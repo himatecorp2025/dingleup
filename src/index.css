@@ -153,14 +153,42 @@ All colors MUST be HSL.
 /* Hexagon Clips */
 .clip-hexagon {
   clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+  padding: 1rem 1.5rem;
+}
+
+@media (min-width: 400px) {
+  .clip-hexagon {
+    padding: 1.5rem 2rem;
+  }
 }
 
 .clip-hexagon-box {
   clip-path: polygon(5% 0%, 95% 0%, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0% 90%, 0% 10%);
+  padding: 1.25rem;
+  min-height: 80px;
+}
+
+@media (min-width: 400px) {
+  .clip-hexagon-box {
+    padding: 1.5rem;
+    min-height: 100px;
+  }
 }
 
 .clip-hexagon-answer {
   clip-path: polygon(3% 0%, 97% 0%, 100% 50%, 97% 100%, 3% 100%, 0% 50%);
+  padding: 0.875rem 1rem;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  word-break: break-word;
+}
+
+@media (min-width: 400px) {
+  .clip-hexagon-answer {
+    padding: 1rem 1.25rem;
+    min-height: 70px;
+  }
 }
 
 /* Shake Animation */

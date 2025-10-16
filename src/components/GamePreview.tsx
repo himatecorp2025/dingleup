@@ -314,7 +314,7 @@ const GamePreview = () => {
             <Button 
               onClick={() => startGame(false)}
               size="lg"
-              className="bg-gradient-gold text-accent-foreground font-bold text-xl px-12 py-6 rounded-xl shadow-glow hover:scale-105 transition-transform"
+              className="bg-gradient-gold text-black font-bold text-xl px-12 py-6 rounded-xl shadow-glow hover:scale-105 transition-transform"
             >
               Játék indítása
             </Button>
@@ -349,14 +349,14 @@ const GamePreview = () => {
             <Button 
               onClick={continueWithCoins}
               disabled={coins < 50}
-              className="bg-gradient-gold text-accent-foreground font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg disabled:opacity-30 w-full sm:w-auto"
+              className="bg-gradient-gold text-black font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg disabled:opacity-30 w-full sm:w-auto min-h-[44px]"
             >
               Folytatom (50 🪙)
             </Button>
             <Button 
               onClick={() => setGameState('idle')}
               variant="outline"
-              className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg w-full sm:w-auto"
+              className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg w-full sm:w-auto min-h-[44px]"
             >
               Kilépek
             </Button>
@@ -379,7 +379,7 @@ const GamePreview = () => {
           <p className="text-foreground">Restarting with one life!</p>
           <Button 
             onClick={() => startGame(true)}
-            className="bg-gradient-gold text-accent-foreground font-bold px-8 py-4 text-lg"
+            className="bg-gradient-gold text-black font-bold px-8 py-4 text-lg min-h-[44px]"
           >
             Újraindítás (1 élettel)
           </Button>
@@ -400,7 +400,7 @@ const GamePreview = () => {
           <p className="text-foreground">Restarting with one life!</p>
           <Button 
             onClick={() => startGame(true)}
-            className="bg-gradient-gold text-accent-foreground font-bold px-8 py-4 text-lg"
+            className="bg-gradient-gold text-black font-bold px-8 py-4 text-lg min-h-[44px]"
           >
             Újraindítás (1 élettel)
           </Button>
@@ -424,7 +424,7 @@ const GamePreview = () => {
           </p>
           <Button 
             onClick={() => setGameState('idle')}
-            className="bg-gradient-gold text-accent-foreground font-bold px-8 py-4 text-lg mt-6"
+            className="bg-gradient-gold text-black font-bold px-8 py-4 text-lg mt-6 min-h-[44px]"
           >
             Vissza a főoldalra
           </Button>
@@ -464,12 +464,12 @@ const GamePreview = () => {
 
             {/* Question Box - Hexagon Style */}
             <div className="mb-8 relative">
-              <div className="bg-gradient-card border-2 border-accent/20 rounded-2xl p-6 clip-hexagon-box shadow-hexagon">
-                <div className="flex items-start gap-3">
-                  <div className="bg-accent text-accent-foreground rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="bg-gradient-card border-2 border-accent/20 rounded-2xl p-4 sm:p-6 clip-hexagon-box shadow-hexagon">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div className="bg-accent text-black rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base">
                     ?
                   </div>
-                  <p className="text-foreground text-lg font-semibold leading-tight">
+                  <p className="text-foreground text-base sm:text-lg font-semibold leading-tight break-words">
                     {currentQ.question}
                   </p>
                 </div>
@@ -477,7 +477,7 @@ const GamePreview = () => {
             </div>
 
             {/* Answer Buttons - Hexagon Style */}
-            <div className="space-y-4 mb-8">
+            <div className="space-y-3 sm:space-y-4 mb-8">
               {currentQ.shuffledAnswers.map((answer, index) => {
                 if (removedOption === index) return null;
                 
@@ -486,13 +486,13 @@ const GamePreview = () => {
                     key={index}
                     onClick={() => handleAnswer(index)}
                     disabled={selectedAnswer !== null && !hasDoubleAnswer}
-                    className={`w-full bg-black border-2 border-primary/50 rounded-2xl p-4 text-left transition-all hover:border-accent/70 disabled:opacity-50 clip-hexagon-answer shadow-hexagon ${getButtonClasses(index)}`}
+                    className={`w-full bg-black border-2 border-primary/50 rounded-2xl p-3 sm:p-4 text-left transition-all hover:border-accent/70 disabled:opacity-50 clip-hexagon-answer shadow-hexagon min-h-[60px] ${getButtonClasses(index)}`}
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="text-accent font-bold text-lg">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <span className="text-accent font-bold text-base sm:text-lg flex-shrink-0">
                         {String.fromCharCode(65 + index)}:
                       </span>
-                      <span className="text-foreground font-medium">
+                      <span className="text-foreground font-medium text-sm sm:text-base break-words">
                         {answer}
                       </span>
                     </div>
@@ -502,7 +502,7 @@ const GamePreview = () => {
             </div>
 
             {/* Helper Buttons - Hexagon Style */}
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-3 sm:gap-4">
               <button
                 onClick={useHalve}
                 disabled={usedHelpers.halve || selectedAnswer !== null || coins < 15}
@@ -510,8 +510,8 @@ const GamePreview = () => {
                 title="Harmadoló"
               >
                 <div className="hexagon-content">
-                  <span className="text-lg font-bold">½</span>
-                  <span className="text-xs">Harmadoló (15)</span>
+                  <span className="text-base sm:text-lg font-bold">½</span>
+                  <span className="text-[0.6rem] sm:text-xs leading-tight">Harmadoló<br />(15)</span>
                 </div>
               </button>
 
@@ -522,8 +522,8 @@ const GamePreview = () => {
                 title="2× Válasz"
               >
                 <div className="hexagon-content">
-                  <span className="text-2xl font-bold">2</span>
-                  <span className="text-xs">2× Válasz (20)</span>
+                  <span className="text-xl sm:text-2xl font-bold">2</span>
+                  <span className="text-[0.6rem] sm:text-xs leading-tight">2× Válasz<br />(20)</span>
                 </div>
               </button>
 
@@ -534,8 +534,8 @@ const GamePreview = () => {
                 title="Közönség"
               >
                 <div className="hexagon-content">
-                  <span className="text-xl">👥</span>
-                  <span className="text-xs">Közönség (30)</span>
+                  <span className="text-lg sm:text-xl">👥</span>
+                  <span className="text-[0.6rem] sm:text-xs leading-tight">Közönség<br />(30)</span>
                 </div>
               </button>
             </div>
