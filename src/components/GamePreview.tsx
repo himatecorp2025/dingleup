@@ -85,6 +85,7 @@ const GamePreview = () => {
   const [showSwipeIndicator, setShowSwipeIndicator] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Timer
   useEffect(() => {
@@ -255,16 +256,24 @@ const GamePreview = () => {
   };
 
   const nextQuestion = () => {
-    setCurrentQuestion(prev => prev + 1);
-    setTimeLeft(10);
-    setSelectedAnswer(null);
-    setRemovedOption(null);
-    setHasDoubleAnswer(false);
-    setFirstAttemptIndex(null);
-    setSecondAttemptIndex(null);
-    setShowAudiencePanel(false);
-    setAudienceResults([]);
-    setShowSwipeIndicator(false);
+    setIsTransitioning(true);
+    
+    setTimeout(() => {
+      setCurrentQuestion(prev => prev + 1);
+      setTimeLeft(10);
+      setSelectedAnswer(null);
+      setRemovedOption(null);
+      setHasDoubleAnswer(false);
+      setFirstAttemptIndex(null);
+      setSecondAttemptIndex(null);
+      setShowAudiencePanel(false);
+      setAudienceResults([]);
+      setShowSwipeIndicator(false);
+      
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 100);
+    }, 500);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -613,7 +622,11 @@ const GamePreview = () => {
             </div>
 
             {/* Question Box - Hexagon Style */}
-            <div className="mb-6 relative">
+            <div className={`mb-6 relative transition-all duration-500 ${
+              isTransitioning 
+                ? 'translate-y-[-100%] opacity-0 blur-sm' 
+                : 'translate-y-0 opacity-100 blur-0'
+            }`}>
               <div className="bg-[#0B1130] border-2 border-[#3A4260] rounded-2xl p-4 sm:p-6 clip-hexagon-box shadow-hexagon">
                 <div className="flex items-start gap-2 sm:gap-3">
                   <div className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base">
@@ -653,7 +666,11 @@ const GamePreview = () => {
 
 
             {/* Answer Buttons - Hexagon Style */}
-            <div className="space-y-3 sm:space-y-4 mb-6">
+            <div className={`space-y-3 sm:space-y-4 mb-6 transition-all duration-500 ${
+              isTransitioning 
+                ? 'translate-y-[-100%] opacity-0 blur-sm' 
+                : 'translate-y-0 opacity-100 blur-0'
+            }`}>
               {currentQ.shuffledAnswers.map((answer, index) => {
                 if (removedOption === index) return null;
                 
