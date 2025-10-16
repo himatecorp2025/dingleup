@@ -110,7 +110,7 @@ All colors MUST be HSL.
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease-out;
-  box-shadow: 0 4px 12px hsl(0 0% 0% / 0.5);
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.3), 0 4px 12px hsl(0 0% 0% / 0.5);
   flex-shrink: 0;
   touch-action: manipulation;
   min-width: 44px;
