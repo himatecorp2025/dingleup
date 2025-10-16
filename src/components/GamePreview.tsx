@@ -91,6 +91,7 @@ const GamePreview = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [swipeCompleted, setSwipeCompleted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // URL param handling
   const [searchParams] = useSearchParams();
@@ -98,7 +99,18 @@ const GamePreview = () => {
   // Background music via Web Audio API
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainRef = useRef<GainNode | null>(null);
-  const oscRef = useRef<OscillatorNode | null>(null);
+  const oscRef = useRef<OscillatorNode[]>([]);
+  const melodyIntervalRef = useRef<number | null>(null);
+
+  // Check if mobile on mount
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const ensureAudioContext = () => {
     if (!audioCtxRef.current) {
@@ -112,25 +124,58 @@ const GamePreview = () => {
   const startBackgroundMusic = () => {
     try {
       const ctx = ensureAudioContext();
-      if (oscRef.current) return; // already playing
+      if (oscRef.current.length > 0) return; // already playing
+      
       const gain = ctx.createGain();
-      gain.gain.value = 0.2; // 20%
-      const osc = ctx.createOscillator();
-      osc.type = "sawtooth";
-      osc.frequency.value = 110; // base tension tone
-      osc.connect(gain);
+      gain.gain.value = 0.15; // 15% volume
       gain.connect(ctx.destination);
-      osc.start();
       gainRef.current = gain;
-      oscRef.current = osc;
+
+      // Dallamos zene - egyszerű akkord progresszió
+      const playMelody = () => {
+        // Töröljük a korábbi oszcillátorokat
+        oscRef.current.forEach(osc => {
+          try { osc.stop(); } catch {}
+        });
+        oscRef.current = [];
+
+        // Három hang - akkord (C-E-G, Am, F, G7 progresszió)
+        const chordProgression = [
+          [261.63, 329.63, 392.00], // C major
+          [220.00, 261.63, 329.63], // A minor
+          [174.61, 220.00, 261.63], // F major
+          [196.00, 246.94, 293.66], // G7
+        ];
+
+        const currentChord = chordProgression[Math.floor(Date.now() / 2000) % chordProgression.length];
+
+        currentChord.forEach(freq => {
+          const osc = ctx.createOscillator();
+          osc.type = "sine";
+          osc.frequency.value = freq;
+          osc.connect(gain);
+          osc.start();
+          oscRef.current.push(osc);
+        });
+      };
+
+      playMelody();
+      melodyIntervalRef.current = window.setInterval(playMelody, 2000); // Akkord váltás 2 másodpercenként
+
     } catch (e) {
       console.warn("Audio init failed", e);
     }
   };
 
   const stopBackgroundMusic = () => {
-    try { oscRef.current?.stop(); } catch {}
-    oscRef.current = null;
+    if (melodyIntervalRef.current) {
+      clearInterval(melodyIntervalRef.current);
+      melodyIntervalRef.current = null;
+    }
+    oscRef.current.forEach(osc => {
+      try { osc.stop(); } catch {}
+    });
+    oscRef.current = [];
     gainRef.current = null;
   };
 
@@ -379,7 +424,7 @@ const handleAnswer = (answerIndex: number) => {
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (!showSwipeIndicator) return;
+    if (!showSwipeIndicator || !isMobile) return;
     e.stopPropagation();
     setTouchStart(e.targetTouches[0].clientY);
     setTouchEnd(e.targetTouches[0].clientY);
@@ -387,7 +432,7 @@ const handleAnswer = (answerIndex: number) => {
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!showSwipeIndicator || swipeCompleted) return;
+    if (!showSwipeIndicator || swipeCompleted || !isMobile) return;
     e.preventDefault();
     e.stopPropagation();
     
@@ -417,7 +462,7 @@ const handleAnswer = (answerIndex: number) => {
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!showSwipeIndicator || swipeCompleted) return;
+    if (!showSwipeIndicator || swipeCompleted || !isMobile) return;
     e.stopPropagation();
     
     // Ha nem húzta teljesen végig, visszaugrik
@@ -768,13 +813,31 @@ const handleAnswer = (answerIndex: number) => {
               style={{ touchAction: showSwipeIndicator ? 'none' : 'auto' }}
             >
               
-              {/* Swipe Indicator */}
-              {showSwipeIndicator && (
+              {/* Swipe Indicator - csak mobilon */}
+              {showSwipeIndicator && isMobile && (
                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 animate-bounce pointer-events-none">
                   <div className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
                     <span className="text-sm font-bold">Húzd felfelé a következő kérdéshez</span>
                     <span className="text-xl">👆</span>
                   </div>
+                </div>
+              )}
+
+              {/* Next Button - csak desktopon */}
+              {showSwipeIndicator && !isMobile && (
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
+                  <Button
+                    onClick={() => {
+                      setShowSwipeIndicator(false);
+                      setTimeout(() => {
+                        nextQuestion();
+                      }, 100);
+                    }}
+                    className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg hover:scale-110 transition-transform flex items-center gap-2"
+                  >
+                    Következő kérdés
+                    <span className="text-2xl">👇</span>
+                  </Button>
                 </div>
               )}
               {/* Header */}
