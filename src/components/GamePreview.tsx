@@ -377,7 +377,7 @@ const handleAnswer = (answerIndex: number) => {
     setTouchEnd(currentTouch);
     
     const diff = touchStart - currentTouch;
-    const maxSwipe = 500; // Teljes átmenet távolság
+    const maxSwipe = 200; // Csökkentett távolság - érzékenyebb görgetés
     
     // Csak felfelé engedjük a mozgást (pozitív diff)
     if (diff > 0) {
@@ -400,7 +400,7 @@ const handleAnswer = (answerIndex: number) => {
     e.stopPropagation();
     
     // Ha nem húzta teljesen végig, visszaugrik
-    if (swipeOffset < 500) {
+    if (swipeOffset < 200) {
       setSwipeOffset(0);
     }
   };
