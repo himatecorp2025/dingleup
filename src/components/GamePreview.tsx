@@ -98,14 +98,25 @@ const GamePreview = () => {
     setShowTimeoutPopup(true);
   };
 
-  const startGame = (restartWithOneLive = false) => {
+  const startGame = (restartWithOneLive = false, deductLife = false) => {
     const newQuestions = getRandomQuestions();
     setQuestions(newQuestions);
     setGameState('playing');
     setCurrentQuestion(0);
     setTimeLeft(10);
     setSelectedAnswer(null);
-    setLives(restartWithOneLive ? 1 : 5);
+    
+    // Élet kezelés
+    if (restartWithOneLive) {
+      setLives(1);
+    } else if (deductLife && lives > 0) {
+      const newLives = lives - 1;
+      setLives(newLives);
+      toast.info(`Élet levonva: ${newLives} élet maradt`, { description: "❤️" });
+    } else {
+      setLives(3);
+    }
+    
     setCoins(200);
     setUsedHelpers({ halve: false, doubleAnswer: false, audience: false });
     setRemovedOption(null);
@@ -116,7 +127,7 @@ const GamePreview = () => {
     setShowTimeoutPopup(false);
     setShowAudiencePanel(false);
     setAudienceResults([]);
-    console.log('round_start', { questions: 15, lives: restartWithOneLive ? 1 : 5 });
+    console.log('round_start', { questions: 15, lives: restartWithOneLive ? 1 : (deductLife ? lives - 1 : 3) });
   };
 
   const handleAnswer = (answerIndex: number) => {
@@ -345,7 +356,7 @@ const GamePreview = () => {
             <h2 className="text-4xl font-bold text-foreground">DingleUP! Kvíz</h2>
             <p className="text-muted-foreground text-lg">
               15 kérdés, 3 válaszlehetőség, 10 másodperc időkorlát.
-              <br />5 életed van. Jó szerencsét!
+              <br />3 életed van. Jó szerencsét!
             </p>
             <Button 
               onClick={() => startGame(false)}
@@ -420,10 +431,10 @@ const GamePreview = () => {
           </p>
           <div className="flex flex-col gap-4 mt-6">
             <Button 
-              onClick={() => startGame(false)}
+              onClick={() => startGame(false, true)}
               className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg min-h-[44px] w-full"
             >
-              Új játék indítása
+              Új játék indítása (-1 ❤️)
             </Button>
             <Button 
               onClick={() => setGameState('idle')}
