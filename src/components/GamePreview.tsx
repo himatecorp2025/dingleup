@@ -78,6 +78,7 @@ const GamePreview = () => {
   const [hasDoubleAnswer, setHasDoubleAnswer] = useState(false);
   const [firstAttemptIndex, setFirstAttemptIndex] = useState<number | null>(null);
   const [secondAttemptIndex, setSecondAttemptIndex] = useState<number | null>(null);
+  const [showWrongAnswerPopup, setShowWrongAnswerPopup] = useState(false);
 
   // Timer
   useEffect(() => {
@@ -186,7 +187,10 @@ const GamePreview = () => {
     setSelectedAnswer(answerIndex);
 
     if (isCorrect) {
-      toast.success("Helyes válasz!", { description: "Nagyszerű munka!" });
+      // +5 aranyérme jutalom
+      const newCoins = coins + 5;
+      setCoins(newCoins);
+      toast.success("Helyes válasz! +5 🪙", { description: "Nagyszerű munka!" });
 
       setTimeout(() => {
         if (currentQuestion < questions.length - 1) {
@@ -195,28 +199,42 @@ const GamePreview = () => {
           setGameState('won');
           console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
         }
-      }, 1500);
+      }, 1000);
     } else {
-      handleWrongAnswer();
+      // Rossz válasz - popup megjelenítése
+      setShowWrongAnswerPopup(true);
     }
   };
 
   const handleWrongAnswer = () => {
-    const newLives = lives - 1;
-    setLives(newLives);
-    toast.error("Helytelen válasz!", { description: `-1 élet (${newLives} maradt)` });
+    setGameState('idle');
+    console.log('round_end', { result: 'wrong_answer', correctCount: currentQuestion });
+  };
 
+  const continueAfterWrongAnswer = () => {
+    if (coins >= 50) {
+      const newCoins = coins - 50;
+      setCoins(newCoins);
+      toast.info("Folytatás aranyérméért", { description: `–50 🪙 (${newCoins} maradt)` });
+      console.log('continue_with_coins', { cost: 50, remaining: newCoins });
+      setShowWrongAnswerPopup(false);
+      setTimeout(() => {
+        if (currentQuestion < questions.length - 1) {
+          nextQuestion();
+        } else {
+          setGameState('won');
+          console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
+        }
+      }, 500);
+    }
+  };
+
+  const exitAfterWrongAnswer = () => {
+    setShowWrongAnswerPopup(false);
+    toast.info(`Összegyűjtött aranyérméd: ${coins} 🪙`);
     setTimeout(() => {
-      if (newLives <= 0) {
-        setGameState('out-of-lives');
-        console.log('round_end', { result: 'out-of-lives', correctCount: currentQuestion });
-      } else if (currentQuestion < questions.length - 1) {
-        nextQuestion();
-      } else {
-        setGameState('lost');
-        console.log('round_end', { result: 'lost', correctCount: currentQuestion });
-      }
-    }, 1500);
+      setGameState('idle');
+    }, 500);
   };
 
   const nextQuestion = () => {
@@ -287,15 +305,15 @@ const GamePreview = () => {
     const isSecondAttempt = index === secondAttemptIndex;
     const isSelected = index === selectedAnswer;
     
-    // Ha van végleges válasz, mutassuk a helyes választ zölden
+    // Ha van végleges válasz, mutassuk a helyes választ zölden és a rosszat pirosan
     if (selectedAnswer !== null) {
-      if (isCorrect) return "!bg-success !border-success";
-      if (isFirstAttempt || isSecondAttempt) return "!bg-destructive !border-destructive animate-shake";
+      if (isCorrect) return "!bg-[#00FF66] !border-[#00FF66] !text-black";
+      if (isSelected && !isCorrect) return "!bg-[#FF3040] !border-[#FF3040] !text-white animate-shake";
       return "";
     }
     
     // Dupla válasz esetén az első hibás próbálkozás
-    if (isFirstAttempt && !isCorrect) return "!bg-destructive !border-destructive animate-shake";
+    if (isFirstAttempt && !isCorrect) return "!bg-[#FF3040] !border-[#FF3040] !text-white animate-shake";
     
     return "";
   };
@@ -437,12 +455,42 @@ const GamePreview = () => {
   const currentQ = questions[currentQuestion];
 
   return (
-    <section id="game" className="min-h-screen py-8 px-4 bg-gradient-to-b from-background via-muted to-background">
-      <div className="container max-w-md mx-auto">
-        {/* Phone Frame */}
-        <div className="relative mx-auto" style={{ maxWidth: '430px' }}>
-          <div className="bg-gradient-card rounded-[2.5rem] p-6 shadow-card border-2 border-border/30">
-            {/* Header */}
+    <>
+      {/* Wrong Answer Popup */}
+      {showWrongAnswerPopup && (
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur flex items-center justify-center p-4">
+          <div className="text-center space-y-6 animate-fade-in max-w-md px-4">
+            <div className="text-8xl">❌</div>
+            <h2 className="text-4xl md:text-5xl font-bold text-destructive">Rossz válasz!</h2>
+            <p className="text-foreground text-lg md:text-xl font-semibold bg-gradient-gold px-6 md:px-8 py-4 rounded-xl clip-hexagon">
+              Folytathatod 50 🪙 aranyérme felhasználásával.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                onClick={continueAfterWrongAnswer}
+                disabled={coins < 50}
+                className="bg-gradient-gold text-black font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg disabled:opacity-30 w-full sm:w-auto min-h-[44px]"
+              >
+                Folytatom (50 🪙)
+              </Button>
+              <Button 
+                onClick={exitAfterWrongAnswer}
+                variant="outline"
+                className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg w-full sm:w-auto min-h-[44px]"
+              >
+                Kilépek
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <section id="game" className="min-h-screen py-8 px-4 bg-gradient-to-b from-background via-muted to-background">
+        <div className="container max-w-md mx-auto">
+          {/* Phone Frame */}
+          <div className="relative mx-auto" style={{ maxWidth: '430px' }}>
+            <div className="bg-gradient-card rounded-[2.5rem] p-6 shadow-card border-2 border-border/30">
+              {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <Button 
                 variant="ghost" 
@@ -545,10 +593,11 @@ const GamePreview = () => {
               <span>Kérdés: {currentQuestion + 1}/15</span>
               <span className="text-destructive font-bold">❤️ × {lives}</span>
             </div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
