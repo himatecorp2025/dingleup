@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -57,10 +58,12 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6">
-              Értesíts, ha elérhető
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            <Link to="/game">
+              <Button size="lg" className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6">
+                Játék indítása
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
             <Button size="lg" variant="outline" className="border-accent/50 text-foreground hover:bg-accent/10 text-lg px-8 py-6">
               Tudj meg többet
             </Button>

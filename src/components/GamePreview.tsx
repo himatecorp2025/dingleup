@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import questionData from "@/data/questions.json";
 
@@ -600,8 +601,8 @@ const GamePreview = () => {
         </div>
       )}
 
-      <section id="game" className="min-h-screen py-8 px-4 bg-gradient-to-b from-background via-muted to-background">
-        <div className="container max-w-md mx-auto">
+      <section id="game" className="min-h-screen bg-gradient-to-b from-background via-muted to-background flex items-center justify-center">
+        <div className="container max-w-md mx-auto px-4">
           {/* Phone Frame */}
           <div className="relative mx-auto" style={{ maxWidth: '430px' }}>
             <div 
@@ -623,14 +624,15 @@ const GamePreview = () => {
               )}
               {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => setGameState('idle')}
-                className="text-foreground hover:bg-muted"
-              >
-                <ArrowLeft className="w-6 h-6" />
-              </Button>
+              <Link to="/">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="text-foreground hover:bg-muted"
+                >
+                  <ArrowLeft className="w-6 h-6" />
+                </Button>
+              </Link>
               
               <div className={`text-6xl font-bold ${getTimerColor()} transition-colors`}>
                 {timeLeft}
