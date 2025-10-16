@@ -88,6 +88,7 @@ const GamePreview = () => {
   const [touchEnd, setTouchEnd] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [swipeOffset, setSwipeOffset] = useState(0);
+  const [swipeCompleted, setSwipeCompleted] = useState(false);
 
   // URL param handling
   const [searchParams] = useSearchParams();
@@ -366,10 +367,11 @@ const handleAnswer = (answerIndex: number) => {
     e.stopPropagation();
     setTouchStart(e.targetTouches[0].clientY);
     setTouchEnd(e.targetTouches[0].clientY);
+    setSwipeCompleted(false);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!showSwipeIndicator) return;
+    if (!showSwipeIndicator || swipeCompleted) return;
     e.preventDefault();
     e.stopPropagation();
     
@@ -377,7 +379,7 @@ const handleAnswer = (answerIndex: number) => {
     setTouchEnd(currentTouch);
     
     const diff = touchStart - currentTouch;
-    const maxSwipe = 200; // Csökkentett távolság - érzékenyebb görgetés
+    const maxSwipe = 150; // Érzékenyebb görgetés
     
     // Csak felfelé engedjük a mozgást (pozitív diff)
     if (diff > 0) {
@@ -385,10 +387,13 @@ const handleAnswer = (answerIndex: number) => {
       setSwipeOffset(offset);
       
       // Ha teljesen felhúzta, akkor válts következő kérdésre
-      if (offset >= maxSwipe) {
-        setIsTransitioning(true);
+      if (offset >= maxSwipe && !swipeCompleted) {
+        setSwipeCompleted(true);
         setSwipeOffset(0);
-        nextQuestion();
+        setShowSwipeIndicator(false);
+        setTimeout(() => {
+          nextQuestion();
+        }, 100);
       }
     } else {
       setSwipeOffset(0);
@@ -396,11 +401,11 @@ const handleAnswer = (answerIndex: number) => {
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!showSwipeIndicator) return;
+    if (!showSwipeIndicator || swipeCompleted) return;
     e.stopPropagation();
     
     // Ha nem húzta teljesen végig, visszaugrik
-    if (swipeOffset < 200) {
+    if (swipeOffset < 150 && !swipeCompleted) {
       setSwipeOffset(0);
     }
   };
