@@ -485,10 +485,26 @@ const GamePreview = () => {
           <div className="text-8xl animate-float">🏆</div>
           <h2 className="text-4xl md:text-5xl font-bold text-success">Gratulálunk!</h2>
           <p className="text-foreground text-lg md:text-xl font-semibold mb-4">
-            A játék véget ért.
+            Sikeresen teljesítetted a kvízt!
           </p>
+          
+          {/* Eredmény jelző */}
+          <div className="bg-gradient-to-br from-card to-muted border-2 border-success/30 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between text-lg">
+              <span className="text-muted-foreground">Helyes válaszok:</span>
+              <span className="text-success font-bold text-2xl">15/15</span>
+            </div>
+            <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-success to-accent w-full animate-fade-in"></div>
+            </div>
+            <div className="flex items-center justify-between text-lg pt-2 border-t border-border">
+              <span className="text-muted-foreground">Megmaradt életek:</span>
+              <span className="text-destructive font-bold text-2xl">{lives} ❤️</span>
+            </div>
+          </div>
+
           <p className="text-accent text-2xl md:text-3xl font-bold bg-[#0B1130] border-2 border-[#3A4260] px-6 md:px-8 py-4 md:py-6 rounded-xl">
-            Összegyűjtött aranyérmeid:<br />
+            Összegyűjtött aranyérmék:<br />
             {coins} 🪙
           </p>
           <div className="flex flex-col gap-4 mt-6">
