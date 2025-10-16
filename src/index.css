@@ -8,74 +8,78 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 40% 10%;
+    --background: 228 47% 8%;
     --foreground: 0 0% 100%;
 
-    --card: 240 35% 15%;
+    --card: 228 35% 12%;
     --card-foreground: 0 0% 100%;
 
-    --popover: 240 35% 15%;
+    --popover: 228 35% 12%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 224 64% 33%;
+    --primary: 228 47% 15%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 258 84% 58%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 30% 20%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 228 30% 18%;
+    --muted-foreground: 228 5% 65%;
 
-    --accent: 43 96% 56%;
-    --accent-foreground: 240 40% 10%;
+    --accent: 43 100% 50%;
+    --accent-foreground: 228 47% 8%;
 
-    --destructive: 0 84.2% 60.2%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 91% 62%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 30% 25%;
-    --input: 240 30% 25%;
-    --ring: 43 96% 56%;
+    --border: 228 30% 20%;
+    --input: 228 30% 20%;
+    --ring: 43 100% 50%;
 
-    --radius: 1rem;
+    --radius: 0.5rem;
 
-    --gradient-hero: linear-gradient(135deg, hsl(224, 64%, 33%) 0%, hsl(258, 84%, 58%) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(43, 96%, 56%) 0%, hsl(38, 92%, 50%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(240, 35%, 18%) 0%, hsl(240, 35%, 12%) 100%);
+    --gradient-bg: linear-gradient(180deg, hsl(228, 47%, 8%) 0%, hsl(228, 47%, 6%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(43, 100%, 50%) 0%, hsl(38, 95%, 48%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(228, 35%, 14%) 0%, hsl(228, 35%, 10%) 100%);
     
-    --shadow-glow: 0 0 40px hsl(43 96% 56% / 0.3);
-    --shadow-card: 0 10px 30px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 30px hsl(43 100% 50% / 0.4);
+    --shadow-card: 0 8px 24px hsl(0 0% 0% / 0.6);
+    --shadow-hexagon: 0 4px 12px hsl(0 0% 0% / 0.5);
     
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.2s ease-out;
   }
 
   .dark {
-    --background: 240 40% 10%;
+    --background: 228 47% 8%;
     --foreground: 0 0% 100%;
 
-    --card: 240 35% 15%;
+    --card: 228 35% 12%;
     --card-foreground: 0 0% 100%;
 
-    --popover: 240 35% 15%;
+    --popover: 228 35% 12%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 224 64% 33%;
+    --primary: 228 47% 15%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 258 84% 58%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 30% 20%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 228 30% 18%;
+    --muted-foreground: 228 5% 65%;
 
-    --accent: 43 96% 56%;
-    --accent-foreground: 240 40% 10%;
+    --accent: 43 100% 50%;
+    --accent-foreground: 228 47% 8%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --success: 142 76% 36%;
+    --destructive: 0 91% 62%;
 
-    --border: 240 30% 25%;
-    --input: 240 30% 25%;
-    --ring: 43 96% 56%;
+    --border: 228 30% 20%;
+    --input: 228 30% 20%;
+    --ring: 43 100% 50%;
   }
 }
 
@@ -91,4 +95,63 @@ All colors MUST be HSL.
 
 .shadow-glow {
   box-shadow: var(--shadow-glow);
+}
+
+/* Hexagon Buttons */
+.hexagon-button {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, hsl(43, 100%, 50%), hsl(38, 95%, 48%));
+  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  box-shadow: 0 4px 12px hsl(0 0% 0% / 0.5);
+}
+
+.hexagon-button:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px hsl(43 100% 50% / 0.6);
+}
+
+.hexagon-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.hexagon-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: hsl(228, 47%, 8%);
+  font-weight: bold;
+  text-align: center;
+  padding: 4px;
+}
+
+/* Hexagon Clips */
+.clip-hexagon {
+  clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+}
+
+.clip-hexagon-box {
+  clip-path: polygon(5% 0%, 95% 0%, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0% 90%, 0% 10%);
+}
+
+.clip-hexagon-answer {
+  clip-path: polygon(3% 0%, 97% 0%, 100% 50%, 97% 100%, 3% 100%, 0% 50%);
+}
+
+/* Shake Animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.animate-shake {
+  animation: shake 0.3s ease-in-out;
 }
