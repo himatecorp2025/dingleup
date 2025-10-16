@@ -511,7 +511,7 @@ const GamePreview = () => {
             </div>
 
             {/* Question Box - Hexagon Style */}
-            <div className="mb-8 relative">
+            <div className="mb-6 relative">
               <div className="bg-gradient-card border-2 border-accent/20 rounded-2xl p-4 sm:p-6 clip-hexagon-box shadow-hexagon">
                 <div className="flex items-start gap-2 sm:gap-3">
                   <div className="bg-accent text-black rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base">
@@ -522,6 +522,65 @@ const GamePreview = () => {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Helper Buttons - Above Answers */}
+            <div className="flex justify-center gap-3 sm:gap-4 mb-6">
+              <button
+                onClick={useHalve}
+                disabled={usedHelpers.halve || selectedAnswer !== null || coins < 15}
+                className={`hexagon-button transition-all ${
+                  usedHelpers.halve 
+                    ? 'opacity-40 cursor-not-allowed' 
+                    : selectedAnswer === null && coins >= 15
+                    ? 'hover:shadow-[0_0_20px_rgba(251,191,36,0.6)] hover:scale-105'
+                    : 'opacity-40 cursor-not-allowed'
+                }`}
+                title="Harmadoló"
+              >
+                <div className="hexagon-content">
+                  <span className="text-base sm:text-lg font-bold">½</span>
+                  <span className="text-[0.6rem] sm:text-xs leading-tight">Harmadoló<br />(15 🪙)</span>
+                </div>
+              </button>
+
+              <button
+                onClick={useDoubleAnswer}
+                disabled={usedHelpers.doubleAnswer || selectedAnswer !== null || coins < 20}
+                className={`hexagon-button transition-all ${
+                  usedHelpers.doubleAnswer && hasDoubleAnswer
+                    ? 'shadow-[0_0_25px_rgba(34,197,94,0.7)] opacity-100'
+                    : usedHelpers.doubleAnswer
+                    ? 'opacity-40 cursor-not-allowed'
+                    : selectedAnswer === null && coins >= 20
+                    ? 'hover:shadow-[0_0_20px_rgba(251,191,36,0.6)] hover:scale-105'
+                    : 'opacity-40 cursor-not-allowed'
+                }`}
+                title="2× Válasz"
+              >
+                <div className="hexagon-content">
+                  <span className="text-xl sm:text-2xl font-bold">2</span>
+                  <span className="text-[0.6rem] sm:text-xs leading-tight">2× Válasz<br />(20 🪙)</span>
+                </div>
+              </button>
+
+              <button
+                onClick={useAudience}
+                disabled={usedHelpers.audience || selectedAnswer !== null || coins < 30}
+                className={`hexagon-button transition-all ${
+                  usedHelpers.audience 
+                    ? 'opacity-40 cursor-not-allowed' 
+                    : selectedAnswer === null && coins >= 30
+                    ? 'hover:shadow-[0_0_20px_rgba(251,191,36,0.6)] hover:scale-105'
+                    : 'opacity-40 cursor-not-allowed'
+                }`}
+                title="Közönség"
+              >
+                <div className="hexagon-content">
+                  <span className="text-lg sm:text-xl">👥</span>
+                  <span className="text-[0.6rem] sm:text-xs leading-tight">Közönség<br />(30 🪙)</span>
+                </div>
+              </button>
             </div>
 
             {/* Answer Buttons - Hexagon Style */}
@@ -547,45 +606,6 @@ const GamePreview = () => {
                   </button>
                 );
               })}
-            </div>
-
-            {/* Helper Buttons - Hexagon Style */}
-            <div className="flex justify-center gap-3 sm:gap-4">
-              <button
-                onClick={useHalve}
-                disabled={usedHelpers.halve || selectedAnswer !== null || coins < 15}
-                className="hexagon-button disabled:opacity-30"
-                title="Harmadoló"
-              >
-                <div className="hexagon-content">
-                  <span className="text-base sm:text-lg font-bold">½</span>
-                  <span className="text-[0.6rem] sm:text-xs leading-tight">Harmadoló<br />(15)</span>
-                </div>
-              </button>
-
-              <button
-                onClick={useDoubleAnswer}
-                disabled={usedHelpers.doubleAnswer || selectedAnswer !== null || coins < 20}
-                className="hexagon-button disabled:opacity-30"
-                title="2× Válasz"
-              >
-                <div className="hexagon-content">
-                  <span className="text-xl sm:text-2xl font-bold">2</span>
-                  <span className="text-[0.6rem] sm:text-xs leading-tight">2× Válasz<br />(20)</span>
-                </div>
-              </button>
-
-              <button
-                onClick={useAudience}
-                disabled={usedHelpers.audience || selectedAnswer !== null || coins < 30}
-                className="hexagon-button disabled:opacity-30"
-                title="Közönség"
-              >
-                <div className="hexagon-content">
-                  <span className="text-lg sm:text-xl">👥</span>
-                  <span className="text-[0.6rem] sm:text-xs leading-tight">Közönség<br />(30)</span>
-                </div>
-              </button>
             </div>
 
             {/* Progress & Lives */}
