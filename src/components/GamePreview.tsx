@@ -738,76 +738,79 @@ const GamePreview = () => {
             </div>
 
             {/* Helper Buttons - Below Answers */}
-            <div className="flex justify-center gap-3 sm:gap-4 mb-6">
+            <div className="flex justify-center gap-4 sm:gap-6 mb-6">
+              {/* Harmadoló - 1/3 */}
               <button
                 onClick={useHalve}
                 disabled={usedHelpers.halve || selectedAnswer !== null || coins < 15}
-                className={`hexagon-button transition-all ${
-                  usedHelpers.halve && selectedAnswer === null
-                    ? 'shadow-[0_0_25px_rgba(0,255,102,0.7)]'
-                    : ''
-                } ${
+                className={`group relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl transition-all duration-300 ${
                   usedHelpers.halve 
-                    ? 'opacity-40 cursor-not-allowed' 
+                    ? 'bg-muted/30 cursor-not-allowed' 
                     : selectedAnswer === null && coins >= 15
-                    ? 'hover:shadow-[0_0_20px_rgba(0,255,102,0.6)] hover:scale-105'
-                    : 'opacity-40 cursor-not-allowed'
-                }`}
+                    ? 'bg-gradient-to-br from-success/20 to-success/5 hover:from-success/30 hover:to-success/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(0,255,102,0.4)] border-2 border-success/30 hover:border-success/50'
+                    : 'bg-muted/30 cursor-not-allowed'
+                } ${usedHelpers.halve && selectedAnswer === null ? 'ring-2 ring-success animate-pulse' : ''}`}
                 title="Harmadoló (1/3)"
               >
-                <div className="hexagon-content">
-                  <span className="text-base sm:text-lg font-bold">⅓</span>
-                  <span className="text-[0.6rem] sm:text-xs leading-tight">1/3<br />(15 🪙)</span>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-success/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative flex flex-col items-center justify-center h-full gap-1">
+                  <span className="text-2xl sm:text-3xl font-bold text-success group-hover:scale-110 transition-transform duration-300">⅓</span>
+                  <span className="text-[0.65rem] sm:text-xs text-muted-foreground font-medium">15 🪙</span>
                 </div>
-              </button>
-
-              <button
-                onClick={useDoubleAnswer}
-                disabled={usedHelpers.doubleAnswer || selectedAnswer !== null || coins < 20}
-                className={`hexagon-button transition-all relative ${
-                  usedHelpers.doubleAnswer && hasDoubleAnswer
-                    ? 'shadow-[0_0_25px_rgba(0,255,102,0.7)]'
-                    : ''
-                } ${
-                  usedHelpers.doubleAnswer 
-                    ? 'opacity-40 cursor-not-allowed'
-                    : selectedAnswer === null && coins >= 20
-                    ? 'hover:shadow-[0_0_20px_rgba(0,255,102,0.6)] hover:scale-105'
-                    : 'opacity-40 cursor-not-allowed'
-                }`}
-                title="2× Válasz"
-              >
-                <div className="hexagon-content">
-                  <span className="text-xl sm:text-2xl font-bold">2×</span>
-                  <span className="text-[0.6rem] sm:text-xs leading-tight">2× Válasz<br />(20 🪙)</span>
-                </div>
-                {usedHelpers.doubleAnswer && hasDoubleAnswer && (
-                  <div className="absolute -top-1 -right-1 bg-[#00FF66] text-black rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                    2×
-                  </div>
+                {!usedHelpers.halve && coins >= 15 && selectedAnswer === null && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-success rounded-full animate-ping" />
                 )}
               </button>
 
+              {/* 2× Válasz */}
+              <button
+                onClick={useDoubleAnswer}
+                disabled={usedHelpers.doubleAnswer || selectedAnswer !== null || coins < 20}
+                className={`group relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl transition-all duration-300 ${
+                  usedHelpers.doubleAnswer 
+                    ? 'bg-muted/30 cursor-not-allowed'
+                    : selectedAnswer === null && coins >= 20
+                    ? 'bg-gradient-to-br from-accent/20 to-accent/5 hover:from-accent/30 hover:to-accent/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] border-2 border-accent/30 hover:border-accent/50'
+                    : 'bg-muted/30 cursor-not-allowed'
+                } ${usedHelpers.doubleAnswer && hasDoubleAnswer ? 'ring-2 ring-accent animate-pulse' : ''}`}
+                title="2× Válasz"
+              >
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative flex flex-col items-center justify-center h-full gap-1">
+                  <span className="text-2xl sm:text-3xl font-bold text-accent group-hover:scale-110 transition-transform duration-300">2×</span>
+                  <span className="text-[0.65rem] sm:text-xs text-muted-foreground font-medium">20 🪙</span>
+                </div>
+                {usedHelpers.doubleAnswer && hasDoubleAnswer && (
+                  <div className="absolute -top-2 -right-2 bg-accent text-accent-foreground rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold shadow-lg animate-bounce">
+                    2
+                  </div>
+                )}
+                {!usedHelpers.doubleAnswer && coins >= 20 && selectedAnswer === null && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-ping" />
+                )}
+              </button>
+
+              {/* Közönség */}
               <button
                 onClick={useAudience}
                 disabled={usedHelpers.audience || selectedAnswer !== null || coins < 30}
-                className={`hexagon-button transition-all ${
-                  usedHelpers.audience && showAudiencePanel
-                    ? 'shadow-[0_0_25px_rgba(28,114,255,0.7)]'
-                    : ''
-                } ${
+                className={`group relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl transition-all duration-300 ${
                   usedHelpers.audience 
-                    ? 'opacity-40 cursor-not-allowed' 
+                    ? 'bg-muted/30 cursor-not-allowed' 
                     : selectedAnswer === null && coins >= 30
-                    ? 'hover:shadow-[0_0_20px_rgba(28,114,255,0.6)] hover:scale-105'
-                    : 'opacity-40 cursor-not-allowed'
-                }`}
+                    ? 'bg-gradient-to-br from-secondary/20 to-secondary/5 hover:from-secondary/30 hover:to-secondary/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(124,58,237,0.4)] border-2 border-secondary/30 hover:border-secondary/50'
+                    : 'bg-muted/30 cursor-not-allowed'
+                } ${usedHelpers.audience && showAudiencePanel ? 'ring-2 ring-secondary animate-pulse' : ''}`}
                 title="Közönség"
               >
-                <div className="hexagon-content">
-                  <span className="text-lg sm:text-xl">👥</span>
-                  <span className="text-[0.6rem] sm:text-xs leading-tight">Közönség<br />(30 🪙)</span>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative flex flex-col items-center justify-center h-full gap-1">
+                  <span className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform duration-300">👥</span>
+                  <span className="text-[0.65rem] sm:text-xs text-muted-foreground font-medium">30 🪙</span>
                 </div>
+                {!usedHelpers.audience && coins >= 30 && selectedAnswer === null && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full animate-ping" />
+                )}
               </button>
             </div>
 
