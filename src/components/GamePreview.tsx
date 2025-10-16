@@ -20,15 +20,14 @@ interface ShuffledQuestion extends Question {
 type GameState = 'idle' | 'playing' | 'won' | 'lost' | 'timeout' | 'out-of-lives';
 
 // Véletlenszerű 15 kérdés kiválasztása HELYES válasszal
+// Biztosítja, hogy ne legyen három egymást követő kérdésnél ugyanazon pozícióban a helyes válasz
 const getRandomQuestions = (): ShuffledQuestion[] => {
   const shuffled = [...questionData].sort(() => Math.random() - 0.5);
   const selected = shuffled.slice(0, 15);
   
-  return selected.map(q => {
+  const questions = selected.map(q => {
     const shuffledAnswers = [...q.answers].sort(() => Math.random() - 0.5);
     const correctIndex = shuffledAnswers.indexOf(q.correct);
-    
-    console.log('answer', { id: q.id, correct: q.correct, correctIndex });
     
     return {
       ...q,
@@ -36,6 +35,30 @@ const getRandomQuestions = (): ShuffledQuestion[] => {
       correctIndex
     };
   });
+
+  // Ellenőrizés: ne legyen három egymást követő helyes válasz ugyanazon pozícióban
+  for (let i = 2; i < questions.length; i++) {
+    if (
+      questions[i].correctIndex === questions[i - 1].correctIndex &&
+      questions[i].correctIndex === questions[i - 2].correctIndex
+    ) {
+      // Ha három egyforma, keverjük újra az i-edik kérdés válaszait
+      const availablePositions = [0, 1, 2].filter(pos => pos !== questions[i].correctIndex);
+      const newCorrectIndex = availablePositions[Math.floor(Math.random() * availablePositions.length)];
+      
+      // Csere: mozgatjuk a helyes választ az új pozícióra
+      const temp = questions[i].shuffledAnswers[newCorrectIndex];
+      questions[i].shuffledAnswers[newCorrectIndex] = questions[i].shuffledAnswers[questions[i].correctIndex];
+      questions[i].shuffledAnswers[questions[i].correctIndex] = temp;
+      questions[i].correctIndex = newCorrectIndex;
+    }
+  }
+
+  questions.forEach(q => {
+    console.log('answer', { id: q.id, correct: q.correct, correctIndex: q.correctIndex });
+  });
+  
+  return questions;
 };
 
 const GamePreview = () => {
@@ -316,24 +339,24 @@ const GamePreview = () => {
 
     return (
       <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur flex items-center justify-center p-4">
-        <div className="text-center space-y-6 animate-fade-in max-w-md">
+        <div className="text-center space-y-6 animate-fade-in max-w-md px-4">
           <div className="text-8xl">⏰</div>
-          <h2 className="text-5xl font-bold text-destructive">Time's up!</h2>
-          <p className="text-accent text-xl font-semibold bg-gradient-gold px-8 py-4 rounded-xl clip-hexagon">
-            Folytatás aranyérméért vagy kilépés?
+          <h2 className="text-4xl md:text-5xl font-bold text-destructive">Lejárt az idő!</h2>
+          <p className="text-foreground text-lg md:text-xl font-semibold bg-gradient-gold px-6 md:px-8 py-4 rounded-xl clip-hexagon">
+            Folytathatod 50 🪙 aranyérme felhasználásával.
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
               onClick={continueWithCoins}
               disabled={coins < 50}
-              className="bg-gradient-gold text-accent-foreground font-bold px-8 py-4 text-lg disabled:opacity-30"
+              className="bg-gradient-gold text-accent-foreground font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg disabled:opacity-30 w-full sm:w-auto"
             >
-              Tovább (50 🪙)
+              Folytatom (50 🪙)
             </Button>
             <Button 
               onClick={() => setGameState('idle')}
               variant="outline"
-              className="font-bold px-8 py-4 text-lg"
+              className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg w-full sm:w-auto"
             >
               Kilépek
             </Button>
@@ -390,15 +413,18 @@ const GamePreview = () => {
     return (
       <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur flex items-center justify-center p-4">
         <div className="text-center space-y-6 animate-fade-in max-w-md">
-          <div className="text-8xl animate-float">🏆</div>
-          <h2 className="text-5xl font-bold text-success">Congratulations, you win!</h2>
-          <p className="text-accent text-xl font-semibold bg-gradient-gold px-8 py-4 rounded-xl clip-hexagon">
-            If you still want to play scroll down!
+          <div className="text-8xl animate-float">🎉</div>
+          <h2 className="text-5xl font-bold text-success">Gratulálunk!</h2>
+          <p className="text-foreground text-2xl font-semibold mb-4">
+            A játék véget ért.
           </p>
-          <p className="text-foreground">At rest, back to the main page!</p>
+          <p className="text-accent text-3xl font-bold bg-gradient-gold px-8 py-6 rounded-xl clip-hexagon">
+            Ennyi aranyérmét gyűjtöttél:<br />
+            {coins} 🪙
+          </p>
           <Button 
             onClick={() => setGameState('idle')}
-            className="bg-gradient-gold text-accent-foreground font-bold px-8 py-4 text-lg"
+            className="bg-gradient-gold text-accent-foreground font-bold px-8 py-4 text-lg mt-6"
           >
             Vissza a főoldalra
           </Button>

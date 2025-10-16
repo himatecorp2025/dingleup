@@ -100,8 +100,8 @@ All colors MUST be HSL.
 /* Hexagon Buttons */
 .hexagon-button {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   background: linear-gradient(135deg, hsl(43, 100%, 50%), hsl(38, 95%, 48%));
   clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
   display: flex;
@@ -110,6 +110,14 @@ All colors MUST be HSL.
   cursor: pointer;
   transition: all 0.2s ease-out;
   box-shadow: 0 4px 12px hsl(0 0% 0% / 0.5);
+  flex-shrink: 0;
+}
+
+@media (min-width: 400px) {
+  .hexagon-button {
+    width: 80px;
+    height: 80px;
+  }
 }
 
 .hexagon-button:hover:not(:disabled) {
@@ -129,7 +137,17 @@ All colors MUST be HSL.
   color: hsl(228, 47%, 8%);
   font-weight: bold;
   text-align: center;
-  padding: 4px;
+  padding: 2px;
+  font-size: 0.7rem;
+  gap: 1px;
+}
+
+@media (min-width: 400px) {
+  .hexagon-content {
+    padding: 4px;
+    font-size: 0.75rem;
+    gap: 2px;
+  }
 }
 
 /* Hexagon Clips */
