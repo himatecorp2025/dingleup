@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import questionData from "@/data/questions.json";
 
@@ -89,6 +89,73 @@ const GamePreview = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [swipeOffset, setSwipeOffset] = useState(0);
 
+  // URL param handling
+  const [searchParams] = useSearchParams();
+
+  // Background music via Web Audio API
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const gainRef = useRef<GainNode | null>(null);
+  const oscRef = useRef<OscillatorNode | null>(null);
+
+  const ensureAudioContext = () => {
+    if (!audioCtxRef.current) {
+      // @ts-ignore - webkit prefix for older iOS
+      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+      audioCtxRef.current = new Ctx();
+    }
+    return audioCtxRef.current!;
+  };
+
+  const startBackgroundMusic = () => {
+    try {
+      const ctx = ensureAudioContext();
+      if (oscRef.current) return; // already playing
+      const gain = ctx.createGain();
+      gain.gain.value = 0.2; // 20%
+      const osc = ctx.createOscillator();
+      osc.type = "sawtooth";
+      osc.frequency.value = 110; // base tension tone
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      gainRef.current = gain;
+      oscRef.current = osc;
+    } catch (e) {
+      console.warn("Audio init failed", e);
+    }
+  };
+
+  const stopBackgroundMusic = () => {
+    try { oscRef.current?.stop(); } catch {}
+    oscRef.current = null;
+    gainRef.current = null;
+  };
+
+  // Start/stop music with game state
+  useEffect(() => {
+    if (gameState === 'playing') {
+      try { audioCtxRef.current?.resume(); } catch {}
+      startBackgroundMusic();
+    } else {
+      stopBackgroundMusic();
+    }
+  }, [gameState]);
+
+  // Increase intensity as you progress / when time is low
+  useEffect(() => {
+    if (gameState !== 'playing' || !gainRef.current || !audioCtxRef.current) return;
+    const ctx = audioCtxRef.current;
+    const base = 0.2;
+    const progress = questions.length > 1 ? currentQuestion / (questions.length - 1) : 0;
+    const urgency = timeLeft < 5 ? (5 - timeLeft) / 5 : 0;
+    const target = Math.min(0.6, base + progress * 0.25 + urgency * 0.15);
+    try {
+      const now = ctx.currentTime;
+      gainRef.current.gain.cancelScheduledValues(now);
+      gainRef.current.gain.linearRampToValueAtTime(target, now + 0.3);
+    } catch {}
+  }, [currentQuestion, timeLeft, gameState, questions.length]);
+
   // Timer
   useEffect(() => {
     if (gameState === 'playing' && timeLeft > 0 && selectedAnswer === null && questions[currentQuestion]) {
@@ -137,7 +204,14 @@ const GamePreview = () => {
     console.log('round_start', { questions: 15, lives: restartWithOneLive ? 1 : (deductLife ? lives - 1 : 3) });
   };
 
-  const handleAnswer = (answerIndex: number) => {
+useEffect(() => {
+  const autostart = searchParams.get('autostart');
+  if (autostart === 'true' && gameState === 'idle') {
+    startGame(false);
+  }
+}, [searchParams, gameState]);
+
+const handleAnswer = (answerIndex: number) => {
     // Ha már van végleges válasz és nincs dupla válasz, ne tegyen semmit
     if (selectedAnswer !== null) return;
     
@@ -406,8 +480,8 @@ const GamePreview = () => {
     
     // Ha van végleges válasz, mutassuk a helyes választ zölden és a rosszat pirosan
     if (selectedAnswer !== null) {
-      if (isCorrect) return "!bg-[#00FF66] !border-[#00FF66] !text-black";
-      if (isSelected && !isCorrect) return "!bg-[#FF3040] !border-[#FF3040] !text-white animate-shake";
+      if (isCorrect) return "!bg-[#00FF66] !border-[#00FF66] !text-black animate-pulse-green";
+      if (isSelected && !isCorrect) return "!bg-[#FF3040] !border-[#FF3040] !text-white animate-shake animate-pulse-red";
       return "";
     }
     
