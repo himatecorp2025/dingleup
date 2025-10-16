@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import questionData from "@/data/questions.json";
-import gameMusic from "@/assets/game-music.mp3";
+import gameMusic from "@/assets/game-music.m4a";
 
 interface Question {
   id: string;
@@ -137,6 +137,11 @@ const GamePreview = () => {
     } else {
       stopBackgroundMusic();
     }
+    
+    // Cleanup: leállítja a zenét amikor a komponens unmount-ol (pl. visszamegy a főoldalra)
+    return () => {
+      stopBackgroundMusic();
+    };
   }, [gameState]);
 
   // Timer
