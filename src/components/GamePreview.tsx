@@ -268,15 +268,21 @@ const GamePreview = () => {
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (!showSwipeIndicator) return;
+    e.stopPropagation(); // Megállítja a buborékolást
     setTouchStart(e.targetTouches[0].clientY);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (!showSwipeIndicator) return;
+    e.preventDefault(); // Megakadályozza az oldal scrollolását
+    e.stopPropagation();
     setTouchEnd(e.targetTouches[0].clientY);
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: React.TouchEvent) => {
     if (!showSwipeIndicator) return;
+    e.stopPropagation();
     
     const swipeDistance = touchStart - touchEnd;
     const minSwipeDistance = 50;
@@ -563,18 +569,18 @@ const GamePreview = () => {
       <section id="game" className="min-h-screen py-8 px-4 bg-gradient-to-b from-background via-muted to-background">
         <div className="container max-w-md mx-auto">
           {/* Phone Frame */}
-          <div 
-            className="relative mx-auto" 
-            style={{ maxWidth: '430px' }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div className="bg-gradient-card rounded-[2.5rem] p-6 shadow-card border-2 border-border/30">
+          <div className="relative mx-auto" style={{ maxWidth: '430px' }}>
+            <div 
+              className="bg-gradient-card rounded-[2.5rem] p-6 shadow-card border-2 border-border/30 relative overflow-hidden"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              style={{ touchAction: showSwipeIndicator ? 'none' : 'auto' }}
+            >
               
               {/* Swipe Indicator */}
               {showSwipeIndicator && (
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 animate-bounce">
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 animate-bounce pointer-events-none">
                   <div className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
                     <span className="text-sm font-bold">Húzd felfelé a következő kérdéshez</span>
                     <span className="text-xl">👆</span>
