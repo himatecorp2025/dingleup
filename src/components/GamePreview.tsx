@@ -82,6 +82,9 @@ const GamePreview = () => {
   const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
   const [showAudiencePanel, setShowAudiencePanel] = useState(false);
   const [audienceResults, setAudienceResults] = useState<number[]>([]);
+  const [showSwipeIndicator, setShowSwipeIndicator] = useState(false);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   // Timer
   useEffect(() => {
@@ -168,14 +171,15 @@ const GamePreview = () => {
           setCoins(newCoins);
           toast.success("Helyes válasz! +5 🪙", { description: "Nagyszerű munka!" });
 
-          setTimeout(() => {
-            if (currentQuestion < questions.length - 1) {
-              nextQuestion();
-            } else {
+          // Swipe indikátor megjelenítése
+          if (currentQuestion < questions.length - 1) {
+            setShowSwipeIndicator(true);
+          } else {
+            setTimeout(() => {
               setGameState('won');
               console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
-            }
-          }, 1000);
+            }, 1000);
+          }
         } else {
           setSelectedAnswer(questions[currentQuestion].correctIndex);
           setShowWrongAnswerPopup(true);
@@ -204,14 +208,15 @@ const GamePreview = () => {
       setCoins(newCoins);
       toast.success("Helyes válasz! +5 🪙", { description: "Nagyszerű munka!" });
 
-      setTimeout(() => {
-        if (currentQuestion < questions.length - 1) {
-          nextQuestion();
-        } else {
+      // Swipe indikátor megjelenítése
+      if (currentQuestion < questions.length - 1) {
+        setShowSwipeIndicator(true);
+      } else {
+        setTimeout(() => {
           setGameState('won');
           console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
-        }
-      }, 1000);
+        }, 1000);
+      }
     } else {
       // Rossz válasz - popup megjelenítése
       setShowWrongAnswerPopup(true);
@@ -259,6 +264,27 @@ const GamePreview = () => {
     setSecondAttemptIndex(null);
     setShowAudiencePanel(false);
     setAudienceResults([]);
+    setShowSwipeIndicator(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    if (!showSwipeIndicator) return;
+    
+    const swipeDistance = touchStart - touchEnd;
+    const minSwipeDistance = 50;
+
+    if (swipeDistance > minSwipeDistance) {
+      // Felfelé swipe
+      nextQuestion();
+    }
   };
 
   const useHalve = () => {
@@ -537,8 +563,24 @@ const GamePreview = () => {
       <section id="game" className="min-h-screen py-8 px-4 bg-gradient-to-b from-background via-muted to-background">
         <div className="container max-w-md mx-auto">
           {/* Phone Frame */}
-          <div className="relative mx-auto" style={{ maxWidth: '430px' }}>
+          <div 
+            className="relative mx-auto" 
+            style={{ maxWidth: '430px' }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div className="bg-gradient-card rounded-[2.5rem] p-6 shadow-card border-2 border-border/30">
+              
+              {/* Swipe Indicator */}
+              {showSwipeIndicator && (
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 animate-bounce">
+                  <div className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
+                    <span className="text-sm font-bold">Húzd felfelé a következő kérdéshez</span>
+                    <span className="text-xl">👆</span>
+                  </div>
+                </div>
+              )}
               {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <Button 
