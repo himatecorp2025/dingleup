@@ -79,6 +79,9 @@ const GamePreview = () => {
   const [firstAttemptIndex, setFirstAttemptIndex] = useState<number | null>(null);
   const [secondAttemptIndex, setSecondAttemptIndex] = useState<number | null>(null);
   const [showWrongAnswerPopup, setShowWrongAnswerPopup] = useState(false);
+  const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
+  const [showAudiencePanel, setShowAudiencePanel] = useState(false);
+  const [audienceResults, setAudienceResults] = useState<number[]>([]);
 
   // Timer
   useEffect(() => {
@@ -92,11 +95,7 @@ const GamePreview = () => {
 
   const handleTimeOut = () => {
     console.log('timeout', { id: questions[currentQuestion].id });
-    if (coins >= 50) {
-      setGameState('timeout');
-    } else {
-      handleWrongAnswer();
-    }
+    setShowTimeoutPopup(true);
   };
 
   const startGame = (restartWithOneLive = false) => {
@@ -113,6 +112,10 @@ const GamePreview = () => {
     setHasDoubleAnswer(false);
     setFirstAttemptIndex(null);
     setSecondAttemptIndex(null);
+    setShowWrongAnswerPopup(false);
+    setShowTimeoutPopup(false);
+    setShowAudiencePanel(false);
+    setAudienceResults([]);
     console.log('round_start', { questions: 15, lives: restartWithOneLive ? 1 : 5 });
   };
 
@@ -133,10 +136,6 @@ const GamePreview = () => {
           correct: isCorrect,
           attempt: 1
         });
-        
-        if (!isCorrect) {
-          toast.error("Rossz válasz! Még egy próbálkozásod van.");
-        }
         return;
       } else if (secondAttemptIndex === null && firstAttemptIndex !== answerIndex) {
         // Második válasz dupla válasz esetén
@@ -154,7 +153,9 @@ const GamePreview = () => {
 
         if (isCorrect || firstWasCorrect) {
           setSelectedAnswer(questions[currentQuestion].correctIndex);
-          toast.success("Helyes válasz!", { description: "Nagyszerű munka!" });
+          const newCoins = coins + 5;
+          setCoins(newCoins);
+          toast.success("Helyes válasz! +5 🪙", { description: "Nagyszerű munka!" });
 
           setTimeout(() => {
             if (currentQuestion < questions.length - 1) {
@@ -163,10 +164,10 @@ const GamePreview = () => {
               setGameState('won');
               console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
             }
-          }, 1500);
+          }, 1000);
         } else {
           setSelectedAnswer(questions[currentQuestion].correctIndex);
-          handleWrongAnswer();
+          setShowWrongAnswerPopup(true);
         }
         return;
       } else {
@@ -245,6 +246,8 @@ const GamePreview = () => {
     setHasDoubleAnswer(false);
     setFirstAttemptIndex(null);
     setSecondAttemptIndex(null);
+    setShowAudiencePanel(false);
+    setAudienceResults([]);
   };
 
   const useHalve = () => {
@@ -283,9 +286,24 @@ const GamePreview = () => {
     setUsedHelpers(prev => ({ ...prev, audience: true }));
 
     const correct = questions[currentQuestion].correctIndex;
-    const percentage = 60 + Math.floor(Math.random() * 30);
+    const results = [0, 0, 0];
+    
+    // Generate realistic percentages
+    const correctPercentage = 60 + Math.floor(Math.random() * 30); // 60-90%
+    results[correct] = correctPercentage;
+    
+    // Distribute remaining percentage among wrong answers
+    const remaining = 100 - correctPercentage;
+    const wrongIndices = [0, 1, 2].filter(i => i !== correct);
+    const firstWrong = Math.floor(Math.random() * (remaining - 5));
+    results[wrongIndices[0]] = firstWrong;
+    results[wrongIndices[1]] = remaining - firstWrong;
+    
+    setAudienceResults(results);
+    setShowAudiencePanel(true);
+    
     toast.info("Közönség használva", { 
-      description: `–30 🪙 (${newCoins} maradt). ${percentage}% szerint: ${String.fromCharCode(65 + correct)}` 
+      description: `–30 🪙 (${newCoins} maradt)` 
     });
 
     console.log('lifeline_used', { type: 'audience', cost: 30 });
@@ -342,47 +360,7 @@ const GamePreview = () => {
     );
   }
 
-  // OVERLAY Screens
-  if (gameState === 'timeout') {
-    const continueWithCoins = () => {
-      if (coins >= 50) {
-        const newCoins = coins - 50;
-        setCoins(newCoins);
-        toast.info("Folytatás aranyérméért", { description: `–50 🪙 (${newCoins} maradt)` });
-        console.log('continue_with_coins', { cost: 50, remaining: newCoins });
-        nextQuestion();
-        setGameState('playing');
-      }
-    };
-
-    return (
-      <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur flex items-center justify-center p-4">
-        <div className="text-center space-y-6 animate-fade-in max-w-md px-4">
-          <div className="text-8xl">⏰</div>
-          <h2 className="text-4xl md:text-5xl font-bold text-destructive">Lejárt az idő!</h2>
-          <p className="text-foreground text-lg md:text-xl font-semibold bg-gradient-gold px-6 md:px-8 py-4 rounded-xl clip-hexagon">
-            Folytathatod 50 🪙 aranyérme felhasználásával.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              onClick={continueWithCoins}
-              disabled={coins < 50}
-              className="bg-gradient-gold text-black font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg disabled:opacity-30 w-full sm:w-auto min-h-[44px]"
-            >
-              Folytatom (50 🪙)
-            </Button>
-            <Button 
-              onClick={() => setGameState('idle')}
-              variant="outline"
-              className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg w-full sm:w-auto min-h-[44px]"
-            >
-              Kilépek
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // OVERLAY Screens - Removed, using popup instead
 
   if (gameState === 'out-of-lives') {
     return (
@@ -430,22 +408,31 @@ const GamePreview = () => {
   if (gameState === 'won') {
     return (
       <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur flex items-center justify-center p-4">
-        <div className="text-center space-y-6 animate-fade-in max-w-md">
-          <div className="text-8xl animate-float">🎉</div>
-          <h2 className="text-5xl font-bold text-success">Gratulálunk!</h2>
-          <p className="text-foreground text-2xl font-semibold mb-4">
+        <div className="text-center space-y-6 animate-fade-in max-w-md px-4">
+          <div className="text-8xl animate-float">🏆</div>
+          <h2 className="text-4xl md:text-5xl font-bold text-success">Gratulálunk!</h2>
+          <p className="text-foreground text-lg md:text-xl font-semibold mb-4">
             A játék véget ért.
           </p>
-          <p className="text-accent text-3xl font-bold bg-gradient-gold px-8 py-6 rounded-xl clip-hexagon">
-            Ennyi aranyérmét gyűjtöttél:<br />
+          <p className="text-accent text-2xl md:text-3xl font-bold bg-[#0B1130] border-2 border-[#3A4260] px-6 md:px-8 py-4 md:py-6 rounded-xl">
+            Összegyűjtött aranyérmeid:<br />
             {coins} 🪙
           </p>
-          <Button 
-            onClick={() => setGameState('idle')}
-            className="bg-gradient-gold text-black font-bold px-8 py-4 text-lg mt-6 min-h-[44px]"
-          >
-            Vissza a főoldalra
-          </Button>
+          <div className="flex flex-col gap-4 mt-6">
+            <Button 
+              onClick={() => startGame(false)}
+              className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg min-h-[44px] w-full"
+            >
+              Új játék indítása
+            </Button>
+            <Button 
+              onClick={() => setGameState('idle')}
+              variant="outline"
+              className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg min-h-[44px] w-full"
+            >
+              Vissza a főoldalra
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -462,19 +449,70 @@ const GamePreview = () => {
           <div className="text-center space-y-6 animate-fade-in max-w-md px-4">
             <div className="text-8xl">❌</div>
             <h2 className="text-4xl md:text-5xl font-bold text-destructive">Rossz válasz!</h2>
-            <p className="text-foreground text-lg md:text-xl font-semibold bg-gradient-gold px-6 md:px-8 py-4 rounded-xl clip-hexagon">
+            <p className="text-foreground text-lg md:text-xl font-semibold bg-[#0B1130] border-2 border-[#3A4260] px-6 md:px-8 py-4 rounded-xl">
               Folytathatod 50 🪙 aranyérme felhasználásával.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
                 onClick={continueAfterWrongAnswer}
                 disabled={coins < 50}
-                className="bg-gradient-gold text-black font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg disabled:opacity-30 w-full sm:w-auto min-h-[44px]"
+                className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg disabled:opacity-30 w-full sm:w-auto min-h-[44px]"
               >
                 Folytatom (50 🪙)
               </Button>
               <Button 
                 onClick={exitAfterWrongAnswer}
+                variant="outline"
+                className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg w-full sm:w-auto min-h-[44px]"
+              >
+                Kilépek
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Timeout Popup */}
+      {showTimeoutPopup && (
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur flex items-center justify-center p-4">
+          <div className="text-center space-y-6 animate-fade-in max-w-md px-4">
+            <div className="text-8xl">⏰</div>
+            <h2 className="text-4xl md:text-5xl font-bold text-destructive">Lejárt az idő!</h2>
+            <p className="text-foreground text-lg md:text-xl font-semibold bg-[#0B1130] border-2 border-[#3A4260] px-6 md:px-8 py-4 rounded-xl">
+              Folytathatod 50 🪙 aranyérme felhasználásával.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                onClick={() => {
+                  if (coins >= 50) {
+                    const newCoins = coins - 50;
+                    setCoins(newCoins);
+                    toast.info("Folytatás aranyérméért", { description: `–50 🪙 (${newCoins} maradt)` });
+                    console.log('continue_with_coins', { cost: 50, remaining: newCoins });
+                    setShowTimeoutPopup(false);
+                    setTimeout(() => {
+                      if (currentQuestion < questions.length - 1) {
+                        nextQuestion();
+                      } else {
+                        setGameState('won');
+                        console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
+                      }
+                    }, 500);
+                  }
+                }}
+                disabled={coins < 50}
+                className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg disabled:opacity-30 w-full sm:w-auto min-h-[44px]"
+              >
+                Folytatom (50 🪙)
+              </Button>
+              <Button 
+                onClick={() => {
+                  setShowTimeoutPopup(false);
+                  toast.info(`Összegyűjtött aranyérméd: ${coins} 🪙`);
+                  setTimeout(() => {
+                    setGameState('idle');
+                  }, 500);
+                }}
                 variant="outline"
                 className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg w-full sm:w-auto min-h-[44px]"
               >
@@ -512,9 +550,9 @@ const GamePreview = () => {
 
             {/* Question Box - Hexagon Style */}
             <div className="mb-6 relative">
-              <div className="bg-gradient-card border-2 border-accent/20 rounded-2xl p-4 sm:p-6 clip-hexagon-box shadow-hexagon">
+              <div className="bg-[#0B1130] border-2 border-[#3A4260] rounded-2xl p-4 sm:p-6 clip-hexagon-box shadow-hexagon">
                 <div className="flex items-start gap-2 sm:gap-3">
-                  <div className="bg-accent text-black rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base">
+                  <div className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base">
                     ?
                   </div>
                   <p className="text-foreground text-base sm:text-lg font-semibold leading-tight break-words">
@@ -524,67 +562,34 @@ const GamePreview = () => {
               </div>
             </div>
 
-            {/* Helper Buttons - Above Answers */}
-            <div className="flex justify-center gap-3 sm:gap-4 mb-6">
-              <button
-                onClick={useHalve}
-                disabled={usedHelpers.halve || selectedAnswer !== null || coins < 15}
-                className={`hexagon-button transition-all ${
-                  usedHelpers.halve 
-                    ? 'opacity-40 cursor-not-allowed' 
-                    : selectedAnswer === null && coins >= 15
-                    ? 'hover:shadow-[0_0_20px_rgba(251,191,36,0.6)] hover:scale-105'
-                    : 'opacity-40 cursor-not-allowed'
-                }`}
-                title="Harmadoló"
-              >
-                <div className="hexagon-content">
-                  <span className="text-base sm:text-lg font-bold">½</span>
-                  <span className="text-[0.6rem] sm:text-xs leading-tight">Harmadoló<br />(15 🪙)</span>
+            {/* Audience Result Panel */}
+            {showAudiencePanel && audienceResults.length > 0 && (
+              <div className="mb-4 bg-[#101630] border-2 border-[#3A4260] rounded-xl p-4 animate-fade-in">
+                <h3 className="text-white font-bold text-center mb-3">Közönség szavazata:</h3>
+                <div className="space-y-2">
+                  {currentQ.shuffledAnswers.map((_, index) => {
+                    if (removedOption === index) return null;
+                    return (
+                      <div key={index} className="flex items-center gap-3">
+                        <span className="text-white font-bold w-8">{String.fromCharCode(65 + index)}:</span>
+                        <div className="flex-1 bg-[#0B1130] rounded-full h-6 overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] transition-all duration-1000 flex items-center justify-end pr-2"
+                            style={{ width: `${audienceResults[index]}%` }}
+                          >
+                            <span className="text-white text-xs font-bold">{audienceResults[index]}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              </button>
+              </div>
+            )}
 
-              <button
-                onClick={useDoubleAnswer}
-                disabled={usedHelpers.doubleAnswer || selectedAnswer !== null || coins < 20}
-                className={`hexagon-button transition-all ${
-                  usedHelpers.doubleAnswer && hasDoubleAnswer
-                    ? 'shadow-[0_0_25px_rgba(34,197,94,0.7)] opacity-100'
-                    : usedHelpers.doubleAnswer
-                    ? 'opacity-40 cursor-not-allowed'
-                    : selectedAnswer === null && coins >= 20
-                    ? 'hover:shadow-[0_0_20px_rgba(251,191,36,0.6)] hover:scale-105'
-                    : 'opacity-40 cursor-not-allowed'
-                }`}
-                title="2× Válasz"
-              >
-                <div className="hexagon-content">
-                  <span className="text-xl sm:text-2xl font-bold">2</span>
-                  <span className="text-[0.6rem] sm:text-xs leading-tight">2× Válasz<br />(20 🪙)</span>
-                </div>
-              </button>
-
-              <button
-                onClick={useAudience}
-                disabled={usedHelpers.audience || selectedAnswer !== null || coins < 30}
-                className={`hexagon-button transition-all ${
-                  usedHelpers.audience 
-                    ? 'opacity-40 cursor-not-allowed' 
-                    : selectedAnswer === null && coins >= 30
-                    ? 'hover:shadow-[0_0_20px_rgba(251,191,36,0.6)] hover:scale-105'
-                    : 'opacity-40 cursor-not-allowed'
-                }`}
-                title="Közönség"
-              >
-                <div className="hexagon-content">
-                  <span className="text-lg sm:text-xl">👥</span>
-                  <span className="text-[0.6rem] sm:text-xs leading-tight">Közönség<br />(30 🪙)</span>
-                </div>
-              </button>
-            </div>
 
             {/* Answer Buttons - Hexagon Style */}
-            <div className="space-y-3 sm:space-y-4 mb-8">
+            <div className="space-y-3 sm:space-y-4 mb-6">
               {currentQ.shuffledAnswers.map((answer, index) => {
                 if (removedOption === index) return null;
                 
@@ -593,10 +598,10 @@ const GamePreview = () => {
                     key={index}
                     onClick={() => handleAnswer(index)}
                     disabled={selectedAnswer !== null && !hasDoubleAnswer}
-                    className={`w-full bg-black border-2 border-primary/50 rounded-2xl p-3 sm:p-4 text-left transition-all hover:border-accent/70 disabled:opacity-50 clip-hexagon-answer shadow-hexagon min-h-[60px] ${getButtonClasses(index)}`}
+                    className={`w-full bg-[#0B1130] border-2 border-[#3A4260] rounded-2xl p-3 sm:p-4 text-left transition-all hover:border-[#00FFCC]/70 disabled:opacity-50 clip-hexagon-answer shadow-hexagon min-h-[60px] touch-manipulation ${getButtonClasses(index)}`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3">
-                      <span className="text-accent font-bold text-base sm:text-lg flex-shrink-0">
+                      <span className="text-[#00FFCC] font-bold text-base sm:text-lg flex-shrink-0">
                         {String.fromCharCode(65 + index)}:
                       </span>
                       <span className="text-foreground font-medium text-sm sm:text-base break-words">
@@ -606,6 +611,80 @@ const GamePreview = () => {
                   </button>
                 );
               })}
+            </div>
+
+            {/* Helper Buttons - Below Answers */}
+            <div className="flex justify-center gap-3 sm:gap-4 mb-6">
+              <button
+                onClick={useHalve}
+                disabled={usedHelpers.halve || selectedAnswer !== null || coins < 15}
+                className={`hexagon-button transition-all ${
+                  usedHelpers.halve && selectedAnswer === null
+                    ? 'shadow-[0_0_25px_rgba(0,255,102,0.7)]'
+                    : ''
+                } ${
+                  usedHelpers.halve 
+                    ? 'opacity-40 cursor-not-allowed' 
+                    : selectedAnswer === null && coins >= 15
+                    ? 'hover:shadow-[0_0_20px_rgba(0,255,102,0.6)] hover:scale-105'
+                    : 'opacity-40 cursor-not-allowed'
+                }`}
+                title="Harmadoló (1/3)"
+              >
+                <div className="hexagon-content">
+                  <span className="text-base sm:text-lg font-bold">⅓</span>
+                  <span className="text-[0.6rem] sm:text-xs leading-tight">1/3<br />(15 🪙)</span>
+                </div>
+              </button>
+
+              <button
+                onClick={useDoubleAnswer}
+                disabled={usedHelpers.doubleAnswer || selectedAnswer !== null || coins < 20}
+                className={`hexagon-button transition-all relative ${
+                  usedHelpers.doubleAnswer && hasDoubleAnswer
+                    ? 'shadow-[0_0_25px_rgba(0,255,102,0.7)]'
+                    : ''
+                } ${
+                  usedHelpers.doubleAnswer 
+                    ? 'opacity-40 cursor-not-allowed'
+                    : selectedAnswer === null && coins >= 20
+                    ? 'hover:shadow-[0_0_20px_rgba(0,255,102,0.6)] hover:scale-105'
+                    : 'opacity-40 cursor-not-allowed'
+                }`}
+                title="2× Válasz"
+              >
+                <div className="hexagon-content">
+                  <span className="text-xl sm:text-2xl font-bold">2×</span>
+                  <span className="text-[0.6rem] sm:text-xs leading-tight">2× Válasz<br />(20 🪙)</span>
+                </div>
+                {usedHelpers.doubleAnswer && hasDoubleAnswer && (
+                  <div className="absolute -top-1 -right-1 bg-[#00FF66] text-black rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                    2×
+                  </div>
+                )}
+              </button>
+
+              <button
+                onClick={useAudience}
+                disabled={usedHelpers.audience || selectedAnswer !== null || coins < 30}
+                className={`hexagon-button transition-all ${
+                  usedHelpers.audience && showAudiencePanel
+                    ? 'shadow-[0_0_25px_rgba(28,114,255,0.7)]'
+                    : ''
+                } ${
+                  usedHelpers.audience 
+                    ? 'opacity-40 cursor-not-allowed' 
+                    : selectedAnswer === null && coins >= 30
+                    ? 'hover:shadow-[0_0_20px_rgba(28,114,255,0.6)] hover:scale-105'
+                    : 'opacity-40 cursor-not-allowed'
+                }`}
+                title="Közönség"
+              >
+                <div className="hexagon-content">
+                  <span className="text-lg sm:text-xl">👥</span>
+                  <span className="text-[0.6rem] sm:text-xs leading-tight">Közönség<br />(30 🪙)</span>
+                </div>
+              </button>
             </div>
 
             {/* Progress & Lives */}
