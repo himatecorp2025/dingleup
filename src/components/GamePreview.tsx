@@ -497,8 +497,23 @@ const handleAnswer = (answerIndex: number) => {
     return "";
   };
 
-  // IDLE Screen
+  // IDLE Screen - csak akkor jelenjen meg, ha nincs autostart paraméter
   if (gameState === 'idle') {
+    const autostart = searchParams.get('autostart');
+    
+    // Ha autostart van, ne jelenjen meg semmi, amíg a useEffect el nem indítja a játékot
+    if (autostart === 'true') {
+      return (
+        <section id="game" className="py-20 px-4 bg-gradient-to-b from-background via-muted to-background">
+          <div className="container max-w-md mx-auto">
+            <div className="text-center space-y-8 animate-fade-in">
+              <h2 className="text-4xl font-bold text-foreground">Betöltés...</h2>
+            </div>
+          </div>
+        </section>
+      );
+    }
+    
     return (
       <section id="game" className="py-20 px-4 bg-gradient-to-b from-background via-muted to-background">
         <div className="container max-w-md mx-auto">
