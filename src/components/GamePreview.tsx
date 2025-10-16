@@ -932,7 +932,7 @@ const handleAnswer = (answerIndex: number) => {
                     : selectedAnswer === null && coins >= 15
                     ? 'bg-gradient-to-br from-success/20 to-success/5 hover:from-success/30 hover:to-success/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(0,255,102,0.4)] border-2 border-success/30 hover:border-success/50'
                     : 'bg-muted/30 cursor-not-allowed'
-                } ${usedHelpers.halve && selectedAnswer === null ? 'ring-2 ring-success animate-pulse' : ''}`}
+                }`}
                 title="Harmadoló (1/3)"
               >
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-success/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -955,7 +955,7 @@ const handleAnswer = (answerIndex: number) => {
                     : selectedAnswer === null && coins >= 20
                     ? 'bg-gradient-to-br from-accent/20 to-accent/5 hover:from-accent/30 hover:to-accent/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] border-2 border-accent/30 hover:border-accent/50'
                     : 'bg-muted/30 cursor-not-allowed'
-                } ${usedHelpers.doubleAnswer && hasDoubleAnswer ? 'ring-2 ring-accent animate-pulse' : ''}`}
+                }`}
                 title="2× Válasz"
               >
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -983,7 +983,7 @@ const handleAnswer = (answerIndex: number) => {
                     : selectedAnswer === null && coins >= 30
                     ? 'bg-gradient-to-br from-secondary/20 to-secondary/5 hover:from-secondary/30 hover:to-secondary/10 hover:scale-110 hover:shadow-[0_0_30px_rgba(124,58,237,0.4)] border-2 border-secondary/30 hover:border-secondary/50'
                     : 'bg-muted/30 cursor-not-allowed'
-                } ${usedHelpers.audience && showAudiencePanel ? 'ring-2 ring-secondary animate-pulse' : ''}`}
+                }`}
                 title="Közönség"
               >
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
