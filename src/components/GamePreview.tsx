@@ -293,9 +293,19 @@ const GamePreview = () => {
     setTouchEnd(currentTouch);
     
     const diff = touchStart - currentTouch;
+    const maxSwipe = 500; // Teljes átmenet távolság
+    
     // Csak felfelé engedjük a mozgást (pozitív diff)
     if (diff > 0) {
-      setSwipeOffset(Math.min(diff, 300)); // Max 300px
+      const offset = Math.min(diff, maxSwipe);
+      setSwipeOffset(offset);
+      
+      // Ha teljesen felhúzta, akkor válts következő kérdésre
+      if (offset >= maxSwipe) {
+        setIsTransitioning(true);
+        setSwipeOffset(0);
+        nextQuestion();
+      }
     } else {
       setSwipeOffset(0);
     }
@@ -305,16 +315,8 @@ const GamePreview = () => {
     if (!showSwipeIndicator) return;
     e.stopPropagation();
     
-    const swipeDistance = touchStart - touchEnd;
-    const minSwipeDistance = 100;
-
-    if (swipeDistance > minSwipeDistance) {
-      // Elég messzire húzta - következő kérdés
-      setIsTransitioning(true);
-      setSwipeOffset(0);
-      nextQuestion();
-    } else {
-      // Vissza az eredeti pozícióba
+    // Ha nem húzta teljesen végig, visszaugrik
+    if (swipeOffset < 500) {
       setSwipeOffset(0);
     }
   };
@@ -644,11 +646,11 @@ const GamePreview = () => {
               style={{
                 transform: isTransitioning 
                   ? 'translateY(-100%)' 
-                  : `translateY(-${swipeOffset}px)`,
+                  : `translateY(-${(swipeOffset / 500) * 100}%)`,
                 opacity: isTransitioning 
                   ? 0 
-                  : Math.max(0, 1 - (swipeOffset / 150)),
-                filter: `blur(${Math.min(swipeOffset / 50, 4)}px)`,
+                  : Math.max(0.2, 1 - (swipeOffset / 400)),
+                filter: `blur(${Math.min(swipeOffset / 100, 6)}px)`,
                 transitionDuration: swipeOffset > 0 ? '0ms' : '300ms'
               }}
             >
@@ -696,11 +698,11 @@ const GamePreview = () => {
               style={{
                 transform: isTransitioning 
                   ? 'translateY(-100%)' 
-                  : `translateY(-${swipeOffset}px)`,
+                  : `translateY(-${(swipeOffset / 500) * 100}%)`,
                 opacity: isTransitioning 
                   ? 0 
-                  : Math.max(0, 1 - (swipeOffset / 150)),
-                filter: `blur(${Math.min(swipeOffset / 50, 4)}px)`,
+                  : Math.max(0.2, 1 - (swipeOffset / 400)),
+                filter: `blur(${Math.min(swipeOffset / 100, 6)}px)`,
                 transitionDuration: swipeOffset > 0 ? '0ms' : '300ms'
               }}
             >
