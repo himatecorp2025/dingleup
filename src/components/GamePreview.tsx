@@ -83,6 +83,7 @@ const GamePreview = () => {
   const [showWrongAnswerPopup, setShowWrongAnswerPopup] = useState(false);
   const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
   const [showAudiencePanel, setShowAudiencePanel] = useState(false);
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [audienceResults, setAudienceResults] = useState<number[]>([]);
   const [showSwipeIndicator, setShowSwipeIndicator] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
@@ -181,6 +182,7 @@ const GamePreview = () => {
     setCurrentQuestion(0);
     setTimeLeft(10);
     setSelectedAnswer(null);
+    setCorrectAnswersCount(0);
     
     // Élet kezelés
     if (restartWithOneLive) {
@@ -248,6 +250,7 @@ const handleAnswer = (answerIndex: number) => {
 
         if (isCorrect || firstWasCorrect) {
           setSelectedAnswer(questions[currentQuestion].correctIndex);
+          setCorrectAnswersCount(prev => prev + 1);
           const newCoins = coins + 5;
           setCoins(newCoins);
           toast.success("Helyes válasz! +5 🪙", { description: "Nagyszerű munka!" });
@@ -258,7 +261,7 @@ const handleAnswer = (answerIndex: number) => {
           } else {
             setTimeout(() => {
               setGameState('won');
-              console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
+              console.log('round_end', { result: 'won', correctCount: correctAnswersCount + 1 });
             }, 1000);
           }
         } else {
@@ -285,6 +288,7 @@ const handleAnswer = (answerIndex: number) => {
 
     if (isCorrect) {
       // +5 aranyérme jutalom
+      setCorrectAnswersCount(prev => prev + 1);
       const newCoins = coins + 5;
       setCoins(newCoins);
       toast.success("Helyes válasz! +5 🪙", { description: "Nagyszerű munka!" });
@@ -295,7 +299,7 @@ const handleAnswer = (answerIndex: number) => {
       } else {
         setTimeout(() => {
           setGameState('won');
-          console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
+          console.log('round_end', { result: 'won', correctCount: correctAnswersCount + 1 });
         }, 1000);
       }
     } else {
@@ -305,8 +309,8 @@ const handleAnswer = (answerIndex: number) => {
   };
 
   const handleWrongAnswer = () => {
-    setGameState('idle');
-    console.log('round_end', { result: 'wrong_answer', correctCount: currentQuestion });
+    setGameState('lost');
+    console.log('round_end', { result: 'wrong_answer', correctCount: correctAnswersCount, questionsReached: currentQuestion + 1 });
   };
 
   const continueAfterWrongAnswer = () => {
@@ -321,7 +325,7 @@ const handleAnswer = (answerIndex: number) => {
           nextQuestion();
         } else {
           setGameState('won');
-          console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
+          console.log('round_end', { result: 'won', correctCount: correctAnswersCount });
         }
       }, 500);
     }
@@ -332,7 +336,7 @@ const handleAnswer = (answerIndex: number) => {
     toast.info(`Összegyűjtött aranyérméd: ${coins} 🪙`);
     setShouldDeductLife(true); // Jelöljük meg, hogy életet kell levonni
     setTimeout(() => {
-      setGameState('idle');
+      setGameState('lost');
     }, 500);
   };
 
@@ -341,7 +345,7 @@ const handleAnswer = (answerIndex: number) => {
     if (currentQuestion >= questions.length - 1) {
       // Ez volt az utolsó kérdés - játék vége
       setGameState('won');
-      console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
+      console.log('round_end', { result: 'won', correctCount: correctAnswersCount });
       return;
     }
 
@@ -550,19 +554,54 @@ const handleAnswer = (answerIndex: number) => {
   if (gameState === 'lost') {
     return (
       <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur flex items-center justify-center p-4">
-        <div className="text-center space-y-6 animate-fade-in max-w-md">
-          <div className="text-8xl">❓</div>
-          <h2 className="text-5xl font-bold text-destructive">You lose!</h2>
-          <p className="text-accent text-xl font-semibold bg-gradient-gold px-8 py-4 rounded-xl clip-hexagon">
-            Keep going, you get 2 bonus lives!
+        <div className="text-center space-y-6 animate-fade-in max-w-md px-4">
+          <div className="text-8xl">💔</div>
+          <h2 className="text-4xl md:text-5xl font-bold text-destructive">Vége a játéknak!</h2>
+          <p className="text-foreground text-lg md:text-xl font-semibold mb-4">
+            Így teljesítettél ebben a körben:
           </p>
-          <p className="text-foreground">Restarting with one life!</p>
-          <Button 
-            onClick={() => startGame(true)}
-            className="bg-gradient-gold text-black font-bold px-8 py-4 text-lg min-h-[44px]"
-          >
-            Újraindítás (1 élettel)
-          </Button>
+          
+          {/* Eredmény jelző */}
+          <div className="bg-gradient-to-br from-card to-muted border-2 border-destructive/30 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between text-lg">
+              <span className="text-muted-foreground">Elért kérdések:</span>
+              <span className="text-accent font-bold text-2xl">{currentQuestion + 1}/15</span>
+            </div>
+            <div className="flex items-center justify-between text-lg">
+              <span className="text-muted-foreground">Helyes válaszok:</span>
+              <span className="text-success font-bold text-2xl">{correctAnswersCount}/{currentQuestion + 1}</span>
+            </div>
+            <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-success to-accent animate-fade-in" 
+                style={{ width: `${(correctAnswersCount / (currentQuestion + 1)) * 100}%` }}
+              ></div>
+            </div>
+            <div className="flex items-center justify-between text-lg pt-2 border-t border-border">
+              <span className="text-muted-foreground">Megmaradt életek:</span>
+              <span className="text-destructive font-bold text-2xl">{lives} ❤️</span>
+            </div>
+          </div>
+
+          <p className="text-accent text-2xl md:text-3xl font-bold bg-[#0B1130] border-2 border-[#3A4260] px-6 md:px-8 py-4 md:py-6 rounded-xl">
+            Összegyűjtött aranyérmék:<br />
+            {coins} 🪙
+          </p>
+          <div className="flex flex-col gap-4 mt-6">
+            <Button 
+              onClick={() => startGame(false, true)}
+              className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg min-h-[44px] w-full"
+            >
+              Új játék indítása (-1 ❤️)
+            </Button>
+            <Button 
+              onClick={() => setGameState('idle')}
+              variant="outline"
+              className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg min-h-[44px] w-full"
+            >
+              Vissza a főoldalra
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -582,7 +621,7 @@ const handleAnswer = (answerIndex: number) => {
           <div className="bg-gradient-to-br from-card to-muted border-2 border-success/30 rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between text-lg">
               <span className="text-muted-foreground">Helyes válaszok:</span>
-              <span className="text-success font-bold text-2xl">15/15</span>
+              <span className="text-success font-bold text-2xl">{correctAnswersCount}/15</span>
             </div>
             <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-success to-accent w-full animate-fade-in"></div>
@@ -679,7 +718,7 @@ const handleAnswer = (answerIndex: number) => {
                         nextQuestion();
                       } else {
                         setGameState('won');
-                        console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
+                        console.log('round_end', { result: 'won', correctCount: correctAnswersCount });
                       }
                     }, 500);
                   }
@@ -695,7 +734,7 @@ const handleAnswer = (answerIndex: number) => {
                   toast.info(`Összegyűjtött aranyérméd: ${coins} 🪙`);
                   setShouldDeductLife(true); // Jelöljük meg, hogy életet kell levonni
                   setTimeout(() => {
-                    setGameState('idle');
+                    setGameState('lost');
                   }, 500);
                 }}
                 variant="outline"
