@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import questionData from "@/data/questions.json";
 import gameMusic from "@/assets/game-music.m4a";
@@ -97,6 +97,7 @@ const GamePreview = () => {
 
   // URL param handling
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   // Background music via HTML5 Audio
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -611,13 +612,14 @@ const handleAnswer = (answerIndex: number) => {
             >
               Új játék indítása (-1 ❤️)
             </Button>
-            <Button 
-              onClick={() => setGameState('idle')}
-              variant="outline"
-              className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg min-h-[44px] w-full"
-            >
-              Vissza a főoldalra
-            </Button>
+            <Link to="/" className="w-full">
+              <Button 
+                variant="outline"
+                className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg min-h-[44px] w-full"
+              >
+                Vissza a főoldalra
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -662,13 +664,14 @@ const handleAnswer = (answerIndex: number) => {
             >
               Új játék indítása (-1 ❤️)
             </Button>
-            <Button 
-              onClick={() => setGameState('idle')}
-              variant="outline"
-              className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg min-h-[44px] w-full"
-            >
-              Vissza a főoldalra
-            </Button>
+            <Link to="/" className="w-full">
+              <Button 
+                variant="outline"
+                className="font-bold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg min-h-[44px] w-full"
+              >
+                Vissza a főoldalra
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
