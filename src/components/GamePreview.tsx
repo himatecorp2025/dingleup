@@ -1,96 +1,146 @@
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, HelpCircle, X, Users, Repeat } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { CheckCircle2, X, Users, Phone, Repeat, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 import trophyCharacter from "@/assets/trophy-character.png";
 
 interface Question {
+  id: number;
   question: string;
   options: string[];
   correctAnswer: number;
 }
 
-const questions: Question[] = [
-  {
-    question: "Melyik magyar király beszélt hat nyelven?",
-    options: ["Szent István", "Hunyadi Mátyás", "II. András"],
-    correctAnswer: 1
-  },
-  {
-    question: "Mennyi 16 − 12 ÷ 4 eredménye?",
-    options: ["1", "13", "4"],
-    correctAnswer: 1
-  },
-  {
-    question: "Hány százalékban egyezik az ember DNS-e a csimpánzzal?",
-    options: ["68%", "88%", "98%"],
-    correctAnswer: 2
-  },
-  {
-    question: "Melyik országban található a Stonehenge?",
-    options: ["Írország", "Skócia", "Anglia"],
-    correctAnswer: 2
-  },
-  {
-    question: "Ki festette a Mona Lisát?",
-    options: ["Michelangelo", "Leonardo da Vinci", "Raphael"],
-    correctAnswer: 1
-  },
-  {
-    question: "Melyik bolygó a legnagyobb a Naprendszerben?",
-    options: ["Szaturnusz", "Jupiter", "Neptunusz"],
-    correctAnswer: 1
-  },
-  {
-    question: "Hány éves volt Mozart, amikor meghalt?",
-    options: ["35", "40", "45"],
-    correctAnswer: 0
-  },
-  {
-    question: "Melyik évben fedezte fel Kolumbusz Amerikát?",
-    options: ["1492", "1500", "1485"],
-    correctAnswer: 0
-  },
-  {
-    question: "Mi a fény sebessége?",
-    options: ["300 000 km/s", "150 000 km/s", "450 000 km/s"],
-    correctAnswer: 0
-  },
-  {
-    question: "Hány csont van az emberi testben?",
-    options: ["186", "206", "226"],
-    correctAnswer: 1
-  },
-  {
-    question: "Ki írta a Rómeó és Júliát?",
-    options: ["Charles Dickens", "William Shakespeare", "Jane Austen"],
-    correctAnswer: 1
-  },
-  {
-    question: "Melyik a legnagyobb óceán a Földön?",
-    options: ["Atlanti-óceán", "Indiai-óceán", "Csendes-óceán"],
-    correctAnswer: 2
-  },
-  {
-    question: "Hány kontinens van a Földön?",
-    options: ["5", "6", "7"],
-    correctAnswer: 2
-  },
-  {
-    question: "Ki volt az első ember az űrben?",
-    options: ["Neil Armstrong", "Jurij Gagarin", "Buzz Aldrin"],
-    correctAnswer: 1
-  },
-  {
-    question: "Melyik elem vegyjele az Au?",
-    options: ["Ezüst", "Arany", "Alumínium"],
-    correctAnswer: 1
-  }
+// 100+ kérdéses kérdésbank
+const questionBank: Question[] = [
+  { id: 1, question: "Melyik magyar király beszélt hat nyelven?", options: ["Szent István", "Hunyadi Mátyás", "II. András"], correctAnswer: 1 },
+  { id: 2, question: "Mennyi 16 − 12 ÷ 4 eredménye?", options: ["1", "13", "4"], correctAnswer: 1 },
+  { id: 3, question: "Hány százalékban egyezik az ember DNS-e a csimpánzzal?", options: ["68%", "88%", "98%"], correctAnswer: 2 },
+  { id: 4, question: "Melyik országban található a Stonehenge?", options: ["Írország", "Skócia", "Anglia"], correctAnswer: 2 },
+  { id: 5, question: "Ki festette a Mona Lisát?", options: ["Michelangelo", "Leonardo da Vinci", "Raphael"], correctAnswer: 1 },
+  { id: 6, question: "Melyik bolygó a legnagyobb a Naprendszerben?", options: ["Szaturnusz", "Jupiter", "Neptunusz"], correctAnswer: 1 },
+  { id: 7, question: "Hány éves volt Mozart, amikor meghalt?", options: ["35", "40", "45"], correctAnswer: 0 },
+  { id: 8, question: "Melyik évben fedezte fel Kolumbusz Amerikát?", options: ["1492", "1500", "1485"], correctAnswer: 0 },
+  { id: 9, question: "Mi a fény sebessége?", options: ["300 000 km/s", "150 000 km/s", "450 000 km/s"], correctAnswer: 0 },
+  { id: 10, question: "Hány csont van az emberi testben?", options: ["186", "206", "226"], correctAnswer: 1 },
+  { id: 11, question: "Ki írta a Rómeó és Júliát?", options: ["Charles Dickens", "William Shakespeare", "Jane Austen"], correctAnswer: 1 },
+  { id: 12, question: "Melyik a legnagyobb óceán a Földön?", options: ["Atlanti-óceán", "Indiai-óceán", "Csendes-óceán"], correctAnswer: 2 },
+  { id: 13, question: "Hány kontinens van a Földön?", options: ["5", "6", "7"], correctAnswer: 2 },
+  { id: 14, question: "Ki volt az első ember az űrben?", options: ["Neil Armstrong", "Jurij Gagarin", "Buzz Aldrin"], correctAnswer: 1 },
+  { id: 15, question: "Melyik elem vegyjele az Au?", options: ["Ezüst", "Arany", "Alumínium"], correctAnswer: 1 },
+  { id: 16, question: "Melyik évben történt a holdra szállás?", options: ["1969", "1971", "1965"], correctAnswer: 0 },
+  { id: 17, question: "Hány string van egy gitáron?", options: ["4", "6", "8"], correctAnswer: 1 },
+  { id: 18, question: "Mi a víz kémiai jele?", options: ["H2O", "CO2", "O2"], correctAnswer: 0 },
+  { id: 19, question: "Melyik város Franciaország fővárosa?", options: ["Lyon", "Párizs", "Marseille"], correctAnswer: 1 },
+  { id: 20, question: "Hány oldalú a hexagon?", options: ["5", "6", "7"], correctAnswer: 1 },
+  { id: 21, question: "Ki festette a Napraforgókat?", options: ["Van Gogh", "Picasso", "Monet"], correctAnswer: 0 },
+  { id: 22, question: "Melyik a leggyorsabb szárazföldi állat?", options: ["Oroszlán", "Gepárd", "Antilop"], correctAnswer: 1 },
+  { id: 23, question: "Hány fok van egy körben?", options: ["180", "360", "90"], correctAnswer: 1 },
+  { id: 24, question: "Melyik bolygó a Naphoz legközelebb?", options: ["Vénusz", "Merkúr", "Mars"], correctAnswer: 1 },
+  { id: 25, question: "Ki találta fel a telefont?", options: ["Edison", "Bell", "Tesla"], correctAnswer: 1 },
+  { id: 26, question: "Melyik évben kezdődött a második világháború?", options: ["1939", "1941", "1937"], correctAnswer: 0 },
+  { id: 27, question: "Hány billentyű van egy zongorán?", options: ["76", "88", "100"], correctAnswer: 1 },
+  { id: 28, question: "Melyik a leghosszabb folyó a világon?", options: ["Amazonas", "Nílus", "Mississippi"], correctAnswer: 1 },
+  { id: 29, question: "Ki írta a Harry Potter sorozatot?", options: ["Tolkien", "Rowling", "Lewis"], correctAnswer: 1 },
+  { id: 30, question: "Melyik elem vegyjele Fe?", options: ["Vas", "Fluor", "Foszfor"], correctAnswer: 0 },
+  { id: 31, question: "Hány perc van egy órában?", options: ["50", "60", "70"], correctAnswer: 1 },
+  { id: 32, question: "Melyik ország fővárosa London?", options: ["Skócia", "Anglia", "Írország"], correctAnswer: 1 },
+  { id: 33, question: "Ki komponálta A Varázsfuvolát?", options: ["Mozart", "Beethoven", "Bach"], correctAnswer: 0 },
+  { id: 34, question: "Melyik állat a legnagyobb emlős?", options: ["Elefánt", "Zsiráf", "Kék bálna"], correctAnswer: 2 },
+  { id: 35, question: "Hány nap van egy szökőévben?", options: ["365", "366", "364"], correctAnswer: 1 },
+  { id: 36, question: "Melyik elem vegyjele O?", options: ["Oxigén", "Arany", "Ózon"], correctAnswer: 0 },
+  { id: 37, question: "Ki festette a Sixtus-kápolna mennyezetét?", options: ["Da Vinci", "Michelangelo", "Raphael"], correctAnswer: 1 },
+  { id: 38, question: "Melyik sport mondják 'királyi játéknak'?", options: ["Tenisz", "Golf", "Sakk"], correctAnswer: 2 },
+  { id: 39, question: "Hány láb van egy pókon?", options: ["6", "8", "10"], correctAnswer: 1 },
+  { id: 40, question: "Melyik bolygó a 'Vörös bolygó'?", options: ["Mars", "Jupiter", "Vénusz"], correctAnswer: 0 },
+  { id: 41, question: "Ki találta fel az izzót?", options: ["Edison", "Tesla", "Franklin"], correctAnswer: 0 },
+  { id: 42, question: "Melyik évben volt az első olimpia?", options: ["776 BCE", "500 BCE", "1000 BCE"], correctAnswer: 0 },
+  { id: 43, question: "Hány hét van egy évben?", options: ["50", "52", "54"], correctAnswer: 1 },
+  { id: 44, question: "Melyik elem vegyjele N?", options: ["Nátrium", "Nitrogén", "Neon"], correctAnswer: 1 },
+  { id: 45, question: "Ki írta az 1984-et?", options: ["Huxley", "Orwell", "Bradbury"], correctAnswer: 1 },
+  { id: 46, question: "Melyik a legmélyebb óceán?", options: ["Atlanti", "Csendes", "Indiai"], correctAnswer: 1 },
+  { id: 47, question: "Hány szem van az embernek?", options: ["1", "2", "3"], correctAnswer: 1 },
+  { id: 48, question: "Melyik ország adott nekünk a Szabadság-szobrot?", options: ["Anglia", "Franciaország", "Spanyolország"], correctAnswer: 1 },
+  { id: 49, question: "Ki komponálta a 9. szimfóniát?", options: ["Mozart", "Beethoven", "Brahms"], correctAnswer: 1 },
+  { id: 50, question: "Melyik elem vegyjele C?", options: ["Kalcium", "Szén", "Klór"], correctAnswer: 1 },
+  { id: 51, question: "Hány nap van februárban (nem szökőév)?", options: ["28", "29", "30"], correctAnswer: 0 },
+  { id: 52, question: "Melyik ország fővárosa Róma?", options: ["Spanyolország", "Olaszország", "Görögország"], correctAnswer: 1 },
+  { id: 53, question: "Ki festette A Csillagos éjt?", options: ["Monet", "Van Gogh", "Renoir"], correctAnswer: 1 },
+  { id: 54, question: "Melyik az egyetlen repülő emlős?", options: ["Denevér", "Repülő hal", "Saskeselyű"], correctAnswer: 0 },
+  { id: 55, question: "Hány szín van a szivárványban?", options: ["5", "7", "9"], correctAnswer: 1 },
+  { id: 56, question: "Melyik elem vegyjele Ag?", options: ["Arany", "Ezüst", "Alumínium"], correctAnswer: 1 },
+  { id: 57, question: "Ki írta A Gyűrűk Urát?", options: ["Lewis", "Tolkien", "Martin"], correctAnswer: 1 },
+  { id: 58, question: "Melyik a legnagyobb sivatag a világon?", options: ["Szahara", "Góbi", "Szaúd-Arábia"], correctAnswer: 0 },
+  { id: 59, question: "Hány fül van az embernek?", options: ["1", "2", "3"], correctAnswer: 1 },
+  { id: 60, question: "Melyik bolygónak van gyűrűje?", options: ["Mars", "Szaturnusz", "Neptunusz"], correctAnswer: 1 },
+  { id: 61, question: "Ki volt az első amerikai elnök?", options: ["Jefferson", "Washington", "Lincoln"], correctAnswer: 1 },
+  { id: 62, question: "Melyik évben ért véget a második világháború?", options: ["1944", "1945", "1946"], correctAnswer: 1 },
+  { id: 63, question: "Hány hónap van egy évben?", options: ["10", "12", "14"], correctAnswer: 1 },
+  { id: 64, question: "Melyik elem vegyjele He?", options: ["Hidrogén", "Hélium", "Hafnium"], correctAnswer: 1 },
+  { id: 65, question: "Ki komponálta A Hattyúk tavát?", options: ["Csajkovszkij", "Strauss", "Verdi"], correctAnswer: 0 },
+  { id: 66, question: "Melyik kontinensen található Brazília?", options: ["Afrika", "Dél-Amerika", "Ázsia"], correctAnswer: 1 },
+  { id: 67, question: "Hány éves kortól lehet vezetni Magyarországon?", options: ["16", "18", "21"], correctAnswer: 1 },
+  { id: 68, question: "Melyik ország fővárosa Madrid?", options: ["Portugália", "Spanyolország", "Mexikó"], correctAnswer: 1 },
+  { id: 69, question: "Ki találta fel a repülőgépet?", options: ["Wright fivérek", "Edison", "Ford"], correctAnswer: 0 },
+  { id: 70, question: "Melyik a legnagyobb szárazföldi ragadozó?", options: ["Oroszlán", "Jegesmedve", "Tigris"], correctAnswer: 1 },
+  { id: 71, question: "Hány érzékszerve van az embernek?", options: ["4", "5", "6"], correctAnswer: 1 },
+  { id: 72, question: "Melyik elem vegyjele Na?", options: ["Nitrogén", "Nátrium", "Neon"], correctAnswer: 1 },
+  { id: 73, question: "Ki írta a Háború és békét?", options: ["Dosztojevszkij", "Tolsztoj", "Csehov"], correctAnswer: 1 },
+  { id: 74, question: "Melyik a legmagasabb hegy a világon?", options: ["K2", "Mount Everest", "Kilimandzsáró"], correctAnswer: 1 },
+  { id: 75, question: "Hány ujj van két kézen?", options: ["8", "10", "12"], correctAnswer: 1 },
+  { id: 76, question: "Melyik bolygó a legmelegebb?", options: ["Merkúr", "Vénusz", "Mars"], correctAnswer: 1 },
+  { id: 77, question: "Ki festette A Guernicát?", options: ["Dalí", "Picasso", "Miró"], correctAnswer: 1 },
+  { id: 78, question: "Melyik évben hunyt el Elvis Presley?", options: ["1975", "1977", "1979"], correctAnswer: 1 },
+  { id: 79, question: "Hány óra van egy napban?", options: ["20", "24", "28"], correctAnswer: 1 },
+  { id: 80, question: "Melyik elem vegyjele K?", options: ["Kálium", "Kalcium", "Kripton"], correctAnswer: 0 },
+  { id: 81, question: "Ki komponálta A Messiást?", options: ["Bach", "Händel", "Vivaldi"], correctAnswer: 1 },
+  { id: 82, question: "Melyik ország fővárosa Berlin?", options: ["Ausztria", "Németország", "Svájc"], correctAnswer: 1 },
+  { id: 83, question: "Ki találta fel a dinamitot?", options: ["Nobel", "Curie", "Einstein"], correctAnswer: 0 },
+  { id: 84, question: "Melyik a leggyorsabb madár?", options: ["Sólyom", "Vándorsólyom", "Sas"], correctAnswer: 1 },
+  { id: 85, question: "Hány fogunk van egy felnőttnek?", options: ["28", "32", "36"], correctAnswer: 1 },
+  { id: 86, question: "Melyik elem vegyjele Ca?", options: ["Szén", "Kalcium", "Kadmium"], correctAnswer: 1 },
+  { id: 87, question: "Ki írta az Iliászt?", options: ["Homérosz", "Szophoklész", "Euripidész"], correctAnswer: 0 },
+  { id: 88, question: "Melyik a legnagyobb tó a világon?", options: ["Michigan-tó", "Kaszpi-tenger", "Bajkál-tó"], correctAnswer: 1 },
+  { id: 89, question: "Hány perc van egy napban?", options: ["1440", "1460", "1420"], correctAnswer: 0 },
+  { id: 90, question: "Melyik ország fővárosa Tokió?", options: ["Kína", "Japán", "Dél-Korea"], correctAnswer: 1 },
+  { id: 91, question: "Ki festette Az utolsó vacsorát?", options: ["Michelangelo", "Leonardo da Vinci", "Raphael"], correctAnswer: 1 },
+  { id: 92, question: "Melyik elem vegyjele Pb?", options: ["Platina", "Ólom", "Paládium"], correctAnswer: 1 },
+  { id: 93, question: "Ki komponálta A Négy évszakot?", options: ["Bach", "Vivaldi", "Händel"], correctAnswer: 1 },
+  { id: 94, question: "Melyik a legnagyobb sivatag Amerikában?", options: ["Mojave", "Sonora", "Chihuahua"], correctAnswer: 2 },
+  { id: 95, question: "Hány nap van egy hétben?", options: ["5", "7", "9"], correctAnswer: 1 },
+  { id: 96, question: "Melyik elem vegyjele Cu?", options: ["Króm", "Réz", "Kobalt"], correctAnswer: 1 },
+  { id: 97, question: "Ki írta A Karamazov testvéreket?", options: ["Tolsztoj", "Dosztojevszkij", "Puskin"], correctAnswer: 1 },
+  { id: 98, question: "Melyik a legkisebb ország a világon?", options: ["Monaco", "Vatikán", "Liechtenstein"], correctAnswer: 1 },
+  { id: 99, question: "Hány fok van egy derékszögben?", options: ["45", "90", "180"], correctAnswer: 1 },
+  { id: 100, question: "Melyik bolygó a legnagyobb holdakkal?", options: ["Földgolyó", "Jupiter", "Szaturnusz"], correctAnswer: 1 },
+  { id: 101, question: "Ki találta fel a rádiót?", options: ["Marconi", "Tesla", "Edison"], correctAnswer: 0 },
+  { id: 102, question: "Melyik elem vegyjele Zn?", options: ["Cirkónium", "Cink", "Xenon"], correctAnswer: 1 },
+  { id: 103, question: "Ki komponálta A Bolygó hollandait?", options: ["Verdi", "Wagner", "Puccini"], correctAnswer: 1 },
+  { id: 104, question: "Melyik a legmagasabb épület a világon?", options: ["Empire State", "Burj Khalifa", "Shanghai Tower"], correctAnswer: 1 },
+  { id: 105, question: "Hány másodperc van egy percben?", options: ["50", "60", "70"], correctAnswer: 1 }
 ];
+
+// Véletlenszerű 15 kérdés kiválasztása és keverése
+const getRandomQuestions = (): Question[] => {
+  const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 15).map(q => ({
+    ...q,
+    options: [...q.options].sort(() => Math.random() - 0.5)
+  }));
+};
+
+// Arany jutalmak kérdésenként
+const getGoldReward = (questionIndex: number): number => {
+  if (questionIndex < 4) return 1;      // 1-4: 1 arany
+  if (questionIndex < 9) return 3;      // 5-9: 3 arany
+  if (questionIndex < 14) return 5;     // 10-14: 5 arany
+  return 55;                             // 15: 55 arany
+};
 
 const GamePreview = () => {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'finished' | 'lost'>('idle');
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -103,15 +153,25 @@ const GamePreview = () => {
     doubleAnswer: false,
     audience: false
   });
+  const [hasDoubleAnswer, setHasDoubleAnswer] = useState(false);
+  const [firstAttemptWrong, setFirstAttemptWrong] = useState(false);
 
   useEffect(() => {
     if (gameState === 'playing' && timeLeft > 0 && selectedAnswer === null) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && selectedAnswer === null && gameState === 'playing') {
-      handleWrongAnswer();
+      // Idő lejárt - automatikus hibás
+      handleTimeOut();
     }
   }, [timeLeft, gameState, selectedAnswer]);
+
+  const handleTimeOut = () => {
+    toast.error("Az idő lejárt!", {
+      description: "Automatikus hibás válasz"
+    });
+    handleWrongAnswer();
+  };
 
   const startGame = () => {
     setGameState('playing');
