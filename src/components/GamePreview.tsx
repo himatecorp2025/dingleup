@@ -64,6 +64,7 @@ const getRandomQuestions = (): ShuffledQuestion[] => {
 
 const GamePreview = () => {
   const [gameState, setGameState] = useState<GameState>('idle');
+  const [shouldDeductLife, setShouldDeductLife] = useState(false);
   const [questions, setQuestions] = useState<ShuffledQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
@@ -184,10 +185,11 @@ const GamePreview = () => {
     // Élet kezelés
     if (restartWithOneLive) {
       setLives(1);
-    } else if (deductLife && lives > 0) {
+    } else if (deductLife || shouldDeductLife) {
       const newLives = lives - 1;
       setLives(newLives);
       toast.info(`Élet levonva: ${newLives} élet maradt`, { description: "❤️" });
+      setShouldDeductLife(false); // Reset flag
     } else {
       setLives(3);
     }
@@ -202,7 +204,7 @@ const GamePreview = () => {
     setShowTimeoutPopup(false);
     setShowAudiencePanel(false);
     setAudienceResults([]);
-    console.log('round_start', { questions: 15, lives: restartWithOneLive ? 1 : (deductLife ? lives - 1 : 3) });
+    console.log('round_start', { questions: 15, lives: restartWithOneLive ? 1 : ((deductLife || shouldDeductLife) ? lives - 1 : 3) });
   };
 
 useEffect(() => {
@@ -328,6 +330,7 @@ const handleAnswer = (answerIndex: number) => {
   const exitAfterWrongAnswer = () => {
     setShowWrongAnswerPopup(false);
     toast.info(`Összegyűjtött aranyérméd: ${coins} 🪙`);
+    setShouldDeductLife(true); // Jelöljük meg, hogy életet kell levonni
     setTimeout(() => {
       setGameState('idle');
     }, 500);
@@ -690,6 +693,7 @@ const handleAnswer = (answerIndex: number) => {
                 onClick={() => {
                   setShowTimeoutPopup(false);
                   toast.info(`Összegyűjtött aranyérméd: ${coins} 🪙`);
+                  setShouldDeductLife(true); // Jelöljük meg, hogy életet kell levonni
                   setTimeout(() => {
                     setGameState('idle');
                   }, 500);
