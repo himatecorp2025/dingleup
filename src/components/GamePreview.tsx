@@ -181,7 +181,9 @@ const GamePreview = () => {
       setLives(3);
     }
     
-    setCoins(200);
+    // Az aranyérméket NEM reseteljük, hanem megtartjuk a meglévő mennyiséget
+    // Csak akkor állítjuk 200-ra, ha teljesen új játékos (első indítás esetén a coins már 200)
+    
     setUsedHelpers({ halve: false, doubleAnswer: false, audience: false });
     setRemovedOption(null);
     setHasDoubleAnswer(false);
