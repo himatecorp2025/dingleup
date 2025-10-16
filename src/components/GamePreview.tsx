@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import questionData from "@/data/questions.json";
+import gameMusic from "@/assets/game-music.mp3";
 
 interface Question {
   id: string;
@@ -96,11 +97,8 @@ const GamePreview = () => {
   // URL param handling
   const [searchParams] = useSearchParams();
 
-  // Background music via Web Audio API
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const gainRef = useRef<GainNode | null>(null);
-  const oscRef = useRef<OscillatorNode[]>([]);
-  const melodyIntervalRef = useRef<number | null>(null);
+  // Background music via HTML5 Audio
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Check if mobile on mount
   useEffect(() => {
@@ -112,97 +110,34 @@ const GamePreview = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const ensureAudioContext = () => {
-    if (!audioCtxRef.current) {
-      // @ts-ignore - webkit prefix for older iOS
-      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
-      audioCtxRef.current = new Ctx();
-    }
-    return audioCtxRef.current!;
-  };
-
   const startBackgroundMusic = () => {
     try {
-      const ctx = ensureAudioContext();
-      if (oscRef.current.length > 0) return; // already playing
-      
-      const gain = ctx.createGain();
-      gain.gain.value = 0.15; // 15% volume
-      gain.connect(ctx.destination);
-      gainRef.current = gain;
-
-      // Dallamos zene - egyszerű akkord progresszió
-      const playMelody = () => {
-        // Töröljük a korábbi oszcillátorokat
-        oscRef.current.forEach(osc => {
-          try { osc.stop(); } catch {}
-        });
-        oscRef.current = [];
-
-        // Három hang - akkord (C-E-G, Am, F, G7 progresszió)
-        const chordProgression = [
-          [261.63, 329.63, 392.00], // C major
-          [220.00, 261.63, 329.63], // A minor
-          [174.61, 220.00, 261.63], // F major
-          [196.00, 246.94, 293.66], // G7
-        ];
-
-        const currentChord = chordProgression[Math.floor(Date.now() / 2000) % chordProgression.length];
-
-        currentChord.forEach(freq => {
-          const osc = ctx.createOscillator();
-          osc.type = "sine";
-          osc.frequency.value = freq;
-          osc.connect(gain);
-          osc.start();
-          oscRef.current.push(osc);
-        });
-      };
-
-      playMelody();
-      melodyIntervalRef.current = window.setInterval(playMelody, 2000); // Akkord váltás 2 másodpercenként
-
+      if (!audioRef.current) {
+        audioRef.current = new Audio(gameMusic);
+        audioRef.current.loop = true;
+        audioRef.current.volume = 0.3; // 30% volume
+      }
+      audioRef.current.play().catch(e => console.warn("Audio play failed", e));
     } catch (e) {
       console.warn("Audio init failed", e);
     }
   };
 
   const stopBackgroundMusic = () => {
-    if (melodyIntervalRef.current) {
-      clearInterval(melodyIntervalRef.current);
-      melodyIntervalRef.current = null;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
-    oscRef.current.forEach(osc => {
-      try { osc.stop(); } catch {}
-    });
-    oscRef.current = [];
-    gainRef.current = null;
   };
 
   // Start/stop music with game state
   useEffect(() => {
     if (gameState === 'playing') {
-      try { audioCtxRef.current?.resume(); } catch {}
       startBackgroundMusic();
     } else {
       stopBackgroundMusic();
     }
   }, [gameState]);
-
-  // Increase intensity as you progress / when time is low
-  useEffect(() => {
-    if (gameState !== 'playing' || !gainRef.current || !audioCtxRef.current) return;
-    const ctx = audioCtxRef.current;
-    const base = 0.2;
-    const progress = questions.length > 1 ? currentQuestion / (questions.length - 1) : 0;
-    const urgency = timeLeft < 5 ? (5 - timeLeft) / 5 : 0;
-    const target = Math.min(0.6, base + progress * 0.25 + urgency * 0.15);
-    try {
-      const now = ctx.currentTime;
-      gainRef.current.gain.cancelScheduledValues(now);
-      gainRef.current.gain.linearRampToValueAtTime(target, now + 0.3);
-    } catch {}
-  }, [currentQuestion, timeLeft, gameState, questions.length]);
 
   // Timer
   useEffect(() => {
