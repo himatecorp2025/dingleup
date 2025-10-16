@@ -23,8 +23,15 @@ type GameState = 'idle' | 'playing' | 'won' | 'lost' | 'timeout' | 'out-of-lives
 
 // Véletlenszerű 15 kérdés kiválasztása HELYES válasszal
 // Biztosítja, hogy ne legyen három egymást követő kérdésnél ugyanazon pozícióban a helyes válasz
-const getRandomQuestions = (): ShuffledQuestion[] => {
-  const shuffled = [...questionData].sort(() => Math.random() - 0.5);
+const getRandomQuestions = (excludeIds: Set<string> = new Set()): ShuffledQuestion[] => {
+  // Építsünk egy kérdéskészletet a nemrég használt ID-k kizárásával
+  let pool = questionData.filter(q => !excludeIds.has(q.id));
+  // Ha nincs elég kérdés, essünk vissza a teljes készletre
+  if (pool.length < 15) {
+    pool = [...questionData];
+  }
+
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
   const selected = shuffled.slice(0, 15);
   
   const questions = selected.map(q => {
@@ -99,6 +106,22 @@ const GamePreview = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  // Persistens ismétlődés-kerülés a körök között
+  const RECENT_KEY = 'recentQuestionIds_v1';
+  const loadRecent = (): string[] => {
+    try {
+      const raw = localStorage.getItem(RECENT_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  };
+  const saveRecent = (ids: string[]) => {
+    // Tartsuk az utolsó 300-at
+    const trimmed = ids.slice(-300);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(trimmed));
+  };
+
   // Background music via HTML5 Audio
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -163,8 +186,13 @@ const GamePreview = () => {
   };
 
   const startGame = (restartWithOneLive = false, deductLife = false) => {
-    const newQuestions = getRandomQuestions();
+    const recent = loadRecent();
+    const exclude = new Set(recent);
+    const newQuestions = getRandomQuestions(exclude);
     setQuestions(newQuestions);
+    // Frissítsük a 'recent' listát az új kör kérdéseivel
+    saveRecent([...recent, ...newQuestions.map(q => q.id)]);
+
     setGameState('playing');
     setCurrentQuestion(0);
     setTimeLeft(10);
