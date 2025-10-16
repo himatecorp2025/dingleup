@@ -5,6 +5,9 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import questions1 from "@/data/questions1.json";
 import questions2 from "@/data/questions2.json";
+import questions3 from "@/data/questions3.json";
+import questions4 from "@/data/questions4.json";
+import questions5 from "@/data/questions5.json";
 import gameMusic from "@/assets/game-music.m4a";
 
 interface Question {
@@ -24,8 +27,8 @@ type GameState = 'idle' | 'playing' | 'won' | 'lost' | 'timeout' | 'out-of-lives
 
 // Véletlenszerű 15 kérdés kiválasztása HELYES válasszal
 // Biztosítja, hogy ne legyen három egymást követő kérdésnél ugyanazon pozícióban a helyes válasz
-// Egyesítjük az összes kérdéskészletet
-const allQuestions = [...questions1, ...questions2];
+// Egyesítjük az összes kérdéskészletet (5 × 100 = 500 kérdés)
+const allQuestions = [...questions1, ...questions2, ...questions3, ...questions4, ...questions5];
 
 const getRandomQuestions = (excludeIds: Set<string> = new Set()): ShuffledQuestion[] => {
   // Építsünk egy kérdéskészletet a nemrég használt ID-k kizárásával
