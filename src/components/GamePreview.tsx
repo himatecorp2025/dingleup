@@ -259,6 +259,14 @@ const GamePreview = () => {
   };
 
   const nextQuestion = () => {
+    // Ellenőrizzük, hogy van-e még kérdés
+    if (currentQuestion >= questions.length - 1) {
+      // Ez volt az utolsó kérdés - játék vége
+      setGameState('won');
+      console.log('round_end', { result: 'won', correctCount: currentQuestion + 1 });
+      return;
+    }
+
     setIsTransitioning(true);
     
     setTimeout(() => {
