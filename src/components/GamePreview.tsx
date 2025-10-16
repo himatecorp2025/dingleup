@@ -216,6 +216,13 @@ useEffect(() => {
   }
 }, [searchParams, gameState]);
 
+  const getCoinReward = (questionIndex: number) => {
+    if (questionIndex <= 3) return 1;      // 1-4. kérdés (index 0-3)
+    if (questionIndex <= 8) return 3;      // 5-9. kérdés (index 4-8)
+    if (questionIndex <= 13) return 5;     // 10-14. kérdés (index 9-13)
+    return 55;                             // 15. kérdés (index 14)
+  };
+
 const handleAnswer = (answerIndex: number) => {
     // Ha már van végleges válasz és nincs dupla válasz, ne tegyen semmit
     if (selectedAnswer !== null) return;
@@ -251,9 +258,10 @@ const handleAnswer = (answerIndex: number) => {
         if (isCorrect || firstWasCorrect) {
           setSelectedAnswer(questions[currentQuestion].correctIndex);
           setCorrectAnswersCount(prev => prev + 1);
-          const newCoins = coins + 5;
+          const reward = getCoinReward(currentQuestion);
+          const newCoins = coins + reward;
           setCoins(newCoins);
-          toast.success("Helyes válasz! +5 🪙", { description: "Nagyszerű munka!" });
+          toast.success(`Helyes válasz! +${reward} 🪙`, { description: "Nagyszerű munka!" });
 
           // Swipe indikátor megjelenítése
           if (currentQuestion < questions.length - 1) {
@@ -287,11 +295,12 @@ const handleAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
 
     if (isCorrect) {
-      // +5 aranyérme jutalom
+      // Aranyérme jutalom a kérdés szintje alapján
       setCorrectAnswersCount(prev => prev + 1);
-      const newCoins = coins + 5;
+      const reward = getCoinReward(currentQuestion);
+      const newCoins = coins + reward;
       setCoins(newCoins);
-      toast.success("Helyes válasz! +5 🪙", { description: "Nagyszerű munka!" });
+      toast.success(`Helyes válasz! +${reward} 🪙`, { description: "Nagyszerű munka!" });
 
       // Swipe indikátor megjelenítése
       if (currentQuestion < questions.length - 1) {
