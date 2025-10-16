@@ -174,6 +174,8 @@ const GamePreview = () => {
   };
 
   const startGame = () => {
+    const newQuestions = getRandomQuestions();
+    setQuestions(newQuestions);
     setGameState('playing');
     setCurrentQuestion(0);
     setTimeLeft(10);
@@ -183,6 +185,8 @@ const GamePreview = () => {
     setCorrectAnswers(0);
     setAvailableOptions([0, 1, 2]);
     setUsedHelpers({ halve: false, doubleAnswer: false, audience: false });
+    setHasDoubleAnswer(false);
+    setFirstAttemptWrong(false);
   };
 
   const handleAnswer = (answerIndex: number) => {
