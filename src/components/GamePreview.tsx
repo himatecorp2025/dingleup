@@ -90,15 +90,16 @@ const GamePreview = () => {
 
   // Timer
   useEffect(() => {
-    if (gameState === 'playing' && timeLeft > 0 && selectedAnswer === null) {
+    if (gameState === 'playing' && timeLeft > 0 && selectedAnswer === null && questions[currentQuestion]) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && selectedAnswer === null && gameState === 'playing') {
+    } else if (timeLeft === 0 && selectedAnswer === null && gameState === 'playing' && questions[currentQuestion]) {
       handleTimeOut();
     }
-  }, [timeLeft, gameState, selectedAnswer]);
+  }, [timeLeft, gameState, selectedAnswer, currentQuestion, questions]);
 
   const handleTimeOut = () => {
+    if (!questions[currentQuestion]) return;
     console.log('timeout', { id: questions[currentQuestion].id });
     setShowTimeoutPopup(true);
   };
