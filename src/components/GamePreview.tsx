@@ -9,6 +9,7 @@ import questions3 from "@/data/questions3.json";
 import questions4 from "@/data/questions4.json";
 import questions5 from "@/data/questions5.json";
 import gameMusic from "@/assets/game-music.m4a";
+import MusicInitializer from "./MusicInitializer";
 
 interface Question {
   id: string;
@@ -149,7 +150,11 @@ const GamePreview = () => {
         audioRef.current.loop = true;
         audioRef.current.volume = 0.3; // 30% volume
       }
-      audioRef.current.play().catch(e => console.warn("Audio play failed", e));
+      // Csak akkor játszuk le, ha már volt user interaction (localStorage check)
+      const musicEnabled = localStorage.getItem('musicEnabled');
+      if (musicEnabled) {
+        audioRef.current.play().catch(e => console.warn("Audio play failed", e));
+      }
     } catch (e) {
       console.warn("Audio init failed", e);
     }
@@ -1043,6 +1048,12 @@ const handleAnswer = (answerIndex: number) => {
           </div>
         </div>
       </section>
+
+      {/* Zene inicializáló */}
+      <MusicInitializer 
+        audioRef={audioRef} 
+        onMusicEnabled={startBackgroundMusic}
+      />
     </>
   );
 };
