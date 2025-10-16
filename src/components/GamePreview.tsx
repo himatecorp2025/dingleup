@@ -511,6 +511,11 @@ const GamePreview = () => {
 
   // PLAYING Screen
   const currentQ = questions[currentQuestion];
+  
+  // Védőellenőrzés - ha nincs érvényes kérdés, ne rendereljünk semmit
+  if (!currentQ) {
+    return null;
+  }
 
   return (
     <>
