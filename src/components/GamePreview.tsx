@@ -85,6 +85,7 @@ const GamePreview = () => {
   const [showTimeoutPopup, setShowTimeoutPopup] = useState(false);
   const [showAudiencePanel, setShowAudiencePanel] = useState(false);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
+  const [coinsEarnedThisGame, setCoinsEarnedThisGame] = useState(0);
   const [audienceResults, setAudienceResults] = useState<number[]>([]);
   const [showSwipeIndicator, setShowSwipeIndicator] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
@@ -168,6 +169,7 @@ const GamePreview = () => {
     setTimeLeft(10);
     setSelectedAnswer(null);
     setCorrectAnswersCount(0);
+    setCoinsEarnedThisGame(0); // Reset az új játéknál
     
     // Élet kezelés
     if (restartWithOneLive) {
@@ -248,6 +250,7 @@ const handleAnswer = (answerIndex: number) => {
           const reward = getCoinReward(currentQuestion);
           const newCoins = coins + reward;
           setCoins(newCoins);
+          setCoinsEarnedThisGame(prev => prev + reward); // Hozzáadás az ebben a játékban gyűjtött érméhez
           toast.success(`Helyes válasz! +${reward} 🪙`, { description: "Nagyszerű munka!" });
 
           // Swipe indikátor megjelenítése
@@ -287,6 +290,7 @@ const handleAnswer = (answerIndex: number) => {
       const reward = getCoinReward(currentQuestion);
       const newCoins = coins + reward;
       setCoins(newCoins);
+      setCoinsEarnedThisGame(prev => prev + reward); // Hozzáadás az ebben a játékban gyűjtött érméhez
       toast.success(`Helyes válasz! +${reward} 🪙`, { description: "Nagyszerű munka!" });
 
       // Swipe indikátor megjelenítése
@@ -594,10 +598,12 @@ const handleAnswer = (answerIndex: number) => {
             </div>
           </div>
 
-          <p className="text-accent text-2xl md:text-3xl font-bold bg-[#0B1130] border-2 border-[#3A4260] px-6 md:px-8 py-4 md:py-6 rounded-xl">
-            Összegyűjtött aranyérmék:<br />
-            {coins} 🪙
-          </p>
+          <div className="bg-[#0B1130] border-2 border-[#3A4260] px-6 md:px-8 py-4 md:py-6 rounded-xl space-y-2">
+            <p className="text-muted-foreground text-sm">Ebben a játékban gyűjtött:</p>
+            <p className="text-accent text-xl md:text-2xl font-bold">+{coinsEarnedThisGame} 🪙</p>
+            <p className="text-muted-foreground text-sm">Jelenlegi egyenleg:</p>
+            <p className="text-accent text-2xl md:text-3xl font-bold">{coins} 🪙</p>
+          </div>
           <div className="flex flex-col gap-4 mt-6">
             <Button 
               onClick={() => startGame(false, true)}
@@ -643,10 +649,12 @@ const handleAnswer = (answerIndex: number) => {
             </div>
           </div>
 
-          <p className="text-accent text-2xl md:text-3xl font-bold bg-[#0B1130] border-2 border-[#3A4260] px-6 md:px-8 py-4 md:py-6 rounded-xl">
-            Összegyűjtött aranyérmék:<br />
-            {coins} 🪙
-          </p>
+          <div className="bg-[#0B1130] border-2 border-[#3A4260] px-6 md:px-8 py-4 md:py-6 rounded-xl space-y-2">
+            <p className="text-muted-foreground text-sm">Ebben a játékban gyűjtött:</p>
+            <p className="text-accent text-xl md:text-2xl font-bold">+{coinsEarnedThisGame} 🪙</p>
+            <p className="text-muted-foreground text-sm">Jelenlegi egyenleg:</p>
+            <p className="text-accent text-2xl md:text-3xl font-bold">{coins} 🪙</p>
+          </div>
           <div className="flex flex-col gap-4 mt-6">
             <Button 
               onClick={() => startGame(false, true)}
