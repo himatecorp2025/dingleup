@@ -1,0 +1,702 @@
+[
+  {
+    "id": "q101",
+    "question": "Ki volt Magyarország első királya?",
+    "answers": ["Szent László", "Szent István", "Géza fejedelem"],
+    "correct": "Szent István",
+    "topic": "Történelem"
+  },
+  {
+    "id": "q102",
+    "question": "Melyik évben volt a mohácsi csata?",
+    "answers": ["1526", "1456", "1541"],
+    "correct": "1526",
+    "topic": "Történelem"
+  },
+  {
+    "id": "q103",
+    "question": "Ki írta a Zrínyi és Szép Ilonkát?",
+    "answers": ["Vörösmarty Mihály", "Petőfi Sándor", "Arany János"],
+    "correct": "Vörösmarty Mihály",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q104",
+    "question": "Melyik folyó folyik át Budapesten?",
+    "answers": ["Tisza", "Duna", "Dráva"],
+    "correct": "Duna",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q105",
+    "question": "Hány megye van Magyarországon?",
+    "answers": ["17", "19", "21"],
+    "correct": "19",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q106",
+    "question": "Ki komponálta a Himnuszt?",
+    "answers": ["Erkel Ferenc", "Liszt Ferenc", "Kodály Zoltán"],
+    "correct": "Erkel Ferenc",
+    "topic": "Zene"
+  },
+  {
+    "id": "q107",
+    "question": "Melyik évben volt Trianon?",
+    "answers": ["1918", "1920", "1921"],
+    "correct": "1920",
+    "topic": "Történelem"
+  },
+  {
+    "id": "q108",
+    "question": "Ki írta a Bánk bánt?",
+    "answers": ["Katona József", "Madách Imre", "Vörösmarty Mihály"],
+    "correct": "Katona József",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q109",
+    "question": "Melyik a legmagasabb hegy Magyarországon?",
+    "answers": ["Kékestető", "Galyatető", "Dobogókő"],
+    "correct": "Kékestető",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q110",
+    "question": "Ki volt a Corvin-könyvtár alapítója?",
+    "answers": ["Szent István", "Hunyadi Mátyás", "Hunyadi János"],
+    "correct": "Hunyadi Mátyás",
+    "topic": "Történelem"
+  },
+  {
+    "id": "q111",
+    "question": "Melyik elem rendszáma 1?",
+    "answers": ["Hélium", "Hidrogén", "Lítium"],
+    "correct": "Hidrogén",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q112",
+    "question": "Hány évig tart a Föld megkerülése a Nap körül?",
+    "answers": ["365 nap", "366 nap", "360 nap"],
+    "correct": "365 nap",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q113",
+    "question": "Ki festette A Sikoly-t?",
+    "answers": ["Edvard Munch", "Van Gogh", "Klimt"],
+    "correct": "Edvard Munch",
+    "topic": "Művészet"
+  },
+  {
+    "id": "q114",
+    "question": "Melyik évben volt a berlini fal lebontása?",
+    "answers": ["1987", "1989", "1991"],
+    "correct": "1989",
+    "topic": "Történelem"
+  },
+  {
+    "id": "q115",
+    "question": "Ki írta az Egri csillagokat?",
+    "answers": ["Gárdonyi Géza", "Mikszáth Kálmán", "Móricz Zsigmond"],
+    "correct": "Gárdonyi Géza",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q116",
+    "question": "Melyik kontinensen van Egyiptom?",
+    "answers": ["Ázsia", "Afrika", "Európa"],
+    "correct": "Afrika",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q117",
+    "question": "Hány gramm van egy kilogrammban?",
+    "answers": ["100", "1000", "10000"],
+    "correct": "1000",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q118",
+    "question": "Ki volt Einstein keresztneve?",
+    "answers": ["Albert", "Isaac", "Werner"],
+    "correct": "Albert",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q119",
+    "question": "Melyik ország fővárosa Moszkva?",
+    "answers": ["Ukrajna", "Oroszország", "Fehéroroszország"],
+    "correct": "Oroszország",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q120",
+    "question": "Ki komponálta a Bolygó hollandi-t?",
+    "answers": ["Wagner", "Verdi", "Puccini"],
+    "correct": "Wagner",
+    "topic": "Zene"
+  },
+  {
+    "id": "q121",
+    "question": "Melyik elem vegyjele Si?",
+    "answers": ["Ezüst", "Szilícium", "Kén"],
+    "correct": "Szilícium",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q122",
+    "question": "Ki írta a Légy jó mindhalálig-ot?",
+    "answers": ["Móricz Zsigmond", "Molnár Ferenc", "Jókai Mór"],
+    "correct": "Móricz Zsigmond",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q123",
+    "question": "Melyik a legnagyobb kontinens?",
+    "answers": ["Afrika", "Ázsia", "Amerika"],
+    "correct": "Ázsia",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q124",
+    "question": "Hány centimeter van egy méterben?",
+    "answers": ["10", "100", "1000"],
+    "correct": "100",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q125",
+    "question": "Ki találta fel a penicillint?",
+    "answers": ["Louis Pasteur", "Alexander Fleming", "Robert Koch"],
+    "correct": "Alexander Fleming",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q126",
+    "question": "Melyik ország fővárosa Peking?",
+    "answers": ["Japán", "Kína", "Tajvan"],
+    "correct": "Kína",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q127",
+    "question": "Ki festette A Csókot?",
+    "answers": ["Gustav Klimt", "Egon Schiele", "Oskar Kokoschka"],
+    "correct": "Gustav Klimt",
+    "topic": "Művészet"
+  },
+  {
+    "id": "q128",
+    "question": "Melyik évben született Shakespeare?",
+    "answers": ["1564", "1574", "1554"],
+    "correct": "1564",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q129",
+    "question": "Hány liter van egy köbméterben?",
+    "answers": ["100", "1000", "10000"],
+    "correct": "1000",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q130",
+    "question": "Ki írta A Pál utcai fiúk-at?",
+    "answers": ["Molnár Ferenc", "Gárdonyi Géza", "Mikszáth Kálmán"],
+    "correct": "Molnár Ferenc",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q131",
+    "question": "Melyik elem vegyjele Cl?",
+    "answers": ["Kalcium", "Klór", "Szén"],
+    "correct": "Klór",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q132",
+    "question": "Ki komponálta az Aida-t?",
+    "answers": ["Verdi", "Puccini", "Rossini"],
+    "correct": "Verdi",
+    "topic": "Zene"
+  },
+  {
+    "id": "q133",
+    "question": "Melyik ország fővárosa Athén?",
+    "answers": ["Ciprus", "Görögország", "Törökország"],
+    "correct": "Görögország",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q134",
+    "question": "Hány oldala van egy kockának?",
+    "answers": ["4", "6", "8"],
+    "correct": "6",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q135",
+    "question": "Ki találta fel az autót?",
+    "answers": ["Henry Ford", "Karl Benz", "Gottlieb Daimler"],
+    "correct": "Karl Benz",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q136",
+    "question": "Melyik a legnagyobb állatfaj a Földön?",
+    "answers": ["Afrikai elefánt", "Kék bálna", "Zsiráf"],
+    "correct": "Kék bálna",
+    "topic": "Állattan"
+  },
+  {
+    "id": "q137",
+    "question": "Ki írta A kőszívű ember fiait?",
+    "answers": ["Jókai Mór", "Mikszáth Kálmán", "Kemény Zsigmond"],
+    "correct": "Jókai Mór",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q138",
+    "question": "Melyik elem vegyjele Zn?",
+    "answers": ["Cink", "Cirkónium", "Xenon"],
+    "correct": "Cink",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q139",
+    "question": "Ki festette a Lány a gyöngy fülbevalóval-t?",
+    "answers": ["Rembrandt", "Vermeer", "Rubens"],
+    "correct": "Vermeer",
+    "topic": "Művészet"
+  },
+  {
+    "id": "q140",
+    "question": "Melyik ország fővárosa Bécs?",
+    "answers": ["Németország", "Ausztria", "Svájc"],
+    "correct": "Ausztria",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q141",
+    "question": "Hány másodperc van egy percben?",
+    "answers": ["50", "60", "100"],
+    "correct": "60",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q142",
+    "question": "Ki komponálta a Carmen-t?",
+    "answers": ["Bizet", "Verdi", "Puccini"],
+    "correct": "Bizet",
+    "topic": "Zene"
+  },
+  {
+    "id": "q143",
+    "question": "Melyik elem vegyjele Mg?",
+    "answers": ["Mangán", "Magnézium", "Molibdén"],
+    "correct": "Magnézium",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q144",
+    "question": "Ki írta a Moby Dick-et?",
+    "answers": ["Herman Melville", "Mark Twain", "Jack London"],
+    "correct": "Herman Melville",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q145",
+    "question": "Melyik a leghidegebb hely a Földön?",
+    "answers": ["Grönland", "Antarktisz", "Szibéria"],
+    "correct": "Antarktisz",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q146",
+    "question": "Hány fokos egy egyenes szög?",
+    "answers": ["90", "180", "360"],
+    "correct": "180",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q147",
+    "question": "Ki találta fel a nyomtatást?",
+    "answers": ["Gutenberg", "Caxton", "Aldus"],
+    "correct": "Gutenberg",
+    "topic": "Történelem"
+  },
+  {
+    "id": "q148",
+    "question": "Melyik ország fővárosa Lisszabon?",
+    "answers": ["Spanyolország", "Portugália", "Brazília"],
+    "correct": "Portugália",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q149",
+    "question": "Ki komponálta a Tannhäuser-t?",
+    "answers": ["Wagner", "Strauss", "Mahler"],
+    "correct": "Wagner",
+    "topic": "Zene"
+  },
+  {
+    "id": "q150",
+    "question": "Melyik elem vegyjele P?",
+    "answers": ["Platina", "Foszfor", "Palládium"],
+    "correct": "Foszfor",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q151",
+    "question": "Ki írta a Don Quijote-t?",
+    "answers": ["Cervantes", "Lope de Vega", "Calderón"],
+    "correct": "Cervantes",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q152",
+    "question": "Melyik a legnagyobb sziget a világon?",
+    "answers": ["Új-Guinea", "Grönland", "Borneó"],
+    "correct": "Grönland",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q153",
+    "question": "Hány perc van fél órában?",
+    "answers": ["20", "30", "40"],
+    "correct": "30",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q154",
+    "question": "Ki festette A vihar-t?",
+    "answers": ["Rembrandt", "Vermeer", "Hals"],
+    "correct": "Rembrandt",
+    "topic": "Művészet"
+  },
+  {
+    "id": "q155",
+    "question": "Melyik elem vegyjele S?",
+    "answers": ["Nátrium", "Kén", "Szilícium"],
+    "correct": "Kén",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q156",
+    "question": "Ki írta a Faust-ot?",
+    "answers": ["Schiller", "Goethe", "Heine"],
+    "correct": "Goethe",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q157",
+    "question": "Melyik ország fővárosa Stockholm?",
+    "answers": ["Norvégia", "Svédország", "Finnország"],
+    "correct": "Svédország",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q158",
+    "question": "Hány óra egy félnap?",
+    "answers": ["6", "12", "18"],
+    "correct": "12",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q159",
+    "question": "Ki komponálta a Tosca-t?",
+    "answers": ["Verdi", "Puccini", "Rossini"],
+    "correct": "Puccini",
+    "topic": "Zene"
+  },
+  {
+    "id": "q160",
+    "question": "Melyik elem vegyjele Al?",
+    "answers": ["Arany", "Alumínium", "Argon"],
+    "correct": "Alumínium",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q161",
+    "question": "Ki írta a Robinson Crusoe-t?",
+    "answers": ["Daniel Defoe", "Jonathan Swift", "Henry Fielding"],
+    "correct": "Daniel Defoe",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q162",
+    "question": "Melyik a legmélyebb pont az óceánban?",
+    "answers": ["Mariana-árok", "Puerto Rico-árok", "Tonga-árok"],
+    "correct": "Mariana-árok",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q163",
+    "question": "Hány mm van egy cm-ben?",
+    "answers": ["5", "10", "100"],
+    "correct": "10",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q164",
+    "question": "Ki találta fel a gőzgépet?",
+    "answers": ["James Watt", "George Stephenson", "Robert Fulton"],
+    "correct": "James Watt",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q165",
+    "question": "Melyik ország fővárosa Oslo?",
+    "answers": ["Svédország", "Norvégia", "Dánia"],
+    "correct": "Norvégia",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q166",
+    "question": "Ki festette A szénakazal-t?",
+    "answers": ["Constable", "Turner", "Monet"],
+    "correct": "Monet",
+    "topic": "Művészet"
+  },
+  {
+    "id": "q167",
+    "question": "Melyik elem vegyjele Br?",
+    "answers": ["Bór", "Bróm", "Bárium"],
+    "correct": "Bróm",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q168",
+    "question": "Ki írta a Gullivert?",
+    "answers": ["Jonathan Swift", "Daniel Defoe", "Laurence Sterne"],
+    "correct": "Jonathan Swift",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q169",
+    "question": "Melyik a legszárazabb hely a Földön?",
+    "answers": ["Szahara", "Atacama", "Góbi"],
+    "correct": "Atacama",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q170",
+    "question": "Hány oldala van egy háromszögnek?",
+    "answers": ["2", "3", "4"],
+    "correct": "3",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q171",
+    "question": "Ki komponálta a Rigoletto-t?",
+    "answers": ["Rossini", "Verdi", "Donizetti"],
+    "correct": "Verdi",
+    "topic": "Zene"
+  },
+  {
+    "id": "q172",
+    "question": "Melyik elem vegyjele I?",
+    "answers": ["Vas", "Jód", "Indium"],
+    "correct": "Jód",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q173",
+    "question": "Ki írta A három testőrt?",
+    "answers": ["Alexandre Dumas", "Victor Hugo", "Balzac"],
+    "correct": "Alexandre Dumas",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q174",
+    "question": "Melyik ország fővárosa Koppenhága?",
+    "answers": ["Norvégia", "Dánia", "Hollandia"],
+    "correct": "Dánia",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q175",
+    "question": "Hány cm van fél méterben?",
+    "answers": ["25", "50", "75"],
+    "correct": "50",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q176",
+    "question": "Ki festette Vénusz születését?",
+    "answers": ["Botticelli", "Titian", "Raphael"],
+    "correct": "Botticelli",
+    "topic": "Művészet"
+  },
+  {
+    "id": "q177",
+    "question": "Melyik elem vegyjele Ar?",
+    "answers": ["Ezüst", "Argon", "Arany"],
+    "correct": "Argon",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q178",
+    "question": "Ki írta a Nyomorultak-at?",
+    "answers": ["Balzac", "Victor Hugo", "Zola"],
+    "correct": "Victor Hugo",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q179",
+    "question": "Melyik a legmagasabb vízesés a világon?",
+    "answers": ["Niagara", "Angel", "Victoria"],
+    "correct": "Angel",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q180",
+    "question": "Hány sarok van egy négyszögnek?",
+    "answers": ["3", "4", "5"],
+    "correct": "4",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q181",
+    "question": "Ki komponálta a Lakmé-t?",
+    "answers": ["Delibes", "Massenet", "Saint-Saëns"],
+    "correct": "Delibes",
+    "topic": "Zene"
+  },
+  {
+    "id": "q182",
+    "question": "Melyik elem vegyjele Li?",
+    "answers": ["Lítium", "Ólom", "Lutécium"],
+    "correct": "Lítium",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q183",
+    "question": "Ki írta A Mester és Margaritát?",
+    "answers": ["Gogol", "Bulgakov", "Nabokov"],
+    "correct": "Bulgakov",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q184",
+    "question": "Melyik ország fővárosa Dublin?",
+    "answers": ["Skócia", "Írország", "Wales"],
+    "correct": "Írország",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q185",
+    "question": "Hány oldala van egy ötszögnek?",
+    "answers": ["4", "5", "6"],
+    "correct": "5",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q186",
+    "question": "Ki festette A gyönyörök kertje-t?",
+    "answers": ["Bosch", "Bruegel", "Van Eyck"],
+    "correct": "Bosch",
+    "topic": "Művészet"
+  },
+  {
+    "id": "q187",
+    "question": "Melyik elem vegyjele Ne?",
+    "answers": ["Nikkel", "Neon", "Neptúnium"],
+    "correct": "Neon",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q188",
+    "question": "Ki írta Az öreg halász és a tenger-t?",
+    "answers": ["Steinbeck", "Hemingway", "Faulkner"],
+    "correct": "Hemingway",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q189",
+    "question": "Melyik a leghosszabb hegylánc a világon?",
+    "answers": ["Himalája", "Andok", "Sziklás-hegység"],
+    "correct": "Andok",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q190",
+    "question": "Hány fok van három derékszögben?",
+    "answers": ["180", "270", "360"],
+    "correct": "270",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q191",
+    "question": "Ki komponálta A Walkűrt?",
+    "answers": ["Wagner", "Strauss", "Mahler"],
+    "correct": "Wagner",
+    "topic": "Zene"
+  },
+  {
+    "id": "q192",
+    "question": "Melyik elem vegyjele F?",
+    "answers": ["Vas", "Fluor", "Foszfor"],
+    "correct": "Fluor",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q193",
+    "question": "Ki írta a Tükör a falon-t?",
+    "answers": ["Agatha Christie", "Dorothy Sayers", "Margery Allingham"],
+    "correct": "Agatha Christie",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q194",
+    "question": "Melyik a legnagyobb öböl a világon?",
+    "answers": ["Bengáli-öböl", "Mexikói-öböl", "Hudson-öböl"],
+    "correct": "Bengáli-öböl",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q195",
+    "question": "Hány szöge van egy hatszögnek?",
+    "answers": ["5", "6", "7"],
+    "correct": "6",
+    "topic": "Matematika"
+  },
+  {
+    "id": "q196",
+    "question": "Ki festette Az éjjeli őrjáratok-at?",
+    "answers": ["Rembrandt", "Vermeer", "Hals"],
+    "correct": "Rembrandt",
+    "topic": "Művészet"
+  },
+  {
+    "id": "q197",
+    "question": "Melyik elem vegyjele Kr?",
+    "answers": ["Króm", "Kripton", "Kadmium"],
+    "correct": "Kripton",
+    "topic": "Tudomány"
+  },
+  {
+    "id": "q198",
+    "question": "Ki írta Az üvegfigurák játéka-t?",
+    "answers": ["Thomas Mann", "Hermann Hesse", "Stefan Zweig"],
+    "correct": "Hermann Hesse",
+    "topic": "Irodalom"
+  },
+  {
+    "id": "q199",
+    "question": "Melyik ország fővárosa Wellington?",
+    "answers": ["Ausztrália", "Új-Zéland", "Fiji"],
+    "correct": "Új-Zéland",
+    "topic": "Földrajz"
+  },
+  {
+    "id": "q200",
+    "question": "Hány másodperc van 2 percben?",
+    "answers": ["100", "120", "140"],
+    "correct": "120",
+    "topic": "Matematika"
+  }
+]

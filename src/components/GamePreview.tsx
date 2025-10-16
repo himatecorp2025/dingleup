@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import questionData from "@/data/questions.json";
+import questions1 from "@/data/questions1.json";
+import questions2 from "@/data/questions2.json";
 import gameMusic from "@/assets/game-music.m4a";
 
 interface Question {
@@ -23,12 +24,15 @@ type GameState = 'idle' | 'playing' | 'won' | 'lost' | 'timeout' | 'out-of-lives
 
 // Véletlenszerű 15 kérdés kiválasztása HELYES válasszal
 // Biztosítja, hogy ne legyen három egymást követő kérdésnél ugyanazon pozícióban a helyes válasz
+// Egyesítjük az összes kérdéskészletet
+const allQuestions = [...questions1, ...questions2];
+
 const getRandomQuestions = (excludeIds: Set<string> = new Set()): ShuffledQuestion[] => {
   // Építsünk egy kérdéskészletet a nemrég használt ID-k kizárásával
-  let pool = questionData.filter(q => !excludeIds.has(q.id));
+  let pool = allQuestions.filter(q => !excludeIds.has(q.id));
   // Ha nincs elég kérdés, essünk vissza a teljes készletre
   if (pool.length < 15) {
-    pool = [...questionData];
+    pool = [...allQuestions];
   }
 
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
