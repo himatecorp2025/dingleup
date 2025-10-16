@@ -58,7 +58,7 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/game">
+            <Link to="/game?autostart=true">
               <Button size="lg" className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6">
                 Játék indítása
                 <ArrowRight className="ml-2 w-5 h-5" />
