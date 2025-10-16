@@ -86,6 +86,7 @@ const GamePreview = () => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [swipeOffset, setSwipeOffset] = useState(0);
 
   // Timer
   useEffect(() => {
@@ -278,15 +279,26 @@ const GamePreview = () => {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!showSwipeIndicator) return;
-    e.stopPropagation(); // Megállítja a buborékolást
+    e.stopPropagation();
     setTouchStart(e.targetTouches[0].clientY);
+    setTouchEnd(e.targetTouches[0].clientY);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!showSwipeIndicator) return;
-    e.preventDefault(); // Megakadályozza az oldal scrollolását
+    e.preventDefault();
     e.stopPropagation();
-    setTouchEnd(e.targetTouches[0].clientY);
+    
+    const currentTouch = e.targetTouches[0].clientY;
+    setTouchEnd(currentTouch);
+    
+    const diff = touchStart - currentTouch;
+    // Csak felfelé engedjük a mozgást (pozitív diff)
+    if (diff > 0) {
+      setSwipeOffset(Math.min(diff, 300)); // Max 300px
+    } else {
+      setSwipeOffset(0);
+    }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
@@ -294,11 +306,16 @@ const GamePreview = () => {
     e.stopPropagation();
     
     const swipeDistance = touchStart - touchEnd;
-    const minSwipeDistance = 50;
+    const minSwipeDistance = 100;
 
     if (swipeDistance > minSwipeDistance) {
-      // Felfelé swipe
+      // Elég messzire húzta - következő kérdés
+      setIsTransitioning(true);
+      setSwipeOffset(0);
       nextQuestion();
+    } else {
+      // Vissza az eredeti pozícióba
+      setSwipeOffset(0);
     }
   };
 
@@ -622,11 +639,19 @@ const GamePreview = () => {
             </div>
 
             {/* Question Box - Hexagon Style */}
-            <div className={`mb-6 relative transition-all duration-500 ${
-              isTransitioning 
-                ? 'translate-y-[-100%] opacity-0 blur-sm' 
-                : 'translate-y-0 opacity-100 blur-0'
-            }`}>
+            <div 
+              className="mb-6 relative transition-all"
+              style={{
+                transform: isTransitioning 
+                  ? 'translateY(-100%)' 
+                  : `translateY(-${swipeOffset}px)`,
+                opacity: isTransitioning 
+                  ? 0 
+                  : Math.max(0, 1 - (swipeOffset / 150)),
+                filter: `blur(${Math.min(swipeOffset / 50, 4)}px)`,
+                transitionDuration: swipeOffset > 0 ? '0ms' : '300ms'
+              }}
+            >
               <div className="bg-[#0B1130] border-2 border-[#3A4260] rounded-2xl p-4 sm:p-6 clip-hexagon-box shadow-hexagon">
                 <div className="flex items-start gap-2 sm:gap-3">
                   <div className="bg-gradient-to-r from-[#1C72FF] to-[#00FFCC] text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base">
@@ -666,11 +691,19 @@ const GamePreview = () => {
 
 
             {/* Answer Buttons - Hexagon Style */}
-            <div className={`space-y-3 sm:space-y-4 mb-6 transition-all duration-500 ${
-              isTransitioning 
-                ? 'translate-y-[-100%] opacity-0 blur-sm' 
-                : 'translate-y-0 opacity-100 blur-0'
-            }`}>
+            <div 
+              className="space-y-3 sm:space-y-4 mb-6 transition-all"
+              style={{
+                transform: isTransitioning 
+                  ? 'translateY(-100%)' 
+                  : `translateY(-${swipeOffset}px)`,
+                opacity: isTransitioning 
+                  ? 0 
+                  : Math.max(0, 1 - (swipeOffset / 150)),
+                filter: `blur(${Math.min(swipeOffset / 50, 4)}px)`,
+                transitionDuration: swipeOffset > 0 ? '0ms' : '300ms'
+              }}
+            >
               {currentQ.shuffledAnswers.map((answer, index) => {
                 if (removedOption === index) return null;
                 
