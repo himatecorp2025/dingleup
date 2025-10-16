@@ -28,11 +28,20 @@ const Hero = () => {
       {/* Content */}
       <div className="container mx-auto px-4 z-10 text-center">
         <div className="animate-fade-in">
-          <img 
-            src={logo} 
-            alt="Dingle UP! Logo" 
-            className="w-48 h-48 mx-auto mb-8 animate-glow"
-          />
+          <div className="relative w-48 h-48 mx-auto mb-8">
+            {/* Golden rays behind logo */}
+            <div className="absolute inset-0 animate-glow">
+              <div className="absolute inset-0 rounded-full bg-gradient-radial from-accent/40 via-accent/20 to-transparent blur-2xl"></div>
+              <div className="absolute inset-[-20%] rounded-full border-4 border-accent/30 animate-pulse"></div>
+            </div>
+            {/* Logo with transparent background */}
+            <img 
+              src={logo} 
+              alt="Dingle UP! Logo" 
+              className="relative w-full h-full object-contain drop-shadow-2xl"
+              style={{ mixBlendMode: 'normal' }}
+            />
+          </div>
           
           <div className="inline-flex items-center gap-2 bg-accent/20 backdrop-blur-sm border border-accent/30 rounded-full px-6 py-2 mb-6">
             <Sparkles className="w-4 h-4 text-accent" />

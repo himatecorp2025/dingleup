@@ -31,11 +31,66 @@ const questions: Question[] = [
     question: "Melyik országban található a Stonehenge?",
     options: ["Írország", "Skócia", "Anglia"],
     correctAnswer: 2
+  },
+  {
+    question: "Ki festette a Mona Lisát?",
+    options: ["Michelangelo", "Leonardo da Vinci", "Raphael"],
+    correctAnswer: 1
+  },
+  {
+    question: "Melyik bolygó a legnagyobb a Naprendszerben?",
+    options: ["Szaturnusz", "Jupiter", "Neptunusz"],
+    correctAnswer: 1
+  },
+  {
+    question: "Hány éves volt Mozart, amikor meghalt?",
+    options: ["35", "40", "45"],
+    correctAnswer: 0
+  },
+  {
+    question: "Melyik évben fedezte fel Kolumbusz Amerikát?",
+    options: ["1492", "1500", "1485"],
+    correctAnswer: 0
+  },
+  {
+    question: "Mi a fény sebessége?",
+    options: ["300 000 km/s", "150 000 km/s", "450 000 km/s"],
+    correctAnswer: 0
+  },
+  {
+    question: "Hány csont van az emberi testben?",
+    options: ["186", "206", "226"],
+    correctAnswer: 1
+  },
+  {
+    question: "Ki írta a Rómeó és Júliát?",
+    options: ["Charles Dickens", "William Shakespeare", "Jane Austen"],
+    correctAnswer: 1
+  },
+  {
+    question: "Melyik a legnagyobb óceán a Földön?",
+    options: ["Atlanti-óceán", "Indiai-óceán", "Csendes-óceán"],
+    correctAnswer: 2
+  },
+  {
+    question: "Hány kontinens van a Földön?",
+    options: ["5", "6", "7"],
+    correctAnswer: 2
+  },
+  {
+    question: "Ki volt az első ember az űrben?",
+    options: ["Neil Armstrong", "Jurij Gagarin", "Buzz Aldrin"],
+    correctAnswer: 1
+  },
+  {
+    question: "Melyik elem vegyjele az Au?",
+    options: ["Ezüst", "Arany", "Alumínium"],
+    correctAnswer: 1
   }
 ];
 
 const GamePreview = () => {
-  const [gameState, setGameState] = useState<'idle' | 'playing' | 'finished'>('idle');
+  const [gameState, setGameState] = useState<'idle' | 'playing' | 'finished' | 'lost'>('idle');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -105,15 +160,13 @@ const GamePreview = () => {
     });
 
     setTimeout(() => {
-      if (lives - 1 > 0) {
-        if (currentQuestion < questions.length - 1) {
-          setCurrentQuestion(prev => prev + 1);
-          setTimeLeft(10);
-          setSelectedAnswer(null);
-          setAvailableOptions([0, 1, 2]);
-        } else {
-          setGameState('finished');
-        }
+      if (lives - 1 <= 0) {
+        setGameState('lost');
+      } else if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(prev => prev + 1);
+        setTimeLeft(10);
+        setSelectedAnswer(null);
+        setAvailableOptions([0, 1, 2]);
       } else {
         setGameState('finished');
       }
@@ -123,7 +176,8 @@ const GamePreview = () => {
   const useHalve = () => {
     if (usedHelpers.halve || selectedAnswer !== null) return;
     if (gold < 15) {
-      toast.error("Nincs elég aranyad!");
+      toast.error("Nincs elég aranyad! A játék véget ért.");
+      setTimeout(() => setGameState('lost'), 1500);
       return;
     }
 
@@ -143,7 +197,8 @@ const GamePreview = () => {
   const useDoubleAnswer = () => {
     if (usedHelpers.doubleAnswer || selectedAnswer !== null) return;
     if (gold < 20) {
-      toast.error("Nincs elég aranyad!");
+      toast.error("Nincs elég aranyad! A játék véget ért.");
+      setTimeout(() => setGameState('lost'), 1500);
       return;
     }
 
@@ -158,7 +213,8 @@ const GamePreview = () => {
   const useAudience = () => {
     if (usedHelpers.audience || selectedAnswer !== null) return;
     if (gold < 30) {
-      toast.error("Nincs elég aranyad!");
+      toast.error("Nincs elég aranyad! A játék véget ért.");
+      setTimeout(() => setGameState('lost'), 1500);
       return;
     }
 
@@ -197,6 +253,55 @@ const GamePreview = () => {
     );
   }
 
+  if (gameState === 'lost') {
+    return (
+      <section className="py-24 px-4 bg-gradient-to-b from-background to-muted/20">
+        <div className="container mx-auto">
+          <div className="max-w-2xl mx-auto text-center animate-fade-in">
+            <div className="w-64 h-64 mx-auto mb-8 flex items-center justify-center text-9xl animate-float">
+              ❓
+            </div>
+            <h2 className="text-5xl font-bold mb-4 font-poppins text-destructive">
+              Vesztettél!
+            </h2>
+            <p className="text-2xl text-foreground mb-8">
+              {lives <= 0 ? "Elfogytak az életeid!" : "Elfogy az aranyad!"}
+            </p>
+
+            <div className="grid grid-cols-3 gap-4 mb-8">
+              <Card className="bg-gradient-card border-destructive/30 p-6">
+                <div className="text-3xl font-bold text-destructive mb-2">{correctAnswers}/{questions.length}</div>
+                <div className="text-sm text-muted-foreground">Helyes válasz</div>
+              </Card>
+              <Card className="bg-gradient-card border-destructive/30 p-6">
+                <div className="text-3xl font-bold text-destructive mb-2">{gold}</div>
+                <div className="text-sm text-muted-foreground">Összegyűjtött arany</div>
+              </Card>
+              <Card className="bg-gradient-card border-destructive/30 p-6">
+                <div className="text-3xl font-bold text-destructive mb-2">{lives}</div>
+                <div className="text-sm text-muted-foreground">Maradt élet</div>
+              </Card>
+            </div>
+
+            <div className="bg-accent/20 border border-accent rounded-lg p-6 mb-6 max-w-md mx-auto">
+              <p className="text-accent font-semibold mb-2">Folytasd a játékot!</p>
+              <p className="text-sm text-muted-foreground">Szerezz bónusz életeket és próbáld újra!</p>
+            </div>
+
+            <Button 
+              onClick={startGame}
+              size="lg"
+              className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow"
+            >
+              <Repeat className="mr-2 w-5 h-5" />
+              Újraindítás 1 élettel
+            </Button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (gameState === 'finished') {
     return (
       <section className="py-24 px-4 bg-gradient-to-b from-background to-muted/20">
@@ -207,26 +312,31 @@ const GamePreview = () => {
               alt="Trophy" 
               className="w-64 h-64 mx-auto mb-8 animate-float"
             />
-            <h2 className="text-5xl font-bold mb-4 font-poppins text-accent">
-              Gratulálunk!
+            <h2 className="text-5xl font-bold mb-4 font-poppins text-green-500">
+              Gratulálunk, nyertél!
             </h2>
             <p className="text-2xl text-foreground mb-8">
-              Játék vége!
+              Teljesítetted a játékot!
             </p>
 
             <div className="grid grid-cols-3 gap-4 mb-8">
-              <Card className="bg-gradient-card border-accent/30 p-6">
-                <div className="text-3xl font-bold text-accent mb-2">{correctAnswers}/{questions.length}</div>
+              <Card className="bg-gradient-card border-green-500/30 p-6">
+                <div className="text-3xl font-bold text-green-500 mb-2">{correctAnswers}/{questions.length}</div>
                 <div className="text-sm text-muted-foreground">Helyes válasz</div>
               </Card>
-              <Card className="bg-gradient-card border-accent/30 p-6">
-                <div className="text-3xl font-bold text-accent mb-2">{gold}</div>
+              <Card className="bg-gradient-card border-green-500/30 p-6">
+                <div className="text-3xl font-bold text-green-500 mb-2">{gold}</div>
                 <div className="text-sm text-muted-foreground">Összegyűjtött arany</div>
               </Card>
-              <Card className="bg-gradient-card border-accent/30 p-6">
-                <div className="text-3xl font-bold text-accent mb-2">{lives}</div>
+              <Card className="bg-gradient-card border-green-500/30 p-6">
+                <div className="text-3xl font-bold text-green-500 mb-2">{lives}</div>
                 <div className="text-sm text-muted-foreground">Maradt élet</div>
               </Card>
+            </div>
+
+            <div className="bg-accent/20 border border-accent rounded-lg p-6 mb-6 max-w-md mx-auto">
+              <p className="text-accent font-semibold mb-2">Ha még játszani szeretnél, görgess lejjebb!</p>
+              <p className="text-sm text-muted-foreground">Nyugalomban, vissza a főoldalra</p>
             </div>
 
             <Button 
@@ -288,11 +398,11 @@ const GamePreview = () => {
           </div>
 
           {/* Question Card */}
-          <Card className="bg-gradient-card border-primary/30 p-8 mb-6 animate-fade-in">
-            <div className="bg-primary/20 border border-primary/30 rounded-xl p-6 mb-6">
+          <Card className="bg-primary/10 border-primary/50 p-8 mb-6 animate-fade-in shadow-lg">
+            <div className="bg-gradient-to-r from-primary/30 to-accent/30 border-2 border-primary/50 rounded-2xl p-6 mb-6 shadow-glow">
               <div className="flex items-start gap-3">
-                <HelpCircle className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
-                <h3 className="text-xl font-semibold">
+                <HelpCircle className="w-7 h-7 text-accent flex-shrink-0 mt-1 animate-pulse" />
+                <h3 className="text-xl md:text-2xl font-bold text-foreground">
                   {question.question}
                 </h3>
               </div>
@@ -318,12 +428,12 @@ const GamePreview = () => {
                 const isCorrect = index === question.correctAnswer;
                 const showResult = selectedAnswer !== null;
 
-                let buttonClass = 'bg-muted/30 border-border hover:border-accent/50 hover:bg-muted/50';
+                let buttonClass = 'bg-gradient-to-r from-muted/40 to-muted/20 border-2 border-muted hover:border-accent/70 hover:from-accent/20 hover:to-accent/10 hover:scale-[1.02] shadow-md';
                 if (showResult) {
                   if (isCorrect) {
-                    buttonClass = 'bg-green-500/20 border-green-500 text-green-500 font-semibold';
+                    buttonClass = 'bg-gradient-to-r from-green-500/30 to-green-600/20 border-2 border-green-500 text-green-400 font-bold shadow-lg shadow-green-500/50';
                   } else if (isSelected) {
-                    buttonClass = 'bg-destructive/20 border-destructive text-destructive font-semibold';
+                    buttonClass = 'bg-gradient-to-r from-destructive/30 to-destructive/20 border-2 border-destructive text-destructive font-bold shadow-lg shadow-destructive/50';
                   }
                 }
 
@@ -332,12 +442,15 @@ const GamePreview = () => {
                     key={index}
                     onClick={() => handleAnswer(index)}
                     disabled={selectedAnswer !== null}
-                    className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-300 ${buttonClass}`}
+                    className={`w-full text-left p-5 rounded-2xl transition-all duration-300 ${buttonClass}`}
                   >
                     <div className="flex items-center justify-between">
-                      <span>{String.fromCharCode(65 + index)}: {option}</span>
-                      {showResult && isCorrect && <CheckCircle2 className="w-5 h-5" />}
-                      {showResult && !isCorrect && isSelected && <X className="w-5 h-5" />}
+                      <span className="text-lg font-semibold">
+                        <span className="text-accent mr-3">{String.fromCharCode(65 + index)}:</span>
+                        {option}
+                      </span>
+                      {showResult && isCorrect && <CheckCircle2 className="w-6 h-6 animate-bounce" />}
+                      {showResult && !isCorrect && isSelected && <X className="w-6 h-6" />}
                     </div>
                   </button>
                 );
