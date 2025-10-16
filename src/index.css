@@ -110,7 +110,7 @@ All colors MUST be HSL.
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease-out;
-  box-shadow: 0 0 15px rgba(0, 255, 102, 0.3), 0 4px 12px hsl(0 0% 0% / 0.5);
+  box-shadow: 0 0 20px rgba(0, 255, 102, 0.4), 0 4px 12px hsl(0 0% 0% / 0.5);
   flex-shrink: 0;
   touch-action: manipulation;
   min-width: 44px;
@@ -172,7 +172,7 @@ All colors MUST be HSL.
 }
 
 .clip-hexagon-box {
-  clip-path: polygon(5% 0%, 95% 0%, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0% 90%, 0% 10%);
+  clip-path: none;
   padding: 1.25rem;
   min-height: 80px;
   display: flex;
@@ -190,7 +190,7 @@ All colors MUST be HSL.
 }
 
 .clip-hexagon-answer {
-  clip-path: polygon(3% 0%, 97% 0%, 100% 50%, 97% 100%, 3% 100%, 0% 50%);
+  clip-path: none;
   padding: 0.875rem 1rem;
   min-height: 60px;
   display: flex;

@@ -543,8 +543,13 @@ const GamePreview = () => {
                 {timeLeft}
               </div>
               
-              <div className="flex items-center gap-2">
-                <span className="text-accent font-bold">🪙 {coins}</span>
+              <div className="flex flex-col items-end gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-accent font-bold text-lg">🪙 {coins}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-destructive font-bold text-base">❤️ × {lives}</span>
+                </div>
               </div>
             </div>
 
@@ -598,7 +603,7 @@ const GamePreview = () => {
                     key={index}
                     onClick={() => handleAnswer(index)}
                     disabled={selectedAnswer !== null && !hasDoubleAnswer}
-                    className={`w-full bg-[#0B1130] border-2 border-[#3A4260] rounded-2xl p-3 sm:p-4 text-left transition-all hover:border-[#00FFCC]/70 disabled:opacity-50 clip-hexagon-answer shadow-hexagon min-h-[60px] touch-manipulation ${getButtonClasses(index)}`}
+                    className={`w-full bg-[#0B1130] border-2 border-[#3A4260] rounded-2xl p-3 sm:p-4 text-left transition-all hover:border-[#00FFCC]/50 disabled:opacity-50 clip-hexagon-answer shadow-hexagon min-h-[60px] touch-manipulation ${getButtonClasses(index)}`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3">
                       <span className="text-[#00FFCC] font-bold text-base sm:text-lg flex-shrink-0">
@@ -687,10 +692,9 @@ const GamePreview = () => {
               </button>
             </div>
 
-            {/* Progress & Lives */}
-            <div className="mt-6 flex justify-between items-center text-muted-foreground text-sm">
+            {/* Progress */}
+            <div className="mt-6 flex justify-center items-center text-muted-foreground text-sm">
               <span>Kérdés: {currentQuestion + 1}/15</span>
-              <span className="text-destructive font-bold">❤️ × {lives}</span>
             </div>
             </div>
           </div>
