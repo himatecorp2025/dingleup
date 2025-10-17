@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useDailyGift } from '@/hooks/useDailyGift';
+import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2 } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
+import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import logoImage from '@/assets/logo.png';
 
 const Dashboard = () => {
@@ -12,7 +14,9 @@ const Dashboard = () => {
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading } = useGameProfile(userId);
   const { canClaim, currentStreak, nextReward, claimDailyGift, checkDailyGift } = useDailyGift(userId);
+  const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus } = useWelcomeBonus(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
+  const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   const [currentRank, setCurrentRank] = useState<number>(1);
 
   // Helper function
@@ -47,6 +51,13 @@ const Dashboard = () => {
   }, [canClaim]);
 
   useEffect(() => {
+    if (canClaimWelcome) {
+      // Welcome bonus has priority over daily gift
+      setShowWelcomeBonus(true);
+    }
+  }, [canClaimWelcome]);
+
+  useEffect(() => {
     const fetchUserRank = async () => {
       if (!userId) return;
       
@@ -68,6 +79,16 @@ const Dashboard = () => {
     await claimDailyGift();
     await checkDailyGift();
     setShowDailyGift(false);
+  };
+
+  const handleClaimWelcomeBonus = async () => {
+    const success = await claimWelcomeBonus();
+    if (success) {
+      setShowWelcomeBonus(false);
+      // Reload profile to show updated coins and question swaps
+      window.location.reload();
+    }
+    return success;
   };
 
   if (loading) {
@@ -192,9 +213,16 @@ const Dashboard = () => {
         </button>
       </div>
 
+      {/* Welcome bonus dialog */}
+      <WelcomeBonusDialog
+        open={showWelcomeBonus}
+        onClaim={handleClaimWelcomeBonus}
+        claiming={claimingWelcome}
+      />
+
       {/* Daily gift dialog */}
       <DailyGiftDialog
-        open={showDailyGift}
+        open={showDailyGift && !showWelcomeBonus}
         onClose={() => setShowDailyGift(false)}
         onClaim={handleClaimDailyGift}
         currentStreak={currentStreak}
