@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
@@ -36,6 +36,9 @@ type RegisterForm = z.infer<typeof registerSchema>;
 const Register = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const invitationCode = searchParams.get('code') || '';
+  
   const [formData, setFormData] = useState<RegisterForm>({
     username: "",
     email: "",
@@ -47,6 +50,7 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [inviterCode, setInviterCode] = useState(invitationCode);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,9 +89,41 @@ const Register = () => {
       }
 
       if (authData.user) {
+        // Handle invitation if code exists
+        if (inviterCode) {
+          try {
+            // Find inviter by invitation code
+            const { data: inviterProfile } = await supabase
+              .from('profiles')
+              .select('id, coins')
+              .eq('invitation_code', inviterCode)
+              .single();
+
+            if (inviterProfile) {
+              // Create invitation record
+              await supabase.from('invitations').insert({
+                inviter_id: inviterProfile.id,
+                invited_user_id: authData.user.id,
+                invited_email: validated.email,
+                accepted: true,
+                accepted_at: new Date().toISOString(),
+                invitation_code: inviterCode
+              });
+
+              // Award 100 coins to inviter
+              await supabase
+                .from('profiles')
+                .update({ coins: inviterProfile.coins + 100 })
+                .eq('id', inviterProfile.id);
+            }
+          } catch (error) {
+            console.error('Error processing invitation:', error);
+          }
+        }
+
         toast({
           title: "Sikeres regisztráció!",
-          description: "Átirányítunk a játékhoz...",
+          description: inviterCode ? "Átirányítunk a játékhoz... A meghívód 100 aranyérmét kapott!" : "Átirányítunk a játékhoz...",
         });
         navigate("/registration-success");
       }
@@ -182,6 +218,21 @@ const Register = () => {
               {errors.email && (
                 <p className="text-sm text-destructive mt-1">{errors.email}</p>
               )}
+            </div>
+
+            <div>
+              <Label htmlFor="inviterCode">Meghívó kód (opcionális)</Label>
+              <Input
+                id="inviterCode"
+                type="text"
+                value={inviterCode}
+                onChange={(e) => setInviterCode(e.target.value.toUpperCase())}
+                placeholder="Pl: ABC12345"
+                disabled={isLoading}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Ha van meghívó kódod, itt add meg
+              </p>
             </div>
 
             <div>
