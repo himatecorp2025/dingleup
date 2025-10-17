@@ -204,14 +204,10 @@ const Dashboard = () => {
         {/* Booster Button */}
         <button
           onClick={() => navigate('/shop')}
-          className="w-full py-1 px-6 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-black font-black text-base rounded-2xl border-4 border-yellow-600 shadow-2xl shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:scale-105 transition-all"
+          className="w-full py-3 px-6 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-black font-black text-xl rounded-2xl border-4 border-yellow-600 shadow-2xl shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:scale-105 transition-all"
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
-          <div className="text-center">
-            <div className="text-base mb-0.5">BOOSTER</div>
-            <div className="text-[9px] font-bold">SZEREZZ TOVÁBBI 300 MÁSODPERC ELŐNYT!</div>
-            <div className="text-[8px] mt-0.5 opacity-80">Csak 349 Ft-ért!</div>
-          </div>
+          BOOSTER
         </button>
       </div>
 

@@ -104,9 +104,11 @@ const GamePreview = () => {
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
     
+    // Spend one life at game start
     const canPlay = await spendLife();
     if (!canPlay) {
       toast.error("Nincs elég életed a játékhoz!");
+      setGameState('category-select');
       return;
     }
 
@@ -194,6 +196,8 @@ const GamePreview = () => {
 
   const handleNextQuestion = () => {
     setShowScrollHint(false);
+    
+    // Decrease in-game lives (wrong answer penalty)
     setLivesInGame(prev => prev - 1);
     
     if (livesInGame - 1 === 0) {
@@ -219,9 +223,17 @@ const GamePreview = () => {
 
     setGameState('finished');
 
-    // Award coins
+    // Award coins and update profile immediately
     if (coinsEarned > 0) {
-      await updateProfile({ coins: profile.coins + coinsEarned });
+      const { error } = await supabase
+        .from('profiles')
+        .update({ coins: profile.coins + coinsEarned })
+        .eq('id', userId!);
+      
+      if (!error) {
+        // Force refetch profile to sync data
+        await updateProfile({ coins: profile.coins + coinsEarned });
+      }
     }
 
     // Calculate average response time
@@ -463,7 +475,7 @@ const GamePreview = () => {
                 </div>
                 <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-500/50">
                   <Coins className="w-4 h-4 text-yellow-500" />
-                  <span className="font-bold text-sm text-white">{profile.coins + coinsEarned}</span>
+                  <span className="font-bold text-sm text-white">{profile.coins}</span>
                 </div>
               </div>
             </div>
