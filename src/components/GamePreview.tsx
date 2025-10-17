@@ -620,25 +620,25 @@ const GamePreview = () => {
               </div>
             </div>
 
-            {/* Timer Circle - Centered & LARGER */}
-            <div className="flex justify-center mb-0.5">
+            {/* Timer Circle - NO gap below */}
+            <div className="flex justify-center mb-0">
               <div className="scale-125">
                 <TimerCircle timeLeft={timeLeft} />
               </div>
             </div>
           </div>
 
-          {/* Main content area - NO SCROLL, fixed height, VERY CLOSE to timer */}
-          <div className="flex-1 w-full px-2 flex flex-col justify-center overflow-hidden">
-            <div className="w-full space-y-0.5">
+          {/* Main content - ZERO spacing between elements */}
+          <div className="flex-1 w-full px-2 flex flex-col justify-center overflow-hidden -mt-2">
+            <div className="w-full space-y-0">
               
-              {/* Question - LARGER box with BIGGER text */}
-              <div className="clip-hexagon-box relative z-10 py-5">
+              {/* Question - touches timer */}
+              <div className="clip-hexagon-box relative z-10 py-5 -mt-1">
                 <h2 className="text-base md:text-xl font-bold text-white text-center leading-tight line-clamp-3 px-3">{currentQuestion.question}</h2>
               </div>
 
-              {/* Answers - LARGER with BIGGER text, VERY CLOSE spacing */}
-              <div className="grid grid-cols-1 gap-0.5 relative z-10">
+              {/* Answers - touch each other and question */}
+              <div className="grid grid-cols-1 gap-0 relative z-10 -mt-1">
                 {currentQuestion.answers.map((answer, index) => {
                   const isRemoved = removedAnswers.includes(answer);
                   const isSelected = selectedAnswer === answer;

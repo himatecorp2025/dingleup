@@ -285,7 +285,7 @@ All colors MUST be HSL.
   justify-content: center;
   word-break: break-word;
   overflow: hidden;
-  margin: 4px auto;
+  margin: 0 auto;
   position: relative;
   background: #000000;
   border: 3px solid rgba(59, 130, 246, 0.8);
@@ -310,7 +310,7 @@ All colors MUST be HSL.
   display: flex;
   align-items: center;
   word-break: break-word;
-  margin: 3px 0;
+  margin: 0;
   position: relative;
   background: #000000;
   border: 3px solid rgba(59, 130, 246, 0.8);
