@@ -184,6 +184,44 @@ export type Database = {
         }
         Relationships: []
       }
+      user_boosters: {
+        Row: {
+          activated: boolean
+          activated_at: string | null
+          booster_type: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          activated?: boolean
+          activated_at?: string | null
+          booster_type: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          activated?: boolean
+          activated_at?: string | null
+          booster_type?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_boosters_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       weekly_rankings: {
         Row: {
           average_response_time: number | null
