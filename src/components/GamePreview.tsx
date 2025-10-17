@@ -533,8 +533,8 @@ const GamePreview = () => {
       <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
         <div className="h-full w-full flex flex-col p-4">
           {/* Header */}
-          <div className="flex-none w-full mb-6">
-            <div className="flex items-center justify-between">
+          <div className="flex-none w-full mb-4">
+            <div className="flex items-center justify-between mb-3">
               {/* Level hexagon */}
               <div 
                 className="bg-gradient-to-br from-blue-600 to-purple-600 border-2 border-blue-400 w-16 h-16 flex items-center justify-center"
@@ -567,6 +567,74 @@ const GamePreview = () => {
                 </div>
               </div>
             </div>
+
+            {/* Notification panel - below timer, compact horizontal bar */}
+            {(showSkipPanel || showContinuePanel || showScrollHint) && (
+              <div className="w-full h-16 flex items-center justify-center animate-fade-in">
+                {/* Skip panel */}
+                {showSkipPanel && !selectedAnswer && (
+                  <div className="w-full bg-yellow-600/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-yellow-400 shadow-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-white font-bold text-sm">Kérdés átugrása</span>
+                        <span className="text-white/90 text-xl font-black">
+                          {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-white/70 text-xs">
+                        <ChevronDown className="w-4 h-4 animate-bounce" />
+                        <span>Görgess le</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Continue panel */}
+                {showContinuePanel && (
+                  <div className="w-full bg-gradient-to-r from-red-600/95 to-red-700/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-red-400 shadow-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-white font-bold text-sm">
+                          {continueType === 'timeout' ? '⏰ Lejárt!' : '❌ Rossz!'}
+                        </span>
+                        <span className="text-yellow-400 font-black text-xl">
+                          {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs">
+                        <div className="flex items-center gap-1 text-green-300">
+                          <ChevronDown className="w-4 h-4 animate-bounce" />
+                          <span className="text-white">Le=Fizet</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-red-300">
+                          <div className="rotate-180"><ChevronDown className="w-4 h-4" /></div>
+                          <span className="text-white/70">Fel=Hiba</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Scroll hint for correct answer */}
+                {showScrollHint && !showContinuePanel && selectedAnswer && answerFlash === 'correct' && (
+                  <div className="w-full bg-gradient-to-r from-green-600/95 to-green-500/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-green-400 shadow-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">🎉</span>
+                        <div>
+                          <span className="text-white font-bold text-sm">Helyes válasz!</span>
+                          <span className="text-green-200 text-xs ml-2">+{getCoinsForQuestion(currentQuestionIndex)} 🪙</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-white/80 text-xs">
+                        <ChevronDown className="w-4 h-4 animate-bounce" />
+                        <span>Következő</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Question and answers - with flash effect overlay */}
@@ -609,67 +677,6 @@ const GamePreview = () => {
               })}
             </div>
 
-            {/* Skip panel - after 5 seconds */}
-            {showSkipPanel && !selectedAnswer && (
-              <div className="fixed bottom-20 left-0 right-0 flex justify-center z-20 animate-fade-in">
-                <div className="bg-yellow-600/95 backdrop-blur-sm rounded-2xl px-6 py-4 border-2 border-yellow-400 shadow-2xl text-center transform hover:scale-105 transition-transform">
-                  <p className="text-white font-bold text-lg mb-2">Kérdés átugrása</p>
-                  <p className="text-white/90 text-2xl font-black mb-3">
-                    {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
-                  </p>
-                  <div className="flex items-center gap-2 text-white/70 text-xs justify-center">
-                    <ChevronDown className="w-4 h-4 animate-bounce" />
-                    <span>Görgess le a jóváhagyáshoz</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Continue panel - after wrong/timeout */}
-            {showContinuePanel && (
-              <div className="fixed bottom-20 left-0 right-0 flex justify-center z-20 animate-scale-in">
-                <div className="bg-gradient-to-br from-red-600/95 to-red-700/95 backdrop-blur-sm rounded-2xl px-6 py-4 border-2 border-red-400 shadow-2xl text-center max-w-sm">
-                  <p className="text-white font-bold text-xl mb-2">
-                    {continueType === 'timeout' ? '⏰ Lejárt az idő!' : '❌ Rossz válasz!'}
-                  </p>
-                  <p className="text-white/80 text-sm mb-1">Folytatás költsége:</p>
-                  <p className="text-yellow-400 font-black text-3xl mb-4 animate-pulse">
-                    {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
-                  </p>
-                  <div className="flex flex-col gap-2 bg-black/20 rounded-xl p-3">
-                    <div className="flex items-center gap-2 text-white text-sm justify-center">
-                      <ChevronDown className="w-5 h-5 animate-bounce text-green-300" />
-                      <span className="font-bold">Görgess le → Fizetek & Folytatom</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-white/70 text-sm justify-center">
-                      <div className="rotate-180">
-                        <ChevronDown className="w-5 h-5 text-red-300" />
-                      </div>
-                      <span>Görgess fel → Elutasítom (hiba +1)</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Scroll hint for correct answer */}
-            {showScrollHint && !showContinuePanel && selectedAnswer && answerFlash === 'correct' && (
-              <div className="fixed bottom-20 left-0 right-0 flex flex-col items-center gap-3 z-20 animate-fade-in">
-                <div className="bg-gradient-to-r from-green-600/95 to-green-500/95 backdrop-blur-sm rounded-2xl px-8 py-4 border-2 border-green-400 shadow-2xl">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">🎉</span>
-                    <div>
-                      <p className="text-white font-black text-lg">Helyes válasz!</p>
-                      <p className="text-green-200 text-sm">+{getCoinsForQuestion(currentQuestionIndex)} 🪙</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-white/80 text-xs justify-center mt-3">
-                    <ChevronDown className="w-5 h-5 animate-bounce" />
-                    <span>Görgess a következő kérdéshez</span>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Lifelines with enhanced styling */}
             <div className="flex justify-center gap-3 mb-4">
