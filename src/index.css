@@ -155,6 +155,52 @@ All colors MUST be HSL.
   box-shadow: var(--shadow-glow);
 }
 
+/* Hexagon Buttons - SMALL for compact layout */
+.hexagon-button-small {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(180deg, #0B1130 0%, #070F26 100%);
+  border: 2px solid #3A4260;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  box-shadow: 0 0 20px rgba(0, 255, 102, 0.4), 0 4px 12px hsl(0 0% 0% / 0.5);
+  flex-shrink: 0;
+  touch-action: manipulation;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.hexagon-button-small:hover:not(:disabled) {
+  transform: scale(1.05);
+  border-color: #00FF66;
+}
+
+.hexagon-button-small:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.hexagon-button-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.hexagon-content-small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-weight: bold;
+  text-align: center;
+  font-size: 0.65rem;
+}
+
 /* Hexagon Buttons - Dark Blue-Purple Theme */
 .hexagon-button {
   position: relative;

@@ -573,47 +573,49 @@ const GamePreview = () => {
         ref={scrollContainerRef}
         className="h-screen w-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] overflow-hidden fixed inset-0"
       >
-        <div className="h-full w-full md:max-w-4xl md:mx-auto flex flex-col">
-          {/* Header */}
-          <div className="flex-none w-full">
-            <div className="flex items-center justify-between p-4">
+        <div className="h-full w-full flex flex-col">
+          {/* Header - compact */}
+          <div className="flex-none w-full px-2 py-1.5">
+            <div className="flex items-center justify-between">
               <Button onClick={() => {
                 stopMusic();
                 setGameState('category-select');
-              }} variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
+              }} variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                <ArrowLeft className="w-3 h-3 mr-1" />
                 Kilépés
               </Button>
               
-              <div className="flex items-center gap-2 md:gap-4">
-                <div className="flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-white/20">
-                  <Heart className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
-                  <span className="font-bold text-sm md:text-base">{profile.lives}</span>
+              <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 border border-white/20">
+                  <Heart className="w-3 h-3 text-red-500" />
+                  <span className="font-bold text-xs">{profile.lives}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-white/20">
-                  <Coins className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
-                  <span className="font-bold text-sm md:text-base">{profile.coins + coinsEarned}</span>
+                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 border border-white/20">
+                  <Coins className="w-3 h-3 text-yellow-500" />
+                  <span className="font-bold text-xs">{profile.coins + coinsEarned}</span>
                 </div>
               </div>
             </div>
 
-            {/* Timer Circle - Centered */}
-            <div className="flex justify-center mb-2">
-              <TimerCircle timeLeft={timeLeft} />
+            {/* Timer Circle - Centered & Compact */}
+            <div className="flex justify-center mt-1">
+              <div className="scale-75">
+                <TimerCircle timeLeft={timeLeft} />
+              </div>
             </div>
           </div>
 
-          {/* Main content area - scrollable within fixed viewport */}
-          <div className="flex-1 w-full px-2 overflow-y-auto relative">
-            <div className="w-full md:max-w-4xl md:mx-auto space-y-3 pb-4">
+          {/* Main content area - NO SCROLL, fixed height */}
+          <div className="flex-1 w-full px-2 flex flex-col justify-center overflow-hidden">
+            <div className="w-full space-y-2">
               
-              {/* Question - wider box */}
-              <div className="clip-hexagon-box relative z-10">
-                <h2 className="text-sm md:text-base font-bold text-white text-center leading-tight line-clamp-3">{currentQuestion.question}</h2>
+              {/* Question - compact box */}
+              <div className="clip-hexagon-box relative z-10 py-2">
+                <h2 className="text-xs md:text-sm font-bold text-white text-center leading-tight line-clamp-3 px-2">{currentQuestion.question}</h2>
               </div>
 
-              {/* Answers - lower z-index */}
-              <div className="grid grid-cols-1 gap-3 md:gap-4 relative z-10">
+              {/* Answers - compact */}
+              <div className="grid grid-cols-1 gap-1.5 relative z-10">
                 {currentQuestion.answers.map((answer, index) => {
                   const isRemoved = removedAnswers.includes(answer);
                   const isSelected = selectedAnswer === answer;
@@ -630,7 +632,7 @@ const GamePreview = () => {
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
-                        clip-hexagon-answer transition-all touch-manipulation
+                        clip-hexagon-answer transition-all touch-manipulation py-2
                         ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : ''}
                         ${showResult && isCorrect ? '!border-green-500 !bg-green-600' : ''}
                         ${showResult && selectedAnswer === '__wrong__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
@@ -639,13 +641,13 @@ const GamePreview = () => {
                         disabled:opacity-50
                       `}
                     >
-                      <div className="flex items-center justify-center gap-3 w-full">
-                        <span className="font-bold text-white text-base md:text-lg">{prefix}</span>
-                        <span className="font-medium text-white text-base md:text-lg">{answer}</span>
+                      <div className="flex items-center justify-center gap-2 w-full">
+                        <span className="font-bold text-white text-xs md:text-sm">{prefix}</span>
+                        <span className="font-medium text-white text-xs md:text-sm line-clamp-2">{answer}</span>
                       </div>
                       {audienceVotes[answer] && (
-                        <div className="mt-2 text-xs md:text-sm text-white/70">
-                          <Users className="w-3 h-3 md:w-4 md:h-4 inline mr-1" />
+                        <div className="mt-1 text-[10px] text-white/70">
+                          <Users className="w-2.5 h-2.5 inline mr-1" />
                           {audienceVotes[answer]}%
                         </div>
                       )}
@@ -654,88 +656,90 @@ const GamePreview = () => {
                 })}
               </div>
 
-              {/* Scroll hint - show after answer */}
+              {/* Scroll hint - compact, INLINE not overlay */}
               {selectedAnswer && showScrollHint && gameState === 'playing' && (
-                <div className="flex flex-col items-center gap-4 mt-6 p-4 bg-blue-600/20 rounded-xl border border-blue-600">
+                <div className="flex flex-col items-center gap-2 p-2 bg-blue-600/20 rounded-xl border border-blue-600 relative z-10">
                   {selectedAnswer === '__wrong__' ? (
                     <>
-                      <p className="text-red-400 text-center font-bold text-xl">❌ Rossz válasz!</p>
-                      <p className="text-white text-center font-bold text-lg">
-                        Görgess LE a továbbjutáshoz (50 🪙)
+                      <p className="text-red-400 text-center font-bold text-sm">❌ Rossz válasz!</p>
+                      <p className="text-white text-center font-bold text-xs">
+                        Görgess LE (50 🪙) vagy FEL (befejezés)
                       </p>
-                      <ChevronDown className="w-10 h-10 text-green-400 animate-bounce" />
-                      <p className="text-white/70 text-sm text-center">
-                        vagy görgess FEL a befejezéshez
-                      </p>
-                      <div className="rotate-180">
-                        <ChevronDown className="w-10 h-10 text-red-400 animate-bounce" />
+                      <div className="flex gap-4">
+                        <div className="rotate-180">
+                          <ChevronDown className="w-6 h-6 text-green-400 animate-bounce" />
+                        </div>
+                        <ChevronDown className="w-6 h-6 text-red-400 animate-bounce" />
                       </div>
                     </>
                   ) : (
                     <>
-                      <p className="text-green-400 text-center font-bold text-xl">✅ Helyes válasz!</p>
-                      <p className="text-white text-center font-bold text-lg">
+                      <p className="text-green-400 text-center font-bold text-sm">✅ Helyes válasz!</p>
+                      <p className="text-white text-center font-bold text-xs">
                         Görgess LE a következő kérdéshez
                       </p>
-                      <ChevronDown className="w-10 h-10 text-blue-400 animate-bounce" />
+                      <ChevronDown className="w-6 h-6 text-blue-400 animate-bounce" />
                     </>
                   )}
                 </div>
               )}
+            </div>
+          </div>
 
-              {/* Helps - Hexagon buttons */}
-              <div className="flex justify-center gap-3 md:gap-4 mt-4 pb-2 flex-wrap">
-                <button
-                  onClick={useHelp5050}
-                  disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
-                  className="hexagon-button relative"
-                  title="Harmadoló - 1 hibás válasz eltávolítása"
-                >
-                  <div className="hexagon-content">
-                    <span className="text-lg font-bold">1/3</span>
+          {/* Helps - Compact hexagon buttons at bottom */}
+          <div className="flex-none w-full pb-2">
+            <div className="flex justify-center gap-2 flex-wrap">
+              <button
+                onClick={useHelp5050}
+                disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
+                className="hexagon-button-small relative"
+                title="Harmadoló - 1 hibás válasz eltávolítása"
+              >
+                <div className="hexagon-content-small">
+                  <span className="text-sm font-bold">1/3</span>
+                </div>
+                {!profile.help_50_50_active && (
+                  <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1 py-0.5 text-[8px] font-bold">
+                    <ArrowLeftRight className="w-2.5 h-2.5" />
+                    <span>15</span>
+                    <Coins className="w-2.5 h-2.5" />
                   </div>
-                  {!profile.help_50_50_active && (
-                    <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
-                      <ArrowLeftRight className="w-3 h-3" />
-                      <span>15</span>
-                      <Coins className="w-3 h-3" />
-                    </div>
-                  )}
-                </button>
-                <button
-                  onClick={useHelp2xAnswer}
-                  disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
-                  className="hexagon-button relative"
-                  title="2× válasz - Két választ jelölhetsz meg"
-                >
-                  <div className="hexagon-content">
-                    <span className="text-lg font-bold">2X</span>
+                )}
+              </button>
+              <button
+                onClick={useHelp2xAnswer}
+                disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
+                className="hexagon-button-small relative"
+                title="2× válasz - Két választ jelölhetsz meg"
+              >
+                <div className="hexagon-content-small">
+                  <span className="text-sm font-bold">2X</span>
+                </div>
+                {!profile.help_2x_answer_active && (
+                  <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1 py-0.5 text-[8px] font-bold">
+                    <ArrowLeftRight className="w-2.5 h-2.5" />
+                    <span>20</span>
+                    <Coins className="w-2.5 h-2.5" />
                   </div>
-                  {!profile.help_2x_answer_active && (
-                    <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
-                      <ArrowLeftRight className="w-3 h-3" />
-                      <span>20</span>
-                      <Coins className="w-3 h-3" />
-                    </div>
-                  )}
-                </button>
-                <button
-                  onClick={useHelpAudience}
-                  disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
-                  className="hexagon-button relative"
-                  title="Közönség segítsége - Százalékos szavazatok"
-                >
-                  <div className="hexagon-content">
-                    <Users className="w-5 h-5" />
+                )}
+              </button>
+              <button
+                onClick={useHelpAudience}
+                disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
+                className="hexagon-button-small relative"
+                title="Közönség segítsége - Százalékos szavazatok"
+              >
+                <div className="hexagon-content-small">
+                  <Users className="w-4 h-4" />
+                </div>
+                {!profile.help_audience_active && (
+                  <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1 py-0.5 text-[8px] font-bold">
+                    <ArrowLeftRight className="w-2.5 h-2.5" />
+                    <span>30</span>
+                    <Coins className="w-2.5 h-2.5" />
                   </div>
-                  {!profile.help_audience_active && (
-                    <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
-                      <ArrowLeftRight className="w-3 h-3" />
-                      <span>30</span>
-                      <Coins className="w-3 h-3" />
-                    </div>
-                  )}
-                </button>
+                )}
+              </button>
             </div>
           </div>
         </div>
@@ -848,7 +852,6 @@ const GamePreview = () => {
             </div>
           </div>
         )}
-      </div>
       </div>
     );
   }
