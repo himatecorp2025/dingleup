@@ -204,18 +204,9 @@ const GamePreview = () => {
     const reward = getCoinsForQuestion(currentQuestionIndex);
     setCoinsEarned(coinsEarned + reward);
     
-    // Update coins immediately in profile with animation
+    // Update coins immediately in profile
     if (profile) {
       await updateProfile({ coins: profile.coins + reward });
-      toast.success(`+${reward} 🪙`, {
-        duration: 2000,
-        style: {
-          background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-          color: '#000',
-          fontWeight: 'bold',
-          fontSize: '1.2rem'
-        }
-      });
     }
     
     // Show scroll hint for next question
