@@ -122,6 +122,9 @@ export default {
         'gradient-gold': 'var(--gradient-gold)',
         'gradient-card': 'var(--gradient-card)',
       },
+      spacing: {
+        'safe': 'env(safe-area-inset-bottom)',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
