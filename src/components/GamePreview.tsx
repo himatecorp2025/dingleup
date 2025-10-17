@@ -629,7 +629,7 @@ const GamePreview = () => {
           </div>
 
             {/* Kérdés + Válaszok + Értesítések + Segítségek - 2px gap */}
-            <div className="flex-1 flex flex-col overflow-y-auto space-y-0.5 w-[85vw] mx-auto">
+            <div className="flex-1 flex flex-col overflow-y-auto space-y-0.5 w-[95vw] mx-auto">
               
               {/* Kérdés */}
               <div className="clip-hexagon-box py-4">
