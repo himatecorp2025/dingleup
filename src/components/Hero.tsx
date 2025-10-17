@@ -33,7 +33,7 @@ const Hero = () => {
           backgroundPosition: 'center',
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-blue-800/20 to-background"></div>
       </div>
 
       <div className="absolute inset-0 z-0 overflow-hidden">

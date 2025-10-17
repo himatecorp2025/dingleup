@@ -94,7 +94,6 @@ const Dashboard = () => {
           {/* Left: Greeting */}
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-black text-white">Szia, {profile.username}!</h1>
-            <Crown className="w-6 h-6 text-yellow-500" />
           </div>
 
           {/* Right: Stats & Avatar */}
@@ -163,7 +162,7 @@ const Dashboard = () => {
 
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <div className="relative w-64 h-64">
+          <div className="relative w-48 h-48">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full blur-3xl"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl" />
           </div>
@@ -172,23 +171,23 @@ const Dashboard = () => {
         {/* Play Button */}
         <button
           onClick={() => navigate('/game')}
-          className="w-full py-5 px-8 mb-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-2xl rounded-2xl border-4 border-green-400 shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 hover:scale-105 transition-all animate-pulse-glow-green"
+          className="w-full py-3 px-6 mb-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-xl rounded-2xl border-4 border-green-400 shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 hover:scale-105 transition-all animate-pulse-glow-green"
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
-          <Play className="inline w-8 h-8 mr-3" />
+          <Play className="inline w-6 h-6 mr-3" />
           PLAY NOW
         </button>
 
         {/* Booster Button */}
         <button
           onClick={() => navigate('/shop')}
-          className="w-full py-4 px-6 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-black font-black text-lg rounded-2xl border-4 border-yellow-600 shadow-2xl shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:scale-105 transition-all"
+          className="w-full py-2 px-6 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-black font-black text-base rounded-2xl border-4 border-yellow-600 shadow-2xl shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:scale-105 transition-all"
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
           <div className="text-center">
-            <div className="text-2xl mb-1">BOOSTER</div>
-            <div className="text-xs font-bold">SZEREZZ TOVÁBBI 300 MÁSODPERC ELŐNYT!</div>
-            <div className="text-[10px] mt-1 opacity-80">Csak 349 Ft-ért!</div>
+            <div className="text-lg mb-0.5">BOOSTER</div>
+            <div className="text-[10px] font-bold">SZEREZZ TOVÁBBI 300 MÁSODPERC ELŐNYT!</div>
+            <div className="text-[9px] mt-0.5 opacity-80">Csak 349 Ft-ért!</div>
           </div>
         </button>
       </div>
