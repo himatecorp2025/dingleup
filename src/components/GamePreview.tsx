@@ -11,6 +11,9 @@ import CategorySelector from "./CategorySelector";
 import { HexagonButton } from "./HexagonButton";
 import { TimerCircle } from "./TimerCircle";
 import { GameStateScreen } from "./GameStateScreen";
+import { MillionaireQuestion } from "./MillionaireQuestion";
+import { MillionaireAnswer } from "./MillionaireAnswer";
+import { MillionaireBanner } from "./MillionaireBanner";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -596,235 +599,142 @@ const GamePreview = () => {
         ref={scrollContainerRef}
         className="h-screen w-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] overflow-hidden fixed inset-0"
       >
-        <div className="h-full w-full flex flex-col">
-          {/* Header - compact */}
-          <div className="flex-none w-full px-2 py-1.5">
-            <div className="flex items-center justify-between">
-              <Button onClick={() => {
-                stopMusic();
-                setGameState('category-select');
-              }} variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                <ArrowLeft className="w-3 h-3 mr-1" />
-                Kilépés
-              </Button>
-              
-              <div className="flex items-center gap-1.5">
-                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 border border-white/20">
-                  <Heart className="w-3 h-3 text-red-500" />
-                  <span className="font-bold text-xs">{profile.lives}</span>
-                </div>
-                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5 border border-white/20">
-                  <Coins className="w-3 h-3 text-yellow-500" />
-                  <span className="font-bold text-xs">{profile.coins + coinsEarned}</span>
+        <div className="h-full w-full flex flex-col p-4">
+          {/* Header */}
+          <div className="flex-none w-full mb-4">
+            <div className="flex items-center justify-between mb-4">
+              {/* Bal felül: profil/szint hexagon */}
+              <div 
+                className="bg-gradient-to-br from-blue-600 to-purple-600 border-2 border-blue-400 w-16 h-16 flex items-center justify-center"
+                style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
+              >
+                <div className="text-center">
+                  <div className="text-xs font-bold text-white">Szint</div>
+                  <div className="text-lg font-black text-yellow-400">{currentQuestionIndex + 1}</div>
                 </div>
               </div>
-            </div>
 
-            {/* Timer Circle + Notification Hexagon */}
-            <div className="flex justify-center items-center mb-0 relative">
-              {/* Animated notification hexagon - slides in from right */}
-              {(timeLeft <= 5 || gameState === 'awaiting-timeout' || (selectedAnswer && showScrollHint && gameState === 'playing')) && (
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 animate-slide-in-right z-20">
-                  <div className="relative w-[22vw] flex items-center justify-center" style={{ aspectRatio: '2/1' }}>
-                    {/* Border hexagon wrapper */}
-                    <div className="absolute inset-0 clip-path-hexagon-notification bg-purple-300"></div>
-                    {/* Inner background hexagon */}
-                    <div className="absolute inset-[2px] bg-gradient-to-br from-purple-600/95 to-purple-900/95 clip-path-hexagon-notification shadow-xl shadow-purple-500/60"></div>
-                    <div className="relative z-10 text-center px-1.5 py-1">
-                      {timeLeft <= 5 && gameState === 'playing' && !selectedAnswer ? (
-                        <span className="text-yellow-100 font-bold text-[9px] drop-shadow-lg leading-tight block">
-                          Skip<br/>{skipCost}🪙
-                        </span>
-                      ) : gameState === 'awaiting-timeout' ? (
-                        <span className="text-orange-100 font-bold text-[8px] drop-shadow-lg leading-tight block">
-                          Idő lejárt!<br/>150🪙 folytatás
-                        </span>
-                      ) : selectedAnswer === '__wrong__' ? (
-                        <span className="text-red-100 font-bold text-[8px] drop-shadow-lg leading-tight block">
-                          ❌ Rossz!<br/>50🪙 tovább
-                        </span>
-                      ) : (
-                        <span className="text-green-100 font-bold text-[9px] drop-shadow-lg leading-tight block">
-                          ✅ Helyes!<br/>Görgess
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              <div className="scale-125">
+              {/* Középen: Timer */}
+              <div className="flex-shrink-0">
                 <TimerCircle timeLeft={timeLeft} />
               </div>
+
+              {/* Jobb felül: Életek és érmék */}
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-red-500/50">
+                  <Heart className="w-4 h-4 text-red-500" />
+                  <span className="font-bold text-sm text-white">{profile.lives}</span>
+                </div>
+                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-500/50">
+                  <Coins className="w-4 h-4 text-yellow-500" />
+                  <span className="font-bold text-sm text-white">{profile.coins + coinsEarned}</span>
+                </div>
+              </div>
             </div>
+
+            {/* Pénzösszeg banner */}
+            <MillionaireBanner>1,000,000 $</MillionaireBanner>
           </div>
 
-            {/* Kérdés + Válaszok + Értesítések + Segítségek - 2px gap */}
-            <div className="flex-1 flex flex-col overflow-y-auto space-y-0.5 w-[95vw] mx-auto">
-              
-              {/* Kérdés */}
-              <div className="relative py-4">
-                {/* Border wrapper */}
-                <div className="absolute inset-0 clip-hexagon-box bg-purple-400"></div>
-                {/* Inner background */}
-                <div className="absolute inset-[2px] clip-hexagon-box bg-gradient-to-br from-blue-900/80 to-purple-900/80"></div>
-                <h2 className="relative z-10 text-base md:text-lg font-bold text-white text-center leading-tight line-clamp-3 px-2">{currentQuestion.question}</h2>
-              </div>
+          {/* Kérdés és válaszok */}
+          <div className="flex-1 flex flex-col overflow-y-auto px-2">
+            {/* Kérdés */}
+            <MillionaireQuestion>{currentQuestion.question}</MillionaireQuestion>
 
-              {/* Válaszok - 2px gap */}
-              <div className="space-y-0.5">
-                {currentQuestion.answers.map((answer, index) => {
-                  const isRemoved = removedAnswers.includes(answer);
-                  const isSelected = selectedAnswer === answer;
-                  const isCorrect = answer === currentQuestion.correct;
-                  const showResult = selectedAnswer !== null;
-                  const isFirstAttempt = firstAttempt === answer;
-                  const prefix = ['A:', 'B:', 'C:', 'D:'][index];
+            {/* Válaszok - csak 3 db */}
+            <div className="space-y-3 mb-4">
+              {currentQuestion.answers.slice(0, 3).map((answer, index) => {
+                const letters: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
+                const letter = letters[index];
+                const isRemoved = removedAnswers.includes(answer);
+                const isSelected = selectedAnswer === answer;
+                const isCorrect = answer === currentQuestion.correct;
+                const showResult = selectedAnswer !== null;
+                const isWrong = showResult && (selectedAnswer === '__wrong__' || selectedAnswer === '__timeout__') && isSelected;
 
-                  if (isRemoved) return null;
-
-                  return (
-                    <button
-                      key={answer}
-                      onClick={() => handleAnswer(answer)}
-                      disabled={selectedAnswer !== null && !usedHelp2xAnswer}
-                      className="relative transition-all touch-manipulation py-4 disabled:opacity-50"
-                    >
-                      {/* Border wrapper - változó színekkel */}
-                      <div className={`
-                        absolute inset-0 clip-hexagon-answer transition-colors
-                        ${isFirstAttempt && !showResult ? 'bg-orange-500' : ''}
-                        ${showResult && isCorrect ? 'bg-green-500' : ''}
-                        ${showResult && (selectedAnswer === '__wrong__' || selectedAnswer === '__timeout__') && !isCorrect ? 'bg-red-500' : ''}
-                        ${!showResult && !isFirstAttempt ? 'bg-purple-400' : ''}
-                      `}></div>
-                      
-                      {/* Inner background - változó színekkel */}
-                      <div className={`
-                        absolute inset-[2px] clip-hexagon-answer transition-colors
-                        ${isFirstAttempt && !showResult ? 'bg-orange-500/10' : ''}
-                        ${showResult && isCorrect ? 'bg-green-600' : ''}
-                        ${showResult && (selectedAnswer === '__wrong__' || selectedAnswer === '__timeout__') && !isCorrect ? 'bg-red-600' : ''}
-                        ${!showResult && !isFirstAttempt ? 'bg-black/60 hover:bg-blue-500/10' : ''}
-                      `}></div>
-                      
-                      <div className="relative z-10 flex items-center justify-center gap-2.5 w-full">
-                        <span className="font-bold text-white text-sm md:text-base">{prefix}</span>
-                        <span className="font-medium text-white text-sm md:text-base line-clamp-2">{answer}</span>
-                      </div>
-                      {audienceVotes[answer] && (
-                        <div className="relative z-10 mt-1 text-[10px] text-white/70">
-                          <Users className="w-2.5 h-2.5 inline mr-1" />
-                          {audienceVotes[answer]}%
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                return (
+                  <MillionaireAnswer
+                    key={answer}
+                    letter={letter}
+                    onClick={() => handleAnswer(answer)}
+                    isSelected={isSelected && !showResult}
+                    isCorrect={showResult && isCorrect}
+                    isWrong={isWrong}
+                    disabled={selectedAnswer !== null}
+                    isRemoved={isRemoved}
+                  >
+                    {answer}
+                    {audienceVotes[answer] && (
+                      <span className="ml-2 text-xs">
+                        <Users className="w-3 h-3 inline mr-1" />
+                        {audienceVotes[answer]}%
+                      </span>
+                    )}
+                  </MillionaireAnswer>
+                );
+              })}
+            </div>
 
 
-              {/* Segítségek - 2px gap */}
-              <div className="flex justify-center gap-1.5 py-1">
+            {/* Segítségek */}
+            <div className="flex justify-center gap-3 mb-4">
               <button
                 onClick={useHelp5050}
                 disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
-                className="hexagon-button relative"
-                title="Harmadoló - 1 hibás válasz eltávolítása"
+                className="relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 disabled:opacity-40 hover:scale-110 transition-transform"
+                style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                title="Harmadoló"
               >
-                <div className="hexagon-content">
-                  <span className="text-base font-bold">1/3</span>
-                </div>
-                {!profile.help_50_50_active && (
-                  <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1 py-0.5 text-[8px] font-bold">
-                    <ArrowLeftRight className="w-2.5 h-2.5" />
-                    <span>15</span>
-                    <Coins className="w-2.5 h-2.5" />
-                  </div>
-                )}
+                <span className="text-white font-black text-lg">1/3</span>
               </button>
               <button
                 onClick={useHelp2xAnswer}
                 disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
-                className="hexagon-button relative"
-                title="2× válasz - Két választ jelölhetsz meg"
+                className="relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 disabled:opacity-40 hover:scale-110 transition-transform"
+                style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                title="2X válasz"
               >
-                <div className="hexagon-content">
-                  <span className="text-base font-bold">2X</span>
-                </div>
-                {!profile.help_2x_answer_active && (
-                  <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1 py-0.5 text-[8px] font-bold">
-                    <ArrowLeftRight className="w-2.5 h-2.5" />
-                    <span>20</span>
-                    <Coins className="w-2.5 h-2.5" />
-                  </div>
-                )}
+                <span className="text-white font-black text-lg">2X</span>
               </button>
               <button
                 onClick={useHelpAudience}
                 disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
-                className="hexagon-button relative"
-                title="Közönség segítsége - Százalékos szavazatok"
+                className="relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 disabled:opacity-40 hover:scale-110 transition-transform"
+                style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                title="Közönség"
               >
-                <div className="hexagon-content">
-                  <Users className="w-5 h-5" />
-                </div>
-                {!profile.help_audience_active && (
-                  <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1 py-0.5 text-[8px] font-bold">
-                    <ArrowLeftRight className="w-2.5 h-2.5" />
-                    <span>30</span>
-                    <Coins className="w-2.5 h-2.5" />
-                  </div>
-                )}
+                <Users className="w-6 h-6 text-white" />
               </button>
             </div>
           </div>
-        </div>
 
-        {/* FIX ALSÓ MENÜ - 4 hexagon */}
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a1a] via-[#0f0f2a]/95 to-transparent backdrop-blur-sm border-t border-white/10 z-50">
-          <div className="flex justify-evenly items-center py-2 px-2">
-            <button
-              onClick={() => navigate('/')}
-              className="hexagon-button-small relative"
-              title="Dashboard"
-            >
-              <div className="hexagon-content-small">
-                <Home className="w-4 h-4" />
-              </div>
-            </button>
-            <button
-              onClick={() => {/* TODO: Ranglista */}}
-              className="hexagon-button-small relative"
-              title="Ranglista"
-            >
-              <div className="hexagon-content-small">
-                <Trophy className="w-4 h-4" />
-              </div>
-            </button>
-            <button
-              onClick={() => {/* TODO: Profil */}}
-              className="hexagon-button-small relative"
-              title="Profil"
-            >
-              <div className="hexagon-content-small">
-                <User className="w-4 h-4" />
-              </div>
-            </button>
-            <button
+          {/* Alsó menü */}
+          <div className="flex-none flex justify-center gap-4 pb-2">
+            <Button
               onClick={() => {
                 stopMusic();
                 navigate('/');
               }}
-              className="hexagon-button-small relative"
-              title="Kilépés"
+              variant="ghost"
+              size="sm"
+              className="text-white/70 hover:text-white"
             >
-              <div className="hexagon-content-small">
-                <LogOut className="w-4 h-4" />
-              </div>
-            </button>
+              <Home className="w-5 h-5" />
+            </Button>
+            <Button
+              onClick={() => {
+                stopMusic();
+                setGameState('category-select');
+              }}
+              variant="ghost"
+              size="sm"
+              className="text-white/70 hover:text-white"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
           </div>
         </div>
+
 
         {/* TIMEOUT OVERLAY */}
         {gameState === 'awaiting-timeout' && (
