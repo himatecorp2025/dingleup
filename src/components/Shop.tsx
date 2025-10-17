@@ -4,6 +4,8 @@ import { Button } from './ui/button';
 import { Heart, Zap, HelpCircle, Users, Eye, ShoppingCart, Coins } from 'lucide-react';
 import { toast } from 'sonner';
 import { useGameProfile } from '@/hooks/useGameProfile';
+import { useUserBoosters } from '@/hooks/useUserBoosters';
+import { SPEED_BOOSTERS } from '@/types/game';
 
 interface ShopProps {
   userId: string;
@@ -21,6 +23,7 @@ interface ShopItem {
 
 const Shop = ({ userId }: ShopProps) => {
   const { profile, updateProfile, spendCoins } = useGameProfile(userId);
+  const { purchaseBooster } = useUserBoosters(userId);
   const [loading, setLoading] = useState<string | null>(null);
 
   if (!profile) return null;
@@ -82,6 +85,19 @@ const Shop = ({ userId }: ShopProps) => {
     setLoading(null);
   };
 
+  const buyBooster = async (boosterType: 'DoubleSpeed' | 'MegaSpeed' | 'GigaSpeed' | 'DingleSpeed') => {
+    setLoading(boosterType);
+    const booster = SPEED_BOOSTERS.find(b => b.name === boosterType);
+    if (!booster) return;
+    
+    const success = await spendCoins(booster.price);
+    if (success) {
+      await purchaseBooster(boosterType);
+      toast.success(`${booster.name} booster vásárolva!`);
+    }
+    setLoading(null);
+  };
+
   const shopItems: ShopItem[] = [
     {
       id: 'life',
@@ -91,15 +107,6 @@ const Shop = ({ userId }: ShopProps) => {
       icon: Heart,
       action: buyLife,
       disabled: profile.lives >= profile.max_lives
-    },
-    {
-      id: 'speed',
-      name: 'Speed Booster',
-      description: '24 órás 2x gyorsabb életregeneráció',
-      price: 150,
-      icon: Zap,
-      action: buySpeedBooster,
-      disabled: profile.speed_booster_active
     },
     {
       id: 'help5050',
@@ -130,80 +137,157 @@ const Shop = ({ userId }: ShopProps) => {
     }
   ];
 
+  const boosterItems: ShopItem[] = SPEED_BOOSTERS.map(booster => ({
+    id: booster.name,
+    name: booster.name,
+    description: `${booster.multiplier}x gyorsítás, +${booster.lives_gained} élet`,
+    price: booster.price,
+    icon: Zap,
+    action: () => buyBooster(booster.name as any)
+  }));
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <ShoppingCart className="w-6 h-6 text-primary" />
-          Bolt
-        </CardTitle>
-        <CardDescription>
-          Vásárolj extra életeket és segítségeket aranyérméért
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-6 bg-accent/50 rounded-xl p-4 text-center">
-          <p className="text-sm text-muted-foreground mb-1">Egyenleged</p>
-          <p className="text-3xl font-bold text-primary flex items-center justify-center gap-2">
-            <Coins className="w-8 h-8" />
-            {profile.coins}
-          </p>
-        </div>
+    <div className="space-y-6">
+      {/* Balance Card */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="bg-accent/50 rounded-xl p-4 text-center">
+            <p className="text-sm text-muted-foreground mb-1">Egyenleged</p>
+            <p className="text-3xl font-bold text-primary flex items-center justify-center gap-2">
+              <Coins className="w-8 h-8" />
+              {profile.coins}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {shopItems.map((item) => {
-            const Icon = item.icon;
-            const isLoading = loading === item.id;
-            const canAfford = profile.coins >= item.price;
-            
-            return (
-              <div
-                key={item.id}
-                className={`
-                  border-2 rounded-xl p-4 transition-all
-                  ${item.disabled ? 'border-border/30 bg-muted/30 opacity-50' : 'border-border/50 hover:border-primary/50'}
-                `}
-              >
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Icon className="w-6 h-6 text-primary" />
+      {/* Boosters Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="w-6 h-6 text-yellow-500" />
+            Boosterek
+          </CardTitle>
+          <CardDescription>
+            Vásárolj boostereket aranyérméért - aktiváld őket a játék előtt!
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {boosterItems.map((item) => {
+              const Icon = item.icon;
+              const isLoading = loading === item.id;
+              const canAfford = profile.coins >= item.price;
+              
+              return (
+                <div
+                  key={item.id}
+                  className="border-2 rounded-xl p-4 transition-all border-border/50 hover:border-yellow-500/50"
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="p-2 rounded-lg bg-yellow-500/10">
+                      <Icon className="w-6 h-6 text-yellow-500" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold mb-1">{item.name}</h4>
+                      <p className="text-sm text-muted-foreground">{item.description}</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold mb-1">{item.name}</h4>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
+
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-lg flex items-center gap-1">
+                      <Coins className="w-5 h-5" />
+                      {item.price}
+                    </span>
+                    <Button
+                      onClick={item.action}
+                      disabled={!canAfford || isLoading}
+                      size="sm"
+                      className="bg-yellow-600 hover:bg-yellow-700"
+                    >
+                      {isLoading ? 'Vásárlás...' : 'Vásárlás'}
+                    </Button>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-lg flex items-center gap-1">
-                    <Coins className="w-5 h-5" />
-                    {item.price}
-                  </span>
-                  <Button
-                    onClick={item.action}
-                    disabled={item.disabled || !canAfford || isLoading}
-                    size="sm"
-                  >
-                    {isLoading ? 'Vásárlás...' : 'Vásárlás'}
-                  </Button>
+                  {!canAfford && (
+                    <p className="text-xs text-red-500 mt-2">
+                      Nincs elég aranyérméd
+                    </p>
+                  )}
                 </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
-                {item.disabled && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Már aktív vagy maximális szinten
-                  </p>
-                )}
-                {!canAfford && !item.disabled && (
-                  <p className="text-xs text-red-500 mt-2">
-                    Nincs elég aranyérméd
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </CardContent>
-    </Card>
+      {/* Shop Items Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ShoppingCart className="w-6 h-6 text-primary" />
+            Bolt
+          </CardTitle>
+          <CardDescription>
+            Vásárolj extra életeket és segítségeket aranyérméért
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {shopItems.map((item) => {
+              const Icon = item.icon;
+              const isLoading = loading === item.id;
+              const canAfford = profile.coins >= item.price;
+              
+              return (
+                <div
+                  key={item.id}
+                  className={`
+                    border-2 rounded-xl p-4 transition-all
+                    ${item.disabled ? 'border-border/30 bg-muted/30 opacity-50' : 'border-border/50 hover:border-primary/50'}
+                  `}
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold mb-1">{item.name}</h4>
+                      <p className="text-sm text-muted-foreground">{item.description}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-lg flex items-center gap-1">
+                      <Coins className="w-5 h-5" />
+                      {item.price}
+                    </span>
+                    <Button
+                      onClick={item.action}
+                      disabled={item.disabled || !canAfford || isLoading}
+                      size="sm"
+                    >
+                      {isLoading ? 'Vásárlás...' : 'Vásárlás'}
+                    </Button>
+                  </div>
+
+                  {item.disabled && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Már aktív vagy maximális szinten
+                    </p>
+                  )}
+                  {!canAfford && !item.disabled && (
+                    <p className="text-xs text-red-500 mt-2">
+                      Nincs elég aranyérméd
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

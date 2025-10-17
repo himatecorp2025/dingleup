@@ -2,8 +2,9 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
+import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Camera, Heart, Coins, Trophy, Calendar } from 'lucide-react';
+import { ArrowLeft, Camera, Heart, Coins, Trophy, Calendar, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import BottomNav from '@/components/BottomNav';
 
@@ -11,8 +12,11 @@ const Profile = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading, updateProfile } = useGameProfile(userId);
+  const { boosters, getBoosterCounts } = useUserBoosters(userId);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const boosterCounts = getBoosterCounts();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -151,6 +155,33 @@ const Profile = () => {
             <Trophy className="w-8 h-8 text-purple-500 mx-auto mb-2" />
             <p className="text-sm text-white/70 mb-1">Meghívó kód</p>
             <p className="text-lg font-black text-white">{profile.invitation_code}</p>
+          </div>
+        </div>
+
+        {/* Booster Inventory */}
+        <div className="bg-black/60 border-2 border-yellow-500/30 rounded-2xl p-6 backdrop-blur-sm mb-6">
+          <h2 className="text-xl font-black text-white mb-4 flex items-center gap-2">
+            <Zap className="w-6 h-6 text-yellow-500" />
+            Booster készletem
+          </h2>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-center">
+              <p className="text-sm text-yellow-300 mb-1">DoubleSpeed</p>
+              <p className="text-2xl font-black text-yellow-500">{boosterCounts.DoubleSpeed || 0}</p>
+            </div>
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-center">
+              <p className="text-sm text-yellow-300 mb-1">MegaSpeed</p>
+              <p className="text-2xl font-black text-yellow-500">{boosterCounts.MegaSpeed || 0}</p>
+            </div>
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-center">
+              <p className="text-sm text-yellow-300 mb-1">GigaSpeed</p>
+              <p className="text-2xl font-black text-yellow-500">{boosterCounts.GigaSpeed || 0}</p>
+            </div>
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-center">
+              <p className="text-sm text-yellow-300 mb-1">DingleSpeed</p>
+              <p className="text-2xl font-black text-yellow-500">{boosterCounts.DingleSpeed || 0}</p>
+            </div>
           </div>
         </div>
 
