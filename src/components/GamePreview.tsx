@@ -534,13 +534,13 @@ const handleAnswer = (answerIndex: number) => {
     
     // Ha van végleges válasz, mutassuk a helyes választ zölden és a rosszat pirosan
     if (selectedAnswer !== null) {
-      if (isCorrect) return "!bg-[#00FF66] !border-[#00FF66] !text-black animate-pulse-green";
-      if (isSelected && !isCorrect) return "!bg-[#FF3040] !border-[#FF3040] !text-white animate-shake animate-pulse-red";
+      if (isCorrect) return "!bg-[#00FF66] !border-black !border-2 !text-white animate-pulse-green";
+      if (isSelected && !isCorrect) return "!bg-[#FF3040] !border-black !border-2 !text-stone-100 animate-shake animate-pulse-red";
       return "";
     }
     
     // Dupla válasz esetén az első hibás próbálkozás
-    if (isFirstAttempt && !isCorrect) return "!bg-[#FF3040] !border-[#FF3040] !text-white animate-shake";
+    if (isFirstAttempt && !isCorrect) return "!bg-[#FF3040] !border-black !border-2 !text-stone-100 animate-shake";
     
     return "";
   };
