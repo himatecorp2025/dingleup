@@ -46,6 +46,7 @@ export interface UserProfile {
   daily_gift_streak: number;
   daily_gift_last_claimed: string | null;
   invitation_code: string;
+  avatar_url: string | null;
   created_at: string;
   updated_at: string;
 }

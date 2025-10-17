@@ -111,6 +111,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           coins: number | null
           created_at: string | null
           daily_gift_last_claimed: string | null
@@ -132,6 +133,7 @@ export type Database = {
           username: string
         }
         Insert: {
+          avatar_url?: string | null
           coins?: number | null
           created_at?: string | null
           daily_gift_last_claimed?: string | null
@@ -153,6 +155,7 @@ export type Database = {
           username: string
         }
         Update: {
+          avatar_url?: string | null
           coins?: number | null
           created_at?: string | null
           daily_gift_last_claimed?: string | null

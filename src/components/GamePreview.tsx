@@ -623,12 +623,12 @@ const GamePreview = () => {
             {/* Timer Circle + Notification Hexagon */}
             <div className="flex justify-center items-center mb-0 relative">
               {/* Animated notification hexagon - slides in from right */}
-              {(gameState === 'awaiting-skip' || gameState === 'awaiting-timeout' || (selectedAnswer && showScrollHint && gameState === 'playing')) && (
+              {(timeLeft <= 5 || gameState === 'awaiting-timeout' || (selectedAnswer && showScrollHint && gameState === 'playing')) && (
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 animate-slide-in-right z-20">
                   <div className="relative w-[22vw] flex items-center justify-center" style={{ aspectRatio: '2/1' }}>
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-600/95 to-purple-900/95 clip-path-hexagon-notification border-2 border-purple-300 shadow-xl shadow-purple-500/60"></div>
                     <div className="relative z-10 text-center px-1.5 py-1">
-                      {gameState === 'awaiting-skip' ? (
+                      {timeLeft <= 5 && gameState === 'playing' && !selectedAnswer ? (
                         <span className="text-yellow-100 font-bold text-[9px] drop-shadow-lg leading-tight block">
                           Skip<br/>{skipCost}🪙
                         </span>

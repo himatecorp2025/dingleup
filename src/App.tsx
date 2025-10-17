@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Game from "./pages/Game";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import ShopPage from "./pages/ShopPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import RegistrationSuccess from "./pages/RegistrationSuccess";
@@ -22,6 +24,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/shop" element={<ShopPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registration-success" element={<RegistrationSuccess />} />

@@ -25,6 +25,28 @@ const WeeklyRankings = () => {
 
   useEffect(() => {
     fetchRankings();
+
+    // Set up realtime subscription
+    const weekStart = getWeekStart();
+    const channel = supabase
+      .channel('weekly_rankings_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'weekly_rankings',
+          filter: `week_start=eq.${weekStart}`
+        },
+        () => {
+          fetchRankings();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchRankings = async () => {
