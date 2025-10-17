@@ -147,12 +147,15 @@ const GamePreview = () => {
     try {
       if (!audioRef.current) {
         audioRef.current = new Audio(gameMusic);
-        audioRef.current.loop = true;
-        audioRef.current.volume = 0.3; // 30% volume
       }
+      
+      // Mindig beállítjuk a loop-ot és a hangerőt
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.3; // 30% volume
+      
       // Csak akkor játszuk le, ha már volt user interaction (localStorage check)
       const musicEnabled = localStorage.getItem('musicEnabled');
-      if (musicEnabled) {
+      if (musicEnabled && audioRef.current.paused) {
         audioRef.current.play().catch(e => console.warn("Audio play failed", e));
       }
     } catch (e) {
