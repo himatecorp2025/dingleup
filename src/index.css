@@ -277,9 +277,9 @@ All colors MUST be HSL.
 
 .clip-hexagon-box {
   clip-path: polygon(5% 50%, 10% 20%, 90% 20%, 95% 50%, 90% 80%, 10% 80%);
-  padding: 1.5rem 1rem;
-  min-height: 80px;
-  max-height: 120px;
+  padding: 2.25rem 1rem;
+  min-height: 120px;
+  max-height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -288,17 +288,17 @@ All colors MUST be HSL.
   margin: 0 auto;
   position: relative;
   background: #000000;
-  border: 3px solid hsl(var(--secondary));
-  box-shadow: 0 0 12px hsla(var(--secondary) / 0.4), inset 0 0 8px hsla(var(--secondary) / 0.15);
+  border: 4px solid #a855f7;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.6), inset 0 0 12px rgba(168, 85, 247, 0.2);
   width: 100%;
   max-width: 100%;
 }
 
 @media (min-width: 768px) {
   .clip-hexagon-box {
-    padding: 2rem 1.5rem;
-    min-height: 90px;
-    max-height: 130px;
+    padding: 3rem 1.5rem;
+    min-height: 135px;
+    max-height: 195px;
     width: 100%;
     max-width: 100%;
   }
@@ -306,16 +306,16 @@ All colors MUST be HSL.
 
 .clip-hexagon-answer {
   clip-path: polygon(5% 50%, 10% 20%, 90% 20%, 95% 50%, 90% 80%, 10% 80%);
-  padding: 1.25rem 1rem;
-  min-height: 68px;
+  padding: 1.875rem 1rem;
+  min-height: 102px;
   display: flex;
   align-items: center;
   word-break: break-word;
   margin: 0;
   position: relative;
   background: #000000;
-  border: 3px solid hsl(var(--secondary));
-  box-shadow: 0 0 10px hsla(var(--secondary) / 0.35), inset 0 0 6px hsla(var(--secondary) / 0.12);
+  border: 4px solid #a855f7;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.6), inset 0 0 12px rgba(168, 85, 247, 0.2);
   justify-content: center;
   width: 100%;
   max-width: 100%;
@@ -325,8 +325,8 @@ All colors MUST be HSL.
 
 @media (min-width: 768px) {
   .clip-hexagon-answer {
-    padding: 1.5rem 1.25rem;
-    min-height: 75px;
+    padding: 2.25rem 1.25rem;
+    min-height: 112px;
     max-width: 100%;
   }
 }
