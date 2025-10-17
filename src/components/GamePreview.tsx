@@ -271,6 +271,29 @@ const GamePreview = () => {
     toast.info('Közönség segítség használva');
   };
 
+  const skipQuestionDirectly = async () => {
+    if (!profile) return;
+    
+    // Calculate skip cost
+    let skipCost = 10;
+    if (currentQuestionIndex >= 5 && currentQuestionIndex < 10) {
+      skipCost = 20;
+    } else if (currentQuestionIndex >= 10) {
+      skipCost = 30;
+    }
+    
+    if (profile.coins < skipCost) {
+      toast.error(`Sajnos elfogyott az aranyérméd! (${skipCost} aranyérme szükséges)`);
+      return;
+    }
+    
+    const success = await spendCoins(skipCost);
+    if (success) {
+      toast.info(`Kérdés átugorva -${skipCost} aranyérme`);
+      handleNextQuestion();
+    }
+  };
+
   const initiateSkipQuestion = () => {
     if (!profile) return;
     
@@ -714,14 +737,14 @@ const GamePreview = () => {
                 </div>
               )}
 
-              {/* INLINE - Skip button when time is low */}
+              {/* INLINE - Skip button when time is low - DIRECT ACTION */}
               {timeLeft <= 5 && !selectedAnswer && gameState === 'playing' && (
                 <div className="w-full px-2 py-2 bg-gradient-to-r from-yellow-900/90 to-yellow-800/90 border-y-2 border-yellow-500 relative z-10">
                   <p className="text-yellow-300 text-center font-bold text-xs mb-1">
                     ⏱️ Kevés az idő!
                   </p>
                   <Button
-                    onClick={initiateSkipQuestion}
+                    onClick={skipQuestionDirectly}
                     size="sm"
                     className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold text-xs py-1"
                   >
