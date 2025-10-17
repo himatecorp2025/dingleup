@@ -36,7 +36,7 @@ const features = [
 
 const Features = () => {
   return (
-    <section className="py-24 px-4 relative">
+    <section id="features" className="py-24 px-4 relative">
       <div className="container mx-auto">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins">

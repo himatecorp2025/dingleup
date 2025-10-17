@@ -98,10 +98,17 @@ const Hero = () => {
               }}
               className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6"
             >
-              Játék indítása
+              Teszt játék indítása
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
-            <Button size="lg" variant="outline" className="border-accent/50 text-foreground hover:bg-accent/10 text-lg px-8 py-6">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-accent/50 text-foreground hover:bg-accent/10 text-lg px-8 py-6"
+              onClick={() => {
+                document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               Tudj meg többet
             </Button>
           </div>
