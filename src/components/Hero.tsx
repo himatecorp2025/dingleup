@@ -1,11 +1,27 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.jpg";
 import gameMusic from "@/assets/game-music.m4a";
 
 const Hero = () => {
+  // Előtöltjük az audio fájlt a komponens betöltésekor
+  useEffect(() => {
+    try {
+      const w = window as any;
+      if (!w.__bgm) {
+        const audio = new Audio(gameMusic);
+        audio.preload = 'auto';
+        audio.loop = true;
+        audio.volume = 0.3;
+        w.__bgm = audio;
+        // Betöltjük de nem játsszuk le
+        audio.load();
+      }
+    } catch {}
+  }, []);
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
@@ -66,14 +82,11 @@ const Hero = () => {
                   try {
                     localStorage.setItem('musicEnabled', 'true');
                     const w = window as any;
-                    if (!w.__bgm) {
-                      w.__bgm = new Audio(gameMusic);
-                    }
                     const audio: HTMLAudioElement = w.__bgm;
-                    audio.loop = true;
-                    audio.volume = 0.3;
-                    // Play immediately on user click
-                    audio.play().catch(() => {});
+                    if (audio) {
+                      // Az audio már be van töltve, azonnal játsszuk le
+                      audio.play().catch(() => {});
+                    }
                   } catch {}
                 }}
                 className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6"
