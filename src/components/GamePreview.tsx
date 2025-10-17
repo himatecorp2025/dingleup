@@ -740,17 +740,16 @@ const GamePreview = () => {
           </div>
         </div>
 
-        {/* OVERLAY Notifications - these cover everything */}
-        {/* Skip button overlay */}
+        {/* INLINE Skip button - shown when time is low, inline in game */}
         {timeLeft <= 5 && !selectedAnswer && gameState === 'playing' && (
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100]">
-            <div className="bg-gradient-to-br from-yellow-900/90 to-yellow-800/90 border-2 border-yellow-500 rounded-2xl p-6 max-w-md mx-4 shadow-2xl">
-              <p className="text-yellow-300 text-center font-bold text-xl mb-4">
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 z-50">
+            <div className="bg-gradient-to-br from-yellow-900/90 to-yellow-800/90 border-2 border-yellow-500 rounded-2xl p-4 shadow-2xl">
+              <p className="text-yellow-300 text-center font-bold text-sm mb-2">
                 ⏱️ Kevés az idő!
               </p>
               <Button
                 onClick={initiateSkipQuestion}
-                size="lg"
+                size="sm"
                 className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold"
               >
                 Kérdés átugrása ({skipCost} 🪙)
@@ -759,9 +758,9 @@ const GamePreview = () => {
           </div>
         )}
 
-        {/* Awaiting skip confirmation overlay */}
+        {/* OVERLAY - Awaiting skip confirmation - 50% transparent background */}
         {gameState === 'awaiting-skip' && (
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100]">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-[100]">
             <div className="bg-gradient-to-br from-yellow-900/95 to-yellow-800/95 border-3 border-yellow-500 rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
               <p className="text-yellow-400 text-center font-bold text-2xl mb-6">
                 Kérdés átugrása ({skipCost} 🪙)
@@ -782,9 +781,9 @@ const GamePreview = () => {
           </div>
         )}
 
-        {/* Awaiting timeout confirmation overlay */}
+        {/* OVERLAY - Awaiting timeout - 50% transparent background */}
         {gameState === 'awaiting-timeout' && (
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100]">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-[100]">
             <div className="bg-gradient-to-br from-orange-900/95 to-red-900/95 border-3 border-orange-500 rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
               <p className="text-orange-300 text-center font-bold text-3xl mb-2">
                 ⏰ Lejárt az idő!
@@ -808,9 +807,9 @@ const GamePreview = () => {
           </div>
         )}
 
-        {/* Scroll hint overlay - after answer */}
+        {/* OVERLAY - Scroll hint after answer - 50% transparent background */}
         {selectedAnswer && showScrollHint && gameState === 'playing' && (
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100]">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-[100]">
             <div className={`border-3 rounded-2xl p-8 max-w-md mx-4 shadow-2xl ${
               selectedAnswer === '__wrong__' 
                 ? 'bg-gradient-to-br from-red-900/95 to-red-800/95 border-red-500' 
