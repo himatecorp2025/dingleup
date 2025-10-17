@@ -534,13 +534,13 @@ const handleAnswer = (answerIndex: number) => {
     
     // Ha van végleges válasz, mutassuk a helyes választ zölden és a rosszat pirosan
     if (selectedAnswer !== null) {
-      if (isCorrect) return "!bg-[#00FF66] !border-black !border-2 !text-white animate-pulse-green";
-      if (isSelected && !isCorrect) return "!bg-[#FF3040] !border-black !border-2 !text-stone-100 animate-shake animate-pulse-red";
+      if (isCorrect) return "!bg-[#00FF66] !border-[#00FF66] animate-pulse-green [&_span]:!text-white [&_span]:![text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]";
+      if (isSelected && !isCorrect) return "!bg-[#FF3040] !border-[#FF3040] animate-shake animate-pulse-red [&_span]:!text-stone-100 [&_span]:![text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]";
       return "";
     }
     
     // Dupla válasz esetén az első hibás próbálkozás
-    if (isFirstAttempt && !isCorrect) return "!bg-[#FF3040] !border-black !border-2 !text-stone-100 animate-shake";
+    if (isFirstAttempt && !isCorrect) return "!bg-[#FF3040] !border-[#FF3040] animate-shake [&_span]:!text-stone-100 [&_span]:![text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]";
     
     return "";
   };
