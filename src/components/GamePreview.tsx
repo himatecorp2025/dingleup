@@ -17,7 +17,7 @@ import historyQuestions from "@/data/questions-history.json";
 import cultureQuestions from "@/data/questions-culture.json";
 import financeQuestions from "@/data/questions-finance.json";
 
-type GameState = 'category-select' | 'playing' | 'paused' | 'finished' | 'timeout' | 'lose' | 'win' | 'out-of-lives';
+type GameState = 'category-select' | 'playing' | 'paused' | 'finished' | 'lose' | 'out-of-lives';
 
 const QUESTION_BANKS = {
   health: healthQuestions,
@@ -76,7 +76,11 @@ const GamePreview = () => {
     const responseTime = (Date.now() - questionStartTime) / 1000;
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__timeout__');
-    setGameState('timeout');
+    
+    // Auto continue after showing result
+    setTimeout(() => {
+      handleNextQuestion();
+    }, 1500);
   };
 
   const startGameWithCategory = async (category: GameCategory) => {
@@ -147,13 +151,28 @@ const GamePreview = () => {
     const reward = calculateReward(currentQuestionIndex);
     setCoinsEarned(coinsEarned + reward);
     
-    setGameState('win');
+    // Auto continue after showing green result
+    setTimeout(() => {
+      handleNextQuestion();
+    }, 1500);
   };
 
-  const handleWrongAnswer = (responseTime: number) => {
+  const handleWrongAnswer = async (responseTime: number) => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__wrong__');
-    setGameState('lose');
+    
+    // Check if player has lives left
+    if (!profile) return;
+    
+    if (profile.lives <= 0) {
+      // No lives left - show game over screen
+      setGameState('out-of-lives');
+    } else {
+      // Has lives - auto continue after showing red result
+      setTimeout(() => {
+        handleNextQuestion();
+      }, 1500);
+    }
   };
 
   const calculateReward = (questionIndex: number): number => {
@@ -304,8 +323,8 @@ const GamePreview = () => {
     );
   }
 
-  // Game state overlays
-  if (gameState === 'timeout' || gameState === 'lose' || gameState === 'win' || gameState === 'out-of-lives') {
+  // Game state overlays - only for actual game over scenarios
+  if (gameState === 'lose' || gameState === 'out-of-lives') {
     return (
       <GameStateScreen 
         type={gameState}
@@ -373,11 +392,12 @@ const GamePreview = () => {
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
-                        clip-hexagon-answer bg-black border-2 text-left transition-all touch-manipulation
+                        clip-hexagon-answer border-2 text-left transition-all touch-manipulation
                         ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : 'border-blue-500/50'}
-                        ${showResult && isCorrect ? 'border-green-500 bg-green-500/20 animate-pulse-green' : ''}
-                        ${showResult && isSelected && !isCorrect ? 'border-red-500 bg-red-500/20 animate-pulse-red' : ''}
-                        ${!showResult ? 'hover:border-blue-400 hover:bg-blue-500/10 active:scale-95' : ''}
+                        ${showResult && isCorrect ? 'border-green-500 bg-green-600 animate-pulse-green' : ''}
+                        ${showResult && isSelected && !isCorrect ? 'border-red-500 bg-red-600 animate-pulse-red' : ''}
+                        ${showResult && !isCorrect && !isSelected ? 'bg-black' : ''}
+                        ${!showResult ? 'bg-black hover:border-blue-400 hover:bg-blue-500/10 active:scale-95' : ''}
                         disabled:opacity-50
                       `}
                     >

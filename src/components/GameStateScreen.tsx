@@ -1,7 +1,7 @@
 import { HexagonButton } from './HexagonButton';
 
 interface GameStateScreenProps {
-  type: 'timeout' | 'lose' | 'win' | 'out-of-lives';
+  type: 'lose' | 'out-of-lives';
   onContinue: () => void;
   onSkip?: () => void;
   characterImage?: string;
@@ -14,25 +14,9 @@ export const GameStateScreen = ({
   characterImage 
 }: GameStateScreenProps) => {
   const config = {
-    timeout: {
-      title: "Time's up!",
-      titleColor: 'text-red-600',
-      buttonText: 'Keep going, you get 2 bonus lives!',
-      buttonSubtext: undefined,
-      subtitle: 'Restarting with one life!',
-      emoji: '⏰'
-    },
     lose: {
       title: 'you lose!',
       titleColor: 'text-red-600',
-      buttonText: 'Keep going, you get 2 bonus lives!',
-      buttonSubtext: undefined,
-      subtitle: 'Restarting with one life!',
-      emoji: '❓'
-    },
-    win: {
-      title: 'you Win!',
-      titleColor: 'text-green-500',
       buttonText: 'Keep going, you get 2 bonus lives!',
       buttonSubtext: undefined,
       subtitle: 'Restarting with one life!',
