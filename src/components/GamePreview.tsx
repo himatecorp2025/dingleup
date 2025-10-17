@@ -624,20 +624,20 @@ const GamePreview = () => {
             <div className="flex justify-center items-center mb-0 relative">
               {/* Animated notification hexagon - slides in from right */}
               {(gameState === 'awaiting-skip' || (selectedAnswer && showScrollHint && gameState === 'playing')) && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 animate-slide-in-right">
-                  <div className="relative w-24 h-12 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-purple-500/20 clip-path-hexagon-notification animate-pulse"></div>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 animate-slide-in-right z-20">
+                  <div className="relative w-28 h-14 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/90 to-purple-800/90 clip-path-hexagon-notification border-2 border-purple-400 shadow-lg shadow-purple-500/50"></div>
                     <div className="relative z-10 text-center px-2">
                       {gameState === 'awaiting-skip' ? (
-                        <span className="text-yellow-300 font-bold text-[10px] drop-shadow-lg">
+                        <span className="text-yellow-200 font-bold text-[11px] drop-shadow-lg leading-tight">
                           Átugrás<br/>{skipCost}🪙
                         </span>
                       ) : selectedAnswer === '__wrong__' ? (
-                        <span className="text-red-300 font-bold text-[10px] drop-shadow-lg">
+                        <span className="text-red-200 font-bold text-[11px] drop-shadow-lg leading-tight">
                           ❌ Rossz!<br/>Görgess
                         </span>
                       ) : (
-                        <span className="text-green-300 font-bold text-[10px] drop-shadow-lg">
+                        <span className="text-green-200 font-bold text-[11px] drop-shadow-lg leading-tight">
                           ✅ Helyes!<br/>Görgess
                         </span>
                       )}
@@ -702,79 +702,6 @@ const GamePreview = () => {
                 })}
               </div>
 
-              {/* Értesítések - 2px gap */}
-              <div className="space-y-0.5">
-                {gameState === 'awaiting-skip' && (
-                  <div className="w-full px-2 py-1.5 bg-gradient-to-r from-yellow-900/95 to-yellow-800/95 border-y border-yellow-500">
-                    <p className="text-yellow-300 text-center font-bold text-xs mb-0.5">
-                      Kérdés átugrása ({skipCost} 🪙)
-                    </p>
-                    <div className="flex items-center justify-center gap-2 text-[9px]">
-                      <div className="flex items-center gap-0.5">
-                        <div className="rotate-180">
-                          <ChevronDown className="w-3 h-3 text-green-400 animate-bounce" />
-                        </div>
-                        <span className="text-green-300 font-bold">LE: OK</span>
-                      </div>
-                      <div className="flex items-center gap-0.5">
-                        <ChevronDown className="w-3 h-3 text-red-400" />
-                        <span className="text-red-300 font-bold">FEL: Mégse</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedAnswer && showScrollHint && gameState === 'playing' && (
-                  <div className={`w-full px-2 py-1.5 border-y ${
-                    selectedAnswer === '__wrong__' 
-                      ? 'bg-gradient-to-r from-red-900/95 to-red-800/95 border-red-500' 
-                      : 'bg-gradient-to-r from-green-900/95 to-green-800/95 border-green-500'
-                  }`}>
-                    {selectedAnswer === '__wrong__' ? (
-                      <>
-                        <p className="text-red-300 text-center font-bold text-xs mb-0.5">❌ Rossz!</p>
-                        <div className="flex items-center justify-center gap-2 text-[9px]">
-                          <div className="flex items-center gap-0.5">
-                            <div className="rotate-180">
-                              <ChevronDown className="w-3 h-3 text-green-400 animate-bounce" />
-                            </div>
-                            <span className="text-green-300 font-bold">LE: 50🪙</span>
-                          </div>
-                          <div className="flex items-center gap-0.5">
-                            <ChevronDown className="w-3 h-3 text-red-400" />
-                            <span className="text-red-300 font-bold">FEL: Vége</span>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-green-300 text-center font-bold text-xs mb-0.5">✅ Helyes!</p>
-                        <div className="flex items-center justify-center gap-0.5">
-                          <div className="rotate-180">
-                            <ChevronDown className="w-3.5 h-3.5 text-green-300 animate-bounce" />
-                          </div>
-                          <span className="text-green-200 font-bold text-[9px]">LE</span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {timeLeft <= 5 && !selectedAnswer && gameState === 'playing' && (
-                  <div className="w-full px-2 py-1.5 bg-gradient-to-r from-yellow-900/95 to-yellow-800/95 border-y border-yellow-500">
-                    <p className="text-yellow-300 text-center font-bold text-xs mb-0.5">
-                      ⏱️ Kevés idő!
-                    </p>
-                    <Button
-                      onClick={skipQuestionDirectly}
-                      size="sm"
-                      className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold text-[10px] py-0.5"
-                    >
-                      Skip ({skipCost} 🪙)
-                    </Button>
-                  </div>
-                )}
-              </div>
 
               {/* Segítségek - 2px gap */}
               <div className="flex justify-center gap-1.5 py-1">
