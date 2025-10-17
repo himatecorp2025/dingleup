@@ -637,8 +637,8 @@ const GamePreview = () => {
                 <h2 className="text-base md:text-xl font-bold text-white text-center leading-tight line-clamp-3 px-3">{currentQuestion.question}</h2>
               </div>
 
-              {/* Answers - touch each other and question */}
-              <div className="grid grid-cols-1 gap-0 relative z-10 -mt-1">
+              {/* Answers - very close to question */}
+              <div className="grid grid-cols-1 gap-0 relative z-10 -mt-4">
                 {currentQuestion.answers.map((answer, index) => {
                   const isRemoved = removedAnswers.includes(answer);
                   const isSelected = selectedAnswer === answer;
@@ -655,7 +655,7 @@ const GamePreview = () => {
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
-                        clip-hexagon-answer transition-all touch-manipulation py-5 -mt-3 first:mt-0
+                        clip-hexagon-answer transition-all touch-manipulation py-5 -mt-2.5 first:-mt-0
                         ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : ''}
                         ${showResult && isCorrect ? '!border-green-500 !bg-green-600' : ''}
                         ${showResult && selectedAnswer === '__wrong__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
@@ -755,8 +755,8 @@ const GamePreview = () => {
             </div>
           </div>
 
-          {/* Helps - Compact hexagon buttons at bottom */}
-          <div className="flex-none w-full pb-2">
+          {/* SEGÍTSÉG GOMBOK - az értesítések alatt, screen aljára rögzítve */}
+          <div className="flex-none w-full pb-2 pt-2">
             <div className="flex justify-center gap-2 flex-wrap">
               <button
                 onClick={useHelp5050}
