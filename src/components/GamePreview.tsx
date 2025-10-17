@@ -629,7 +629,7 @@ const GamePreview = () => {
           </div>
 
             {/* Kérdés + Válaszok + Értesítések + Segítségek - 2px gap */}
-            <div className="flex-1 flex flex-col overflow-y-auto space-y-0.5">
+            <div className="flex-1 flex flex-col overflow-y-auto space-y-0.5 w-[85vw] mx-auto">
               
               {/* Kérdés */}
               <div className="clip-hexagon-box py-4">
@@ -757,11 +757,11 @@ const GamePreview = () => {
               <button
                 onClick={useHelp5050}
                 disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
-                className="hexagon-button-small relative"
+                className="hexagon-button relative"
                 title="Harmadoló - 1 hibás válasz eltávolítása"
               >
-                <div className="hexagon-content-small">
-                  <span className="text-sm font-bold">1/3</span>
+                <div className="hexagon-content">
+                  <span className="text-base font-bold">1/3</span>
                 </div>
                 {!profile.help_50_50_active && (
                   <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1 py-0.5 text-[8px] font-bold">
@@ -774,11 +774,11 @@ const GamePreview = () => {
               <button
                 onClick={useHelp2xAnswer}
                 disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
-                className="hexagon-button-small relative"
+                className="hexagon-button relative"
                 title="2× válasz - Két választ jelölhetsz meg"
               >
-                <div className="hexagon-content-small">
-                  <span className="text-sm font-bold">2X</span>
+                <div className="hexagon-content">
+                  <span className="text-base font-bold">2X</span>
                 </div>
                 {!profile.help_2x_answer_active && (
                   <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1 py-0.5 text-[8px] font-bold">
@@ -791,11 +791,11 @@ const GamePreview = () => {
               <button
                 onClick={useHelpAudience}
                 disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
-                className="hexagon-button-small relative"
+                className="hexagon-button relative"
                 title="Közönség segítsége - Százalékos szavazatok"
               >
-                <div className="hexagon-content-small">
-                  <Users className="w-4 h-4" />
+                <div className="hexagon-content">
+                  <Users className="w-5 h-5" />
                 </div>
                 {!profile.help_audience_active && (
                   <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1 py-0.5 text-[8px] font-bold">

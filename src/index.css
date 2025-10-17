@@ -290,8 +290,8 @@ All colors MUST be HSL.
   background: #000000;
   border: 3px solid hsl(var(--ring));
   box-shadow: 0 0 12px hsla(var(--ring) / 0.4), inset 0 0 8px hsla(var(--ring) / 0.15);
-  width: 96vw;
-  max-width: 96vw;
+  width: 100%;
+  max-width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -299,8 +299,8 @@ All colors MUST be HSL.
     padding: 2rem 1.5rem;
     min-height: 90px;
     max-height: 130px;
-    width: 92vw;
-    max-width: 92vw;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -317,8 +317,8 @@ All colors MUST be HSL.
   border: 3px solid hsl(var(--ring));
   box-shadow: 0 0 10px hsla(var(--ring) / 0.35), inset 0 0 6px hsla(var(--ring) / 0.12);
   justify-content: center;
-  width: 88vw;
-  max-width: 88vw;
+  width: 100%;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -327,7 +327,7 @@ All colors MUST be HSL.
   .clip-hexagon-answer {
     padding: 1.5rem 1.25rem;
     min-height: 75px;
-    max-width: 84vw;
+    max-width: 100%;
   }
 }
 
