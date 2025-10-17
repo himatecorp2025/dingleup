@@ -87,8 +87,18 @@ const Login = () => {
     }
   };
 
+  const handleGoogleAuth = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/` },
+    });
+    if (error) {
+      toast({ title: 'Hiba', description: 'Google bejelentkezés sikertelen', variant: 'destructive' });
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-4 sm:py-12 relative overflow-hidden">
+    <div className="min-h-[100svh] flex justify-center items-start sm:items-center px-4 pt-3 pb-4 sm:py-12 relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-accent/10"></div>
 
@@ -104,13 +114,24 @@ const Login = () => {
           Vissza a főoldalra
         </Link>
 
-        <div className="bg-gradient-card border border-border/50 rounded-2xl p-6 sm:p-8 shadow-glow">
+        <div className="bg-gradient-card border border-border/50 rounded-2xl p-6 sm:p-8 shadow-glow max-h-[calc(100svh-6rem)] sm:max-h-none overflow-y-auto">
           <div className="text-center mb-6 sm:mb-8">
             <img src={logo} alt="Dingle UP!" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4" />
             <h1 className="text-2xl sm:text-3xl font-bold mb-2 font-poppins">
               <span className="text-transparent bg-clip-text bg-gradient-gold">Bejelentkezés</span>
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground">Üdv újra! Jelentkezz be a folytatáshoz</p>
+          </div>
+
+          <div className="space-y-3 mb-4">
+            <Button type="button" variant="outline" className="w-full" onClick={handleGoogleAuth}>
+              Bejelentkezés Google-lel
+            </Button>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="h-px flex-1 bg-border"></span>
+              <span>vagy</span>
+              <span className="h-px flex-1 bg-border"></span>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
