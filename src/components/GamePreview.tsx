@@ -159,16 +159,13 @@ const GamePreview = () => {
     const reward = calculateReward(currentQuestionIndex);
     setCoinsEarned(coinsEarned + reward);
     
-    // Auto continue after showing green result
-    setTimeout(() => {
-      handleNextQuestion();
-    }, 1500);
+    // Don't auto-continue - wait for scroll
   };
 
   const handleWrongAnswer = (responseTime: number) => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__wrong__');
-    setGameState('lose');
+    // Don't show popup or auto-continue - wait for scroll
   };
 
   const calculateReward = (questionIndex: number): number => {
@@ -273,7 +270,7 @@ const GamePreview = () => {
     }
     
     if (profile.coins < skipCost) {
-      toast.error(`Nincs elég aranyérmed! (${skipCost} szükséges)`);
+      toast.error(`Sajnos elfogyott az aranyérméd! (${skipCost} aranyérme szükséges az átugráshoz)`);
       return;
     }
     
@@ -286,7 +283,7 @@ const GamePreview = () => {
 
   const continueAfterTimeout = async () => {
     if (!profile || profile.coins < 150) {
-      toast.error('Nincs elég aranyérmed! (150 szükséges)');
+      toast.error('Sajnos elfogyott az aranyérméd! (150 aranyérme szükséges)');
       return;
     }
     
@@ -299,7 +296,7 @@ const GamePreview = () => {
 
   const continueAfterWrong = async () => {
     if (!profile || profile.coins < 50) {
-      toast.error('Nincs elég aranyérmed! (50 szükséges)');
+      toast.error('Sajnos elfogyott az aranyérméd! (50 aranyérme szükséges)');
       return;
     }
     
@@ -312,7 +309,7 @@ const GamePreview = () => {
 
   const reactivateHelp5050 = async () => {
     if (!profile || profile.coins < 15) {
-      toast.error('Nincs elég aranyérmed! (15 szükséges)');
+      toast.error('Sajnos elfogyott az aranyérméd! (15 aranyérme szükséges)');
       return;
     }
     
@@ -325,7 +322,7 @@ const GamePreview = () => {
 
   const reactivateHelp2xAnswer = async () => {
     if (!profile || profile.coins < 20) {
-      toast.error('Nincs elég aranyérmed! (20 szükséges)');
+      toast.error('Sajnos elfogyott az aranyérméd! (20 aranyérme szükséges)');
       return;
     }
     
@@ -338,7 +335,7 @@ const GamePreview = () => {
 
   const reactivateHelpAudience = async () => {
     if (!profile || profile.coins < 30) {
-      toast.error('Nincs elég aranyérmed! (30 szükséges)');
+      toast.error('Sajnos elfogyott az aranyérméd! (30 aranyérme szükséges)');
       return;
     }
     
@@ -395,33 +392,7 @@ const GamePreview = () => {
     );
   }
 
-  // Game state overlays
-  if (gameState === 'timeout') {
-    return (
-      <GameStateScreen 
-        type="timeout"
-        onContinue={continueAfterTimeout}
-        onSkip={() => {
-          setGameState('finished');
-          finishGame();
-        }}
-      />
-    );
-  }
-
-  if (gameState === 'lose') {
-    return (
-      <GameStateScreen 
-        type="lose"
-        onContinue={continueAfterWrong}
-        onSkip={() => {
-          setGameState('finished');
-          finishGame();
-        }}
-      />
-    );
-  }
-
+  // Game state overlays - remove timeout and lose popups
   if (gameState === 'out-of-lives') {
     return (
       <GameStateScreen 
@@ -516,11 +487,11 @@ const GamePreview = () => {
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
                         clip-hexagon-answer transition-all touch-manipulation
-                        ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : 'border-blue-500/60'}
-                        ${showResult && isCorrect ? 'border-green-500 bg-green-600' : ''}
-                        ${showResult && isSelected && !isCorrect ? 'border-red-500 bg-red-600' : ''}
-                        ${showResult && !isCorrect && !isSelected ? 'bg-black border-blue-500/60' : ''}
-                        ${!showResult ? 'bg-black hover:border-blue-400 hover:bg-blue-500/10 active:scale-98' : ''}
+                        ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : ''}
+                        ${showResult && isCorrect ? '!border-green-500 !bg-green-600' : ''}
+                        ${showResult && selectedAnswer === '__wrong__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
+                        ${showResult && selectedAnswer === '__timeout__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
+                        ${!showResult ? 'hover:border-blue-400 hover:bg-blue-500/10 active:scale-98' : ''}
                         disabled:opacity-50
                       `}
                     >
@@ -538,6 +509,35 @@ const GamePreview = () => {
                   );
                 })}
               </div>
+
+              {/* Next question button - show after answer */}
+              {selectedAnswer && currentQuestionIndex < questions.length - 1 && (
+                <div className="flex justify-center mt-6">
+                  <Button
+                    onClick={handleNextQuestion}
+                    size="lg"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  >
+                    Következő kérdés
+                  </Button>
+                </div>
+              )}
+
+              {/* Finish game button - show on last question after answer */}
+              {selectedAnswer && currentQuestionIndex === questions.length - 1 && (
+                <div className="flex justify-center mt-6">
+                  <Button
+                    onClick={() => {
+                      setGameState('finished');
+                      finishGame();
+                    }}
+                    size="lg"
+                    className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                  >
+                    Játék befejezése
+                  </Button>
+                </div>
+              )}
 
               {/* Helps - Hexagon buttons - closer to answers */}
               <div className="flex justify-center gap-3 md:gap-4 mt-4 pb-safe md:pb-0 flex-wrap">
