@@ -24,7 +24,7 @@ const statusItems = [
   {
     category: "Tesztelés & Biztonság",
     progress: 75,
-    color: "from-success to-green-500",
+    color: "from-lime-400 to-green-400",
     description: "Keresztplatform tesztelés, teljesítmény optimalizálás, biztonsági protokollok implementálása és bug fixing folyamatos végzése."
   }
 ];
