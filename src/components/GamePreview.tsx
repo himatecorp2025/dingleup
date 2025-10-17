@@ -386,37 +386,41 @@ const GamePreview = () => {
       e.preventDefault();
       const delta = e.deltaY;
       
+      console.log('Wheel event:', { delta, gameState, selectedAnswer });
+      
       if (gameState === 'awaiting-skip') {
-        if (delta < -50) {
-          // Scroll UP = confirm skip
+        if (delta > 50) {
+          // Scroll DOWN = confirm skip
           confirmSkipQuestion();
-        } else if (delta > 50) {
-          // Scroll DOWN = cancel, exit game
+        } else if (delta < -50) {
+          // Scroll UP = cancel, exit game
           setGameState('finished');
           finishGame();
         }
       } else if (gameState === 'awaiting-timeout') {
-        if (delta < -50) {
-          // Scroll UP = continue with 150 coins
+        if (delta > 50) {
+          // Scroll DOWN = continue with 150 coins
           confirmContinueAfterTimeout();
-        } else if (delta > 50) {
-          // Scroll DOWN = finish game
+        } else if (delta < -50) {
+          // Scroll UP = finish game
           setGameState('finished');
           finishGame();
         }
       } else if (selectedAnswer && gameState === 'playing') {
         if (selectedAnswer === '__wrong__') {
-          if (delta < -50) {
-            // Scroll UP = continue with 50 coins
+          if (delta > 50) {
+            // Scroll DOWN = continue with 50 coins
             confirmContinueAfterWrong();
-          } else if (delta > 50) {
-            // Scroll DOWN = finish game
+          } else if (delta < -50) {
+            // Scroll UP = finish game
             setGameState('finished');
             finishGame();
           }
         } else {
-          if (delta < -50) {
-            // Scroll UP = next question
+          // Correct answer or timeout
+          if (delta > 50) {
+            // Scroll DOWN = next question
+            console.log('Next question triggered');
             handleNextQuestion();
           }
         }
@@ -430,40 +434,45 @@ const GamePreview = () => {
     const handleTouchMove = (e: TouchEvent) => {
       if (!touchStartY) return;
       
-      e.preventDefault();
       const touchEndY = e.touches[0].clientY;
       const delta = touchStartY - touchEndY;
       
+      console.log('Touch event:', { delta, gameState, selectedAnswer });
+      
+      if (Math.abs(delta) < 100) return; // Minimum swipe distance
+      
+      e.preventDefault();
+      
       if (gameState === 'awaiting-skip') {
-        if (delta < -100) {
+        if (delta > 0) {
           confirmSkipQuestion();
           touchStartY = 0;
-        } else if (delta > 100) {
+        } else {
           setGameState('finished');
           finishGame();
           touchStartY = 0;
         }
       } else if (gameState === 'awaiting-timeout') {
-        if (delta < -100) {
+        if (delta > 0) {
           confirmContinueAfterTimeout();
           touchStartY = 0;
-        } else if (delta > 100) {
+        } else {
           setGameState('finished');
           finishGame();
           touchStartY = 0;
         }
       } else if (selectedAnswer && gameState === 'playing') {
         if (selectedAnswer === '__wrong__') {
-          if (delta < -100) {
+          if (delta > 0) {
             confirmContinueAfterWrong();
             touchStartY = 0;
-          } else if (delta > 100) {
+          } else {
             setGameState('finished');
             finishGame();
             touchStartY = 0;
           }
         } else {
-          if (delta < -100) {
+          if (delta > 0) {
             handleNextQuestion();
             touchStartY = 0;
           }
@@ -474,7 +483,7 @@ const GamePreview = () => {
     const container = document.body;
     if (gameState !== 'category-select' && gameState !== 'finished' && gameState !== 'out-of-lives') {
       container.addEventListener('wheel', handleWheel, { passive: false });
-      container.addEventListener('touchstart', handleTouchStart, { passive: false });
+      container.addEventListener('touchstart', handleTouchStart, { passive: true });
       container.addEventListener('touchmove', handleTouchMove, { passive: false });
     }
 
@@ -483,7 +492,7 @@ const GamePreview = () => {
       container.removeEventListener('touchstart', handleTouchStart);
       container.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [gameState, selectedAnswer, currentQuestionIndex]);
+  }, [gameState, selectedAnswer, currentQuestionIndex, profile]);
 
   if (profileLoading) {
     return <div className="min-h-screen flex items-center justify-center">Betöltés...</div>;
@@ -614,15 +623,15 @@ const GamePreview = () => {
               {gameState === 'awaiting-skip' && (
                 <div className="flex flex-col items-center gap-4 mt-6 p-4 bg-yellow-600/20 rounded-xl border border-yellow-600">
                   <p className="text-yellow-400 text-center font-bold text-lg">
-                    Görgess FEL a kérdés átugrásához ({skipCost} 🪙)
+                    Görgess LE a kérdés átugrásához ({skipCost} 🪙)
+                  </p>
+                  <ChevronDown className="w-10 h-10 text-yellow-400 animate-bounce" />
+                  <p className="text-white/70 text-sm text-center">
+                    vagy görgess FEL a kilépéshez
                   </p>
                   <div className="rotate-180">
-                    <ChevronDown className="w-10 h-10 text-yellow-400 animate-bounce" />
+                    <ChevronDown className="w-10 h-10 text-red-400 animate-bounce" />
                   </div>
-                  <p className="text-white/70 text-sm text-center">
-                    vagy görgess LE a kilépéshez
-                  </p>
-                  <ChevronDown className="w-10 h-10 text-red-400 animate-bounce" />
                 </div>
               )}
 
@@ -633,15 +642,15 @@ const GamePreview = () => {
                     ⏰ Lejárt az idő!
                   </p>
                   <p className="text-white text-center font-bold text-lg">
-                    Görgess FEL a továbbjutáshoz (150 🪙)
+                    Görgess LE a továbbjutáshoz (150 🪙)
+                  </p>
+                  <ChevronDown className="w-10 h-10 text-green-400 animate-bounce" />
+                  <p className="text-white/70 text-sm text-center">
+                    vagy görgess FEL a befejezéshez
                   </p>
                   <div className="rotate-180">
-                    <ChevronDown className="w-10 h-10 text-green-400 animate-bounce" />
+                    <ChevronDown className="w-10 h-10 text-red-400 animate-bounce" />
                   </div>
-                  <p className="text-white/70 text-sm text-center">
-                    vagy görgess LE a befejezéshez
-                  </p>
-                  <ChevronDown className="w-10 h-10 text-red-400 animate-bounce" />
                 </div>
               )}
 
@@ -694,25 +703,23 @@ const GamePreview = () => {
                     <>
                       <p className="text-red-400 text-center font-bold text-xl">❌ Rossz válasz!</p>
                       <p className="text-white text-center font-bold text-lg">
-                        Görgess FEL a továbbjutáshoz (50 🪙)
+                        Görgess LE a továbbjutáshoz (50 🪙)
+                      </p>
+                      <ChevronDown className="w-10 h-10 text-green-400 animate-bounce" />
+                      <p className="text-white/70 text-sm text-center">
+                        vagy görgess FEL a befejezéshez
                       </p>
                       <div className="rotate-180">
-                        <ChevronDown className="w-10 h-10 text-green-400 animate-bounce" />
+                        <ChevronDown className="w-10 h-10 text-red-400 animate-bounce" />
                       </div>
-                      <p className="text-white/70 text-sm text-center">
-                        vagy görgess LE a befejezéshez
-                      </p>
-                      <ChevronDown className="w-10 h-10 text-red-400 animate-bounce" />
                     </>
                   ) : (
                     <>
                       <p className="text-green-400 text-center font-bold text-xl">✅ Helyes válasz!</p>
                       <p className="text-white text-center font-bold text-lg">
-                        Görgess FEL a következő kérdéshez
+                        Görgess LE a következő kérdéshez
                       </p>
-                      <div className="rotate-180">
-                        <ChevronDown className="w-10 h-10 text-blue-400 animate-bounce" />
-                      </div>
+                      <ChevronDown className="w-10 h-10 text-blue-400 animate-bounce" />
                     </>
                   )}
                 </div>
