@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, Gift, Phone, ChevronDown } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, Gift, ChevronDown, ArrowLeftRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
@@ -565,12 +565,12 @@ const GamePreview = () => {
     return (
       <div 
         ref={scrollContainerRef}
-        className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] overflow-hidden relative"
+        className="h-screen w-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] overflow-hidden fixed inset-0"
       >
-        <div className="w-full md:max-w-4xl md:mx-auto min-h-screen flex flex-col relative">
+        <div className="h-full w-full md:max-w-4xl md:mx-auto flex flex-col">
           {/* Header */}
           <div className="flex-none w-full">
-            <div className="flex items-center justify-between p-4 md:mb-6">
+            <div className="flex items-center justify-between p-4">
               <Button onClick={() => {
                 stopMusic();
                 setGameState('category-select');
@@ -592,14 +592,14 @@ const GamePreview = () => {
             </div>
 
             {/* Timer Circle - Centered */}
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-2">
               <TimerCircle timeLeft={timeLeft} />
             </div>
           </div>
 
-          {/* Main content area */}
-          <div className="flex-1 w-full px-2 pb-20 md:px-0">
-            <div className="w-full md:max-w-4xl md:mx-auto space-y-3 md:space-y-4 pb-8">
+          {/* Main content area - scrollable within fixed viewport */}
+          <div className="flex-1 w-full px-2 overflow-y-auto">
+            <div className="w-full md:max-w-4xl md:mx-auto space-y-3 pb-4">
               
               {/* Skip button - visible from 5 seconds */}
               {timeLeft <= 5 && !selectedAnswer && gameState === 'playing' && (
@@ -775,57 +775,59 @@ const GamePreview = () => {
                 </div>
               )}
 
-              {/* Helps - Hexagon buttons - closer to answers */}
-              <div className="flex justify-center gap-3 md:gap-4 mt-4 pb-safe md:pb-0 flex-wrap">
+              {/* Helps - Hexagon buttons */}
+              <div className="flex justify-center gap-3 md:gap-4 mt-4 pb-2 flex-wrap">
                 <button
                   onClick={useHelp5050}
                   disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
-                  className="hexagon-button"
+                  className="hexagon-button relative"
                   title="Harmadoló - 1 hibás válasz eltávolítása"
                 >
                   <div className="hexagon-content">
                     <span className="text-lg font-bold">1/3</span>
                   </div>
+                  {!profile.help_50_50_active && (
+                    <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
+                      <ArrowLeftRight className="w-3 h-3" />
+                      <span>15</span>
+                      <Coins className="w-3 h-3" />
+                    </div>
+                  )}
                 </button>
                 <button
                   onClick={useHelp2xAnswer}
                   disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
-                  className="hexagon-button"
+                  className="hexagon-button relative"
                   title="2× válasz - Két választ jelölhetsz meg"
                 >
                   <div className="hexagon-content">
-                    <Phone className="w-5 h-5" />
+                    <span className="text-lg font-bold">2X</span>
                   </div>
+                  {!profile.help_2x_answer_active && (
+                    <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
+                      <ArrowLeftRight className="w-3 h-3" />
+                      <span>20</span>
+                      <Coins className="w-3 h-3" />
+                    </div>
+                  )}
                 </button>
                 <button
                   onClick={useHelpAudience}
                   disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
-                  className="hexagon-button"
+                  className="hexagon-button relative"
                   title="Közönség segítsége - Százalékos szavazatok"
                 >
                   <div className="hexagon-content">
                     <Users className="w-5 h-5" />
                   </div>
+                  {!profile.help_audience_active && (
+                    <div className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-yellow-600 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
+                      <ArrowLeftRight className="w-3 h-3" />
+                      <span>30</span>
+                      <Coins className="w-3 h-3" />
+                    </div>
+                  )}
                 </button>
-              </div>
-
-              {/* Help shop - reactivate used helps */}
-              <div className="flex justify-center gap-2 mt-4 flex-wrap">
-                {!profile.help_50_50_active && (
-                  <Button onClick={reactivateHelp5050} size="sm" variant="outline" className="text-xs">
-                    Harmadoló (15 🪙)
-                  </Button>
-                )}
-                {!profile.help_2x_answer_active && (
-                  <Button onClick={reactivateHelp2xAnswer} size="sm" variant="outline" className="text-xs">
-                    2× válasz (20 🪙)
-                  </Button>
-                )}
-                {!profile.help_audience_active && (
-                  <Button onClick={reactivateHelpAudience} size="sm" variant="outline" className="text-xs">
-                    Közönség (30 🪙)
-                  </Button>
-                )}
               </div>
             </div>
           </div>
