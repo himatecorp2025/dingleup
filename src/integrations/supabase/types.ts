@@ -185,6 +185,7 @@ export type Database = {
           total_correct_answers: number | null
           updated_at: string | null
           user_id: string
+          username: string | null
           week_start: string
         }
         Insert: {
@@ -196,6 +197,7 @@ export type Database = {
           total_correct_answers?: number | null
           updated_at?: string | null
           user_id: string
+          username?: string | null
           week_start: string
         }
         Update: {
@@ -207,6 +209,7 @@ export type Database = {
           total_correct_answers?: number | null
           updated_at?: string | null
           user_id?: string
+          username?: string | null
           week_start?: string
         }
         Relationships: [
