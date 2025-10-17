@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, Gift, Phone } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, Gift, Phone, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
@@ -17,7 +17,7 @@ import historyQuestions from "@/data/questions-history.json";
 import cultureQuestions from "@/data/questions-culture.json";
 import financeQuestions from "@/data/questions-finance.json";
 
-type GameState = 'category-select' | 'playing' | 'paused' | 'finished' | 'timeout' | 'lose' | 'out-of-lives';
+type GameState = 'category-select' | 'playing' | 'paused' | 'finished' | 'awaiting-skip' | 'awaiting-timeout' | 'out-of-lives';
 
 const QUESTION_BANKS = {
   health: healthQuestions,
@@ -31,6 +31,7 @@ const GamePreview = () => {
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading: profileLoading, updateProfile, spendCoins, spendLife } = useGameProfile(userId);
   const { canClaim, claimDailyGift } = useDailyGift(userId);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Music control
   const stopMusic = () => {
@@ -59,6 +60,7 @@ const GamePreview = () => {
   const [firstAttempt, setFirstAttempt] = useState<string | null>(null);
   const [removedAnswers, setRemovedAnswers] = useState<string[]>([]);
   const [audienceVotes, setAudienceVotes] = useState<Record<string, number>>({});
+  const [showScrollHint, setShowScrollHint] = useState(false);
 
   // Auth check
   useEffect(() => {
@@ -85,7 +87,8 @@ const GamePreview = () => {
     const responseTime = (Date.now() - questionStartTime) / 1000;
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__timeout__');
-    setGameState('timeout');
+    setGameState('awaiting-timeout');
+    setShowScrollHint(true);
   };
 
   const startGameWithCategory = async (category: GameCategory) => {
@@ -159,13 +162,14 @@ const GamePreview = () => {
     const reward = calculateReward(currentQuestionIndex);
     setCoinsEarned(coinsEarned + reward);
     
-    // Don't auto-continue - wait for scroll
+    // Show scroll hint
+    setShowScrollHint(true);
   };
 
   const handleWrongAnswer = (responseTime: number) => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__wrong__');
-    // Don't show popup or auto-continue - wait for scroll
+    setShowScrollHint(true);
   };
 
   const calculateReward = (questionIndex: number): number => {
@@ -176,6 +180,7 @@ const GamePreview = () => {
   };
 
   const handleNextQuestion = () => {
+    setShowScrollHint(false);
     if (currentQuestionIndex >= questions.length - 1) {
       finishGame();
     } else {
@@ -187,6 +192,14 @@ const GamePreview = () => {
       setAudienceVotes({});
       setQuestionStartTime(Date.now());
       setGameState('playing');
+      
+      // Scroll to next question
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTo({
+          top: (currentQuestionIndex + 1) * window.innerHeight,
+          behavior: 'smooth'
+        });
+      }
     }
   };
 
@@ -258,10 +271,10 @@ const GamePreview = () => {
     toast.info('Közönség segítség használva');
   };
 
-  const skipQuestion = async () => {
+  const initiateSkipQuestion = () => {
     if (!profile) return;
     
-    // Calculate skip cost based on question index
+    // Calculate skip cost
     let skipCost = 10;
     if (currentQuestionIndex >= 5 && currentQuestionIndex < 10) {
       skipCost = 20;
@@ -270,8 +283,22 @@ const GamePreview = () => {
     }
     
     if (profile.coins < skipCost) {
-      toast.error(`Sajnos elfogyott az aranyérméd! (${skipCost} aranyérme szükséges az átugráshoz)`);
+      toast.error(`Sajnos elfogyott az aranyérméd! (${skipCost} aranyérme szükséges)`);
       return;
+    }
+    
+    setGameState('awaiting-skip');
+    setShowScrollHint(true);
+  };
+
+  const confirmSkipQuestion = async () => {
+    if (!profile) return;
+    
+    let skipCost = 10;
+    if (currentQuestionIndex >= 5 && currentQuestionIndex < 10) {
+      skipCost = 20;
+    } else if (currentQuestionIndex >= 10) {
+      skipCost = 30;
     }
     
     const success = await spendCoins(skipCost);
@@ -281,9 +308,11 @@ const GamePreview = () => {
     }
   };
 
-  const continueAfterTimeout = async () => {
+  const confirmContinueAfterTimeout = async () => {
     if (!profile || profile.coins < 150) {
       toast.error('Sajnos elfogyott az aranyérméd! (150 aranyérme szükséges)');
+      setGameState('finished');
+      finishGame();
       return;
     }
     
@@ -294,9 +323,11 @@ const GamePreview = () => {
     }
   };
 
-  const continueAfterWrong = async () => {
+  const confirmContinueAfterWrong = async () => {
     if (!profile || profile.coins < 50) {
       toast.error('Sajnos elfogyott az aranyérméd! (50 aranyérme szükséges)');
+      setGameState('finished');
+      finishGame();
       return;
     }
     
@@ -345,6 +376,55 @@ const GamePreview = () => {
       toast.success('Közönség segítség újraaktiválva!');
     }
   };
+
+  
+  // Scroll handler
+  useEffect(() => {
+    const handleScroll = (e: WheelEvent | TouchEvent) => {
+      if (gameState === 'awaiting-skip') {
+        e.preventDefault();
+        const delta = 'deltaY' in e ? e.deltaY : 0;
+        if (delta > 50) {
+          confirmSkipQuestion();
+        } else if (delta < -50) {
+          setGameState('playing');
+          setShowScrollHint(false);
+          toast.info('Kérdés átugrás visszavonva');
+        }
+      } else if (gameState === 'awaiting-timeout') {
+        e.preventDefault();
+        const delta = 'deltaY' in e ? e.deltaY : 0;
+        if (delta > 50) {
+          confirmContinueAfterTimeout();
+        } else if (delta < -50) {
+          setGameState('finished');
+          finishGame();
+        }
+      } else if (selectedAnswer && gameState === 'playing') {
+        const delta = 'deltaY' in e ? e.deltaY : 0;
+        if (delta > 50) {
+          if (selectedAnswer === '__wrong__') {
+            confirmContinueAfterWrong();
+          } else {
+            handleNextQuestion();
+          }
+        }
+      }
+    };
+
+    const container = scrollContainerRef.current;
+    if (container && gameState !== 'category-select' && gameState !== 'finished') {
+      container.addEventListener('wheel', handleScroll, { passive: false });
+      container.addEventListener('touchmove', handleScroll, { passive: false });
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('wheel', handleScroll);
+        container.removeEventListener('touchmove', handleScroll);
+      }
+    };
+  }, [gameState, selectedAnswer, currentQuestionIndex]);
 
   if (profileLoading) {
     return <div className="min-h-screen flex items-center justify-center">Betöltés...</div>;
@@ -403,7 +483,7 @@ const GamePreview = () => {
     );
   }
 
-  if (gameState === 'playing') {
+  if (gameState === 'playing' || gameState === 'awaiting-skip' || gameState === 'awaiting-timeout') {
     const currentQuestion = questions[currentQuestionIndex];
     
     // Calculate skip cost
@@ -415,8 +495,11 @@ const GamePreview = () => {
     }
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] overflow-auto">
-        <div className="w-full md:max-w-4xl md:mx-auto min-h-screen flex flex-col">
+      <div 
+        ref={scrollContainerRef}
+        className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] overflow-hidden relative"
+      >
+        <div className="w-full md:max-w-4xl md:mx-auto min-h-screen flex flex-col relative">
           {/* Header */}
           <div className="flex-none w-full">
             <div className="flex items-center justify-between p-4 md:mb-6">
@@ -455,16 +538,45 @@ const GamePreview = () => {
               </div>
 
               {/* Skip button - visible from 5 seconds */}
-              {timeLeft <= 5 && !selectedAnswer && (
+              {timeLeft <= 5 && !selectedAnswer && gameState === 'playing' && (
                 <div className="flex justify-center">
                   <Button
-                    onClick={skipQuestion}
+                    onClick={initiateSkipQuestion}
                     variant="outline"
                     size="sm"
                     className="bg-yellow-600/20 hover:bg-yellow-600/30 border-yellow-600"
                   >
                     Kérdés átugrása ({skipCost} 🪙)
                   </Button>
+                </div>
+              )}
+
+              {/* Awaiting skip confirmation */}
+              {gameState === 'awaiting-skip' && (
+                <div className="flex flex-col items-center gap-4 mt-6 p-4 bg-yellow-600/20 rounded-xl border border-yellow-600">
+                  <p className="text-yellow-400 text-center font-bold">
+                    Görgess le a kérdés átugrásához ({skipCost} 🪙)
+                  </p>
+                  <p className="text-white/70 text-sm text-center">
+                    vagy görgess fel a visszavonáshoz
+                  </p>
+                  <ChevronDown className="w-8 h-8 text-yellow-400 animate-bounce" />
+                </div>
+              )}
+
+              {/* Awaiting timeout confirmation */}
+              {gameState === 'awaiting-timeout' && (
+                <div className="flex flex-col items-center gap-4 mt-6 p-4 bg-orange-600/20 rounded-xl border border-orange-600">
+                  <p className="text-orange-400 text-center font-bold">
+                    Lejárt az idő!
+                  </p>
+                  <p className="text-white text-center">
+                    Görgess le a továbbjutáshoz (150 🪙)
+                  </p>
+                  <p className="text-white/70 text-sm text-center">
+                    vagy görgess fel a befejezéshez
+                  </p>
+                  <ChevronDown className="w-8 h-8 text-orange-400 animate-bounce" />
                 </div>
               )}
 
@@ -510,32 +622,18 @@ const GamePreview = () => {
                 })}
               </div>
 
-              {/* Next question button - show after answer */}
-              {selectedAnswer && currentQuestionIndex < questions.length - 1 && (
-                <div className="flex justify-center mt-6">
-                  <Button
-                    onClick={handleNextQuestion}
-                    size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  >
-                    Következő kérdés
-                  </Button>
-                </div>
-              )}
-
-              {/* Finish game button - show on last question after answer */}
-              {selectedAnswer && currentQuestionIndex === questions.length - 1 && (
-                <div className="flex justify-center mt-6">
-                  <Button
-                    onClick={() => {
-                      setGameState('finished');
-                      finishGame();
-                    }}
-                    size="lg"
-                    className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
-                  >
-                    Játék befejezése
-                  </Button>
+              {/* Scroll hint - show after answer */}
+              {selectedAnswer && showScrollHint && gameState === 'playing' && (
+                <div className="flex flex-col items-center gap-4 mt-6 p-4 bg-blue-600/20 rounded-xl border border-blue-600">
+                  <p className="text-blue-400 text-center font-bold">
+                    {selectedAnswer === '__wrong__' 
+                      ? 'Görgess le a továbbjutáshoz (50 🪙) vagy befejezéshez'
+                      : currentQuestionIndex < questions.length - 1
+                        ? 'Görgess le a következő kérdéshez'
+                        : 'Görgess le a játék befejezéséhez'
+                    }
+                  </p>
+                  <ChevronDown className="w-8 h-8 text-blue-400 animate-bounce" />
                 </div>
               )}
 
