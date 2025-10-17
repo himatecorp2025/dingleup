@@ -230,8 +230,8 @@ All colors MUST be HSL.
 }
 
 .clip-hexagon-box {
-  clip-path: polygon(8% 50%, 15% 15%, 85% 15%, 92% 50%, 85% 85%, 15% 85%);
-  padding: 1.5rem 2rem;
+  clip-path: polygon(5% 50%, 10% 20%, 90% 20%, 95% 50%, 90% 80%, 10% 80%);
+  padding: 1.5rem 2.5rem;
   min-height: 80px;
   display: flex;
   align-items: center;
@@ -240,34 +240,40 @@ All colors MUST be HSL.
   margin: 12px auto;
   position: relative;
   background: #000000;
-  border: 2px solid rgba(59, 130, 246, 0.3);
+  border: 3px solid rgba(59, 130, 246, 0.6);
+  max-width: 90%;
 }
 
 @media (min-width: 400px) {
   .clip-hexagon-box {
-    padding: 2rem 2.5rem;
+    padding: 2rem 3rem;
     min-height: 100px;
+    max-width: 85%;
   }
 }
 
 .clip-hexagon-answer {
-  clip-path: polygon(5% 50%, 12% 15%, 88% 15%, 95% 50%, 88% 85%, 12% 85%);
-  padding: 1.25rem 2rem;
-  min-height: 60px;
+  clip-path: polygon(5% 50%, 10% 20%, 90% 20%, 95% 50%, 90% 80%, 10% 80%);
+  padding: 1rem 2rem;
+  min-height: 55px;
   display: flex;
   align-items: center;
   word-break: break-word;
-  margin: 10px 0;
+  margin: 6px 0;
   position: relative;
   background: #000000;
-  border: 2px solid rgba(59, 130, 246, 0.3);
+  border: 3px solid rgba(59, 130, 246, 0.6);
   justify-content: center;
+  max-width: 85%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @media (min-width: 400px) {
   .clip-hexagon-answer {
-    padding: 1.5rem 2.5rem;
-    min-height: 70px;
+    padding: 1.25rem 2.5rem;
+    min-height: 60px;
+    max-width: 80%;
   }
 }
 

@@ -239,12 +239,13 @@ const GamePreview = () => {
     
     const currentQuestion = questions[currentQuestionIndex];
     const wrongAnswers = currentQuestion.answers.filter(a => a !== currentQuestion.correct);
+    // Harmadoló - csak 1 hibás választ távolít el
     const toRemove = wrongAnswers.slice(0, 1);
     
     setRemovedAnswers(toRemove);
     setUsedHelp5050(true);
     updateProfile({ help_50_50_active: false });
-    toast.info('50:50 segítség használva');
+    toast.info('Harmadoló segítség használva - 1 hibás válasz eltávolítva');
   };
 
   const useHelp2xAnswer = () => {
@@ -379,11 +380,11 @@ const GamePreview = () => {
           </div>
 
           {/* Scrollable content area */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden md:overflow-visible px-4 pb-4 md:px-0 md:pb-0">
-            <div className="w-full md:max-w-4xl md:mx-auto space-y-4 md:space-y-6">
-              {/* Question */}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden md:overflow-visible px-2 pb-4 md:px-0 md:pb-0">
+            <div className="w-full md:max-w-4xl md:mx-auto space-y-3 md:space-y-4">
+              {/* Question - wider box */}
               <div className="clip-hexagon-box">
-                <h2 className="text-lg md:text-xl font-bold text-white text-center">{currentQuestion.question}</h2>
+                <h2 className="text-base md:text-lg font-bold text-white text-center leading-tight">{currentQuestion.question}</h2>
               </div>
 
               {/* Answers */}
@@ -404,16 +405,16 @@ const GamePreview = () => {
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
-                        clip-hexagon-answer border-2 text-center transition-all touch-manipulation
-                        ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : 'border-blue-500/30'}
+                        clip-hexagon-answer transition-all touch-manipulation
+                        ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : 'border-blue-500/60'}
                         ${showResult && isCorrect ? 'border-green-500 bg-green-600' : ''}
                         ${showResult && isSelected && !isCorrect ? 'border-red-500 bg-red-600' : ''}
-                        ${showResult && !isCorrect && !isSelected ? 'bg-black border-blue-500/30' : ''}
-                        ${!showResult ? 'bg-black hover:border-blue-400 hover:bg-blue-500/10 active:scale-95' : ''}
+                        ${showResult && !isCorrect && !isSelected ? 'bg-black border-blue-500/60' : ''}
+                        ${!showResult ? 'bg-black hover:border-blue-400 hover:bg-blue-500/10 active:scale-98' : ''}
                         disabled:opacity-50
                       `}
                     >
-                      <div className="flex items-center justify-center gap-4 w-full">
+                      <div className="flex items-center justify-center gap-3 w-full">
                         <span className="font-bold text-white text-base md:text-lg">{prefix}</span>
                         <span className="font-medium text-white text-base md:text-lg">{answer}</span>
                       </div>
@@ -428,12 +429,13 @@ const GamePreview = () => {
                 })}
               </div>
 
-              {/* Helps - Hexagon buttons */}
-              <div className="flex justify-center gap-3 md:gap-4 pb-safe md:pb-0 flex-wrap">
+              {/* Helps - Hexagon buttons - closer to answers */}
+              <div className="flex justify-center gap-3 md:gap-4 mt-4 pb-safe md:pb-0 flex-wrap">
                 <button
                   onClick={useHelp5050}
                   disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
                   className="hexagon-button"
+                  title="Harmadoló - 1 hibás válasz eltávolítása"
                 >
                   <div className="hexagon-content">
                     <span className="text-lg font-bold">1/3</span>
@@ -443,6 +445,7 @@ const GamePreview = () => {
                   onClick={useHelp2xAnswer}
                   disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
                   className="hexagon-button"
+                  title="2× válasz - Két választ jelölhetsz meg"
                 >
                   <div className="hexagon-content">
                     <Phone className="w-5 h-5" />
@@ -452,6 +455,7 @@ const GamePreview = () => {
                   onClick={useHelpAudience}
                   disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
                   className="hexagon-button"
+                  title="Közönség segítsége - Százalékos szavazatok"
                 >
                   <div className="hexagon-content">
                     <Users className="w-5 h-5" />
