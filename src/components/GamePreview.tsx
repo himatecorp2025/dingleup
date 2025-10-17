@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
 import { useDailyGift } from "@/hooks/useDailyGift";
 import { supabase } from "@/integrations/supabase/client";
-import { GameCategory, Question, COIN_REWARDS } from "@/types/game";
+import { GameCategory, Question, getCoinsForQuestion, SKIP_COSTS, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from "@/types/game";
 import CategorySelector from "./CategorySelector";
 import { HexagonButton } from "./HexagonButton";
 import { TimerCircle } from "./TimerCircle";
@@ -54,8 +54,8 @@ const GamePreview = () => {
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
 
-  // Fix 3 lives per game (separate from profile lives)
-  const [livesInGame, setLivesInGame] = useState(3);
+  // 3 mistakes allowed per game (separate from profile lives)
+  const [mistakesInGame, setMistakesInGame] = useState(0);
 
   // Lifelines
   const [usedHelp5050, setUsedHelp5050] = useState(false);
@@ -69,6 +69,9 @@ const GamePreview = () => {
   // Flash effect for correct/wrong answers
   const [answerFlash, setAnswerFlash] = useState<'correct' | 'wrong' | null>(null);
   const [showScrollHint, setShowScrollHint] = useState(false);
+  const [showSkipPanel, setShowSkipPanel] = useState(false);
+  const [showContinuePanel, setShowContinuePanel] = useState(false);
+  const [continueType, setContinueType] = useState<'wrong' | 'timeout'>('wrong');
 
   // Auth check
   useEffect(() => {
@@ -81,10 +84,18 @@ const GamePreview = () => {
     });
   }, [navigate]);
 
-  // Timer
+  // Timer with skip button at 5 seconds
   useEffect(() => {
     if (gameState === 'playing' && timeLeft > 0 && !selectedAnswer) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      const timer = setTimeout(() => {
+        const newTime = timeLeft - 1;
+        setTimeLeft(newTime);
+        
+        // Show skip button after 5 seconds
+        if (newTime === 5) {
+          setShowSkipPanel(true);
+        }
+      }, 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && !selectedAnswer && gameState === 'playing') {
       handleTimeout();
@@ -96,21 +107,28 @@ const GamePreview = () => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__timeout__');
     setAnswerFlash('wrong');
-    setShowScrollHint(true);
-    
-    // NOT automatic - user must scroll to continue
+    setShowSkipPanel(false);
+    setContinueType('timeout');
+    setShowContinuePanel(true);
   };
 
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
     
-    // Spend one life at game start
+    // Spend one life at game start ONLY
     const canPlay = await spendLife();
     if (!canPlay) {
       toast.error("Nincs elég életed a játékhoz!");
       setGameState('category-select');
       return;
     }
+
+    // Reactivate all lifelines for new game
+    await updateProfile({
+      help_50_50_active: true,
+      help_2x_answer_active: true,
+      help_audience_active: true
+    });
 
     setSelectedCategory(category);
     const questionBank = QUESTION_BANKS[category];
@@ -119,7 +137,7 @@ const GamePreview = () => {
     setGameState('playing');
     setCurrentQuestionIndex(0);
     setTimeLeft(10);
-    setLivesInGame(3);
+    setMistakesInGame(0);
     setCorrectAnswers(0);
     setCoinsEarned(0);
     setResponseTimes([]);
@@ -131,6 +149,8 @@ const GamePreview = () => {
     setFirstAttempt(null);
     setRemovedAnswer(null);
     setAudienceVotes({});
+    setShowSkipPanel(false);
+    setShowContinuePanel(false);
     setQuestionStartTime(Date.now());
   };
 
@@ -168,42 +188,38 @@ const GamePreview = () => {
     }
   };
 
-  const handleCorrectAnswer = (responseTime: number, answerKey: string) => {
+  const handleCorrectAnswer = async (responseTime: number, answerKey: string) => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer(answerKey);
     setCorrectAnswers(correctAnswers + 1);
     setAnswerFlash('correct');
+    setShowSkipPanel(false);
     
-    // +50 gold per correct answer
-    const reward = COIN_REWARDS.per_correct_answer;
+    // Progressive gold reward
+    const reward = getCoinsForQuestion(currentQuestionIndex);
     setCoinsEarned(coinsEarned + reward);
     
-    // Correct answer: Auto-scroll to next question after 1 second
-    setTimeout(() => {
-      setAnswerFlash(null);
-      handleNextQuestion();
-    }, 1000);
+    // Update coins immediately in profile
+    if (profile) {
+      await updateProfile({ coins: profile.coins + reward });
+    }
+    
+    // Show scroll hint for next question
+    setShowScrollHint(true);
   };
 
   const handleWrongAnswer = (responseTime: number, answerKey: string) => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer(answerKey);
     setAnswerFlash('wrong');
-    setShowScrollHint(true);
-    
-    // NOT automatic - user must scroll to continue
+    setShowSkipPanel(false);
+    setContinueType('wrong');
+    setShowContinuePanel(true);
   };
 
   const handleNextQuestion = () => {
     setShowScrollHint(false);
-    
-    // Decrease in-game lives (wrong answer penalty)
-    setLivesInGame(prev => prev - 1);
-    
-    if (livesInGame - 1 === 0) {
-      setGameState('out-of-lives');
-      return;
-    }
+    setShowContinuePanel(false);
     
     if (currentQuestionIndex >= questions.length - 1) {
       finishGame();
@@ -214,7 +230,62 @@ const GamePreview = () => {
       setFirstAttempt(null);
       setRemovedAnswer(null);
       setAudienceVotes({});
+      setShowSkipPanel(false);
       setQuestionStartTime(Date.now());
+    }
+  };
+
+  const handleSkipQuestion = async () => {
+    if (!profile) return;
+    
+    // Calculate skip cost
+    let cost = 10;
+    if (currentQuestionIndex >= 5 && currentQuestionIndex <= 9) cost = 20;
+    if (currentQuestionIndex >= 10) cost = 30;
+    
+    if (profile.coins < cost) {
+      toast.error(`Nincs elég aranyérme! ${cost} 🪙 szükséges.`);
+      return;
+    }
+    
+    // Deduct coins
+    await updateProfile({ coins: profile.coins - cost });
+    toast.success(`Kérdés átugorva -${cost} 🪙`);
+    
+    setShowSkipPanel(false);
+    handleNextQuestion();
+  };
+
+  const handleContinueAfterMistake = async () => {
+    if (!profile) return;
+    
+    const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
+    
+    if (profile.coins < cost) {
+      toast.error(`Nincs elég aranyérme! ${cost} 🪙 szükséges.`);
+      // Force next question without payment
+      setMistakesInGame(prev => prev + 1);
+      if (mistakesInGame + 1 >= 3) {
+        setGameState('out-of-lives');
+      } else {
+        handleNextQuestion();
+      }
+      return;
+    }
+    
+    // Pay and continue
+    await updateProfile({ coins: profile.coins - cost });
+    toast.success(`Folytatás -${cost} 🪙`);
+    handleNextQuestion();
+  };
+
+  const handleRejectContinue = () => {
+    setMistakesInGame(prev => prev + 1);
+    
+    if (mistakesInGame + 1 >= 3) {
+      setGameState('out-of-lives');
+    } else {
+      handleNextQuestion();
     }
   };
 
@@ -323,18 +394,17 @@ const GamePreview = () => {
     let touchStartY = 0;
     
     const handleWheel = (e: WheelEvent) => {
-      if (!showScrollHint) return;
-      
       e.preventDefault();
       const delta = e.deltaY;
       
-      if (delta > 50) {
-        // Scroll DOWN = next question (after wrong/timeout)
+      if (showSkipPanel && delta > 50) {
+        handleSkipQuestion();
+      } else if (showContinuePanel && delta > 50) {
+        handleContinueAfterMistake();
+      } else if (showContinuePanel && delta < -50) {
+        handleRejectContinue();
+      } else if (showScrollHint && delta > 50) {
         handleNextQuestion();
-      } else if (delta < -50) {
-        // Scroll UP = exit game
-        setGameState('finished');
-        finishGame();
       }
     };
 
@@ -343,7 +413,7 @@ const GamePreview = () => {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!showScrollHint || !touchStartY) return;
+      if (!touchStartY) return;
       
       const touchEndY = e.touches[0].clientY;
       const delta = touchStartY - touchEndY;
@@ -352,20 +422,23 @@ const GamePreview = () => {
       
       e.preventDefault();
       
-      if (delta > 0) {
-        // Swipe UP = next question
-        handleNextQuestion();
+      if (showSkipPanel && delta > 0) {
+        handleSkipQuestion();
         touchStartY = 0;
-      } else {
-        // Swipe DOWN = exit game
-        setGameState('finished');
-        finishGame();
+      } else if (showContinuePanel && delta > 0) {
+        handleContinueAfterMistake();
+        touchStartY = 0;
+      } else if (showContinuePanel && delta < 0) {
+        handleRejectContinue();
+        touchStartY = 0;
+      } else if (showScrollHint && delta > 0) {
+        handleNextQuestion();
         touchStartY = 0;
       }
     };
 
     const container = document.body;
-    if (gameState === 'playing' && showScrollHint) {
+    if (gameState === 'playing' && (showScrollHint || showSkipPanel || showContinuePanel)) {
       container.addEventListener('wheel', handleWheel, { passive: false });
       container.addEventListener('touchstart', handleTouchStart, { passive: true });
       container.addEventListener('touchmove', handleTouchMove, { passive: false });
@@ -376,7 +449,7 @@ const GamePreview = () => {
       container.removeEventListener('touchstart', handleTouchStart);
       container.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [showScrollHint, gameState, livesInGame]);
+  }, [showScrollHint, showSkipPanel, showContinuePanel, gameState]);
 
   if (profileLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532]">Betöltés...</div>;
@@ -467,15 +540,19 @@ const GamePreview = () => {
                 <TimerCircle timeLeft={timeLeft} />
               </div>
 
-              {/* Lives and coins */}
+              {/* Lives and coins - showing profile data */}
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-red-500/50">
                   <Heart className="w-4 h-4 text-red-500" />
-                  <span className="font-bold text-sm text-white">{livesInGame}</span>
+                  <span className="font-bold text-sm text-white">{profile.lives}</span>
                 </div>
                 <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-500/50">
                   <Coins className="w-4 h-4 text-yellow-500" />
                   <span className="font-bold text-sm text-white">{profile.coins}</span>
+                </div>
+                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-orange-500/50">
+                  <Zap className="w-4 h-4 text-orange-500" />
+                  <span className="font-bold text-sm text-white">{3 - mistakesInGame}</span>
                 </div>
               </div>
             </div>
@@ -521,21 +598,56 @@ const GamePreview = () => {
               })}
             </div>
 
-            {/* Scroll hint - visible after wrong answer or timeout */}
-            {showScrollHint && (
+            {/* Skip panel - after 5 seconds */}
+            {showSkipPanel && !selectedAnswer && (
+              <div className="fixed bottom-20 left-0 right-0 flex justify-center z-20">
+                <div className="bg-yellow-600/90 backdrop-blur-sm rounded-2xl px-6 py-4 border-2 border-yellow-400 shadow-xl text-center">
+                  <p className="text-white font-bold text-lg mb-2">Kérdés átugrása</p>
+                  <p className="text-white/80 text-sm mb-3">
+                    {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
+                  </p>
+                  <div className="flex items-center gap-2 text-white/70 text-xs">
+                    <ChevronDown className="w-4 h-4 animate-bounce" />
+                    <span>Görgess le a jóváhagyáshoz</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Continue panel - after wrong/timeout */}
+            {showContinuePanel && (
+              <div className="fixed bottom-20 left-0 right-0 flex justify-center z-20">
+                <div className="bg-red-600/90 backdrop-blur-sm rounded-2xl px-6 py-4 border-2 border-red-400 shadow-xl text-center">
+                  <p className="text-white font-bold text-lg mb-2">
+                    {continueType === 'timeout' ? 'Lejárt az idő!' : 'Rossz válasz!'}
+                  </p>
+                  <p className="text-white/80 text-sm mb-1">Folytatás:</p>
+                  <p className="text-yellow-400 font-bold text-xl mb-3">
+                    {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-white/70 text-xs justify-center">
+                      <ChevronDown className="w-4 h-4 animate-bounce" />
+                      <span>Görgess le a fizetéshez</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-white/70 text-xs justify-center">
+                      <div className="rotate-180">
+                        <ChevronDown className="w-4 h-4" />
+                      </div>
+                      <span>Görgess fel az elutasításhoz</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Scroll hint for correct answer */}
+            {showScrollHint && !showContinuePanel && selectedAnswer && (
               <div className="fixed bottom-20 left-0 right-0 flex flex-col items-center gap-3 animate-fade-in z-20">
                 <div className="bg-green-600/90 backdrop-blur-sm rounded-2xl px-6 py-3 border-2 border-green-400 shadow-xl">
                   <div className="flex items-center gap-3">
                     <ChevronDown className="w-6 h-6 text-green-200 animate-bounce" />
-                    <span className="text-white font-bold">Görgess tovább a következő kérdéshez</span>
-                  </div>
-                </div>
-                <div className="bg-red-600/90 backdrop-blur-sm rounded-2xl px-6 py-3 border-2 border-red-400 shadow-xl">
-                  <div className="flex items-center gap-3">
-                    <div className="rotate-180">
-                      <ChevronDown className="w-6 h-6 text-red-200" />
-                    </div>
-                    <span className="text-white font-bold">Görgess fel a kilépéshez</span>
+                    <span className="text-white font-bold">Görgess a következő kérdéshez</span>
                   </div>
                 </div>
               </div>
