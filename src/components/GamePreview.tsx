@@ -199,13 +199,24 @@ const GamePreview = () => {
     const reward = getCoinsForQuestion(currentQuestionIndex);
     setCoinsEarned(coinsEarned + reward);
     
-    // Update coins immediately in profile
+    // Update coins immediately in profile with animation
     if (profile) {
       await updateProfile({ coins: profile.coins + reward });
+      toast.success(`+${reward} 🪙`, {
+        duration: 2000,
+        style: {
+          background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+          color: '#000',
+          fontWeight: 'bold',
+          fontSize: '1.2rem'
+        }
+      });
     }
     
     // Show scroll hint for next question
-    setShowScrollHint(true);
+    setTimeout(() => {
+      setShowScrollHint(true);
+    }, 500);
   };
 
   const handleWrongAnswer = (responseTime: number, answerKey: string) => {
@@ -559,9 +570,9 @@ const GamePreview = () => {
           </div>
 
           {/* Question and answers - with flash effect overlay */}
-          <div className={`flex-1 flex flex-col overflow-y-auto px-2 relative ${answerFlash === 'correct' ? 'animate-pulse' : answerFlash === 'wrong' ? 'animate-shake' : ''}`}>
+          <div className={`flex-1 flex flex-col overflow-y-auto px-2 relative transition-all duration-300 ${answerFlash === 'correct' ? 'scale-105' : answerFlash === 'wrong' ? 'animate-shake' : ''}`}>
             {answerFlash && (
-              <div className={`absolute inset-0 ${answerFlash === 'correct' ? 'bg-green-500/20' : 'bg-red-500/20'} pointer-events-none z-10`} />
+              <div className={`absolute inset-0 ${answerFlash === 'correct' ? 'bg-green-500/30 animate-pulse' : 'bg-red-500/30 animate-pulse'} pointer-events-none z-10 rounded-2xl`} />
             )}
             
             <MillionaireQuestion>{currentQuestion.question}</MillionaireQuestion>
@@ -600,13 +611,13 @@ const GamePreview = () => {
 
             {/* Skip panel - after 5 seconds */}
             {showSkipPanel && !selectedAnswer && (
-              <div className="fixed bottom-20 left-0 right-0 flex justify-center z-20">
-                <div className="bg-yellow-600/90 backdrop-blur-sm rounded-2xl px-6 py-4 border-2 border-yellow-400 shadow-xl text-center">
+              <div className="fixed bottom-20 left-0 right-0 flex justify-center z-20 animate-fade-in">
+                <div className="bg-yellow-600/95 backdrop-blur-sm rounded-2xl px-6 py-4 border-2 border-yellow-400 shadow-2xl text-center transform hover:scale-105 transition-transform">
                   <p className="text-white font-bold text-lg mb-2">Kérdés átugrása</p>
-                  <p className="text-white/80 text-sm mb-3">
+                  <p className="text-white/90 text-2xl font-black mb-3">
                     {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
                   </p>
-                  <div className="flex items-center gap-2 text-white/70 text-xs">
+                  <div className="flex items-center gap-2 text-white/70 text-xs justify-center">
                     <ChevronDown className="w-4 h-4 animate-bounce" />
                     <span>Görgess le a jóváhagyáshoz</span>
                   </div>
@@ -616,25 +627,25 @@ const GamePreview = () => {
 
             {/* Continue panel - after wrong/timeout */}
             {showContinuePanel && (
-              <div className="fixed bottom-20 left-0 right-0 flex justify-center z-20">
-                <div className="bg-red-600/90 backdrop-blur-sm rounded-2xl px-6 py-4 border-2 border-red-400 shadow-xl text-center">
-                  <p className="text-white font-bold text-lg mb-2">
-                    {continueType === 'timeout' ? 'Lejárt az idő!' : 'Rossz válasz!'}
+              <div className="fixed bottom-20 left-0 right-0 flex justify-center z-20 animate-scale-in">
+                <div className="bg-gradient-to-br from-red-600/95 to-red-700/95 backdrop-blur-sm rounded-2xl px-6 py-4 border-2 border-red-400 shadow-2xl text-center max-w-sm">
+                  <p className="text-white font-bold text-xl mb-2">
+                    {continueType === 'timeout' ? '⏰ Lejárt az idő!' : '❌ Rossz válasz!'}
                   </p>
-                  <p className="text-white/80 text-sm mb-1">Folytatás:</p>
-                  <p className="text-yellow-400 font-bold text-xl mb-3">
+                  <p className="text-white/80 text-sm mb-1">Folytatás költsége:</p>
+                  <p className="text-yellow-400 font-black text-3xl mb-4 animate-pulse">
                     {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
                   </p>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-white/70 text-xs justify-center">
-                      <ChevronDown className="w-4 h-4 animate-bounce" />
-                      <span>Görgess le a fizetéshez</span>
+                  <div className="flex flex-col gap-2 bg-black/20 rounded-xl p-3">
+                    <div className="flex items-center gap-2 text-white text-sm justify-center">
+                      <ChevronDown className="w-5 h-5 animate-bounce text-green-300" />
+                      <span className="font-bold">Görgess le → Fizetek & Folytatom</span>
                     </div>
-                    <div className="flex items-center gap-2 text-white/70 text-xs justify-center">
+                    <div className="flex items-center gap-2 text-white/70 text-sm justify-center">
                       <div className="rotate-180">
-                        <ChevronDown className="w-4 h-4" />
+                        <ChevronDown className="w-5 h-5 text-red-300" />
                       </div>
-                      <span>Görgess fel az elutasításhoz</span>
+                      <span>Görgess fel → Elutasítom (hiba +1)</span>
                     </div>
                   </div>
                 </div>
@@ -642,23 +653,34 @@ const GamePreview = () => {
             )}
 
             {/* Scroll hint for correct answer */}
-            {showScrollHint && !showContinuePanel && selectedAnswer && (
-              <div className="fixed bottom-20 left-0 right-0 flex flex-col items-center gap-3 animate-fade-in z-20">
-                <div className="bg-green-600/90 backdrop-blur-sm rounded-2xl px-6 py-3 border-2 border-green-400 shadow-xl">
+            {showScrollHint && !showContinuePanel && selectedAnswer && answerFlash === 'correct' && (
+              <div className="fixed bottom-20 left-0 right-0 flex flex-col items-center gap-3 z-20 animate-fade-in">
+                <div className="bg-gradient-to-r from-green-600/95 to-green-500/95 backdrop-blur-sm rounded-2xl px-8 py-4 border-2 border-green-400 shadow-2xl">
                   <div className="flex items-center gap-3">
-                    <ChevronDown className="w-6 h-6 text-green-200 animate-bounce" />
-                    <span className="text-white font-bold">Görgess a következő kérdéshez</span>
+                    <span className="text-3xl">🎉</span>
+                    <div>
+                      <p className="text-white font-black text-lg">Helyes válasz!</p>
+                      <p className="text-green-200 text-sm">+{getCoinsForQuestion(currentQuestionIndex)} 🪙</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-white/80 text-xs justify-center mt-3">
+                    <ChevronDown className="w-5 h-5 animate-bounce" />
+                    <span>Görgess a következő kérdéshez</span>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Lifelines */}
+            {/* Lifelines with enhanced styling */}
             <div className="flex justify-center gap-3 mb-4">
               <button
                 onClick={useHelp5050}
                 disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
-                className="relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 disabled:opacity-40 hover:scale-110 transition-transform flex items-center justify-center"
+                className={`
+                  relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                  disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
+                  ${!usedHelp5050 && profile.help_50_50_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                `}
                 style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
                 title="Harmadoló"
               >
@@ -667,7 +689,11 @@ const GamePreview = () => {
               <button
                 onClick={useHelp2xAnswer}
                 disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
-                className="relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 disabled:opacity-40 hover:scale-110 transition-transform flex items-center justify-center"
+                className={`
+                  relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                  disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
+                  ${!usedHelp2xAnswer && profile.help_2x_answer_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                `}
                 style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
                 title="2× válasz"
               >
@@ -676,7 +702,11 @@ const GamePreview = () => {
               <button
                 onClick={useHelpAudience}
                 disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
-                className="relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 disabled:opacity-40 hover:scale-110 transition-transform flex items-center justify-center"
+                className={`
+                  relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                  disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
+                  ${!usedHelpAudience && profile.help_audience_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                `}
                 style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
                 title="Közönség"
               >
@@ -685,7 +715,11 @@ const GamePreview = () => {
               <button
                 onClick={useQuestionSwap}
                 disabled={usedQuestionSwap || !profile.question_swaps_available || profile.question_swaps_available === 0 || selectedAnswer !== null}
-                className="relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 disabled:opacity-40 hover:scale-110 transition-transform flex items-center justify-center"
+                className={`
+                  relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                  disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
+                  ${!usedQuestionSwap && profile.question_swaps_available > 0 && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                `}
                 style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
                 title="Kérdéscsere"
               >
