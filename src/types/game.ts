@@ -1,10 +1,17 @@
 export type GameCategory = 'health' | 'history' | 'culture' | 'finance';
 
+export interface Answer {
+  key: string;
+  text: string;
+  correct: boolean;
+}
+
 export interface Question {
   id: string;
   question: string;
-  answers: string[];
-  correct: string;
+  answers: Answer[];
+  audience: { A: number; B: number; C: number };
+  third: string;
   topic: string;
 }
 
@@ -47,6 +54,8 @@ export interface UserProfile {
   daily_gift_last_claimed: string | null;
   invitation_code: string;
   avatar_url: string | null;
+  welcome_bonus_claimed: boolean;
+  question_swaps_available: number;
   created_at: string;
   updated_at: string;
 }
@@ -79,11 +88,7 @@ export const SPEED_BOOSTERS: SpeedBooster[] = [
 ];
 
 export const COIN_REWARDS = {
-  start: 1,
-  questions_1_4: 1,
-  questions_5_9: 3,
-  questions_10_14: 5,
-  question_15: 55
+  per_correct_answer: 50
 };
 
 export const HELP_REACTIVATION_COSTS = {

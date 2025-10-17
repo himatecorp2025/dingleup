@@ -126,11 +126,13 @@ export type Database = {
           lives: number | null
           lives_regeneration_rate: number | null
           max_lives: number | null
+          question_swaps_available: number | null
           speed_booster_active: boolean | null
           speed_booster_expires_at: string | null
           speed_booster_multiplier: number | null
           updated_at: string | null
           username: string
+          welcome_bonus_claimed: boolean | null
         }
         Insert: {
           avatar_url?: string | null
@@ -148,11 +150,13 @@ export type Database = {
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
+          question_swaps_available?: number | null
           speed_booster_active?: boolean | null
           speed_booster_expires_at?: string | null
           speed_booster_multiplier?: number | null
           updated_at?: string | null
           username: string
+          welcome_bonus_claimed?: boolean | null
         }
         Update: {
           avatar_url?: string | null
@@ -170,11 +174,13 @@ export type Database = {
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
+          question_swaps_available?: number | null
           speed_booster_active?: boolean | null
           speed_booster_expires_at?: string | null
           speed_booster_multiplier?: number | null
           updated_at?: string | null
           username?: string
+          welcome_bonus_claimed?: boolean | null
         }
         Relationships: []
       }

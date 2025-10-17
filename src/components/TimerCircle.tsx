@@ -4,9 +4,16 @@ interface TimerCircleProps {
 }
 
 export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
-  const isLowTime = timeLeft <= 3;
+  // Green: 10-8s, Orange: 7-4s, Red: 3-0s
+  const getTimerColor = () => {
+    if (timeLeft >= 8) return "#16A34A"; // Green
+    if (timeLeft >= 4) return "#F59E0B"; // Orange
+    return "#DC2626"; // Red
+  };
+  
   const circumference = 2 * Math.PI * 54;
   const progress = (timeLeft / maxTime) * circumference;
+  const timerColor = getTimerColor();
   
   return (
     <div className="relative w-36 h-36 flex items-center justify-center">
@@ -36,7 +43,7 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
           cx="72"
           cy="72"
           r="54"
-          stroke={isLowTime ? "#ef4444" : "#06b6d4"}
+          stroke={timerColor}
           strokeWidth="10"
           fill="none"
           strokeDasharray={circumference}
@@ -48,7 +55,7 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
       <div className="absolute w-28 h-28 rounded-full bg-slate-900 border-4 border-slate-800" />
       {/* Timer number */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className={`text-6xl font-black ${isLowTime ? 'text-red-400' : 'text-cyan-400'} drop-shadow-lg`}>
+        <span className="text-6xl font-black drop-shadow-lg" style={{ color: timerColor }}>
           {timeLeft}
         </span>
       </div>
