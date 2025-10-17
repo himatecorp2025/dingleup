@@ -294,7 +294,7 @@ const handleAnswer = (answerIndex: number) => {
           setCoinsEarnedThisGame(prev => prev + reward);
           toast.success(`Helyes válasz! +${reward} 🪙`, { description: "Nagyszerű munka!" });
 
-          // 3 mp késleltetés mielőtt a swipe indikátor vagy következő megjelenik
+          // 2 mp késleltetés mielőtt a swipe indikátor vagy következő megjelenik
           setTimeout(() => {
             if (currentQuestion < questions.length - 1) {
               setShowSwipeIndicator(true);
@@ -302,13 +302,13 @@ const handleAnswer = (answerIndex: number) => {
               setGameState('won');
               console.log('round_end', { result: 'won', correctCount: correctAnswersCount + 1 });
             }
-          }, 3000);
+          }, 2000);
         } else {
           setSelectedAnswer(questions[currentQuestion].correctIndex);
-          // 3 mp késleltetés mielőtt a popup megjelenik
+          // 2 mp késleltetés mielőtt a popup megjelenik
           setTimeout(() => {
             setShowWrongAnswerPopup(true);
-          }, 3000);
+          }, 2000);
         }
         return;
       } else {
@@ -337,7 +337,7 @@ const handleAnswer = (answerIndex: number) => {
       setCoinsEarnedThisGame(prev => prev + reward);
       toast.success(`Helyes válasz! +${reward} 🪙`, { description: "Nagyszerű munka!" });
 
-      // 3 mp késleltetés mielőtt a swipe indikátor vagy következő megjelenik
+      // 2 mp késleltetés mielőtt a swipe indikátor vagy következő megjelenik
       setTimeout(() => {
         if (currentQuestion < questions.length - 1) {
           setShowSwipeIndicator(true);
@@ -345,12 +345,12 @@ const handleAnswer = (answerIndex: number) => {
           setGameState('won');
           console.log('round_end', { result: 'won', correctCount: correctAnswersCount + 1 });
         }
-      }, 3000);
+      }, 2000);
     } else {
-      // Rossz válasz - 3 mp késleltetés mielőtt a popup megjelenik
+      // Rossz válasz - 2 mp késleltetés mielőtt a popup megjelenik
       setTimeout(() => {
         setShowWrongAnswerPopup(true);
-      }, 3000);
+      }, 2000);
     }
   };
 
