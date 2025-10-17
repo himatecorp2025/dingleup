@@ -6,22 +6,26 @@ const statusItems = [
   {
     category: "Felhasználói Élmény",
     progress: 85,
-    color: "from-accent to-yellow-500"
+    color: "from-accent to-yellow-500",
+    description: "Responzív design optimalizálás, animációk finomhangolása, sötét/világos téma váltás implementálása és általános UX/UI fejlesztések."
   },
   {
     category: "Játékmechanika",
     progress: 90,
-    color: "from-secondary to-purple-500"
+    color: "from-secondary to-purple-500",
+    description: "Kérdésbank bővítés 500+ kérdésre, timer rendszer optimalizálás, segítségek rendszerének tökéletesítése és pontszámítási logika finomítása."
   },
   {
-    category: "社交功能",
+    category: "Szociális Funkciók",
     progress: 60,
-    color: "from-accent to-orange-500"
+    color: "from-accent to-orange-500",
+    description: "Heti rangsor rendszer fejlesztése, meghívó rendszer kidolgozása, social share funkciók és barátok kezelésének implementálása."
   },
   {
     category: "Tesztelés & Biztonság",
     progress: 75,
-    color: "from-success to-green-500"
+    color: "from-success to-green-500",
+    description: "Keresztplatform tesztelés, teljesítmény optimalizálás, biztonsági protokollok implementálása és bug fixing folyamatos végzése."
   }
 ];
 
@@ -84,16 +88,15 @@ const DevelopmentStatus = () => {
                   {item.progress}%
                 </span>
               </div>
-              <Progress 
-                value={item.progress} 
-                className="h-3 bg-muted"
-              />
-              <div className={`h-3 w-full bg-muted rounded-full overflow-hidden mt-[-12px]`}>
+              <div className={`h-3 w-full bg-muted rounded-full overflow-hidden mb-4`}>
                 <div 
                   className={`h-full bg-gradient-to-r ${item.color} transition-all duration-1000 rounded-full shadow-glow`}
                   style={{ width: `${item.progress}%` }}
                 />
               </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {item.description}
+              </p>
             </Card>
           ))}
         </div>
