@@ -277,15 +277,15 @@ All colors MUST be HSL.
 
 .clip-hexagon-box {
   clip-path: polygon(5% 50%, 10% 20%, 90% 20%, 95% 50%, 90% 80%, 10% 80%);
-  padding: 2rem 2.5rem;
-  min-height: 100px;
-  max-height: 150px;
+  padding: 2.5rem 2.5rem;
+  min-height: 120px;
+  max-height: 170px;
   display: flex;
   align-items: center;
   justify-content: center;
   word-break: break-word;
   overflow: hidden;
-  margin: 12px auto;
+  margin: 4px auto;
   position: relative;
   background: #000000;
   border: 3px solid rgba(59, 130, 246, 0.8);
@@ -295,9 +295,9 @@ All colors MUST be HSL.
 
 @media (min-width: 400px) {
   .clip-hexagon-box {
-    padding: 2.5rem 3rem;
-    min-height: 120px;
-    max-height: 170px;
+    padding: 3rem 3rem;
+    min-height: 140px;
+    max-height: 190px;
     width: 95%;
     max-width: 95%;
   }
@@ -305,12 +305,12 @@ All colors MUST be HSL.
 
 .clip-hexagon-answer {
   clip-path: polygon(5% 50%, 10% 20%, 90% 20%, 95% 50%, 90% 80%, 10% 80%);
-  padding: 1.25rem 2rem;
-  min-height: 65px;
+  padding: 1.5rem 2rem;
+  min-height: 75px;
   display: flex;
   align-items: center;
   word-break: break-word;
-  margin: 6px 0;
+  margin: 3px 0;
   position: relative;
   background: #000000;
   border: 3px solid rgba(59, 130, 246, 0.8);
@@ -323,8 +323,8 @@ All colors MUST be HSL.
 
 @media (min-width: 400px) {
   .clip-hexagon-answer {
-    padding: 1.5rem 2.5rem;
-    min-height: 75px;
+    padding: 1.75rem 2.5rem;
+    min-height: 85px;
     max-width: 80%;
   }
 }

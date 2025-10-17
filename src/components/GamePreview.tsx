@@ -621,24 +621,24 @@ const GamePreview = () => {
             </div>
 
             {/* Timer Circle - Centered & LARGER */}
-            <div className="flex justify-center mt-2">
-              <div className="scale-110">
+            <div className="flex justify-center mb-0.5">
+              <div className="scale-125">
                 <TimerCircle timeLeft={timeLeft} />
               </div>
             </div>
           </div>
 
-          {/* Main content area - NO SCROLL, fixed height, CLOSER to timer */}
-          <div className="flex-1 w-full px-2 flex flex-col justify-center overflow-hidden mt-1">
-            <div className="w-full space-y-3">
+          {/* Main content area - NO SCROLL, fixed height, VERY CLOSE to timer */}
+          <div className="flex-1 w-full px-2 flex flex-col justify-center overflow-hidden">
+            <div className="w-full space-y-0.5">
               
               {/* Question - LARGER box with BIGGER text */}
-              <div className="clip-hexagon-box relative z-10 py-4">
-                <h2 className="text-sm md:text-lg font-bold text-white text-center leading-tight line-clamp-3 px-3">{currentQuestion.question}</h2>
+              <div className="clip-hexagon-box relative z-10 py-5">
+                <h2 className="text-base md:text-xl font-bold text-white text-center leading-tight line-clamp-3 px-3">{currentQuestion.question}</h2>
               </div>
 
-              {/* Answers - LARGER with BIGGER text */}
-              <div className="grid grid-cols-1 gap-2.5 relative z-10">
+              {/* Answers - LARGER with BIGGER text, VERY CLOSE spacing */}
+              <div className="grid grid-cols-1 gap-0.5 relative z-10">
                 {currentQuestion.answers.map((answer, index) => {
                   const isRemoved = removedAnswers.includes(answer);
                   const isSelected = selectedAnswer === answer;
@@ -655,7 +655,7 @@ const GamePreview = () => {
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
-                        clip-hexagon-answer transition-all touch-manipulation py-3.5
+                        clip-hexagon-answer transition-all touch-manipulation py-4.5
                         ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : ''}
                         ${showResult && isCorrect ? '!border-green-500 !bg-green-600' : ''}
                         ${showResult && selectedAnswer === '__wrong__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
@@ -664,9 +664,9 @@ const GamePreview = () => {
                         disabled:opacity-50
                       `}
                     >
-                      <div className="flex items-center justify-center gap-2.5 w-full">
-                        <span className="font-bold text-white text-sm md:text-base">{prefix}</span>
-                        <span className="font-medium text-white text-sm md:text-base line-clamp-2">{answer}</span>
+                      <div className="flex items-center justify-center gap-3 w-full">
+                        <span className="font-bold text-white text-base md:text-lg">{prefix}</span>
+                        <span className="font-medium text-white text-base md:text-lg line-clamp-2">{answer}</span>
                       </div>
                       {audienceVotes[answer] && (
                         <div className="mt-1 text-[10px] text-white/70">
