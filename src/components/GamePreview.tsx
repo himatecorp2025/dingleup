@@ -145,18 +145,20 @@ const GamePreview = () => {
 
   const startBackgroundMusic = () => {
     try {
-      if (!audioRef.current) {
+      const w = window as any;
+      if (w.__bgm) {
+        audioRef.current = w.__bgm as HTMLAudioElement;
+      } else {
         audioRef.current = new Audio(gameMusic);
+        w.__bgm = audioRef.current;
       }
-      
       // Mindig beállítjuk a loop-ot és a hangerőt
-      audioRef.current.loop = true;
-      audioRef.current.volume = 0.3; // 30% volume
+      audioRef.current!.loop = true;
+      audioRef.current!.volume = 0.3; // 30% volume
       
-      // Csak akkor játszuk le, ha már volt user interaction (localStorage check)
       const musicEnabled = localStorage.getItem('musicEnabled');
-      if (musicEnabled && audioRef.current.paused) {
-        audioRef.current.play().catch(e => console.warn("Audio play failed", e));
+      if (musicEnabled && audioRef.current!.paused) {
+        audioRef.current!.play().catch(e => console.warn("Audio play failed", e));
       }
     } catch (e) {
       console.warn("Audio init failed", e);
@@ -164,10 +166,14 @@ const GamePreview = () => {
   };
 
   const stopBackgroundMusic = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
+    try {
+      const w = window as any;
+      const audio: HTMLAudioElement | null = (audioRef.current ?? w.__bgm) || null;
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    } catch {}
   };
 
   // Cleanup: leállítja a zenét amikor a komponens unmount-ol (pl. visszamegy a főoldalra)

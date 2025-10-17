@@ -3,6 +3,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.jpg";
+import gameMusic from "@/assets/game-music.m4a";
 
 const Hero = () => {
   return (
@@ -59,7 +60,24 @@ const Hero = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link to="/game?autostart=true">
-              <Button size="lg" className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6">
+              <Button
+                size="lg"
+                onClick={() => {
+                  try {
+                    localStorage.setItem('musicEnabled', 'true');
+                    const w = window as any;
+                    if (!w.__bgm) {
+                      w.__bgm = new Audio(gameMusic);
+                    }
+                    const audio: HTMLAudioElement = w.__bgm;
+                    audio.loop = true;
+                    audio.volume = 0.3;
+                    // Play immediately on user click
+                    audio.play().catch(() => {});
+                  } catch {}
+                }}
+                className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6"
+              >
                 Játék indítása
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
