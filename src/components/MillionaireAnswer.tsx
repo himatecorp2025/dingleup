@@ -25,42 +25,51 @@ export const MillionaireAnswer = ({
     return (
       <div className="w-full mb-3 opacity-30">
         <div 
-          className="bg-gray-800/50 border-2 border-gray-600/50 px-4 py-3 text-gray-500"
+          className="bg-gray-800/50 border-2 border-gray-600/50 px-5 py-4 text-gray-500"
           style={{
-            clipPath: 'polygon(1% 0%, 99% 0%, 100% 50%, 99% 100%, 1% 100%, 0% 50%)'
+            clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)'
           }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div 
-              className="w-8 h-8 bg-gray-700 border border-gray-600 flex items-center justify-center flex-shrink-0 text-sm font-bold"
+              className="w-10 h-10 bg-gray-700 border-2 border-gray-600 flex items-center justify-center flex-shrink-0 text-base font-bold"
               style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
             >
-              ◆{letter}
+              {letter}:
             </div>
-            <span className="text-sm md:text-base line-through">{children}</span>
+            <span className="text-base md:text-lg line-through">{children}</span>
           </div>
         </div>
       </div>
     );
   }
 
-  let bgGradient = 'from-blue-900/80 via-blue-800/80 to-blue-900/80';
-  let borderColor = 'border-yellow-500/80';
+  let bgColor = 'bg-slate-900';
+  let borderColor = 'border-yellow-500';
   let textColor = 'text-white';
+  let letterBg = 'bg-yellow-500';
+  let letterBorder = 'border-yellow-400';
+  let letterText = 'text-gray-900';
   
   if (isSelected) {
-    bgGradient = 'from-orange-600 via-orange-500 to-orange-600';
-    borderColor = 'border-orange-300';
+    bgColor = 'bg-orange-600';
+    borderColor = 'border-orange-400';
+    letterBg = 'bg-orange-300';
+    letterBorder = 'border-orange-200';
   }
   
   if (isCorrect) {
-    bgGradient = 'from-green-600 via-green-500 to-green-600';
-    borderColor = 'border-green-300';
+    bgColor = 'bg-green-600';
+    borderColor = 'border-green-400';
+    letterBg = 'bg-green-300';
+    letterBorder = 'border-green-200';
   }
   
   if (isWrong) {
-    bgGradient = 'from-red-600 via-red-500 to-red-600';
-    borderColor = 'border-red-300';
+    bgColor = 'bg-red-600';
+    borderColor = 'border-red-400';
+    letterBg = 'bg-red-300';
+    letterBorder = 'border-red-200';
   }
 
   return (
@@ -70,19 +79,19 @@ export const MillionaireAnswer = ({
       className="w-full mb-3 touch-manipulation group"
     >
       <div 
-        className={`bg-gradient-to-r ${bgGradient} border-3 ${borderColor} px-4 py-3 transition-all duration-300 hover:scale-105 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        className={`${bgColor} border-4 ${borderColor} px-5 py-4 transition-all duration-300 hover:scale-[1.02] ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         style={{
-          clipPath: 'polygon(1% 0%, 99% 0%, 100% 50%, 99% 100%, 1% 100%, 0% 50%)'
+          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)'
         }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div 
-            className={`w-8 h-8 bg-yellow-500 border-2 border-yellow-300 flex items-center justify-center flex-shrink-0 text-sm font-black ${textColor}`}
+            className={`w-10 h-10 ${letterBg} border-2 ${letterBorder} flex items-center justify-center flex-shrink-0 text-base font-black ${letterText}`}
             style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
           >
-            ◆{letter}
+            {letter}:
           </div>
-          <span className={`text-sm md:text-base font-medium ${textColor}`}>
+          <span className={`text-base md:text-lg font-normal text-left ${textColor}`}>
             {children}
           </span>
         </div>
