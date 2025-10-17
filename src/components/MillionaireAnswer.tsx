@@ -27,7 +27,7 @@ export const MillionaireAnswer = ({
         <div 
           className="bg-gray-800/50 border-2 border-gray-600/50 px-5 py-4 text-gray-500"
           style={{
-            clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)'
+            clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
           }}
         >
           <div className="flex items-center gap-4">
@@ -81,7 +81,7 @@ export const MillionaireAnswer = ({
       <div 
         className={`${bgColor} border-4 ${borderColor} px-5 py-4 transition-all duration-300 hover:scale-[1.02] ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         style={{
-          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)'
+          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
         }}
       >
         <div className="flex items-center gap-4">

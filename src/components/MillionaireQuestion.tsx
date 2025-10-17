@@ -10,7 +10,7 @@ export const MillionaireQuestion = ({ children }: MillionaireQuestionProps) => {
       <div 
         className="bg-slate-900 border-2 border-cyan-500/60 px-6 py-5 text-white"
         style={{
-          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)'
+          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
         }}
       >
         <div className="flex items-center gap-4">
