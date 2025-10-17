@@ -14,36 +14,220 @@ export type Database = {
   }
   public: {
     Tables: {
+      game_results: {
+        Row: {
+          average_response_time: number | null
+          category: string
+          coins_earned: number
+          completed: boolean | null
+          completed_at: string | null
+          correct_answers: number
+          created_at: string | null
+          id: string
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          average_response_time?: number | null
+          category: string
+          coins_earned?: number
+          completed?: boolean | null
+          completed_at?: string | null
+          correct_answers?: number
+          created_at?: string | null
+          id?: string
+          total_questions?: number
+          user_id: string
+        }
+        Update: {
+          average_response_time?: number | null
+          category?: string
+          coins_earned?: number
+          completed?: boolean | null
+          completed_at?: string | null
+          correct_answers?: number
+          created_at?: string | null
+          id?: string
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_results_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invitations: {
+        Row: {
+          accepted: boolean | null
+          accepted_at: string | null
+          created_at: string | null
+          id: string
+          invitation_code: string
+          invited_email: string | null
+          invited_user_id: string | null
+          inviter_id: string
+        }
+        Insert: {
+          accepted?: boolean | null
+          accepted_at?: string | null
+          created_at?: string | null
+          id?: string
+          invitation_code: string
+          invited_email?: string | null
+          invited_user_id?: string | null
+          inviter_id: string
+        }
+        Update: {
+          accepted?: boolean | null
+          accepted_at?: string | null
+          created_at?: string | null
+          id?: string
+          invitation_code?: string
+          invited_email?: string | null
+          invited_user_id?: string | null
+          inviter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_invited_user_id_fkey"
+            columns: ["invited_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_inviter_id_fkey"
+            columns: ["inviter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          coins: number | null
           created_at: string | null
+          daily_gift_last_claimed: string | null
+          daily_gift_streak: number | null
           email: string
+          help_2x_answer_active: boolean | null
+          help_50_50_active: boolean | null
+          help_audience_active: boolean | null
           id: string
+          invitation_code: string | null
+          last_life_regeneration: string | null
+          lives: number | null
+          lives_regeneration_rate: number | null
+          max_lives: number | null
+          speed_booster_active: boolean | null
+          speed_booster_expires_at: string | null
+          speed_booster_multiplier: number | null
           updated_at: string | null
           username: string
         }
         Insert: {
+          coins?: number | null
           created_at?: string | null
+          daily_gift_last_claimed?: string | null
+          daily_gift_streak?: number | null
           email: string
+          help_2x_answer_active?: boolean | null
+          help_50_50_active?: boolean | null
+          help_audience_active?: boolean | null
           id: string
+          invitation_code?: string | null
+          last_life_regeneration?: string | null
+          lives?: number | null
+          lives_regeneration_rate?: number | null
+          max_lives?: number | null
+          speed_booster_active?: boolean | null
+          speed_booster_expires_at?: string | null
+          speed_booster_multiplier?: number | null
           updated_at?: string | null
           username: string
         }
         Update: {
+          coins?: number | null
           created_at?: string | null
+          daily_gift_last_claimed?: string | null
+          daily_gift_streak?: number | null
           email?: string
+          help_2x_answer_active?: boolean | null
+          help_50_50_active?: boolean | null
+          help_audience_active?: boolean | null
           id?: string
+          invitation_code?: string | null
+          last_life_regeneration?: string | null
+          lives?: number | null
+          lives_regeneration_rate?: number | null
+          max_lives?: number | null
+          speed_booster_active?: boolean | null
+          speed_booster_expires_at?: string | null
+          speed_booster_multiplier?: number | null
           updated_at?: string | null
           username?: string
         }
         Relationships: []
+      }
+      weekly_rankings: {
+        Row: {
+          average_response_time: number | null
+          category: string
+          created_at: string | null
+          id: string
+          rank: number | null
+          total_correct_answers: number | null
+          updated_at: string | null
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          average_response_time?: number | null
+          category: string
+          created_at?: string | null
+          id?: string
+          rank?: number | null
+          total_correct_answers?: number | null
+          updated_at?: string | null
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          average_response_time?: number | null
+          category?: string
+          created_at?: string | null
+          id?: string
+          rank?: number | null
+          total_correct_answers?: number | null
+          updated_at?: string | null
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_rankings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_invitation_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
