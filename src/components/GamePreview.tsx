@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Coins } from "lucide-react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import questions1 from "@/data/questions1.json";
@@ -291,21 +291,24 @@ const handleAnswer = (answerIndex: number) => {
           const reward = getCoinReward(currentQuestion);
           const newCoins = coins + reward;
           setCoins(newCoins);
-          setCoinsEarnedThisGame(prev => prev + reward); // Hozzáadás az ebben a játékban gyűjtött érméhez
+          setCoinsEarnedThisGame(prev => prev + reward);
           toast.success(`Helyes válasz! +${reward} 🪙`, { description: "Nagyszerű munka!" });
 
-          // Swipe indikátor megjelenítése
-          if (currentQuestion < questions.length - 1) {
-            setShowSwipeIndicator(true);
-          } else {
-            setTimeout(() => {
+          // 3 mp késleltetés mielőtt a swipe indikátor vagy következő megjelenik
+          setTimeout(() => {
+            if (currentQuestion < questions.length - 1) {
+              setShowSwipeIndicator(true);
+            } else {
               setGameState('won');
               console.log('round_end', { result: 'won', correctCount: correctAnswersCount + 1 });
-            }, 1000);
-          }
+            }
+          }, 3000);
         } else {
           setSelectedAnswer(questions[currentQuestion].correctIndex);
-          setShowWrongAnswerPopup(true);
+          // 3 mp késleltetés mielőtt a popup megjelenik
+          setTimeout(() => {
+            setShowWrongAnswerPopup(true);
+          }, 3000);
         }
         return;
       } else {
@@ -331,21 +334,23 @@ const handleAnswer = (answerIndex: number) => {
       const reward = getCoinReward(currentQuestion);
       const newCoins = coins + reward;
       setCoins(newCoins);
-      setCoinsEarnedThisGame(prev => prev + reward); // Hozzáadás az ebben a játékban gyűjtött érméhez
+      setCoinsEarnedThisGame(prev => prev + reward);
       toast.success(`Helyes válasz! +${reward} 🪙`, { description: "Nagyszerű munka!" });
 
-      // Swipe indikátor megjelenítése
-      if (currentQuestion < questions.length - 1) {
-        setShowSwipeIndicator(true);
-      } else {
-        setTimeout(() => {
+      // 3 mp késleltetés mielőtt a swipe indikátor vagy következő megjelenik
+      setTimeout(() => {
+        if (currentQuestion < questions.length - 1) {
+          setShowSwipeIndicator(true);
+        } else {
           setGameState('won');
           console.log('round_end', { result: 'won', correctCount: correctAnswersCount + 1 });
-        }, 1000);
-      }
+        }
+      }, 3000);
     } else {
-      // Rossz válasz - popup megjelenítése
-      setShowWrongAnswerPopup(true);
+      // Rossz válasz - 3 mp késleltetés mielőtt a popup megjelenik
+      setTimeout(() => {
+        setShowWrongAnswerPopup(true);
+      }, 3000);
     }
   };
 
@@ -866,7 +871,8 @@ const handleAnswer = (answerIndex: number) => {
               
               <div className="flex flex-col items-end gap-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-accent font-bold text-lg">🪙 {coins}</span>
+                  <Coins className="w-5 h-5 text-yellow-500" />
+                  <span className="text-accent font-bold text-lg">{coins}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-destructive font-bold text-base">❤️ × {lives}</span>
