@@ -240,7 +240,7 @@ All colors MUST be HSL.
   margin: 12px auto;
   position: relative;
   background: #000000;
-  border: 3px solid rgba(59, 130, 246, 0.6);
+  border: 3px solid rgba(59, 130, 246, 0.8);
   max-width: 90%;
 }
 
@@ -262,7 +262,7 @@ All colors MUST be HSL.
   margin: 6px 0;
   position: relative;
   background: #000000;
-  border: 3px solid rgba(59, 130, 246, 0.6);
+  border: 3px solid rgba(59, 130, 246, 0.8);
   justify-content: center;
   max-width: 85%;
   margin-left: auto;

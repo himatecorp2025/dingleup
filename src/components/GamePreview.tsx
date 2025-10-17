@@ -603,7 +603,7 @@ const GamePreview = () => {
       <div className="fixed inset-0 md:relative md:min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
         <div className="max-w-md w-full bg-black/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 text-center border-2 border-green-500/50">
           <div className="text-8xl mb-6 animate-bounce">🏆</div>
-          <h1 className="text-3xl md:text-4xl font-black text-green-500 mb-6">Congratulations, you win!</h1>
+          <h1 className="text-3xl md:text-4xl font-black text-green-500 mb-6">Gratulálunk, nyertél!</h1>
           
           <div className="space-y-3 mb-6">
             <div className="bg-green-500/20 rounded-xl p-4 border border-green-500/30">
@@ -625,7 +625,7 @@ const GamePreview = () => {
             }}
             className="w-full max-w-sm mx-auto mb-3"
           >
-            If you still want to play scroll down!
+            Ha még játszanál, görgess le!
           </HexagonButton>
           
           <button 
@@ -635,7 +635,7 @@ const GamePreview = () => {
             }}
             className="text-white text-sm hover:underline"
           >
-            At rest, back to the main page!
+            Pihenésre, vissza a főoldalra!
           </button>
         </div>
       </div>
