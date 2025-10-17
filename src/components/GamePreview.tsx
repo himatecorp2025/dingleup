@@ -626,7 +626,10 @@ const GamePreview = () => {
               {(timeLeft <= 5 || gameState === 'awaiting-timeout' || (selectedAnswer && showScrollHint && gameState === 'playing')) && (
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 animate-slide-in-right z-20">
                   <div className="relative w-[22vw] flex items-center justify-center" style={{ aspectRatio: '2/1' }}>
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/95 to-purple-900/95 clip-path-hexagon-notification border-2 border-purple-300 shadow-xl shadow-purple-500/60"></div>
+                    {/* Border hexagon wrapper */}
+                    <div className="absolute inset-0 clip-path-hexagon-notification bg-purple-300"></div>
+                    {/* Inner background hexagon */}
+                    <div className="absolute inset-[2px] bg-gradient-to-br from-purple-600/95 to-purple-900/95 clip-path-hexagon-notification shadow-xl shadow-purple-500/60"></div>
                     <div className="relative z-10 text-center px-1.5 py-1">
                       {timeLeft <= 5 && gameState === 'playing' && !selectedAnswer ? (
                         <span className="text-yellow-100 font-bold text-[9px] drop-shadow-lg leading-tight block">
@@ -660,8 +663,12 @@ const GamePreview = () => {
             <div className="flex-1 flex flex-col overflow-y-auto space-y-0.5 w-[95vw] mx-auto">
               
               {/* Kérdés */}
-              <div className="clip-hexagon-box py-4">
-                <h2 className="text-base md:text-lg font-bold text-white text-center leading-tight line-clamp-3 px-2">{currentQuestion.question}</h2>
+              <div className="relative py-4">
+                {/* Border wrapper */}
+                <div className="absolute inset-0 clip-hexagon-box bg-purple-400"></div>
+                {/* Inner background */}
+                <div className="absolute inset-[2px] clip-hexagon-box bg-gradient-to-br from-blue-900/80 to-purple-900/80"></div>
+                <h2 className="relative z-10 text-base md:text-lg font-bold text-white text-center leading-tight line-clamp-3 px-2">{currentQuestion.question}</h2>
               </div>
 
               {/* Válaszok - 2px gap */}
@@ -681,22 +688,32 @@ const GamePreview = () => {
                       key={answer}
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
-                      className={`
-                        clip-hexagon-answer transition-all touch-manipulation py-4
-                        ${isFirstAttempt && !showResult ? '!border-orange-500 bg-orange-500/10' : ''}
-                        ${showResult && isCorrect ? '!border-green-500 !bg-green-600' : ''}
-                        ${showResult && selectedAnswer === '__wrong__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
-                        ${showResult && selectedAnswer === '__timeout__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
-                        ${!showResult && !isFirstAttempt ? 'hover:border-blue-400 hover:bg-blue-500/10 active:scale-98' : ''}
-                        disabled:opacity-50
-                      `}
+                      className="relative transition-all touch-manipulation py-4 disabled:opacity-50"
                     >
-                      <div className="flex items-center justify-center gap-2.5 w-full">
+                      {/* Border wrapper - változó színekkel */}
+                      <div className={`
+                        absolute inset-0 clip-hexagon-answer transition-colors
+                        ${isFirstAttempt && !showResult ? 'bg-orange-500' : ''}
+                        ${showResult && isCorrect ? 'bg-green-500' : ''}
+                        ${showResult && (selectedAnswer === '__wrong__' || selectedAnswer === '__timeout__') && !isCorrect ? 'bg-red-500' : ''}
+                        ${!showResult && !isFirstAttempt ? 'bg-purple-400' : ''}
+                      `}></div>
+                      
+                      {/* Inner background - változó színekkel */}
+                      <div className={`
+                        absolute inset-[2px] clip-hexagon-answer transition-colors
+                        ${isFirstAttempt && !showResult ? 'bg-orange-500/10' : ''}
+                        ${showResult && isCorrect ? 'bg-green-600' : ''}
+                        ${showResult && (selectedAnswer === '__wrong__' || selectedAnswer === '__timeout__') && !isCorrect ? 'bg-red-600' : ''}
+                        ${!showResult && !isFirstAttempt ? 'bg-black/60 hover:bg-blue-500/10' : ''}
+                      `}></div>
+                      
+                      <div className="relative z-10 flex items-center justify-center gap-2.5 w-full">
                         <span className="font-bold text-white text-sm md:text-base">{prefix}</span>
                         <span className="font-medium text-white text-sm md:text-base line-clamp-2">{answer}</span>
                       </div>
                       {audienceVotes[answer] && (
-                        <div className="mt-1 text-[10px] text-white/70">
+                        <div className="relative z-10 mt-1 text-[10px] text-white/70">
                           <Users className="w-2.5 h-2.5 inline mr-1" />
                           {audienceVotes[answer]}%
                         </div>
