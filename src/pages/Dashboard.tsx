@@ -13,6 +13,22 @@ const Dashboard = () => {
   const { profile, loading } = useGameProfile(userId);
   const { canClaim, currentStreak, nextReward, claimDailyGift, checkDailyGift } = useDailyGift(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
+  const [currentRank, setCurrentRank] = useState<number>(1);
+
+  // Helper function
+  const getInitials = (name: string) => {
+    return name.charAt(0).toUpperCase();
+  };
+
+  const getWeekStart = () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday.toISOString().split('T')[0];
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -29,34 +45,6 @@ const Dashboard = () => {
       setShowDailyGift(true);
     }
   }, [canClaim]);
-
-  const handleClaimDailyGift = async () => {
-    await claimDailyGift();
-    await checkDailyGift();
-    setShowDailyGift(false);
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg">Betöltés...</p>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg">Hiba a profil betöltésekor</p>
-      </div>
-    );
-  }
-
-  const getInitials = (name: string) => {
-    return name.charAt(0).toUpperCase();
-  };
-
-  const [currentRank, setCurrentRank] = useState<number>(1);
 
   useEffect(() => {
     const fetchUserRank = async () => {
@@ -76,15 +64,27 @@ const Dashboard = () => {
     fetchUserRank();
   }, [userId]);
 
-  const getWeekStart = () => {
-    const now = new Date();
-    const dayOfWeek = now.getDay();
-    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    const monday = new Date(now);
-    monday.setDate(now.getDate() - diff);
-    monday.setHours(0, 0, 0, 0);
-    return monday.toISOString().split('T')[0];
+  const handleClaimDailyGift = async () => {
+    await claimDailyGift();
+    await checkDailyGift();
+    setShowDailyGift(false);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+        <p className="text-lg text-white">Betöltés...</p>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+        <p className="text-lg text-white">Hiba a profil betöltésekor</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] p-4">
