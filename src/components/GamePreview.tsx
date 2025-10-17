@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Coins } from "lucide-react";
+import { ArrowLeft, Medal } from "lucide-react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import questions1 from "@/data/questions1.json";
@@ -876,7 +876,7 @@ const handleAnswer = (answerIndex: number) => {
               
               <div className="flex flex-col items-end gap-1">
                 <div className="flex items-center gap-2">
-                  <Coins className="w-5 h-5 text-yellow-500" />
+                  <Medal className="w-5 h-5 text-yellow-500" />
                   <span className="text-accent font-bold text-lg">{coins}</span>
                 </div>
                 <div className="flex items-center gap-2">
