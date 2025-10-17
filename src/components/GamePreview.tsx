@@ -600,11 +600,7 @@ const GamePreview = () => {
           {/* Main content area */}
           <div className="flex-1 w-full px-2 pb-20 md:px-0">
             <div className="w-full md:max-w-4xl md:mx-auto space-y-3 md:space-y-4 pb-8">
-              {/* Question - wider box */}
-              <div className="clip-hexagon-box">
-                <h2 className="text-base md:text-lg font-bold text-white text-center leading-tight">{currentQuestion.question}</h2>
-              </div>
-
+              
               {/* Skip button - visible from 5 seconds */}
               {timeLeft <= 5 && !selectedAnswer && gameState === 'playing' && (
                 <div className="flex justify-center">
@@ -621,38 +617,92 @@ const GamePreview = () => {
 
               {/* Awaiting skip confirmation */}
               {gameState === 'awaiting-skip' && (
-                <div className="flex flex-col items-center gap-4 mt-6 p-4 bg-yellow-600/20 rounded-xl border border-yellow-600">
+                <div className="flex flex-col items-center gap-3 p-4 bg-yellow-600/20 rounded-xl border border-yellow-600">
                   <p className="text-yellow-400 text-center font-bold text-lg">
                     Görgess LE a kérdés átugrásához ({skipCost} 🪙)
                   </p>
-                  <ChevronDown className="w-10 h-10 text-yellow-400 animate-bounce" />
-                  <p className="text-white/70 text-sm text-center">
-                    vagy görgess FEL a kilépéshez
-                  </p>
-                  <div className="rotate-180">
-                    <ChevronDown className="w-10 h-10 text-red-400 animate-bounce" />
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="rotate-180">
+                        <ChevronDown className="w-8 h-8 text-green-500" />
+                      </div>
+                      <span className="text-green-500 text-sm">Tovább (LE görgetés)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ChevronDown className="w-8 h-8 text-red-500" />
+                      <span className="text-red-500 text-sm">Kilépés (FEL görgetés)</span>
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* Awaiting timeout confirmation */}
               {gameState === 'awaiting-timeout' && (
-                <div className="flex flex-col items-center gap-4 mt-6 p-4 bg-orange-600/20 rounded-xl border border-orange-600">
+                <div className="flex flex-col items-center gap-3 p-4 bg-orange-600/20 rounded-xl border border-orange-600">
                   <p className="text-orange-400 text-center font-bold text-xl">
                     ⏰ Lejárt az idő!
                   </p>
-                  <p className="text-white text-center font-bold text-lg">
+                  <p className="text-white text-center font-bold">
                     Görgess LE a továbbjutáshoz (150 🪙)
                   </p>
-                  <ChevronDown className="w-10 h-10 text-green-400 animate-bounce" />
-                  <p className="text-white/70 text-sm text-center">
-                    vagy görgess FEL a befejezéshez
-                  </p>
-                  <div className="rotate-180">
-                    <ChevronDown className="w-10 h-10 text-red-400 animate-bounce" />
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="rotate-180">
+                        <ChevronDown className="w-8 h-8 text-green-500" />
+                      </div>
+                      <span className="text-green-500 text-sm">Tovább (LE görgetés)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ChevronDown className="w-8 h-8 text-red-500" />
+                      <span className="text-red-500 text-sm">Befejezés (FEL görgetés)</span>
+                    </div>
                   </div>
                 </div>
               )}
+
+              {/* Scroll hint - show after answer */}
+              {selectedAnswer && showScrollHint && gameState === 'playing' && (
+                <div className="flex flex-col items-center gap-3 p-4 bg-blue-600/20 rounded-xl border border-blue-600">
+                  {selectedAnswer === '__wrong__' ? (
+                    <>
+                      <p className="text-red-400 text-center font-bold text-xl">❌ Rossz válasz!</p>
+                      <p className="text-white text-center font-bold">
+                        Görgess LE a továbbjutáshoz (50 🪙)
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <div className="rotate-180">
+                            <ChevronDown className="w-8 h-8 text-green-500" />
+                          </div>
+                          <span className="text-green-500 text-sm">Tovább (LE görgetés)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <ChevronDown className="w-8 h-8 text-red-500" />
+                          <span className="text-red-500 text-sm">Befejezés (FEL görgetés)</span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-green-400 text-center font-bold text-xl">✅ Helyes válasz!</p>
+                      <p className="text-white text-center font-bold">
+                        Görgess LE a következő kérdéshez
+                      </p>
+                      <div className="flex items-center gap-2 justify-center">
+                        <div className="rotate-180">
+                          <ChevronDown className="w-8 h-8 text-green-500 animate-bounce" />
+                        </div>
+                        <span className="text-green-500">Következő kérdés (LE görgetés)</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+              
+              {/* Question - wider box */}
+              <div className="clip-hexagon-box">
+                <h2 className="text-sm md:text-base font-bold text-white text-center leading-tight line-clamp-3">{currentQuestion.question}</h2>
+              </div>
 
               {/* Answers */}
               <div className="grid grid-cols-1 gap-3 md:gap-4">

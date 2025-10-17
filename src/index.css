@@ -233,23 +233,27 @@ All colors MUST be HSL.
   clip-path: polygon(5% 50%, 10% 20%, 90% 20%, 95% 50%, 90% 80%, 10% 80%);
   padding: 1.5rem 2.5rem;
   min-height: 80px;
+  max-height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
   word-break: break-word;
+  overflow: hidden;
   margin: 12px auto;
   position: relative;
   background: #000000;
   border: 3px solid rgba(59, 130, 246, 0.8);
-  width: 90%;
-  max-width: 90%;
+  width: 95%;
+  max-width: 95%;
 }
 
 @media (min-width: 400px) {
   .clip-hexagon-box {
     padding: 2rem 3rem;
     min-height: 100px;
-    max-width: 85%;
+    max-height: 140px;
+    width: 95%;
+    max-width: 95%;
   }
 }
 
