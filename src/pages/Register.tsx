@@ -1,139 +1,151 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import logo from "@/assets/logo.png";
 
 const registerSchema = z.object({
-  username: z.string().min(3, "A felhasználónév legalább 3 karakter hosszú legyen"),
-  email: z.string().email("Érvényes email címet adj meg"),
+  username: z.string()
+    .min(3, "A felhasználónév legalább 3 karakter hosszú legyen")
+    .max(50, "A felhasználónév maximum 50 karakter lehet"),
+  email: z.string()
+    .email("Érvénytelen email cím")
+    .max(255, "Az email cím túl hosszú"),
   password: z.string()
-    .min(8, "A jelszó legalább 8 karakter hosszú legyen")
+    .min(8, "A jelszónak legalább 8 karakter hosszúnak kell lennie")
     .regex(/[a-z]/, "A jelszónak tartalmaznia kell kisbetűt")
     .regex(/[A-Z]/, "A jelszónak tartalmaznia kell nagybetűt")
     .regex(/[^a-zA-Z0-9]/, "A jelszónak tartalmaznia kell speciális karaktert"),
-  confirmPassword: z.string(),
-  terms: z.boolean().refine(val => val === true, "El kell fogadnod az ÁSZF-et")
-}).refine(data => data.password === data.confirmPassword, {
+  passwordConfirm: z.string(),
+  termsAccepted: z.boolean().refine((val) => val === true, {
+    message: "El kell fogadnod az ÁSZF-et",
+  }),
+}).refine((data) => data.password === data.passwordConfirm, {
   message: "A két jelszó nem egyezik",
-  path: ["confirmPassword"]
+  path: ["passwordConfirm"],
 });
 
+type RegisterForm = z.infer<typeof registerSchema>;
+
 const Register = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [terms, setTerms] = useState(false);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [formData, setFormData] = useState<RegisterForm>({
+    username: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    termsAccepted: false,
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof RegisterForm, string>>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setErrors({});
+    setIsLoading(true);
+
     try {
-      const validatedData = registerSchema.parse({
-        username,
-        email,
-        password,
-        confirmPassword,
-        terms
-      });
+      const validated = registerSchema.parse(formData);
 
-      setLoading(true);
-
-      const { data, error } = await supabase.auth.signUp({
-        email: validatedData.email,
-        password: validatedData.password,
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: validated.email,
+        password: validated.password,
         options: {
           data: {
-            username: validatedData.username
+            username: validated.username,
           },
-          emailRedirectTo: `${window.location.origin}/`
-        }
+          emailRedirectTo: `${window.location.origin}/`,
+        },
       });
 
-      if (error) {
-        toast({
-          title: "Hiba",
-          description: error.message === "User already registered" 
-            ? "Ez az email cím már regisztrálva van" 
-            : error.message,
-          variant: "destructive"
-        });
+      if (authError) {
+        if (authError.message.includes("already registered")) {
+          toast({
+            title: "Hiba",
+            description: "Ez az email cím már regisztrálva van",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Hiba",
+            description: authError.message,
+            variant: "destructive",
+          });
+        }
         return;
       }
 
-      if (data.user) {
+      if (authData.user) {
+        toast({
+          title: "Sikeres regisztráció!",
+          description: "Átirányítunk a játékhoz...",
+        });
         navigate("/registration-success");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        toast({
-          title: "Hibás adatok",
-          description: error.errors[0].message,
-          variant: "destructive"
+        const fieldErrors: Partial<Record<keyof RegisterForm, string>> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            fieldErrors[err.path[0] as keyof RegisterForm] = err.message;
+          }
         });
+        setErrors(fieldErrors);
       }
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background"></div>
-      
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-accent/10"></div>
+
       {/* Floating elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-16 h-16 bg-accent rounded-full opacity-20 animate-float"></div>
-        <div className="absolute bottom-40 right-20 w-24 h-24 bg-secondary rounded-full opacity-20 animate-float" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-20 h-20 bg-accent rounded-full opacity-20 animate-float"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary rounded-full opacity-20 animate-float" style={{ animationDelay: '1s' }}></div>
       </div>
 
-      <div className="w-full max-w-md z-10">
-        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors">
+      <div className="w-full max-w-md relative z-10">
+        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Vissza a főoldalra
         </Link>
 
         <div className="bg-gradient-card border border-border/50 rounded-2xl p-8 shadow-glow">
-          {/* Logo */}
-          <div className="flex justify-center mb-6">
-            <div className="relative w-24 h-24">
-              <div className="absolute inset-0 rounded-full bg-gradient-radial from-accent/40 via-accent/20 to-transparent blur-xl"></div>
-              <img src={logo} alt="Dingle UP! Logo" className="relative w-full h-full object-contain" />
-            </div>
-          </div>
-
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 bg-accent/20 backdrop-blur-sm border border-accent/30 rounded-full px-4 py-2 mb-4">
-              <Sparkles className="w-4 h-4 text-accent" />
-              <span className="text-accent font-semibold text-sm">Regisztráció</span>
-            </div>
-            <h1 className="text-3xl font-bold font-poppins">Csatlakozz hozzánk!</h1>
-            <p className="text-muted-foreground mt-2">Hozd létre a fiókodat és kezdd el a játékot</p>
+            <img src={logo} alt="Dingle UP!" className="w-24 h-24 mx-auto mb-4" />
+            <h1 className="text-3xl font-bold mb-2 font-poppins">
+              <span className="text-transparent bg-clip-text bg-gradient-gold">Regisztráció</span>
+            </h1>
+            <p className="text-muted-foreground">Csatlakozz és kezdd el a játékot!</p>
           </div>
 
-          <form onSubmit={handleRegister} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="username">Felhasználónév</Label>
               <Input
                 id="username"
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Válassz egy felhasználónevet"
-                required
-                className="mt-1"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                className={errors.username ? "border-destructive" : ""}
+                disabled={isLoading}
               />
+              {errors.username && (
+                <p className="text-sm text-destructive mt-1">{errors.username}</p>
+              )}
             </div>
 
             <div>
@@ -141,74 +153,102 @@ const Register = () => {
               <Input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="pelda@email.com"
-                required
-                className="mt-1"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className={errors.email ? "border-destructive" : ""}
+                disabled={isLoading}
               />
+              {errors.email && (
+                <p className="text-sm text-destructive mt-1">{errors.email}</p>
+              )}
             </div>
 
             <div>
               <Label htmlFor="password">Jelszó</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 8 karakter, kis/nagybetű, speciális karakter"
-                required
-                className="mt-1"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className={errors.password ? "border-destructive pr-10" : "pr-10"}
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-sm text-destructive mt-1">{errors.password}</p>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">
+                Min. 8 karakter, kis- és nagybetű, speciális karakter
+              </p>
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword">Jelszó megerősítése</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Add meg újra a jelszót"
-                required
-                className="mt-1"
-              />
+              <Label htmlFor="passwordConfirm">Jelszó megerősítése</Label>
+              <div className="relative">
+                <Input
+                  id="passwordConfirm"
+                  type={showPasswordConfirm ? "text" : "password"}
+                  value={formData.passwordConfirm}
+                  onChange={(e) => setFormData({ ...formData, passwordConfirm: e.target.value })}
+                  className={errors.passwordConfirm ? "border-destructive pr-10" : "pr-10"}
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPasswordConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {errors.passwordConfirm && (
+                <p className="text-sm text-destructive mt-1">{errors.passwordConfirm}</p>
+              )}
             </div>
 
             <div className="flex items-start gap-2">
               <Checkbox
                 id="terms"
-                checked={terms}
-                onCheckedChange={(checked) => setTerms(checked as boolean)}
-                className="mt-1"
+                checked={formData.termsAccepted}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, termsAccepted: checked as boolean })
+                }
+                disabled={isLoading}
               />
               <Label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">
                 Elfogadom az{" "}
                 <a href="#" className="text-accent hover:underline">
                   Általános Szerződési Feltételeket
-                </a>{" "}
-                és az{" "}
-                <a href="#" className="text-accent hover:underline">
-                  Adatvédelmi Nyilatkozatot
                 </a>
               </Label>
             </div>
+            {errors.termsAccepted && (
+              <p className="text-sm text-destructive">{errors.termsAccepted}</p>
+            )}
 
             <Button
               type="submit"
               className="w-full bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all"
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? "Regisztráció..." : "Regisztráció"}
+              {isLoading ? "Regisztráció..." : "Regisztráció"}
             </Button>
-
-            <p className="text-center text-sm text-muted-foreground">
-              Már van fiókod?{" "}
-              <Link to="/login" className="text-accent hover:underline font-semibold">
-                Bejelentkezés
-              </Link>
-            </p>
           </form>
+
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            Van már fiókod?{" "}
+            <Link to="/login" className="text-accent hover:underline font-semibold">
+              Bejelentkezés
+            </Link>
+          </p>
         </div>
       </div>
     </div>

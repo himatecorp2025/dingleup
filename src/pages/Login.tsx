@@ -1,147 +1,175 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { z } from "zod";
 import logo from "@/assets/logo.png";
 
+const loginSchema = z.object({
+  email: z.string().email("Érvénytelen email cím").max(255),
+  password: z.string().min(1, "A jelszó mező kötelező"),
+});
+
+type LoginForm = z.infer<typeof loginSchema>;
+
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [formData, setFormData] = useState<LoginForm>({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof LoginForm, string>>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        navigate("/game");
-      }
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        navigate("/game");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email || !password) {
-      toast({
-        title: "Hiányzó adatok",
-        description: "Kérlek add meg az email címed és a jelszavad",
-        variant: "destructive"
+    setErrors({});
+    setIsLoading(true);
+
+    try {
+      const validated = loginSchema.parse(formData);
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: validated.email,
+        password: validated.password,
       });
-      return;
+
+      if (error) {
+        toast({
+          title: "Bejelentkezési hiba",
+          description: "Helytelen email vagy jelszó",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Sikeres bejelentkezés!",
+          description: "Átirányítunk a játékhoz...",
+        });
+        
+        // Music setup
+        try {
+          localStorage.setItem('musicEnabled', 'true');
+          const w = window as any;
+          const audio: HTMLAudioElement | undefined = w.__bgm;
+          if (audio) {
+            audio.muted = true;
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+            setTimeout(() => {
+              audio.muted = false;
+            }, 0);
+          }
+        } catch {}
+        
+        navigate("/game?autostart=true");
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors: Partial<Record<keyof LoginForm, string>> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            fieldErrors[err.path[0] as keyof LoginForm] = err.message;
+          }
+        });
+        setErrors(fieldErrors);
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    setLoading(true);
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      toast({
-        title: "Bejelentkezési hiba",
-        description: error.message === "Invalid login credentials" 
-          ? "Hibás email cím vagy jelszó" 
-          : error.message,
-        variant: "destructive"
-      });
-      setLoading(false);
-      return;
-    }
-
-    // The navigation will happen automatically through onAuthStateChange
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background"></div>
-      
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-accent/10"></div>
+
       {/* Floating elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-16 h-16 bg-accent rounded-full opacity-20 animate-float"></div>
-        <div className="absolute bottom-40 right-20 w-24 h-24 bg-secondary rounded-full opacity-20 animate-float" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-20 h-20 bg-accent rounded-full opacity-20 animate-float"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary rounded-full opacity-20 animate-float" style={{ animationDelay: '1s' }}></div>
       </div>
 
-      <div className="w-full max-w-md z-10">
-        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors">
+      <div className="w-full max-w-md relative z-10">
+        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Vissza a főoldalra
         </Link>
 
         <div className="bg-gradient-card border border-border/50 rounded-2xl p-8 shadow-glow">
-          {/* Logo */}
-          <div className="flex justify-center mb-6">
-            <div className="relative w-24 h-24">
-              <div className="absolute inset-0 rounded-full bg-gradient-radial from-accent/40 via-accent/20 to-transparent blur-xl"></div>
-              <img src={logo} alt="Dingle UP! Logo" className="relative w-full h-full object-contain" />
-            </div>
-          </div>
-
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 bg-accent/20 backdrop-blur-sm border border-accent/30 rounded-full px-4 py-2 mb-4">
-              <Sparkles className="w-4 h-4 text-accent" />
-              <span className="text-accent font-semibold text-sm">Bejelentkezés</span>
-            </div>
-            <h1 className="text-3xl font-bold font-poppins">Üdv újra!</h1>
-            <p className="text-muted-foreground mt-2">Lépj be a fiókodba és folytasd a játékot</p>
+            <img src={logo} alt="Dingle UP!" className="w-24 h-24 mx-auto mb-4" />
+            <h1 className="text-3xl font-bold mb-2 font-poppins">
+              <span className="text-transparent bg-clip-text bg-gradient-gold">Bejelentkezés</span>
+            </h1>
+            <p className="text-muted-foreground">Üdv újra! Jelentkezz be a folytatáshoz</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="email">Email cím</Label>
               <Input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="pelda@email.com"
-                required
-                className="mt-1"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className={errors.email ? "border-destructive" : ""}
+                disabled={isLoading}
+                autoComplete="email"
               />
+              {errors.email && (
+                <p className="text-sm text-destructive mt-1">{errors.email}</p>
+              )}
             </div>
 
             <div>
               <Label htmlFor="password">Jelszó</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Add meg a jelszavad"
-                required
-                className="mt-1"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className={errors.password ? "border-destructive pr-10" : "pr-10"}
+                  disabled={isLoading}
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-sm text-destructive mt-1">{errors.password}</p>
+              )}
             </div>
 
             <Button
               type="submit"
               className="w-full bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all"
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? "Bejelentkezés..." : "Bejelentkezés"}
+              {isLoading ? "Bejelentkezés..." : "Bejelentkezés"}
             </Button>
-
-            <p className="text-center text-sm text-muted-foreground">
-              Még nincs fiókod?{" "}
-              <Link to="/register" className="text-accent hover:underline font-semibold">
-                Regisztráció
-              </Link>
-            </p>
           </form>
+
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            Még nincs fiókod?{" "}
+            <Link to="/register" className="text-accent hover:underline font-semibold">
+              Regisztráció
+            </Link>
+          </p>
         </div>
       </div>
     </div>
