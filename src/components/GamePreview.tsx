@@ -628,17 +628,17 @@ const GamePreview = () => {
             </div>
           </div>
 
-          {/* Main content - ZERO spacing between elements */}
-          <div className="flex-1 w-full px-2 flex flex-col justify-start overflow-hidden -mt-3">
+          {/* Main content - KOMPAKT, felső 90%-ban */}
+          <div className="flex-1 w-full px-1 flex flex-col justify-start overflow-hidden pt-0 -mt-8">
             <div className="w-full space-y-0">
               
-              {/* Question - touches timer */}
-              <div className="clip-hexagon-box relative z-10 py-5 -mt-6">
-                <h2 className="text-base md:text-xl font-bold text-white text-center leading-tight line-clamp-3 px-3">{currentQuestion.question}</h2>
+              {/* Question - SZÉLES, MAGAS, közel a timerhez */}
+              <div className="clip-hexagon-box relative z-10 py-6">
+                <h2 className="text-base md:text-xl font-bold text-white text-center leading-tight line-clamp-3 px-2">{currentQuestion.question}</h2>
               </div>
 
-              {/* Answers - very close to question */}
-              <div className="grid grid-cols-1 gap-0 relative z-10 -mt-4">
+              {/* Answers - SZOROSAN a kérdés alatt, egymáshoz is közel */}
+              <div className="grid grid-cols-1 gap-0 relative z-10 -mt-6">
                 {currentQuestion.answers.map((answer, index) => {
                   const isRemoved = removedAnswers.includes(answer);
                   const isSelected = selectedAnswer === answer;
@@ -655,7 +655,7 @@ const GamePreview = () => {
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
-                        clip-hexagon-answer transition-all touch-manipulation py-5 -mt-2.5 first:-mt-0
+                        clip-hexagon-answer transition-all touch-manipulation py-6 ${index === 0 ? '-mt-0' : '-mt-4'}
                         ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : ''}
                         ${showResult && isCorrect ? '!border-green-500 !bg-green-600' : ''}
                         ${showResult && selectedAnswer === '__wrong__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
@@ -679,85 +679,85 @@ const GamePreview = () => {
                 })}
               </div>
 
-              {/* VÉKONY SÁV - Skip confirmation - between answers and helps */}
-              {gameState === 'awaiting-skip' && (
-                <div className="w-full px-2 py-2 bg-gradient-to-r from-yellow-900/90 to-yellow-800/90 border-y-2 border-yellow-500 relative z-10">
-                  <p className="text-yellow-400 text-center font-bold text-xs mb-1">
-                    Kérdés átugrása ({skipCost} 🪙)
-                  </p>
-                  <div className="flex items-center justify-center gap-4 text-[10px]">
-                    <div className="flex items-center gap-1">
-                      <div className="rotate-180">
-                        <ChevronDown className="w-4 h-4 text-green-400 animate-bounce" />
+              {/* ÉRTESÍTÉSEK - közvetlenül C válasz alatt, wrapper -mt-3 */}
+              <div className="-mt-3">
+                {gameState === 'awaiting-skip' && (
+                  <div className="w-full px-2 py-1.5 bg-gradient-to-r from-yellow-900/90 to-yellow-800/90 border-y-2 border-yellow-500 relative z-10">
+                    <p className="text-yellow-400 text-center font-bold text-xs mb-0.5">
+                      Kérdés átugrása ({skipCost} 🪙)
+                    </p>
+                    <div className="flex items-center justify-center gap-3 text-[9px]">
+                      <div className="flex items-center gap-1">
+                        <div className="rotate-180">
+                          <ChevronDown className="w-3.5 h-3.5 text-green-400 animate-bounce" />
+                        </div>
+                        <span className="text-green-300 font-bold">LE: Megerősít</span>
                       </div>
-                      <span className="text-green-300 font-bold">LE: Megerősít</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <ChevronDown className="w-4 h-4 text-red-400" />
-                      <span className="text-red-300 font-bold">FEL: Mégsem</span>
+                      <div className="flex items-center gap-1">
+                        <ChevronDown className="w-3.5 h-3.5 text-red-400" />
+                        <span className="text-red-300 font-bold">FEL: Mégsem</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* VÉKONY SÁV - Answer result - between answers and helps */}
-              {selectedAnswer && showScrollHint && gameState === 'playing' && (
-                <div className={`w-full px-2 py-2 border-y-2 relative z-10 ${
-                  selectedAnswer === '__wrong__' 
-                    ? 'bg-gradient-to-r from-red-900/90 to-red-800/90 border-red-500' 
-                    : 'bg-gradient-to-r from-green-900/90 to-green-800/90 border-green-500'
-                }`}>
-                  {selectedAnswer === '__wrong__' ? (
-                    <>
-                      <p className="text-red-300 text-center font-bold text-xs mb-1">❌ Rossz válasz!</p>
-                      <div className="flex items-center justify-center gap-4 text-[10px]">
-                        <div className="flex items-center gap-1">
-                          <div className="rotate-180">
-                            <ChevronDown className="w-4 h-4 text-green-400 animate-bounce" />
+                {selectedAnswer && showScrollHint && gameState === 'playing' && (
+                  <div className={`w-full px-2 py-1.5 border-y-2 relative z-10 ${
+                    selectedAnswer === '__wrong__' 
+                      ? 'bg-gradient-to-r from-red-900/90 to-red-800/90 border-red-500' 
+                      : 'bg-gradient-to-r from-green-900/90 to-green-800/90 border-green-500'
+                  }`}>
+                    {selectedAnswer === '__wrong__' ? (
+                      <>
+                        <p className="text-red-300 text-center font-bold text-xs mb-0.5">❌ Rossz válasz!</p>
+                        <div className="flex items-center justify-center gap-3 text-[9px]">
+                          <div className="flex items-center gap-1">
+                            <div className="rotate-180">
+                              <ChevronDown className="w-3.5 h-3.5 text-green-400 animate-bounce" />
+                            </div>
+                            <span className="text-green-300 font-bold">LE: Tovább (50🪙)</span>
                           </div>
-                          <span className="text-green-300 font-bold">LE: Tovább (50🪙)</span>
+                          <div className="flex items-center gap-1">
+                            <ChevronDown className="w-3.5 h-3.5 text-red-400" />
+                            <span className="text-red-300 font-bold">FEL: Befejez</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <ChevronDown className="w-4 h-4 text-red-400" />
-                          <span className="text-red-300 font-bold">FEL: Befejez</span>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-green-300 text-center font-bold text-xs mb-0.5">✅ Helyes!</p>
+                        <div className="flex items-center justify-center gap-1">
+                          <div className="rotate-180">
+                            <ChevronDown className="w-4 h-4 text-green-300 animate-bounce" />
+                          </div>
+                          <span className="text-green-200 font-bold text-[9px]">Görgess LE</span>
                         </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-green-300 text-center font-bold text-xs mb-1">✅ Helyes!</p>
-                      <div className="flex items-center justify-center gap-1">
-                        <div className="rotate-180">
-                          <ChevronDown className="w-5 h-5 text-green-300 animate-bounce" />
-                        </div>
-                        <span className="text-green-200 font-bold text-[10px]">Görgess LE a következő kérdéshez</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
+                      </>
+                    )}
+                  </div>
+                )}
 
-              {/* INLINE - Skip button when time is low - DIRECT ACTION */}
-              {timeLeft <= 5 && !selectedAnswer && gameState === 'playing' && (
-                <div className="w-full px-2 py-2 bg-gradient-to-r from-yellow-900/90 to-yellow-800/90 border-y-2 border-yellow-500 relative z-10">
-                  <p className="text-yellow-300 text-center font-bold text-xs mb-1">
-                    ⏱️ Kevés az idő!
-                  </p>
-                  <Button
-                    onClick={skipQuestionDirectly}
-                    size="sm"
-                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold text-xs py-1"
-                  >
-                    Kérdés átugrása ({skipCost} 🪙)
-                  </Button>
-                </div>
-              )}
+                {timeLeft <= 5 && !selectedAnswer && gameState === 'playing' && (
+                  <div className="w-full px-2 py-1.5 bg-gradient-to-r from-yellow-900/90 to-yellow-800/90 border-y-2 border-yellow-500 relative z-10">
+                    <p className="text-yellow-300 text-center font-bold text-xs mb-0.5">
+                      ⏱️ Kevés az idő!
+                    </p>
+                    <Button
+                      onClick={skipQuestionDirectly}
+                      size="sm"
+                      className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold text-xs py-0.5"
+                    >
+                      Kérdés átugrása ({skipCost} 🪙)
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* SEGÍTSÉG GOMBOK - az értesítések alatt, screen aljára rögzítve */}
-          <div className="flex-none w-full pb-2 pt-2">
-            <div className="flex justify-center gap-2 flex-wrap">
+          {/* SEGÍTSÉG GOMBOK - közvetlenül értesítések alatt */}
+          <div className="flex-none w-full pb-1 pt-0.5">
+            <div className="flex justify-center gap-1.5 flex-wrap">
               <button
                 onClick={useHelp5050}
                 disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}

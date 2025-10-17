@@ -277,9 +277,9 @@ All colors MUST be HSL.
 
 .clip-hexagon-box {
   clip-path: polygon(5% 50%, 10% 20%, 90% 20%, 95% 50%, 90% 80%, 10% 80%);
-  padding: 2.5rem 2.5rem;
-  min-height: 120px;
-  max-height: 170px;
+  padding: 2.5rem 1.5rem;
+  min-height: 130px;
+  max-height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -290,24 +290,24 @@ All colors MUST be HSL.
   background: #000000;
   border: 4px solid rgba(59, 130, 246, 1);
   box-shadow: 0 0 15px rgba(59, 130, 246, 0.5), inset 0 0 10px rgba(59, 130, 246, 0.2);
-  width: 95%;
-  max-width: 95%;
+  width: 98%;
+  max-width: 98%;
 }
 
 @media (min-width: 400px) {
   .clip-hexagon-box {
-    padding: 3rem 3rem;
-    min-height: 140px;
-    max-height: 190px;
-    width: 95%;
-    max-width: 95%;
+    padding: 3rem 2rem;
+    min-height: 150px;
+    max-height: 200px;
+    width: 98%;
+    max-width: 98%;
   }
 }
 
 .clip-hexagon-answer {
   clip-path: polygon(5% 50%, 10% 20%, 90% 20%, 95% 50%, 90% 80%, 10% 80%);
-  padding: 1.5rem 2rem;
-  min-height: 75px;
+  padding: 1.75rem 1.5rem;
+  min-height: 85px;
   display: flex;
   align-items: center;
   word-break: break-word;
@@ -317,17 +317,17 @@ All colors MUST be HSL.
   border: 4px solid rgba(59, 130, 246, 1);
   box-shadow: 0 0 12px rgba(59, 130, 246, 0.4), inset 0 0 8px rgba(59, 130, 246, 0.15);
   justify-content: center;
-  width: 80%;
-  max-width: 80%;
+  width: 90%;
+  max-width: 90%;
   margin-left: auto;
   margin-right: auto;
 }
 
 @media (min-width: 400px) {
   .clip-hexagon-answer {
-    padding: 1.75rem 2.5rem;
-    min-height: 85px;
-    max-width: 80%;
+    padding: 2rem 2rem;
+    min-height: 95px;
+    max-width: 90%;
   }
 }
 
