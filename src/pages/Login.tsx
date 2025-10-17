@@ -88,32 +88,32 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-4 py-4 sm:py-12 relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-accent/10"></div>
 
-      {/* Floating elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Floating elements - hidden on mobile */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
         <div className="absolute top-20 left-10 w-20 h-20 bg-accent rounded-full opacity-20 animate-float"></div>
         <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary rounded-full opacity-20 animate-float" style={{ animationDelay: '1s' }}></div>
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
+        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 sm:mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Vissza a főoldalra
         </Link>
 
-        <div className="bg-gradient-card border border-border/50 rounded-2xl p-8 shadow-glow">
-          <div className="text-center mb-8">
-            <img src={logo} alt="Dingle UP!" className="w-24 h-24 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold mb-2 font-poppins">
+        <div className="bg-gradient-card border border-border/50 rounded-2xl p-6 sm:p-8 shadow-glow">
+          <div className="text-center mb-6 sm:mb-8">
+            <img src={logo} alt="Dingle UP!" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4" />
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2 font-poppins">
               <span className="text-transparent bg-clip-text bg-gradient-gold">Bejelentkezés</span>
             </h1>
-            <p className="text-muted-foreground">Üdv újra! Jelentkezz be a folytatáshoz</p>
+            <p className="text-sm sm:text-base text-muted-foreground">Üdv újra! Jelentkezz be a folytatáshoz</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div>
               <Label htmlFor="email">Email cím</Label>
               <Input
@@ -164,7 +164,7 @@ const Login = () => {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-6">
+          <p className="text-center text-xs sm:text-sm text-muted-foreground mt-4 sm:mt-6">
             Még nincs fiókod?{" "}
             <Link to="/register" className="text-accent hover:underline font-semibold">
               Regisztráció
