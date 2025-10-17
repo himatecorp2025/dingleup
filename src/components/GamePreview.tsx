@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, HelpCircle, Clock, Gift, Trophy } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, HelpCircle, Gift, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
@@ -8,13 +8,16 @@ import { useDailyGift } from "@/hooks/useDailyGift";
 import { supabase } from "@/integrations/supabase/client";
 import { GameCategory, Question } from "@/types/game";
 import CategorySelector from "./CategorySelector";
+import { HexagonButton } from "./HexagonButton";
+import { TimerCircle } from "./TimerCircle";
+import { GameStateScreen } from "./GameStateScreen";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
 import cultureQuestions from "@/data/questions-culture.json";
 import financeQuestions from "@/data/questions-finance.json";
 
-type GameState = 'category-select' | 'playing' | 'paused' | 'finished';
+type GameState = 'category-select' | 'playing' | 'paused' | 'finished' | 'timeout' | 'lose' | 'win' | 'out-of-lives';
 
 const QUESTION_BANKS = {
   health: healthQuestions,
@@ -73,8 +76,7 @@ const GamePreview = () => {
     const responseTime = (Date.now() - questionStartTime) / 1000;
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__timeout__');
-    toast.error('Lejárt az idő!');
-    setTimeout(handleNextQuestion, 2000);
+    setGameState('timeout');
   };
 
   const startGameWithCategory = async (category: GameCategory) => {
@@ -145,15 +147,13 @@ const GamePreview = () => {
     const reward = calculateReward(currentQuestionIndex);
     setCoinsEarned(coinsEarned + reward);
     
-    toast.success(`Helyes! +${reward} aranyérme`);
-    setTimeout(handleNextQuestion, 1500);
+    setGameState('win');
   };
 
   const handleWrongAnswer = (responseTime: number) => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__wrong__');
-    toast.error('Rossz válasz!');
-    setTimeout(handleNextQuestion, 2000);
+    setGameState('lose');
   };
 
   const calculateReward = (questionIndex: number): number => {
@@ -174,6 +174,7 @@ const GamePreview = () => {
       setRemovedAnswers([]);
       setAudienceVotes({});
       setQuestionStartTime(Date.now());
+      setGameState('playing');
     }
   };
 
@@ -303,11 +304,22 @@ const GamePreview = () => {
     );
   }
 
+  // Game state overlays
+  if (gameState === 'timeout' || gameState === 'lose' || gameState === 'win' || gameState === 'out-of-lives') {
+    return (
+      <GameStateScreen 
+        type={gameState}
+        onContinue={handleNextQuestion}
+        onSkip={handleNextQuestion}
+      />
+    );
+  }
+
   if (gameState === 'playing') {
     const currentQuestion = questions[currentQuestionIndex];
     
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-accent/10 overflow-hidden md:relative md:min-h-screen">
+      <div className="fixed inset-0 bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] overflow-hidden md:relative md:min-h-screen">
         <div className="h-full md:h-auto flex flex-col md:block md:p-4">
           {/* Header */}
           <div className="flex-none w-full md:max-w-4xl md:mx-auto">
@@ -318,34 +330,20 @@ const GamePreview = () => {
               </Button>
               
               <div className="flex items-center gap-2 md:gap-4">
-                <div className="flex items-center gap-2 bg-card/90 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2">
+                <div className="flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-white/20">
                   <Heart className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
                   <span className="font-bold text-sm md:text-base">{profile.lives}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-card/90 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2">
+                <div className="flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-white/20">
                   <Coins className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
                   <span className="font-bold text-sm md:text-base">{profile.coins + coinsEarned}</span>
                 </div>
               </div>
             </div>
 
-            {/* Progress */}
-            <div className="px-4 pb-3 md:pb-0 md:mb-6">
-              <div className="bg-card/90 backdrop-blur-sm rounded-2xl p-3 md:p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs md:text-sm font-medium">Kérdés {currentQuestionIndex + 1}/15</span>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-3 h-3 md:w-4 md:h-4" />
-                    <span className="font-bold text-base md:text-lg">{timeLeft}s</span>
-                  </div>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div
-                    className="bg-primary h-2 rounded-full transition-all"
-                    style={{ width: `${((currentQuestionIndex + 1) / 15) * 100}%` }}
-                  />
-                </div>
-              </div>
+            {/* Timer Circle - Centered */}
+            <div className="flex justify-center mb-6">
+              <TimerCircle timeLeft={timeLeft} />
             </div>
           </div>
 
@@ -353,19 +351,19 @@ const GamePreview = () => {
           <div className="flex-1 overflow-y-auto overflow-x-hidden md:overflow-visible px-4 pb-4 md:px-0 md:pb-0">
             <div className="w-full md:max-w-4xl md:mx-auto space-y-4 md:space-y-6">
               {/* Question */}
-              <div className="bg-card/90 backdrop-blur-sm rounded-2xl p-4 md:p-6">
-                <h2 className="text-lg md:text-2xl font-bold mb-2">{currentQuestion.question}</h2>
-                <p className="text-xs md:text-sm text-muted-foreground">{currentQuestion.topic}</p>
+              <div className="clip-hexagon-box bg-black border-2 border-blue-500/50 shadow-hexagon">
+                <h2 className="text-base md:text-xl font-bold text-white text-center">{currentQuestion.question}</h2>
               </div>
 
               {/* Answers */}
-              <div className="grid grid-cols-1 gap-2 md:gap-3">
-                {currentQuestion.answers.map((answer) => {
+              <div className="grid grid-cols-1 gap-3 md:gap-4">
+                {currentQuestion.answers.map((answer, index) => {
                   const isRemoved = removedAnswers.includes(answer);
                   const isSelected = selectedAnswer === answer;
                   const isCorrect = answer === currentQuestion.correct;
                   const showResult = selectedAnswer !== null;
                   const isFirstAttempt = firstAttempt === answer;
+                  const prefix = ['A:', 'B:', 'C:', 'D:'][index];
 
                   if (isRemoved) return null;
 
@@ -375,17 +373,20 @@ const GamePreview = () => {
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
-                        p-3 md:p-4 rounded-xl border-2 text-left transition-all touch-manipulation
-                        ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : 'border-border/50'}
-                        ${showResult && isCorrect ? 'border-green-500 bg-green-500/20' : ''}
-                        ${showResult && isSelected && !isCorrect ? 'border-red-500 bg-red-500/20' : ''}
-                        ${!showResult ? 'hover:border-primary hover:bg-accent/50 active:scale-95' : ''}
+                        clip-hexagon-answer bg-black border-2 text-left transition-all touch-manipulation
+                        ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : 'border-blue-500/50'}
+                        ${showResult && isCorrect ? 'border-green-500 bg-green-500/20 animate-pulse-green' : ''}
+                        ${showResult && isSelected && !isCorrect ? 'border-red-500 bg-red-500/20 animate-pulse-red' : ''}
+                        ${!showResult ? 'hover:border-blue-400 hover:bg-blue-500/10 active:scale-95' : ''}
                         disabled:opacity-50
                       `}
                     >
-                      <span className="font-medium text-sm md:text-base">{answer}</span>
+                      <div className="flex items-center gap-3 w-full">
+                        <span className="font-bold text-white text-sm md:text-base flex-shrink-0">{prefix}</span>
+                        <span className="font-medium text-white text-sm md:text-base flex-1">{answer}</span>
+                      </div>
                       {audienceVotes[answer] && (
-                        <div className="mt-2 text-xs md:text-sm text-muted-foreground">
+                        <div className="mt-2 text-xs md:text-sm text-white/70">
                           <Users className="w-3 h-3 md:w-4 md:h-4 inline mr-1" />
                           {audienceVotes[answer]}%
                         </div>
@@ -395,46 +396,36 @@ const GamePreview = () => {
                 })}
               </div>
 
-              {/* Helps */}
-              <div className="grid grid-cols-2 gap-2 md:gap-3 pb-safe md:pb-0">
-                <Button
+              {/* Helps - Hexagon buttons */}
+              <div className="flex justify-center gap-3 md:gap-4 pb-safe md:pb-0 flex-wrap">
+                <button
                   onClick={useHelp5050}
                   disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs md:text-sm"
+                  className="hexagon-button"
                 >
-                  <HelpCircle className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                  50:50
-                </Button>
-                <Button
-                  onClick={useHelp2xAnswer}
-                  disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs md:text-sm"
-                >
-                  2x válasz
-                </Button>
-                <Button
+                  <div className="hexagon-content">
+                    <span className="text-2xl">50</span>
+                    <span className="text-xs">50</span>
+                  </div>
+                </button>
+                <button
                   onClick={useHelpAudience}
                   disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs md:text-sm"
+                  className="hexagon-button"
                 >
-                  <Users className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                  Közönség
-                </Button>
-                <Button
-                  onClick={skipQuestion}
-                  disabled={selectedAnswer !== null}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs md:text-sm"
+                  <div className="hexagon-content">
+                    <Users className="w-6 h-6" />
+                  </div>
+                </button>
+                <button
+                  onClick={useHelp2xAnswer}
+                  disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
+                  className="hexagon-button"
                 >
-                  Ugrás (10 🪙)
-                </Button>
+                  <div className="hexagon-content">
+                    <span className="text-xl">2x</span>
+                  </div>
+                </button>
               </div>
             </div>
           </div>
