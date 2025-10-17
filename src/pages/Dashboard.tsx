@@ -7,6 +7,7 @@ import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2 } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
+import { InvitationDialog } from '@/components/InvitationDialog';
 import logoImage from '@/assets/logo.png';
 
 const Dashboard = () => {
@@ -17,6 +18,7 @@ const Dashboard = () => {
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus } = useWelcomeBonus(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
+  const [showInvitation, setShowInvitation] = useState(false);
   const [currentRank, setCurrentRank] = useState<number>(1);
 
   // Helper function
@@ -161,7 +163,7 @@ const Dashboard = () => {
             {/* Action Buttons */}
             <div className="flex flex-col gap-2 w-48">
               <button
-                onClick={() => navigate('/profile')}
+                onClick={() => setShowInvitation(true)}
                 className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-2"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
@@ -202,13 +204,13 @@ const Dashboard = () => {
         {/* Booster Button */}
         <button
           onClick={() => navigate('/shop')}
-          className="w-full py-2 px-6 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-black font-black text-base rounded-2xl border-4 border-yellow-600 shadow-2xl shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:scale-105 transition-all"
+          className="w-full py-1 px-6 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-black font-black text-base rounded-2xl border-4 border-yellow-600 shadow-2xl shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:scale-105 transition-all"
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
           <div className="text-center">
-            <div className="text-lg mb-0.5">BOOSTER</div>
-            <div className="text-[10px] font-bold">SZEREZZ TOVÁBBI 300 MÁSODPERC ELŐNYT!</div>
-            <div className="text-[9px] mt-0.5 opacity-80">Csak 349 Ft-ért!</div>
+            <div className="text-base mb-0.5">BOOSTER</div>
+            <div className="text-[9px] font-bold">SZEREZZ TOVÁBBI 300 MÁSODPERC ELŐNYT!</div>
+            <div className="text-[8px] mt-0.5 opacity-80">Csak 349 Ft-ért!</div>
           </div>
         </button>
       </div>
@@ -229,6 +231,15 @@ const Dashboard = () => {
         nextReward={nextReward}
         canClaim={canClaim}
       />
+
+      {/* Invitation dialog */}
+      {userId && (
+        <InvitationDialog
+          open={showInvitation}
+          onClose={() => setShowInvitation(false)}
+          userId={userId}
+        />
+      )}
     </div>
   );
 };

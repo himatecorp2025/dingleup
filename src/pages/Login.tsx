@@ -52,7 +52,7 @@ const Login = () => {
       if (data.user) {
         toast({
           title: "Sikeres bejelentkezés!",
-          description: "Átirányítunk a játékhoz...",
+          description: "Átirányítunk a dashboard-ra...",
         });
         
         // Music setup
@@ -70,7 +70,7 @@ const Login = () => {
           }
         } catch {}
         
-        navigate("/game?autostart=true");
+        navigate("/dashboard");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
