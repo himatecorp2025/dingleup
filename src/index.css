@@ -230,8 +230,8 @@ All colors MUST be HSL.
 }
 
 .clip-hexagon-box {
-  clip-path: none;
-  padding: 1.25rem;
+  clip-path: polygon(5% 25%, 5% 75%, 25% 95%, 75% 95%, 95% 75%, 95% 25%, 75% 5%, 25% 5%);
+  padding: 1.25rem 2rem;
   min-height: 80px;
   display: flex;
   align-items: center;
@@ -242,26 +242,27 @@ All colors MUST be HSL.
 
 @media (min-width: 400px) {
   .clip-hexagon-box {
-    padding: 1.5rem;
+    padding: 1.5rem 2.5rem;
     min-height: 100px;
   }
 }
 
 .clip-hexagon-answer {
-  clip-path: none;
-  padding: 0.875rem 1rem;
+  clip-path: polygon(2% 50%, 10% 10%, 90% 10%, 98% 50%, 90% 90%, 10% 90%);
+  padding: 1rem 1.5rem;
   min-height: 60px;
   display: flex;
   align-items: center;
   word-break: break-word;
-  margin: 12px auto;
+  margin: 8px 0;
   aspect-ratio: auto;
   touch-action: manipulation;
+  justify-content: flex-start;
 }
 
 @media (min-width: 400px) {
   .clip-hexagon-answer {
-    padding: 1rem 1.25rem;
+    padding: 1.25rem 2rem;
     min-height: 70px;
   }
 }

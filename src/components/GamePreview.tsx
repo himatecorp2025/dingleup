@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, HelpCircle, Gift, Trophy } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, Gift, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
@@ -404,17 +404,7 @@ const GamePreview = () => {
                   className="hexagon-button"
                 >
                   <div className="hexagon-content">
-                    <span className="text-2xl">50</span>
-                    <span className="text-xs">50</span>
-                  </div>
-                </button>
-                <button
-                  onClick={useHelpAudience}
-                  disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
-                  className="hexagon-button"
-                >
-                  <div className="hexagon-content">
-                    <Users className="w-6 h-6" />
+                    <span className="text-lg font-bold">1/3</span>
                   </div>
                 </button>
                 <button
@@ -423,7 +413,16 @@ const GamePreview = () => {
                   className="hexagon-button"
                 >
                   <div className="hexagon-content">
-                    <span className="text-xl">2x</span>
+                    <Phone className="w-5 h-5" />
+                  </div>
+                </button>
+                <button
+                  onClick={useHelpAudience}
+                  disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
+                  className="hexagon-button"
+                >
+                  <div className="hexagon-content">
+                    <Users className="w-5 h-5" />
                   </div>
                 </button>
               </div>
