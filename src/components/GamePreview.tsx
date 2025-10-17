@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
@@ -33,6 +33,7 @@ const GamePreview = () => {
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading: profileLoading, updateProfile, spendLife } = useGameProfile(userId);
   const { canClaim, claimDailyGift } = useDailyGift(userId);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const stopMusic = () => {
     const audio = document.querySelector('audio');
@@ -67,6 +68,7 @@ const GamePreview = () => {
 
   // Flash effect for correct/wrong answers
   const [answerFlash, setAnswerFlash] = useState<'correct' | 'wrong' | null>(null);
+  const [showScrollHint, setShowScrollHint] = useState(false);
 
   // Auth check
   useEffect(() => {
@@ -94,18 +96,9 @@ const GamePreview = () => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__timeout__');
     setAnswerFlash('wrong');
+    setShowScrollHint(true);
     
-    // Auto-progress after 1 second flash
-    setTimeout(() => {
-      setAnswerFlash(null);
-      setLivesInGame(prev => prev - 1);
-      
-      if (livesInGame - 1 === 0) {
-        setGameState('out-of-lives');
-      } else {
-        handleNextQuestion();
-      }
-    }, 1000);
+    // NOT automatic - user must scroll to continue
   };
 
   const startGameWithCategory = async (category: GameCategory) => {
@@ -183,7 +176,7 @@ const GamePreview = () => {
     const reward = COIN_REWARDS.per_correct_answer;
     setCoinsEarned(coinsEarned + reward);
     
-    // Auto-progress after 1 second flash
+    // Correct answer: Auto-scroll to next question after 1 second
     setTimeout(() => {
       setAnswerFlash(null);
       handleNextQuestion();
@@ -194,21 +187,20 @@ const GamePreview = () => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer(answerKey);
     setAnswerFlash('wrong');
+    setShowScrollHint(true);
     
-    // Auto-progress after 1 second flash
-    setTimeout(() => {
-      setAnswerFlash(null);
-      setLivesInGame(prev => prev - 1);
-      
-      if (livesInGame - 1 === 0) {
-        setGameState('out-of-lives');
-      } else {
-        handleNextQuestion();
-      }
-    }, 1000);
+    // NOT automatic - user must scroll to continue
   };
 
   const handleNextQuestion = () => {
+    setShowScrollHint(false);
+    setLivesInGame(prev => prev - 1);
+    
+    if (livesInGame - 1 === 0) {
+      setGameState('out-of-lives');
+      return;
+    }
+    
     if (currentQuestionIndex >= questions.length - 1) {
       finishGame();
     } else {
@@ -313,6 +305,66 @@ const GamePreview = () => {
     updateProfile({ question_swaps_available: profile.question_swaps_available - 1 });
     toast.info('Kérdés kicserélve! Timer visszaállítva.');
   };
+
+  // Scroll handler for TikTok-style navigation
+  useEffect(() => {
+    let touchStartY = 0;
+    
+    const handleWheel = (e: WheelEvent) => {
+      if (!showScrollHint) return;
+      
+      e.preventDefault();
+      const delta = e.deltaY;
+      
+      if (delta > 50) {
+        // Scroll DOWN = next question (after wrong/timeout)
+        handleNextQuestion();
+      } else if (delta < -50) {
+        // Scroll UP = exit game
+        setGameState('finished');
+        finishGame();
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!showScrollHint || !touchStartY) return;
+      
+      const touchEndY = e.touches[0].clientY;
+      const delta = touchStartY - touchEndY;
+      
+      if (Math.abs(delta) < 100) return;
+      
+      e.preventDefault();
+      
+      if (delta > 0) {
+        // Swipe UP = next question
+        handleNextQuestion();
+        touchStartY = 0;
+      } else {
+        // Swipe DOWN = exit game
+        setGameState('finished');
+        finishGame();
+        touchStartY = 0;
+      }
+    };
+
+    const container = document.body;
+    if (gameState === 'playing' && showScrollHint) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+      container.addEventListener('touchstart', handleTouchStart, { passive: true });
+      container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    }
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [showScrollHint, gameState, livesInGame]);
 
   if (profileLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532]">Betöltés...</div>;
@@ -456,6 +508,26 @@ const GamePreview = () => {
                 );
               })}
             </div>
+
+            {/* Scroll hint - visible after wrong answer or timeout */}
+            {showScrollHint && (
+              <div className="fixed bottom-20 left-0 right-0 flex flex-col items-center gap-3 animate-fade-in z-20">
+                <div className="bg-green-600/90 backdrop-blur-sm rounded-2xl px-6 py-3 border-2 border-green-400 shadow-xl">
+                  <div className="flex items-center gap-3">
+                    <ChevronDown className="w-6 h-6 text-green-200 animate-bounce" />
+                    <span className="text-white font-bold">Görgess tovább a következő kérdéshez</span>
+                  </div>
+                </div>
+                <div className="bg-red-600/90 backdrop-blur-sm rounded-2xl px-6 py-3 border-2 border-red-400 shadow-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="rotate-180">
+                      <ChevronDown className="w-6 h-6 text-red-200" />
+                    </div>
+                    <span className="text-white font-bold">Görgess fel a kilépéshez</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Lifelines */}
             <div className="flex justify-center gap-3 mb-4">
