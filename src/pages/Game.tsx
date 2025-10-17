@@ -62,7 +62,7 @@ const Game = () => {
       
       {!musicEnabled && <MusicInitializer onMusicEnabled={handleMusicEnabled} audioRef={audioRef} />}
       
-      <div className="min-h-screen">
+      <div className="min-h-screen overflow-hidden">
         <GamePreview />
       </div>
     </>

@@ -257,7 +257,6 @@ const GamePreview = () => {
     
     // Deduct coins
     await updateProfile({ coins: profile.coins - cost });
-    toast.success(`Kérdés átugorva -${cost} 🪙`);
     handleNextQuestion();
   };
 
@@ -280,7 +279,6 @@ const GamePreview = () => {
     
     // Pay and continue
     await updateProfile({ coins: profile.coins - cost });
-    toast.success(`Folytatás -${cost} 🪙`);
     handleNextQuestion();
   };
 

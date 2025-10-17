@@ -110,7 +110,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] p-4 overflow-hidden">
       <div className="max-w-md mx-auto">
         {/* Top Section */}
         <div className="flex items-start justify-between mb-6">

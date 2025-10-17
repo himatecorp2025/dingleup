@@ -39,7 +39,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900/40 via-blue-800/20 to-background overflow-y-auto">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900/40 via-blue-800/20 to-background overflow-hidden">
       <div className="max-w-2xl w-full py-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-3 font-poppins">
           <span className="text-transparent bg-clip-text bg-gradient-gold">
