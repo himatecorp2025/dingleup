@@ -623,21 +623,25 @@ const GamePreview = () => {
             {/* Timer Circle + Notification Hexagon */}
             <div className="flex justify-center items-center mb-0 relative">
               {/* Animated notification hexagon - slides in from right */}
-              {(gameState === 'awaiting-skip' || (selectedAnswer && showScrollHint && gameState === 'playing')) && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 animate-slide-in-right z-20">
-                  <div className="relative w-28 h-14 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/90 to-purple-800/90 clip-path-hexagon-notification border-2 border-purple-400 shadow-lg shadow-purple-500/50"></div>
-                    <div className="relative z-10 text-center px-2">
+              {(gameState === 'awaiting-skip' || gameState === 'awaiting-timeout' || (selectedAnswer && showScrollHint && gameState === 'playing')) && (
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 animate-slide-in-right z-20">
+                  <div className="relative w-[22vw] flex items-center justify-center" style={{ aspectRatio: '2/1' }}>
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/95 to-purple-900/95 clip-path-hexagon-notification border-2 border-purple-300 shadow-xl shadow-purple-500/60"></div>
+                    <div className="relative z-10 text-center px-1.5 py-1">
                       {gameState === 'awaiting-skip' ? (
-                        <span className="text-yellow-200 font-bold text-[11px] drop-shadow-lg leading-tight">
-                          Átugrás<br/>{skipCost}🪙
+                        <span className="text-yellow-100 font-bold text-[9px] drop-shadow-lg leading-tight block">
+                          Skip<br/>{skipCost}🪙
+                        </span>
+                      ) : gameState === 'awaiting-timeout' ? (
+                        <span className="text-orange-100 font-bold text-[8px] drop-shadow-lg leading-tight block">
+                          Idő lejárt!<br/>150🪙 folytatás
                         </span>
                       ) : selectedAnswer === '__wrong__' ? (
-                        <span className="text-red-200 font-bold text-[11px] drop-shadow-lg leading-tight">
-                          ❌ Rossz!<br/>Görgess
+                        <span className="text-red-100 font-bold text-[8px] drop-shadow-lg leading-tight block">
+                          ❌ Rossz!<br/>50🪙 tovább
                         </span>
                       ) : (
-                        <span className="text-green-200 font-bold text-[11px] drop-shadow-lg leading-tight">
+                        <span className="text-green-100 font-bold text-[9px] drop-shadow-lg leading-tight block">
                           ✅ Helyes!<br/>Görgess
                         </span>
                       )}
