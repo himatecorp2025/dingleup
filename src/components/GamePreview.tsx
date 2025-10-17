@@ -32,6 +32,15 @@ const GamePreview = () => {
   const { profile, loading: profileLoading, updateProfile, spendCoins, spendLife } = useGameProfile(userId);
   const { canClaim, claimDailyGift } = useDailyGift(userId);
 
+  // Music control
+  const stopMusic = () => {
+    const audio = document.querySelector('audio');
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+  };
+
   const [gameState, setGameState] = useState<GameState>('category-select');
   const [selectedCategory, setSelectedCategory] = useState<GameCategory | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -343,7 +352,10 @@ const GamePreview = () => {
           {/* Header */}
           <div className="flex-none w-full md:max-w-4xl md:mx-auto">
             <div className="flex items-center justify-between p-4 md:mb-6">
-              <Button onClick={() => setGameState('category-select')} variant="ghost" size="sm">
+              <Button onClick={() => {
+                stopMusic();
+                setGameState('category-select');
+              }} variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Kilépés
               </Button>
@@ -366,12 +378,16 @@ const GamePreview = () => {
             </div>
           </div>
 
-          {/* Scrollable content area */}
+          {/* Scrollable content area with hexagon frame */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden md:overflow-visible px-4 pb-4 md:px-0 md:pb-0">
-            <div className="w-full md:max-w-4xl md:mx-auto space-y-4 md:space-y-6">
+            <div className="w-full md:max-w-4xl md:mx-auto space-y-4 md:space-y-6 relative">
+              {/* Hexagon frame - top */}
+              <div className="absolute -top-2 left-0 right-0 h-8 bg-gradient-to-b from-blue-500/30 to-transparent clip-path-hexagon-top pointer-events-none z-10"></div>
+              
               {/* Question */}
-              <div className="clip-hexagon-box bg-black border-2 border-blue-500/50 shadow-hexagon">
-                <h2 className="text-base md:text-xl font-bold text-white text-center">{currentQuestion.question}</h2>
+              <div className="clip-hexagon-box bg-black border-2 border-blue-500/50 shadow-hexagon relative">
+                <div className="absolute inset-0 clip-hexagon-box border-2 border-blue-400/20 pointer-events-none"></div>
+                <h2 className="text-base md:text-xl font-bold text-white text-center relative z-10">{currentQuestion.question}</h2>
               </div>
 
               {/* Answers */}
@@ -474,14 +490,20 @@ const GamePreview = () => {
           <HexagonButton 
             variant="yellow" 
             size="lg" 
-            onClick={() => setGameState('category-select')}
+            onClick={() => {
+              stopMusic();
+              setGameState('category-select');
+            }}
             className="w-full max-w-sm mx-auto mb-3"
           >
             If you still want to play scroll down!
           </HexagonButton>
           
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => {
+              stopMusic();
+              navigate('/');
+            }}
             className="text-white text-sm hover:underline"
           >
             At rest, back to the main page!
