@@ -629,11 +629,11 @@ const GamePreview = () => {
           </div>
 
           {/* Main content - ZERO spacing between elements */}
-          <div className="flex-1 w-full px-2 flex flex-col justify-center overflow-hidden -mt-2">
+          <div className="flex-1 w-full px-2 flex flex-col justify-start overflow-hidden -mt-3">
             <div className="w-full space-y-0">
               
               {/* Question - touches timer */}
-              <div className="clip-hexagon-box relative z-10 py-5 -mt-1">
+              <div className="clip-hexagon-box relative z-10 py-5 -mt-6">
                 <h2 className="text-base md:text-xl font-bold text-white text-center leading-tight line-clamp-3 px-3">{currentQuestion.question}</h2>
               </div>
 
@@ -655,7 +655,7 @@ const GamePreview = () => {
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
-                        clip-hexagon-answer transition-all touch-manipulation py-4.5
+                        clip-hexagon-answer transition-all touch-manipulation py-5 -mt-3 first:mt-0
                         ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : ''}
                         ${showResult && isCorrect ? '!border-green-500 !bg-green-600' : ''}
                         ${showResult && selectedAnswer === '__wrong__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
