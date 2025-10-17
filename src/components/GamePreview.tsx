@@ -436,25 +436,37 @@ const GamePreview = () => {
 
   if (gameState === 'finished') {
     return (
-      <div className="fixed inset-0 md:relative md:min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-accent/10">
-        <div className="max-w-md w-full bg-card/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 text-center">
-          <Trophy className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-yellow-500" />
-          <h1 className="text-2xl md:text-3xl font-bold mb-4">Játék vége!</h1>
+      <div className="fixed inset-0 md:relative md:min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+        <div className="max-w-md w-full bg-black/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 text-center border-2 border-green-500/50">
+          <div className="text-8xl mb-6 animate-bounce">🏆</div>
+          <h1 className="text-3xl md:text-4xl font-black text-green-500 mb-6">Congratulations, you win!</h1>
           
           <div className="space-y-3 mb-6">
-            <div className="bg-accent/50 rounded-xl p-4">
-              <p className="text-sm text-muted-foreground">Helyes válaszok</p>
-              <p className="text-xl md:text-2xl font-bold">{correctAnswers}/15</p>
+            <div className="bg-green-500/20 rounded-xl p-4 border border-green-500/30">
+              <p className="text-sm text-white/70">Helyes válaszok</p>
+              <p className="text-2xl md:text-3xl font-bold text-white">{correctAnswers}/15</p>
             </div>
-            <div className="bg-accent/50 rounded-xl p-4">
-              <p className="text-sm text-muted-foreground">Szerzett aranyérme</p>
-              <p className="text-xl md:text-2xl font-bold">+{coinsEarned} 🪙</p>
+            <div className="bg-yellow-500/20 rounded-xl p-4 border border-yellow-500/30">
+              <p className="text-sm text-white/70">Szerzett aranyérme</p>
+              <p className="text-2xl md:text-3xl font-bold text-white">+{coinsEarned} 🪙</p>
             </div>
           </div>
 
-          <Button onClick={() => setGameState('category-select')} className="w-full">
-            Új játék
-          </Button>
+          <HexagonButton 
+            variant="yellow" 
+            size="lg" 
+            onClick={() => setGameState('category-select')}
+            className="w-full max-w-sm mx-auto mb-3"
+          >
+            If you still want to play scroll down!
+          </HexagonButton>
+          
+          <button 
+            onClick={() => navigate('/')}
+            className="text-white text-sm hover:underline"
+          >
+            At rest, back to the main page!
+          </button>
         </div>
       </div>
     );
