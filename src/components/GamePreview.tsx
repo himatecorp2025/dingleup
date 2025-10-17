@@ -17,7 +17,7 @@ import historyQuestions from "@/data/questions-history.json";
 import cultureQuestions from "@/data/questions-culture.json";
 import financeQuestions from "@/data/questions-finance.json";
 
-type GameState = 'category-select' | 'playing' | 'paused' | 'finished' | 'lose' | 'out-of-lives';
+type GameState = 'category-select' | 'playing' | 'paused' | 'finished' | 'timeout' | 'lose' | 'out-of-lives';
 
 const QUESTION_BANKS = {
   health: healthQuestions,
@@ -85,11 +85,7 @@ const GamePreview = () => {
     const responseTime = (Date.now() - questionStartTime) / 1000;
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__timeout__');
-    
-    // Auto continue after showing result
-    setTimeout(() => {
-      handleNextQuestion();
-    }, 1500);
+    setGameState('timeout');
   };
 
   const startGameWithCategory = async (category: GameCategory) => {
@@ -99,6 +95,9 @@ const GamePreview = () => {
     const canPlay = await spendLife();
     if (!canPlay) return;
 
+    // Award 1 coin for starting the game
+    await updateProfile({ coins: profile.coins + 1 });
+
     setSelectedCategory(category);
     const questionBank = QUESTION_BANKS[category];
     const shuffled = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 15);
@@ -107,7 +106,7 @@ const GamePreview = () => {
     setCurrentQuestionIndex(0);
     setTimeLeft(10);
     setCorrectAnswers(0);
-    setCoinsEarned(0);
+    setCoinsEarned(1); // Start with 1 coin
     setResponseTimes([]);
     setSelectedAnswer(null);
     setUsedHelp5050(false);
@@ -166,22 +165,10 @@ const GamePreview = () => {
     }, 1500);
   };
 
-  const handleWrongAnswer = async (responseTime: number) => {
+  const handleWrongAnswer = (responseTime: number) => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__wrong__');
-    
-    // Check if player has lives left
-    if (!profile) return;
-    
-    if (profile.lives <= 0) {
-      // No lives left - show game over screen
-      setGameState('out-of-lives');
-    } else {
-      // Has lives - auto continue after showing red result
-      setTimeout(() => {
-        handleNextQuestion();
-      }, 1500);
-    }
+    setGameState('lose');
   };
 
   const calculateReward = (questionIndex: number): number => {
@@ -275,15 +262,90 @@ const GamePreview = () => {
   };
 
   const skipQuestion = async () => {
-    if (!profile || profile.coins < 10) {
-      toast.error('Nincs elég aranyérmed! (10 szükséges)');
+    if (!profile) return;
+    
+    // Calculate skip cost based on question index
+    let skipCost = 10;
+    if (currentQuestionIndex >= 5 && currentQuestionIndex < 10) {
+      skipCost = 20;
+    } else if (currentQuestionIndex >= 10) {
+      skipCost = 30;
+    }
+    
+    if (profile.coins < skipCost) {
+      toast.error(`Nincs elég aranyérmed! (${skipCost} szükséges)`);
       return;
     }
     
-    const success = await spendCoins(10);
+    const success = await spendCoins(skipCost);
     if (success) {
-      toast.info('Kérdés átugorva -10 aranyérme');
+      toast.info(`Kérdés átugorva -${skipCost} aranyérme`);
       handleNextQuestion();
+    }
+  };
+
+  const continueAfterTimeout = async () => {
+    if (!profile || profile.coins < 150) {
+      toast.error('Nincs elég aranyérmed! (150 szükséges)');
+      return;
+    }
+    
+    const success = await spendCoins(150);
+    if (success) {
+      toast.info('Továbbjutás -150 aranyérme');
+      handleNextQuestion();
+    }
+  };
+
+  const continueAfterWrong = async () => {
+    if (!profile || profile.coins < 50) {
+      toast.error('Nincs elég aranyérmed! (50 szükséges)');
+      return;
+    }
+    
+    const success = await spendCoins(50);
+    if (success) {
+      toast.info('Továbbjutás -50 aranyérme');
+      handleNextQuestion();
+    }
+  };
+
+  const reactivateHelp5050 = async () => {
+    if (!profile || profile.coins < 15) {
+      toast.error('Nincs elég aranyérmed! (15 szükséges)');
+      return;
+    }
+    
+    const success = await spendCoins(15);
+    if (success) {
+      await updateProfile({ help_50_50_active: true });
+      toast.success('Harmadoló újraaktiválva!');
+    }
+  };
+
+  const reactivateHelp2xAnswer = async () => {
+    if (!profile || profile.coins < 20) {
+      toast.error('Nincs elég aranyérmed! (20 szükséges)');
+      return;
+    }
+    
+    const success = await spendCoins(20);
+    if (success) {
+      await updateProfile({ help_2x_answer_active: true });
+      toast.success('2× válasz újraaktiválva!');
+    }
+  };
+
+  const reactivateHelpAudience = async () => {
+    if (!profile || profile.coins < 30) {
+      toast.error('Nincs elég aranyérmed! (30 szükséges)');
+      return;
+    }
+    
+    const success = await spendCoins(30);
+    if (success) {
+      await updateProfile({ help_audience_active: true });
+      toast.success('Közönség segítség újraaktiválva!');
     }
   };
 
@@ -333,13 +395,39 @@ const GamePreview = () => {
     );
   }
 
-  // Game state overlays - only for actual game over scenarios
-  if (gameState === 'lose' || gameState === 'out-of-lives') {
+  // Game state overlays
+  if (gameState === 'timeout') {
     return (
       <GameStateScreen 
-        type={gameState}
+        type="timeout"
+        onContinue={continueAfterTimeout}
+        onSkip={() => {
+          setGameState('finished');
+          finishGame();
+        }}
+      />
+    );
+  }
+
+  if (gameState === 'lose') {
+    return (
+      <GameStateScreen 
+        type="lose"
+        onContinue={continueAfterWrong}
+        onSkip={() => {
+          setGameState('finished');
+          finishGame();
+        }}
+      />
+    );
+  }
+
+  if (gameState === 'out-of-lives') {
+    return (
+      <GameStateScreen 
+        type="out-of-lives"
         onContinue={handleNextQuestion}
-        onSkip={handleNextQuestion}
+        onSkip={() => navigate('/')}
       />
     );
   }
@@ -347,11 +435,19 @@ const GamePreview = () => {
   if (gameState === 'playing') {
     const currentQuestion = questions[currentQuestionIndex];
     
+    // Calculate skip cost
+    let skipCost = 10;
+    if (currentQuestionIndex >= 5 && currentQuestionIndex < 10) {
+      skipCost = 20;
+    } else if (currentQuestionIndex >= 10) {
+      skipCost = 30;
+    }
+    
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] overflow-hidden md:relative md:min-h-screen">
-        <div className="h-full md:h-auto flex flex-col md:block md:p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] overflow-auto">
+        <div className="w-full md:max-w-4xl md:mx-auto min-h-screen flex flex-col">
           {/* Header */}
-          <div className="flex-none w-full md:max-w-4xl md:mx-auto">
+          <div className="flex-none w-full">
             <div className="flex items-center justify-between p-4 md:mb-6">
               <Button onClick={() => {
                 stopMusic();
@@ -379,13 +475,27 @@ const GamePreview = () => {
             </div>
           </div>
 
-          {/* Scrollable content area */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden md:overflow-visible px-2 pb-4 md:px-0 md:pb-0">
-            <div className="w-full md:max-w-4xl md:mx-auto space-y-3 md:space-y-4">
+          {/* Main content area */}
+          <div className="flex-1 w-full px-2 pb-20 md:px-0">
+            <div className="w-full md:max-w-4xl md:mx-auto space-y-3 md:space-y-4 pb-8">
               {/* Question - wider box */}
               <div className="clip-hexagon-box">
                 <h2 className="text-base md:text-lg font-bold text-white text-center leading-tight">{currentQuestion.question}</h2>
               </div>
+
+              {/* Skip button - visible from 5 seconds */}
+              {timeLeft <= 5 && !selectedAnswer && (
+                <div className="flex justify-center">
+                  <Button
+                    onClick={skipQuestion}
+                    variant="outline"
+                    size="sm"
+                    className="bg-yellow-600/20 hover:bg-yellow-600/30 border-yellow-600"
+                  >
+                    Kérdés átugrása ({skipCost} 🪙)
+                  </Button>
+                </div>
+              )}
 
               {/* Answers */}
               <div className="grid grid-cols-1 gap-3 md:gap-4">
@@ -461,6 +571,25 @@ const GamePreview = () => {
                     <Users className="w-5 h-5" />
                   </div>
                 </button>
+              </div>
+
+              {/* Help shop - reactivate used helps */}
+              <div className="flex justify-center gap-2 mt-4 flex-wrap">
+                {!profile.help_50_50_active && (
+                  <Button onClick={reactivateHelp5050} size="sm" variant="outline" className="text-xs">
+                    Harmadoló (15 🪙)
+                  </Button>
+                )}
+                {!profile.help_2x_answer_active && (
+                  <Button onClick={reactivateHelp2xAnswer} size="sm" variant="outline" className="text-xs">
+                    2× válasz (20 🪙)
+                  </Button>
+                )}
+                {!profile.help_audience_active && (
+                  <Button onClick={reactivateHelpAudience} size="sm" variant="outline" className="text-xs">
+                    Közönség (30 🪙)
+                  </Button>
+                )}
               </div>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import { HexagonButton } from './HexagonButton';
 
 interface GameStateScreenProps {
-  type: 'lose' | 'out-of-lives';
+  type: 'timeout' | 'lose' | 'out-of-lives';
   onContinue: () => void;
   onSkip?: () => void;
   characterImage?: string;
@@ -14,20 +14,28 @@ export const GameStateScreen = ({
   characterImage 
 }: GameStateScreenProps) => {
   const config = {
-    lose: {
-      title: 'you lose!',
-      titleColor: 'text-red-600',
-      buttonText: 'Keep going, you get 2 bonus lives!',
+    timeout: {
+      title: "Lejárt az idő!",
+      titleColor: 'text-orange-600',
+      buttonText: 'Továbbjutás 150 aranyért',
       buttonSubtext: undefined,
-      subtitle: 'Restarting with one life!',
-      emoji: '❓'
+      subtitle: 'Elviszem az alap mennyiséget',
+      emoji: '⏰'
+    },
+    lose: {
+      title: 'Rossz válasz!',
+      titleColor: 'text-red-600',
+      buttonText: 'Továbbjutás 50 aranyért',
+      buttonSubtext: undefined,
+      subtitle: 'Elviszem az alap mennyiséget',
+      emoji: '❌'
     },
     'out-of-lives': {
-      title: "Sadly, you're out of lives!",
+      title: "Elfogyott az életed!",
       titleColor: 'text-red-600',
-      buttonText: 'Get your +5 extra lives now!',
+      buttonText: 'Vásárolj +5 életet',
       buttonSubtext: '0.99$',
-      subtitle: 'Restarting with one life!',
+      subtitle: 'Vissza a főoldalra',
       emoji: '💔'
     }
   };
