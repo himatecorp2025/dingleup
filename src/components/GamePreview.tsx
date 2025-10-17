@@ -13,7 +13,6 @@ import { TimerCircle } from "./TimerCircle";
 import { GameStateScreen } from "./GameStateScreen";
 import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
-import { MillionaireBanner } from "./MillionaireBanner";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -386,8 +385,8 @@ const GamePreview = () => {
       <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
         <div className="h-full w-full flex flex-col p-4">
           {/* Header */}
-          <div className="flex-none w-full mb-4">
-            <div className="flex items-center justify-between mb-4">
+          <div className="flex-none w-full mb-6">
+            <div className="flex items-center justify-between">
               {/* Level hexagon */}
               <div 
                 className="bg-gradient-to-br from-blue-600 to-purple-600 border-2 border-blue-400 w-16 h-16 flex items-center justify-center"
@@ -416,9 +415,6 @@ const GamePreview = () => {
                 </div>
               </div>
             </div>
-
-            {/* Banner */}
-            <MillionaireBanner>1,000,000 $</MillionaireBanner>
           </div>
 
           {/* Question and answers - with flash effect overlay */}
