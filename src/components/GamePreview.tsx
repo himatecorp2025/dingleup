@@ -3,6 +3,16 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, Zap, SkipForward } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useGameProfile } from "@/hooks/useGameProfile";
 import { useDailyGift } from "@/hooks/useDailyGift";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,6 +82,7 @@ const GamePreview = () => {
   const [showSkipPanel, setShowSkipPanel] = useState(false);
   const [showContinuePanel, setShowContinuePanel] = useState(false);
   const [continueType, setContinueType] = useState<'wrong' | 'timeout'>('wrong');
+  const [showExitDialog, setShowExitDialog] = useState(false);
 
   // Auth check
   useEffect(() => {
@@ -489,7 +500,7 @@ const GamePreview = () => {
         <Button
           onClick={() => {
             stopMusic();
-            navigate('/');
+            navigate('/dashboard');
           }}
           variant="ghost"
           size="sm"
@@ -523,12 +534,23 @@ const GamePreview = () => {
     
     return (
       <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
-        <div className="h-full w-full flex flex-col p-4">
-          {/* Header */}
-          <div className="flex-none w-full mb-4">
-            <div className="flex items-center justify-between mb-3">
-              {/* Level hexagon */}
-              <div 
+      <div className="h-full w-full flex flex-col p-4">
+        {/* Exit button */}
+        <Button
+          onClick={() => setShowExitDialog(true)}
+          variant="ghost"
+          size="sm"
+          className="absolute top-4 left-4 z-50 text-white/70 hover:text-white"
+        >
+          <ArrowLeft className="w-5 h-5 mr-1" />
+          Kilépés
+        </Button>
+
+        {/* Header */}
+        <div className="flex-none w-full mb-4">
+          <div className="flex items-center justify-between mb-3">
+            {/* Level hexagon */}
+            <div
                 className="bg-gradient-to-br from-blue-600 to-purple-600 border-2 border-blue-400 w-16 h-16 flex items-center justify-center"
                 style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
               >
@@ -738,6 +760,32 @@ const GamePreview = () => {
             </Button>
           </div>
         </div>
+
+        {/* Exit confirmation dialog */}
+        <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+          <AlertDialogContent className="bg-gradient-to-br from-purple-900 to-indigo-900 border-2 border-purple-500">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-2xl text-white">Kilépés a játékból?</AlertDialogTitle>
+              <AlertDialogDescription className="text-white/80 text-base">
+                Ha most kilépsz, az eddigi eredményeidet elveszíted és nem kapsz pontokat!
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="bg-white/10 text-white border-white/20 hover:bg-white/20">
+                Mégsem
+              </AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => {
+                  stopMusic();
+                  navigate('/dashboard');
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                Kilépés
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     );
   }
