@@ -382,3 +382,20 @@ All colors MUST be HSL.
 .animate-pulse-red {
   animation: pulse-glow-red 1s ease-in-out infinite;
 }
+
+/* Hexagon clip path for notifications */
+.clip-path-hexagon-notification {
+  clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+}
+
+/* Slide in from right animation */
+@keyframes slide-in-right-custom {
+  from {
+    transform: translateX(100%) translateY(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) translateY(-50%);
+    opacity: 1;
+  }
+}

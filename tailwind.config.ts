@@ -108,6 +108,16 @@ export default {
           "50%": {
             boxShadow: "0 0 40px hsl(43 96% 56% / 0.6)"
           }
+        },
+        "slide-in-right": {
+          from: {
+            transform: "translateX(100%)",
+            opacity: "0"
+          },
+          to: {
+            transform: "translateX(0)",
+            opacity: "1"
+          }
         }
       },
       animation: {
@@ -116,6 +126,7 @@ export default {
         "fade-in": "fade-in 0.6s ease-out",
         "float": "float 3s ease-in-out infinite",
         "glow": "glow 2s ease-in-out infinite",
+        "slide-in-right": "slide-in-right 0.5s ease-out",
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',

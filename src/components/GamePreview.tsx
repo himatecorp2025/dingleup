@@ -620,8 +620,32 @@ const GamePreview = () => {
               </div>
             </div>
 
-            {/* Timer Circle - NO gap below */}
-            <div className="flex justify-center mb-0">
+            {/* Timer Circle + Notification Hexagon */}
+            <div className="flex justify-center items-center mb-0 relative">
+              {/* Animated notification hexagon - slides in from right */}
+              {(gameState === 'awaiting-skip' || (selectedAnswer && showScrollHint && gameState === 'playing')) && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 animate-slide-in-right">
+                  <div className="relative w-24 h-12 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-purple-500/20 clip-path-hexagon-notification animate-pulse"></div>
+                    <div className="relative z-10 text-center px-2">
+                      {gameState === 'awaiting-skip' ? (
+                        <span className="text-yellow-300 font-bold text-[10px] drop-shadow-lg">
+                          Átugrás<br/>{skipCost}🪙
+                        </span>
+                      ) : selectedAnswer === '__wrong__' ? (
+                        <span className="text-red-300 font-bold text-[10px] drop-shadow-lg">
+                          ❌ Rossz!<br/>Görgess
+                        </span>
+                      ) : (
+                        <span className="text-green-300 font-bold text-[10px] drop-shadow-lg">
+                          ✅ Helyes!<br/>Görgess
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div className="scale-125">
                 <TimerCircle timeLeft={timeLeft} />
               </div>
@@ -655,11 +679,11 @@ const GamePreview = () => {
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
                         clip-hexagon-answer transition-all touch-manipulation py-4
-                        ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : ''}
+                        ${isFirstAttempt && !showResult ? '!border-orange-500 bg-orange-500/10' : ''}
                         ${showResult && isCorrect ? '!border-green-500 !bg-green-600' : ''}
                         ${showResult && selectedAnswer === '__wrong__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
                         ${showResult && selectedAnswer === '__timeout__' && !isCorrect ? '!border-red-500 !bg-red-600' : ''}
-                        ${!showResult ? 'hover:border-blue-400 hover:bg-blue-500/10 active:scale-98' : ''}
+                        ${!showResult && !isFirstAttempt ? 'hover:border-blue-400 hover:bg-blue-500/10 active:scale-98' : ''}
                         disabled:opacity-50
                       `}
                     >
