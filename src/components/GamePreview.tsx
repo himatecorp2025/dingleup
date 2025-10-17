@@ -378,16 +378,12 @@ const GamePreview = () => {
             </div>
           </div>
 
-          {/* Scrollable content area with hexagon frame */}
+          {/* Scrollable content area */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden md:overflow-visible px-4 pb-4 md:px-0 md:pb-0">
-            <div className="w-full md:max-w-4xl md:mx-auto space-y-4 md:space-y-6 relative">
-              {/* Hexagon frame - top */}
-              <div className="absolute -top-2 left-0 right-0 h-8 bg-gradient-to-b from-blue-500/30 to-transparent clip-path-hexagon-top pointer-events-none z-10"></div>
-              
+            <div className="w-full md:max-w-4xl md:mx-auto space-y-4 md:space-y-6">
               {/* Question */}
-              <div className="clip-hexagon-box bg-black border-2 border-blue-500/50 shadow-hexagon relative">
-                <div className="absolute inset-0 clip-hexagon-box border-2 border-blue-400/20 pointer-events-none"></div>
-                <h2 className="text-base md:text-xl font-bold text-white text-center relative z-10">{currentQuestion.question}</h2>
+              <div className="clip-hexagon-box">
+                <h2 className="text-lg md:text-xl font-bold text-white text-center">{currentQuestion.question}</h2>
               </div>
 
               {/* Answers */}
@@ -408,18 +404,18 @@ const GamePreview = () => {
                       onClick={() => handleAnswer(answer)}
                       disabled={selectedAnswer !== null && !usedHelp2xAnswer}
                       className={`
-                        clip-hexagon-answer border-2 text-left transition-all touch-manipulation
-                        ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : 'border-blue-500/50'}
-                        ${showResult && isCorrect ? 'border-green-500 bg-green-600 animate-pulse-green' : ''}
-                        ${showResult && isSelected && !isCorrect ? 'border-red-500 bg-red-600 animate-pulse-red' : ''}
-                        ${showResult && !isCorrect && !isSelected ? 'bg-black' : ''}
+                        clip-hexagon-answer border-2 text-center transition-all touch-manipulation
+                        ${isFirstAttempt ? 'border-orange-500 bg-orange-500/10' : 'border-blue-500/30'}
+                        ${showResult && isCorrect ? 'border-green-500 bg-green-600' : ''}
+                        ${showResult && isSelected && !isCorrect ? 'border-red-500 bg-red-600' : ''}
+                        ${showResult && !isCorrect && !isSelected ? 'bg-black border-blue-500/30' : ''}
                         ${!showResult ? 'bg-black hover:border-blue-400 hover:bg-blue-500/10 active:scale-95' : ''}
                         disabled:opacity-50
                       `}
                     >
-                      <div className="flex items-center gap-3 w-full">
-                        <span className="font-bold text-white text-sm md:text-base flex-shrink-0">{prefix}</span>
-                        <span className="font-medium text-white text-sm md:text-base flex-1">{answer}</span>
+                      <div className="flex items-center justify-center gap-4 w-full">
+                        <span className="font-bold text-white text-base md:text-lg">{prefix}</span>
+                        <span className="font-medium text-white text-base md:text-lg">{answer}</span>
                       </div>
                       {audienceVotes[answer] && (
                         <div className="mt-2 text-xs md:text-sm text-white/70">
