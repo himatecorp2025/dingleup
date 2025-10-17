@@ -167,17 +167,12 @@ const GamePreview = () => {
     }
   };
 
-  // Start music when game starts, stop only when unmounting (leaving the game page)
+  // Cleanup: leállítja a zenét amikor a komponens unmount-ol (pl. visszamegy a főoldalra)
   useEffect(() => {
-    if (gameState === 'playing' && !audioRef.current?.paused === false) {
-      startBackgroundMusic();
-    }
-    
-    // Cleanup: leállítja a zenét amikor a komponens unmount-ol (pl. visszamegy a főoldalra)
     return () => {
       stopBackgroundMusic();
     };
-  }, [gameState]);
+  }, []);
 
   // Timer
   useEffect(() => {
@@ -196,6 +191,9 @@ const GamePreview = () => {
   };
 
   const startGame = (restartWithOneLive = false, deductLife = false) => {
+    // Zene azonnal elindítása
+    startBackgroundMusic();
+    
     const recent = loadRecent();
     const exclude = new Set(recent);
     const newQuestions = getRandomQuestions(exclude);
