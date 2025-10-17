@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, Zap } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, Zap, SkipForward } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
@@ -84,17 +84,11 @@ const GamePreview = () => {
     });
   }, [navigate]);
 
-  // Timer with skip button at 5 seconds
+  // Timer countdown
   useEffect(() => {
     if (gameState === 'playing' && timeLeft > 0 && !selectedAnswer) {
       const timer = setTimeout(() => {
-        const newTime = timeLeft - 1;
-        setTimeLeft(newTime);
-        
-        // Show skip button after 5 seconds
-        if (newTime === 5) {
-          setShowSkipPanel(true);
-        }
+        setTimeLeft(timeLeft - 1);
       }, 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && !selectedAnswer && gameState === 'playing') {
@@ -262,8 +256,6 @@ const GamePreview = () => {
     // Deduct coins
     await updateProfile({ coins: profile.coins - cost });
     toast.success(`Kérdés átugorva -${cost} 🪙`);
-    
-    setShowSkipPanel(false);
     handleNextQuestion();
   };
 
@@ -449,7 +441,7 @@ const GamePreview = () => {
     };
 
     const container = document.body;
-    if (gameState === 'playing' && (showScrollHint || showSkipPanel || showContinuePanel)) {
+    if (gameState === 'playing' && (showScrollHint || showContinuePanel)) {
       container.addEventListener('wheel', handleWheel, { passive: false });
       container.addEventListener('touchstart', handleTouchStart, { passive: true });
       container.addEventListener('touchmove', handleTouchMove, { passive: false });
@@ -460,7 +452,7 @@ const GamePreview = () => {
       container.removeEventListener('touchstart', handleTouchStart);
       container.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [showScrollHint, showSkipPanel, showContinuePanel, gameState]);
+  }, [showScrollHint, showContinuePanel, gameState]);
 
   if (profileLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532]">Betöltés...</div>;
@@ -569,26 +561,8 @@ const GamePreview = () => {
             </div>
 
             {/* Notification panel - below timer, compact horizontal bar */}
-            {(showSkipPanel || showContinuePanel || showScrollHint) && (
+            {(showContinuePanel || showScrollHint) && (
               <div className="w-full h-16 flex items-center justify-center animate-fade-in">
-                {/* Skip panel */}
-                {showSkipPanel && !selectedAnswer && (
-                  <div className="w-full bg-yellow-600/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-yellow-400 shadow-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-white font-bold text-sm">Kérdés átugrása</span>
-                        <span className="text-white/90 text-xl font-black">
-                          {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-white/70 text-xs">
-                        <ChevronDown className="w-4 h-4 animate-bounce" />
-                        <span>Görgess le</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {/* Continue panel */}
                 {showContinuePanel && (
                   <div className="w-full bg-gradient-to-r from-red-600/95 to-red-700/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-red-400 shadow-lg">
@@ -720,17 +694,20 @@ const GamePreview = () => {
                 <Users className="w-6 h-6 text-white" />
               </button>
               <button
-                onClick={useQuestionSwap}
-                disabled={usedQuestionSwap || !profile.question_swaps_available || profile.question_swaps_available === 0 || selectedAnswer !== null}
+                onClick={handleSkipQuestion}
+                disabled={selectedAnswer !== null || !profile || profile.coins < (currentQuestionIndex < 5 ? 10 : currentQuestionIndex < 10 ? 20 : 30)}
                 className={`
-                  relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                  relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-yellow-400 
                   disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                  ${!usedQuestionSwap && profile.question_swaps_available > 0 && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                  shadow-lg shadow-yellow-500/40
                 `}
                 style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
-                title="Kérdéscsere"
+                title="Kérdés átugrás"
               >
-                <RotateCcw className="w-6 h-6 text-white" />
+                <SkipForward className="w-6 h-6 text-white" />
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white">
+                  {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'}
+                </span>
               </button>
             </div>
           </div>
