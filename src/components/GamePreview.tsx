@@ -167,12 +167,10 @@ const GamePreview = () => {
     }
   };
 
-  // Start/stop music with game state
+  // Start music when game starts, stop only when unmounting (leaving the game page)
   useEffect(() => {
-    if (gameState === 'playing') {
+    if (gameState === 'playing' && !audioRef.current?.paused === false) {
       startBackgroundMusic();
-    } else {
-      stopBackgroundMusic();
     }
     
     // Cleanup: leállítja a zenét amikor a komponens unmount-ol (pl. visszamegy a főoldalra)
