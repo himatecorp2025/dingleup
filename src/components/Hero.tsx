@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.jpg";
@@ -22,6 +22,7 @@ const Hero = () => {
       }
     } catch {}
   }, []);
+  const navigate = useNavigate();
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
@@ -75,26 +76,31 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/game?autostart=true">
-              <Button
-                size="lg"
-                onClick={() => {
-                  try {
-                    localStorage.setItem('musicEnabled', 'true');
-                    const w = window as any;
-                    const audio: HTMLAudioElement = w.__bgm;
-                    if (audio) {
-                      // Az audio már be van töltve, azonnal játsszuk le
-                      audio.play().catch(() => {});
-                    }
-                  } catch {}
-                }}
-                className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6"
-              >
-                Játék indítása
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              onClick={() => {
+                try {
+                  localStorage.setItem('musicEnabled', 'true');
+                  const w = window as any;
+                  const audio: HTMLAudioElement | undefined = w.__bgm;
+                  if (audio) {
+                    // Azonnali indulás: némítva indítjuk, majd azonnal visszanémítjuk
+                    audio.muted = true;
+                    audio.currentTime = 0;
+                    audio.play().catch(() => {});
+                    setTimeout(() => {
+                      audio.muted = false;
+                    }, 0);
+                  }
+                } catch {}
+                // Navigáció csak az audio indítása után
+                navigate('/game?autostart=true');
+              }}
+              className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6"
+            >
+              Játék indítása
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
             <Button size="lg" variant="outline" className="border-accent/50 text-foreground hover:bg-accent/10 text-lg px-8 py-6">
               Tudj meg többet
             </Button>
