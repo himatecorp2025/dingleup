@@ -78,24 +78,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
-              onClick={() => {
-                try {
-                  localStorage.setItem('musicEnabled', 'true');
-                  const w = window as any;
-                  const audio: HTMLAudioElement | undefined = w.__bgm;
-                  if (audio) {
-                    // Azonnali indulás: némítva indítjuk, majd azonnal visszanémítjuk
-                    audio.muted = true;
-                    audio.currentTime = 0;
-                    audio.play().catch(() => {});
-                    setTimeout(() => {
-                      audio.muted = false;
-                    }, 0);
-                  }
-                } catch {}
-                // Navigáció csak az audio indítása után
-                navigate('/game?autostart=true');
-              }}
+              onClick={() => navigate('/register')}
               className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6"
             >
               Teszt játék indítása
@@ -110,6 +93,14 @@ const Hero = () => {
               }}
             >
               Tudj meg többet
+            </Button>
+            <Button 
+              size="lg" 
+              variant="secondary"
+              onClick={() => navigate('/login')}
+              className="text-lg px-8 py-6"
+            >
+              Belépés
             </Button>
           </div>
 
