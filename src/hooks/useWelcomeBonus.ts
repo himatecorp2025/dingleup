@@ -45,7 +45,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
       // Get current profile
       const { data: profile, error: fetchError } = await supabase
         .from('profiles')
-        .select('coins, welcome_bonus_claimed')
+        .select('coins, lives, welcome_bonus_claimed')
         .eq('id', userId)
         .single();
 
@@ -62,14 +62,24 @@ export const useWelcomeBonus = (userId: string | undefined) => {
         .from('profiles')
         .update({
           coins: profile.coins + 2500,
-          question_swaps_available: 1,
+          lives: profile.lives + 50,
           welcome_bonus_claimed: true
         })
         .eq('id', userId);
 
       if (updateError) throw updateError;
 
-      toast.success('🎉 Welcome bónusz felveveéve! +2500 arany és +1 kérdéscsere!');
+      // Add DingleSpeed booster
+      const { error: boosterError } = await supabase
+        .from('user_boosters')
+        .insert({
+          user_id: userId,
+          booster_type: 'DingleSpeed'
+        });
+
+      if (boosterError) throw boosterError;
+
+      toast.success('🎉 Welcome bónusz felvéve! +2500 arany, +50 élet és +1 DingleSpeed booster!');
       setCanClaim(false);
       return true;
     } catch (error) {

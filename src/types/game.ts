@@ -91,6 +91,16 @@ export const COIN_REWARDS = {
   per_correct_answer: 50
 };
 
+// Progresszív arany jutalom rendszer
+export const getCoinsForQuestion = (questionIndex: number): number => {
+  if (questionIndex === 0) return 1; // Start
+  if (questionIndex >= 1 && questionIndex <= 4) return 1;
+  if (questionIndex >= 5 && questionIndex <= 9) return 3;
+  if (questionIndex >= 10 && questionIndex <= 14) return 5;
+  if (questionIndex === 15) return 55;
+  return 1; // fallback
+};
+
 export const HELP_REACTIVATION_COSTS = {
   '50_50': 15,
   '2x_answer': 20,
@@ -104,6 +114,17 @@ export const SKIP_COSTS = {
 };
 
 export const CONTINUE_AFTER_WRONG_COST = 50;
+export const TIMEOUT_CONTINUE_COST = 150;
 export const EXTRA_LIFE_COST = 100;
 export const INITIAL_LIVES = 15;
 export const LIVES_REGEN_MINUTES = 12;
+
+export interface UserBooster {
+  id: string;
+  user_id: string;
+  booster_type: 'DoubleSpeed' | 'MegaSpeed' | 'GigaSpeed' | 'DingleSpeed';
+  activated: boolean;
+  activated_at: string | null;
+  expires_at: string | null;
+  created_at: string;
+}
