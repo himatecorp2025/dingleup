@@ -30,7 +30,9 @@ export const useWelcomeBonus = (userId: string | undefined) => {
 
       setCanClaim(!profile.welcome_bonus_claimed);
     } catch (error) {
-      console.error('Error checking welcome bonus:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error checking welcome bonus:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -42,48 +44,33 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     setClaiming(true);
 
     try {
-      // Get current profile
-      const { data: profile, error: fetchError } = await supabase
-        .from('profiles')
-        .select('coins, lives, welcome_bonus_claimed')
-        .eq('id', userId)
-        .single();
+      const { data, error } = await supabase.rpc('claim_welcome_bonus');
+      
+      if (error) throw error;
+      
+      const result = data as { success: boolean; coins: number; error?: string };
+      if (result.success) {
+        // Add DingleSpeed booster
+        const { error: boosterError } = await supabase
+          .from('user_boosters')
+          .insert({
+            user_id: userId,
+            booster_type: 'DingleSpeed'
+          });
 
-      if (fetchError) throw fetchError;
+        if (boosterError) throw boosterError;
 
-      if (profile.welcome_bonus_claimed) {
-        toast.error('Már felvetted a welcome bónuszt!');
+        toast.success('🎉 Welcome bónusz felvéve! +2500 arany, +50 élet és +1 DingleSpeed booster!');
         setCanClaim(false);
+        return true;
+      } else {
+        toast.error(result.error || 'Hiba történt a bónusz felvételekor');
         return false;
       }
-
-      // Update profile with bonus
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({
-          coins: profile.coins + 2500,
-          lives: profile.lives + 50,
-          welcome_bonus_claimed: true
-        })
-        .eq('id', userId);
-
-      if (updateError) throw updateError;
-
-      // Add DingleSpeed booster
-      const { error: boosterError } = await supabase
-        .from('user_boosters')
-        .insert({
-          user_id: userId,
-          booster_type: 'DingleSpeed'
-        });
-
-      if (boosterError) throw boosterError;
-
-      toast.success('🎉 Welcome bónusz felvéve! +2500 arany, +50 élet és +1 DingleSpeed booster!');
-      setCanClaim(false);
-      return true;
     } catch (error) {
-      console.error('Error claiming welcome bonus:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error claiming welcome bonus:', error);
+      }
       toast.error('Hiba történt a bónusz felvételekor');
       return false;
     } finally {

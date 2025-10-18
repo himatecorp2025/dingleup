@@ -76,12 +76,27 @@ const InvitationSystem = ({ userId, invitationCode }: InvitationSystemProps) => 
     setLoading(false);
   };
 
-  const copyInvitationLink = () => {
-    const link = `${window.location.origin}/register?code=${invitationCode}`;
-    navigator.clipboard.writeText(link);
-    setCopied(true);
-    toast.success('Link másolva!');
-    setTimeout(() => setCopied(false), 2000);
+  const copyInvitationLink = async () => {
+    try {
+      // Regenerate the invitation code
+      const { data: newCode, error } = await supabase.rpc('regenerate_invitation_code');
+      
+      if (error) throw error;
+      
+      const link = `${window.location.origin}/register?code=${newCode}`;
+      navigator.clipboard.writeText(link);
+      setCopied(true);
+      toast.success('Új meghívó link generálva és másolva!');
+      setTimeout(() => setCopied(false), 2000);
+      
+      // Refresh to show new code
+      window.location.reload();
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Error regenerating code:', error);
+      }
+      toast.error('Hiba történt a link generálása során');
+    }
   };
 
   const acceptedCount = invitations.filter(i => i.accepted).length;

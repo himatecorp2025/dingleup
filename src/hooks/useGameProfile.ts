@@ -23,7 +23,9 @@ export const useGameProfile = (userId: string | undefined) => {
       if (error) throw error;
       setProfile(data as UserProfile);
     } catch (error: any) {
-      console.error('Error fetching profile:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching profile:', error);
+      }
       toast({
         title: 'Hiba',
         description: 'Nem sikerült betölteni a profilt',
@@ -49,7 +51,9 @@ export const useGameProfile = (userId: string | undefined) => {
       setProfile(data as UserProfile);
       return data;
     } catch (error: any) {
-      console.error('Error updating profile:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error updating profile:', error);
+      }
       toast({
         title: 'Hiba',
         description: 'Nem sikerült frissíteni a profilt',
@@ -138,13 +142,17 @@ export const useGameProfile = (userId: string | undefined) => {
       const { error } = await supabase.rpc('award_coins', { amount });
       
       if (error) {
-        console.error('Error awarding coins:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error awarding coins:', error);
+        }
         return;
       }
       
       setProfile({ ...profile, coins: profile.coins + amount });
     } catch (error) {
-      console.error('Error in addCoins:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error in addCoins:', error);
+      }
     }
   };
 

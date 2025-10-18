@@ -328,11 +328,36 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_booster: {
+        Args: {
+          p_booster_type: string
+          p_cost: number
+          p_duration_hours?: number
+          p_multiplier?: number
+        }
+        Returns: Json
+      }
       award_coins: {
         Args: { amount: number }
         Returns: undefined
       }
+      claim_daily_gift: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      claim_welcome_bonus: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       generate_invitation_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      purchase_life: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      regenerate_invitation_code: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
@@ -343,6 +368,10 @@ export type Database = {
       spend_coins: {
         Args: { amount: number }
         Returns: boolean
+      }
+      use_help: {
+        Args: { p_help_type: string }
+        Returns: Json
       }
       use_life: {
         Args: Record<PropertyKey, never>

@@ -45,7 +45,9 @@ export const useDailyGift = (userId: string | undefined) => {
       setNextReward(DAILY_GIFT_REWARDS[streak % 7]);
       setCanClaim(!isToday);
     } catch (error) {
-      console.error('Error checking daily gift:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error checking daily gift:', error);
+      }
     }
   };
 
@@ -53,38 +55,31 @@ export const useDailyGift = (userId: string | undefined) => {
     if (!userId || !canClaim) return;
 
     try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('coins, daily_gift_streak')
-        .eq('id', userId)
-        .single();
-
-      if (!profile) return;
-
-      const newStreak = (profile.daily_gift_streak || 0) + 1;
-      const reward = DAILY_GIFT_REWARDS[(newStreak - 1) % 7];
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          coins: profile.coins + reward,
-          daily_gift_streak: newStreak,
-          daily_gift_last_claimed: new Date().toISOString()
-        })
-        .eq('id', userId);
-
+      const { data, error } = await supabase.rpc('claim_daily_gift');
+      
       if (error) throw error;
+      
+      const result = data as { success: boolean; coins: number; streak: number; error?: string };
+      if (result.success) {
+        toast({
+          title: '🎁 Napi ajándék',
+          description: `+${result.coins} aranyérme a ${result.streak}. belépésért!`,
+        });
 
-      toast({
-        title: '🎁 Napi ajándék',
-        description: `+${reward} aranyérme a ${newStreak}. belépésért!`,
-      });
-
-      setCanClaim(false);
-      setCurrentStreak(newStreak);
-      setNextReward(DAILY_GIFT_REWARDS[newStreak % 7]);
+        setCanClaim(false);
+        setCurrentStreak(result.streak);
+        setNextReward(DAILY_GIFT_REWARDS[result.streak % 7]);
+      } else {
+        toast({
+          title: 'Hiba',
+          description: result.error || 'Nem sikerült az ajándék átvétele',
+          variant: 'destructive'
+        });
+      }
     } catch (error) {
-      console.error('Error claiming daily gift:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error claiming daily gift:', error);
+      }
       toast({
         title: 'Hiba',
         description: 'Nem sikerült az ajándék átvétele',

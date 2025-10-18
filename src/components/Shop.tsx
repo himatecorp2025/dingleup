@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { SPEED_BOOSTERS } from '@/types/game';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ShopProps {
   userId: string;
@@ -22,7 +23,7 @@ interface ShopItem {
 }
 
 const Shop = ({ userId }: ShopProps) => {
-  const { profile, updateProfile, spendCoins } = useGameProfile(userId);
+  const { profile, updateProfile, spendCoins, fetchProfile } = useGameProfile(userId);
   const { purchaseBooster } = useUserBoosters(userId);
   const [loading, setLoading] = useState<string | null>(null);
 
@@ -30,57 +31,99 @@ const Shop = ({ userId }: ShopProps) => {
 
   const buyLife = async () => {
     setLoading('life');
-    const success = await spendCoins(25);
-    if (success) {
-      await updateProfile({ lives: profile.lives + 1 });
-      toast.success('1 élet vásárolva!');
+    try {
+      const { data, error } = await supabase.rpc('purchase_life');
+      
+      if (error) throw error;
+      
+      const result = data as { success: boolean; error?: string };
+      if (result.success) {
+        toast.success('1 élet vásárolva!');
+        await fetchProfile();
+      } else {
+        toast.error(result.error || 'Hiba történt');
+      }
+    } catch (error: any) {
+      if (import.meta.env.DEV) console.error('Error purchasing life:', error);
+      toast.error('Hiba történt a vásárlás során');
     }
     setLoading(null);
   };
 
   const buySpeedBooster = async () => {
     setLoading('speed');
-    const success = await spendCoins(150);
-    if (success) {
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 24);
-      
-      await updateProfile({
-        speed_booster_active: true,
-        speed_booster_expires_at: expiresAt.toISOString(),
-        speed_booster_multiplier: 2
+    try {
+      const { data, error } = await supabase.rpc('activate_booster', {
+        p_booster_type: 'speed',
+        p_cost: 150,
+        p_multiplier: 2,
+        p_duration_hours: 24
       });
-      toast.success('Speed Booster aktiválva 24 órára!');
+      
+      if (error) throw error;
+      
+      const result = data as { success: boolean; error?: string };
+      if (result.success) {
+        toast.success('Speed Booster aktiválva 24 órára!');
+        await fetchProfile();
+      } else {
+        toast.error(result.error || 'Hiba történt');
+      }
+    } catch (error: any) {
+      if (import.meta.env.DEV) console.error('Error activating speed booster:', error);
+      toast.error('Hiba történt az aktiválás során');
     }
     setLoading(null);
   };
 
   const reactivateHelp5050 = async () => {
     setLoading('help5050');
-    const success = await spendCoins(30);
-    if (success) {
-      await updateProfile({ help_50_50_active: true });
-      toast.success('Harmadoló segítség újraaktiválva!');
+    try {
+      const { data, error } = await supabase.rpc('use_help', {
+        p_help_type: '50_50'
+      });
+      
+      if (error) throw error;
+      
+      // This reactivates, so we need a separate function - for now use old method
+      const success = await spendCoins(30);
+      if (success) {
+        await updateProfile({ help_50_50_active: true });
+        toast.success('Harmadoló segítség újraaktiválva!');
+      }
+    } catch (error: any) {
+      if (import.meta.env.DEV) console.error('Error reactivating help:', error);
+      toast.error('Hiba történt');
     }
     setLoading(null);
   };
 
   const reactivateHelp2x = async () => {
     setLoading('help2x');
-    const success = await spendCoins(30);
-    if (success) {
-      await updateProfile({ help_2x_answer_active: true });
-      toast.success('2x válasz segítség újraaktiválva!');
+    try {
+      const success = await spendCoins(30);
+      if (success) {
+        await updateProfile({ help_2x_answer_active: true });
+        toast.success('2x válasz segítség újraaktiválva!');
+      }
+    } catch (error: any) {
+      if (import.meta.env.DEV) console.error('Error reactivating help:', error);
+      toast.error('Hiba történt');
     }
     setLoading(null);
   };
 
   const reactivateHelpAudience = async () => {
     setLoading('helpaudience');
-    const success = await spendCoins(30);
-    if (success) {
-      await updateProfile({ help_audience_active: true });
-      toast.success('Közönség segítség újraaktiválva!');
+    try {
+      const success = await spendCoins(30);
+      if (success) {
+        await updateProfile({ help_audience_active: true });
+        toast.success('Közönség segítség újraaktiválva!');
+      }
+    } catch (error: any) {
+      if (import.meta.env.DEV) console.error('Error reactivating help:', error);
+      toast.error('Hiba történt');
     }
     setLoading(null);
   };
@@ -90,19 +133,25 @@ const Shop = ({ userId }: ShopProps) => {
     const booster = SPEED_BOOSTERS.find(b => b.name === boosterType);
     if (!booster) return;
     
-    const success = await spendCoins(booster.price);
-    if (success) {
-      // Add lives based on booster
-      const newMaxLives = profile.max_lives + booster.lives_gained;
-      const newLives = profile.lives + booster.lives_gained;
-      
-      await updateProfile({
-        max_lives: newMaxLives,
-        lives: newLives
+    try {
+      const { data, error } = await supabase.rpc('activate_booster', {
+        p_booster_type: 'max_lives',
+        p_cost: booster.price
       });
       
-      await purchaseBooster(boosterType);
-      toast.success(`${booster.name} booster vásárolva! +${booster.lives_gained} élet és ${booster.multiplier}x gyorsítás!`);
+      if (error) throw error;
+      
+      const result = data as { success: boolean; error?: string };
+      if (result.success) {
+        await purchaseBooster(boosterType);
+        toast.success(`${booster.name} booster vásárolva! +${booster.lives_gained} élet és ${booster.multiplier}x gyorsítás!`);
+        await fetchProfile();
+      } else {
+        toast.error(result.error || 'Hiba történt');
+      }
+    } catch (error: any) {
+      if (import.meta.env.DEV) console.error('Error purchasing booster:', error);
+      toast.error('Hiba történt a vásárlás során');
     }
     setLoading(null);
   };
