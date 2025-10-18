@@ -24,7 +24,7 @@ import { GameStateScreen } from "./GameStateScreen";
 import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
 import MusicInitializer from "./MusicInitializer";
-import gameMusic from "@/assets/game-music.mp3";
+import gameMusic from "@/assets/game-music.m4a";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -601,8 +601,8 @@ const GamePreview = () => {
     
     return (
       <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
-        <audio ref={audioRef} loop>
-          <source src={gameMusic} type="audio/mpeg" />
+        <audio ref={audioRef} loop preload="auto">
+          <source src={gameMusic} type="audio/mp4" />
         </audio>
         <MusicInitializer onMusicEnabled={() => setMusicEnabled(true)} audioRef={audioRef} />
       <div className="h-full w-full flex flex-col p-4">
