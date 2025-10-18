@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Copy, Check, Gift, Coins, Heart, Users } from 'lucide-react';
+import { LogOut, Copy, Check, Gift, Coins, Heart, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -74,13 +74,13 @@ const Invitation = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4">
-      {/* Back button - same style as game */}
+      {/* Back button - same style as shop */}
       <button
         onClick={() => navigate('/dashboard')}
-        className="absolute top-4 left-4 p-2 bg-red-600/90 hover:bg-red-700 text-white rounded-lg border-2 border-red-400/60 shadow-lg transition-all z-10 flex items-center gap-2"
+        className="absolute top-4 left-4 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+        title="Vissza"
       >
-        <ArrowLeft className="w-5 h-5" />
-        <span className="font-bold">Vissza</span>
+        <LogOut className="w-6 h-6 -scale-x-100" />
       </button>
 
       <div className="max-w-md mx-auto pt-20">
