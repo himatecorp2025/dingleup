@@ -71,26 +71,22 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchUserRank = async () => {
-      if (!userId) return;
+      if (!userId || !profile) return;
       
-      // Fetch from global_leaderboard for overall ranking
-      const { data, error } = await supabase
-        .from('global_leaderboard')
-        .select('rank')
-        .eq('user_id', userId)
-        .maybeSingle();
+      // Count how many users have more correct answers than the current user
+      const { count, error } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .gt('total_correct_answers', profile.total_correct_answers);
       
       if (error) {
         console.error('Error fetching rank:', error);
         return;
       }
       
-      if (data?.rank) {
-        setCurrentRank(data.rank);
-      } else {
-        // If no rank yet, set to null (will show "-")
-        setCurrentRank(null);
-      }
+      // Rank is count + 1 (number of people ahead + yourself)
+      const rank = (count ?? 0) + 1;
+      setCurrentRank(rank);
     };
     
     // Fetch immediately
@@ -100,7 +96,7 @@ const Dashboard = () => {
     const interval = setInterval(fetchUserRank, 60000);
     
     return () => clearInterval(interval);
-  }, [userId]);
+  }, [userId, profile?.total_correct_answers]);
 
   const handleClaimDailyGift = async () => {
     await claimDailyGift();
@@ -151,7 +147,7 @@ const Dashboard = () => {
               {/* Rank Hexagon */}
               <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-purple-400">
                 <Trophy className="w-4 h-4 text-yellow-500 mb-0.5" />
-                <span className="text-white text-xs font-bold">{currentRank ?? '-'}</span>
+                <span className="text-white text-xs font-bold">{currentRank || '...'}</span>
               </div>
 
               {/* Coins Hexagon */}
