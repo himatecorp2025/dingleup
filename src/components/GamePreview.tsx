@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type RefObject } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, Zap, SkipForward, LogOut } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, SkipForward, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -57,8 +57,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
 
-  // 3 mistakes allowed per game (separate from profile lives)
-  const [mistakesInGame, setMistakesInGame] = useState(0);
 
   // Lifelines
   const [usedHelp5050, setUsedHelp5050] = useState(false);
@@ -191,7 +189,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setGameState('playing');
     setCurrentQuestionIndex(0);
     setTimeLeft(10);
-    setMistakesInGame(0);
+    
     setCorrectAnswers(0);
     setResponseTimes([]);
     setSelectedAnswer(null);
@@ -622,10 +620,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
               <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-500/50">
                 <Coins className="w-4 h-4 text-yellow-500" />
                 <span className="font-bold text-sm text-white">{profile.coins}</span>
-              </div>
-              <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-orange-500/50">
-                <Zap className="w-4 h-4 text-orange-500" />
-                <span className="font-bold text-sm text-white">{3 - mistakesInGame}</span>
               </div>
             </div>
           </div>
