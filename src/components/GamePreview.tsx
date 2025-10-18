@@ -79,15 +79,16 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
 
   const stopMusic = () => {
     try {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+      const g = (window as any).__bgm as HTMLAudioElement | undefined;
+      if (g) {
+        g.pause();
+        g.currentTime = 0;
+        (window as any).__bgm = undefined;
       }
     } catch (error) {
       console.error('Error stopping music:', error);
     }
   };
-
   // Auth check
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -157,9 +158,10 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
 
-    if (audioRef.current) {
-      audioRef.current.volume = 0.2;
-      audioRef.current.play().catch(err => console.log('Music play blocked:', err));
+    const g = (window as any).__bgm as HTMLAudioElement | undefined;
+    if (g) {
+      g.volume = 0.1;
+      try { await g.play(); } catch {}
     }
     
     // Spend one life at game start ONLY
