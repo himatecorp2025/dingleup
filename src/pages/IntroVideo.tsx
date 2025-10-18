@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import introVideo from "@/assets/introvideo.mp4";
 
@@ -6,34 +6,36 @@ const IntroVideo = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const nextPage = searchParams.get('next') || '/dashboard';
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Auto-play video
-    video.play().catch(err => {
-      console.log('Auto-play prevented:', err);
-      // If auto-play fails, navigate after timeout
-      setTimeout(() => navigate(nextPage), 100);
-    });
+    // Ensure video is loaded and ready
+    const handleCanPlay = () => {
+      setVideoLoaded(true);
+      video.play().catch(() => {
+        // Force play even if autoplay is blocked
+        video.play();
+      });
+    };
 
     // Navigate when video ends
     const handleEnded = () => {
       navigate(nextPage);
     };
 
+    video.addEventListener('canplay', handleCanPlay);
     video.addEventListener('ended', handleEnded);
 
-    // Safety timeout in case video doesn't end properly
-    const timeout = setTimeout(() => {
-      navigate(nextPage);
-    }, 4000);
+    // Force load the video
+    video.load();
 
     return () => {
+      video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('ended', handleEnded);
-      clearTimeout(timeout);
     };
   }, [navigate, nextPage]);
 
@@ -44,8 +46,14 @@ const IntroVideo = () => {
         className="w-full h-full object-cover"
         muted
         playsInline
+        preload="auto"
         src={introVideo}
       />
+      {!videoLoaded && (
+        <div className="absolute inset-0 bg-black flex items-center justify-center">
+          <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
     </div>
   );
 };
