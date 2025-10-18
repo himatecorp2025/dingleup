@@ -612,194 +612,199 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
-        <div className="h-full w-full flex flex-col p-4 relative z-10">
-        <button
-          onClick={() => setShowExitDialog(true)}
-          className="absolute top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
-          title="Kilépés"
-        >
-          <LogOut className="w-6 h-6 -scale-x-100" />
-        </button>
+        
+        {/* Scrollable content container - TikTok style */}
+        <div className="h-full w-full overflow-y-auto overflow-x-hidden relative z-10 snap-y snap-mandatory">
+          
+          {/* Main game screen - full viewport height */}
+          <div className="min-h-screen w-full flex flex-col p-4 snap-start relative">
+            <button
+              onClick={() => setShowExitDialog(true)}
+              className="absolute top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+              title="Kilépés"
+            >
+              <LogOut className="w-6 h-6 -scale-x-100" />
+            </button>
 
-        {/* Header */}
-        <div className="flex-none w-full mb-4 mt-0">
-          <div className="flex items-center justify-between mb-3">
-            {/* Left spacer (exit button is absolute) */}
-            <div className="w-16 h-16" />
+            {/* Header */}
+            <div className="flex-none w-full mb-4 mt-0">
+              <div className="flex items-center justify-between mb-3">
+                {/* Left spacer (exit button is absolute) */}
+                <div className="w-16 h-16" />
 
-            {/* Timer */}
-            <div className="flex-shrink-0">
-              <TimerCircle timeLeft={timeLeft} />
-            </div>
+                {/* Timer */}
+                <div className="flex-shrink-0">
+                  <TimerCircle timeLeft={timeLeft} />
+                </div>
 
-            {/* Lives and coins - showing profile data */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-red-500/50">
-                <Heart className="w-4 h-4 text-red-500" />
-                <span className="font-bold text-sm text-white">{profile.lives}</span>
-              </div>
-              <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-500/50">
-                <Coins className="w-4 h-4 text-yellow-500" />
-                <span className="font-bold text-sm text-white">{profile.coins}</span>
-              </div>
-            </div>
-          </div>
-
-            {/* Notification panel - below timer, compact horizontal bar */}
-            {(showContinuePanel || showScrollHint) && (
-              <div className="w-full h-16 flex items-center justify-center animate-fade-in">
-                {/* Continue panel */}
-                {showContinuePanel && (
-                  <div className="relative w-full bg-gradient-to-r from-red-600/95 to-red-700/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-red-400 shadow-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-white font-bold text-sm">
-                          {continueType === 'timeout' ? '⏰ Lejárt!' : '❌ Rossz!'}
-                        </span>
-                        {/* Cost badge - bal oldal, a "Lejárt!" vagy "Rossz!" szó mellett */}
-                        <div className="bg-yellow-500 text-black font-black text-xs px-2.5 py-1 rounded-full border-2 border-yellow-600 shadow-lg">
-                          {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 text-xs">
-                        <div className="flex items-center gap-1 text-green-300">
-                          <ChevronDown className="w-4 h-4 animate-bounce" />
-                          <span className="text-white">Le=Fizet</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-red-300">
-                          <div className="rotate-180"><ChevronDown className="w-4 h-4" /></div>
-                          <span className="text-white/70">Fel=Kilép</span>
-                        </div>
-                      </div>
-                    </div>
+                {/* Lives and coins - showing profile data */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-red-500/50">
+                    <Heart className="w-4 h-4 text-red-500" />
+                    <span className="font-bold text-sm text-white">{profile.lives}</span>
                   </div>
-                )}
+                  <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-500/50">
+                    <Coins className="w-4 h-4 text-yellow-500" />
+                    <span className="font-bold text-sm text-white">{profile.coins}</span>
+                  </div>
+                </div>
+              </div>
 
-                {/* Scroll hint for correct answer */}
-                {showScrollHint && !showContinuePanel && selectedAnswer && answerFlash === 'correct' && (
-                  <div className="w-full bg-gradient-to-r from-green-600/95 to-green-500/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-green-400 shadow-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">🎉</span>
-                        <div>
-                          <span className="text-white font-bold text-sm">Helyes válasz!</span>
-                          <span className="text-green-200 text-xs ml-2">
-                            +{currentQuestionIndex >= 0 && currentQuestionIndex <= 3 ? 1 : 
-                              currentQuestionIndex >= 4 && currentQuestionIndex <= 8 ? 3 : 
-                              currentQuestionIndex >= 9 && currentQuestionIndex <= 13 ? 5 : 55} 🪙
-                          </span>
+                {/* Notification panel - below timer, compact horizontal bar */}
+                {(showContinuePanel || showScrollHint) && (
+                  <div className="w-full h-16 flex items-center justify-center animate-fade-in">
+                    {/* Continue panel */}
+                    {showContinuePanel && (
+                      <div className="relative w-full bg-gradient-to-r from-red-600/95 to-red-700/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-red-400 shadow-lg">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-white font-bold text-sm">
+                              {continueType === 'timeout' ? '⏰ Lejárt!' : '❌ Rossz!'}
+                            </span>
+                            {/* Cost badge - bal oldal, a "Lejárt!" vagy "Rossz!" szó mellett */}
+                            <div className="bg-yellow-500 text-black font-black text-xs px-2.5 py-1 rounded-full border-2 border-yellow-600 shadow-lg">
+                              {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 text-xs">
+                            <div className="flex items-center gap-1 text-green-300">
+                              <ChevronDown className="w-4 h-4 animate-bounce" />
+                              <span className="text-white">Le=Fizet</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-red-300">
+                              <div className="rotate-180"><ChevronDown className="w-4 h-4" /></div>
+                              <span className="text-white/70">Fel=Kilép</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-white/80 text-xs">
-                        <ChevronDown className="w-4 h-4 animate-bounce" />
-                        <span>Következő</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Question and answers - NO flash effect overlay */}
-          <div className={`flex-1 flex flex-col overflow-y-auto px-2 relative transition-all duration-300 ${answerFlash === 'correct' ? 'scale-105' : answerFlash === 'wrong' ? 'animate-shake' : ''}`}>
-            
-            <MillionaireQuestion questionNumber={currentQuestionIndex + 1}>{currentQuestion.question}</MillionaireQuestion>
-
-            {/* Answers */}
-            <div className="space-y-3 mb-4">
-              {currentQuestion.answers.map((answer) => {
-                const isRemoved = removedAnswer === answer.key;
-                const isSelected = selectedAnswer === answer.key;
-                const showResult = selectedAnswer !== null;
-                const isCorrect = answer.correct && showResult;
-                const isWrong = showResult && isSelected && !answer.correct;
-
-                return (
-                  <MillionaireAnswer
-                    key={answer.key}
-                    letter={answer.key as 'A' | 'B' | 'C'}
-                    onClick={() => handleAnswer(answer.key)}
-                    isSelected={isSelected && !showResult}
-                    isCorrect={isCorrect}
-                    isWrong={isWrong}
-                    disabled={selectedAnswer !== null}
-                    isRemoved={isRemoved}
-                  >
-                    {answer.text}
-                    {audienceVotes[answer.key] && (
-                      <span className="ml-2 text-xs">
-                        <Users className="w-3 h-3 inline mr-1" />
-                        {audienceVotes[answer.key]}%
-                      </span>
                     )}
-                  </MillionaireAnswer>
-                );
-              })}
-            </div>
 
-
-            {/* Lifelines with enhanced styling - ROTATED to flat side */}
-            <div className="flex justify-center gap-3 mb-4 relative">
-              <button
-                onClick={useHelp5050}
-                disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
-                className={`
-                  relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
-                  disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                  ${!usedHelp5050 && profile.help_50_50_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
-                `}
-                style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
-                title="Harmadoló"
-              >
-                <span className="text-white font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
-              </button>
-              <button
-                onClick={useHelp2xAnswer}
-                disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
-                className={`
-                  relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
-                  disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                  ${!usedHelp2xAnswer && profile.help_2x_answer_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
-                `}
-                style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
-                title="2× válasz"
-              >
-                <span className="text-white font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>2×</span>
-              </button>
-              <button
-                onClick={useHelpAudience}
-                disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
-                className={`
-                  relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
-                  disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                  ${!usedHelpAudience && profile.help_audience_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
-                `}
-                style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
-                title="Közönség"
-              >
-                <Users className="w-6 h-6 text-white" style={{ transform: 'rotate(-90deg)' }} />
-              </button>
-              <button
-                onClick={handleSkipQuestion}
-                disabled={selectedAnswer !== null || !profile || profile.coins < (currentQuestionIndex < 5 ? 10 : currentQuestionIndex < 10 ? 20 : 30)}
-                className={`
-                  relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-yellow-400 
-                  disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                  shadow-lg shadow-yellow-500/40
-                `}
-                style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
-                title="Kérdés átugrás"
-              >
-                <SkipForward className="w-6 h-6 text-white" style={{ transform: 'rotate(-90deg)' }} />
-              </button>
-              {/* Skip cost badge - jobb felső sarokban, KÍVÜL a gombon */}
-              <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-extrabold rounded-full px-2.5 py-1 border-2 border-yellow-600 shadow-lg pointer-events-none">
-                {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
+                    {/* Scroll hint for correct answer */}
+                    {showScrollHint && !showContinuePanel && selectedAnswer && answerFlash === 'correct' && (
+                      <div className="w-full bg-gradient-to-r from-green-600/95 to-green-500/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-green-400 shadow-lg">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">🎉</span>
+                            <div>
+                              <span className="text-white font-bold text-sm">Helyes válasz!</span>
+                              <span className="text-green-200 text-xs ml-2">
+                                +{currentQuestionIndex >= 0 && currentQuestionIndex <= 3 ? 1 : 
+                                  currentQuestionIndex >= 4 && currentQuestionIndex <= 8 ? 3 : 
+                                  currentQuestionIndex >= 9 && currentQuestionIndex <= 13 ? 5 : 55} 🪙
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 text-white/80 text-xs">
+                            <ChevronDown className="w-4 h-4 animate-bounce" />
+                            <span>Következő</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-            </div>
-          </div>
 
+              {/* Question and answers - NO flash effect overlay */}
+              <div className={`flex-1 flex flex-col px-2 relative transition-all duration-300 ${answerFlash === 'correct' ? 'scale-105' : answerFlash === 'wrong' ? 'animate-shake' : ''}`}>
+                
+                <MillionaireQuestion questionNumber={currentQuestionIndex + 1}>{currentQuestion.question}</MillionaireQuestion>
+
+                {/* Answers */}
+                <div className="space-y-3 mb-4">
+                  {currentQuestion.answers.map((answer) => {
+                    const isRemoved = removedAnswer === answer.key;
+                    const isSelected = selectedAnswer === answer.key;
+                    const showResult = selectedAnswer !== null;
+                    const isCorrect = answer.correct && showResult;
+                    const isWrong = showResult && isSelected && !answer.correct;
+
+                    return (
+                      <MillionaireAnswer
+                        key={answer.key}
+                        letter={answer.key as 'A' | 'B' | 'C'}
+                        onClick={() => handleAnswer(answer.key)}
+                        isSelected={isSelected && !showResult}
+                        isCorrect={isCorrect}
+                        isWrong={isWrong}
+                        disabled={selectedAnswer !== null}
+                        isRemoved={isRemoved}
+                      >
+                        {answer.text}
+                        {audienceVotes[answer.key] && (
+                          <span className="ml-2 text-xs">
+                            <Users className="w-3 h-3 inline mr-1" />
+                            {audienceVotes[answer.key]}%
+                          </span>
+                        )}
+                      </MillionaireAnswer>
+                    );
+                  })}
+                </div>
+
+
+                {/* Lifelines with enhanced styling - ROTATED to flat side */}
+                <div className="flex justify-center gap-3 mb-4 relative">
+                  <button
+                    onClick={useHelp5050}
+                    disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
+                    className={`
+                      relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                      disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
+                      ${!usedHelp5050 && profile.help_50_50_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                    `}
+                    style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
+                    title="Harmadoló"
+                  >
+                    <span className="text-white font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
+                  </button>
+                  <button
+                    onClick={useHelp2xAnswer}
+                    disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
+                    className={`
+                      relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                      disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
+                      ${!usedHelp2xAnswer && profile.help_2x_answer_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                    `}
+                    style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
+                    title="2× válasz"
+                  >
+                    <span className="text-white font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>2×</span>
+                  </button>
+                  <button
+                    onClick={useHelpAudience}
+                    disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
+                    className={`
+                      relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                      disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
+                      ${!usedHelpAudience && profile.help_audience_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                    `}
+                    style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
+                    title="Közönség"
+                  >
+                    <Users className="w-6 h-6 text-white" style={{ transform: 'rotate(-90deg)' }} />
+                  </button>
+                  <button
+                    onClick={handleSkipQuestion}
+                    disabled={selectedAnswer !== null || !profile || profile.coins < (currentQuestionIndex < 5 ? 10 : currentQuestionIndex < 10 ? 20 : 30)}
+                    className={`
+                      relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-yellow-400 
+                      disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
+                      shadow-lg shadow-yellow-500/40
+                    `}
+                    style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
+                    title="Kérdés átugrás"
+                  >
+                    <SkipForward className="w-6 h-6 text-white" style={{ transform: 'rotate(-90deg)' }} />
+                  </button>
+                  {/* Skip cost badge - jobb felső sarokban, KÍVÜL a gombon */}
+                  <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-extrabold rounded-full px-2.5 py-1 border-2 border-yellow-600 shadow-lg pointer-events-none">
+                    {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
+                  </div>
+                </div>
+              </div>
+          </div>
         </div>
 
         {/* Exit confirmation dialog */}
