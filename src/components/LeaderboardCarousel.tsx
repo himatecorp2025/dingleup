@@ -68,38 +68,38 @@ export const LeaderboardCarousel = () => {
   };
 
   return (
-    <div className="w-full mb-6">
-      <h3 className="text-center text-lg font-bold text-white mb-4">
+    <div className="w-full mb-4">
+      <h3 className="text-center text-sm font-bold text-white mb-2">
         🏆 TOP 25 JÁTÉKOS 🏆
       </h3>
       
       <div
         ref={scrollContainerRef}
-        className="overflow-x-hidden whitespace-nowrap"
+        className="overflow-x-hidden whitespace-nowrap h-16"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        <div className="inline-flex gap-3">
+        <div className="inline-flex gap-2">
           {/* Duplicate the array for seamless loop */}
           {[...topPlayers, ...topPlayers].map((player, index) => {
             const actualIndex = index % topPlayers.length;
             return (
               <div
                 key={`${player.user_id}-${index}`}
-                className={`clip-hexagon w-28 h-28 flex flex-col items-center justify-center bg-gradient-to-br ${getMedalColor(actualIndex)} border-2 border-purple-400 shadow-lg transform hover:scale-110 transition-transform flex-shrink-0`}
+                className={`clip-hexagon w-16 h-16 flex flex-col items-center justify-center bg-gradient-to-br ${getMedalColor(actualIndex)} border border-purple-400 shadow-md transform hover:scale-105 transition-transform flex-shrink-0`}
               >
                 {actualIndex < 3 && (
-                  <Crown className={`w-6 h-6 mb-1 ${
+                  <Crown className={`w-3 h-3 mb-0.5 ${
                     actualIndex === 0 ? 'text-yellow-200' :
                     actualIndex === 1 ? 'text-gray-200' :
                     'text-orange-200'
                   }`} />
                 )}
-                <p className="text-xs font-bold text-white text-center px-2 truncate w-full">
+                <p className="text-[8px] font-bold text-white text-center px-1 truncate w-full">
                   {actualIndex + 1}. {player.username}
                 </p>
-                <p className="text-lg font-black text-white">
+                <p className="text-xs font-black text-white">
                   {player.total_correct_answers}
                 </p>
               </div>

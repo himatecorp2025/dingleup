@@ -616,14 +616,16 @@ const GamePreview = () => {
               <div className="w-full h-16 flex items-center justify-center animate-fade-in">
                 {/* Continue panel */}
                 {showContinuePanel && (
-                  <div className="w-full bg-gradient-to-r from-red-600/95 to-red-700/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-red-400 shadow-lg">
+                  <div className="relative w-full bg-gradient-to-r from-red-600/95 to-red-700/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-red-400 shadow-lg">
+                    {/* Cost badge - jobb felső sarok */}
+                    <div className="absolute -top-2 -right-2 bg-yellow-500 text-black font-black text-sm px-3 py-1 rounded-full border-2 border-yellow-600 shadow-lg">
+                      {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
+                    </div>
+                    
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <span className="text-white font-bold text-sm">
                           {continueType === 'timeout' ? '⏰ Lejárt!' : '❌ Rossz!'}
-                        </span>
-                        <span className="text-yellow-400 font-black text-xl">
-                          {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
                         </span>
                       </div>
                       <div className="flex items-center gap-3 text-xs">

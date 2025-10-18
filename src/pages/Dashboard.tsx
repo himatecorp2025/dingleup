@@ -111,8 +111,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 flex flex-col">
-      <div className="max-w-md mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 flex justify-center">
+      <div className="w-full max-w-md mx-auto flex flex-col">
         {/* Top Section */}
         <div className="flex items-start justify-between mb-6">
           {/* Left: Greeting */}
