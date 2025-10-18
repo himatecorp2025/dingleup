@@ -146,12 +146,10 @@ const GamePreview = () => {
 
     // Start game music at 20% volume when category is selected
     try {
-      const w = window as any;
-      const audio: HTMLAudioElement | undefined = w.__bgm;
-      if (audio) {
-        audio.volume = 0.2; // 20% hangerő
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
+      if (audioRef.current) {
+        audioRef.current.volume = 0.2; // 20% hangerő
+        audioRef.current.currentTime = 0;
+        await audioRef.current.play();
       }
     } catch (error) {
       console.error('Zene indítási hiba:', error);
@@ -501,17 +499,17 @@ const GamePreview = () => {
         {!musicEnabled && <MusicInitializer onMusicEnabled={handleMusicEnabled} audioRef={audioRef} />}
         
         <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
-          {/* Back button - top left corner */}
-          <Button
-            onClick={() => {
+          <button
+            onClick={async () => {
               stopMusic();
-              navigate('/dashboard');
+              await supabase.auth.signOut();
+              navigate('/');
             }}
-            className="fixed top-4 left-4 z-50 bg-red-600 hover:bg-red-700 text-white border-2 border-red-400/50 shadow-lg"
+            className="fixed top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+            title="Kijelentkezés"
           >
-            <LogOut className="w-5 h-5 mr-1" />
-            Vissza
-          </Button>
+            <LogOut className="w-6 h-6 -scale-x-100" />
+          </button>
 
           <CategorySelector onSelect={startGameWithCategory} />
           
@@ -560,51 +558,41 @@ const GamePreview = () => {
     return (
       <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
       <div className="h-full w-full flex flex-col p-4">
-        {/* Exit button */}
-        {/* Exit button - top left corner */}
-        <Button
+        <button
           onClick={() => setShowExitDialog(true)}
-          className="absolute top-4 left-4 z-50 bg-red-600 hover:bg-red-700 text-white border-2 border-red-400/50 shadow-lg"
+          className="absolute top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+          title="Kilépés"
         >
-          <LogOut className="w-5 h-5 mr-1" />
-          Kilépés
-        </Button>
+          <LogOut className="w-6 h-6 -scale-x-100" />
+        </button>
 
         {/* Header */}
-        <div className="flex-none w-full mb-4 mt-16">
+        <div className="flex-none w-full mb-4 mt-0">
           <div className="flex items-center justify-between mb-3">
-            {/* Level hexagon */}
-            <div
-                className="bg-gradient-to-br from-blue-600 to-purple-600 border-2 border-blue-400 w-16 h-16 flex items-center justify-center"
-                style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
-              >
-                <div className="text-center">
-                  <div className="text-xs font-bold text-white">Szint</div>
-                  <div className="text-lg font-black text-yellow-400">{currentQuestionIndex + 1}</div>
-                </div>
-              </div>
+            {/* Left spacer (exit button is absolute) */}
+            <div className="w-16 h-16" />
 
-              {/* Timer */}
-              <div className="flex-shrink-0">
-                <TimerCircle timeLeft={timeLeft} />
-              </div>
+            {/* Timer */}
+            <div className="flex-shrink-0">
+              <TimerCircle timeLeft={timeLeft} />
+            </div>
 
-              {/* Lives and coins - showing profile data */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-red-500/50">
-                  <Heart className="w-4 h-4 text-red-500" />
-                  <span className="font-bold text-sm text-white">{profile.lives}</span>
-                </div>
-                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-500/50">
-                  <Coins className="w-4 h-4 text-yellow-500" />
-                  <span className="font-bold text-sm text-white">{profile.coins}</span>
-                </div>
-                <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-orange-500/50">
-                  <Zap className="w-4 h-4 text-orange-500" />
-                  <span className="font-bold text-sm text-white">{3 - mistakesInGame}</span>
-                </div>
+            {/* Lives and coins - showing profile data */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-red-500/50">
+                <Heart className="w-4 h-4 text-red-500" />
+                <span className="font-bold text-sm text-white">{profile.lives}</span>
+              </div>
+              <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-500/50">
+                <Coins className="w-4 h-4 text-yellow-500" />
+                <span className="font-bold text-sm text-white">{profile.coins}</span>
+              </div>
+              <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-orange-500/50">
+                <Zap className="w-4 h-4 text-orange-500" />
+                <span className="font-bold text-sm text-white">{3 - mistakesInGame}</span>
               </div>
             </div>
+          </div>
 
             {/* Notification panel - below timer, compact horizontal bar */}
             {(showContinuePanel || showScrollHint) && (
@@ -660,7 +648,7 @@ const GamePreview = () => {
           {/* Question and answers - NO flash effect overlay */}
           <div className={`flex-1 flex flex-col overflow-y-auto px-2 relative transition-all duration-300 ${answerFlash === 'correct' ? 'scale-105' : answerFlash === 'wrong' ? 'animate-shake' : ''}`}>
             
-            <MillionaireQuestion>{currentQuestion.question}</MillionaireQuestion>
+            <MillionaireQuestion questionNumber={currentQuestionIndex + 1}>{currentQuestion.question}</MillionaireQuestion>
 
             {/* Answers */}
             <div className="space-y-3 mb-4">

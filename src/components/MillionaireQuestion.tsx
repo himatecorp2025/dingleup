@@ -2,9 +2,10 @@ import { ReactNode } from 'react';
 
 interface MillionaireQuestionProps {
   children: ReactNode;
+  questionNumber?: number;
 }
 
-export const MillionaireQuestion = ({ children }: MillionaireQuestionProps) => {
+export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
   return (
     <div className="relative w-full mb-6">
       <div 
@@ -15,9 +16,13 @@ export const MillionaireQuestion = ({ children }: MillionaireQuestionProps) => {
       >
         <div className="flex items-center gap-4">
           <div 
-            className="w-10 h-10 bg-cyan-600 border-2 border-cyan-400 flex-shrink-0"
+            className="w-10 h-10 bg-cyan-600 border-2 border-cyan-400 flex-shrink-0 flex items-center justify-center"
             style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
-          />
+          >
+            {typeof questionNumber === 'number' && (
+              <span className="text-white font-bold text-sm leading-none">{questionNumber}</span>
+            )}
+          </div>
           <p className="text-base md:text-lg font-normal leading-snug text-left">
             {children}
           </p>
