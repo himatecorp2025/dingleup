@@ -5,10 +5,17 @@
 /* Mobile & touch optimizations */
 html, body {
   height: 100%;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  margin: 0;
+  padding: 0;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
+}
+
+#root {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  min-height: 100vh;
 }
 
 body {
@@ -16,12 +23,6 @@ body {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
-}
-
-/* Text stroke (körvonal) CSAK fehér betűknek */
-.text-white {
-  -webkit-text-stroke: 1.5px black;
-  paint-order: stroke fill;
 }
 
 button, a {
