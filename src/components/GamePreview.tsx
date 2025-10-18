@@ -93,23 +93,46 @@ const GamePreview = () => {
 
   // Zene automatikus indítás/leállítás a gameState alapján
   useEffect(() => {
-    if (gameState === 'category-select') {
-      // Témakör választásnál automatikusan indítson zenét
-      if (audioRef.current) {
+    const tryPlay = async () => {
+      if (!audioRef.current) return;
+      try {
         audioRef.current.volume = 0.2;
         audioRef.current.loop = true;
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            console.log('Auto-play blocked, user interaction needed:', error);
-          });
-        }
+        await audioRef.current.play();
+      } catch (err) {
+        // Autoplay blokkolva – megpróbáljuk első felhasználói interakciónál
+        console.log('Autoplay blocked, will retry on user interaction');
       }
+    };
+
+    if (gameState === 'category-select') {
+      // Azonnali próbálkozás
+      tryPlay();
+
+      // Első interakciónál kényszerített lejátszás
+      const onUserInteract = () => {
+        tryPlay();
+      };
+      document.addEventListener('pointerdown', onUserInteract, { once: true });
+      document.addEventListener('touchstart', onUserInteract, { once: true });
+      document.addEventListener('click', onUserInteract, { once: true });
+
+      // Láthatóság váltáskor is próbáljuk
+      const onVisibility = () => {
+        if (document.visibilityState === 'visible') tryPlay();
+      };
+      document.addEventListener('visibilitychange', onVisibility);
+
+      return () => {
+        document.removeEventListener('pointerdown', onUserInteract);
+        document.removeEventListener('touchstart', onUserInteract);
+        document.removeEventListener('click', onUserInteract);
+        document.removeEventListener('visibilitychange', onVisibility);
+      };
     } else {
       // Bármilyen más állapotnál állítsa le a zenét
       stopMusic();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState]);
 
   // Auth check
@@ -557,10 +580,9 @@ const GamePreview = () => {
   if (gameState === 'category-select') {
     return (
         <>
-        <audio ref={audioRef} loop>
-          <source src={gameMusic} type="audio/mpeg" />
+        <audio ref={audioRef} loop preload="auto" playsInline autoPlay>
+          <source src={gameMusic} type="audio/mp4" />
         </audio>
-        <MusicInitializer onMusicEnabled={() => setMusicEnabled(true)} audioRef={audioRef} />
         
         <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
 
