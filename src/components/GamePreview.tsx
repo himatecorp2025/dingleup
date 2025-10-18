@@ -653,16 +653,15 @@ const GamePreview = () => {
                 {/* Continue panel */}
                 {showContinuePanel && (
                   <div className="relative w-full bg-gradient-to-r from-red-600/95 to-red-700/95 backdrop-blur-sm rounded-xl px-4 py-2 border-2 border-red-400 shadow-lg">
-                    {/* Cost badge - jobb felső sarok */}
-                    <div className="absolute -top-2 -right-2 bg-yellow-500 text-black font-black text-sm px-3 py-1 rounded-full border-2 border-yellow-600 shadow-lg">
-                      {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
-                    </div>
-                    
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <span className="text-white font-bold text-sm">
                           {continueType === 'timeout' ? '⏰ Lejárt!' : '❌ Rossz!'}
                         </span>
+                        {/* Cost badge - bal oldal, a "Lejárt!" vagy "Rossz!" szó mellett */}
+                        <div className="bg-yellow-500 text-black font-black text-xs px-2.5 py-1 rounded-full border-2 border-yellow-600 shadow-lg">
+                          {continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙
+                        </div>
                       </div>
                       <div className="flex items-center gap-3 text-xs">
                         <div className="flex items-center gap-1 text-green-300">
@@ -671,7 +670,7 @@ const GamePreview = () => {
                         </div>
                         <div className="flex items-center gap-1 text-red-300">
                           <div className="rotate-180"><ChevronDown className="w-4 h-4" /></div>
-                          <span className="text-white/70">Fel=Hiba</span>
+                          <span className="text-white/70">Fel=Kilép</span>
                         </div>
                       </div>
                     </div>
@@ -743,7 +742,7 @@ const GamePreview = () => {
 
 
             {/* Lifelines with enhanced styling - ROTATED to flat side */}
-            <div className="flex justify-center gap-3 mb-4">
+            <div className="flex justify-center gap-3 mb-4 relative">
               <button
                 onClick={useHelp5050}
                 disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
@@ -794,13 +793,12 @@ const GamePreview = () => {
                 style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                 title="Kérdés átugrás"
               >
-                <div style={{ transform: 'rotate(-90deg)' }} className="relative">
-                  <SkipForward className="w-6 h-6 text-white" />
-                  <span className="absolute -top-1 -right-1 translate-x-1 -translate-y-1 bg-yellow-500 text-black text-[10px] font-extrabold rounded-full px-1.5 py-0.5 border-2 border-yellow-600 shadow">
-                    {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
-                  </span>
-                </div>
+                <SkipForward className="w-6 h-6 text-white" style={{ transform: 'rotate(-90deg)' }} />
               </button>
+              {/* Skip cost badge - jobb felső sarokban, KÍVÜL a gombon */}
+              <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-extrabold rounded-full px-2.5 py-1 border-2 border-yellow-600 shadow-lg pointer-events-none">
+                {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
+              </div>
             </div>
           </div>
 

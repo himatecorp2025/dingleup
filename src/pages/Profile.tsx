@@ -97,7 +97,7 @@ const Profile = () => {
         <div className="flex flex-col items-center mb-8">
           <div className="relative mb-4">
             <div 
-              className="w-32 h-32 clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-4 border-purple-400 shadow-xl shadow-purple-500/50"
+              className="w-32 h-32 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-4 border-purple-400 shadow-xl shadow-purple-500/50"
             >
               {profile.avatar_url ? (
                 <img 

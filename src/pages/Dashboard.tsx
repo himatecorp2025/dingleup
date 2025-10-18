@@ -132,19 +132,19 @@ const Dashboard = () => {
             {/* Stats Row */}
             <div className="flex items-center gap-2">
               {/* Rank Hexagon */}
-              <div className="w-16 h-16 clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-purple-400">
+              <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-purple-400">
                 <Trophy className="w-4 h-4 text-yellow-500 mb-0.5" />
                 <span className="text-white text-xs font-bold">{currentRank}</span>
               </div>
 
               {/* Coins Hexagon */}
-              <div className="w-16 h-16 clip-hexagon bg-gradient-to-br from-yellow-600 to-yellow-900 flex flex-col items-center justify-center border-2 border-yellow-400">
+              <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-yellow-600 to-yellow-900 flex flex-col items-center justify-center border-2 border-yellow-400">
                 <Coins className="w-4 h-4 text-white mb-0.5" />
                 <span className="text-white text-xs font-bold">{profile.coins}</span>
               </div>
 
               {/* Lives Hexagon */}
-              <div className="w-16 h-16 clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400">
+              <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400">
                 <Heart className="w-4 h-4 text-white mb-0.5" />
                 <span className="text-white text-xs font-bold">{profile.lives}</span>
               </div>
@@ -152,7 +152,7 @@ const Dashboard = () => {
               {/* Avatar Hexagon */}
               <button
                 onClick={() => navigate('/profile')}
-                className="w-16 h-16 clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-4 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-transform"
+                className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-4 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-transform"
               >
                 {profile.avatar_url ? (
                   <img 

@@ -72,10 +72,10 @@ const Register = () => {
       });
 
       if (authError) {
-        if (authError.message.includes("already registered")) {
+        if (authError.message.includes("already registered") || authError.message.includes("User already registered")) {
           toast({
             title: "Hiba",
-            description: "Ez az email cím már regisztrálva van",
+            description: "Sajnáljuk, de ez az emailcím már foglalt.",
             variant: "destructive",
           });
         } else {
@@ -192,7 +192,7 @@ const Register = () => {
 
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div>
-              <Label htmlFor="username">Felhasználónév</Label>
+              <Label htmlFor="username" className="text-white">Felhasználónév</Label>
               <Input
                 id="username"
                 type="text"
@@ -208,7 +208,7 @@ const Register = () => {
             </div>
 
             <div>
-              <Label htmlFor="email">Email cím</Label>
+              <Label htmlFor="email" className="text-white">Email cím</Label>
               <Input
                 id="email"
                 type="email"
@@ -224,7 +224,7 @@ const Register = () => {
             </div>
 
             <div>
-              <Label htmlFor="inviterCode">Meghívó kód (opcionális)</Label>
+              <Label htmlFor="inviterCode" className="text-white">Meghívó kód (opcionális)</Label>
               <Input
                 id="inviterCode"
                 type="text"
@@ -239,7 +239,7 @@ const Register = () => {
             </div>
 
             <div>
-              <Label htmlFor="password">Jelszó</Label>
+              <Label htmlFor="password" className="text-white">Jelszó</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -267,7 +267,7 @@ const Register = () => {
             </div>
 
             <div>
-              <Label htmlFor="passwordConfirm">Jelszó megerősítése</Label>
+              <Label htmlFor="passwordConfirm" className="text-white">Jelszó megerősítése</Label>
               <div className="relative">
                 <Input
                   id="passwordConfirm"
@@ -300,7 +300,7 @@ const Register = () => {
                 }
                 disabled={isLoading}
               />
-              <Label htmlFor="terms" className="text-xs sm:text-sm leading-relaxed cursor-pointer">
+              <Label htmlFor="terms" className="text-xs sm:text-sm leading-relaxed cursor-pointer text-white">
                 Elfogadom az{" "}
                 <a href="#" className="text-accent hover:underline">
                   Általános Szerződési Feltételeket

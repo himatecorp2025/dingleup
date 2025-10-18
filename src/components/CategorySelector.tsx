@@ -1,5 +1,5 @@
 import { GameCategory } from '@/types/game';
-import { Heart, Brain, Palette, TrendingUp } from 'lucide-react';
+import { Heart, Brain, Palette, TrendingUp, ArrowLeft } from 'lucide-react';
 
 interface CategorySelectorProps {
   onSelect: (category: GameCategory) => void;
@@ -38,8 +38,18 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
   ];
 
   return (
-    <div className="min-h-screen flex items-start justify-center p-4 pt-12 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden">
+    <div className="min-h-screen flex flex-col items-start justify-start p-4 pt-12 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10"></div>
+      
+      {/* Back button */}
+      <button
+        onClick={() => window.location.href = '/dashboard'}
+        className="p-3 mb-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+        title="Vissza"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </button>
+      
       <div className="max-w-2xl w-full relative z-10">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 font-poppins text-white">
           Válassz témakört!

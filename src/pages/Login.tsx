@@ -137,10 +137,11 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div>
-              <Label htmlFor="email">Email cím</Label>
+              <Label htmlFor="email" className="text-white">Email cím</Label>
               <Input
                 id="email"
                 type="email"
+                placeholder="pl: valaki@email.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className={errors.email ? "border-destructive" : ""}
@@ -153,11 +154,12 @@ const Login = () => {
             </div>
 
             <div>
-              <Label htmlFor="password">Jelszó</Label>
+              <Label htmlFor="password" className="text-white">Jelszó</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  placeholder="Pl: Jelszó123!"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className={errors.password ? "border-destructive pr-10" : "pr-10"}
