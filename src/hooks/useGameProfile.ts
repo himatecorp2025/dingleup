@@ -112,7 +112,18 @@ export const useGameProfile = (userId: string | undefined) => {
     }
 
     try {
-      await updateProfile({ coins: profile.coins - amount });
+      const { data, error } = await supabase.rpc('spend_coins', { amount });
+      
+      if (error || !data) {
+        toast({
+          title: 'Hiba',
+          description: 'Nem sikerült levonni az aranyérméket',
+          variant: 'destructive'
+        });
+        return false;
+      }
+      
+      setProfile({ ...profile, coins: profile.coins - amount });
       toast({ title: 'Levonás', description: `-${amount} aranyérme levonva` });
       return true;
     } catch {
@@ -122,7 +133,19 @@ export const useGameProfile = (userId: string | undefined) => {
 
   const addCoins = async (amount: number) => {
     if (!profile) return;
-    await updateProfile({ coins: profile.coins + amount });
+    
+    try {
+      const { error } = await supabase.rpc('award_coins', { amount });
+      
+      if (error) {
+        console.error('Error awarding coins:', error);
+        return;
+      }
+      
+      setProfile({ ...profile, coins: profile.coins + amount });
+    } catch (error) {
+      console.error('Error in addCoins:', error);
+    }
   };
 
   const spendLife = async (): Promise<boolean> => {
@@ -136,7 +159,18 @@ export const useGameProfile = (userId: string | undefined) => {
     }
 
     try {
-      await updateProfile({ lives: profile.lives - 1 });
+      const { data, error } = await supabase.rpc('use_life');
+      
+      if (error || !data) {
+        toast({
+          title: 'Hiba',
+          description: 'Nem sikerült használni az életet',
+          variant: 'destructive'
+        });
+        return false;
+      }
+      
+      setProfile({ ...profile, lives: profile.lives - 1 });
       return true;
     } catch {
       return false;

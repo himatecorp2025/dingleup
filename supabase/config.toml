@@ -1,4 +1,1 @@
 project_id = "wdpxmwsxhckazwxufttk"
-
-[functions.calculate-weekly-rankings]
-verify_jwt = false

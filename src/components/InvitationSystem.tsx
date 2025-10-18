@@ -39,14 +39,30 @@ const InvitationSystem = ({ userId, invitationCode }: InvitationSystemProps) => 
   };
 
   const sendInvitation = async () => {
-    if (!email) return;
+    const trimmedEmail = email.trim().toLowerCase();
+    
+    if (!trimmedEmail) {
+      toast.error('Kérlek adj meg egy email címet');
+      return;
+    }
+
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      toast.error('Érvénytelen email formátum');
+      return;
+    }
+
+    if (trimmedEmail.length > 255) {
+      toast.error('Az email cím túl hosszú');
+      return;
+    }
     
     setLoading(true);
     const { error } = await supabase
       .from('invitations')
       .insert({
         inviter_id: userId,
-        invited_email: email,
+        invited_email: trimmedEmail,
         invitation_code: invitationCode
       });
 

@@ -328,9 +328,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      award_coins: {
+        Args: { amount: number }
+        Returns: undefined
+      }
       generate_invitation_code: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      regenerate_lives: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      spend_coins: {
+        Args: { amount: number }
+        Returns: boolean
+      }
+      use_life: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
     }
     Enums: {
