@@ -4,11 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
-import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut } from 'lucide-react';
+import { useUserBoosters } from '@/hooks/useUserBoosters';
+import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { InvitationDialog } from '@/components/InvitationDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
+import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import logoImage from '@/assets/logo.png';
 
 const Dashboard = () => {
@@ -17,10 +19,15 @@ const Dashboard = () => {
   const { profile, loading } = useGameProfile(userId);
   const { canClaim, currentStreak, nextReward, claimDailyGift, checkDailyGift } = useDailyGift(userId);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus } = useWelcomeBonus(userId);
+  const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   const [showInvitation, setShowInvitation] = useState(false);
+  const [showBoosterActivation, setShowBoosterActivation] = useState(false);
   const [currentRank, setCurrentRank] = useState<number>(1);
+  
+  const hasActiveBooster = profile?.speed_booster_active || false;
+  const availableBoosters = boosters.filter(b => !b.activated);
 
   // Helper function
   const getInitials = (name: string) => {
@@ -204,11 +211,18 @@ const Dashboard = () => {
 
         {/* Booster Button */}
         <button
-          onClick={() => navigate('/shop')}
-          className="w-full py-2.5 px-5 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-gray-100 font-black text-lg rounded-2xl border-2 border-yellow-600 shadow-xl shadow-yellow-500/40 hover:shadow-yellow-500/60 hover:scale-105 transition-all"
+          onClick={() => setShowBoosterActivation(true)}
+          className={`w-full py-2.5 px-5 mb-3 bg-gradient-to-r ${hasActiveBooster ? 'from-orange-500 via-orange-400 to-orange-500' : 'from-yellow-500 via-yellow-400 to-yellow-500'} text-gray-100 font-black text-lg rounded-2xl border-2 ${hasActiveBooster ? 'border-orange-600 shadow-orange-500/40' : 'border-yellow-600 shadow-yellow-500/40'} shadow-xl hover:shadow-yellow-500/60 hover:scale-105 transition-all relative`}
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
-          BOOSTER
+          {hasActiveBooster && (
+            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+            </span>
+          )}
+          <Zap className="inline w-5 h-5 mr-2" />
+          BOOSTER {hasActiveBooster && '(AKTÍV)'}
         </button>
 
         {/* Leaderboard Carousel - Top 25 players */}
@@ -252,6 +266,24 @@ const Dashboard = () => {
           userId={userId}
         />
       )}
+
+      {/* Booster activation dialog */}
+      <BoosterActivationDialog
+        open={showBoosterActivation}
+        onClose={() => {
+          setShowBoosterActivation(false);
+          refetchBoosters();
+        }}
+        availableBoosters={availableBoosters}
+        hasActiveBooster={hasActiveBooster}
+        onActivate={async (boosterId) => {
+          const success = await activateBooster(boosterId);
+          if (success) {
+            setShowBoosterActivation(false);
+            window.location.reload();
+          }
+        }}
+      />
 
       {/* Logout button - bottom right corner */}
       <button

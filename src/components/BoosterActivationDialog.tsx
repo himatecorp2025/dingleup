@@ -6,8 +6,9 @@ import { UserBooster } from '@/types/game';
 interface BoosterActivationDialogProps {
   open: boolean;
   onClose: () => void;
-  boosters: UserBooster[];
-  onActivate: (boosterId: string) => void;
+  availableBoosters: UserBooster[];
+  hasActiveBooster: boolean;
+  onActivate: (boosterId: string) => Promise<void>;
 }
 
 const BOOSTER_INFO = {
@@ -17,8 +18,7 @@ const BOOSTER_INFO = {
   DingleSpeed: { multiplier: '24×', color: 'from-yellow-500 to-orange-500' }
 };
 
-export const BoosterActivationDialog = ({ open, onClose, boosters, onActivate }: BoosterActivationDialogProps) => {
-  const availableBoosters = boosters.filter(b => !b.activated);
+export const BoosterActivationDialog = ({ open, onClose, availableBoosters, hasActiveBooster, onActivate }: BoosterActivationDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

@@ -136,6 +136,39 @@ const GamePreview = () => {
     setShowContinuePanel(true);
   };
 
+  const shuffleAnswers = (questionSet: Question[]): Question[] => {
+    let lastCorrectIndex = -1;
+    let lastCorrectCount = 0;
+    
+    return questionSet.map((q) => {
+      const answers = [...q.answers];
+      const correctIdx = answers.findIndex(a => a.correct);
+      
+      // Prevent same position more than 2 times in a row
+      let newCorrectIdx = correctIdx;
+      let attempts = 0;
+      while ((newCorrectIdx === lastCorrectIndex && lastCorrectCount >= 2) && attempts < 10) {
+        // Shuffle answers
+        for (let i = answers.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [answers[i], answers[j]] = [answers[j], answers[i]];
+        }
+        newCorrectIdx = answers.findIndex(a => a.correct);
+        attempts++;
+      }
+      
+      // Update tracking
+      if (newCorrectIdx === lastCorrectIndex) {
+        lastCorrectCount++;
+      } else {
+        lastCorrectIndex = newCorrectIdx;
+        lastCorrectCount = 1;
+      }
+      
+      return { ...q, answers };
+    });
+  };
+
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
 
@@ -151,6 +184,10 @@ const GamePreview = () => {
       setGameState('category-select');
       return;
     }
+    
+    // Give 1 gold coin as welcome gift
+    await updateProfile({ coins: profile.coins + 1 });
+    setCoinsEarned(1);
 
     // Reactivate all lifelines for new game - with error handling
     try {
@@ -166,13 +203,13 @@ const GamePreview = () => {
     setSelectedCategory(category);
     const questionBank = QUESTION_BANKS[category];
     const shuffled = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 15);
-    setQuestions(shuffled);
+    const shuffledWithVariety = shuffleAnswers(shuffled);
+    setQuestions(shuffledWithVariety);
     setGameState('playing');
     setCurrentQuestionIndex(0);
     setTimeLeft(10);
     setMistakesInGame(0);
     setCorrectAnswers(0);
-    setCoinsEarned(0);
     setResponseTimes([]);
     setSelectedAnswer(null);
     setUsedHelp5050(false);
@@ -228,8 +265,18 @@ const GamePreview = () => {
     setAnswerFlash('correct');
     setShowSkipPanel(false);
     
-    // Progressive gold reward
-    const reward = getCoinsForQuestion(currentQuestionIndex);
+    // New progressive gold reward system
+    let reward = 0;
+    if (currentQuestionIndex >= 0 && currentQuestionIndex <= 3) {
+      reward = 1; // Questions 1-4: 1 coin each
+    } else if (currentQuestionIndex >= 4 && currentQuestionIndex <= 8) {
+      reward = 3; // Questions 5-9: 3 coins each
+    } else if (currentQuestionIndex >= 9 && currentQuestionIndex <= 13) {
+      reward = 5; // Questions 10-14: 5 coins each
+    } else if (currentQuestionIndex === 14) {
+      reward = 55; // Question 15: 55 coins
+    }
+    
     setCoinsEarned(coinsEarned + reward);
     
     // Update coins immediately in profile
@@ -295,13 +342,8 @@ const GamePreview = () => {
     
     if (profile.coins < cost) {
       toast.error(`Nincs elég aranyérme! ${cost} 🪙 szükséges.`);
-      // Force next question without payment
-      setMistakesInGame(prev => prev + 1);
-      if (mistakesInGame + 1 >= 3) {
-        setGameState('out-of-lives');
-      } else {
-        handleNextQuestion();
-      }
+      // Exit game and finish
+      finishGame();
       return;
     }
     
@@ -311,13 +353,8 @@ const GamePreview = () => {
   };
 
   const handleRejectContinue = () => {
-    setMistakesInGame(prev => prev + 1);
-    
-    if (mistakesInGame + 1 >= 3) {
-      setGameState('out-of-lives');
-    } else {
-      handleNextQuestion();
-    }
+    // Exit game and finish
+    finishGame();
   };
 
   const finishGame = async () => {
@@ -446,11 +483,11 @@ const GamePreview = () => {
       e.preventDefault();
       const delta = e.deltaY;
       
-      if (showSkipPanel && delta > 50) {
-        handleSkipQuestion();
-      } else if (showContinuePanel && delta > 50) {
+      if (showContinuePanel && delta > 0) {
+        // Scroll down = Continue and pay
         handleContinueAfterMistake();
       } else if (showContinuePanel && delta < -50) {
+        // Scroll up = Exit game
         handleRejectContinue();
       } else if (showScrollHint && delta > 50) {
         handleNextQuestion();
@@ -471,13 +508,12 @@ const GamePreview = () => {
       
       e.preventDefault();
       
-      if (showSkipPanel && delta > 0) {
-        handleSkipQuestion();
-        touchStartY = 0;
-      } else if (showContinuePanel && delta > 0) {
+      if (showContinuePanel && delta > 0) {
+        // Swipe up (ujjával lentről felfelé) = Continue and pay
         handleContinueAfterMistake();
         touchStartY = 0;
       } else if (showContinuePanel && delta < 0) {
+        // Swipe down (fentről lefelé) = Exit game
         handleRejectContinue();
         touchStartY = 0;
       } else if (showScrollHint && delta > 0) {
@@ -650,7 +686,11 @@ const GamePreview = () => {
                         <span className="text-2xl">🎉</span>
                         <div>
                           <span className="text-white font-bold text-sm">Helyes válasz!</span>
-                          <span className="text-green-200 text-xs ml-2">+{getCoinsForQuestion(currentQuestionIndex)} 🪙</span>
+                          <span className="text-green-200 text-xs ml-2">
+                            +{currentQuestionIndex >= 0 && currentQuestionIndex <= 3 ? 1 : 
+                              currentQuestionIndex >= 4 && currentQuestionIndex <= 8 ? 3 : 
+                              currentQuestionIndex >= 9 && currentQuestionIndex <= 13 ? 5 : 55} 🪙
+                          </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-white/80 text-xs">

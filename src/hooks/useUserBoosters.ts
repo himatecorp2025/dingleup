@@ -41,10 +41,10 @@ export const useUserBoosters = (userId: string | undefined) => {
       }
 
       const boosterConfig = {
-        DoubleSpeed: { multiplier: 2, duration: 60 },
-        MegaSpeed: { multiplier: 4, duration: 60 },
-        GigaSpeed: { multiplier: 12, duration: 60 },
-        DingleSpeed: { multiplier: 24, duration: 60 }
+        DoubleSpeed: { multiplier: 2, duration: 60, maxLives: 20 },
+        MegaSpeed: { multiplier: 4, duration: 60, maxLives: 25 },
+        GigaSpeed: { multiplier: 12, duration: 60, maxLives: 30 },
+        DingleSpeed: { multiplier: 24, duration: 60, maxLives: 35 }
       }[booster.booster_type];
 
       const now = new Date();
@@ -62,19 +62,20 @@ export const useUserBoosters = (userId: string | undefined) => {
 
       if (boosterError) throw boosterError;
 
-      // Update profile
+      // Update profile with increased max lives and faster regeneration
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
           speed_booster_active: true,
           speed_booster_expires_at: expiresAt.toISOString(),
-          speed_booster_multiplier: boosterConfig.multiplier
+          speed_booster_multiplier: boosterConfig.multiplier,
+          max_lives: boosterConfig.maxLives
         })
         .eq('id', userId);
 
       if (profileError) throw profileError;
 
-      toast.success(`${booster.booster_type} aktiválva!`);
+      toast.success(`${booster.booster_type} aktiválva! Max élet: ${boosterConfig.maxLives}, Regeneráció: ${12 / boosterConfig.multiplier} perc`);
       await fetchBoosters();
       return true;
     } catch (error) {
