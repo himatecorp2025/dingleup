@@ -111,10 +111,10 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 flex justify-center">
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 flex justify-center overflow-hidden">
       <div className="w-full max-w-md mx-auto flex flex-col">
         {/* Top Section */}
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex items-start justify-between mb-3">
           {/* Left: Greeting */}
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-black text-white">Szia, {profile.username}!</h1>
@@ -185,8 +185,8 @@ const Dashboard = () => {
         </div>
 
         {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <div className="relative w-48 h-48">
+        <div className="flex justify-center mb-3">
+          <div className="relative w-36 h-36">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full blur-3xl"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl" />
           </div>
@@ -195,34 +195,34 @@ const Dashboard = () => {
         {/* Play Button */}
         <button
           onClick={() => navigate('/game')}
-          className="w-full py-3 px-6 mb-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-xl rounded-2xl border-4 border-green-400 shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 hover:scale-105 transition-all animate-pulse-glow-green"
+          className="w-full py-2.5 px-5 mb-3 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg rounded-2xl border-2 border-green-400 shadow-xl shadow-green-500/40 hover:shadow-green-500/60 hover:scale-105 transition-all animate-pulse-glow-green"
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
-          <Play className="inline w-6 h-6 mr-3" />
+          <Play className="inline w-5 h-5 mr-2" />
           PLAY NOW
         </button>
 
         {/* Booster Button */}
         <button
           onClick={() => navigate('/shop')}
-          className="w-full py-3 px-6 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-gray-100 font-black text-xl rounded-2xl border-4 border-yellow-600 shadow-2xl shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:scale-105 transition-all"
+          className="w-full py-2.5 px-5 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-gray-100 font-black text-lg rounded-2xl border-2 border-yellow-600 shadow-xl shadow-yellow-500/40 hover:shadow-yellow-500/60 hover:scale-105 transition-all"
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
           BOOSTER
         </button>
 
         {/* Leaderboard Carousel - Top 25 players */}
-        <div className="my-6">
+        <div className="my-3">
           <LeaderboardCarousel />
         </div>
 
         {/* Ranglista Button */}
         <button
           onClick={() => navigate('/leaderboard')}
-          className="w-full py-3 px-6 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-white font-black text-xl rounded-2xl border-4 border-purple-600 shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105 transition-all"
+          className="w-full py-2.5 px-5 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-white font-black text-lg rounded-2xl border-2 border-purple-600 shadow-xl shadow-purple-500/40 hover:shadow-purple-500/60 hover:scale-105 transition-all"
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
-          <Trophy className="inline w-6 h-6 mr-3" />
+          <Trophy className="inline w-5 h-5 mr-2" />
           RANGLISTA
         </button>
       </div>

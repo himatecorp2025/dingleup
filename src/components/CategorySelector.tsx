@@ -38,7 +38,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
   ];
 
   return (
-    <div className="min-h-screen flex items-start justify-center p-4 pt-24 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-y-auto">
+    <div className="min-h-screen flex items-start justify-center p-4 pt-12 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10"></div>
       <div className="max-w-2xl w-full relative z-10">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 font-poppins text-white">
@@ -56,7 +56,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
               <button
                 key={category.id}
                 onClick={() => onSelect(category.id)}
-                className="group relative overflow-hidden rounded-2xl p-4 border border-border/50 bg-gradient-card hover:border-primary/50 transition-all duration-300 hover:scale-105 hover:shadow-glow text-left touch-manipulation active:scale-95 aspect-square flex flex-col justify-between"
+                className="group relative overflow-hidden rounded-2xl p-4 border-2 border-purple-500/30 bg-black/60 hover:border-primary/50 transition-all duration-300 hover:scale-105 hover:shadow-glow text-left touch-manipulation active:scale-95 aspect-square flex flex-col justify-between"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
                 

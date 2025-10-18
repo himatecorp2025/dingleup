@@ -754,10 +754,10 @@ const GamePreview = () => {
                 style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                 title="Kérdés átugrás"
               >
-                <div style={{ transform: 'rotate(-90deg)' }}>
+                <div style={{ transform: 'rotate(-90deg)' }} className="relative">
                   <SkipForward className="w-6 h-6 text-white" />
-                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white">
-                    {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'}
+                  <span className="absolute -top-1 -right-1 translate-x-1 -translate-y-1 bg-yellow-500 text-black text-[10px] font-extrabold rounded-full px-1.5 py-0.5 border-2 border-yellow-600 shadow">
+                    {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
                   </span>
                 </div>
               </button>
@@ -837,7 +837,7 @@ const GamePreview = () => {
           <button 
             onClick={() => {
               stopMusic();
-              navigate('/');
+              navigate('/dashboard');
             }}
             className="text-white text-sm hover:underline"
           >

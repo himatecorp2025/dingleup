@@ -44,7 +44,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
 
   return (
     <Dialog open={open}>
-      <DialogContent className="max-w-lg bg-gradient-to-br from-primary/20 via-background to-accent/20 border-2 border-primary/30">
+      <DialogContent className="max-w-none w-[95vw] h-[85vh] bg-gradient-to-br from-primary/20 via-background to-accent/20 border-2 border-primary/30">
         <DialogHeader>
           <DialogTitle className="text-4xl font-bold text-center bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-fade-in">
             Helló! Szia! 👋

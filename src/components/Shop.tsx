@@ -60,7 +60,7 @@ const Shop = ({ userId }: ShopProps) => {
     const success = await spendCoins(30);
     if (success) {
       await updateProfile({ help_50_50_active: true });
-      toast.success('50:50 segítség újraaktiválva!');
+      toast.success('Harmadoló segítség újraaktiválva!');
     }
     setLoading(null);
   };
@@ -119,8 +119,8 @@ const Shop = ({ userId }: ShopProps) => {
     },
     {
       id: 'help5050',
-      name: '50:50 Segítség',
-      description: 'Újraaktiválás következő játékhoz',
+      name: 'Harmadoló Segítség',
+      description: 'Újraaktiválás a következő játékhoz',
       price: 30,
       icon: HelpCircle,
       action: reactivateHelp5050,

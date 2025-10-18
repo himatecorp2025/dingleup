@@ -125,7 +125,7 @@ const Register = () => {
           title: "Sikeres regisztráció!",
           description: inviterCode ? "Átirányítunk a játékhoz... A meghívód 100 aranyérmét kapott!" : "Átirányítunk a játékhoz...",
         });
-        navigate("/registration-success");
+        navigate("/dashboard");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -196,6 +196,7 @@ const Register = () => {
               <Input
                 id="username"
                 type="text"
+                placeholder="Pl: Jatekos123"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 className={errors.username ? "border-destructive" : ""}
@@ -211,6 +212,7 @@ const Register = () => {
               <Input
                 id="email"
                 type="email"
+                placeholder="pl: valaki@email.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className={errors.email ? "border-destructive" : ""}

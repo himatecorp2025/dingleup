@@ -107,6 +107,7 @@ export const useGameProfile = (userId: string | undefined) => {
 
     try {
       await updateProfile({ coins: profile.coins - amount });
+      toast({ title: 'Levonás', description: `-${amount} aranyérme levonva` });
       return true;
     } catch {
       return false;

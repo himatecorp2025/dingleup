@@ -71,7 +71,7 @@ const Features = () => {
           {features.map((feature, index) => (
             <Card 
               key={index}
-              className="group relative bg-gradient-card border-border/50 p-0 overflow-hidden hover:border-accent/50 transition-all duration-500 hover:scale-105 animate-fade-in"
+              className="group relative bg-black/60 border-2 border-purple-500/30 p-0 overflow-hidden hover:border-accent/50 transition-all duration-500 hover:scale-105 animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Image Background */}
@@ -90,11 +90,11 @@ const Features = () => {
               </div>
 
               {/* Content */}
-              <div className="p-6 bg-gradient-to-b from-card/95 to-card">
-                <h3 className="text-2xl font-bold mb-3 font-poppins text-white group-hover:text-accent transition-colors duration-300 bg-purple-900/70 backdrop-blur-sm px-4 py-2 rounded-lg border-2 border-purple-500/50">
+              <div className="p-6 bg-black/50">
+                <h3 className="text-2xl font-bold mb-3 font-poppins text-white">
                   {feature.title}
                 </h3>
-                <p className="text-white/80 leading-relaxed bg-purple-900/70 backdrop-blur-sm px-4 py-3 rounded-lg border-2 border-purple-500/50">
+                <p className="text-white/80 leading-relaxed">
                   {feature.description}
                 </p>
 

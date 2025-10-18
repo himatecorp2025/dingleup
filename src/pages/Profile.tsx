@@ -86,10 +86,10 @@ const Profile = () => {
         <div className="flex items-center justify-between mb-6 pt-4">
           <button
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full border-2 border-red-400/50 shadow-lg transition-all"
+            className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+            title="Vissza"
           >
-            <ArrowLeft className="w-5 h-5" />
-            Vissza
+            <ArrowLeft className="w-6 h-6" />
           </button>
         </div>
 
