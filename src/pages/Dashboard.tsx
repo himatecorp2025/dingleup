@@ -171,7 +171,7 @@ const Dashboard = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-2 w-48 -mr-[1%]">
+            <div className="flex flex-col gap-2 w-48 -mr-[2%]">
               <button
                 onClick={() => navigate('/invitation')}
                 className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-2"
