@@ -38,8 +38,8 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
   ];
 
   return (
-    <div className="h-screen flex flex-col items-start justify-start p-4 pt-12 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10"></div>
+    <div className="h-screen w-screen flex flex-col items-start justify-start p-4 pt-12 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
+      <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10 pointer-events-none"></div>
       
       {/* Back button */}
       <button
