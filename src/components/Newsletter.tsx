@@ -1,8 +1,44 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Bell } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Newsletter = () => {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async () => {
+    if (!email || !email.includes("@")) {
+      toast.error("Kérlek adj meg egy érvényes email címet!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('subscribers')
+        .insert({ email: email.trim().toLowerCase() });
+
+      if (error) {
+        if (error.code === '23505') {
+          toast.error("Ez az email cím már fel van iratkozva!");
+        } else {
+          throw error;
+        }
+      } else {
+        toast.success("Sikeresen feliratkoztál! Hamarosan értesítünk!");
+        setEmail("");
+      }
+    } catch (error) {
+      console.error('Subscribe error:', error);
+      toast.error("Hiba történt a feliratkozás során");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="py-24 px-4 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
       <div className="container mx-auto">
@@ -27,10 +63,18 @@ const Newsletter = () => {
               <Input 
                 type="email" 
                 placeholder="Add meg az email címed" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
+                disabled={loading}
                 className="bg-background/50 border-border/50 text-white placeholder:text-white/60 flex-1"
               />
-              <Button className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 whitespace-nowrap">
-                Feliratkozás
+              <Button 
+                onClick={handleSubscribe}
+                disabled={loading}
+                className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 whitespace-nowrap"
+              >
+                {loading ? "Feliratkozás..." : "Feliratkozás"}
               </Button>
             </div>
 

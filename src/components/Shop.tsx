@@ -92,8 +92,17 @@ const Shop = ({ userId }: ShopProps) => {
     
     const success = await spendCoins(booster.price);
     if (success) {
+      // Add lives based on booster
+      const newMaxLives = profile.max_lives + booster.lives_gained;
+      const newLives = profile.lives + booster.lives_gained;
+      
+      await updateProfile({
+        max_lives: newMaxLives,
+        lives: newLives
+      });
+      
       await purchaseBooster(boosterType);
-      toast.success(`${booster.name} booster vásárolva!`);
+      toast.success(`${booster.name} booster vásárolva! +${booster.lives_gained} élet és ${booster.multiplier}x gyorsítás!`);
     }
     setLoading(null);
   };

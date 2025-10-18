@@ -73,31 +73,31 @@ export const InvitationDialog = ({ open, onClose, userId }: InvitationDialogProp
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Users className="w-6 h-6 text-primary" />
+          <DialogTitle className="flex items-center gap-2 text-2xl text-white">
+            <Users className="w-6 h-6 text-purple-400" />
             Hívd meg barátaidat!
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-white/70">
             Osztd meg meghívó kódodat vagy linkedet
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           {/* Invitation Code */}
-          <div className="bg-accent/50 rounded-xl p-4">
-            <label className="text-sm font-medium mb-2 block">Meghívó kód</label>
+          <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
+            <label className="text-sm font-medium mb-2 block text-white">Meghívó kód</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={invitationCode}
                 readOnly
-                className="flex-1 px-4 py-2 bg-background border border-border rounded-lg font-mono text-lg text-center"
+                className="flex-1 px-4 py-2 bg-black/40 border-2 border-purple-500/50 rounded-lg font-mono text-lg text-center text-white"
               />
               <Button
                 onClick={() => copyToClipboard(invitationCode, 'code')}
-                variant="outline"
+                className="bg-purple-600 hover:bg-purple-700 text-white"
                 size="icon"
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -106,18 +106,18 @@ export const InvitationDialog = ({ open, onClose, userId }: InvitationDialogProp
           </div>
 
           {/* Invitation Link */}
-          <div className="bg-accent/50 rounded-xl p-4">
-            <label className="text-sm font-medium mb-2 block">Meghívó link</label>
+          <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
+            <label className="text-sm font-medium mb-2 block text-white">Meghívó link</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={invitationLink}
                 readOnly
-                className="flex-1 px-4 py-2 bg-background border border-border rounded-lg text-sm"
+                className="flex-1 px-4 py-2 bg-black/40 border-2 border-purple-500/50 rounded-lg text-sm text-white"
               />
               <Button
                 onClick={() => copyToClipboard(invitationLink, 'link')}
-                variant="outline"
+                className="bg-purple-600 hover:bg-purple-700 text-white"
                 size="icon"
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -126,33 +126,33 @@ export const InvitationDialog = ({ open, onClose, userId }: InvitationDialogProp
           </div>
 
           {/* Stats */}
-          <div className="bg-primary/10 rounded-xl p-4 text-center">
+          <div className="bg-purple-900/30 rounded-xl p-4 text-center border-2 border-purple-500/30">
             <div className="flex items-center justify-center gap-2 mb-2">
-              <Gift className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium">Meghívott barátok</span>
+              <Gift className="w-5 h-5 text-yellow-400" />
+              <span className="text-sm font-medium text-white">Meghívott barátok</span>
             </div>
-            <p className="text-3xl font-bold text-primary">{invitedCount}</p>
+            <p className="text-3xl font-bold text-yellow-400">{invitedCount}</p>
           </div>
 
           {/* Rewards */}
           <div className="space-y-2">
-            <h3 className="font-bold text-sm">Jutalmak:</h3>
+            <h3 className="font-bold text-sm text-white">Jutalmak:</h3>
             {INVITATION_REWARDS.map((reward) => {
               const achieved = invitedCount >= reward.count;
               return (
                 <div
                   key={reward.count}
-                  className={`flex items-center justify-between p-3 rounded-lg border ${
+                  className={`flex items-center justify-between p-3 rounded-lg border-2 ${
                     achieved
-                      ? 'bg-primary/20 border-primary'
-                      : 'bg-muted border-border'
+                      ? 'bg-purple-600/30 border-purple-400'
+                      : 'bg-black/40 border-purple-500/30'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className={`text-sm font-medium ${achieved ? 'text-primary' : ''}`}>
+                    <span className={`text-sm font-medium ${achieved ? 'text-purple-300' : 'text-white/70'}`}>
                       {reward.count} barát
                     </span>
-                    {achieved && <Check className="w-4 h-4 text-primary" />}
+                    {achieved && <Check className="w-4 h-4 text-purple-300" />}
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <div className="flex items-center gap-1">
@@ -169,7 +169,7 @@ export const InvitationDialog = ({ open, onClose, userId }: InvitationDialogProp
             })}
           </div>
 
-          <Button onClick={onClose} variant="outline" className="w-full">
+          <Button onClick={onClose} className="w-full bg-purple-600 hover:bg-purple-700 text-white">
             Bezárás
           </Button>
         </div>

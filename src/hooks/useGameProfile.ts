@@ -59,13 +59,25 @@ export const useGameProfile = (userId: string | undefined) => {
     }
   };
 
-  const regenerateLives = () => {
+  const regenerateLives = async () => {
     if (!profile) return;
 
     const now = new Date();
     const lastRegen = new Date(profile.last_life_regeneration);
     const minutesPassed = Math.floor((now.getTime() - lastRegen.getTime()) / 60000);
     
+    // Check if booster expired
+    if (profile.speed_booster_active && profile.speed_booster_expires_at) {
+      const expiresAt = new Date(profile.speed_booster_expires_at);
+      if (now > expiresAt) {
+        await updateProfile({
+          speed_booster_active: false,
+          speed_booster_expires_at: null,
+          speed_booster_multiplier: 1
+        });
+      }
+    }
+
     const regenRate = profile.speed_booster_active 
       ? Math.floor(profile.lives_regeneration_rate / profile.speed_booster_multiplier)
       : profile.lives_regeneration_rate;
@@ -76,7 +88,7 @@ export const useGameProfile = (userId: string | undefined) => {
       const newLives = Math.min(profile.lives + livesToAdd, profile.max_lives);
       const newLastRegen = new Date(lastRegen.getTime() + (livesToAdd * regenRate * 60000));
       
-      updateProfile({
+      await updateProfile({
         lives: newLives,
         last_life_regeneration: newLastRegen.toISOString()
       });

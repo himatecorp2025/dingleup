@@ -91,10 +91,10 @@ const Features = () => {
 
               {/* Content */}
               <div className="p-6 bg-gradient-to-b from-card/95 to-card">
-                <h3 className="text-2xl font-bold mb-3 font-poppins text-white group-hover:text-accent transition-colors duration-300">
+                <h3 className="text-2xl font-bold mb-3 font-poppins text-white group-hover:text-accent transition-colors duration-300 bg-purple-900/70 backdrop-blur-sm px-4 py-2 rounded-lg border-2 border-purple-500/50">
                   {feature.title}
                 </h3>
-                <p className="text-white/80 leading-relaxed">
+                <p className="text-white/80 leading-relaxed bg-purple-900/70 backdrop-blur-sm px-4 py-3 rounded-lg border-2 border-purple-500/50">
                   {feature.description}
                 </p>
 

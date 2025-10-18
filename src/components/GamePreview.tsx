@@ -49,14 +49,17 @@ const GamePreview = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [musicEnabled, setMusicEnabled] = useState(false);
 
-  const handleMusicEnabled = () => {
-    setMusicEnabled(true);
+  useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.play().catch(error => {
-        console.error('Error playing audio:', error);
-      });
+      audioRef.current.volume = 0.2;
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error('Auto-play blocked:', error);
+        });
+      }
     }
-  };
+  }, []);
 
   const stopMusic = () => {
     try {
@@ -135,6 +138,11 @@ const GamePreview = () => {
 
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
+
+    if (audioRef.current) {
+      audioRef.current.volume = 0.2;
+      audioRef.current.play().catch(err => console.log('Music play blocked:', err));
+    }
     
     // Spend one life at game start ONLY
     const canPlay = await spendLife();
@@ -484,12 +492,10 @@ const GamePreview = () => {
 
   if (gameState === 'category-select') {
     return (
-      <>
+        <>
         <audio ref={audioRef} loop>
           <source src={gameMusic} type="audio/mpeg" />
         </audio>
-        
-        {!musicEnabled && <MusicInitializer onMusicEnabled={handleMusicEnabled} audioRef={audioRef} />}
         
         <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
           <button
@@ -676,7 +682,7 @@ const GamePreview = () => {
             </div>
 
 
-            {/* Lifelines with enhanced styling */}
+            {/* Lifelines with enhanced styling - ROTATED to flat side */}
             <div className="flex justify-center gap-3 mb-4">
               <button
                 onClick={useHelp5050}
@@ -686,10 +692,10 @@ const GamePreview = () => {
                   disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                   ${!usedHelp5050 && profile.help_50_50_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
                 `}
-                style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                 title="Harmadoló"
               >
-                <span className="text-white font-black text-lg">1/3</span>
+                <span className="text-white font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
               </button>
               <button
                 onClick={useHelp2xAnswer}
@@ -699,10 +705,10 @@ const GamePreview = () => {
                   disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                   ${!usedHelp2xAnswer && profile.help_2x_answer_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
                 `}
-                style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                 title="2× válasz"
               >
-                <span className="text-white font-black text-lg">2×</span>
+                <span className="text-white font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>2×</span>
               </button>
               <button
                 onClick={useHelpAudience}
@@ -712,10 +718,10 @@ const GamePreview = () => {
                   disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                   ${!usedHelpAudience && profile.help_audience_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
                 `}
-                style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                 title="Közönség"
               >
-                <Users className="w-6 h-6 text-white" />
+                <Users className="w-6 h-6 text-white" style={{ transform: 'rotate(-90deg)' }} />
               </button>
               <button
                 onClick={handleSkipQuestion}
@@ -725,13 +731,15 @@ const GamePreview = () => {
                   disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                   shadow-lg shadow-yellow-500/40
                 `}
-                style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                 title="Kérdés átugrás"
               >
-                <SkipForward className="w-6 h-6 text-white" />
-                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white">
-                  {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'}
-                </span>
+                <div style={{ transform: 'rotate(-90deg)' }}>
+                  <SkipForward className="w-6 h-6 text-white" />
+                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white">
+                    {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'}
+                  </span>
+                </div>
               </button>
             </div>
           </div>
@@ -754,7 +762,8 @@ const GamePreview = () => {
               <AlertDialogAction 
                 onClick={() => {
                   stopMusic();
-                  navigate('/dashboard');
+                  setGameState('category-select');
+                  setShowExitDialog(false);
                 }}
                 className="bg-red-600 hover:bg-red-700 text-white"
               >
