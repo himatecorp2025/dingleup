@@ -49,29 +49,6 @@ const GamePreview = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [musicEnabled, setMusicEnabled] = useState(false);
 
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 0.2;
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.error('Auto-play blocked:', error);
-        });
-      }
-    }
-  }, []);
-
-  const stopMusic = () => {
-    try {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
-    } catch (error) {
-      console.error('Error stopping music:', error);
-    }
-  };
-
   const [gameState, setGameState] = useState<GameState>('category-select');
   const [selectedCategory, setSelectedCategory] = useState<GameCategory | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -102,6 +79,36 @@ const GamePreview = () => {
   const [showContinuePanel, setShowContinuePanel] = useState(false);
   const [continueType, setContinueType] = useState<'wrong' | 'timeout'>('wrong');
   const [showExitDialog, setShowExitDialog] = useState(false);
+
+  const stopMusic = () => {
+    try {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    } catch (error) {
+      console.error('Error stopping music:', error);
+    }
+  };
+
+  // Zene automatikus indítás/leállítás a gameState alapján
+  useEffect(() => {
+    if (gameState === 'category-select') {
+      // Témakör választásnál automatikusan indítson zenét
+      if (audioRef.current) {
+        audioRef.current.volume = 0.2;
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.log('Auto-play blocked, user interaction needed:', error);
+          });
+        }
+      }
+    } else {
+      // Bármilyen más állapotnál állítsa le a zenét
+      stopMusic();
+    }
+  }, [gameState]);
 
   // Auth check
   useEffect(() => {
@@ -601,10 +608,6 @@ const GamePreview = () => {
     
     return (
       <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
-        <audio ref={audioRef} loop preload="auto">
-          <source src={gameMusic} type="audio/mp4" />
-        </audio>
-        <MusicInitializer onMusicEnabled={() => setMusicEnabled(true)} audioRef={audioRef} />
       <div className="h-full w-full flex flex-col p-4">
         <button
           onClick={() => setShowExitDialog(true)}
