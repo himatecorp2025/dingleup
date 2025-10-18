@@ -566,11 +566,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       <GameStateScreen 
         type="out-of-lives"
         onContinue={() => {
-          stopMusic();
           finishGame();
         }}
         onSkip={() => {
-          stopMusic();
           navigate('/');
         }}
       />
@@ -792,7 +790,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
               </AlertDialogCancel>
               <AlertDialogAction 
                 onClick={() => {
-                  stopMusic();
                   setGameState('category-select');
                   setShowExitDialog(false);
                 }}
@@ -837,10 +834,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
           <HexagonButton 
             variant="yellow" 
             size="lg" 
-            onClick={() => {
-              stopMusic();
-              setGameState('category-select');
-            }}
+          onClick={() => {
+            setGameState('category-select');
+          }}
             className="w-full max-w-sm mx-auto mb-3"
           >
             Új játék

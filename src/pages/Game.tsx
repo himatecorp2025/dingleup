@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Smartphone } from "lucide-react";
 import backmusic from "@/assets/backmusic.mp3";
-
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -19,29 +21,47 @@ const Game = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Global music control for /game lifecycle
+  // Global music control for /game lifecycle (with Web Audio for iOS volume control)
   useEffect(() => {
-    const tryPlay = async () => {
+    const setupAudioGraph = async () => {
       if (!audioRef.current) return;
-      try {
-        audioRef.current.volume = 0.1;
-        audioRef.current.loop = true;
-        await audioRef.current.play();
-      } catch {
-        // Autoplay blocked – retry on first interaction
+      // Init or resume context
+      const Ctx: typeof AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!audioCtxRef.current) audioCtxRef.current = new Ctx();
+      try { await audioCtxRef.current.resume(); } catch {}
+      if (!sourceRef.current) {
+        sourceRef.current = audioCtxRef.current.createMediaElementSource(audioRef.current);
+        gainNodeRef.current = audioCtxRef.current.createGain();
+        gainNodeRef.current.gain.value = 0.1; // 10%
+        sourceRef.current.connect(gainNodeRef.current);
+        gainNodeRef.current.connect(audioCtxRef.current.destination);
+      } else if (gainNodeRef.current) {
+        gainNodeRef.current.gain.value = 0.1;
       }
     };
 
+    const tryPlay = async () => {
+      if (!audioRef.current) return;
+      await setupAudioGraph();
+      const el = audioRef.current;
+      el.volume = 1; // WebAudio gain controls loudness
+      el.loop = true;
+      try { await el.play(); } catch {}
+    };
+
     const keepVolume = () => {
-      if (audioRef.current && audioRef.current.volume !== 0.1) {
-        audioRef.current.volume = 0.1;
+      if (gainNodeRef.current && gainNodeRef.current.gain.value !== 0.1) {
+        gainNodeRef.current.gain.value = 0.1;
       }
     };
 
     tryPlay();
-    const volumeInterval = setInterval(keepVolume, 200);
+    const volumeInterval = setInterval(keepVolume, 300);
 
-    const onUserInteract = () => tryPlay();
+    const onUserInteract = async () => {
+      try { await audioCtxRef.current?.resume(); } catch {}
+      tryPlay();
+    };
     document.addEventListener('pointerdown', onUserInteract, { once: true });
     document.addEventListener('touchstart', onUserInteract, { once: true });
     document.addEventListener('click', onUserInteract, { once: true });
@@ -51,6 +71,10 @@ const Game = () => {
       document.removeEventListener('pointerdown', onUserInteract);
       document.removeEventListener('touchstart', onUserInteract);
       document.removeEventListener('click', onUserInteract);
+      try { audioCtxRef.current?.close(); } catch {}
+      sourceRef.current = null;
+      gainNodeRef.current = null;
+      audioCtxRef.current = null;
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
