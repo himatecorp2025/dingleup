@@ -126,13 +126,13 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
           </div>
         </div>
 
-        {/* Claim button - BOOSTER STÍLUS */}
+        {/* Claim button */}
         <HexagonButton
           variant="yellow"
           size="lg"
           onClick={handleClaim}
           disabled={claiming}
-          className="w-full text-lg font-black text-black"
+          className="w-full text-lg font-black"
         >
           {claiming ? '⏳ Feldolgozás...' : '✅ ELFOGADOM! 🎉'}
         </HexagonButton>

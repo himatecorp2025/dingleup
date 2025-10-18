@@ -120,8 +120,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 flex justify-center overflow-hidden">
-      <div className="w-full max-w-md mx-auto flex flex-col">
+    <div className="h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 flex justify-center overflow-hidden">
+      <div className="w-full max-w-md mx-auto flex flex-col overflow-y-auto">
         {/* Top Section */}
         <div className="flex items-start justify-between mb-3">
           {/* Left: Greeting */}

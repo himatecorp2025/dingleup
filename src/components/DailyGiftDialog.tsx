@@ -87,20 +87,21 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
             )}
           </div>
 
-          {/* Action button - Hexagón gomb */}
+          {/* Action button */}
           {canClaim ? (
             <HexagonButton
               variant="yellow"
               size="lg"
               onClick={onClaim}
-              className="w-full transform hover:scale-105 transition-transform shadow-2xl text-black"
+              className="w-full"
             >
-              <Gift className="w-5 h-5 mr-2 text-black" />
+              <Gift className="w-5 h-5 mr-2" />
               Köszönöm a napi jutalmat! 🎉
             </HexagonButton>
           ) : (
             <HexagonButton
               variant="outline"
+              size="lg"
               onClick={onClose}
               className="w-full"
             >
