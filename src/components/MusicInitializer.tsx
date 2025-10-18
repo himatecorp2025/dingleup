@@ -15,7 +15,7 @@ const MusicInitializer = ({ onMusicEnabled, audioRef }: MusicInitializerProps) =
     const tryAutoplay = async () => {
       try {
         if (audioRef.current) {
-          audioRef.current.volume = 0.2;
+          audioRef.current.volume = 0.1;
           await audioRef.current.play();
           setShow(false);
           onMusicEnabled();
@@ -33,7 +33,7 @@ const MusicInitializer = ({ onMusicEnabled, audioRef }: MusicInitializerProps) =
     localStorage.setItem('musicEnabled', 'true');
     try {
       if (audioRef.current) {
-        audioRef.current.volume = 0.2;
+        audioRef.current.volume = 0.1;
         await audioRef.current.play();
       }
     } catch {}

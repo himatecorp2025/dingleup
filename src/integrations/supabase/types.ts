@@ -337,6 +337,10 @@ export type Database = {
         }
         Returns: Json
       }
+      activate_speed_booster: {
+        Args: { booster_id: string }
+        Returns: boolean
+      }
       award_coins: {
         Args: { amount: number }
         Returns: undefined

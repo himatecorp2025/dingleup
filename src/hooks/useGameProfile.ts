@@ -204,6 +204,7 @@ export const useGameProfile = (userId: string | undefined) => {
     regenerateLives,
     spendCoins,
     addCoins,
-    spendLife
+    spendLife,
+    refreshProfile: fetchProfile
   };
 };

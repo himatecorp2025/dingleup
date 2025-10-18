@@ -138,7 +138,7 @@ const Register = () => {
 
         toast({
           title: "Sikeres regisztráció!",
-          description: inviterCode ? "Átirányítunk a játékhoz... A meghívód 100 aranyérmét kapott!" : "Átirányítunk a játékhoz...",
+          description: inviterCode ? "A meghívód 100 aranyérmét kapott!" : "Átirányítunk...",
         });
         navigate("/dashboard");
       }

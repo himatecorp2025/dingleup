@@ -63,9 +63,7 @@ const Invitation = () => {
   const copyToClipboard = async (text: string, type: 'code' | 'link') => {
     try {
       await navigator.clipboard.writeText(text);
-      setCopied(true);
       toast.success(type === 'code' ? 'Meghívó kód másolva!' : 'Meghívó link másolva!');
-      setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error('Error copying:', error);
       toast.error('Hiba a másolás során');
@@ -109,7 +107,7 @@ const Invitation = () => {
                 className="bg-purple-600 hover:bg-purple-700 text-white h-auto px-2"
                 size="icon"
               >
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {<Copy className="w-4 h-4" />}
               </Button>
             </div>
           </div>
@@ -129,7 +127,7 @@ const Invitation = () => {
                 className="bg-purple-600 hover:bg-purple-700 text-white h-auto px-2"
                 size="icon"
               >
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {<Copy className="w-4 h-4" />}
               </Button>
             </div>
           </div>

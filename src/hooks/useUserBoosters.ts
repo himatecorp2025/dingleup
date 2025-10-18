@@ -50,31 +50,8 @@ export const useUserBoosters = (userId: string | undefined) => {
       const now = new Date();
       const expiresAt = new Date(now.getTime() + boosterConfig.duration * 60000);
 
-      // Update booster
-      const { error: boosterError } = await supabase
-        .from('user_boosters')
-        .update({
-          activated: true,
-          activated_at: now.toISOString(),
-          expires_at: expiresAt.toISOString()
-        })
-        .eq('id', boosterId);
-
-      if (boosterError) throw boosterError;
-
-      // Update profile with increased max lives and faster regeneration
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          speed_booster_active: true,
-          speed_booster_expires_at: expiresAt.toISOString(),
-          speed_booster_multiplier: boosterConfig.multiplier,
-          max_lives: boosterConfig.maxLives
-        })
-        .eq('id', userId);
-
-      if (profileError) throw profileError;
-
+      const { data: ok, error: rpcError } = await supabase.rpc('activate_speed_booster', { booster_id: boosterId });
+      if (rpcError || !ok) throw rpcError || new Error('activate_speed_booster failed');
       toast.success(`${booster.booster_type} aktiválva! Max élet: ${boosterConfig.maxLives}, Regeneráció: ${12 / boosterConfig.multiplier} perc`);
       await fetchBoosters();
       return true;

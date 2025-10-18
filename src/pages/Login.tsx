@@ -52,7 +52,7 @@ const Login = () => {
       if (data.user) {
         toast({
           title: "Sikeres bejelentkezés!",
-          description: "Átirányítunk a dashboard-ra...",
+          description: "Átirányítunk...",
         });
         
         // Music setup

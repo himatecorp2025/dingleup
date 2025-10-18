@@ -41,7 +41,7 @@ const QUESTION_BANKS = {
 const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement> }) => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
-  const { profile, loading: profileLoading, updateProfile, spendLife } = useGameProfile(userId);
+  const { profile, loading: profileLoading, updateProfile, spendLife, refreshProfile } = useGameProfile(userId);
   const { canClaim, claimDailyGift } = useDailyGift(userId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [musicEnabled, setMusicEnabled] = useState(false);
@@ -171,6 +171,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       setGameState('category-select');
       return;
     }
+    
+    // Refresh profile to show updated state after spending life
+    await refreshProfile();
     
     // Give 1 gold coin as welcome gift
     await updateProfile({ coins: profile.coins + 1 });
