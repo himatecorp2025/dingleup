@@ -59,10 +59,8 @@ const Game = () => {
       }
     };
 
-    // Try immediately (user just clicked Play, so interaction happened)
-    const initTimer = setTimeout(() => {
-      tryPlay();
-    }, 100);
+    // Try immediately (user just clicked Play)
+    tryPlay();
 
     const volumeInterval = setInterval(keepVolume, 300);
 
@@ -77,7 +75,7 @@ const Game = () => {
     document.addEventListener('click', onUserInteract, { once: true });
 
     return () => {
-      clearTimeout(initTimer);
+      
       clearInterval(volumeInterval);
       document.removeEventListener('pointerdown', onUserInteract);
       document.removeEventListener('touchstart', onUserInteract);
