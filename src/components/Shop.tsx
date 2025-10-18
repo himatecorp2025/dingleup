@@ -242,10 +242,7 @@ const Shop = ({ userId }: ShopProps) => {
               return (
                 <div
                   key={item.id}
-                  className={`
-                    border-2 rounded-xl p-4 transition-all
-                    ${item.disabled ? 'border-border/30 bg-muted/30 opacity-50' : 'border-border/50 hover:border-primary/50'}
-                  `}
+                  className="border-2 rounded-xl p-4 transition-all border-border/50 hover:border-primary/50"
                 >
                   <div className="flex items-start gap-3 mb-3">
                     <div className="p-2 rounded-lg bg-primary/10">
@@ -264,10 +261,10 @@ const Shop = ({ userId }: ShopProps) => {
                     </span>
                     <Button
                       onClick={item.action}
-                      disabled={item.disabled || !canAfford || isLoading}
+                      disabled={!canAfford || isLoading}
                       size="sm"
                     >
-                      {isLoading ? 'Vásárlás...' : 'Vásárlás'}
+                      {isLoading ? 'Vásárlás...' : item.disabled ? 'Újraaktivál' : 'Vásárlás'}
                     </Button>
                   </div>
 

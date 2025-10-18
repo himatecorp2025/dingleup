@@ -622,11 +622,8 @@ const GamePreview = () => {
             )}
           </div>
 
-          {/* Question and answers - with flash effect overlay */}
+          {/* Question and answers - NO flash effect overlay */}
           <div className={`flex-1 flex flex-col overflow-y-auto px-2 relative transition-all duration-300 ${answerFlash === 'correct' ? 'scale-105' : answerFlash === 'wrong' ? 'animate-shake' : ''}`}>
-            {answerFlash && (
-              <div className={`absolute inset-0 ${answerFlash === 'correct' ? 'bg-green-500/30 animate-pulse' : 'bg-red-500/30 animate-pulse'} pointer-events-none z-10 rounded-2xl`} />
-            )}
             
             <MillionaireQuestion>{currentQuestion.question}</MillionaireQuestion>
 
