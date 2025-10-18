@@ -96,7 +96,7 @@ const GamePreview = () => {
     const tryPlay = async () => {
       if (!audioRef.current) return;
       try {
-        audioRef.current.volume = 0.2;
+        audioRef.current.volume = 0.1;
         audioRef.current.loop = true;
         await audioRef.current.play();
       } catch (err) {
