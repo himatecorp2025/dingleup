@@ -201,25 +201,27 @@ const Dashboard = () => {
           </div>
         </div>
 
-        	{/* Play Button */}
-        	<button
-        	  onClick={() => {
-        	    try {
-        	      const w = window as any;
-        	      let a: HTMLAudioElement | undefined = w.__bgm;
-        	      if (!a) {
-        	        a = new Audio(backmusic);
-        	        a.loop = true;
-        	        a.volume = 0.1;
-        	        w.__bgm = a;
-        	      } else {
-        	        a.loop = true;
-        	        a.volume = 0.1;
-        	      }
-        	      a.play().catch(() => {});
-        	    } catch {}
-        	    navigate('/game');
-        	  }}
+        {/* Play Button */}
+        <button
+          onClick={() => {
+            try {
+              const w = window as any;
+              let a: HTMLAudioElement | undefined = w.__bgm;
+              if (!a) {
+                a = new Audio(backmusic);
+                a.loop = true;
+                a.volume = 0.1; // FIXED 10%
+                w.__bgm = a;
+              } else {
+                a.loop = true;
+                a.volume = 0.1; // FIXED 10%
+              }
+              const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+              ctx.resume();
+              a.play().catch(() => {});
+            } catch {}
+            navigate('/game');
+          }}
         	  className="w-full py-2.5 px-5 mb-3 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg rounded-2xl border-2 border-green-400 shadow-xl shadow-green-500/40 hover:shadow-green-500/60 hover:scale-105 transition-all animate-pulse-glow-green"
         	  style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         	>
