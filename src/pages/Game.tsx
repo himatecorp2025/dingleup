@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Smartphone } from "lucide-react";
 import backmusic from "@/assets/backmusic.mp3";
+import gameBackground from "@/assets/game-background.jpg";
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
@@ -116,8 +117,13 @@ const Game = () => {
 
   if (!isMobile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full bg-black/80 backdrop-blur-sm rounded-2xl p-8 text-center border-2 border-blue-500/50">
+      <div className="min-h-screen relative flex items-center justify-center p-4">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${gameBackground})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a1a]/10 via-[#0f0f2a]/10 to-[#0a0a1a]/10" />
+        <div className="max-w-2xl w-full bg-black/80 backdrop-blur-sm rounded-2xl p-8 text-center border-2 border-blue-500/50 relative z-10">
           <Smartphone className="w-24 h-24 mx-auto mb-6 text-blue-500" />
           <h1 className="text-4xl font-black text-white mb-4">Mobil Játék</h1>
           <p className="text-xl text-white/70 mb-8">
