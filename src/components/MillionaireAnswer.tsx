@@ -49,7 +49,7 @@ export const MillionaireAnswer = ({
   let textColor = 'text-white';
   let letterBg = 'bg-yellow-500';
   let letterBorder = 'border-yellow-400';
-  let letterText = 'text-gray-900';
+  let letterText = 'text-gray-100';
   
   if (isSelected) {
     bgColor = 'bg-orange-600';

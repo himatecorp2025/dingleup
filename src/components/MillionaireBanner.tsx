@@ -13,7 +13,7 @@ export const MillionaireBanner = ({ children }: MillionaireBannerProps) => {
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
         }}
       >
-        <p className="text-center text-2xl md:text-3xl font-black text-gray-900 drop-shadow-lg tracking-wide">
+        <p className="text-center text-2xl md:text-3xl font-black text-gray-100 drop-shadow-lg tracking-wide">
           {children}
         </p>
       </div>

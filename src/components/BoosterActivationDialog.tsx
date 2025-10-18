@@ -71,7 +71,7 @@ export const BoosterActivationDialog = ({ open, onClose, boosters, onActivate }:
                       }}
                       variant="secondary"
                       size="sm"
-                      className="bg-white text-gray-900 hover:bg-gray-100"
+                      className="bg-white text-gray-100 hover:bg-gray-100"
                     >
                       Aktiválás
                     </Button>

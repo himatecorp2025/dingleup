@@ -16,7 +16,7 @@ export const HexagonButton = ({
   ...props 
 }: HexagonButtonProps) => {
   const variants = {
-    yellow: 'bg-yellow-500 text-black border-2 border-yellow-600',
+    yellow: 'bg-yellow-500 text-gray-100 border-2 border-yellow-600',
     green: 'bg-green-600 text-white border-2 border-green-700',
     dark: 'bg-black text-white border-2 border-blue-500/50',
     outline: 'bg-transparent text-white border-2 border-white/30'

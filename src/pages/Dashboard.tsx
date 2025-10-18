@@ -173,7 +173,7 @@ const Dashboard = () => {
               
               <button
                 onClick={() => navigate('/shop')}
-                className="w-full py-2 px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-black font-bold text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-2"
+                className="w-full py-2 px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-2"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -204,7 +204,7 @@ const Dashboard = () => {
         {/* Booster Button */}
         <button
           onClick={() => navigate('/shop')}
-          className="w-full py-3 px-6 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-black font-black text-xl rounded-2xl border-4 border-yellow-600 shadow-2xl shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:scale-105 transition-all"
+          className="w-full py-3 px-6 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 text-gray-100 font-black text-xl rounded-2xl border-4 border-yellow-600 shadow-2xl shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:scale-105 transition-all"
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
           BOOSTER
