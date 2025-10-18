@@ -25,7 +25,7 @@ const Dashboard = () => {
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
-  const [currentRank, setCurrentRank] = useState<number>(1);
+  const [currentRank, setCurrentRank] = useState<number | null>(null);
   
   const hasActiveBooster = profile?.speed_booster_active || false;
   const availableBoosters = boosters.filter(b => !b.activated);
@@ -73,15 +73,24 @@ const Dashboard = () => {
     const fetchUserRank = async () => {
       if (!userId) return;
       
-      const weekStart = getWeekStart();
-      const { data } = await supabase
-        .from('weekly_rankings')
+      // Fetch from global_leaderboard for overall ranking
+      const { data, error } = await supabase
+        .from('global_leaderboard')
         .select('rank')
         .eq('user_id', userId)
-        .eq('week_start', weekStart)
-        .single();
+        .maybeSingle();
       
-      if (data?.rank) setCurrentRank(data.rank);
+      if (error) {
+        console.error('Error fetching rank:', error);
+        return;
+      }
+      
+      if (data?.rank) {
+        setCurrentRank(data.rank);
+      } else {
+        // If no rank yet, set to null (will show "-")
+        setCurrentRank(null);
+      }
     };
     
     // Fetch immediately
@@ -142,7 +151,7 @@ const Dashboard = () => {
               {/* Rank Hexagon */}
               <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-purple-400">
                 <Trophy className="w-4 h-4 text-yellow-500 mb-0.5" />
-                <span className="text-white text-xs font-bold">{currentRank}</span>
+                <span className="text-white text-xs font-bold">{currentRank ?? '-'}</span>
               </div>
 
               {/* Coins Hexagon */}
