@@ -100,12 +100,12 @@ const GamePreview = () => {
         audioRef.current.loop = true;
         await audioRef.current.play();
       } catch (err) {
-        // Autoplay blokkolva – megpróbáljuk első felhasználói interakciónál
         console.log('Autoplay blocked, will retry on user interaction');
       }
     };
 
-    if (gameState === 'category-select') {
+    // Zene MENJEN: category-select és playing állapotban
+    if (gameState === 'category-select' || gameState === 'playing') {
       // Azonnali próbálkozás
       tryPlay();
 
@@ -130,7 +130,7 @@ const GamePreview = () => {
         document.removeEventListener('visibilitychange', onVisibility);
       };
     } else {
-      // Bármilyen más állapotnál állítsa le a zenét
+      // Zene ÁLLJON LE: finished, out-of-lives stb.
       stopMusic();
     }
   }, [gameState]);
