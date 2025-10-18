@@ -46,10 +46,15 @@ const GamePreview = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const stopMusic = () => {
-    const audio = document.querySelector('audio');
-    if (audio) {
-      audio.pause();
-      audio.currentTime = 0;
+    try {
+      const w = window as any;
+      const audio: HTMLAudioElement | undefined = w.__bgm;
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    } catch (error) {
+      console.error('Error stopping music:', error);
     }
   };
 
@@ -126,6 +131,19 @@ const GamePreview = () => {
       toast.error("Nincs elég életed a játékhoz!");
       setGameState('category-select');
       return;
+    }
+
+    // Start game music at 20% volume when category is selected
+    try {
+      const w = window as any;
+      const audio: HTMLAudioElement | undefined = w.__bgm;
+      if (audio) {
+        audio.volume = 0.2; // 20% hangerő
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      }
+    } catch (error) {
+      console.error('Zene indítási hiba:', error);
     }
 
     // Reactivate all lifelines for new game

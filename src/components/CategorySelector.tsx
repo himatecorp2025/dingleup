@@ -39,14 +39,15 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
   ];
 
   return (
-    <div className="h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900/40 via-blue-800/20 to-background overflow-hidden">
-      <div className="max-w-2xl w-full py-8">
+    <div className="h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10"></div>
+      <div className="max-w-2xl w-full py-8 relative z-10">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-3 font-poppins">
-          <span className="text-transparent bg-clip-text bg-gradient-gold">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4169E1] via-[#9370DB] to-[#FFD700]">
             Válassz témakört!
           </span>
         </h1>
-        <p className="text-center text-sm text-muted-foreground mb-8">
+        <p className="text-center text-sm text-gray-300 mb-8">
           Melyik területen méred össze tudásod?
         </p>
 

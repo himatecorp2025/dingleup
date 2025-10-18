@@ -33,7 +33,7 @@ const Hero = () => {
           backgroundPosition: 'center',
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-blue-800/20 to-background"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a2e]/90 via-[#16213e]/70 to-[#0f0f3d]/80"></div>
       </div>
 
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -62,12 +62,14 @@ const Hero = () => {
             <span className="text-accent font-semibold text-sm">Hamarosan Elérhető</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 font-poppins">
-            Teszteld <span className="text-transparent bg-clip-text bg-gradient-gold">Tudásod</span>
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 font-poppins leading-tight">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4169E1] via-[#9370DB] to-[#FFD700]">
+              Legyen Ön is Milliomos!
+            </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            15 izgalmas kérdés, 3 válaszlehetőség, végtelen móka. Gyűjts aranyérméket, használj segítségeket és versenyezz a heti ranglistán!
+          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+            Válaszolj helyesen 15 izgalmas kérdésre és szerezd meg az aranyérméket! Használd a segítségeket, versenyezz a ranglistán és légy te a következő milliomos! 🏆
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
