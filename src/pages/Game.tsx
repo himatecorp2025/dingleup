@@ -1,22 +1,61 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import GamePreview from "@/components/GamePreview";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Smartphone } from "lucide-react";
+import backmusic from "@/assets/backmusic.m4a";
 
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Global music control for /game lifecycle
+  useEffect(() => {
+    const tryPlay = async () => {
+      if (!audioRef.current) return;
+      try {
+        audioRef.current.volume = 0.1;
+        audioRef.current.loop = true;
+        await audioRef.current.play();
+      } catch {
+        // Autoplay blocked – retry on first interaction
+      }
+    };
+
+    const keepVolume = () => {
+      if (audioRef.current && audioRef.current.volume !== 0.1) {
+        audioRef.current.volume = 0.1;
+      }
+    };
+
+    tryPlay();
+    const volumeInterval = setInterval(keepVolume, 200);
+
+    const onUserInteract = () => tryPlay();
+    document.addEventListener('pointerdown', onUserInteract, { once: true });
+    document.addEventListener('touchstart', onUserInteract, { once: true });
+    document.addEventListener('click', onUserInteract, { once: true });
+
+    return () => {
+      clearInterval(volumeInterval);
+      document.removeEventListener('pointerdown', onUserInteract);
+      document.removeEventListener('touchstart', onUserInteract);
+      document.removeEventListener('click', onUserInteract);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    };
   }, []);
 
   if (!isMobile) {

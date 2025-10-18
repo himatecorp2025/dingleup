@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type RefObject } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, Zap, SkipForward, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -23,8 +23,6 @@ import { TimerCircle } from "./TimerCircle";
 import { GameStateScreen } from "./GameStateScreen";
 import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
-import MusicInitializer from "./MusicInitializer";
-import gameMusic from "@/assets/backmusic.m4a";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -40,13 +38,12 @@ const QUESTION_BANKS = {
   finance: financeQuestions as Question[]
 };
 
-const GamePreview = () => {
+const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement> }) => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading: profileLoading, updateProfile, spendLife } = useGameProfile(userId);
   const { canClaim, claimDailyGift } = useDailyGift(userId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [musicEnabled, setMusicEnabled] = useState(false);
 
   const [gameState, setGameState] = useState<GameState>('category-select');
@@ -587,9 +584,6 @@ const GamePreview = () => {
   if (gameState === 'category-select') {
     return (
         <>
-        <audio ref={audioRef} loop preload="auto" playsInline autoPlay>
-          <source src={gameMusic} type="audio/mp4" />
-        </audio>
         
         <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
 
@@ -639,9 +633,6 @@ const GamePreview = () => {
     
     return (
       <>
-        <audio ref={audioRef} loop preload="auto" playsInline autoPlay>
-          <source src={gameMusic} type="audio/mp4" />
-        </audio>
         <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
         <div className="h-full w-full flex flex-col p-4">
         <button
