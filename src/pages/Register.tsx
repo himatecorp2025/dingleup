@@ -92,32 +92,47 @@ const Register = () => {
         // Handle invitation if code exists
         if (inviterCode) {
           try {
-            // Find inviter by invitation code
-            const { data: inviterProfile } = await supabase
-              .from('profiles')
-              .select('id, coins')
-              .eq('invitation_code', inviterCode)
-              .single();
+            // Validate invitation using edge function
+            const { data: validationData, error: validationError } = await supabase.functions.invoke(
+              'validate-invitation',
+              {
+                body: {
+                  invitationCode: inviterCode,
+                  invitedEmail: validated.email,
+                },
+              }
+            );
 
-            if (inviterProfile) {
-              // Create invitation record
-              await supabase.from('invitations').insert({
-                inviter_id: inviterProfile.id,
-                invited_user_id: authData.user.id,
-                invited_email: validated.email,
-                accepted: true,
-                accepted_at: new Date().toISOString(),
-                invitation_code: inviterCode
+            if (validationError || !validationData.valid) {
+              toast({
+                title: 'Figyelmeztetés',
+                description: validationData?.error || 'Érvénytelen meghívókód, de a regisztráció sikeres volt',
+                variant: 'default',
               });
+            } else {
+              // Accept invitation using edge function
+              const { error: acceptError } = await supabase.functions.invoke(
+                'accept-invitation',
+                {
+                  body: {
+                    inviterId: validationData.inviterId,
+                    invitedUserId: authData.user.id,
+                    invitedEmail: validated.email,
+                    invitationCode: inviterCode,
+                  },
+                }
+              );
 
-              // Award 100 coins to inviter
-              await supabase
-                .from('profiles')
-                .update({ coins: inviterProfile.coins + 100 })
-                .eq('id', inviterProfile.id);
+              if (acceptError) {
+                if (import.meta.env.DEV) {
+                  console.error('Error accepting invitation:', acceptError);
+                }
+              }
             }
           } catch (error) {
-            console.error('Error processing invitation:', error);
+            if (import.meta.env.DEV) {
+              console.error('Error processing invitation:', error);
+            }
           }
         }
 
