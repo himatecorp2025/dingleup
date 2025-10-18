@@ -1,26 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.jpg";
-import gameMusic from "@/assets/game-music.m4a";
 
 const Hero = () => {
-  useEffect(() => {
-    try {
-      const w = window as any;
-      if (!w.__bgm) {
-        const audio = new Audio(gameMusic);
-        audio.preload = 'auto';
-        audio.loop = true;
-        audio.volume = 0.3;
-        w.__bgm = audio;
-        audio.load();
-      }
-    } catch {}
-  }, []);
-  
   const navigate = useNavigate();
   
   return (

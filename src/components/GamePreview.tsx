@@ -23,6 +23,8 @@ import { TimerCircle } from "./TimerCircle";
 import { GameStateScreen } from "./GameStateScreen";
 import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
+import MusicInitializer from "./MusicInitializer";
+import gameMusic from "@/assets/game-music.mp3";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -44,14 +46,23 @@ const GamePreview = () => {
   const { profile, loading: profileLoading, updateProfile, spendLife } = useGameProfile(userId);
   const { canClaim, claimDailyGift } = useDailyGift(userId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+
+  const handleMusicEnabled = () => {
+    setMusicEnabled(true);
+    if (audioRef.current) {
+      audioRef.current.play().catch(error => {
+        console.error('Error playing audio:', error);
+      });
+    }
+  };
 
   const stopMusic = () => {
     try {
-      const w = window as any;
-      const audio: HTMLAudioElement | undefined = w.__bgm;
-      if (audio) {
-        audio.pause();
-        audio.currentTime = 0;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
       }
     } catch (error) {
       console.error('Error stopping music:', error);
@@ -482,41 +493,48 @@ const GamePreview = () => {
 
   if (gameState === 'category-select') {
     return (
-      <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
-        <CategorySelector onSelect={startGameWithCategory} />
+      <>
+        <audio ref={audioRef} loop>
+          <source src={gameMusic} type="audio/mpeg" />
+        </audio>
         
-        <div className="fixed top-4 right-4 bg-card/90 backdrop-blur-sm rounded-2xl p-3 md:p-4 border border-border/50 shadow-lg z-50">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <Heart className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
-              <span className="font-bold text-sm md:text-base">{profile.lives}/{profile.max_lives}</span>
+        {!musicEnabled && <MusicInitializer onMusicEnabled={handleMusicEnabled} audioRef={audioRef} />}
+        
+        <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
+          {/* Back button - top left corner */}
+          <Button
+            onClick={() => {
+              stopMusic();
+              navigate('/dashboard');
+            }}
+            className="fixed top-4 left-4 z-50 bg-red-600 hover:bg-red-700 text-white border-2 border-red-400/50 shadow-lg"
+          >
+            <LogOut className="w-5 h-5 mr-1" />
+            Vissza
+          </Button>
+
+          <CategorySelector onSelect={startGameWithCategory} />
+          
+          <div className="fixed top-4 right-4 bg-card/90 backdrop-blur-sm rounded-2xl p-3 md:p-4 border border-border/50 shadow-lg z-50">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <Heart className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
+                <span className="font-bold text-sm md:text-base">{profile.lives}/{profile.max_lives}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Coins className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
+                <span className="font-bold text-sm md:text-base">{profile.coins}</span>
+              </div>
+              {canClaim && (
+                <Button size="sm" onClick={claimDailyGift} className="mt-2 text-xs md:text-sm">
+                  <Gift className="w-3 h-3 md:w-4 md:h-4 mr-2" />
+                  Napi ajándék
+                </Button>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <Coins className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
-              <span className="font-bold text-sm md:text-base">{profile.coins}</span>
-            </div>
-            {canClaim && (
-              <Button size="sm" onClick={claimDailyGift} className="mt-2 text-xs md:text-sm">
-                <Gift className="w-3 h-3 md:w-4 md:h-4 mr-2" />
-                Napi ajándék
-              </Button>
-            )}
           </div>
         </div>
-
-        <Button
-          onClick={() => {
-            stopMusic();
-            navigate('/dashboard');
-          }}
-          variant="ghost"
-          size="sm"
-          className="fixed top-4 left-4 z-50 text-xs md:text-sm"
-        >
-          <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 mr-2" />
-          Vissza
-        </Button>
-      </div>
+      </>
     );
   }
 
@@ -543,17 +561,17 @@ const GamePreview = () => {
       <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
       <div className="h-full w-full flex flex-col p-4">
         {/* Exit button */}
-        {/* Exit button - top right corner */}
+        {/* Exit button - top left corner */}
         <Button
           onClick={() => setShowExitDialog(true)}
-          className="absolute top-4 right-4 z-50 bg-red-600 hover:bg-red-700 text-white border-2 border-red-400/50 shadow-lg"
+          className="absolute top-4 left-4 z-50 bg-red-600 hover:bg-red-700 text-white border-2 border-red-400/50 shadow-lg"
         >
           <LogOut className="w-5 h-5 mr-1" />
           Kilépés
         </Button>
 
         {/* Header */}
-        <div className="flex-none w-full mb-4">
+        <div className="flex-none w-full mb-4 mt-16">
           <div className="flex items-center justify-between mb-3">
             {/* Level hexagon */}
             <div

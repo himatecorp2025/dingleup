@@ -1,15 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import GamePreview from "@/components/GamePreview";
-import MusicInitializer from "@/components/MusicInitializer";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Smartphone } from "lucide-react";
-import gameMusic from "@/assets/game-music.mp3";
 
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const [musicEnabled, setMusicEnabled] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,15 +18,6 @@ const Game = () => {
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  const handleMusicEnabled = () => {
-    setMusicEnabled(true);
-    if (audioRef.current) {
-      audioRef.current.play().catch(error => {
-        console.error('Error playing audio:', error);
-      });
-    }
-  };
 
   if (!isMobile) {
     return (
@@ -55,17 +42,9 @@ const Game = () => {
   }
 
   return (
-    <>
-      <audio ref={audioRef} loop>
-        <source src={gameMusic} type="audio/mpeg" />
-      </audio>
-      
-      {!musicEnabled && <MusicInitializer onMusicEnabled={handleMusicEnabled} audioRef={audioRef} />}
-      
-      <div className="min-h-screen overflow-hidden">
-        <GamePreview />
-      </div>
-    </>
+    <div className="min-h-screen overflow-hidden">
+      <GamePreview />
+    </div>
   );
 };
 
