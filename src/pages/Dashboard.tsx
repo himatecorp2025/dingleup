@@ -9,7 +9,6 @@ import { useBoosterTimer } from '@/hooks/useBoosterTimer';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
-import { InvitationDialog } from '@/components/InvitationDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import logoImage from '@/assets/logo.png';
@@ -23,7 +22,7 @@ const Dashboard = () => {
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
-  const [showInvitation, setShowInvitation] = useState(false);
+  
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
   const [currentRank, setCurrentRank] = useState<number>(1);
   
@@ -173,7 +172,7 @@ const Dashboard = () => {
             {/* Action Buttons */}
             <div className="flex flex-col gap-2 w-48">
               <button
-                onClick={() => setShowInvitation(true)}
+                onClick={() => navigate('/invitation')}
                 className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-2"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
@@ -260,14 +259,6 @@ const Dashboard = () => {
         canClaim={canClaim}
       />
 
-      {/* Invitation dialog */}
-      {userId && (
-        <InvitationDialog
-          open={showInvitation}
-          onClose={() => setShowInvitation(false)}
-          userId={userId}
-        />
-      )}
 
       {/* Booster activation dialog */}
       <BoosterActivationDialog
