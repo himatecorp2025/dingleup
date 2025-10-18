@@ -70,7 +70,7 @@ const Login = () => {
           }
         } catch {}
         
-        navigate("/dashboard");
+        navigate("/intro?next=/dashboard");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

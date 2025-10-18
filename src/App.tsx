@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import RegistrationSuccess from "./pages/RegistrationSuccess";
 import InstallApp from "./pages/InstallApp";
 import Invitation from "./pages/Invitation";
+import IntroVideo from "./pages/IntroVideo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/registration-success" element={<RegistrationSuccess />} />
           <Route path="/install" element={<InstallApp />} />
           <Route path="/invitation" element={<Invitation />} />
+          <Route path="/intro" element={<IntroVideo />} />
           <Route path="/game" element={<Game />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

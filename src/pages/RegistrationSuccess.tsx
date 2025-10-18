@@ -21,7 +21,7 @@ const RegistrationSuccess = () => {
       }
     } catch {}
     
-    navigate('/game?autostart=true');
+    navigate('/intro?next=/game?autostart=true');
   };
 
   return (
