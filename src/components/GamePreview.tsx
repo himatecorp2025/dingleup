@@ -96,11 +96,18 @@ const GamePreview = () => {
     const tryPlay = async () => {
       if (!audioRef.current) return;
       try {
-        audioRef.current.volume = 0.1;
+        audioRef.current.volume = 0.1; // Mindig 10%
         audioRef.current.loop = true;
         await audioRef.current.play();
       } catch (err) {
         console.log('Autoplay blocked, will retry on user interaction');
+      }
+    };
+
+    // Hangerő folyamatos figyelése és rögzítése 10%-on
+    const keepVolume = () => {
+      if (audioRef.current && audioRef.current.volume !== 0.1) {
+        audioRef.current.volume = 0.1;
       }
     };
 
@@ -115,6 +122,9 @@ const GamePreview = () => {
     document.addEventListener('touchstart', onUserInteract, { once: true });
     document.addEventListener('click', onUserInteract, { once: true });
 
+    // Hangerő ellenőrzése időnként
+    const volumeInterval = setInterval(keepVolume, 100);
+
     // Láthatóság váltáskor is próbáljuk
     const onVisibility = () => {
       if (document.visibilityState === 'visible') tryPlay();
@@ -124,6 +134,7 @@ const GamePreview = () => {
     // Cleanup: zene leállítása amikor kilép a komponensből
     return () => {
       stopMusic();
+      clearInterval(volumeInterval);
       document.removeEventListener('pointerdown', onUserInteract);
       document.removeEventListener('touchstart', onUserInteract);
       document.removeEventListener('click', onUserInteract);
