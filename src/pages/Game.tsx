@@ -43,7 +43,7 @@ const Game = () => {
       if (!audioRef.current) return;
       await setupAudioGraph();
       const el = audioRef.current;
-      el.volume = 1;
+      el.volume = 0.1;
       el.loop = true;
       try { 
         await el.play(); 
@@ -57,6 +57,10 @@ const Game = () => {
       if (gainNodeRef.current && gainNodeRef.current.gain.value !== 0.1) {
         gainNodeRef.current.gain.value = 0.1;
       }
+      const el = audioRef.current;
+      if (el && el.volume !== 0.1) {
+        el.volume = 0.1;
+      }
     };
 
     // Try immediately (user just clicked Play)
@@ -68,6 +72,15 @@ const Game = () => {
       try { await audioCtxRef.current?.resume(); } catch {}
       tryPlay();
     };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        onUserInteract();
+      }
+    };
+
+    window.addEventListener('pageshow', onUserInteract);
+    document.addEventListener('visibilitychange', onVisibilityChange);
     
     // Backup: retry on any interaction
     document.addEventListener('pointerdown', onUserInteract, { once: true });
@@ -75,8 +88,9 @@ const Game = () => {
     document.addEventListener('click', onUserInteract, { once: true });
 
     return () => {
-      
       clearInterval(volumeInterval);
+      window.removeEventListener('pageshow', onUserInteract);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       document.removeEventListener('pointerdown', onUserInteract);
       document.removeEventListener('touchstart', onUserInteract);
       document.removeEventListener('click', onUserInteract);
