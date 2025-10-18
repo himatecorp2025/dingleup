@@ -16,7 +16,7 @@ export const HexagonButton = ({
   ...props 
 }: HexagonButtonProps) => {
   const variants = {
-    yellow: 'bg-gold text-white border-2 border-gold-dark shadow-lg shadow-gold/30 hover:shadow-gold/50',
+    yellow: 'bg-gradient-to-r from-[hsl(var(--gold))] to-[hsl(var(--gold-dark))] text-white border-2 border-gold-dark hover:brightness-110',
     green: 'bg-success text-white border-2 border-success-dark shadow-lg shadow-success/30 hover:shadow-success/50',
     dark: 'bg-black text-white border-2 border-primary/50 shadow-lg shadow-primary/20',
     outline: 'bg-transparent text-white border-2 border-white/30 hover:bg-white/10'

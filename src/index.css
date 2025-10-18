@@ -163,7 +163,7 @@ body {
 /* Hexagon button small */
 .hexagon-button-small {
   position: relative;
-  background: linear-gradient(135deg, #1e1e3f 0%, #000000 100%);
+  background-color: transparent; /* color comes from Tailwind variants */
   color: white;
   clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
   padding: 10px 20px;
@@ -171,8 +171,8 @@ body {
   font-weight: bold;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  transition: var(--transition-smooth);
+  box-shadow: none;
 }
 
 .hexagon-button-small:hover:not(:disabled) {
@@ -192,7 +192,7 @@ body {
 /* Hexagon button regular */
 .hexagon-button {
   position: relative;
-  background: linear-gradient(135deg, #1e1e3f 0%, #000000 100%);
+  background-color: transparent; /* color comes from Tailwind variants */
   color: white;
   clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
   padding: 14px 28px;
@@ -200,15 +200,14 @@ body {
   font-weight: bold;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  transition: var(--transition-smooth);
+  box-shadow: none;
   min-width: 120px;
   text-align: center;
 }
 
 .hexagon-button:hover:not(:disabled) {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
 }
 
 .hexagon-button:active:not(:disabled) {
