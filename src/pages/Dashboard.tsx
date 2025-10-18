@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
-import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2 } from 'lucide-react';
+import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { InvitationDialog } from '@/components/InvitationDialog';
@@ -236,6 +236,15 @@ const Dashboard = () => {
           userId={userId}
         />
       )}
+
+      {/* Logout button - bottom right corner */}
+      <button
+        onClick={() => navigate('/')}
+        className="fixed bottom-6 right-6 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 z-50"
+        title="Kijelentkezés"
+      >
+        <LogOut className="w-6 h-6" />
+      </button>
     </div>
   );
 };

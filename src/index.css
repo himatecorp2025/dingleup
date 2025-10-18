@@ -111,6 +111,15 @@ body {
   @apply bg-background text-foreground font-poppins;
 }
 
+/* Text stroke for better readability */
+.text-with-stroke {
+  text-shadow: 
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
 /* Timer circle styles */
 .timer-circle {
   stroke-dasharray: 283;
