@@ -40,16 +40,27 @@ export const useGameProfile = (userId: string | undefined) => {
     if (!userId) return;
 
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', userId)
-        .select()
-        .single();
+      // Only allow updating safe fields (username, avatar_url) directly
+      // All other fields use RPC functions
+      const safeUpdates: Partial<UserProfile> = {};
+      if ('username' in updates) safeUpdates.username = updates.username;
+      if ('avatar_url' in updates) safeUpdates.avatar_url = updates.avatar_url;
 
-      if (error) throw error;
-      setProfile(data as UserProfile);
-      return data;
+      if (Object.keys(safeUpdates).length > 0) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .update(safeUpdates)
+          .eq('id', userId)
+          .select()
+          .single();
+
+        if (error) throw error;
+        setProfile(data as UserProfile);
+        return data;
+      }
+      
+      // For other updates, just refetch the profile
+      await fetchProfile();
     } catch (error: any) {
       if (import.meta.env.DEV) {
         console.error('Error updating profile:', error);
@@ -66,42 +77,15 @@ export const useGameProfile = (userId: string | undefined) => {
   const regenerateLives = async () => {
     if (!profile) return;
 
-    const now = new Date();
-    const lastRegen = new Date(profile.last_life_regeneration);
-    const minutesPassed = Math.floor((now.getTime() - lastRegen.getTime()) / 60000);
-    
-    let currentMaxLives = profile.max_lives;
-    let boosterExpired = false;
-    
-    // Check if booster expired
-    if (profile.speed_booster_active && profile.speed_booster_expires_at) {
-      const expiresAt = new Date(profile.speed_booster_expires_at);
-      if (now > expiresAt) {
-        boosterExpired = true;
-        currentMaxLives = 15; // Reset to default
-        await updateProfile({
-          speed_booster_active: false,
-          speed_booster_expires_at: null,
-          speed_booster_multiplier: 1,
-          max_lives: 15
-        });
+    // Just call the regenerate_lives RPC function
+    // It handles all the logic server-side
+    try {
+      await supabase.rpc('regenerate_lives');
+      await fetchProfile(); // Refresh to get updated data
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Error regenerating lives:', error);
       }
-    }
-
-    const regenRate = (profile.speed_booster_active && !boosterExpired)
-      ? Math.floor(profile.lives_regeneration_rate / profile.speed_booster_multiplier)
-      : profile.lives_regeneration_rate;
-
-    const livesToAdd = Math.floor(minutesPassed / regenRate);
-
-    if (livesToAdd > 0 && profile.lives < currentMaxLives) {
-      const newLives = Math.min(profile.lives + livesToAdd, currentMaxLives);
-      const newLastRegen = new Date(lastRegen.getTime() + (livesToAdd * regenRate * 60000));
-      
-      await updateProfile({
-        lives: newLives,
-        last_life_regeneration: newLastRegen.toISOString()
-      });
     }
   };
 

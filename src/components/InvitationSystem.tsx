@@ -76,27 +76,15 @@ const InvitationSystem = ({ userId, invitationCode }: InvitationSystemProps) => 
     setLoading(false);
   };
 
-  const copyInvitationLink = async () => {
-    try {
-      // Regenerate the invitation code
-      const { data: newCode, error } = await supabase.rpc('regenerate_invitation_code');
-      
-      if (error) throw error;
-      
-      const link = `${window.location.origin}/register?code=${newCode}`;
-      navigator.clipboard.writeText(link);
-      setCopied(true);
-      toast.success('Új meghívó link generálva és másolva!');
-      setTimeout(() => setCopied(false), 2000);
-      
-      // Refresh to show new code
-      window.location.reload();
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error regenerating code:', error);
-      }
-      toast.error('Hiba történt a link generálása során');
-    }
+  const copyInvitationLink = () => {
+    const link = `${window.location.origin}/register?code=${invitationCode}`;
+    navigator.clipboard.writeText(link);
+    toast.success('Meghívó link másolva!');
+  };
+
+  const copyInvitationCode = () => {
+    navigator.clipboard.writeText(invitationCode);
+    toast.success('Meghívó kód másolva!');
   };
 
   const acceptedCount = invitations.filter(i => i.accepted).length;
@@ -126,18 +114,34 @@ const InvitationSystem = ({ userId, invitationCode }: InvitationSystemProps) => 
           </div>
         </div>
 
-        {/* Invitation code */}
-        <div>
-          <label className="text-sm font-medium mb-2 block">Meghívó kódod</label>
-          <div className="flex gap-2">
-            <Input
-              value={invitationCode}
-              readOnly
-              className="font-mono font-bold"
-            />
-            <Button onClick={copyInvitationLink} variant="outline" size="icon">
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            </Button>
+        {/* Invitation code and link */}
+        <div className="space-y-3">
+          <div>
+            <label className="text-sm font-medium mb-2 block">Meghívó kódod</label>
+            <div className="flex gap-2">
+              <Input
+                value={invitationCode}
+                readOnly
+                className="font-mono font-bold"
+              />
+              <Button onClick={copyInvitationCode} variant="outline" size="icon">
+                <Copy className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-sm font-medium mb-2 block">Meghívó link</label>
+            <div className="flex gap-2">
+              <Input
+                value={`${window.location.origin}/register?code=${invitationCode}`}
+                readOnly
+                className="text-xs"
+              />
+              <Button onClick={copyInvitationLink} variant="outline" size="icon">
+                <Copy className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
 

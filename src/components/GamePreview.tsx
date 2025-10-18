@@ -172,23 +172,16 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
     
-    // Refresh profile to show updated state after spending life
-    await refreshProfile();
-    
-    // Give 1 gold coin as welcome gift
-    await updateProfile({ coins: profile.coins + 1 });
-    setCoinsEarned(1);
-
-    // Reactivate all lifelines for new game - with error handling
+    // Give 1 gold coin as welcome gift using RPC
     try {
-      await updateProfile({
-        help_50_50_active: true,
-        help_2x_answer_active: true,
-        help_audience_active: true
-      });
+      await supabase.rpc('award_coins', { amount: 1 });
+      setCoinsEarned(1);
     } catch (error) {
-      console.error('Error reactivating lifelines:', error);
+      console.error('Error awarding welcome coin:', error);
     }
+
+    // Refresh profile to show all updates
+    await refreshProfile();
 
     setSelectedCategory(category);
     const questionBank = QUESTION_BANKS[category];
@@ -269,9 +262,13 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     
     setCoinsEarned(coinsEarned + reward);
     
-    // Update coins immediately in profile
+    // Award coins using RPC function
     if (profile) {
-      await updateProfile({ coins: profile.coins + reward });
+      try {
+        await supabase.rpc('award_coins', { amount: reward });
+      } catch (error) {
+        console.error('Error awarding coins:', error);
+      }
     }
     
     // Show scroll hint for next question
@@ -320,9 +317,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
     
-    // Deduct coins
-    await updateProfile({ coins: profile.coins - cost });
-    handleNextQuestion();
+    // Spend coins using RPC
+    const success = await supabase.rpc('spend_coins', { amount: cost });
+    if (success.data) {
+      await refreshProfile();
+      handleNextQuestion();
+    }
   };
 
   const handleContinueAfterMistake = async () => {
@@ -331,15 +331,19 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
     
     if (profile.coins < cost) {
-      toast.error(`Nincs elég aranyérme! ${cost} 🪙 szükséges.`);
-      // Exit game and finish
+      toast.error(`Nincs elég aranyérme! ${cost} 🪙 szükséses.`);
       finishGame();
       return;
     }
     
-    // Pay and continue
-    await updateProfile({ coins: profile.coins - cost });
-    handleNextQuestion();
+    // Spend coins using RPC
+    const success = await supabase.rpc('spend_coins', { amount: cost });
+    if (success.data) {
+      await refreshProfile();
+      handleNextQuestion();
+    } else {
+      finishGame();
+    }
   };
 
   const handleRejectContinue = () => {
@@ -352,18 +356,8 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
 
     setGameState('finished');
 
-    // Award coins and update profile immediately
-    if (coinsEarned > 0) {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ coins: profile.coins + coinsEarned })
-        .eq('id', userId!);
-      
-      if (!error) {
-        // Force refetch profile to sync data
-        await updateProfile({ coins: profile.coins + coinsEarned });
-      }
-    }
+    // Award coins using RPC (already awarded during game, just refresh)
+    await refreshProfile();
 
     // Calculate average response time
     const avgResponseTime = responseTimes.length > 0 
@@ -403,42 +397,54 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     toast.success(`Játék vége! ${correctAnswers}/${questions.length} helyes válasz`);
   };
 
-  const useHelp5050 = () => {
+  const useHelp5050 = async () => {
     if (usedHelp5050 || !profile?.help_50_50_active || selectedAnswer) return;
     
     const currentQuestion = questions[currentQuestionIndex];
-    const thirdAnswerKey = currentQuestion.third; // Use JSON field
+    const thirdAnswerKey = currentQuestion.third;
     
     setRemovedAnswer(thirdAnswerKey);
     setUsedHelp5050(true);
-    updateProfile({ help_50_50_active: false });
+    
+    // Use RPC to deactivate help
+    await supabase.rpc('use_help', { p_help_type: '50_50' });
+    await refreshProfile();
+    
     toast.info('Harmadoló segítség használva - 1 hibás válasz eltávolítva');
   };
 
-  const useHelp2xAnswer = () => {
+  const useHelp2xAnswer = async () => {
     if (usedHelp2xAnswer || !profile?.help_2x_answer_active || selectedAnswer) return;
     
     setUsedHelp2xAnswer(true);
-    updateProfile({ help_2x_answer_active: false });
+    
+    // Use RPC to deactivate help
+    await supabase.rpc('use_help', { p_help_type: '2x_answer' });
+    await refreshProfile();
+    
     toast.info('2× válasz segítség használva - 2 próbálkozásod van');
   };
 
-  const useHelpAudience = () => {
+  const useHelpAudience = async () => {
     if (usedHelpAudience || !profile?.help_audience_active || selectedAnswer) return;
     
     const currentQuestion = questions[currentQuestionIndex];
-    const votes = currentQuestion.audience; // Use JSON field directly
+    const votes = currentQuestion.audience;
     
     setAudienceVotes(votes);
     setUsedHelpAudience(true);
-    updateProfile({ help_audience_active: false });
+    
+    // Use RPC to deactivate help
+    await supabase.rpc('use_help', { p_help_type: 'audience' });
+    await refreshProfile();
+    
     toast.info('Közönség segítség használva');
   };
 
-  const useQuestionSwap = () => {
+  const useQuestionSwap = async () => {
     if (usedQuestionSwap || selectedAnswer || !profile?.question_swaps_available || profile.question_swaps_available === 0) return;
     
-    // Get a new random question from the same category that's not in current 15
+    // Get a new random question from the same category
     const questionBank = QUESTION_BANKS[selectedCategory!];
     const currentIds = questions.map(q => q.id);
     const availableQuestions = questionBank.filter(q => !currentIds.includes(q.id));
@@ -453,15 +459,16 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     updatedQuestions[currentQuestionIndex] = newQuestion;
     setQuestions(updatedQuestions);
     
-    // Reset timer and states
+    // Reset states
     setTimeLeft(10);
     setRemovedAnswer(null);
     setAudienceVotes({});
     setFirstAttempt(null);
     setQuestionStartTime(Date.now());
-    
     setUsedQuestionSwap(true);
-    updateProfile({ question_swaps_available: profile.question_swaps_available - 1 });
+    
+    // Note: question_swaps_available is managed server-side, just refresh
+    await refreshProfile();
     toast.info('Kérdés kicserélve! Timer visszaállítva.');
   };
 
