@@ -91,7 +91,7 @@ const GamePreview = () => {
     }
   };
 
-  // Zene automatikus indítás/leállítás a gameState alapján
+  // Zene automatikus indítás amikor a Game komponens betöltődik
   useEffect(() => {
     const tryPlay = async () => {
       if (!audioRef.current) return;
@@ -104,36 +104,32 @@ const GamePreview = () => {
       }
     };
 
-    // Zene MENJEN: category-select és playing állapotban
-    if (gameState === 'category-select' || gameState === 'playing') {
-      // Azonnali próbálkozás
+    // Azonnali próbálkozás
+    tryPlay();
+
+    // Első interakciónál kényszerített lejátszás
+    const onUserInteract = () => {
       tryPlay();
+    };
+    document.addEventListener('pointerdown', onUserInteract, { once: true });
+    document.addEventListener('touchstart', onUserInteract, { once: true });
+    document.addEventListener('click', onUserInteract, { once: true });
 
-      // Első interakciónál kényszerített lejátszás
-      const onUserInteract = () => {
-        tryPlay();
-      };
-      document.addEventListener('pointerdown', onUserInteract, { once: true });
-      document.addEventListener('touchstart', onUserInteract, { once: true });
-      document.addEventListener('click', onUserInteract, { once: true });
+    // Láthatóság váltáskor is próbáljuk
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') tryPlay();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
 
-      // Láthatóság váltáskor is próbáljuk
-      const onVisibility = () => {
-        if (document.visibilityState === 'visible') tryPlay();
-      };
-      document.addEventListener('visibilitychange', onVisibility);
-
-      return () => {
-        document.removeEventListener('pointerdown', onUserInteract);
-        document.removeEventListener('touchstart', onUserInteract);
-        document.removeEventListener('click', onUserInteract);
-        document.removeEventListener('visibilitychange', onVisibility);
-      };
-    } else {
-      // Zene ÁLLJON LE: finished, out-of-lives stb.
+    // Cleanup: zene leállítása amikor kilép a komponensből
+    return () => {
       stopMusic();
-    }
-  }, [gameState]);
+      document.removeEventListener('pointerdown', onUserInteract);
+      document.removeEventListener('touchstart', onUserInteract);
+      document.removeEventListener('click', onUserInteract);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []); // Csak egyszer, mount/unmount-nál
 
   // Auth check
   useEffect(() => {
