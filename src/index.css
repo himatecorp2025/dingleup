@@ -18,9 +18,10 @@ body {
   user-select: none;
 }
 
-/* Text shadow for all white text */
-.text-white, h1, h2, h3, h4, h5, h6, p, span, button, a {
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.6);
+/* Text stroke (körvonal) CSAK fehér betűknek */
+.text-white {
+  -webkit-text-stroke: 1.5px black;
+  paint-order: stroke fill;
 }
 
 button, a {
