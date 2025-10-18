@@ -144,23 +144,16 @@ const GamePreview = () => {
       return;
     }
 
-    // Start game music at 20% volume when category is selected
+    // Reactivate all lifelines for new game - with error handling
     try {
-      if (audioRef.current) {
-        audioRef.current.volume = 0.2; // 20% hangerő
-        audioRef.current.currentTime = 0;
-        await audioRef.current.play();
-      }
+      await updateProfile({
+        help_50_50_active: true,
+        help_2x_answer_active: true,
+        help_audience_active: true
+      });
     } catch (error) {
-      console.error('Zene indítási hiba:', error);
+      console.error('Error reactivating lifelines:', error);
     }
-
-    // Reactivate all lifelines for new game
-    await updateProfile({
-      help_50_50_active: true,
-      help_2x_answer_active: true,
-      help_audience_active: true
-    });
 
     setSelectedCategory(category);
     const questionBank = QUESTION_BANKS[category];

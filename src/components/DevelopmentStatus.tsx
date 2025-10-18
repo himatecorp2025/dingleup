@@ -67,7 +67,7 @@ const DevelopmentStatus = () => {
             <span className="text-sm font-semibold text-accent">Aktív Fejlesztés</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-white text-with-stroke">
-            Fejlesztési <span className="text-transparent bg-clip-text bg-gradient-gold">Státusz</span>
+            Fejlesztési <span className="text-white">Státusz</span>
           </h2>
           <p className="text-xl text-white max-w-2xl mx-auto">
             Folyamatosan dolgozunk azon, hogy a legjobb játékélményt nyújtsuk
@@ -108,7 +108,7 @@ const DevelopmentStatus = () => {
             <span className="text-sm font-semibold text-secondary">Közelgő Funkciók</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins text-white">
-            Mit Hozunk Nemsokára
+            Mit Hozunk <span className="text-white">Nemsokára</span>
           </h2>
         </div>
 
