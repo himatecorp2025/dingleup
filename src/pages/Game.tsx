@@ -3,7 +3,7 @@ import GamePreview from "@/components/GamePreview";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Smartphone } from "lucide-react";
-import backmusic from "@/assets/backmusic.m4a";
+import backmusic from "@/assets/backmusic.mp3";
 
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -81,9 +81,14 @@ const Game = () => {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden">
-      <GamePreview />
-    </div>
+    <>
+      <audio ref={audioRef} loop preload="auto" playsInline>
+        <source src={backmusic} type="audio/mpeg" />
+      </audio>
+      <div className="min-h-screen overflow-hidden">
+        <GamePreview audioRef={audioRef} />
+      </div>
+    </>
   );
 };
 

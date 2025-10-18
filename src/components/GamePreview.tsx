@@ -88,57 +88,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     }
   };
 
-  // Zene automatikus indítás amikor a Game komponens betöltődik
-  useEffect(() => {
-    const tryPlay = async () => {
-      if (!audioRef.current) return;
-      try {
-        audioRef.current.volume = 0.1; // Mindig 10%
-        audioRef.current.loop = true;
-        await audioRef.current.play();
-      } catch (err) {
-        console.log('Autoplay blocked, will retry on user interaction');
-      }
-    };
-
-    // Hangerő folyamatos figyelése és rögzítése 10%-on
-    const keepVolume = () => {
-      if (audioRef.current && audioRef.current.volume !== 0.1) {
-        audioRef.current.volume = 0.1;
-      }
-    };
-
-    // Azonnali próbálkozás
-    tryPlay();
-
-    // Első interakciónál kényszerített lejátszás
-    const onUserInteract = () => {
-      tryPlay();
-    };
-    document.addEventListener('pointerdown', onUserInteract, { once: true });
-    document.addEventListener('touchstart', onUserInteract, { once: true });
-    document.addEventListener('click', onUserInteract, { once: true });
-
-    // Hangerő ellenőrzése időnként
-    const volumeInterval = setInterval(keepVolume, 100);
-
-    // Láthatóság váltáskor is próbáljuk
-    const onVisibility = () => {
-      if (document.visibilityState === 'visible') tryPlay();
-    };
-    document.addEventListener('visibilitychange', onVisibility);
-
-    // Cleanup: zene leállítása amikor kilép a komponensből
-    return () => {
-      stopMusic();
-      clearInterval(volumeInterval);
-      document.removeEventListener('pointerdown', onUserInteract);
-      document.removeEventListener('touchstart', onUserInteract);
-      document.removeEventListener('click', onUserInteract);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-  }, []); // Csak egyszer, mount/unmount-nál
-
   // Auth check
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
