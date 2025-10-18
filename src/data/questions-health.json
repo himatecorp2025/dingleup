@@ -1,102 +1,642 @@
 [
-  {"id": "h001", "question": "Hány liter a felnőtt ember vérkészlete?", "answers": [{"key": "A", "text": "3-4", "correct": false}, {"key": "B", "text": "5-6", "correct": true}, {"key": "C", "text": "7-8", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h002", "question": "Hány csontvázizma van az embernek?", "answers": [{"key": "A", "text": "430", "correct": false}, {"key": "B", "text": "530", "correct": false}, {"key": "C", "text": "630", "correct": true}], "audience": {"A": 25, "B": 30, "C": 45}, "third": "A", "topic": "Fitnesz"},
-  {"id": "h003", "question": "Melyik vitamin hiánya okoz szkorbut (skorbut)?", "answers": [{"key": "A", "text": "C-vitamin", "correct": true}, {"key": "B", "text": "D-vitamin", "correct": false}, {"key": "C", "text": "B12-vitamin", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Egészség"},
-  {"id": "h004", "question": "Hány fokon tartjuk az emberi test normál hőmérsékletét?", "answers": [{"key": "A", "text": "36,5°C", "correct": true}, {"key": "B", "text": "37°C", "correct": false}, {"key": "C", "text": "37,5°C", "correct": false}], "audience": {"A": 55, "B": 35, "C": 10}, "third": "C", "topic": "Egészség"},
-  {"id": "h005", "question": "Mi az aerob edzés?", "answers": [{"key": "A", "text": "Súlyzós edzés", "correct": false}, {"key": "B", "text": "Oxigénnel végzett mozgás", "correct": true}, {"key": "C", "text": "Nyújtás", "correct": false}], "audience": {"A": 20, "B": 60, "C": 20}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h006", "question": "Mennyi a felnőtt napi ajánlott vízfogyasztás?", "answers": [{"key": "A", "text": "1-1,5 liter", "correct": false}, {"key": "B", "text": "2-2,5 liter", "correct": true}, {"key": "C", "text": "3-4 liter", "correct": false}], "audience": {"A": 15, "B": 70, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h007", "question": "Melyik tápanyag építi az izmokat?", "answers": [{"key": "A", "text": "Szénhidrát", "correct": false}, {"key": "B", "text": "Fehérje", "correct": true}, {"key": "C", "text": "Zsír", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h008", "question": "Hány csontunk van felnőttkorban?", "answers": [{"key": "A", "text": "186", "correct": false}, {"key": "B", "text": "206", "correct": true}, {"key": "C", "text": "226", "correct": false}], "audience": {"A": 25, "B": 55, "C": 20}, "third": "A", "topic": "Egészség"},
-  {"id": "h009", "question": "Mi a BMI?", "answers": [{"key": "A", "text": "Testtömeg index", "correct": true}, {"key": "B", "text": "Vérnyomás mérő", "correct": false}, {"key": "C", "text": "Koleszterin szint", "correct": false}], "audience": {"A": 75, "B": 15, "C": 10}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h010", "question": "Melyik szerv termeli az inzulint?", "answers": [{"key": "A", "text": "Máj", "correct": false}, {"key": "B", "text": "Hasnyálmirigy", "correct": true}, {"key": "C", "text": "Lép", "correct": false}], "audience": {"A": 30, "B": 55, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h011", "question": "Mennyi ideig ajánlott kardió edzést végezni naponta?", "answers": [{"key": "A", "text": "15-20 perc", "correct": false}, {"key": "B", "text": "30-45 perc", "correct": true}, {"key": "C", "text": "60-90 perc", "correct": false}], "audience": {"A": 20, "B": 60, "C": 20}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h012", "question": "Mi a kalória?", "answers": [{"key": "A", "text": "Energia mértékegység", "correct": true}, {"key": "B", "text": "Vitamin típus", "correct": false}, {"key": "C", "text": "Fehérje", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "B", "topic": "Táplálkozás"},
-  {"id": "h013", "question": "Melyik vitamin segíti a kalcium felszívódását?", "answers": [{"key": "A", "text": "A-vitamin", "correct": false}, {"key": "B", "text": "D-vitamin", "correct": true}, {"key": "C", "text": "E-vitamin", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h014", "question": "Hány óra alvás ajánlott felnőtteknek?", "answers": [{"key": "A", "text": "5-6 óra", "correct": false}, {"key": "B", "text": "7-9 óra", "correct": true}, {"key": "C", "text": "10-12 óra", "correct": false}], "audience": {"A": 15, "B": 70, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h015", "question": "Mi a laktóz?", "answers": [{"key": "A", "text": "Tejcukor", "correct": true}, {"key": "B", "text": "Gyümölcscukor", "correct": false}, {"key": "C", "text": "Répacukor", "correct": false}], "audience": {"A": 65, "B": 22, "C": 13}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h016", "question": "Melyik izom a legerősebb a testben?", "answers": [{"key": "A", "text": "Kétfejű karizom", "correct": false}, {"key": "B", "text": "Combizom", "correct": false}, {"key": "C", "text": "Rágóizom", "correct": true}], "audience": {"A": 30, "B": 40, "C": 30}, "third": "A", "topic": "Fitnesz"},
-  {"id": "h017", "question": "Mi az omega-3 forrása?", "answers": [{"key": "A", "text": "Hal", "correct": true}, {"key": "B", "text": "Sertéshús", "correct": false}, {"key": "C", "text": "Csirkemell", "correct": false}], "audience": {"A": 75, "B": 15, "C": 10}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h018", "question": "Mennyi a normál vérnyomás?", "answers": [{"key": "A", "text": "100/60", "correct": false}, {"key": "B", "text": "120/80", "correct": true}, {"key": "C", "text": "140/90", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "A", "topic": "Egészség"},
-  {"id": "h019", "question": "Mi a stretching?", "answers": [{"key": "A", "text": "Nyújtás", "correct": true}, {"key": "B", "text": "Erősítés", "correct": false}, {"key": "C", "text": "Futás", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h020", "question": "Mi a glükóz?", "answers": [{"key": "A", "text": "Szőlőcukor", "correct": true}, {"key": "B", "text": "Tejcukor", "correct": false}, {"key": "C", "text": "Répacukor", "correct": false}], "audience": {"A": 60, "B": 25, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h021", "question": "Hány kamrája van a szívnek?", "answers": [{"key": "A", "text": "2", "correct": false}, {"key": "B", "text": "4", "correct": true}, {"key": "C", "text": "6", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h022", "question": "Mi a HIIT edzés?", "answers": [{"key": "A", "text": "Magas intenzitású intervallum tréning", "correct": true}, {"key": "B", "text": "Hosszú futás", "correct": false}, {"key": "C", "text": "Jóga típus", "correct": false}], "audience": {"A": 55, "B": 25, "C": 20}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h023", "question": "Mennyi ideig tart az emésztés?", "answers": [{"key": "A", "text": "2-4 óra", "correct": false}, {"key": "B", "text": "6-8 óra", "correct": true}, {"key": "C", "text": "12-24 óra", "correct": false}], "audience": {"A": 30, "B": 50, "C": 20}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h024", "question": "Melyik vércsoport az univerzális donor?", "answers": [{"key": "A", "text": "AB", "correct": false}, {"key": "B", "text": "O", "correct": true}, {"key": "C", "text": "A", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h025", "question": "Hány liternyi vér pumpál át a szív naponta?", "answers": [{"key": "A", "text": "3000 liter", "correct": false}, {"key": "B", "text": "7000 liter", "correct": true}, {"key": "C", "text": "10000 liter", "correct": false}], "audience": {"A": 25, "B": 55, "C": 20}, "third": "C", "topic": "Egészség"},
-  {"id": "h026", "question": "Mi a CrossFit?", "answers": [{"key": "A", "text": "Funkcionális fitnesz program", "correct": true}, {"key": "B", "text": "Futó verseny", "correct": false}, {"key": "C", "text": "Úszás módszer", "correct": false}], "audience": {"A": 60, "B": 22, "C": 18}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h027", "question": "Mennyi fehérje ajánlott naponta sportolóknak?", "answers": [{"key": "A", "text": "0,5-1 g/testsúly kg", "correct": false}, {"key": "B", "text": "1,5-2 g/testsúly kg", "correct": true}, {"key": "C", "text": "3-4 g/testsúly kg", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h028", "question": "Mi a vérszegénység oka?", "answers": [{"key": "A", "text": "Vas hiány", "correct": true}, {"key": "B", "text": "Kalcium hiány", "correct": false}, {"key": "C", "text": "Magnézium hiány", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Egészség"},
-  {"id": "h029", "question": "Hány perc alatt regenerálódik az oxigén a vérben?", "answers": [{"key": "A", "text": "10 perc", "correct": false}, {"key": "B", "text": "20 perc", "correct": true}, {"key": "C", "text": "30 perc", "correct": false}], "audience": {"A": 25, "B": 55, "C": 20}, "third": "C", "topic": "Sport"},
-  {"id": "h030", "question": "Mi a plank gyakorlat?", "answers": [{"key": "A", "text": "核心izom erősítés", "correct": true}, {"key": "B", "text": "Láb gyakorlat", "correct": false}, {"key": "C", "text": "Kar emelés", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h031", "question": "Mennyi cukor ajánlott naponta maximum?", "answers": [{"key": "A", "text": "25-30 g", "correct": true}, {"key": "B", "text": "50-60 g", "correct": false}, {"key": "C", "text": "100 g", "correct": false}], "audience": {"A": 55, "B": 30, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h032", "question": "Melyik szervünk a legnagyobb?", "answers": [{"key": "A", "text": "Máj", "correct": false}, {"key": "B", "text": "Bőr", "correct": true}, {"key": "C", "text": "Tüdő", "correct": false}], "audience": {"A": 30, "B": 55, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h033", "question": "Mi a burpee gyakorlat?", "answers": [{"key": "A", "text": "Teljes test gyakorlat", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Nyújtás", "correct": false}], "audience": {"A": 60, "B": 22, "C": 18}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h034", "question": "Hány fog van egy felnőttnek?", "answers": [{"key": "A", "text": "28", "correct": false}, {"key": "B", "text": "32", "correct": true}, {"key": "C", "text": "36", "correct": false}], "audience": {"A": 25, "B": 65, "C": 10}, "third": "C", "topic": "Egészség"},
-  {"id": "h035", "question": "Mi a makro tápanyag?", "answers": [{"key": "A", "text": "Fehérje, szénhidrát, zsír", "correct": true}, {"key": "B", "text": "Vitaminok", "correct": false}, {"key": "C", "text": "Ásványi anyagok", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h036", "question": "Mennyi a szív nyugalmi pulzusa?", "answers": [{"key": "A", "text": "40-50", "correct": false}, {"key": "B", "text": "60-80", "correct": true}, {"key": "C", "text": "90-100", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h037", "question": "Mi a deadlift gyakorlat?", "answers": [{"key": "A", "text": "Felhúzás", "correct": true}, {"key": "B", "text": "Fekvenyomás", "correct": false}, {"key": "C", "text": "Guggolás", "correct": false}], "audience": {"A": 55, "B": 25, "C": 20}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h038", "question": "Mennyi folyadék van az agyban?", "answers": [{"key": "A", "text": "50%", "correct": false}, {"key": "B", "text": "73%", "correct": true}, {"key": "C", "text": "90%", "correct": false}], "audience": {"A": 30, "B": 50, "C": 20}, "third": "C", "topic": "Egészség"},
-  {"id": "h039", "question": "Mi a squat?", "answers": [{"key": "A", "text": "Guggolás", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Fekvenyomás", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h040", "question": "Melyik vitamin oldódik zsírban?", "answers": [{"key": "A", "text": "C-vitamin", "correct": false}, {"key": "B", "text": "A-vitamin", "correct": true}, {"key": "C", "text": "B-vitamin", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h041", "question": "Hány izület van az emberi testben?", "answers": [{"key": "A", "text": "200", "correct": false}, {"key": "B", "text": "360", "correct": true}, {"key": "C", "text": "500", "correct": false}], "audience": {"A": 30, "B": 50, "C": 20}, "third": "C", "topic": "Egészség"},
-  {"id": "h042", "question": "Mi a bench press?", "answers": [{"key": "A", "text": "Fekvenyomás", "correct": true}, {"key": "B", "text": "Evezés", "correct": false}, {"key": "C", "text": "Guggolás", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h043", "question": "Mennyi a max pulzusszám felnőttnek?", "answers": [{"key": "A", "text": "180", "correct": false}, {"key": "B", "text": "220 - életkor", "correct": true}, {"key": "C", "text": "200", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Sport"},
-  {"id": "h044", "question": "Mi a koleszterin?", "answers": [{"key": "A", "text": "Zsírszerű anyag", "correct": true}, {"key": "B", "text": "Fehérje", "correct": false}, {"key": "C", "text": "Vitamin", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h045", "question": "Mennyi ideig tart egy spinning óra?", "answers": [{"key": "A", "text": "20-30 perc", "correct": false}, {"key": "B", "text": "45-60 perc", "correct": true}, {"key": "C", "text": "90 perc", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h046", "question": "Mi a glicémiás index?", "answers": [{"key": "A", "text": "Vércukorszint emelkedés", "correct": true}, {"key": "B", "text": "Zsírtartalom", "correct": false}, {"key": "C", "text": "Fehérje arány", "correct": false}], "audience": {"A": 55, "B": 25, "C": 20}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h047", "question": "Hány liter levegőt lélegzünk be naponta?", "answers": [{"key": "A", "text": "5000 liter", "correct": false}, {"key": "B", "text": "11000 liter", "correct": true}, {"key": "C", "text": "20000 liter", "correct": false}], "audience": {"A": 25, "B": 55, "C": 20}, "third": "C", "topic": "Egészség"},
-  {"id": "h048", "question": "Mi a pilates?", "answers": [{"key": "A", "text": "Torna módszer", "correct": true}, {"key": "B", "text": "Futás stílus", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h049", "question": "Mennyi a napi só bevitel maximum?", "answers": [{"key": "A", "text": "2-3 g", "correct": false}, {"key": "B", "text": "5-6 g", "correct": true}, {"key": "C", "text": "10 g", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h050", "question": "Melyik hormon szabályozza az éhségérzetet?", "answers": [{"key": "A", "text": "Ghrelin", "correct": true}, {"key": "B", "text": "Inzulin", "correct": false}, {"key": "C", "text": "Adrenalin", "correct": false}], "audience": {"A": 50, "B": 30, "C": 20}, "third": "C", "topic": "Egészség"},
-  {"id": "h051", "question": "Mi a jóga?", "answers": [{"key": "A", "text": "Test-lélek gyakorlat", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Súlyzós edzés", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h052", "question": "Mennyi rosttartalom ajánlott naponta?", "answers": [{"key": "A", "text": "10-15 g", "correct": false}, {"key": "B", "text": "25-30 g", "correct": true}, {"key": "C", "text": "50 g", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h053", "question": "Hány perc a teljes alvási ciklus?", "answers": [{"key": "A", "text": "60 perc", "correct": false}, {"key": "B", "text": "90 perc", "correct": true}, {"key": "C", "text": "120 perc", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h054", "question": "Mi a TRX edzés?", "answers": [{"key": "A", "text": "Függeszkedő edzés", "correct": true}, {"key": "B", "text": "Futópad", "correct": false}, {"key": "C", "text": "Spinning", "correct": false}], "audience": {"A": 55, "B": 25, "C": 20}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h055", "question": "Mennyi antioxidáns van a bogyós gyümölcsökben?", "answers": [{"key": "A", "text": "Kevés", "correct": false}, {"key": "B", "text": "Magas", "correct": true}, {"key": "C", "text": "Nincs", "correct": false}], "audience": {"A": 15, "B": 70, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h056", "question": "Hány liter oxigént fogyaszt az agy?", "answers": [{"key": "A", "text": "20%", "correct": true}, {"key": "B", "text": "10%", "correct": false}, {"key": "C", "text": "5%", "correct": false}], "audience": {"A": 55, "B": 28, "C": 17}, "third": "C", "topic": "Egészség"},
-  {"id": "h057", "question": "Mi a zumba?", "answers": [{"key": "A", "text": "Táncos fitnesz", "correct": true}, {"key": "B", "text": "Evezés", "correct": false}, {"key": "C", "text": "Harcművészet", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h058", "question": "Mennyi az ajánlott napi kalóriabevitel nőknek?", "answers": [{"key": "A", "text": "1500 kcal", "correct": false}, {"key": "B", "text": "2000 kcal", "correct": true}, {"key": "C", "text": "2500 kcal", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h059", "question": "Hány vese van az embernek?", "answers": [{"key": "A", "text": "1", "correct": false}, {"key": "B", "text": "2", "correct": true}, {"key": "C", "text": "3", "correct": false}], "audience": {"A": 10, "B": 80, "C": 10}, "third": "C", "topic": "Egészség"},
-  {"id": "h060", "question": "Mi a tabata?", "answers": [{"key": "A", "text": "Intenzív intervallum edzés", "correct": true}, {"key": "B", "text": "Jóga típus", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}], "audience": {"A": 60, "B": 22, "C": 18}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h061", "question": "Mi a prebiotikum?", "answers": [{"key": "A", "text": "Bélflóra tápláló rost", "correct": true}, {"key": "B", "text": "Vitamin", "correct": false}, {"key": "C", "text": "Fehérje", "correct": false}], "audience": {"A": 55, "B": 25, "C": 20}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h062", "question": "Mennyi a normál vércukorszint?", "answers": [{"key": "A", "text": "3,9-5,6 mmol/l", "correct": true}, {"key": "B", "text": "6-8 mmol/l", "correct": false}, {"key": "C", "text": "8-10 mmol/l", "correct": false}], "audience": {"A": 60, "B": 25, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h063", "question": "Mi a kettlebell?", "answers": [{"key": "A", "text": "Orosz súlyzó", "correct": true}, {"key": "B", "text": "Futópad", "correct": false}, {"key": "C", "text": "Evezőgép", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h064", "question": "Mennyi transzzsír ajánlott naponta?", "answers": [{"key": "A", "text": "0-1%", "correct": true}, {"key": "B", "text": "5%", "correct": false}, {"key": "C", "text": "10%", "correct": false}], "audience": {"A": 55, "B": 28, "C": 17}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h065", "question": "Hány borda van az embernek?", "answers": [{"key": "A", "text": "20", "correct": false}, {"key": "B", "text": "24", "correct": true}, {"key": "C", "text": "28", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h066", "question": "Mi a body pump?", "answers": [{"key": "A", "text": "Csoportos súlyzós óra", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h067", "question": "Mi az antioxidáns?", "answers": [{"key": "A", "text": "Sejteket védő anyag", "correct": true}, {"key": "B", "text": "Vitamin", "correct": false}, {"key": "C", "text": "Fehérje", "correct": false}], "audience": {"A": 60, "B": 22, "C": 18}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h068", "question": "Mennyi a vérplazma?", "answers": [{"key": "A", "text": "40%", "correct": false}, {"key": "B", "text": "55%", "correct": true}, {"key": "C", "text": "70%", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h069", "question": "Mi a foam rolling?", "answers": [{"key": "A", "text": "Izom lazítás habhengerrel", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h070", "question": "Mennyi koffein van egy kávéban?", "answers": [{"key": "A", "text": "50 mg", "correct": false}, {"key": "B", "text": "95 mg", "correct": true}, {"key": "C", "text": "200 mg", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h071", "question": "Hány gerinccsigolyánk van?", "answers": [{"key": "A", "text": "24", "correct": false}, {"key": "B", "text": "33", "correct": true}, {"key": "C", "text": "40", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h072", "question": "Mi a box jump?", "answers": [{"key": "A", "text": "Dobozra ugrás", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h073", "question": "Mi a fruktóz?", "answers": [{"key": "A", "text": "Gyümölcscukor", "correct": true}, {"key": "B", "text": "Tejcukor", "correct": false}, {"key": "C", "text": "Répacukor", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h074", "question": "Mennyi a nők testzsír százaléka?", "answers": [{"key": "A", "text": "10-15%", "correct": false}, {"key": "B", "text": "20-25%", "correct": true}, {"key": "C", "text": "35-40%", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h075", "question": "Mi a lunges?", "answers": [{"key": "A", "text": "Kitörés", "correct": true}, {"key": "B", "text": "Fekvenyomás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h076", "question": "Mennyi E-vitamin ajánlott naponta?", "answers": [{"key": "A", "text": "5 mg", "correct": false}, {"key": "B", "text": "15 mg", "correct": true}, {"key": "C", "text": "30 mg", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h077", "question": "Hány liter vizet tartalmaz a test?", "answers": [{"key": "A", "text": "40%", "correct": false}, {"key": "B", "text": "60%", "correct": true}, {"key": "C", "text": "80%", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h078", "question": "Mi a battle rope?", "answers": [{"key": "A", "text": "Kötelező edzés", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}], "audience": {"A": 60, "B": 22, "C": 18}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h079", "question": "Mi a keto diéta?", "answers": [{"key": "A", "text": "Alacsony szénhidrát", "correct": true}, {"key": "B", "text": "Magas zsír", "correct": false}, {"key": "C", "text": "Vegán", "correct": false}], "audience": {"A": 55, "B": 28, "C": 17}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h080", "question": "Mennyi a normál testhőmérséklet?", "answers": [{"key": "A", "text": "36°C", "correct": false}, {"key": "B", "text": "36,6°C", "correct": true}, {"key": "C", "text": "37,5°C", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h081", "question": "Mi a mountain climber?", "answers": [{"key": "A", "text": "Hegymászó gyakorlat", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h082", "question": "Mennyi vas kell naponta nőknek?", "answers": [{"key": "A", "text": "8 mg", "correct": false}, {"key": "B", "text": "18 mg", "correct": true}, {"key": "C", "text": "30 mg", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h083", "question": "Hány izom van az arcban?", "answers": [{"key": "A", "text": "23", "correct": false}, {"key": "B", "text": "43", "correct": true}, {"key": "C", "text": "63", "correct": false}], "audience": {"A": 25, "B": 55, "C": 20}, "third": "C", "topic": "Egészség"},
-  {"id": "h084", "question": "Mi a wall sit?", "answers": [{"key": "A", "text": "Falnak dőlés guggolva", "correct": true}, {"key": "B", "text": "Fekvenyomás", "correct": false}, {"key": "C", "text": "Futás", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h085", "question": "Mi a paleó diéta?", "answers": [{"key": "A", "text": "Őskori táplálkozás", "correct": true}, {"key": "B", "text": "Vegán", "correct": false}, {"key": "C", "text": "Keto", "correct": false}], "audience": {"A": 60, "B": 22, "C": 18}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h086", "question": "Mennyi a normál koleszterinszint?", "answers": [{"key": "A", "text": "3-5 mmol/l", "correct": true}, {"key": "B", "text": "6-8 mmol/l", "correct": false}, {"key": "C", "text": "9-10 mmol/l", "correct": false}], "audience": {"A": 60, "B": 25, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h087", "question": "Mi a jumping jack?", "answers": [{"key": "A", "text": "Ugrógyakorlat", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h088", "question": "Mennyi kalcium kell naponta?", "answers": [{"key": "A", "text": "500 mg", "correct": false}, {"key": "B", "text": "1000 mg", "correct": true}, {"key": "C", "text": "2000 mg", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h089", "question": "Hány ujjperc van?", "answers": [{"key": "A", "text": "10", "correct": false}, {"key": "B", "text": "14", "correct": true}, {"key": "C", "text": "20", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h090", "question": "Mi a russian twist?", "answers": [{"key": "A", "text": "Törzs csavarás", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h091", "question": "Mi az intermittent fasting?", "answers": [{"key": "A", "text": "Időszakos böjt", "correct": true}, {"key": "B", "text": "Vegán", "correct": false}, {"key": "C", "text": "Keto", "correct": false}], "audience": {"A": 60, "B": 22, "C": 18}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h092", "question": "Mennyi a normál légzésszám?", "answers": [{"key": "A", "text": "8-10/perc", "correct": false}, {"key": "B", "text": "12-20/perc", "correct": true}, {"key": "C", "text": "25-30/perc", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h093", "question": "Mi a bicycle crunch?", "answers": [{"key": "A", "text": "Bicikli hasprés", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h094", "question": "Mennyi magnézium kell naponta?", "answers": [{"key": "A", "text": "100 mg", "correct": false}, {"key": "B", "text": "400 mg", "correct": true}, {"key": "C", "text": "800 mg", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h095", "question": "Hány hormon van a testben?", "answers": [{"key": "A", "text": "20", "correct": false}, {"key": "B", "text": "50+", "correct": true}, {"key": "C", "text": "10", "correct": false}], "audience": {"A": 25, "B": 60, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h096", "question": "Mi a superman gyakorlat?", "answers": [{"key": "A", "text": "Hason fekvő hát gyakorlat", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}], "audience": {"A": 65, "B": 20, "C": 15}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h097", "question": "Mi a mediterrán diéta?", "answers": [{"key": "A", "text": "Tengeri táplálkozás", "correct": true}, {"key": "B", "text": "Vegán", "correct": false}, {"key": "C", "text": "Keto", "correct": false}], "audience": {"A": 60, "B": 22, "C": 18}, "third": "C", "topic": "Táplálkozás"},
-  {"id": "h098", "question": "Mennyi a normál hemoglobin szint?", "answers": [{"key": "A", "text": "10-12 g/dl", "correct": false}, {"key": "B", "text": "12-16 g/dl", "correct": true}, {"key": "C", "text": "18-20 g/dl", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Egészség"},
-  {"id": "h099", "question": "Mi a side plank?", "answers": [{"key": "A", "text": "Oldalsó plank", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}], "audience": {"A": 70, "B": 18, "C": 12}, "third": "C", "topic": "Fitnesz"},
-  {"id": "h100", "question": "Mennyi B12-vitamin kell naponta?", "answers": [{"key": "A", "text": "1,5 mcg", "correct": false}, {"key": "B", "text": "2,4 mcg", "correct": true}, {"key": "C", "text": "5 mcg", "correct": false}], "audience": {"A": 20, "B": 65, "C": 15}, "third": "C", "topic": "Táplálkozás"}
+  {
+    "id": "h001",
+    "question": "Hány liter a felnőtt ember vérkészlete?",
+    "answers": [{"key": "A", "text": "3-4", "correct": false}, {"key": "B", "text": "5-6", "correct": true}, {"key": "C", "text": "7-8", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h002",
+    "question": "Hány csontvázizma van az embernek?",
+    "answers": [{"key": "A", "text": "430", "correct": false}, {"key": "B", "text": "530", "correct": false}, {"key": "C", "text": "630", "correct": true}],
+    "audience": {"A": 25, "B": 30, "C": 45},
+    "third": "A",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h003",
+    "question": "Melyik vitamin hiánya okoz szkorbut (skorbut)?",
+    "answers": [{"key": "A", "text": "C-vitamin", "correct": true}, {"key": "B", "text": "D-vitamin", "correct": false}, {"key": "C", "text": "B12-vitamin", "correct": false}],
+    "audience": {"A": 70, "B": 18, "C": 12},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h004",
+    "question": "Hány fokon tartjuk az emberi test normál hőmérsékletét?",
+    "answers": [{"key": "A", "text": "36,5°C", "correct": true}, {"key": "B", "text": "37°C", "correct": false}, {"key": "C", "text": "37,5°C", "correct": false}],
+    "audience": {"A": 55, "B": 35, "C": 10},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h005",
+    "question": "Mi az aerob edzés?",
+    "answers": [{"key": "A", "text": "Súlyzós edzés", "correct": false}, {"key": "B", "text": "Oxigénnel végzett mozgás", "correct": true}, {"key": "C", "text": "Nyújtás", "correct": false}],
+    "audience": {"A": 20, "B": 60, "C": 20},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h006",
+    "question": "Mennyi a felnőtt napi ajánlott vízfogyasztás?",
+    "answers": [{"key": "A", "text": "1-1,5 liter", "correct": false}, {"key": "B", "text": "2-2,5 liter", "correct": true}, {"key": "C", "text": "3-4 liter", "correct": false}],
+    "audience": {"A": 15, "B": 70, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h007",
+    "question": "Melyik tápanyag építi az izmokat?",
+    "answers": [{"key": "A", "text": "Szénhidrát", "correct": false}, {"key": "B", "text": "Fehérje", "correct": true}, {"key": "C", "text": "Zsír", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h008",
+    "question": "Hány csontunk van felnőttkorban?",
+    "answers": [{"key": "A", "text": "186", "correct": false}, {"key": "B", "text": "206", "correct": true}, {"key": "C", "text": "226", "correct": false}],
+    "audience": {"A": 25, "B": 55, "C": 20},
+    "third": "A",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h009",
+    "question": "Mi a BMI?",
+    "answers": [{"key": "A", "text": "Testtömeg index", "correct": true}, {"key": "B", "text": "Vérnyomás mérő", "correct": false}, {"key": "C", "text": "Koleszterin szint", "correct": false}],
+    "audience": {"A": 75, "B": 15, "C": 10},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h010",
+    "question": "Melyik szerv termeli az inzulint?",
+    "answers": [{"key": "A", "text": "Máj", "correct": false}, {"key": "B", "text": "Hasnyálmirigy", "correct": true}, {"key": "C", "text": "Lép", "correct": false}],
+    "audience": {"A": 30, "B": 55, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h011",
+    "question": "Mennyi ideig ajánlott kardió edzést végezni naponta?",
+    "answers": [{"key": "A", "text": "15-20 perc", "correct": false}, {"key": "B", "text": "30-45 perc", "correct": true}, {"key": "C", "text": "60-90 perc", "correct": false}],
+    "audience": {"A": 20, "B": 60, "C": 20},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h012",
+    "question": "Mi a kalória?",
+    "answers": [{"key": "A", "text": "Energia mértékegység", "correct": true}, {"key": "B", "text": "Vitamin típus", "correct": false}, {"key": "C", "text": "Fehérje", "correct": false}],
+    "audience": {"A": 70, "B": 18, "C": 12},
+    "third": "B",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h013",
+    "question": "Melyik vitamin segíti a kalcium felszívódását?",
+    "answers": [{"key": "A", "text": "A-vitamin", "correct": false}, {"key": "B", "text": "D-vitamin", "correct": true}, {"key": "C", "text": "E-vitamin", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h014",
+    "question": "Hány óra alvás ajánlott felnőtteknek?",
+    "answers": [{"key": "A", "text": "5-6 óra", "correct": false}, {"key": "B", "text": "7-9 óra", "correct": true}, {"key": "C", "text": "10-12 óra", "correct": false}],
+    "audience": {"A": 15, "B": 70, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h015",
+    "question": "Mi a laktóz?",
+    "answers": [{"key": "A", "text": "Tejcukor", "correct": true}, {"key": "B", "text": "Gyümölcscukor", "correct": false}, {"key": "C", "text": "Répacukor", "correct": false}],
+    "audience": {"A": 65, "B": 22, "C": 13},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h016",
+    "question": "Melyik izom a legerősebb a testben?",
+    "answers": [{"key": "A", "text": "Kétfejű karizom", "correct": false}, {"key": "B", "text": "Combizom", "correct": false}, {"key": "C", "text": "Rágóizom", "correct": true}],
+    "audience": {"A": 30, "B": 40, "C": 30},
+    "third": "A",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h017",
+    "question": "Mi az omega-3 forrása?",
+    "answers": [{"key": "A", "text": "Hal", "correct": true}, {"key": "B", "text": "Sertéshús", "correct": false}, {"key": "C", "text": "Csirkemell", "correct": false}],
+    "audience": {"A": 75, "B": 15, "C": 10},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h018",
+    "question": "Mennyi a normál vérnyomás?",
+    "answers": [{"key": "A", "text": "100/60", "correct": false}, {"key": "B", "text": "120/80", "correct": true}, {"key": "C", "text": "140/90", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "A",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h019",
+    "question": "Mi a stretching?",
+    "answers": [{"key": "A", "text": "Nyújtás", "correct": true}, {"key": "B", "text": "Erősítés", "correct": false}, {"key": "C", "text": "Futás", "correct": false}],
+    "audience": {"A": 70, "B": 18, "C": 12},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h020",
+    "question": "Mi a glükóz?",
+    "answers": [{"key": "A", "text": "Szőlőcukor", "correct": true}, {"key": "B", "text": "Tejcukor", "correct": false}, {"key": "C", "text": "Répacukor", "correct": false}],
+    "audience": {"A": 60, "B": 25, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h021",
+    "question": "Hány kamrája van a szívnek?",
+    "answers": [{"key": "A", "text": "2", "correct": false}, {"key": "B", "text": "4", "correct": true}, {"key": "C", "text": "6", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h022",
+    "question": "Mi a HIIT edzés?",
+    "answers": [{"key": "A", "text": "Magas intenzitású intervallum tréning", "correct": true}, {"key": "B", "text": "Hosszú futás", "correct": false}, {"key": "C", "text": "Jóga típus", "correct": false}],
+    "audience": {"A": 55, "B": 25, "C": 20},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h023",
+    "question": "Mennyi ideig tart az emésztés?",
+    "answers": [{"key": "A", "text": "2-4 óra", "correct": false}, {"key": "B", "text": "6-8 óra", "correct": true}, {"key": "C", "text": "12-24 óra", "correct": false}],
+    "audience": {"A": 30, "B": 50, "C": 20},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h024",
+    "question": "Melyik vércsoport az univerzális donor?",
+    "answers": [{"key": "A", "text": "AB", "correct": false}, {"key": "B", "text": "O", "correct": true}, {"key": "C", "text": "A", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h025",
+    "question": "Hány liternyi vér pumpál át a szív naponta?",
+    "answers": [{"key": "A", "text": "3000 liter", "correct": false}, {"key": "B", "text": "7000 liter", "correct": true}, {"key": "C", "text": "10000 liter", "correct": false}],
+    "audience": {"A": 25, "B": 55, "C": 20},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h026",
+    "question": "Mi a CrossFit?",
+    "answers": [{"key": "A", "text": "Funkcionális fitnesz program", "correct": true}, {"key": "B", "text": "Futó verseny", "correct": false}, {"key": "C", "text": "Úszás módszer", "correct": false}],
+    "audience": {"A": 60, "B": 22, "C": 18},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h027",
+    "question": "Mennyi fehérje ajánlott naponta sportolóknak?",
+    "answers": [{"key": "A", "text": "0,5-1 g/testsúly kg", "correct": false}, {"key": "B", "text": "1,5-2 g/testsúly kg", "correct": true}, {"key": "C", "text": "3-4 g/testsúly kg", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h028",
+    "question": "Mi a vérszegénység oka?",
+    "answers": [{"key": "A", "text": "Vas hiány", "correct": true}, {"key": "B", "text": "Kalcium hiány", "correct": false}, {"key": "C", "text": "Magnézium hiány", "correct": false}],
+    "audience": {"A": 70, "B": 18, "C": 12},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h029",
+    "question": "Hány perc alatt regenerálódik az oxigén a vérben?",
+    "answers": [{"key": "A", "text": "10 perc", "correct": false}, {"key": "B", "text": "20 perc", "correct": true}, {"key": "C", "text": "30 perc", "correct": false}],
+    "audience": {"A": 25, "B": 55, "C": 20},
+    "third": "C",
+    "topic": "Sport"
+  },
+  {
+    "id": "h030",
+    "question": "Mi a plank gyakorlat?",
+    "answers": [{"key": "A", "text": "核心izom erősítés", "correct": true}, {"key": "B", "text": "Láb gyakorlat", "correct": false}, {"key": "C", "text": "Kar emelés", "correct": false}],
+    "audience": {"A": 65, "B": 20, "C": 15},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h031",
+    "question": "Mennyi cukor ajánlott naponta maximum?",
+    "answers": [{"key": "A", "text": "25-30 g", "correct": true}, {"key": "B", "text": "50-60 g", "correct": false}, {"key": "C", "text": "100 g", "correct": false}],
+    "audience": {"A": 55, "B": 30, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h032",
+    "question": "Melyik szervünk a legnagyobb?",
+    "answers": [{"key": "A", "text": "Máj", "correct": false}, {"key": "B", "text": "Bőr", "correct": true}, {"key": "C", "text": "Tüdő", "correct": false}],
+    "audience": {"A": 30, "B": 55, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h033",
+    "question": "Mi a burpee gyakorlat?",
+    "answers": [{"key": "A", "text": "Teljes test gyakorlat", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Nyújtás", "correct": false}],
+    "audience": {"A": 60, "B": 22, "C": 18},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h034",
+    "question": "Hány fog van egy felnőttnek?",
+    "answers": [{"key": "A", "text": "28", "correct": false}, {"key": "B", "text": "32", "correct": true}, {"key": "C", "text": "36", "correct": false}],
+    "audience": {"A": 25, "B": 65, "C": 10},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h035",
+    "question": "Mi a makro tápanyag?",
+    "answers": [{"key": "A", "text": "Fehérje, szénhidrát, zsír", "correct": true}, {"key": "B", "text": "Vitaminok", "correct": false}, {"key": "C", "text": "Ásványi anyagok", "correct": false}],
+    "audience": {"A": 70, "B": 18, "C": 12},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h036",
+    "question": "Mennyi a szív nyugalmi pulzusa?",
+    "answers": [{"key": "A", "text": "40-50", "correct": false}, {"key": "B", "text": "60-80", "correct": true}, {"key": "C", "text": "90-100", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h037",
+    "question": "Mi a deadlift gyakorlat?",
+    "answers": [{"key": "A", "text": "Felhúzás", "correct": true}, {"key": "B", "text": "Fekvenyomás", "correct": false}, {"key": "C", "text": "Guggolás", "correct": false}],
+    "audience": {"A": 55, "B": 25, "C": 20},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h038",
+    "question": "Mennyi folyadék van az agyban?",
+    "answers": [{"key": "A", "text": "50%", "correct": false}, {"key": "B", "text": "73%", "correct": true}, {"key": "C", "text": "90%", "correct": false}],
+    "audience": {"A": 30, "B": 50, "C": 20},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h039",
+    "question": "Mi a squat?",
+    "answers": [{"key": "A", "text": "Guggolás", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Fekvenyomás", "correct": false}],
+    "audience": {"A": 70, "B": 18, "C": 12},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h040",
+    "question": "Melyik vitamin oldódik zsírban?",
+    "answers": [{"key": "A", "text": "C-vitamin", "correct": false}, {"key": "B", "text": "A-vitamin", "correct": true}, {"key": "C", "text": "B-vitamin", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h041",
+    "question": "Hány izület van az emberi testben?",
+    "answers": [{"key": "A", "text": "200", "correct": false}, {"key": "B", "text": "360", "correct": true}, {"key": "C", "text": "500", "correct": false}],
+    "audience": {"A": 30, "B": 50, "C": 20},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h042",
+    "question": "Mi a bench press?",
+    "answers": [{"key": "A", "text": "Fekvenyomás", "correct": true}, {"key": "B", "text": "Evezés", "correct": false}, {"key": "C", "text": "Guggolás", "correct": false}],
+    "audience": {"A": 65, "B": 20, "C": 15},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h043",
+    "question": "Mennyi a max pulzusszám felnőttnek?",
+    "answers": [{"key": "A", "text": "180", "correct": false}, {"key": "B", "text": "220 - életkor", "correct": true}, {"key": "C", "text": "200", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Sport"
+  },
+  {
+    "id": "h044",
+    "question": "Mi a koleszterin?",
+    "answers": [{"key": "A", "text": "Zsírszerű anyag", "correct": true}, {"key": "B", "text": "Fehérje", "correct": false}, {"key": "C", "text": "Vitamin", "correct": false}],
+    "audience": {"A": 65, "B": 20, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h045",
+    "question": "Mennyi ideig tart egy spinning óra?",
+    "answers": [{"key": "A", "text": "20-30 perc", "correct": false}, {"key": "B", "text": "45-60 perc", "correct": true}, {"key": "C", "text": "90 perc", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h046",
+    "question": "Mi a glicémiás index?",
+    "answers": [{"key": "A", "text": "Vércukorszint emelkedés", "correct": true}, {"key": "B", "text": "Zsírtartalom", "correct": false}, {"key": "C", "text": "Fehérje arány", "correct": false}],
+    "audience": {"A": 55, "B": 25, "C": 20},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h047",
+    "question": "Hány liter levegőt lélegzünk be naponta?",
+    "answers": [{"key": "A", "text": "5000 liter", "correct": false}, {"key": "B", "text": "11000 liter", "correct": true}, {"key": "C", "text": "20000 liter", "correct": false}],
+    "audience": {"A": 25, "B": 55, "C": 20},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h048",
+    "question": "Mi a pilates?",
+    "answers": [{"key": "A", "text": "Torna módszer", "correct": true}, {"key": "B", "text": "Futás stílus", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}],
+    "audience": {"A": 65, "B": 20, "C": 15},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h049",
+    "question": "Mennyi a napi só bevitel maximum?",
+    "answers": [{"key": "A", "text": "2-3 g", "correct": false}, {"key": "B", "text": "5-6 g", "correct": true}, {"key": "C", "text": "10 g", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h050",
+    "question": "Melyik hormon szabályozza az éhségérzetet?",
+    "answers": [{"key": "A", "text": "Ghrelin", "correct": true}, {"key": "B", "text": "Inzulin", "correct": false}, {"key": "C", "text": "Adrenalin", "correct": false}],
+    "audience": {"A": 50, "B": 30, "C": 20},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h051",
+    "question": "Mi a jóga?",
+    "answers": [{"key": "A", "text": "Test-lélek gyakorlat", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Súlyzós edzés", "correct": false}],
+    "audience": {"A": 70, "B": 18, "C": 12},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h052",
+    "question": "Mennyi rosttartalom ajánlott naponta?",
+    "answers": [{"key": "A", "text": "10-15 g", "correct": false}, {"key": "B", "text": "25-30 g", "correct": true}, {"key": "C", "text": "50 g", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h053",
+    "question": "Hány perc a teljes alvási ciklus?",
+    "answers": [{"key": "A", "text": "60 perc", "correct": false}, {"key": "B", "text": "90 perc", "correct": true}, {"key": "C", "text": "120 perc", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h054",
+    "question": "Mi a TRX edzés?",
+    "answers": [{"key": "A", "text": "Függeszkedő edzés", "correct": true}, {"key": "B", "text": "Futópad", "correct": false}, {"key": "C", "text": "Spinning", "correct": false}],
+    "audience": {"A": 55, "B": 25, "C": 20},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h055",
+    "question": "Mennyi antioxidáns van a bogyós gyümölcsökben?",
+    "answers": [{"key": "A", "text": "Kevés", "correct": false}, {"key": "B", "text": "Magas", "correct": true}, {"key": "C", "text": "Nincs", "correct": false}],
+    "audience": {"A": 15, "B": 70, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h056",
+    "question": "Hány liter oxigént fogyaszt az agy?",
+    "answers": [{"key": "A", "text": "20%", "correct": true}, {"key": "B", "text": "10%", "correct": false}, {"key": "C", "text": "5%", "correct": false}],
+    "audience": {"A": 55, "B": 28, "C": 17},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h057",
+    "question": "Mi a zumba?",
+    "answers": [{"key": "A", "text": "Táncos fitnesz", "correct": true}, {"key": "B", "text": "Evezés", "correct": false}, {"key": "C", "text": "Harcművészet", "correct": false}],
+    "audience": {"A": 70, "B": 18, "C": 12},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h058",
+    "question": "Mennyi az ajánlott napi kalóriabevitel nőknek?",
+    "answers": [{"key": "A", "text": "1500 kcal", "correct": false}, {"key": "B", "text": "2000 kcal", "correct": true}, {"key": "C", "text": "2500 kcal", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h059",
+    "question": "Hány vese van az embernek?",
+    "answers": [{"key": "A", "text": "1", "correct": false}, {"key": "B", "text": "2", "correct": true}, {"key": "C", "text": "3", "correct": false}],
+    "audience": {"A": 10, "B": 80, "C": 10},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h060",
+    "question": "Mi a tabata?",
+    "answers": [{"key": "A", "text": "Intenzív intervallum edzés", "correct": true}, {"key": "B", "text": "Jóga típus", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}],
+    "audience": {"A": 60, "B": 22, "C": 18},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h061",
+    "question": "Mi a prebiotikum?",
+    "answers": [{"key": "A", "text": "Bélflóra tápláló rost", "correct": true}, {"key": "B", "text": "Vitamin", "correct": false}, {"key": "C", "text": "Fehérje", "correct": false}],
+    "audience": {"A": 55, "B": 25, "C": 20},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h062",
+    "question": "Mennyi a normál vércukorszint?",
+    "answers": [{"key": "A", "text": "3,9-5,6 mmol/l", "correct": true}, {"key": "B", "text": "6-8 mmol/l", "correct": false}, {"key": "C", "text": "8-10 mmol/l", "correct": false}],
+    "audience": {"A": 60, "B": 25, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h063",
+    "question": "Mi a kettlebell?",
+    "answers": [{"key": "A", "text": "Orosz súlyzó", "correct": true}, {"key": "B", "text": "Futópad", "correct": false}, {"key": "C", "text": "Evezőgép", "correct": false}],
+    "audience": {"A": 65, "B": 20, "C": 15},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h064",
+    "question": "Mennyi transzzsír ajánlott naponta?",
+    "answers": [{"key": "A", "text": "0-1%", "correct": true}, {"key": "B", "text": "5%", "correct": false}, {"key": "C", "text": "10%", "correct": false}],
+    "audience": {"A": 55, "B": 28, "C": 17},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h065",
+    "question": "Hány borda van az embernek?",
+    "answers": [{"key": "A", "text": "20", "correct": false}, {"key": "B", "text": "24", "correct": true}, {"key": "C", "text": "28", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h066",
+    "question": "Mi a body pump?",
+    "answers": [{"key": "A", "text": "Csoportos súlyzós óra", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}],
+    "audience": {"A": 65, "B": 20, "C": 15},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h067",
+    "question": "Mi az antioxidáns?",
+    "answers": [{"key": "A", "text": "Sejteket védő anyag", "correct": true}, {"key": "B", "text": "Vitamin", "correct": false}, {"key": "C", "text": "Fehérje", "correct": false}],
+    "audience": {"A": 60, "B": 22, "C": 18},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h068",
+    "question": "Mennyi a vérplazma?",
+    "answers": [{"key": "A", "text": "40%", "correct": false}, {"key": "B", "text": "55%", "correct": true}, {"key": "C", "text": "70%", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h069",
+    "question": "Mi a foam rolling?",
+    "answers": [{"key": "A", "text": "Izom lazítás habhengerrel", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}],
+    "audience": {"A": 65, "B": 20, "C": 15},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h070",
+    "question": "Mennyi koffein van egy kávéban?",
+    "answers": [{"key": "A", "text": "50 mg", "correct": false}, {"key": "B", "text": "95 mg", "correct": true}, {"key": "C", "text": "200 mg", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h071",
+    "question": "Hány gerinccsigolyánk van?",
+    "answers": [{"key": "A", "text": "24", "correct": false}, {"key": "B", "text": "33", "correct": true}, {"key": "C", "text": "40", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h072",
+    "question": "Mi a box jump?",
+    "answers": [{"key": "A", "text": "Dobozra ugrás", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}],
+    "audience": {"A": 65, "B": 20, "C": 15},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h073",
+    "question": "Mi a fruktóz?",
+    "answers": [{"key": "A", "text": "Gyümölcscukor", "correct": true}, {"key": "B", "text": "Tejcukor", "correct": false}, {"key": "C", "text": "Répacukor", "correct": false}],
+    "audience": {"A": 70, "B": 18, "C": 12},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h074",
+    "question": "Mennyi a nők testzsír százaléka?",
+    "answers": [{"key": "A", "text": "10-15%", "correct": false}, {"key": "B", "text": "20-25%", "correct": true}, {"key": "C", "text": "35-40%", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h075",
+    "question": "Mi a lunges?",
+    "answers": [{"key": "A", "text": "Kitörés", "correct": true}, {"key": "B", "text": "Fekvenyomás", "correct": false}, {"key": "C", "text": "Evezés", "correct": false}],
+    "audience": {"A": 65, "B": 20, "C": 15},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h076",
+    "question": "Mennyi E-vitamin ajánlott naponta?",
+    "answers": [{"key": "A", "text": "5 mg", "correct": false}, {"key": "B", "text": "15 mg", "correct": true}, {"key": "C", "text": "30 mg", "correct": false}],
+    "audience": {"A": 20, "B": 65, "C": 15},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h077",
+    "question": "Hány liter vizet tartalmaz a test?",
+    "answers": [{"key": "A", "text": "40%", "correct": false}, {"key": "B", "text": "60%", "correct": true}, {"key": "C", "text": "80%", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  },
+  {
+    "id": "h078",
+    "question": "Mi a battle rope?",
+    "answers": [{"key": "A", "text": "Kötelező edzés", "correct": true}, {"key": "B", "text": "Futás", "correct": false}, {"key": "C", "text": "Úszás", "correct": false}],
+    "audience": {"A": 60, "B": 22, "C": 18},
+    "third": "C",
+    "topic": "Fitnesz"
+  },
+  {
+    "id": "h079",
+    "question": "Mi a keto diéta?",
+    "answers": [{"key": "A", "text": "Alacsony szénhidrát", "correct": true}, {"key": "B", "text": "Magas zsír", "correct": false}, {"key": "C", "text": "Vegán", "correct": false}],
+    "audience": {"A": 55, "B": 28, "C": 17},
+    "third": "C",
+    "topic": "Táplálkozás"
+  },
+  {
+    "id": "h080",
+    "question": "Mennyi a normál testhőmérséklet?",
+    "answers": [{"key": "A", "text": "36°C", "correct": false}, {"key": "B", "text": "36,6°C", "correct": true}, {"key": "C", "text": "37,5°C", "correct": false}],
+    "audience": {"A": 25, "B": 60, "C": 15},
+    "third": "C",
+    "topic": "Egészség"
+  }
 ]
