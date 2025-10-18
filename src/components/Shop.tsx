@@ -149,12 +149,12 @@ const Shop = ({ userId }: ShopProps) => {
   return (
     <div className="space-y-6">
       {/* Balance Card */}
-      <Card>
+      <Card className="bg-black/60 border-2 border-purple-500/30 backdrop-blur-sm">
         <CardContent className="pt-6">
-          <div className="bg-accent/50 rounded-xl p-4 text-center">
-            <p className="text-sm text-muted-foreground mb-1">Egyenleged</p>
-            <p className="text-3xl font-bold text-primary flex items-center justify-center gap-2">
-              <Coins className="w-8 h-8" />
+          <div className="bg-yellow-500/10 rounded-xl p-4 text-center border border-yellow-500/30">
+            <p className="text-sm text-white/70 mb-1">Egyenleged</p>
+            <p className="text-3xl font-bold text-yellow-500 flex items-center justify-center gap-2">
+              <Coins className="w-8 h-8 text-yellow-500" />
               {profile.coins}
             </p>
           </div>
@@ -162,13 +162,13 @@ const Shop = ({ userId }: ShopProps) => {
       </Card>
 
       {/* Boosters Section */}
-      <Card>
+      <Card className="bg-black/60 border-2 border-purple-500/30 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-white">
             <Zap className="w-6 h-6 text-yellow-500" />
             Boosterek
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-white/70">
             Vásárolj boostereket aranyérméért - aktiváld őket a játék előtt!
           </CardDescription>
         </CardHeader>
@@ -182,21 +182,21 @@ const Shop = ({ userId }: ShopProps) => {
               return (
                 <div
                   key={item.id}
-                  className="border-2 rounded-xl p-4 transition-all border-border/50 hover:border-yellow-500/50"
+                  className="border-2 rounded-xl p-4 transition-all border-purple-500/30 hover:border-yellow-500/50 bg-black/40"
                 >
                   <div className="flex items-start gap-3 mb-3">
                     <div className="p-2 rounded-lg bg-yellow-500/10">
                       <Icon className="w-6 h-6 text-yellow-500" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-bold mb-1">{item.name}</h4>
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
+                      <h4 className="font-bold mb-1 text-white">{item.name}</h4>
+                      <p className="text-sm text-white/70">{item.description}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-lg flex items-center gap-1">
-                      <Coins className="w-5 h-5" />
+                    <span className="font-bold text-lg flex items-center gap-1 text-yellow-500">
+                      <Coins className="w-5 h-5 text-yellow-500" />
                       {item.price}
                     </span>
                     <Button
@@ -222,13 +222,13 @@ const Shop = ({ userId }: ShopProps) => {
       </Card>
 
       {/* Shop Items Section */}
-      <Card>
+      <Card className="bg-black/60 border-2 border-purple-500/30 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ShoppingCart className="w-6 h-6 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <ShoppingCart className="w-6 h-6 text-purple-500" />
             Bolt
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-white/70">
             Vásárolj extra életeket és segítségeket aranyérméért
           </CardDescription>
         </CardHeader>
@@ -242,34 +242,35 @@ const Shop = ({ userId }: ShopProps) => {
               return (
                 <div
                   key={item.id}
-                  className="border-2 rounded-xl p-4 transition-all border-border/50 hover:border-primary/50"
+                  className="border-2 rounded-xl p-4 transition-all border-purple-500/30 hover:border-purple-500/50 bg-black/40"
                 >
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2 rounded-lg bg-primary/10">
-                      <Icon className="w-6 h-6 text-primary" />
+                    <div className="p-2 rounded-lg bg-purple-500/10">
+                      <Icon className="w-6 h-6 text-purple-500" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-bold mb-1">{item.name}</h4>
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
+                      <h4 className="font-bold mb-1 text-white">{item.name}</h4>
+                      <p className="text-sm text-white/70">{item.description}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-lg flex items-center gap-1">
-                      <Coins className="w-5 h-5" />
+                    <span className="font-bold text-lg flex items-center gap-1 text-yellow-500">
+                      <Coins className="w-5 h-5 text-yellow-500" />
                       {item.price}
                     </span>
                     <Button
                       onClick={item.action}
                       disabled={!canAfford || isLoading}
                       size="sm"
+                      className="bg-purple-600 hover:bg-purple-700"
                     >
                       {isLoading ? 'Vásárlás...' : item.disabled ? 'Újraaktivál' : 'Vásárlás'}
                     </Button>
                   </div>
 
                   {item.disabled && (
-                    <p className="text-xs text-muted-foreground mt-2">
+                    <p className="text-xs text-white/50 mt-2">
                       Már aktív vagy maximális szinten
                     </p>
                   )}

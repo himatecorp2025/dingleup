@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, Zap, SkipForward } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, Zap, SkipForward, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -543,13 +543,12 @@ const GamePreview = () => {
       <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
       <div className="h-full w-full flex flex-col p-4">
         {/* Exit button */}
+        {/* Exit button - top right corner */}
         <Button
           onClick={() => setShowExitDialog(true)}
-          variant="ghost"
-          size="sm"
-          className="absolute top-4 left-4 z-50 text-white/70 hover:text-white"
+          className="absolute top-4 right-4 z-50 bg-red-600 hover:bg-red-700 text-white border-2 border-red-400/50 shadow-lg"
         >
-          <ArrowLeft className="w-5 h-5 mr-1" />
+          <LogOut className="w-5 h-5 mr-1" />
           Kilépés
         </Button>
 
@@ -738,31 +737,6 @@ const GamePreview = () => {
             </div>
           </div>
 
-          {/* Bottom menu (simple, no overlays) */}
-          <div className="flex-none flex justify-center gap-4 pb-2">
-            <Button
-              onClick={() => {
-                stopMusic();
-                navigate('/');
-              }}
-              variant="ghost"
-              size="sm"
-              className="text-white/70 hover:text-white"
-            >
-              <Home className="w-5 h-5" />
-            </Button>
-            <Button
-              onClick={() => {
-                stopMusic();
-                setGameState('category-select');
-              }}
-              variant="ghost"
-              size="sm"
-              className="text-white/70 hover:text-white"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-          </div>
         </div>
 
         {/* Exit confirmation dialog */}

@@ -80,11 +80,14 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] pb-24 overflow-hidden">
       <div className="max-w-md mx-auto p-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 pt-4">
-          <Button onClick={() => navigate('/dashboard')} variant="ghost" className="text-white">
+          <Button 
+            onClick={() => navigate('/dashboard')} 
+            className="bg-red-600 hover:bg-red-700 text-white border-2 border-red-400/50 shadow-lg"
+          >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Vissza
           </Button>

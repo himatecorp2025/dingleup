@@ -75,24 +75,15 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
-              onClick={() => navigate('/dashboard')}
-              className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6"
+              onClick={() => navigate('/login')}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-2 border-purple-400/50 hover:from-purple-700 hover:to-blue-700 text-lg px-8 py-6 shadow-lg shadow-purple-500/50 hover:scale-105 transition-all"
             >
               Játék indítása
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="border-accent/50 text-foreground hover:bg-accent/10 text-lg px-8 py-6"
-              onClick={() => navigate('/login')}
-            >
-              Bejelentkezés
-            </Button>
-            <Button 
-              size="lg" 
-              variant="ghost" 
-              className="text-foreground hover:bg-accent/10 text-lg px-8 py-6"
+              className="bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/20 text-lg px-8 py-6"
               onClick={() => {
                 document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
               }}

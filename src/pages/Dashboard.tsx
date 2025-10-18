@@ -110,7 +110,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] p-4 overflow-hidden flex flex-col">
+    <div className="h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 overflow-hidden flex flex-col">
       <div className="max-w-md mx-auto">
         {/* Top Section */}
         <div className="flex items-start justify-between mb-6">
@@ -239,8 +239,11 @@ const Dashboard = () => {
 
       {/* Logout button - bottom right corner */}
       <button
-        onClick={() => navigate('/')}
-        className="fixed bottom-6 right-6 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 z-50"
+        onClick={async () => {
+          await supabase.auth.signOut();
+          navigate('/');
+        }}
+        className="fixed bottom-6 right-6 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 z-50 border-2 border-red-400/50"
         title="Kijelentkezés"
       >
         <LogOut className="w-6 h-6" />

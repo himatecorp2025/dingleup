@@ -39,8 +39,8 @@ const Features = () => {
     <section id="features" className="py-24 px-4 relative bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
       <div className="container mx-auto">
         <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-white text-with-stroke">
-            Játék <span className="text-transparent bg-clip-text bg-gradient-gold">Funkciók</span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-white">
+            Funkciók
           </h2>
           <p className="text-xl text-white max-w-2xl mx-auto">
             Minden, amire szükséged van egy izgalmas kvízélményhez

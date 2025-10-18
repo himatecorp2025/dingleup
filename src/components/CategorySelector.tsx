@@ -1,6 +1,6 @@
 import { GameCategory } from '@/types/game';
 import { Button } from './ui/button';
-import { Heart, Brain, Palette, TrendingUp } from 'lucide-react';
+import { Heart, Brain, Palette, TrendingUp, ArrowLeft } from 'lucide-react';
 
 interface CategorySelectorProps {
   onSelect: (category: GameCategory) => void;
@@ -39,14 +39,27 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
   ];
 
   return (
-    <div className="h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden">
+    <div className="h-screen flex flex-col p-4 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10"></div>
-      <div className="max-w-2xl w-full py-8 relative z-10">
-        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-3 font-poppins">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4169E1] via-[#9370DB] to-[#FFD700] text-with-stroke">
-            Válassz témakört!
-          </span>
-        </h1>
+      
+      {/* Back Button */}
+      <div className="relative z-10 mb-4">
+        <Button 
+          onClick={() => window.history.back()}
+          className="bg-red-600 hover:bg-red-700 text-white border-2 border-red-400/50 shadow-lg"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Vissza
+        </Button>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center">
+        <div className="max-w-2xl w-full relative z-10">
+          <h1 className="text-2xl sm:text-3xl font-bold text-center mb-3 font-poppins">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4169E1] via-[#9370DB] to-[#FFD700] text-with-stroke">
+              Válassz témakört!
+            </span>
+          </h1>
         <p className="text-center text-sm text-white mb-8">
           Melyik területen méred össze tudásod?
         </p>
@@ -63,12 +76,12 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
                 
-                <div className="relative z-10 flex flex-col h-full items-center">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mb-3 mt-2`}>
-                    <Icon className="w-12 h-12" />
+                <div className="relative z-10 flex flex-col h-full items-center justify-between">
+                  <div className={`p-4 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-4`}>
+                    <Icon className="w-16 h-16" />
                   </div>
                   
-                  <div className="flex-1 flex flex-col justify-end text-center">
+                  <div className="text-center pb-4">
                     <h3 className="text-sm font-bold mb-1 font-poppins leading-tight text-white">
                       {category.name}
                     </h3>
@@ -82,10 +95,11 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
           })}
         </div>
 
-        <div className="mt-6 text-center">
-          <p className="text-xs text-white/70">
-            15 kérdés • 10 mp/kérdés • Akár 100 aranyérme
-          </p>
+          <div className="mt-6 text-center">
+            <p className="text-xs text-white/70">
+              15 kérdés • 10 mp/kérdés • Akár 100 aranyérme
+            </p>
+          </div>
         </div>
       </div>
     </div>
