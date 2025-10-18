@@ -8,6 +8,7 @@ import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut } from '
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { InvitationDialog } from '@/components/InvitationDialog';
+import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import logoImage from '@/assets/logo.png';
 
 const Dashboard = () => {
@@ -208,6 +209,21 @@ const Dashboard = () => {
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
           BOOSTER
+        </button>
+
+        {/* Leaderboard Carousel - Top 25 players */}
+        <div className="my-6">
+          <LeaderboardCarousel />
+        </div>
+
+        {/* Ranglista Button */}
+        <button
+          onClick={() => navigate('/leaderboard')}
+          className="w-full py-3 px-6 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-white font-black text-xl rounded-2xl border-4 border-purple-600 shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105 transition-all"
+          style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
+        >
+          <Trophy className="inline w-6 h-6 mr-3" />
+          RANGLISTA
         </button>
       </div>
 

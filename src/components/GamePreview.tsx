@@ -355,6 +355,24 @@ const GamePreview = () => {
       completed_at: new Date().toISOString()
     });
 
+    // Update total correct answers in profile
+    if (correctAnswers > 0) {
+      const { data: currentProfile } = await supabase
+        .from('profiles')
+        .select('total_correct_answers')
+        .eq('id', userId!)
+        .single();
+
+      if (currentProfile) {
+        await supabase
+          .from('profiles')
+          .update({ 
+            total_correct_answers: (currentProfile.total_correct_answers || 0) + correctAnswers 
+          })
+          .eq('id', userId!);
+      }
+    }
+
     toast.success(`Játék vége! ${correctAnswers}/${questions.length} helyes válasz`);
   };
 

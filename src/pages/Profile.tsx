@@ -82,15 +82,15 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] pb-24 overflow-hidden">
       <div className="max-w-md mx-auto p-4">
-        {/* Header */}
+        {/* Header - Egységes vissza gomb */}
         <div className="flex items-center justify-between mb-6 pt-4">
-          <Button 
-            onClick={() => navigate('/dashboard')} 
-            className="bg-red-600 hover:bg-red-700 text-white border-2 border-red-400/50 shadow-lg"
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full border-2 border-red-400/50 shadow-lg transition-all"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
+            <ArrowLeft className="w-5 h-5" />
             Vissza
-          </Button>
+          </button>
         </div>
 
         {/* Avatar Section */}
@@ -146,19 +146,26 @@ const Profile = () => {
             <p className="text-2xl font-black text-white">{profile.coins}</p>
           </div>
 
+          {/* Total Correct Answers */}
+          <div className="bg-gradient-to-br from-green-600/20 to-green-900/20 border-2 border-green-500/50 rounded-2xl p-4 text-center">
+            <Trophy className="w-8 h-8 text-green-500 mx-auto mb-2" />
+            <p className="text-sm text-white/70 mb-1">Helyes válaszok</p>
+            <p className="text-2xl font-black text-white">{profile.total_correct_answers || 0}</p>
+          </div>
+
           {/* Daily Streak */}
           <div className="bg-gradient-to-br from-blue-600/20 to-blue-900/20 border-2 border-blue-500/50 rounded-2xl p-4 text-center">
             <Calendar className="w-8 h-8 text-blue-500 mx-auto mb-2" />
             <p className="text-sm text-white/70 mb-1">Napi sorozat</p>
             <p className="text-2xl font-black text-white">{profile.daily_gift_streak} nap</p>
           </div>
+        </div>
 
-          {/* Trophy */}
-          <div className="bg-gradient-to-br from-purple-600/20 to-purple-900/20 border-2 border-purple-500/50 rounded-2xl p-4 text-center">
-            <Trophy className="w-8 h-8 text-purple-500 mx-auto mb-2" />
-            <p className="text-sm text-white/70 mb-1">Meghívó kód</p>
-            <p className="text-lg font-black text-white">{profile.invitation_code}</p>
-          </div>
+        {/* Invitation Code - Full width */}
+        <div className="bg-gradient-to-br from-purple-600/20 to-purple-900/20 border-2 border-purple-500/50 rounded-2xl p-4 text-center mb-6">
+          <Trophy className="w-8 h-8 text-purple-500 mx-auto mb-2" />
+          <p className="text-sm text-white/70 mb-1">Meghívó kód</p>
+          <p className="text-2xl font-black text-white">{profile.invitation_code}</p>
         </div>
 
         {/* Booster Inventory */}

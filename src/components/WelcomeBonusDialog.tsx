@@ -24,10 +24,10 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
       setShowAnimation(true);
       setAnimationPhase('gift');
       
-      // Transition to coins phase after 0.6s
+      // Transition to coins phase after 1s
       const timer = setTimeout(() => {
         setAnimationPhase('coins');
-      }, 600);
+      }, 1000);
 
       return () => clearTimeout(timer);
     } else {
@@ -54,33 +54,49 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
           </DialogDescription>
         </DialogHeader>
 
-        {/* Animation container */}
-        <div className="flex flex-col items-center justify-center py-8 min-h-[200px]">
+        {/* Animation container - Aranyérmével teli láda */}
+        <div className="flex flex-col items-center justify-center py-8 min-h-[250px]">
           {showAnimation && (
-            <div className="relative">
-              {/* Gift phase */}
+            <div className="relative w-full flex items-center justify-center">
+              {/* Chest phase - animált láda aranyérmékkel */}
               <div 
-                className={`transition-all duration-600 ${
+                className={`transition-all duration-1000 ${
                   animationPhase === 'gift' 
                     ? 'opacity-100 scale-100' 
                     : 'opacity-0 scale-0'
                 }`}
               >
                 <div className="relative">
-                  <Gift className="w-32 h-32 text-primary animate-pulse" />
-                  <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
+                  {/* Láda */}
+                  <div className="relative animate-bounce">
+                    <Gift className="w-40 h-40 text-yellow-500" strokeWidth={2} />
+                    <div className="absolute inset-0 bg-yellow-500/30 blur-3xl rounded-full animate-pulse" />
+                  </div>
+                  {/* Aranyérmék körülötte */}
+                  <div className="absolute -top-2 -right-2 animate-pulse">
+                    <Coins className="w-12 h-12 text-yellow-400" />
+                  </div>
+                  <div className="absolute -bottom-2 -left-2 animate-pulse delay-75">
+                    <Coins className="w-10 h-10 text-yellow-400" />
+                  </div>
+                  <div className="absolute top-1/2 -right-4 animate-pulse delay-150">
+                    <Coins className="w-8 h-8 text-yellow-400" />
+                  </div>
                 </div>
               </div>
 
-              {/* Coins phase */}
+              {/* Coins explosion phase */}
               <div 
-                className={`absolute inset-0 flex items-center justify-center transition-all duration-600 ${
+                className={`absolute inset-0 flex items-center justify-center transition-all duration-1000 ${
                   animationPhase === 'coins' 
                     ? 'opacity-100 scale-100' 
                     : 'opacity-0 scale-0'
                 }`}
               >
-                <Coins className="w-32 h-32 text-yellow-500 mx-auto drop-shadow-2xl animate-scale-in" />
+                <div className="relative">
+                  <Coins className="w-40 h-40 text-yellow-500 drop-shadow-2xl animate-scale-in" />
+                  <div className="absolute inset-0 bg-yellow-500/40 blur-3xl rounded-full animate-pulse" />
+                </div>
               </div>
             </div>
           )}

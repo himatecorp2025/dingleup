@@ -61,6 +61,39 @@ export type Database = {
           },
         ]
       }
+      global_leaderboard: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          rank: number | null
+          total_correct_answers: number
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          rank?: number | null
+          total_correct_answers?: number
+          updated_at?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          rank?: number | null
+          total_correct_answers?: number
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
       invitations: {
         Row: {
           accepted: boolean | null
@@ -130,6 +163,7 @@ export type Database = {
           speed_booster_active: boolean | null
           speed_booster_expires_at: string | null
           speed_booster_multiplier: number | null
+          total_correct_answers: number
           updated_at: string | null
           username: string
           welcome_bonus_claimed: boolean | null
@@ -154,6 +188,7 @@ export type Database = {
           speed_booster_active?: boolean | null
           speed_booster_expires_at?: string | null
           speed_booster_multiplier?: number | null
+          total_correct_answers?: number
           updated_at?: string | null
           username: string
           welcome_bonus_claimed?: boolean | null
@@ -178,6 +213,7 @@ export type Database = {
           speed_booster_active?: boolean | null
           speed_booster_expires_at?: string | null
           speed_booster_multiplier?: number | null
+          total_correct_answers?: number
           updated_at?: string | null
           username?: string
           welcome_bonus_claimed?: boolean | null

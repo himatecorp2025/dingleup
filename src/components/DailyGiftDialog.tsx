@@ -1,6 +1,6 @@
-import { Button } from './ui/button';
+import { HexagonButton } from './HexagonButton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
-import { Gift, Coins } from 'lucide-react';
+import { Gift, Coins, Sun } from 'lucide-react';
 
 interface DailyGiftDialogProps {
   open: boolean;
@@ -16,16 +16,22 @@ const DAILY_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, canClaim }: DailyGiftDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/30">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Gift className="w-6 h-6 text-primary" />
-            Napi ajándék
+          <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text text-transparent">
+            Napi Ajándék 🎁
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-center text-purple-300">
             Jelentkezz be minden nap és szerezz aranyérméket!
           </DialogDescription>
         </DialogHeader>
+
+        {/* Köszönő Napocska középen */}
+        {canClaim && (
+          <div className="flex justify-center py-4">
+            <Sun className="w-32 h-32 text-yellow-400 animate-pulse drop-shadow-2xl" />
+          </div>
+        )}
 
         <div className="space-y-4">
           {/* Streak display */}
@@ -55,39 +61,51 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
           </div>
 
           {/* Current status */}
-          <div className="bg-accent/50 rounded-xl p-4 text-center">
+          <div className="bg-gradient-to-br from-purple-600/20 to-purple-900/20 border-2 border-purple-500/50 rounded-2xl p-6 text-center">
             {canClaim ? (
               <>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-purple-300 mb-2">
                   {currentStreak + 1}. napi ajándékod
                 </p>
-                <p className="text-3xl font-bold text-primary flex items-center justify-center gap-2">
-                  <Coins className="w-8 h-8" />
+                <p className="text-4xl font-black text-yellow-400 flex items-center justify-center gap-3 mb-2">
+                  <Coins className="w-10 h-10" />
                   +{nextReward}
+                </p>
+                <p className="text-lg text-white font-bold">
+                  {nextReward} aranyérme a tiéd!
                 </p>
               </>
             ) : (
               <>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-purple-300 mb-2">
                   Mai ajándékod már átvéve!
                 </p>
-                <p className="text-lg font-bold">
+                <p className="text-2xl font-black text-white">
                   Sorozat: {currentStreak} nap
                 </p>
               </>
             )}
           </div>
 
-          {/* Action button */}
+          {/* Action button - Hexagón gomb */}
           {canClaim ? (
-            <Button onClick={onClaim} className="w-full" size="lg">
+            <HexagonButton
+              variant="yellow"
+              size="lg"
+              onClick={onClaim}
+              className="w-full transform hover:scale-105 transition-transform shadow-2xl"
+            >
               <Gift className="w-5 h-5 mr-2" />
-              Átveszem!
-            </Button>
+              Köszönöm a napi jutalmat! 🎉
+            </HexagonButton>
           ) : (
-            <Button onClick={onClose} variant="outline" className="w-full">
+            <HexagonButton
+              variant="outline"
+              onClick={onClose}
+              className="w-full"
+            >
               Bezárás
-            </Button>
+            </HexagonButton>
           )}
 
           {/* Info */}

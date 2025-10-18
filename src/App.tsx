@@ -8,6 +8,7 @@ import Game from "./pages/Game";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ShopPage from "./pages/ShopPage";
+import Leaderboard from "./pages/Leaderboard";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import RegistrationSuccess from "./pages/RegistrationSuccess";
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/shop" element={<ShopPage />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registration-success" element={<RegistrationSuccess />} />

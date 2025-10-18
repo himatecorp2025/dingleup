@@ -56,6 +56,7 @@ export interface UserProfile {
   avatar_url: string | null;
   welcome_bonus_claimed: boolean;
   question_swaps_available: number;
+  total_correct_answers: number;
   created_at: string;
   updated_at: string;
 }
