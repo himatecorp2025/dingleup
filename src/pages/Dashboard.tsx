@@ -84,7 +84,13 @@ const Dashboard = () => {
       if (data?.rank) setCurrentRank(data.rank);
     };
     
+    // Fetch immediately
     fetchUserRank();
+    
+    // Then fetch every minute (60000ms)
+    const interval = setInterval(fetchUserRank, 60000);
+    
+    return () => clearInterval(interval);
   }, [userId]);
 
   const handleClaimDailyGift = async () => {
