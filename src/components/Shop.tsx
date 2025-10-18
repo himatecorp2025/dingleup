@@ -79,17 +79,19 @@ const Shop = ({ userId }: ShopProps) => {
   const reactivateHelp5050 = async () => {
     setLoading('help5050');
     try {
-      const { data, error } = await supabase.rpc('use_help', {
-        p_help_type: '50_50'
+      const { data, error } = await supabase.rpc('reactivate_help', {
+        p_help_type: '50_50',
+        p_cost: 30
       });
       
       if (error) throw error;
       
-      // This reactivates, so we need a separate function - for now use old method
-      const success = await spendCoins(30);
-      if (success) {
-        await updateProfile({ help_50_50_active: true });
+      const result = data as { success: boolean; error?: string };
+      if (result.success) {
         toast.success('Harmadoló segítség újraaktiválva!');
+        await fetchProfile();
+      } else {
+        toast.error(result.error || 'Hiba történt');
       }
     } catch (error: any) {
       if (import.meta.env.DEV) console.error('Error reactivating help:', error);
@@ -101,10 +103,19 @@ const Shop = ({ userId }: ShopProps) => {
   const reactivateHelp2x = async () => {
     setLoading('help2x');
     try {
-      const success = await spendCoins(30);
-      if (success) {
-        await updateProfile({ help_2x_answer_active: true });
+      const { data, error } = await supabase.rpc('reactivate_help', {
+        p_help_type: '2x_answer',
+        p_cost: 30
+      });
+      
+      if (error) throw error;
+      
+      const result = data as { success: boolean; error?: string };
+      if (result.success) {
         toast.success('2x válasz segítség újraaktiválva!');
+        await fetchProfile();
+      } else {
+        toast.error(result.error || 'Hiba történt');
       }
     } catch (error: any) {
       if (import.meta.env.DEV) console.error('Error reactivating help:', error);
@@ -116,10 +127,19 @@ const Shop = ({ userId }: ShopProps) => {
   const reactivateHelpAudience = async () => {
     setLoading('helpaudience');
     try {
-      const success = await spendCoins(30);
-      if (success) {
-        await updateProfile({ help_audience_active: true });
+      const { data, error } = await supabase.rpc('reactivate_help', {
+        p_help_type: 'audience',
+        p_cost: 30
+      });
+      
+      if (error) throw error;
+      
+      const result = data as { success: boolean; error?: string };
+      if (result.success) {
         toast.success('Közönség segítség újraaktiválva!');
+        await fetchProfile();
+      } else {
+        toast.error(result.error || 'Hiba történt');
       }
     } catch (error: any) {
       if (import.meta.env.DEV) console.error('Error reactivating help:', error);

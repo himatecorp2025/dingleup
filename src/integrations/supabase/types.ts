@@ -357,6 +357,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      reactivate_help: {
+        Args: { p_cost?: number; p_help_type: string }
+        Returns: Json
+      }
       regenerate_invitation_code: {
         Args: Record<PropertyKey, never>
         Returns: string
