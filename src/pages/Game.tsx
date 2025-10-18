@@ -21,11 +21,10 @@ const Game = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Global music control for /game lifecycle (with Web Audio for iOS volume control)
+  // Global music control - play when page loads (user just clicked Play button)
   useEffect(() => {
     const setupAudioGraph = async () => {
       if (!audioRef.current) return;
-      // Init or resume context
       const Ctx: typeof AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
       if (!audioCtxRef.current) audioCtxRef.current = new Ctx();
       try { await audioCtxRef.current.resume(); } catch {}
@@ -44,9 +43,14 @@ const Game = () => {
       if (!audioRef.current) return;
       await setupAudioGraph();
       const el = audioRef.current;
-      el.volume = 1; // WebAudio gain controls loudness
+      el.volume = 1;
       el.loop = true;
-      try { await el.play(); } catch {}
+      try { 
+        await el.play(); 
+        console.log('Music started playing');
+      } catch (e) {
+        console.log('Autoplay blocked, will retry on interaction:', e);
+      }
     };
 
     const keepVolume = () => {
@@ -55,18 +59,25 @@ const Game = () => {
       }
     };
 
-    tryPlay();
+    // Try immediately (user just clicked Play, so interaction happened)
+    const initTimer = setTimeout(() => {
+      tryPlay();
+    }, 100);
+
     const volumeInterval = setInterval(keepVolume, 300);
 
     const onUserInteract = async () => {
       try { await audioCtxRef.current?.resume(); } catch {}
       tryPlay();
     };
+    
+    // Backup: retry on any interaction
     document.addEventListener('pointerdown', onUserInteract, { once: true });
     document.addEventListener('touchstart', onUserInteract, { once: true });
     document.addEventListener('click', onUserInteract, { once: true });
 
     return () => {
+      clearTimeout(initTimer);
       clearInterval(volumeInterval);
       document.removeEventListener('pointerdown', onUserInteract);
       document.removeEventListener('touchstart', onUserInteract);
