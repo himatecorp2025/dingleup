@@ -16,10 +16,10 @@ export const HexagonButton = ({
   ...props 
 }: HexagonButtonProps) => {
   const variants = {
-    yellow: 'bg-yellow-500 text-gray-100 border-2 border-yellow-600',
-    green: 'bg-green-600 text-white border-2 border-green-700',
-    dark: 'bg-black text-white border-2 border-blue-500/50',
-    outline: 'bg-transparent text-white border-2 border-white/30'
+    yellow: 'bg-gold text-white border-2 border-gold-dark shadow-lg shadow-gold/30 hover:shadow-gold/50',
+    green: 'bg-success text-white border-2 border-success-dark shadow-lg shadow-success/30 hover:shadow-success/50',
+    dark: 'bg-black text-white border-2 border-primary/50 shadow-lg shadow-primary/20',
+    outline: 'bg-transparent text-white border-2 border-white/30 hover:bg-white/10'
   };
 
   const sizes = {
