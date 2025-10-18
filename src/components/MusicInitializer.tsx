@@ -11,17 +11,7 @@ const MusicInitializer = ({ onMusicEnabled, audioRef }: MusicInitializerProps) =
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    // Ellenőrizzük, hogy már engedélyezte-e a felhasználó a zenét
-    const musicEnabled = localStorage.getItem('musicEnabled');
-
-    if (!musicEnabled) {
-      // Nincs még engedély – jelenítsük meg a promptot
-      setShow(true);
-      return;
-    }
-
-    // Ha már engedélyezte korábban, próbáljuk meg elindítani a lejátszást.
-    // Ha az automatikus indítás blokkolódik (mobil böngészők), mutassuk a promptot.
+    // Automatikus zene indítás
     const tryAutoplay = async () => {
       try {
         if (audioRef.current) {
@@ -29,12 +19,10 @@ const MusicInitializer = ({ onMusicEnabled, audioRef }: MusicInitializerProps) =
           await audioRef.current.play();
           setShow(false);
           onMusicEnabled();
-        } else {
-          setShow(true);
         }
       } catch {
-        // Autoplay blokk – kérjünk kattintást
-        setShow(true);
+        // Autoplay blokk – nem kérünk kattintást, csendben maradunk
+        setShow(false);
       }
     };
 

@@ -5,6 +5,7 @@ import { useGameProfile } from '@/hooks/useGameProfile';
 import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
+import { useBoosterTimer } from '@/hooks/useBoosterTimer';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
@@ -28,6 +29,7 @@ const Dashboard = () => {
   
   const hasActiveBooster = profile?.speed_booster_active || false;
   const availableBoosters = boosters.filter(b => !b.activated);
+  const timeRemaining = useBoosterTimer(profile?.speed_booster_expires_at || null);
 
   // Helper function
   const getInitials = (name: string) => {
@@ -212,7 +214,7 @@ const Dashboard = () => {
         {/* Booster Button */}
         <button
           onClick={() => setShowBoosterActivation(true)}
-          className={`w-full py-2.5 px-5 mb-3 bg-gradient-to-r ${hasActiveBooster ? 'from-orange-500 via-orange-400 to-orange-500' : 'from-yellow-500 via-yellow-400 to-yellow-500'} text-gray-100 font-black text-lg rounded-2xl border-2 ${hasActiveBooster ? 'border-orange-600 shadow-orange-500/40' : 'border-yellow-600 shadow-yellow-500/40'} shadow-xl hover:shadow-yellow-500/60 hover:scale-105 transition-all relative`}
+          className={`w-full py-2.5 px-5 mb-3 bg-gradient-to-r ${hasActiveBooster ? 'from-orange-500 via-orange-400 to-orange-500' : 'from-yellow-500 via-yellow-400 to-yellow-500'} ${hasActiveBooster ? 'text-white' : 'text-black'} font-black text-lg rounded-2xl border-2 ${hasActiveBooster ? 'border-orange-600 shadow-orange-500/40' : 'border-yellow-600 shadow-yellow-500/40'} shadow-xl hover:shadow-yellow-500/60 hover:scale-105 transition-all relative`}
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
           {hasActiveBooster && (
@@ -221,8 +223,8 @@ const Dashboard = () => {
               <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
             </span>
           )}
-          <Zap className="inline w-5 h-5 mr-2" />
-          BOOSTER {hasActiveBooster && '(AKTÍV)'}
+          <Zap className={`inline w-5 h-5 mr-2 ${!hasActiveBooster ? 'text-black' : 'text-white'}`} />
+          BOOSTER {hasActiveBooster && `(AKTÍV - ${timeRemaining})`}
         </button>
 
         {/* Leaderboard Carousel - Top 25 players */}

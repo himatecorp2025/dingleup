@@ -64,7 +64,7 @@ export const GameStateScreen = ({
           variant="yellow" 
           size="lg" 
           onClick={onContinue}
-          className="w-full max-w-sm mx-auto"
+          className="w-full max-w-sm mx-auto text-black"
         >
           <div className="flex flex-col items-center">
             <span>{buttonText}</span>

@@ -93,9 +93,9 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
               variant="yellow"
               size="lg"
               onClick={onClaim}
-              className="w-full transform hover:scale-105 transition-transform shadow-2xl"
+              className="w-full transform hover:scale-105 transition-transform shadow-2xl text-black"
             >
-              <Gift className="w-5 h-5 mr-2" />
+              <Gift className="w-5 h-5 mr-2 text-black" />
               Köszönöm a napi jutalmat! 🎉
             </HexagonButton>
           ) : (

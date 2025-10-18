@@ -73,8 +73,8 @@ export const InvitationDialog = ({ open, onClose, userId }: InvitationDialogProp
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="relative max-w-md max-h-[85vh] overflow-y-auto z-50 bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50">
-        <button onClick={onClose} className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-600 text-white rounded-full border border-red-400/60">Vissza</button>
+      <DialogContent className="relative max-w-md max-h-[85vh] overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50">
+        <button onClick={onClose} className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-600 text-white rounded-full border border-red-400/60 z-50">Vissza</button>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl text-white">
             <Users className="w-6 h-6 text-purple-400" />

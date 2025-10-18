@@ -22,20 +22,20 @@ export const BoosterActivationDialog = ({ open, onClose, availableBoosters, hasA
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
+          <DialogTitle className="flex items-center gap-2 text-2xl text-white">
             <Zap className="w-6 h-6 text-yellow-500" />
             Speed Booster Aktiválás
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-purple-300">
             Válassz egy boostert a gyorsabb élet regeneráláshoz!
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
           {availableBoosters.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="text-center py-8 text-white/70">
               <Zap className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p>Nincs elérhető boostered.</p>
               <p className="text-sm mt-1">Vásárolj a Shopban!</p>
@@ -69,9 +69,8 @@ export const BoosterActivationDialog = ({ open, onClose, availableBoosters, hasA
                         onActivate(booster.id);
                         onClose();
                       }}
-                      variant="secondary"
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
                       size="sm"
-                      className="bg-white text-gray-100 hover:bg-gray-100"
                     >
                       Aktiválás
                     </Button>
@@ -82,7 +81,7 @@ export const BoosterActivationDialog = ({ open, onClose, availableBoosters, hasA
           )}
         </div>
 
-        <Button onClick={onClose} variant="outline" className="w-full">
+        <Button onClick={onClose} className="w-full bg-purple-600 hover:bg-purple-700 text-white">
           Bezárás
         </Button>
       </DialogContent>
