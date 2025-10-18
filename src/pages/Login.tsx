@@ -121,7 +121,7 @@ const Login = () => {
             <h1 className="text-2xl sm:text-3xl font-bold mb-2 font-poppins">
               <span className="text-transparent bg-clip-text bg-gradient-gold">Bejelentkezés</span>
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Üdv újra! Jelentkezz be a folytatáshoz</p>
+            <p className="text-sm sm:text-base text-muted-foreground">Add meg email címed és jelszavad a bejelentkezéshez</p>
           </div>
 
           <div className="space-y-3 mb-4">

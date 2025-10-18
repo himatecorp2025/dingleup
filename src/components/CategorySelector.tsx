@@ -1,5 +1,5 @@
 import { GameCategory } from '@/types/game';
-import { Heart, Brain, Palette, TrendingUp, ArrowLeft } from 'lucide-react';
+import { Heart, Brain, Palette, TrendingUp, ArrowLeft, LogOut } from 'lucide-react';
 
 interface CategorySelectorProps {
   onSelect: (category: GameCategory) => void;
@@ -47,7 +47,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
         className="p-3 mb-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
         title="Vissza"
       >
-        <ArrowLeft className="w-6 h-6" />
+        <LogOut className="w-6 h-6 -scale-x-100" />
       </button>
       
       <div className="max-w-2xl w-full relative z-10">

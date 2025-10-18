@@ -483,13 +483,14 @@ const GamePreview = () => {
       e.preventDefault();
       const delta = e.deltaY;
       
-      if (showContinuePanel && delta > 0) {
-        // Scroll down = Continue and pay
+      if (showContinuePanel && delta < -50) {
+        // Scroll up = Continue and pay
         handleContinueAfterMistake();
-      } else if (showContinuePanel && delta < -50) {
-        // Scroll up = Exit game
+      } else if (showContinuePanel && delta > 50) {
+        // Scroll down = Exit game
         handleRejectContinue();
-      } else if (showScrollHint && delta > 50) {
+      } else if (showScrollHint && delta < -50) {
+        // Scroll up to go next after correct answer
         handleNextQuestion();
       }
     };
@@ -550,19 +551,9 @@ const GamePreview = () => {
         <audio ref={audioRef} loop>
           <source src={gameMusic} type="audio/mpeg" />
         </audio>
+        <MusicInitializer onMusicEnabled={() => setMusicEnabled(true)} audioRef={audioRef} />
         
         <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
-          <button
-            onClick={async () => {
-              stopMusic();
-              await supabase.auth.signOut();
-              navigate('/');
-            }}
-            className="fixed top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
-            title="Kijelentkezés"
-          >
-            <LogOut className="w-6 h-6 -scale-x-100" />
-          </button>
 
           <CategorySelector onSelect={startGameWithCategory} />
           
@@ -610,6 +601,10 @@ const GamePreview = () => {
     
     return (
       <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
+        <audio ref={audioRef} loop>
+          <source src={gameMusic} type="audio/mpeg" />
+        </audio>
+        <MusicInitializer onMusicEnabled={() => setMusicEnabled(true)} audioRef={audioRef} />
       <div className="h-full w-full flex flex-col p-4">
         <button
           onClick={() => setShowExitDialog(true)}

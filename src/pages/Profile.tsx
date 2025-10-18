@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Camera, Heart, Coins, Trophy, Calendar, Zap } from 'lucide-react';
+import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import BottomNav from '@/components/BottomNav';
 
@@ -89,7 +89,7 @@ const Profile = () => {
             className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
             title="Vissza"
           >
-            <ArrowLeft className="w-6 h-6" />
+            <LogOut className="w-6 h-6 -scale-x-100" />
           </button>
         </div>
 
