@@ -24,7 +24,7 @@ import { GameStateScreen } from "./GameStateScreen";
 import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
 import MusicInitializer from "./MusicInitializer";
-import gameMusic from "@/assets/game-music.m4a";
+import gameMusic from "@/assets/backmusic.m4a";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -97,6 +97,7 @@ const GamePreview = () => {
       // Témakör választásnál automatikusan indítson zenét
       if (audioRef.current) {
         audioRef.current.volume = 0.2;
+        audioRef.current.loop = true;
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch(error => {
@@ -108,6 +109,7 @@ const GamePreview = () => {
       // Bármilyen más állapotnál állítsa le a zenét
       stopMusic();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState]);
 
   // Auth check
