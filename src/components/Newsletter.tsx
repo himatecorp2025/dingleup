@@ -4,7 +4,7 @@ import { Bell } from "lucide-react";
 
 const Newsletter = () => {
   return (
-    <section className="py-24 px-4">
+    <section className="py-24 px-4 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
       <div className="container mx-auto">
         <div className="max-w-3xl mx-auto bg-gradient-hero rounded-3xl p-12 text-center relative overflow-hidden animate-fade-in">
           {/* Decorative elements */}
@@ -16,10 +16,10 @@ const Newsletter = () => {
               <Bell className="w-8 h-8 text-accent" />
             </div>
             
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins text-white text-with-stroke">
               Légy az Elsők Között!
             </h2>
-            <p className="text-lg text-foreground/80 mb-8">
+            <p className="text-lg text-white/90 mb-8">
               Iratkozz fel és értesülj azonnal, amikor a Dingle UP! elérhető lesz. Plusz exkluzív Welcome Bonusz: 2500 arany + 50 élet!
             </p>
 
@@ -27,14 +27,14 @@ const Newsletter = () => {
               <Input 
                 type="email" 
                 placeholder="Add meg az email címed" 
-                className="bg-background/50 border-border/50 text-foreground placeholder:text-muted-foreground flex-1"
+                className="bg-background/50 border-border/50 text-white placeholder:text-white/60 flex-1"
               />
               <Button className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 whitespace-nowrap">
                 Feliratkozás
               </Button>
             </div>
 
-            <p className="text-sm text-foreground/60 mt-4">
+            <p className="text-sm text-white/70 mt-4">
               Nem küldünk spam-et. Bármikor leiratkozhatsz.
             </p>
           </div>

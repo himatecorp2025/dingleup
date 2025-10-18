@@ -36,13 +36,13 @@ const features = [
 
 const Features = () => {
   return (
-    <section id="features" className="py-24 px-4 relative">
+    <section id="features" className="py-24 px-4 relative bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
       <div className="container mx-auto">
         <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-white text-with-stroke">
             Játék <span className="text-transparent bg-clip-text bg-gradient-gold">Funkciók</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-white max-w-2xl mx-auto">
             Minden, amire szükséged van egy izgalmas kvízélményhez
           </p>
         </div>
@@ -57,8 +57,8 @@ const Features = () => {
               <div className="bg-accent/20 w-14 h-14 rounded-xl flex items-center justify-center mb-4">
                 <feature.icon className="w-7 h-7 text-accent" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 font-poppins">{feature.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+              <h3 className="text-xl font-semibold mb-2 font-poppins text-white">{feature.title}</h3>
+              <p className="text-white/80 leading-relaxed">{feature.description}</p>
             </Card>
           ))}
         </div>

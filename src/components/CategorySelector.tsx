@@ -43,11 +43,11 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
       <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10"></div>
       <div className="max-w-2xl w-full py-8 relative z-10">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-3 font-poppins">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4169E1] via-[#9370DB] to-[#FFD700]">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4169E1] via-[#9370DB] to-[#FFD700] text-with-stroke">
             Válassz témakört!
           </span>
         </h1>
-        <p className="text-center text-sm text-gray-300 mb-8">
+        <p className="text-center text-sm text-white mb-8">
           Melyik területen méred össze tudásod?
         </p>
 
@@ -63,16 +63,16 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
                 
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className={`p-2 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mb-2`}>
-                    <Icon className="w-6 h-6" />
+                <div className="relative z-10 flex flex-col h-full items-center">
+                  <div className={`p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mb-3 mt-2`}>
+                    <Icon className="w-12 h-12" />
                   </div>
                   
-                  <div className="flex-1 flex flex-col justify-end">
-                    <h3 className="text-sm font-bold mb-1 font-poppins leading-tight">
+                  <div className="flex-1 flex flex-col justify-end text-center">
+                    <h3 className="text-sm font-bold mb-1 font-poppins leading-tight text-white">
                       {category.name}
                     </h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2">
+                    <p className="text-xs text-white/70 line-clamp-2">
                       {category.description}
                     </p>
                   </div>
@@ -83,7 +83,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
         </div>
 
         <div className="mt-6 text-center">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-white/70">
             15 kérdés • 10 mp/kérdés • Akár 100 aranyérme
           </p>
         </div>

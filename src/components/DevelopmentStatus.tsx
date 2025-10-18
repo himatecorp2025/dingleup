@@ -58,7 +58,7 @@ const comingSoonFeatures = [
 
 const DevelopmentStatus = () => {
   return (
-    <section className="py-24 px-4 relative bg-gradient-to-b from-background to-primary/30">
+    <section className="py-24 px-4 relative bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
       <div className="container mx-auto">
         {/* Development Progress Section */}
         <div className="text-center mb-16 animate-fade-in">
@@ -66,10 +66,10 @@ const DevelopmentStatus = () => {
             <Sparkles className="w-4 h-4 text-accent animate-pulse" />
             <span className="text-sm font-semibold text-accent">Aktív Fejlesztés</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-white text-with-stroke">
             Fejlesztési <span className="text-transparent bg-clip-text bg-gradient-gold">Státusz</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-white max-w-2xl mx-auto">
             Folyamatosan dolgozunk azon, hogy a legjobb játékélményt nyújtsuk
           </p>
         </div>
@@ -83,7 +83,7 @@ const DevelopmentStatus = () => {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="flex justify-between items-center mb-3">
-                <h3 className="text-lg font-semibold font-poppins">{item.category}</h3>
+                <h3 className="text-lg font-semibold font-poppins text-white">{item.category}</h3>
                 <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${item.color}">
                   {item.progress}%
                 </span>
@@ -94,7 +94,7 @@ const DevelopmentStatus = () => {
                   style={{ width: `${item.progress}%` }}
                 />
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-white/80 leading-relaxed">
                 {item.description}
               </p>
             </Card>
@@ -107,7 +107,7 @@ const DevelopmentStatus = () => {
             <Rocket className="w-4 h-4 text-secondary" />
             <span className="text-sm font-semibold text-secondary">Közelgő Funkciók</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins text-white text-with-stroke">
             Mit Hozunk <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-purple-400">Nemsokára</span>
           </h2>
         </div>
@@ -132,8 +132,8 @@ const DevelopmentStatus = () => {
               </div>
 
               {/* Content */}
-              <h3 className="text-xl font-semibold mb-2 font-poppins pr-24">{feature.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+              <h3 className="text-xl font-semibold mb-2 font-poppins pr-24 text-white">{feature.title}</h3>
+              <p className="text-white/80 leading-relaxed">{feature.description}</p>
 
               {/* Glow effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
