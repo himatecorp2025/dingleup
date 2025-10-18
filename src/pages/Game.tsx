@@ -23,6 +23,15 @@ const Game = () => {
 
   // Global music control - play when page loads (user just clicked Play button)
   useEffect(() => {
+    const globalBgm = (window as any).__bgm as HTMLAudioElement | undefined;
+    if (globalBgm) {
+      try {
+        globalBgm.loop = true;
+        globalBgm.volume = 0.1;
+        globalBgm.play().catch(() => {});
+      } catch {}
+      return;
+    }
     const setupAudioGraph = async () => {
       if (!audioRef.current) return;
       const Ctx: typeof AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
