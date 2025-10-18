@@ -49,7 +49,6 @@ export const GameStateScreen = ({
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${gameBackground})` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a1a]/10 via-[#0f0f2a]/10 to-[#0a0a1a]/10" />
       <div className="text-center space-y-6 max-w-md w-full relative z-10">
         {/* Character/Emoji */}
         <div className="text-8xl mb-4 animate-bounce">

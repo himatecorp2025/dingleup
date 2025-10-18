@@ -122,7 +122,6 @@ const Game = () => {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a1a]/10 via-[#0f0f2a]/10 to-[#0a0a1a]/10" />
         <div className="max-w-2xl w-full bg-black/80 backdrop-blur-sm rounded-2xl p-8 text-center border-2 border-blue-500/50 relative z-10">
           <Smartphone className="w-24 h-24 mx-auto mb-6 text-blue-500" />
           <h1 className="text-4xl font-black text-white mb-4">Mobil Játék</h1>

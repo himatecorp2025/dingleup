@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, type RefObject } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, SkipForward, LogOut } from "lucide-react";
+import gameBackground from "@/assets/game-background.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -533,11 +534,27 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   }, [showScrollHint, showContinuePanel, gameState]);
 
   if (profileLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532]">Betöltés...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center relative">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${gameBackground})` }}
+        />
+        <div className="relative z-10 text-white">Betöltés...</div>
+      </div>
+    );
   }
 
   if (!profile) {
-    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532]">Hiba a profil betöltésekor</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center relative">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${gameBackground})` }}
+        />
+        <div className="relative z-10 text-white">Hiba a profil betöltésekor</div>
+      </div>
+    );
   }
 
   if (gameState === 'category-select') {
@@ -590,8 +607,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     
     return (
       <>
-        <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
-        <div className="h-full w-full flex flex-col p-4">
+        <div className="h-screen w-screen overflow-hidden fixed inset-0 relative">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${gameBackground})` }}
+        />
+        <div className="h-full w-full flex flex-col p-4 relative z-10">
         <button
           onClick={() => setShowExitDialog(true)}
           className="absolute top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
@@ -813,7 +834,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
 
   if (gameState === 'finished') {
     return (
-      <div className="fixed inset-0 md:relative md:min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532]">
+      <div className="fixed inset-0 md:relative md:min-h-screen flex items-center justify-center p-4 relative">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${gameBackground})` }}
+        />
+        <div className="relative z-10 w-full flex items-center justify-center">
         <div className="max-w-md w-full bg-black/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 text-center border-2 border-green-500/50">
           <div className="text-8xl mb-6 animate-bounce">🏆</div>
           <h1 className="text-3xl md:text-4xl font-black text-green-500 mb-6">Gratulálunk!</h1>
@@ -857,6 +883,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
           >
             Vissza a főoldalra
           </button>
+        </div>
         </div>
       </div>
     );
