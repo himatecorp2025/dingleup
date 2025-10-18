@@ -38,12 +38,20 @@ const Dashboard = () => {
 
   const getWeekStart = () => {
     const now = new Date();
-    const dayOfWeek = now.getDay();
-    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Days since Monday
     const monday = new Date(now);
     monday.setDate(now.getDate() - diff);
     monday.setHours(0, 0, 0, 0);
-    return monday.toISOString().split('T')[0];
+    return monday.toISOString();
+  };
+
+  const getWeekEnd = () => {
+    const weekStart = new Date(getWeekStart());
+    const sunday = new Date(weekStart);
+    sunday.setDate(weekStart.getDate() + 6); // Sunday
+    sunday.setHours(23, 59, 59, 999);
+    return sunday.toISOString();
   };
 
   useEffect(() => {
@@ -71,21 +79,54 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchUserRank = async () => {
-      if (!userId || !profile) return;
+      if (!userId) return;
       
-      // Count how many users have more correct answers than the current user
-      const { count, error } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .gt('total_correct_answers', profile.total_correct_answers);
+      const weekStart = getWeekStart();
+      const weekEnd = getWeekEnd();
       
-      if (error) {
-        console.error('Error fetching rank:', error);
+      // Get current user's total correct answers this week
+      const { data: userResults, error: userError } = await supabase
+        .from('game_results')
+        .select('correct_answers')
+        .eq('user_id', userId)
+        .gte('created_at', weekStart)
+        .lte('created_at', weekEnd);
+      
+      if (userError) {
+        console.error('Error fetching user results:', userError);
         return;
       }
       
-      // Rank is count + 1 (number of people ahead + yourself)
-      const rank = (count ?? 0) + 1;
+      const userTotal = userResults?.reduce((sum, r) => sum + (r.correct_answers || 0), 0) || 0;
+      
+      // Get all users' totals this week and count how many are better
+      const { data: allResults, error: allError } = await supabase
+        .from('game_results')
+        .select('user_id, correct_answers')
+        .gte('created_at', weekStart)
+        .lte('created_at', weekEnd);
+      
+      if (allError) {
+        console.error('Error fetching all results:', allError);
+        return;
+      }
+      
+      // Group by user_id and sum correct_answers
+      const userTotals = new Map<string, number>();
+      allResults?.forEach(r => {
+        const current = userTotals.get(r.user_id) || 0;
+        userTotals.set(r.user_id, current + (r.correct_answers || 0));
+      });
+      
+      // Count how many users have more correct answers
+      let betterCount = 0;
+      userTotals.forEach((total, uid) => {
+        if (total > userTotal && uid !== userId) {
+          betterCount++;
+        }
+      });
+      
+      const rank = betterCount + 1;
       setCurrentRank(rank);
     };
     
@@ -96,7 +137,7 @@ const Dashboard = () => {
     const interval = setInterval(fetchUserRank, 60000);
     
     return () => clearInterval(interval);
-  }, [userId, profile?.total_correct_answers]);
+  }, [userId]);
 
   const handleClaimDailyGift = async () => {
     await claimDailyGift();
