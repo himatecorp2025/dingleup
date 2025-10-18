@@ -638,8 +638,12 @@ const GamePreview = () => {
     const currentQuestion = questions[currentQuestionIndex];
     
     return (
-      <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
-      <div className="h-full w-full flex flex-col p-4">
+      <>
+        <audio ref={audioRef} loop preload="auto" playsInline autoPlay>
+          <source src={gameMusic} type="audio/mp4" />
+        </audio>
+        <div className="h-screen w-screen bg-gradient-to-br from-[#0c0532] via-[#160a4a] to-[#0c0532] overflow-hidden fixed inset-0">
+        <div className="h-full w-full flex flex-col p-4">
         <button
           onClick={() => setShowExitDialog(true)}
           className="absolute top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
@@ -860,6 +864,7 @@ const GamePreview = () => {
           </AlertDialogContent>
         </AlertDialog>
       </div>
+      </>
     );
   }
 
