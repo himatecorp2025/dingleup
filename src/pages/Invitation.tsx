@@ -73,40 +73,40 @@ const Invitation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4">
+    <div className="h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-3 overflow-hidden">
       {/* Back button - same style as shop */}
       <button
         onClick={() => navigate('/dashboard')}
-        className="absolute top-4 left-4 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+        className="absolute top-3 left-3 p-2 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50 z-10"
         title="Vissza"
       >
-        <LogOut className="w-6 h-6 -scale-x-100" />
+        <LogOut className="w-5 h-5 -scale-x-100" />
       </button>
 
-      <div className="max-w-md mx-auto pt-20">
+      <div className="max-w-md mx-auto pt-12 h-full overflow-hidden">
         {/* Header */}
-        <div className="text-center mb-6">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Users className="w-8 h-8 text-purple-400" />
-            <h1 className="text-3xl font-black text-white">Hívd meg barátaidat!</h1>
+        <div className="text-center mb-3">
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <Users className="w-6 h-6 text-purple-400" />
+            <h1 className="text-xl font-black text-white">Hívd meg barátaidat!</h1>
           </div>
-          <p className="text-white/70">Osztd meg meghívó kódodat vagy linkedet</p>
+          <p className="text-sm text-white/70">Osztd meg meghívó kódodat vagy linkedet</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-2">
           {/* Invitation Code */}
-          <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
-            <label className="text-sm font-medium mb-2 block text-white">Meghívó kód</label>
+          <div className="bg-purple-900/30 rounded-lg p-2 border border-purple-500/30">
+            <label className="text-xs font-medium mb-1 block text-white">Meghívó kód</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={invitationCode}
                 readOnly
-                className="flex-1 px-4 py-2 bg-black/40 border-2 border-purple-500/50 rounded-lg font-mono text-lg text-center text-white"
+                className="flex-1 px-3 py-1.5 bg-black/40 border border-purple-500/50 rounded-lg font-mono text-sm text-center text-white"
               />
               <Button
                 onClick={() => copyToClipboard(invitationCode, 'code')}
-                className="bg-purple-600 hover:bg-purple-700 text-white"
+                className="bg-purple-600 hover:bg-purple-700 text-white h-auto px-2"
                 size="icon"
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -115,18 +115,18 @@ const Invitation = () => {
           </div>
 
           {/* Invitation Link */}
-          <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
-            <label className="text-sm font-medium mb-2 block text-white">Meghívó link</label>
+          <div className="bg-purple-900/30 rounded-lg p-2 border border-purple-500/30">
+            <label className="text-xs font-medium mb-1 block text-white">Meghívó link</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={invitationLink}
                 readOnly
-                className="flex-1 px-4 py-2 bg-black/40 border-2 border-purple-500/50 rounded-lg text-sm text-white"
+                className="flex-1 px-3 py-1.5 bg-black/40 border border-purple-500/50 rounded-lg text-xs text-white"
               />
               <Button
                 onClick={() => copyToClipboard(invitationLink, 'link')}
-                className="bg-purple-600 hover:bg-purple-700 text-white"
+                className="bg-purple-600 hover:bg-purple-700 text-white h-auto px-2"
                 size="icon"
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -135,35 +135,35 @@ const Invitation = () => {
           </div>
 
           {/* Stats */}
-          <div className="bg-purple-900/30 rounded-xl p-4 text-center border-2 border-purple-500/30">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Gift className="w-5 h-5 text-yellow-400" />
-              <span className="text-sm font-medium text-white">Meghívott barátok</span>
+          <div className="bg-purple-900/30 rounded-lg p-2 text-center border border-purple-500/30">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <Gift className="w-4 h-4 text-yellow-400" />
+              <span className="text-xs font-medium text-white">Meghívott barátok</span>
             </div>
-            <p className="text-3xl font-bold text-yellow-400">{invitedCount}</p>
+            <p className="text-2xl font-bold text-yellow-400">{invitedCount}</p>
           </div>
 
           {/* Rewards */}
-          <div className="space-y-2">
-            <h3 className="font-bold text-sm text-white">Jutalmak:</h3>
+          <div className="space-y-1.5">
+            <h3 className="font-bold text-xs text-white mb-1">Jutalmak:</h3>
             {INVITATION_REWARDS.map((reward) => {
               const achieved = invitedCount >= reward.count;
               return (
                 <div
                   key={reward.count}
-                  className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                  className={`flex items-center justify-between p-2 rounded-lg border ${
                     achieved
                       ? 'bg-purple-600/30 border-purple-400'
                       : 'bg-black/40 border-purple-500/30'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className={`text-sm font-medium ${achieved ? 'text-purple-300' : 'text-white/70'}`}>
+                    <span className={`text-xs font-medium ${achieved ? 'text-purple-300' : 'text-white/70'}`}>
                       {reward.count} barát
                     </span>
                     {achieved && <Check className="w-4 h-4 text-purple-300" />}
                   </div>
-                  <div className="flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-2 text-xs">
                     <div className="flex items-center gap-1">
                       <Coins className="w-4 h-4 text-yellow-500" />
                       <span className="font-bold text-white">{reward.coins}</span>
