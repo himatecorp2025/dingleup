@@ -353,6 +353,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      distribute_weekly_rewards: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       generate_invitation_code: {
         Args: Record<PropertyKey, never>
         Returns: string
