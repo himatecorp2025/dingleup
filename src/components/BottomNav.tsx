@@ -21,7 +21,7 @@ const BottomNav = () => {
     { icon: Home, label: 'Dashboard', path: '/dashboard' },
     { icon: User, label: 'Profil', path: '/profile' },
     { icon: ShoppingBag, label: 'Bolt', path: '/shop' },
-    { icon: Building2, label: 'Rólunk', path: '/' },
+    { icon: Building2, label: 'Rólunk', path: '/desktop' },
     { icon: LogOut, label: 'Kilépés', action: handleLogout }
   ];
 

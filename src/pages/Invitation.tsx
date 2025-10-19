@@ -4,6 +4,7 @@ import { LogOut, Copy, Check, Gift, Coins, Heart, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import BottomNav from '@/components/BottomNav';
 
 const INVITATION_REWARDS = [
   { count: 1, coins: 200, lives: 3 },
@@ -177,6 +178,8 @@ const Invitation = () => {
           </div>
         </div>
       </div>
+
+      <BottomNav />
     </div>
   );
 };
