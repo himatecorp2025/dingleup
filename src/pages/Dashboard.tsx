@@ -11,6 +11,7 @@ import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
+import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
 import backmusic from '@/assets/backmusic.mp3';
 
@@ -173,7 +174,7 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4">
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4 pb-24 max-w-screen-lg mx-auto">
         {/* Top Section */}
         <div className="flex items-start justify-between mb-3">
           {/* Left: Greeting */}
@@ -349,17 +350,7 @@ const Dashboard = () => {
         }}
       />
 
-      {/* Logout button - bottom right corner */}
-      <button
-        onClick={async () => {
-          await supabase.auth.signOut();
-          navigate('/');
-        }}
-        className="fixed bottom-6 right-6 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 z-50 border-2 border-red-400/50"
-        title="Kijelentkezés"
-      >
-        <LogOut className="w-6 h-6" />
-      </button>
+      <BottomNav />
     </div>
   );
 };

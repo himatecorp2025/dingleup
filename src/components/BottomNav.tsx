@@ -1,8 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, User, ShoppingBag, LogOut } from 'lucide-react';
+import { Home, User, ShoppingBag, LogOut, Building2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { HexagonButton } from './HexagonButton';
 
 const BottomNav = () => {
   const navigate = useNavigate();
@@ -22,12 +21,13 @@ const BottomNav = () => {
     { icon: Home, label: 'Dashboard', path: '/dashboard' },
     { icon: User, label: 'Profil', path: '/profile' },
     { icon: ShoppingBag, label: 'Bolt', path: '/shop' },
+    { icon: Building2, label: 'Rólunk', path: '/' },
     { icon: LogOut, label: 'Kilépés', action: handleLogout }
   ];
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-black/95 border-t-2 border-purple-500/50 backdrop-blur-sm z-50">
-      <div className="grid grid-cols-4 gap-1 p-2 max-w-screen-sm mx-auto">
+      <div className="grid grid-cols-5 gap-1 p-2 max-w-screen-sm mx-auto">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;

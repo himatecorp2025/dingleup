@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { LogOut, Crown, Medal } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
+import WeeklyRewards from '@/components/WeeklyRewards';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -73,6 +74,9 @@ const Leaderboard = () => {
         <h1 className="text-4xl font-black text-center mb-8 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent">
           🏆 Ranglista 🏆
         </h1>
+
+        {/* Weekly Rewards Section */}
+        <WeeklyRewards />
 
         {/* Leaderboard */}
         {loading ? (

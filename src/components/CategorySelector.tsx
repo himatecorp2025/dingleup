@@ -71,8 +71,8 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                 <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
                 
                 <div className="relative z-10 flex flex-col h-full items-center justify-between">
-                  <div className={`p-4 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-4`}>
-                    <Icon className="w-16 h-16" />
+                  <div className={`p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-3`}>
+                    <Icon className="w-12 h-12" />
                   </div>
                   
                   <div className="text-center pb-4">

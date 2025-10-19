@@ -81,7 +81,7 @@ const Shop = ({ userId }: ShopProps) => {
     try {
       const { data, error } = await supabase.rpc('reactivate_help', {
         p_help_type: '50_50',
-        p_cost: 30
+        p_cost: 15
       });
       
       if (error) throw error;
@@ -105,7 +105,7 @@ const Shop = ({ userId }: ShopProps) => {
     try {
       const { data, error } = await supabase.rpc('reactivate_help', {
         p_help_type: '2x_answer',
-        p_cost: 30
+        p_cost: 20
       });
       
       if (error) throw error;
@@ -190,7 +190,7 @@ const Shop = ({ userId }: ShopProps) => {
       id: 'help5050',
       name: 'Harmadoló Segítség',
       description: 'Újraaktiválás a következő játékhoz',
-      price: 30,
+      price: 15,
       icon: HelpCircle,
       action: reactivateHelp5050,
       disabled: profile.help_50_50_active
@@ -199,7 +199,7 @@ const Shop = ({ userId }: ShopProps) => {
       id: 'help2x',
       name: '2x Válasz Segítség',
       description: 'Újraaktiválás következő játékhoz',
-      price: 30,
+      price: 20,
       icon: Eye,
       action: reactivateHelp2x,
       disabled: profile.help_2x_answer_active

@@ -537,7 +537,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     return (
       <div className="min-h-screen flex items-center justify-center relative">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
         <div className="relative z-10 text-white">Betöltés...</div>
@@ -549,7 +549,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     return (
       <div className="min-h-screen flex items-center justify-center relative">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
         <div className="relative z-10 text-white">Hiba a profil betöltésekor</div>
@@ -609,15 +609,15 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       <>
         <div className="h-screen w-screen overflow-hidden fixed inset-0 relative">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
         
         {/* Scrollable content container - TikTok style */}
-        <div className="h-full w-full overflow-y-auto overflow-x-hidden relative z-10 snap-y snap-mandatory">
+        <div className="h-full w-full overflow-y-auto overflow-x-hidden relative z-10 snap-y snap-proximity">
           
-          {/* Main game screen - full viewport height */}
-          <div className="min-h-screen w-full flex flex-col p-4 snap-start relative">
+          {/* Main game screen - full viewport height (180% for 80% scroll threshold) */}
+          <div className="min-h-[180vh] w-full flex flex-col p-4 snap-start relative">
             <button
               onClick={() => setShowExitDialog(true)}
               className="absolute top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
@@ -750,40 +750,40 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     onClick={useHelp5050}
                     disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
                     className={`
-                      relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                      relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                      ${!usedHelp5050 && profile.help_50_50_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                      ${!usedHelp5050 && profile.help_50_50_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Harmadoló"
                   >
-                    <span className="text-white font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
+                    <span className="text-black font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
                   </button>
                   <button
                     onClick={useHelp2xAnswer}
                     disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
                     className={`
-                      relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                      relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                      ${!usedHelp2xAnswer && profile.help_2x_answer_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                      ${!usedHelp2xAnswer && profile.help_2x_answer_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="2× válasz"
                   >
-                    <span className="text-white font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>2×</span>
+                    <span className="text-black font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>2×</span>
                   </button>
                   <button
                     onClick={useHelpAudience}
                     disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
                     className={`
-                      relative w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 border-2 border-purple-400 
+                      relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                      ${!usedHelpAudience && profile.help_audience_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-purple-500/50' : ''}
+                      ${!usedHelpAudience && profile.help_audience_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Közönség"
                   >
-                    <Users className="w-6 h-6 text-white" style={{ transform: 'rotate(-90deg)' }} />
+                    <Users className="w-6 h-6 text-black" style={{ transform: 'rotate(-90deg)' }} />
                   </button>
                   <button
                     onClick={handleSkipQuestion}
@@ -841,7 +841,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     return (
       <div className="fixed inset-0 md:relative md:min-h-screen flex items-center justify-center p-4 relative">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
         <div className="relative z-10 w-full flex items-center justify-center">
