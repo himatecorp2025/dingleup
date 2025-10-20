@@ -6,8 +6,8 @@ import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { useBoosterTimer } from '@/hooks/useBoosterTimer';
+import { useLifeRegenerationTimer } from '@/hooks/useLifeRegenerationTimer';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
-import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
@@ -32,6 +32,18 @@ const Dashboard = () => {
   const hasActiveBooster = profile?.speed_booster_active || false;
   const availableBoosters = boosters.filter(b => !b.activated);
   const timeRemaining = useBoosterTimer(profile?.speed_booster_expires_at || null);
+  
+  // Calculate life regeneration rate based on booster
+  const lifeRegenRate = hasActiveBooster 
+    ? Math.floor(12 / (profile?.speed_booster_multiplier || 1))
+    : 12;
+    
+  const { timeUntilNextLife } = useLifeRegenerationTimer(
+    profile?.lives || 0,
+    profile?.max_lives || 15,
+    profile?.last_life_regeneration || null,
+    lifeRegenRate
+  );
 
   // Helper function
   const getInitials = (name: string) => {
@@ -200,19 +212,17 @@ const Dashboard = () => {
               </div>
 
               {/* Lives Hexagon with Timer */}
-              <div className="flex flex-col items-center gap-1">
+              <div className="relative">
                 <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400">
                   <Heart className="w-4 h-4 text-white mb-0.5" />
-                  <span className="text-white text-xs font-bold">{profile.lives}/{profile.max_lives}</span>
+                  <span className="text-white text-xs font-bold">{profile.lives}</span>
                 </div>
-                <LifeRegenerationTimer
-                  currentLives={profile.lives}
-                  maxLives={profile.max_lives}
-                  lastRegeneration={profile.last_life_regeneration}
-                  boosterActive={profile.speed_booster_active || false}
-                  boosterType={profile.speed_booster_active ? 'DoubleSpeed' : null}
-                  boosterExpiresAt={profile.speed_booster_expires_at}
-                />
+                {profile.lives < profile.max_lives && timeUntilNextLife !== '0:00' && (
+                  <div className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-black/80 px-2 py-0.5 rounded-full flex items-center gap-1 whitespace-nowrap">
+                    <Clock className="w-2.5 h-2.5 text-green-400" />
+                    <span className="text-[9px] text-green-400 font-bold">{timeUntilNextLife}</span>
+                  </div>
+                )}
               </div>
 
               {/* Avatar Hexagon */}
