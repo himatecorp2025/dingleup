@@ -155,6 +155,7 @@ export type Database = {
           help_audience_active: boolean | null
           id: string
           invitation_code: string | null
+          last_invitation_reward_reset: string | null
           last_life_regeneration: string | null
           lives: number | null
           lives_regeneration_rate: number | null
@@ -180,6 +181,7 @@ export type Database = {
           help_audience_active?: boolean | null
           id: string
           invitation_code?: string | null
+          last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
@@ -205,6 +207,7 @@ export type Database = {
           help_audience_active?: boolean | null
           id?: string
           invitation_code?: string | null
+          last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
@@ -360,6 +363,14 @@ export type Database = {
       generate_invitation_code: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_invitation_tier_reward: {
+        Args: { accepted_count: number }
+        Returns: Json
+      }
+      process_invitation_reward: {
+        Args: { inviter_user_id: string }
+        Returns: Json
       }
       purchase_life: {
         Args: Record<PropertyKey, never>

@@ -6,7 +6,8 @@ import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { useBoosterTimer } from '@/hooks/useBoosterTimer';
-import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap } from 'lucide-react';
+import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
+import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
@@ -198,10 +199,20 @@ const Dashboard = () => {
                 <span className="text-white text-xs font-bold">{profile.coins}</span>
               </div>
 
-              {/* Lives Hexagon */}
-              <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400">
-                <Heart className="w-4 h-4 text-white mb-0.5" />
-                <span className="text-white text-xs font-bold">{profile.lives}</span>
+              {/* Lives Hexagon with Timer */}
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400">
+                  <Heart className="w-4 h-4 text-white mb-0.5" />
+                  <span className="text-white text-xs font-bold">{profile.lives}/{profile.max_lives}</span>
+                </div>
+                <LifeRegenerationTimer
+                  currentLives={profile.lives}
+                  maxLives={profile.max_lives}
+                  lastRegeneration={profile.last_life_regeneration}
+                  boosterActive={profile.speed_booster_active || false}
+                  boosterType={profile.speed_booster_active ? 'DoubleSpeed' : null}
+                  boosterExpiresAt={profile.speed_booster_expires_at}
+                />
               </div>
 
               {/* Avatar Hexagon */}
