@@ -183,26 +183,15 @@ const AdminDashboard = () => {
               <span className="font-medium">Összes felhasználó</span>
             </button>
             <button
-              onClick={() => setActiveTab('revenue')}
+              onClick={() => setActiveTab('purchases')}
               className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-                activeTab === 'revenue'
+                activeTab === 'purchases'
                   ? 'bg-blue-600/20 text-blue-400'
                   : 'text-white/70 hover:bg-white/5'
               }`}
             >
-              <Wallet className="w-4 h-4 xl:w-5 xl:h-5" />
-              <span className="font-medium">Teljes árbevétel</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('payouts')}
-              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-                activeTab === 'payouts'
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'text-white/70 hover:bg-white/5'
-              }`}
-            >
-              <Award className="w-4 h-4 xl:w-5 xl:h-5" />
-              <span className="font-medium">Teljes nyeremény kifizetés</span>
+              <ShoppingCart className="w-4 h-4 xl:w-5 xl:h-5" />
+              <span className="font-medium">Vásárlások</span>
             </button>
           </nav>
         </div>
@@ -312,25 +301,15 @@ const AdminDashboard = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab('revenue')}
+            onClick={() => setActiveTab('purchases')}
             className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-[#1a1a3e]/70 transition-colors"
           >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-white/70 text-xs lg:text-sm">Teljes árbevétel</h3>
-              <Wallet className="w-6 h-6 lg:w-8 lg:h-8 text-blue-500 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
+              <h3 className="text-white/70 text-xs lg:text-sm">Teljes Bevétel (USD)</h3>
+              <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-blue-500 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
             <p className="text-xl lg:text-3xl font-bold text-white">${totalRevenue}</p>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('payouts')}
-            className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-[#1a1a3e]/70 transition-colors"
-          >
-            <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-white/70 text-xs lg:text-sm">Teljes nyeremény kifizetés</h3>
-              <Award className="w-6 h-6 lg:w-8 lg:h-8 text-blue-500 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
-            </div>
-            <p className="text-xl lg:text-3xl font-bold text-white">${totalPayouts}</p>
+            <p className="text-white/50 text-xs mt-1">Stripe fizetésekből</p>
           </button>
         </div>
 
@@ -361,12 +340,12 @@ const AdminDashboard = () => {
                   <p className="text-white/60 text-xs lg:text-sm">Összes felhasználó megtekintése</p>
                 </button>
                 <button
-                  onClick={() => setActiveTab('revenue')}
+                  onClick={() => setActiveTab('purchases')}
                   className="bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 rounded-lg p-3 lg:p-4 text-left transition-colors"
                 >
                   <DollarSign className="w-5 h-5 lg:w-6 lg:h-6 text-green-400 mb-2" />
-                  <h4 className="text-white font-semibold text-sm lg:text-base">Árbevétel</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Bevételi adatok megtekintése</p>
+                  <h4 className="text-white font-semibold text-sm lg:text-base">Bevételek</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">Vásárlások és bevételi adatok</p>
                 </button>
               </div>
             </div>

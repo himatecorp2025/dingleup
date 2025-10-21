@@ -265,31 +265,31 @@ const Dashboard = () => {
           </div>
 
           {/* Second Row: Weekly Countdown and Action Buttons */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-stretch justify-between gap-2 sm:gap-3">
             {/* Left: Weekly Countdown */}
-            <div className="flex-shrink-0 w-40 sm:w-52">
+            <div className="flex-1">
               <WeeklyRankingsCountdown compact />
             </div>
 
-            {/* Right: Action Buttons */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Right: Action Buttons - Stacked Vertically */}
+            <div className="flex flex-col gap-2 flex-1">
               <button
                 onClick={() => navigate('/invitation')}
-                className="py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-[10px] sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                className="flex-1 py-2 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-xs sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
                 <Share2 className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
-                <span className="hidden sm:inline">PROFIL MEGOSZTÁSA</span>
-                <span className="sm:hidden">MEGOSZTÁS</span>
+                <span className="hidden sm:inline">MEGOSZTÁS</span>
+                <span className="sm:hidden text-[10px]">SHARE</span>
               </button>
               
               <button
                 onClick={() => navigate('/shop')}
-                className="py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-[10px] sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(234,179,8,0.6)] gold-glow"
+                className="flex-1 py-2 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-xs sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(234,179,8,0.6)] gold-glow"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
                 <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
-                BOLT
+                <span className="text-[10px] sm:text-sm">BOLT</span>
               </button>
             </div>
           </div>

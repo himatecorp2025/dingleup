@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
 import { useDailyGift } from "@/hooks/useDailyGift";
 import { supabase } from "@/integrations/supabase/client";
-import { GameCategory, Question, Answer, SKIP_COSTS, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from "@/types/game";
+import { GameCategory, Question, Answer, getSkipCost, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from "@/types/game";
 import CategorySelector from "./CategorySelector";
 import { HexagonButton } from "./HexagonButton";
 import { GameStateScreen } from "./GameStateScreen";
