@@ -7,11 +7,13 @@ import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
 
 type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'reports';
+type ReportsSubTab = 'development' | 'support';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<MenuTab>('dashboard');
+  const [reportsSubTab, setReportsSubTab] = useState<ReportsSubTab>('development');
   const [userName, setUserName] = useState('Admin');
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
@@ -552,8 +554,35 @@ const AdminDashboard = () => {
             <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">
               Jelentések ({reports.length})
             </h2>
+            
+            {/* Sub-tabs for Development and Support */}
+            <div className="flex gap-2 mb-6 border-b border-purple-500/30 pb-2">
+              <button
+                onClick={() => setReportsSubTab('development')}
+                className={`px-4 py-2 rounded-t-lg transition-colors font-semibold ${
+                  reportsSubTab === 'development'
+                    ? 'bg-orange-600/30 text-orange-400 border-b-2 border-orange-400'
+                    : 'text-white/70 hover:bg-white/5'
+                }`}
+              >
+                🐛 Development ({reports.filter(r => r.report_type === 'bug').length})
+              </button>
+              <button
+                onClick={() => setReportsSubTab('support')}
+                className={`px-4 py-2 rounded-t-lg transition-colors font-semibold ${
+                  reportsSubTab === 'support'
+                    ? 'bg-red-600/30 text-red-400 border-b-2 border-red-400'
+                    : 'text-white/70 hover:bg-white/5'
+                }`}
+              >
+                ⚠️ Support ({reports.filter(r => r.report_type === 'user_behavior').length})
+              </button>
+            </div>
+            
             <div className="space-y-4">
-              {reports.map((report) => (
+              {reports.filter(r => 
+                reportsSubTab === 'development' ? r.report_type === 'bug' : r.report_type === 'user_behavior'
+              ).map((report) => (
                 <div
                   key={report.id}
                   className="bg-black/30 border border-purple-500/20 rounded-lg p-4"
@@ -652,9 +681,11 @@ const AdminDashboard = () => {
                 </div>
               ))}
 
-              {reports.length === 0 && (
+              {reports.filter(r => 
+                reportsSubTab === 'development' ? r.report_type === 'bug' : r.report_type === 'user_behavior'
+              ).length === 0 && (
                 <div className="text-center py-8 text-white/50">
-                  Nincs jelentés
+                  Nincs {reportsSubTab === 'development' ? 'fejlesztői' : 'felhasználói'} jelentés
                 </div>
               )}
             </div>

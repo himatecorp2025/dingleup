@@ -38,7 +38,9 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
     setSearching(true);
 
     try {
-      // Search by username or invitation code
+      const term = searchTerm.trim();
+      
+      // Search by username (exact match) or invitation code (exact match) or partial username
       const { data, error } = await supabase
         .from('profiles')
         .select(`
@@ -47,8 +49,8 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
           avatar_url,
           invitation_code
         `)
-        .or(`username.ilike.%${searchTerm}%,invitation_code.ilike.%${searchTerm}%`)
-        .limit(10);
+        .or(`username.eq.${term},invitation_code.eq.${term},username.ilike.%${term}%`)
+        .limit(20);
 
       if (error) throw error;
 

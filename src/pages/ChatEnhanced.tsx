@@ -370,7 +370,61 @@ const ChatEnhanced = () => {
                 Új üzenet
               </Button>
             </div>
-            {conversations.map((conv) => (
+            
+            {/* Friends Section */}
+            {conversations.filter((c: any) => c.is_friend).length > 0 && (
+              <div className="px-2 py-3 border-b border-purple-500/20">
+                <p className="text-xs font-bold text-purple-300 mb-2 px-2">BARÁTOK</p>
+                {conversations.filter((c: any) => c.is_friend).map((conv) => (
+                  <button
+                    key={conv.id}
+                    onClick={() => setSelectedConversation(conv.id)}
+                    className={`w-full p-3 text-left border-b border-purple-500/10 transition-colors ${
+                      selectedConversation === conv.id
+                        ? 'bg-purple-600/40'
+                        : 'hover:bg-purple-600/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="relative">
+                        {conv.is_group ? (
+                          <Users className="w-5 h-5 text-purple-400" />
+                        ) : conv.other_user?.avatar_url ? (
+                          <img
+                            src={conv.other_user.avatar_url}
+                            alt={conv.other_user.username}
+                            className="w-10 h-10 rounded-full"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
+                            {conv.other_user?.username.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        {!conv.is_group && conv.other_user?.is_online && (
+                          <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></span>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-semibold text-sm">
+                          {conv.is_group ? conv.name : conv.other_user?.username || 'Ismeretlen'}
+                        </p>
+                        {!conv.is_group && conv.other_user && (
+                          <p className="text-xs text-green-400 font-semibold">
+                            {conv.other_user.is_online ? '● Online' : '○ Offline'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            {/* All Conversations */}
+            {conversations.filter((c: any) => !c.is_friend).length > 0 && (
+              <div className="px-2 py-3">
+                <p className="text-xs font-bold text-purple-300 mb-2 px-2">ÖSSZES BESZÉLGETÉS</p>
+                {conversations.filter((c: any) => !c.is_friend).map((conv) => (
               <button
                 key={conv.id}
                 onClick={() => setSelectedConversation(conv.id)}
@@ -412,6 +466,8 @@ const ChatEnhanced = () => {
                 </div>
               </button>
             ))}
+              </div>
+            )}
           </div>
 
           {/* Messages Area */}

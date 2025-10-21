@@ -19,16 +19,27 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
   
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] max-w-md h-auto max-h-[85vh] overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-yellow-500/50 shadow-2xl shadow-yellow-500/30 flex flex-col relative overflow-hidden">
-        {/* Casino lights animation */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
+      <DialogContent className="w-[95vw] max-w-md h-auto max-h-[85vh] overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-4 border-yellow-500/70 shadow-2xl shadow-yellow-500/50 flex flex-col relative overflow-hidden">
+        {/* Casino lights animation - top */}
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-90 animate-pulse z-50"></div>
+        {/* Casino lights animation - bottom */}
+        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-red-500 to-yellow-500 opacity-90 animate-pulse z-50" style={{ animationDelay: '0.5s' }}></div>
+        
+        {/* Floating sparkles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-10 left-10 w-2 h-2 bg-yellow-400 rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
+          <div className="absolute top-20 right-10 w-3 h-3 bg-red-400 rounded-full animate-ping" style={{ animationDuration: '3s', animationDelay: '0.5s' }}></div>
+          <div className="absolute bottom-20 left-20 w-2 h-2 bg-purple-400 rounded-full animate-ping" style={{ animationDuration: '2.5s', animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 right-5 w-3 h-3 bg-orange-400 rounded-full animate-ping" style={{ animationDuration: '2.2s', animationDelay: '1.5s' }}></div>
+        </div>
+        
         <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="text-xl sm:text-2xl font-bold text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text text-transparent">
-            Napi Ajándék 🎁
+          <DialogTitle className="text-xl sm:text-2xl font-black text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg animate-pulse">
+            🎰 NAPI AJÁNDÉK 🎰
             {isPremium && <span className="ml-2">💎</span>}
           </DialogTitle>
-          <DialogDescription className="text-center text-xs sm:text-sm text-purple-300">
-            {isPremium ? 'Prémium tag - Dupla jutalmak!' : 'Jelentkezz be minden nap és szerezz aranyérméket!'}
+          <DialogDescription className="text-center text-xs sm:text-sm text-yellow-300/90 font-semibold">
+            {isPremium ? '⭐ PRÉMIUM TAG - DUPLA JUTALMAK! ⭐' : '🎲 Jelentkezz be minden nap és szerezz aranyérméket! 🎲'}
           </DialogDescription>
         </DialogHeader>
 
@@ -68,32 +79,35 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
           </div>
 
           {/* Current status */}
-          <div className="bg-gradient-to-br from-purple-600/20 to-purple-900/20 border-2 border-purple-500/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center">
+          <div className="bg-gradient-to-br from-yellow-600/30 via-orange-600/20 to-red-600/30 border-4 border-yellow-500/70 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center shadow-2xl shadow-yellow-500/50 relative overflow-hidden">
+            {/* Animated glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 via-transparent to-orange-500/20 animate-pulse"></div>
+            
             {canClaim ? (
               <>
-                <p className="text-xs sm:text-sm text-purple-300 mb-2">
-                  {currentStreak + 1}. napi ajándékod {isPremium && '(x2 Prémium Bónusz!)'}
+                <p className="text-xs sm:text-sm text-yellow-200 font-bold mb-2 relative z-10">
+                  🎉 {currentStreak + 1}. NAPI AJÁNDÉKOD {isPremium && '(x2 PRÉMIUM BÓNUSZ!)'}
                 </p>
-                <p className="text-3xl sm:text-4xl font-black text-yellow-400 flex items-center justify-center gap-2 sm:gap-3 mb-2">
-                  <Coins className="w-8 h-8 sm:w-10 sm:h-10" />
+                <p className="text-4xl sm:text-5xl font-black text-yellow-400 flex items-center justify-center gap-2 sm:gap-3 mb-2 drop-shadow-2xl relative z-10 animate-bounce">
+                  <Coins className="w-10 h-10 sm:w-12 sm:h-12 animate-spin" style={{ animationDuration: '3s' }} />
                   +{actualReward}
                 </p>
-                <p className="text-base sm:text-lg text-white font-bold">
-                  {actualReward} aranyérme a tiéd!
+                <p className="text-lg sm:text-xl text-white font-black relative z-10">
+                  💰 {actualReward} ARANYÉRME A TIÉD! 💰
                 </p>
                 {isPremium && (
-                  <p className="text-xs text-green-400 mt-2">
-                    ✓ Prémium előfizetés aktív - Dupla jutalmak!
+                  <p className="text-sm text-green-300 font-bold mt-2 relative z-10 animate-pulse">
+                    ✅ PRÉMIUM ELŐFIZETÉS AKTÍV - DUPLA JUTALMAK!
                   </p>
                 )}
               </>
             ) : (
               <>
-                <p className="text-xs sm:text-sm text-purple-300 mb-2">
-                  Mai ajándékod már átvéve!
+                <p className="text-xs sm:text-sm text-yellow-200 font-bold mb-2 relative z-10">
+                  ✅ MAI AJÁNDÉKOD MÁR ÁTVÉVE!
                 </p>
-                <p className="text-xl sm:text-2xl font-black text-white">
-                  Sorozat: {currentStreak} nap
+                <p className="text-2xl sm:text-3xl font-black text-yellow-400 relative z-10">
+                  🔥 SOROZAT: {currentStreak} NAP 🔥
                 </p>
               </>
             )}
@@ -101,12 +115,12 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
 
           {/* Premium subscription promo - only if not premium */}
           {!isPremium && (
-            <div className="bg-gradient-to-r from-yellow-500/20 to-purple-600/20 border border-yellow-500/50 rounded-lg p-3 text-center">
-              <p className="text-xs font-semibold text-yellow-400 mb-1">💎 Legyél Prémium Tag! 💎</p>
-              <p className="text-[10px] sm:text-xs text-white/90 leading-relaxed">
-                Csak <span className="font-bold text-yellow-300">$2.99/hó</span> (~$0.09/nap)<br/>
-                <span className="font-bold text-green-400">Dupla napi jutalmak</span> + 
-                <span className="font-bold text-red-400"> 30 max élet</span>!
+            <div className="bg-gradient-to-r from-yellow-500/30 to-purple-600/30 border-2 border-yellow-500/70 rounded-xl p-4 text-center shadow-xl shadow-yellow-500/30 animate-pulse">
+              <p className="text-sm font-black text-yellow-400 mb-2">💎 LEGYÉL PRÉMIUM TAG! 💎</p>
+              <p className="text-xs sm:text-sm text-white font-bold leading-relaxed">
+                Csak <span className="text-yellow-300 text-lg">$2.99/hó</span> (~$0.09/nap)<br/>
+                <span className="text-green-300">✨ Dupla napi jutalmak ✨</span><br/>
+                <span className="text-red-300">❤️ 30 max élet ❤️</span>
               </p>
             </div>
           )}
