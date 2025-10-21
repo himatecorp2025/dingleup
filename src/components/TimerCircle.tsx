@@ -16,13 +16,13 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
   const timerColor = getTimerColor();
   
   return (
-    <div className="relative w-36 h-36 flex items-center justify-center">
+    <div className="relative w-28 h-28 flex items-center justify-center">
       {/* Outer decorative circle */}
       <svg className="absolute w-full h-full transform -rotate-90">
         <circle
-          cx="72"
-          cy="72"
-          r="68"
+          cx="56"
+          cy="56"
+          r="52"
           stroke="#3b82f6"
           strokeWidth="2"
           fill="none"
@@ -32,19 +32,19 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
       {/* Main timer circle */}
       <svg className="absolute w-full h-full transform -rotate-90">
         <circle
-          cx="72"
-          cy="72"
-          r="54"
+          cx="56"
+          cy="56"
+          r="42"
           stroke="#1e293b"
-          strokeWidth="10"
+          strokeWidth="8"
           fill="none"
         />
         <circle
-          cx="72"
-          cy="72"
-          r="54"
+          cx="56"
+          cy="56"
+          r="42"
           stroke={timerColor}
-          strokeWidth="10"
+          strokeWidth="8"
           fill="none"
           strokeDasharray={circumference}
           strokeDashoffset={circumference - progress}
@@ -52,10 +52,10 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
         />
       </svg>
       {/* Inner background */}
-      <div className="absolute w-28 h-28 rounded-full bg-slate-900 border-4 border-slate-800" />
+      <div className="absolute w-20 h-20 rounded-full bg-slate-900 border-3 border-slate-800" />
       {/* Timer number */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-6xl font-black drop-shadow-lg" style={{ color: timerColor }}>
+        <span className="text-4xl font-black drop-shadow-lg" style={{ color: timerColor }}>
           {timeLeft}
         </span>
       </div>

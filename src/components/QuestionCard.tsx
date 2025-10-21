@@ -57,32 +57,32 @@ export const QuestionCard = ({
   const correctAnswerKey = question.answers.find(a => a.correct)?.key || "";
 
   return (
-    <div className={`w-full h-full flex flex-col justify-between p-4 ${className}`}>
+    <div className={`w-full h-full flex flex-col justify-between p-2 sm:p-3 ${className}`}>
       {/* Top section: Exit button, Lives, Coins */}
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex justify-between items-start mb-2">
         <button
           onClick={onExit}
-          className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+          className="p-2 sm:p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
           title="Vissza"
         >
-          <LogOut className="w-6 h-6 -scale-x-100" />
+          <LogOut className="w-5 h-5 sm:w-6 sm:h-6 -scale-x-100" />
         </button>
 
-        <div className="flex gap-4">
-          <div className="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full">
-            <span className="text-red-500 text-xl">❤️</span>
-            <span className="text-white font-bold">{lives}/{maxLives}</span>
+        <div className="flex gap-2 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-2 bg-black/40 px-2 sm:px-3 py-1 rounded-full">
+            <span className="text-red-500 text-lg sm:text-xl">❤️</span>
+            <span className="text-white font-bold text-sm sm:text-base">{lives}/{maxLives}</span>
           </div>
-          <div className="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full">
-            <span className="text-yellow-500 text-xl">🪙</span>
-            <span className="text-white font-bold">{coins}</span>
+          <div className="flex items-center gap-1 sm:gap-2 bg-black/40 px-2 sm:px-3 py-1 rounded-full">
+            <span className="text-yellow-500 text-lg sm:text-xl">🪙</span>
+            <span className="text-white font-bold text-sm sm:text-base">{coins}</span>
           </div>
         </div>
       </div>
 
       {/* Middle section: Question and Answers */}
-      <div className="flex-1 flex flex-col justify-center space-y-6">
-        <div className="flex justify-center mb-4">
+      <div className="flex-1 flex flex-col justify-center space-y-2 sm:space-y-3">
+        <div className="flex justify-center mb-1 sm:mb-2">
           <TimerCircle timeLeft={timeLeft} />
         </div>
 
@@ -90,8 +90,7 @@ export const QuestionCard = ({
           {question.question}
         </MillionaireQuestion>
 
-        <div className="space-y-3">
-          {question.answers.map((answer) => {
+        <div className="space-y-2">{question.answers.map((answer) => {
             const isRemoved = removedAnswer === answer.key;
             const isSelected = selectedAnswer === answer.key;
             const isCorrect = isSelected && answer.key === correctAnswerKey;
@@ -135,7 +134,7 @@ export const QuestionCard = ({
       </div>
 
       {/* Bottom section: Help buttons - 1 row below answer C */}
-      <div className="grid grid-cols-4 gap-2 mt-4">
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mt-2">
         <HexagonButton
           variant="outline"
           size="sm"
