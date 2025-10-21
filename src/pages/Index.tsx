@@ -10,12 +10,6 @@ const Index = () => {
       <Hero />
       <Features />
       <DevelopmentStatus />
-      {/* Note under hero: Game is mobile-only */}
-      <div className="text-center py-4 px-4">
-        <p className="text-sm text-white/60">
-          📱 A játék kizárólag telefonon érhető el
-        </p>
-      </div>
       <Newsletter />
       <Footer />
     </main>

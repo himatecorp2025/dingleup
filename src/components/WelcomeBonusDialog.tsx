@@ -44,20 +44,20 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-hidden bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50 shadow-2xl shadow-purple-500/30">
+      <DialogContent className="w-[95vw] max-w-md max-h-[70vh] overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50 shadow-2xl shadow-purple-500/30">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent">
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-center bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent">
             🎉 ÜDVÖZLŐ BÓNUSZ! 🎉
           </DialogTitle>
-          <DialogDescription className="text-center text-sm font-medium text-white">
+          <DialogDescription className="text-center text-xs sm:text-sm font-medium text-white">
             Köszönjük, hogy csatlakoztál! 🎁
           </DialogDescription>
         </DialogHeader>
 
         {/* Animation container - KOMPAKT */}
-        <div className="flex flex-col items-center justify-center py-2">
+        <div className="flex flex-col items-center justify-center py-1">
           {showAnimation && (
-            <div className="relative w-full flex items-center justify-center h-32">
+            <div className="relative w-full flex items-center justify-center h-24 sm:h-32">
               {/* Chest phase */}
               <div 
                 className={`transition-all duration-1000 ${
@@ -68,10 +68,10 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
               >
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="absolute w-24 h-24 bg-gradient-to-r from-yellow-500/20 via-yellow-300/30 to-yellow-500/20 blur-2xl animate-spin-slow"></div>
+                    <div className="absolute w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-r from-yellow-500/20 via-yellow-300/30 to-yellow-500/20 blur-2xl animate-spin-slow"></div>
                   </div>
                   <div className="relative animate-bounce z-10">
-                    <Gift className="w-20 h-20 text-yellow-400 drop-shadow-2xl" strokeWidth={2.5} />
+                    <Gift className="w-14 h-14 sm:w-20 sm:h-20 text-yellow-400 drop-shadow-2xl" strokeWidth={2.5} />
                   </div>
                 </div>
               </div>
@@ -86,9 +86,9 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
               >
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="absolute w-32 h-32 bg-gradient-to-r from-yellow-400/30 via-orange-400/40 to-yellow-400/30 blur-2xl rounded-full animate-pulse"></div>
+                    <div className="absolute w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-r from-yellow-400/30 via-orange-400/40 to-yellow-400/30 blur-2xl rounded-full animate-pulse"></div>
                   </div>
-                  <Coins className="w-24 h-24 text-yellow-400 drop-shadow-2xl animate-scale-in relative z-10" strokeWidth={2.5} />
+                  <Coins className="w-16 h-16 sm:w-24 sm:h-24 text-yellow-400 drop-shadow-2xl animate-scale-in relative z-10" strokeWidth={2.5} />
                 </div>
               </div>
             </div>
@@ -96,33 +96,33 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
         </div>
 
         {/* Bonus details - KOMPAKT */}
-        <div className="space-y-2 bg-black/80 backdrop-blur-sm rounded-xl p-4 border-2 border-yellow-500/50">
-          <h3 className="text-center text-sm font-bold mb-2 text-white">
+        <div className="space-y-1.5 sm:space-y-2 bg-black/80 backdrop-blur-sm rounded-xl p-3 sm:p-4 border-2 border-yellow-500/50">
+          <h3 className="text-center text-xs sm:text-sm font-bold mb-1 sm:mb-2 text-white">
             🎁 Regisztrációs Bónuszod:
           </h3>
           
-          <div className="flex items-center justify-between p-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30">
-            <div className="flex items-center gap-2">
-              <Coins className="w-5 h-5 text-yellow-500" />
-              <span className="font-bold text-sm text-white">Aranyérmék</span>
+          <div className="flex items-center justify-between p-1.5 sm:p-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
+              <span className="font-bold text-xs sm:text-sm text-white">Aranyérmék</span>
             </div>
-            <span className="text-xl font-black text-white">+2,500</span>
+            <span className="text-base sm:text-xl font-black text-white">+2,500</span>
           </div>
           
-          <div className="flex items-center justify-between p-2 bg-gradient-to-r from-red-500/20 to-pink-500/20 rounded-lg border border-red-500/30">
-            <div className="flex items-center gap-2">
-              <Heart className="w-5 h-5 text-red-500" />
-              <span className="font-bold text-sm text-white">Életek</span>
+          <div className="flex items-center justify-between p-1.5 sm:p-2 bg-gradient-to-r from-red-500/20 to-pink-500/20 rounded-lg border border-red-500/30">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
+              <span className="font-bold text-xs sm:text-sm text-white">Életek</span>
             </div>
-            <span className="text-xl font-black text-white">+50</span>
+            <span className="text-base sm:text-xl font-black text-white">+50</span>
           </div>
 
-          <div className="flex items-center justify-between p-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
-            <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-purple-500" />
-              <span className="font-bold text-sm text-white">DingleSpeed</span>
+          <div className="flex items-center justify-between p-1.5 sm:p-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
+              <span className="font-bold text-xs sm:text-sm text-white">DingleSpeed</span>
             </div>
-            <span className="text-xl font-black text-white">+1</span>
+            <span className="text-base sm:text-xl font-black text-white">+1</span>
           </div>
         </div>
 
@@ -132,12 +132,12 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
           size="lg"
           onClick={handleClaim}
           disabled={claiming}
-          className="w-full text-lg font-black"
+          className="w-full text-base sm:text-lg font-black py-2 sm:py-3"
         >
           {claiming ? '⏳ Feldolgozás...' : '✅ ELFOGADOM! 🎉'}
         </HexagonButton>
 
-        <p className="text-center text-white/70 text-xs">
+        <p className="text-center text-white/70 text-[10px] sm:text-xs">
           ⭐ Egyszer kapható meg ⭐
         </p>
       </DialogContent>

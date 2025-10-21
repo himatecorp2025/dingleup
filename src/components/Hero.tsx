@@ -81,27 +81,35 @@ const Hero = () => {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
-            <button
-              onClick={() => navigate('/login')}
-              className="group relative w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg rounded-2xl border-4 border-green-400 shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 hover:scale-105 transition-all animate-pulse-glow-green overflow-hidden"
-              style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-white/30 to-green-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-              <div className="relative flex items-center justify-center gap-2">
-                <Play className="w-5 h-5" />
-                TESZTJÁTÉK INDÍTÁSA
-              </div>
-            </button>
+          <div className="flex flex-col gap-4 justify-center items-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <button
+                onClick={() => navigate('/login')}
+                className="group relative w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg rounded-2xl border-4 border-green-400 shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 hover:scale-105 transition-all animate-pulse-glow-green overflow-hidden"
+                style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-white/30 to-green-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                <div className="relative flex items-center justify-center gap-2">
+                  <Play className="w-5 h-5" />
+                  TESZTJÁTÉK INDÍTÁSA
+                </div>
+              </button>
 
-            <Button
-              onClick={scrollToFeatures}
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto text-base px-8 py-6 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/20 hover:scale-105 transition-all"
-            >
-              Tudj meg többet
-            </Button>
+              <Button
+                onClick={scrollToFeatures}
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto text-base px-8 py-6 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/20 hover:scale-105 transition-all"
+              >
+                Tudj meg többet
+              </Button>
+            </div>
+            
+            {/* Mobile-only note */}
+            <p className="text-xs text-white/50 text-center max-w-md">
+              <Smartphone className="w-3 h-3 inline mr-1" />
+              A játék kizárólag telefonon és táblagépen érhető el
+            </p>
           </div>
 
           {/* App Store Icons */}
