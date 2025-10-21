@@ -26,7 +26,8 @@ const BottomNav = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-black/95 border-t-2 border-purple-500/50 backdrop-blur-sm z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-black/90 border-t-2 border-yellow-500/50 backdrop-blur-sm z-50 shadow-[0_-5px_20px_rgba(255,215,0,0.3)]">
+      <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-60"></div>
       <div className="grid grid-cols-5 gap-1 p-2 max-w-screen-sm mx-auto">
         {navItems.map((item, index) => {
           const Icon = item.icon;
@@ -38,13 +39,18 @@ const BottomNav = () => {
               onClick={() => item.action ? item.action() : navigate(item.path!)}
               className={`
                 flex flex-col items-center justify-center py-3 px-2 rounded-lg
-                transition-all duration-200
-                ${isActive ? 'bg-purple-600/30 text-purple-300' : 'text-white/70 hover:text-white hover:bg-white/10'}
+                transition-all duration-200 relative overflow-hidden
+                ${isActive 
+                  ? 'bg-gradient-to-t from-yellow-600/40 to-yellow-500/30 text-yellow-300 shadow-[0_0_15px_rgba(255,215,0,0.4)]' 
+                  : 'text-white/70 hover:text-yellow-300 hover:bg-yellow-500/10'}
               `}
               style={{ transform: 'scaleX(1.25)' }}
             >
-              <Icon className="w-5 h-5 mb-1" />
-              <span className="text-[10px] font-bold">{item.label}</span>
+              {isActive && (
+                <div className="absolute inset-0 bg-gradient-to-t from-yellow-600/20 to-transparent animate-pulse"></div>
+              )}
+              <Icon className={`w-5 h-5 mb-1 relative z-10 ${isActive ? 'drop-shadow-[0_0_5px_rgba(255,215,0,0.8)]' : ''}`} />
+              <span className="text-[10px] font-bold relative z-10">{item.label}</span>
             </button>
           );
         })}

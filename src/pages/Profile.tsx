@@ -81,12 +81,15 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] pb-24 overflow-x-hidden overflow-y-auto">
+      {/* Casino lights at top */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
+      
       <div className="w-full max-w-screen-sm mx-auto p-3 sm:p-4">
         {/* Header - Back button and Avatar in same line - HIGHER UP */}
         <div className="flex items-center justify-between mb-2 sm:mb-4">
           <button
             onClick={() => navigate('/dashboard')}
-            className="p-2.5 sm:p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+            className="p-2.5 sm:p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50 neon-border"
             title="Vissza"
           >
             <LogOut className="w-5 h-5 sm:w-6 sm:h-6 -scale-x-100" />
@@ -95,7 +98,7 @@ const Profile = () => {
           {/* Avatar on the same line as back button */}
           <div className="relative">
             <div 
-              className="w-16 h-16 sm:w-20 sm:h-20 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 sm:border-4 border-purple-400 shadow-xl shadow-purple-500/50"
+              className="w-16 h-16 sm:w-20 sm:h-20 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 sm:border-4 border-yellow-400 shadow-xl shadow-yellow-500/50 gold-glow"
             >
               {profile.avatar_url ? (
                 <img 
@@ -104,7 +107,7 @@ const Profile = () => {
                   className="w-full h-full object-cover clip-hexagon"
                 />
               ) : (
-                <span className="text-2xl sm:text-3xl font-black text-white">
+                <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-lg">
                   {getInitials(profile.username)}
                 </span>
               )}
@@ -112,9 +115,9 @@ const Profile = () => {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="absolute bottom-0 right-0 bg-purple-600 hover:bg-purple-700 p-1.5 sm:p-2 rounded-full border-2 border-purple-400 shadow-lg transition-all"
+              className="absolute bottom-0 right-0 bg-yellow-600 hover:bg-yellow-700 p-1.5 sm:p-2 rounded-full border-2 border-yellow-400 shadow-lg transition-all gold-glow"
             >
-              <Camera className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+              <Camera className="w-3 h-3 sm:w-4 sm:h-4 text-white drop-shadow" />
             </button>
             <input
               ref={fileInputRef}
@@ -128,71 +131,71 @@ const Profile = () => {
 
         {/* User Info */}
         <div className="text-center mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-black text-white mb-1">{profile.username}</h1>
-          <p className="text-sm sm:text-base text-purple-300">{profile.email}</p>
+          <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 mb-1">{profile.username}</h1>
+          <p className="text-sm sm:text-base text-yellow-200/90">{profile.email}</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
           {/* Lives */}
-          <div className="bg-gradient-to-br from-red-600/20 to-red-900/20 border-2 border-red-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
-            <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-red-500 mx-auto mb-2" />
-            <p className="text-xs sm:text-sm text-white/70 mb-1">Életek</p>
-            <p className="text-xl sm:text-2xl font-black text-white">{profile.lives}/{profile.max_lives}</p>
+          <div className="bg-gradient-to-br from-red-600/30 to-red-900/30 border-2 border-red-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center shadow-[0_0_15px_rgba(239,68,68,0.4)] casino-card">
+            <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-red-400 mx-auto mb-2 drop-shadow-lg" />
+            <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Életek</p>
+            <p className="text-xl sm:text-2xl font-black text-white drop-shadow-lg">{profile.lives}/{profile.max_lives}</p>
           </div>
 
           {/* Coins */}
-          <div className="bg-gradient-to-br from-yellow-600/20 to-yellow-900/20 border-2 border-yellow-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
-            <Coins className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500 mx-auto mb-2" />
-            <p className="text-xs sm:text-sm text-white/70 mb-1">Aranyérmék</p>
-            <p className="text-xl sm:text-2xl font-black text-white">{profile.coins}</p>
+          <div className="bg-gradient-to-br from-yellow-600/30 to-yellow-900/30 border-2 border-yellow-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center shadow-[0_0_15px_rgba(234,179,8,0.5)] casino-card gold-glow">
+            <Coins className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 mx-auto mb-2 drop-shadow-lg" />
+            <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Aranyérmék</p>
+            <p className="text-xl sm:text-2xl font-black text-white drop-shadow-lg">{profile.coins}</p>
           </div>
 
           {/* Total Correct Answers */}
-          <div className="bg-gradient-to-br from-green-600/20 to-green-900/20 border-2 border-green-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
-            <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-green-500 mx-auto mb-2" />
-            <p className="text-xs sm:text-sm text-white/70 mb-1">Helyes válaszok</p>
-            <p className="text-xl sm:text-2xl font-black text-white">{profile.total_correct_answers || 0}</p>
+          <div className="bg-gradient-to-br from-green-600/30 to-green-900/30 border-2 border-green-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center shadow-[0_0_15px_rgba(34,197,94,0.4)] casino-card">
+            <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-green-400 mx-auto mb-2 drop-shadow-lg" />
+            <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Helyes válaszok</p>
+            <p className="text-xl sm:text-2xl font-black text-white drop-shadow-lg">{profile.total_correct_answers || 0}</p>
           </div>
 
           {/* Daily Streak */}
-          <div className="bg-gradient-to-br from-blue-600/20 to-blue-900/20 border-2 border-blue-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
-            <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 mx-auto mb-2" />
-            <p className="text-xs sm:text-sm text-white/70 mb-1">Napi sorozat</p>
-            <p className="text-xl sm:text-2xl font-black text-white">{profile.daily_gift_streak} nap</p>
+          <div className="bg-gradient-to-br from-blue-600/30 to-blue-900/30 border-2 border-blue-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center shadow-[0_0_15px_rgba(59,130,246,0.4)] casino-card">
+            <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400 mx-auto mb-2 drop-shadow-lg" />
+            <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Napi sorozat</p>
+            <p className="text-xl sm:text-2xl font-black text-white drop-shadow-lg">{profile.daily_gift_streak} nap</p>
           </div>
         </div>
 
         {/* Invitation Code - Full width */}
-        <div className="bg-gradient-to-br from-purple-600/20 to-purple-900/20 border-2 border-purple-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center mb-4 sm:mb-6">
-          <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500 mx-auto mb-2" />
-          <p className="text-xs sm:text-sm text-white/70 mb-1">Meghívó kód</p>
-          <p className="text-xl sm:text-2xl font-black text-white">{profile.invitation_code}</p>
+        <div className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center mb-4 sm:mb-6 shadow-[0_0_15px_rgba(168,85,247,0.4)] casino-card">
+          <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 mx-auto mb-2 drop-shadow-lg" />
+          <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Meghívó kód</p>
+          <p className="text-xl sm:text-2xl font-black text-white drop-shadow-lg">{profile.invitation_code}</p>
         </div>
 
         {/* Booster Inventory */}
-        <div className="bg-black/60 border-2 border-yellow-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-sm mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-xl font-black text-white mb-3 sm:mb-4 flex items-center gap-2">
-            <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
+        <div className="bg-black/80 border-2 border-yellow-500/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-sm mb-4 sm:mb-6 shadow-[0_0_20px_rgba(234,179,8,0.3)] casino-card">
+          <h2 className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200 mb-3 sm:mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 drop-shadow-lg" />
             Booster készletem
           </h2>
           
           <div className="grid grid-cols-2 gap-2 sm:gap-4">
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center">
-              <p className="text-xs sm:text-sm text-yellow-300 mb-1">DoubleSpeed</p>
-              <p className="text-xl sm:text-2xl font-black text-yellow-500">{boosterCounts.DoubleSpeed || 0}</p>
+            <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center casino-card">
+              <p className="text-xs sm:text-sm text-yellow-300 mb-1 font-semibold">DoubleSpeed</p>
+              <p className="text-xl sm:text-2xl font-black text-yellow-400 drop-shadow-lg">{boosterCounts.DoubleSpeed || 0}</p>
             </div>
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center">
-              <p className="text-xs sm:text-sm text-yellow-300 mb-1">MegaSpeed</p>
-              <p className="text-xl sm:text-2xl font-black text-yellow-500">{boosterCounts.MegaSpeed || 0}</p>
+            <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center casino-card">
+              <p className="text-xs sm:text-sm text-yellow-300 mb-1 font-semibold">MegaSpeed</p>
+              <p className="text-xl sm:text-2xl font-black text-yellow-400 drop-shadow-lg">{boosterCounts.MegaSpeed || 0}</p>
             </div>
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center">
-              <p className="text-xs sm:text-sm text-yellow-300 mb-1">GigaSpeed</p>
-              <p className="text-xl sm:text-2xl font-black text-yellow-500">{boosterCounts.GigaSpeed || 0}</p>
+            <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center casino-card">
+              <p className="text-xs sm:text-sm text-yellow-300 mb-1 font-semibold">GigaSpeed</p>
+              <p className="text-xl sm:text-2xl font-black text-yellow-400 drop-shadow-lg">{boosterCounts.GigaSpeed || 0}</p>
             </div>
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center">
-              <p className="text-xs sm:text-sm text-yellow-300 mb-1">DingleSpeed</p>
-              <p className="text-xl sm:text-2xl font-black text-yellow-500">{boosterCounts.DingleSpeed || 0}</p>
+            <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center casino-card">
+              <p className="text-xs sm:text-sm text-yellow-300 mb-1 font-semibold">DingleSpeed</p>
+              <p className="text-xl sm:text-2xl font-black text-yellow-400 drop-shadow-lg">{boosterCounts.DingleSpeed || 0}</p>
             </div>
           </div>
         </div>

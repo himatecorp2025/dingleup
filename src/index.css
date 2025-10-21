@@ -362,6 +362,72 @@ body {
   }
 }
 
+@keyframes neon-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 0 10px rgba(255, 215, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.4);
+  }
+}
+
+@keyframes casino-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes slot-shine {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(300%) rotate(45deg);
+  }
+}
+
+@keyframes gold-spin {
+  0% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  50% {
+    filter: hue-rotate(15deg) brightness(1.2);
+  }
+  100% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+}
+
+.casino-card {
+  position: relative;
+  overflow: hidden;
+  animation: casino-pulse 3s ease-in-out infinite;
+}
+
+.casino-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+  animation: slot-shine 3s linear infinite;
+}
+
+.neon-border {
+  animation: neon-glow 2s ease-in-out infinite;
+}
+
+.gold-glow {
+  animation: gold-spin 4s ease-in-out infinite;
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 0.3;

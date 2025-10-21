@@ -199,12 +199,15 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
+      {/* Casino lights at top */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
+      
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4 pb-24 max-w-screen-lg mx-auto">
         {/* Top Section */}
         <div className="flex items-start justify-between mb-3">
       {/* Left: Greeting */}
           <div className="flex flex-col items-start gap-2">
-            <h1 className="text-base sm:text-xl font-black text-white">Szia, {profile.username}!</h1>
+            <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">Szia, {profile.username}!</h1>
             <div className="w-40 sm:w-52 flex-shrink-0">
               <WeeklyRankingsCountdown compact />
             </div>
@@ -215,25 +218,25 @@ const Dashboard = () => {
             {/* Stats Row */}
             <div className="flex items-center gap-1.5 sm:gap-2">
               {/* Rank Hexagon */}
-              <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-purple-400">
-                <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 mb-0.5" />
-                <span className="text-white text-[10px] sm:text-xs font-bold">{currentRank || '...'}</span>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.5)] neon-border">
+                <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 mb-0.5" />
+                <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{currentRank || '...'}</span>
               </div>
 
               {/* Coins Hexagon */}
-              <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-yellow-600 to-yellow-900 flex flex-col items-center justify-center border-2 border-yellow-400">
-                <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5" />
-                <span className="text-white text-[10px] sm:text-xs font-bold">{profile.coins}</span>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-yellow-600 to-yellow-900 flex flex-col items-center justify-center border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.6)] gold-glow">
+                <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
+                <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.coins}</span>
               </div>
 
               {/* Lives Hexagon with Timer */}
               <div className="relative">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400">
-                  <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5" />
-                  <span className="text-white text-[10px] sm:text-xs font-bold">{profile.lives}</span>
+                <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.5)]">
+                  <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
+                  <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.lives}</span>
                 </div>
                 {profile.lives < profile.max_lives && timeUntilNextLife !== '0:00' && (
-                  <div className="absolute -right-1 top-1/2 -translate-y-1/2 bg-black/80 px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-0.5 sm:gap-1 whitespace-nowrap border border-green-500/40">
+                  <div className="absolute -right-1 top-1/2 -translate-y-1/2 bg-black/90 px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-0.5 sm:gap-1 whitespace-nowrap border border-green-500/60 shadow-[0_0_10px_rgba(34,197,94,0.4)]">
                     <Clock className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-green-400" />
                     <span className="text-[8px] sm:text-[9px] text-green-400 font-bold">{timeUntilNextLife}</span>
                   </div>
@@ -243,7 +246,7 @@ const Dashboard = () => {
               {/* Avatar Hexagon */}
               <button
                 onClick={() => navigate('/profile')}
-                className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 sm:border-4 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-transform"
+                className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 sm:border-4 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-transform gold-glow"
               >
                 {profile.avatar_url ? (
                   <img 
@@ -263,19 +266,19 @@ const Dashboard = () => {
             <div className="flex flex-col gap-1.5 sm:gap-2 w-40 sm:w-52 flex-shrink-0">
               <button
                 onClick={() => navigate('/invitation')}
-                className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-[10px] sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
+                className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-[10px] sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
-                <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                <Share2 className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
                 PROFIL MEGOSZTÁSA
               </button>
               
               <button
                 onClick={() => navigate('/shop')}
-                className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-[10px] sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
+                className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-[10px] sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(234,179,8,0.6)] gold-glow"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
-                <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4" />
+                <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
                 BOLT
               </button>
             </div>
@@ -285,8 +288,8 @@ const Dashboard = () => {
         {/* Logo */}
         <div className="flex justify-center mb-2 sm:mb-3">
           <div className="relative w-28 h-28 sm:w-36 sm:h-36">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full blur-3xl"></div>
-            <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl" />
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+            <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
         </div>
 
@@ -311,10 +314,10 @@ const Dashboard = () => {
             } catch {}
             navigate('/game');
           }}
-        	  className="w-full py-2 sm:py-2.5 px-4 sm:px-5 mb-2 sm:mb-3 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-base sm:text-lg rounded-2xl border-2 border-green-400 shadow-xl shadow-green-500/40 hover:shadow-green-500/60 hover:scale-105 transition-all animate-pulse-glow-green"
+        	  className="w-full py-2 sm:py-2.5 px-4 sm:px-5 mb-2 sm:mb-3 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-base sm:text-lg rounded-2xl border-2 border-green-400 shadow-xl shadow-green-500/50 hover:shadow-green-500/70 hover:scale-105 transition-all animate-pulse-glow-green casino-card"
         	  style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         	>
-        	  <Play className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+        	  <Play className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" />
         	  PLAY NOW
         	</button>
 
@@ -341,7 +344,7 @@ const Dashboard = () => {
               window.location.reload();
             }
           }}
-          className={`w-full py-2 sm:py-2.5 px-4 sm:px-5 mb-2 sm:mb-3 bg-gradient-to-r ${hasActiveBooster ? 'from-orange-500 via-orange-400 to-orange-500' : 'from-yellow-500 via-yellow-400 to-yellow-500'} ${hasActiveBooster ? 'text-white' : 'text-black'} font-black text-base sm:text-lg rounded-2xl border-2 ${hasActiveBooster ? 'border-orange-600 shadow-orange-500/40' : 'border-yellow-600 shadow-yellow-500/40'} shadow-xl hover:shadow-yellow-500/60 hover:scale-105 transition-all relative`}
+          className={`w-full py-2 sm:py-2.5 px-4 sm:px-5 mb-2 sm:mb-3 bg-gradient-to-r ${hasActiveBooster ? 'from-orange-500 via-orange-400 to-orange-500' : 'from-yellow-500 via-yellow-400 to-yellow-500'} ${hasActiveBooster ? 'text-white' : 'text-black'} font-black text-base sm:text-lg rounded-2xl border-2 ${hasActiveBooster ? 'border-orange-600' : 'border-yellow-600'} shadow-xl ${hasActiveBooster ? 'shadow-orange-500/60' : 'shadow-yellow-500/60'} hover:scale-105 transition-all relative casino-card`}
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
           {hasActiveBooster && (
@@ -372,10 +375,10 @@ const Dashboard = () => {
         {/* Ranglista Button moved higher above bottom nav */}
         <button
           onClick={() => navigate('/leaderboard')}
-          className="w-full py-2 px-4 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-white font-black text-base sm:text-lg rounded-2xl border-2 border-purple-600 shadow-xl shadow-purple-500/40 hover:shadow-purple-500/60 hover:scale-105 transition-all mb-3"
+          className="w-full py-2 px-4 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-white font-black text-base sm:text-lg rounded-2xl border-2 border-purple-600 shadow-xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105 transition-all mb-3 casino-card"
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
-          <Trophy className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+          <Trophy className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" />
           RANGLISTA
         </button>
 
