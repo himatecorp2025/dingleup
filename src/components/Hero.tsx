@@ -105,12 +105,12 @@ const Hero = () => {
               </Button>
             </div>
             
-            {/* Mobile-only note */}
-            <p className="text-[10px] text-white/40 text-center max-w-md leading-relaxed">
-              <Smartphone className="w-3 h-3 inline mr-1" />
-              A játék kizárólag telefonon és táblagépen érhető el. Desktop és laptop esetén csak a landing page látható.
-            </p>
-          </div>
+          {/* Mobile-only note */}
+          <p className="text-[10px] text-white/40 text-center max-w-md leading-relaxed">
+            <Smartphone className="w-3 h-3 inline mr-1" />
+            A játék kizárólag telefonon és táblagépen érhető el. Desktop és laptop esetén csak a landing page látható.
+          </p>
+        </div>
 
           {/* App Store Icons */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6 animate-fade-in" style={{ animationDelay: '0.7s' }}>

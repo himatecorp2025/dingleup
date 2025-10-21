@@ -345,13 +345,24 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     
     if (profile.coins < cost) {
       toast.error(`Nincs elég aranyérme! ${cost} 🪙 szükséges.`);
+      
+      // Show dialog with shop offer
+      const confirmed = window.confirm(
+        `Sajnos elfogyott az aranyérméd!\n\nSzerezz be most újakat a boltban!\n\nRendben = Bolt megnyitása\nMégse = Folytatás nélkül`
+      );
+      
+      if (confirmed) {
+        stopMusic();
+        navigate('/shop');
+      }
       return;
     }
     
     // Spend coins using RPC
-    const success = await supabase.rpc('spend_coins', { amount: cost });
-    if (success.data) {
+    const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
+    if (success) {
       await refreshProfile();
+      toast.success(`Kérdés átugorva ${cost} aranyért`);
       handleNextQuestion();
     }
   };
@@ -362,17 +373,31 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
     
     if (profile.coins < cost) {
-      toast.error(`Nincs elég aranyérme! ${cost} 🪙 szükséses.`);
-      finishGame();
+      // Show insufficient coins dialog
+      toast.error(`Nincs elég aranyérme! ${cost} 🪙 szükséges.`);
+      
+      // Show dialog with shop offer
+      const confirmed = window.confirm(
+        `Sajnos elfogyott az aranyérméd!\n\nSzerezz be most újakat a boltban, hogy folytasd a játékot!\n\nRendben = Bolt megnyitása\nMégse = Játék vége`
+      );
+      
+      if (confirmed) {
+        stopMusic();
+        navigate('/shop');
+      } else {
+        finishGame();
+      }
       return;
     }
     
     // Spend coins using RPC
-    const success = await supabase.rpc('spend_coins', { amount: cost });
-    if (success.data) {
+    const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
+    if (success) {
       await refreshProfile();
+      toast.success(`${cost} aranyérme levonva - Tovább!`);
       handleNextQuestion();
     } else {
+      toast.error('Hiba a fizetés során');
       finishGame();
     }
   };
@@ -446,8 +471,8 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
     
-    // Ha már használtuk de még nem aktiváltuk újra és van elég arany
-    if (usedHelp5050 && !reactivatedHelp5050) {
+    // Ha már használtuk de még nem aktiváltuk újra ÉS még nem használtuk fel a max 1 újraaktiválást
+    if (usedHelp5050 && !reactivatedHelp5050 && help5050ReactivationCount < 1) {
       if (!profile || profile.coins < 15) {
         toast.error('Nincs elég aranyérme! 15 🪙 szükséges.');
         return;
@@ -457,11 +482,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       if (success) {
         await refreshProfile();
         setReactivatedHelp5050(true);
+        setHelp5050ReactivationCount(prev => prev + 1);
         const currentQuestion = questions[currentQuestionIndex];
         const thirdAnswerKey = currentQuestion.third;
         setRemovedAnswer(thirdAnswerKey);
-        toast.info('Harmadoló újraaktiválva 15 aranyért!');
+        toast.success('Harmadoló újraaktiválva 15 aranyért!');
       }
+    } else if (help5050ReactivationCount >= 1) {
+      toast.error('Ezt a segítséget már kétszer használtad ebben a játékban!');
     }
   };
 
@@ -479,8 +507,8 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
     
-    // Ha már használtuk de még nem aktiváltuk újra és van elég arany
-    if (usedHelp2xAnswer && !reactivatedHelp2xAnswer) {
+    // Ha már használtuk de még nem aktiváltuk újra ÉS még nem használtuk fel a max 1 újraaktiválást
+    if (usedHelp2xAnswer && !reactivatedHelp2xAnswer && help2xReactivationCount < 1) {
       if (!profile || profile.coins < 20) {
         toast.error('Nincs elég aranyérme! 20 🪙 szükséges.');
         return;
@@ -490,9 +518,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       if (success) {
         await refreshProfile();
         setReactivatedHelp2xAnswer(true);
+        setHelp2xReactivationCount(prev => prev + 1);
         setFirstAttempt(null);
-        toast.info('2× válasz újraaktiválva 20 aranyért!');
+        toast.success('2× válasz újraaktiválva 20 aranyért!');
       }
+    } else if (help2xReactivationCount >= 1) {
+      toast.error('Ezt a segítséget már kétszer használtad ebben a játékban!');
     }
   };
 
@@ -514,8 +545,8 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
     
-    // Ha már használtuk de még nem aktiváltuk újra és van elég arany
-    if (usedHelpAudience && !reactivatedHelpAudience) {
+    // Ha már használtuk de még nem aktiváltuk újra ÉS még nem használtuk fel a max 1 újraaktiválást
+    if (usedHelpAudience && !reactivatedHelpAudience && helpAudienceReactivationCount < 1) {
       if (!profile || profile.coins < 30) {
         toast.error('Nincs elég aranyérme! 30 🪙 szükséges.');
         return;
@@ -525,11 +556,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       if (success) {
         await refreshProfile();
         setReactivatedHelpAudience(true);
+        setHelpAudienceReactivationCount(prev => prev + 1);
         const currentQuestion = questions[currentQuestionIndex];
         const votes = currentQuestion.audience;
         setAudienceVotes(votes);
-        toast.info('Közönség segítség újraaktiválva 30 aranyért!');
+        toast.success('Közönség segítség újraaktiválva 30 aranyért!');
       }
+    } else if (helpAudienceReactivationCount >= 1) {
+      toast.error('Ezt a segítséget már kétszer használtad ebben a játékban!');
     }
   };
 
@@ -819,21 +853,21 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     const isCorrect = answer.correct && showResult;
                     const isWrong = showResult && isSelected && !answer.correct;
                     
-                    // Double answer orange highlight logic
-                    const isFirstAttempt = usedHelp2xAnswer && firstAttempt === answer.key && !selectedAnswer;
-                    const isSecondAttempt = usedHelp2xAnswer && firstAttempt && selectedAnswer === answer.key && !isCorrect && !isWrong;
+                     // Double answer orange highlight logic
+                     const isFirstAttempt = usedHelp2xAnswer && firstAttempt === answer.key && !selectedAnswer;
+                     const isSecondAttemptOrange = usedHelp2xAnswer && firstAttempt && !selectedAnswer;
 
-                    return (
-                      <MillionaireAnswer
-                        key={answer.key}
-                        letter={answer.key as 'A' | 'B' | 'C'}
-                        onClick={() => handleAnswer(answer.key)}
-                        isSelected={(isSelected && !showResult) || isFirstAttempt || isSecondAttempt}
-                        isCorrect={isCorrect}
-                        isWrong={isWrong}
-                        disabled={selectedAnswer !== null}
-                        isRemoved={isRemoved}
-                      >
+                     return (
+                       <MillionaireAnswer
+                         key={answer.key}
+                         letter={answer.key as 'A' | 'B' | 'C'}
+                         onClick={() => handleAnswer(answer.key)}
+                         isSelected={(isSelected && !showResult) || isFirstAttempt || isSecondAttemptOrange}
+                         isCorrect={isCorrect}
+                         isWrong={isWrong}
+                         disabled={selectedAnswer !== null}
+                         isRemoved={isRemoved}
+                       >
                         {answer.text}
                         {audienceVotes[answer.key] && (
                           <span className="ml-2 text-xs">
