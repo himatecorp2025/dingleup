@@ -32,6 +32,7 @@ const Dashboard = () => {
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
+  const [showSubscriptionPromo, setShowSubscriptionPromo] = useState(false);
   const [isPremiumSubscriber, setIsPremiumSubscriber] = useState(false);
   
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
@@ -135,6 +136,56 @@ const Dashboard = () => {
     const interval = setInterval(checkSubscription, 300000);
     return () => clearInterval(interval);
   }, [userId]);
+
+  // Subscription promo logic - THIRD in sequence after Welcome and Daily Gift
+  useEffect(() => {
+    if (!userId || isPremiumSubscriber || showWelcomeBonus || showDailyGift) return;
+
+    const checkAndShowPromo = () => {
+      const lastPromoDate = localStorage.getItem(`last_promo_date_${userId}`);
+      const promoCountToday = parseInt(localStorage.getItem(`promo_count_today_${userId}`) || '0');
+      const now = Date.now();
+
+      // Reset counter if it's a new day
+      if (lastPromoDate) {
+        const lastDate = new Date(parseInt(lastPromoDate));
+        const today = new Date();
+        if (lastDate.toDateString() !== today.toDateString()) {
+          localStorage.setItem(`promo_count_today_${userId}`, '0');
+        }
+      }
+
+      // Check if we can show promo (max 5 per day)
+      const currentCount = parseInt(localStorage.getItem(`promo_count_today_${userId}`) || '0');
+      if (currentCount < 5) {
+        const lastShown = parseInt(localStorage.getItem(`last_promo_shown_${userId}`) || '0');
+        const timeSinceLastPromo = now - lastShown;
+
+        // Show promo after random interval (15-45 minutes)
+        const minInterval = 15 * 60 * 1000; // 15 minutes
+        const maxInterval = 45 * 60 * 1000; // 45 minutes
+        const randomInterval = Math.random() * (maxInterval - minInterval) + minInterval;
+
+        if (timeSinceLastPromo > randomInterval) {
+          setShowSubscriptionPromo(true);
+          localStorage.setItem(`last_promo_shown_${userId}`, now.toString());
+          localStorage.setItem(`promo_count_today_${userId}`, (currentCount + 1).toString());
+          localStorage.setItem(`last_promo_date_${userId}`, now.toString());
+        }
+      }
+    };
+
+    // Check after 30 seconds
+    const initialDelay = setTimeout(checkAndShowPromo, 30000);
+
+    // Then check periodically every 5 minutes
+    const interval = setInterval(checkAndShowPromo, 5 * 60 * 1000);
+
+    return () => {
+      clearTimeout(initialDelay);
+      clearInterval(interval);
+    };
+  }, [userId, isPremiumSubscriber, showWelcomeBonus, showDailyGift]);
 
 
   useEffect(() => {
@@ -463,12 +514,10 @@ const Dashboard = () => {
       />
 
       {/* Subscription promo dialog - THIRD, only if welcome bonus and daily gift are not shown */}
-      {!showWelcomeBonus && !showDailyGift && (
-        <SubscriptionPromoDialog 
-          userId={userId}
-          isSubscribed={isPremiumSubscriber}
-        />
-      )}
+      <SubscriptionPromoDialog 
+        open={showSubscriptionPromo && !showWelcomeBonus && !showDailyGift}
+        onClose={() => setShowSubscriptionPromo(false)}
+      />
 
       {/* Booster activation dialog */}
       <BoosterActivationDialog
