@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
 import { useDailyGift } from "@/hooks/useDailyGift";
 import { supabase } from "@/integrations/supabase/client";
-import { GameCategory, Question, SKIP_COSTS, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from "@/types/game";
+import { GameCategory, Question, Answer, SKIP_COSTS, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from "@/types/game";
 import CategorySelector from "./CategorySelector";
 import { HexagonButton } from "./HexagonButton";
 import { GameStateScreen } from "./GameStateScreen";
@@ -236,17 +236,17 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setErrorBannerMessage(`⏰ Lejárt az idő - ${TIMEOUT_CONTINUE_COST} aranyérme`);
   };
 
-  const shuffleAnswers = (questionSet: Question[]): Question[] => {
+  const shuffleAnswers = (questionSet: any[]): Question[] => {
     let lastCorrectIndex = -1;
     let lastCorrectCount = 0;
     
     return questionSet.map((q) => {
-      const answers = [...q.answers];
-      const correctAnswer = answers.find(a => a === q.correct);
+      const answerTexts = q.answers as string[];
+      const correctAnswer = q.correct;
       
-      // Shuffle the answers but maintain A, B, C keys
-      const shuffledTexts = [...answers].sort(() => Math.random() - 0.5);
-      const newAnswers = [
+      // Shuffle the answer texts
+      const shuffledTexts = [...answerTexts].sort(() => Math.random() - 0.5);
+      const newAnswers: Answer[] = [
         { key: 'A', text: shuffledTexts[0], correct: shuffledTexts[0] === correctAnswer },
         { key: 'B', text: shuffledTexts[1], correct: shuffledTexts[1] === correctAnswer },
         { key: 'C', text: shuffledTexts[2], correct: shuffledTexts[2] === correctAnswer }
@@ -257,7 +257,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       // Check if we need to reshuffle to avoid patterns
       let attempts = 0;
       while ((newCorrectIdx === lastCorrectIndex && lastCorrectCount >= 2) && attempts < 10) {
-        const reshuffled = [...answers].sort(() => Math.random() - 0.5);
+        const reshuffled = [...answerTexts].sort(() => Math.random() - 0.5);
         newAnswers[0] = { key: 'A', text: reshuffled[0], correct: reshuffled[0] === correctAnswer };
         newAnswers[1] = { key: 'B', text: reshuffled[1], correct: reshuffled[1] === correctAnswer };
         newAnswers[2] = { key: 'C', text: reshuffled[2], correct: reshuffled[2] === correctAnswer };
@@ -272,7 +272,10 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
         lastCorrectCount = 1;
       }
       
-      return { ...q, answers: newAnswers };
+      return {
+        ...q,
+        answers: newAnswers
+      } as Question;
     });
   };
 
