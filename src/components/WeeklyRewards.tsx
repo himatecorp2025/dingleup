@@ -19,9 +19,9 @@ const WeeklyRewards = () => {
     <div 
       className="relative mb-4 px-3 py-4 sm:px-4 sm:py-5 overflow-hidden rounded-2xl"
       style={{ 
-        background: 'linear-gradient(135deg, #047857 0%, #059669 25%, #10b981 50%, #059669 75%, #047857 100%)',
-        boxShadow: '0 0 40px rgba(16, 185, 129, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.2)',
-        border: '3px solid #10b981',
+        background: 'linear-gradient(135deg, #0B6A3D 0%, #0D7C4C 25%, #0F8B59 50%, #0D7C4C 75%, #0B6A3D 100%)',
+        boxShadow: '0 0 40px rgba(15, 139, 89, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.2)',
+        border: '3px solid #0F8B59',
         animation: 'shimmer 3s ease-in-out infinite'
       }}
     >
@@ -39,7 +39,7 @@ const WeeklyRewards = () => {
         className="absolute inset-2 rounded-xl"
         style={{
           border: '2px solid rgba(255, 215, 0, 0.4)',
-          boxShadow: 'inset 0 0 20px rgba(16, 185, 129, 0.4)'
+          boxShadow: 'inset 0 0 20px rgba(15, 139, 89, 0.4)'
         }}
       />
 
@@ -62,30 +62,30 @@ const WeeklyRewards = () => {
             key={index}
             className={`relative rounded-xl p-3 backdrop-blur-sm transition-all hover:scale-105 ${
               index < 3
-                ? 'bg-gradient-to-br from-yellow-400/90 to-yellow-500/90 border-3 border-yellow-500 shadow-lg shadow-yellow-500/50'
-                : 'bg-gradient-to-br from-yellow-300/80 to-yellow-400/80 border-2 border-yellow-500'
+                ? 'bg-gradient-to-br from-emerald-700/95 to-emerald-800/95 border-3 border-yellow-500 shadow-lg shadow-yellow-500/50'
+                : 'bg-gradient-to-br from-emerald-800/90 to-emerald-900/90 border-2 border-yellow-500/60'
             }`}
             style={{
               boxShadow: index < 3 
-                ? '0 4px 15px rgba(255, 215, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.5)' 
-                : '0 2px 8px rgba(255, 215, 0, 0.3), inset 0 1px 5px rgba(255, 255, 255, 0.4)'
+                ? '0 4px 15px rgba(255, 215, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.2)' 
+                : '0 2px 8px rgba(255, 215, 0, 0.3), inset 0 1px 5px rgba(255, 255, 255, 0.15)'
             }}
           >
             {index < 3 && (
               <div className="absolute -top-1 -right-1">
-                <Sparkles className="w-4 h-4 text-yellow-600 animate-pulse" />
+                <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
               </div>
             )}
             <div className="flex items-center justify-between mb-2">
-              <span className="text-yellow-900 font-black text-base drop-shadow">{reward.place}</span>
+              <span className="text-yellow-400 font-black text-base drop-shadow-lg">{reward.place}</span>
             </div>
             <div className="flex items-center gap-2 text-sm mb-1">
-              <Coins className="w-4 h-4 text-yellow-800" />
-              <span className="text-yellow-900 font-bold">{reward.coins}</span>
+              <Coins className="w-4 h-4 text-yellow-400 drop-shadow-lg" />
+              <span className="text-yellow-300 font-bold drop-shadow-lg">{reward.coins}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <Heart className="w-4 h-4 text-red-700" />
-              <span className="text-yellow-900 font-bold">{reward.lives}</span>
+              <Heart className="w-4 h-4 text-red-400 drop-shadow-lg" />
+              <span className="text-yellow-300 font-bold drop-shadow-lg">{reward.lives}</span>
             </div>
           </div>
         ))}
