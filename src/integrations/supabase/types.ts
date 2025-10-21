@@ -694,7 +694,7 @@ export type Database = {
         Returns: undefined
       }
       process_invitation_reward: {
-        Args: { inviter_user_id: string }
+        Args: Record<PropertyKey, never>
         Returns: Json
       }
       purchase_life: {

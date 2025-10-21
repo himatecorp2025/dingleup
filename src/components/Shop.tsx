@@ -332,130 +332,125 @@ const Shop = ({ userId }: ShopProps) => {
   }));
 
   return (
-    <div className="space-y-6">
+    <>
       <QuickBuyOptInDialog 
         open={showQuickBuyDialog} 
         onAccept={handleQuickBuyAccept}
         onDecline={handleQuickBuyDecline}
       />
-      {/* Balance Card */}
-      <Card className="bg-black/60 border-2 border-purple-500/30 backdrop-blur-sm">
-        <CardContent className="pt-6">
-          <div className="bg-yellow-500/10 rounded-xl p-4 text-center border border-yellow-500/30">
-            <p className="text-sm text-white/70 mb-1">Egyenleged</p>
-            <p className="text-3xl font-bold text-yellow-500 flex items-center justify-center gap-2">
-              <Coins className="w-8 h-8 text-yellow-500" />
-              {profile.coins}
-            </p>
+      
+      <div className="space-y-8">
+        {/* User Coins Display */}
+        <div className="bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-2xl p-6 text-center border-2 border-yellow-400/50">
+          <div className="flex items-center justify-center gap-3">
+            <Coins className="w-8 h-8 text-yellow-900" />
+            <span className="text-3xl font-bold text-yellow-900">{profile.coins}</span>
           </div>
-        </CardContent>
-      </Card>
+          <p className="text-yellow-900 mt-2">Jelenlegi egyenleged</p>
+        </div>
 
-      {/* Subscription Section */}
-      <SubscriptionSection isPremium={isPremium} />
+        {/* Subscription Section */}
+        <SubscriptionSection isPremium={isPremium} />
 
-      {/* Boosters Section */}
-      <Card className="bg-black/60 border-2 border-purple-500/30 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Zap className="w-5 h-5" />
-            Speed Boosterek
-          </CardTitle>
-          <CardDescription>Vásárolj speed boostereket aranyérméért vagy valódi pénzért</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {boosterItems.map((item) => {
-              const Icon = item.icon;
-              const isLoadingCoins = loading === item.id;
-              const isLoadingStripe = loading === `stripe-${item.id}`;
-              const canAfford = profile.coins >= item.price;
-              
-              return (
-                <div key={item.id} className="border rounded-xl p-4 transition-all hover:border-primary">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2 rounded-lg bg-purple-500/10">
-                      <Icon className="w-6 h-6 text-purple-500" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold mb-1">{item.name}</h4>
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
+        {/* Speed Boosters Section */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <Zap className="w-8 h-8 text-yellow-500" />
+            <h2 className="text-2xl font-bold text-white">Boosterek</h2>
+          </div>
+          <p className="text-white/80 mb-4">
+            Vásárolj boostereket aranyérméért – aktiváld őket a játék előtt!
+          </p>
+          
+          <div className="grid gap-4">
+            {boosterItems.map((item) => (
+              <div 
+                key={item.id} 
+                className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] rounded-xl p-6 border-2 border-purple-500/30 hover:border-purple-500/60 transition-all"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-yellow-500/10 rounded-xl border-2 border-yellow-500/30">
+                    <item.icon className="w-8 h-8 text-yellow-500" />
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white mb-1">{item.name}</h3>
+                    <p className="text-white/70 text-sm mb-3">{item.description}</p>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Coins className="w-5 h-5 text-yellow-500" />
+                        <span className="text-2xl font-bold text-yellow-500">{item.price}</span>
+                      </div>
+                      
+                      <button
+                        onClick={() => item.action()}
+                        disabled={loading === item.id || profile.coins < item.price}
+                        className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white font-bold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loading === item.id ? 'Betöltés...' : 'Vásárlás'}
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-lg flex items-center gap-1">
-                      <Coins className="w-5 h-5 text-yellow-500" />
-                      {item.price}
-                    </span>
-                    <Button onClick={item.action} disabled={!canAfford || isLoadingCoins || isLoadingStripe} size="sm">
-                      {isLoadingCoins ? 'Vásárlás...' : 'Érmével'}
-                    </Button>
-                  </div>
-                  {item.priceUsd && (
-                    <div className="flex items-center justify-between pt-2 border-t">
-                      <span className="font-bold text-lg flex items-center gap-1">
-                        <CreditCard className="w-5 h-5" />
-                        ${(item.priceUsd / 100).toFixed(2)}
-                      </span>
-                      <Button onClick={() => buyWithStripe(item.id as any)} disabled={isLoadingCoins || isLoadingStripe} size="sm" variant="secondary">
-                        {isLoadingStripe ? 'Fizetés...' : 'Kártyával'}
-                      </Button>
-                    </div>
-                  )}
-                  {!canAfford && <p className="text-xs text-red-500 mt-2">Nincs elég aranyérméd</p>}
-                  {item.priceUsd && <p className="text-xs text-muted-foreground mt-2">További lehetőségek a Shopban</p>}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Shop Items Section */}
-      <Card className="bg-black/60 border-2 border-purple-500/30 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5" />
-            Bolt
-          </CardTitle>
-          <CardDescription>Vásárolj extra életeket és segítségeket aranyérméért</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {shopItems.map((item) => {
-              const Icon = item.icon;
-              const isLoading = loading === item.id;
-              const canAfford = profile.coins >= item.price;
-              
-              return (
-                <div key={item.id} className="border rounded-xl p-4 transition-all hover:border-primary">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2 rounded-lg bg-purple-500/10">
-                      <Icon className="w-6 h-6 text-purple-500" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold mb-1">{item.name}</h4>
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-lg flex items-center gap-1">
-                      <Coins className="w-5 h-5 text-yellow-500" />
-                      {item.price}
-                    </span>
-                    <Button onClick={item.action} disabled={!canAfford || isLoading} size="sm">
-                      {isLoading ? 'Vásárlás...' : item.disabled ? 'Újraaktivál' : 'Vásárlás'}
-                    </Button>
-                  </div>
-                  {item.disabled && <p className="text-xs text-muted-foreground mt-2">Már aktív vagy maximális szinten</p>}
-                  {!canAfford && !item.disabled && <p className="text-xs text-red-500 mt-2">Nincs elég aranyérméd</p>}
-                </div>
-              );
-            })}
+        {/* Shop Items Section */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <ShoppingCart className="w-8 h-8 text-purple-400" />
+            <h2 className="text-2xl font-bold text-white">Bolt</h2>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          <p className="text-white/80 mb-4">
+            Vásárolj extra életeket és segítségeket aranyérméért
+          </p>
+          
+          <div className="grid gap-4">
+            {shopItems.map((item) => (
+              <div 
+                key={item.id} 
+                className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] rounded-xl p-6 border-2 border-purple-500/30 hover:border-purple-500/60 transition-all"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-purple-500/10 rounded-xl border-2 border-purple-500/30">
+                    <item.icon className="w-8 h-8 text-purple-400" />
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white mb-1">{item.name}</h3>
+                    <p className="text-white/70 text-sm mb-3">{item.description}</p>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Coins className="w-5 h-5 text-yellow-500" />
+                        <span className="text-2xl font-bold text-yellow-500">{item.price}</span>
+                      </div>
+                      
+                      <button
+                        onClick={() => item.action()}
+                        disabled={loading === item.id || profile.coins < item.price || item.disabled}
+                        className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loading === item.id ? 'Betöltés...' : 'Újraaktivál'}
+                      </button>
+                    </div>
+                    
+                    {item.disabled && (
+                      <p className="text-xs text-white/50 mt-2">
+                        Már aktív vagy maximális szinten
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

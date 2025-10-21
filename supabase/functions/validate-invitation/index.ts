@@ -115,11 +115,11 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Error in validate-invitation:', error);
+    console.error('[INTERNAL] Error in validate-invitation:', error);
     return new Response(
       JSON.stringify({ 
         valid: false, 
-        error: 'Hiba történt a meghívó ellenőrzése során' 
+        error: 'Hiba történt' 
       }),
       { 
         status: 500,

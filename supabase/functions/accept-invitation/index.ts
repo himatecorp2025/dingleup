@@ -45,22 +45,29 @@ serve(async (req) => {
     
     // Validate inputs
     if (!inviterId || !UUID_REGEX.test(inviterId)) {
-      throw new Error('Invalid inviter ID format');
+      return new Response(
+        JSON.stringify({ success: false, error: 'Érvénytelen meghívó' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
     
     if (!invitationCode || typeof invitationCode !== 'string' || invitationCode.length < 8) {
-      throw new Error('Invalid invitation code format');
+      return new Response(
+        JSON.stringify({ success: false, error: 'Érvénytelen meghívókód' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
     
     if (!user.email || !EMAIL_REGEX.test(user.email)) {
-      throw new Error('Invalid email address');
+      return new Response(
+        JSON.stringify({ success: false, error: 'Érvénytelen email cím' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Use authenticated user's ID and email
     const invitedUserId = user.id;
     const invitedEmail = user.email;
-
-    console.log('Processing invitation acceptance for user:', invitedUserId);
 
     // Verify inviter exists and has this invitation code
     const { data: inviterProfile, error: inviterError } = await supabaseClient
@@ -70,11 +77,17 @@ serve(async (req) => {
       .single();
 
     if (inviterError || !inviterProfile) {
-      throw new Error('Inviter not found');
+      return new Response(
+        JSON.stringify({ success: false, error: 'Meghívó nem található' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     if (inviterProfile.invitation_code !== invitationCode) {
-      throw new Error('Invitation code mismatch');
+      return new Response(
+        JSON.stringify({ success: false, error: 'Meghívókód nem egyezik' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Check if invitation record exists
@@ -86,7 +99,6 @@ serve(async (req) => {
       .maybeSingle();
 
     if (existingInvitation?.accepted) {
-      console.log('Invitation already accepted');
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -108,8 +120,11 @@ serve(async (req) => {
         .eq('id', existingInvitation.id);
 
       if (updateError) {
-        console.error('Error updating invitation:', updateError);
-        throw updateError;
+        console.error('[INTERNAL] Error updating invitation:', updateError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'Hiba történt' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
     } else {
       // Create new invitation record
@@ -125,8 +140,11 @@ serve(async (req) => {
         });
 
       if (insertError) {
-        console.error('Error inserting invitation:', insertError);
-        throw insertError;
+        console.error('[INTERNAL] Error inserting invitation:', insertError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'Hiba történt' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
     }
 
@@ -150,10 +168,8 @@ serve(async (req) => {
       .eq('id', inviterId);
 
     if (coinsError) {
-      console.error('Error awarding coins to inviter:', coinsError);
+      console.error('[INTERNAL] Error awarding coins:', coinsError);
       // Don't fail the whole operation if coin award fails
-    } else {
-      console.log('Awarded 100 coins to inviter:', inviterId);
     }
 
     return new Response(
@@ -165,15 +181,14 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Hiba történt a meghívó feldolgozása során';
-    console.error('Error in accept-invitation:', error);
+    console.error('[INTERNAL] Error in accept-invitation:', error);
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: errorMessage
+        error: 'Hiba történt'
       }),
       { 
-        status: 400,
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     );
