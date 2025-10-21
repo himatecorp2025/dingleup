@@ -64,6 +64,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const [usedHelp2xAnswer, setUsedHelp2xAnswer] = useState(false);
   const [usedHelpAudience, setUsedHelpAudience] = useState(false);
   const [usedQuestionSwap, setUsedQuestionSwap] = useState(false);
+  const [reactivatedHelp5050, setReactivatedHelp5050] = useState(false);
+  const [reactivatedHelp2xAnswer, setReactivatedHelp2xAnswer] = useState(false);
+  const [reactivatedHelpAudience, setReactivatedHelpAudience] = useState(false);
   const [firstAttempt, setFirstAttempt] = useState<string | null>(null);
   const [removedAnswer, setRemovedAnswer] = useState<string | null>(null);
   const [audienceVotes, setAudienceVotes] = useState<Record<string, number>>({});
@@ -198,6 +201,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setUsedHelp2xAnswer(false);
     setUsedHelpAudience(false);
     setUsedQuestionSwap(false);
+    setReactivatedHelp5050(false);
+    setReactivatedHelp2xAnswer(false);
+    setReactivatedHelpAudience(false);
     setFirstAttempt(null);
     setRemovedAnswer(null);
     setAudienceVotes({});
@@ -397,47 +403,108 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   };
 
   const useHelp5050 = async () => {
-    if (usedHelp5050 || !profile?.help_50_50_active || selectedAnswer) return;
+    if (selectedAnswer) return;
     
-    const currentQuestion = questions[currentQuestionIndex];
-    const thirdAnswerKey = currentQuestion.third;
+    // Ha még nem használtuk és aktív a profil segítsége
+    if (!usedHelp5050 && profile?.help_50_50_active) {
+      const currentQuestion = questions[currentQuestionIndex];
+      const thirdAnswerKey = currentQuestion.third;
+      
+      setRemovedAnswer(thirdAnswerKey);
+      setUsedHelp5050(true);
+      
+      await supabase.rpc('use_help', { p_help_type: '50_50' });
+      await refreshProfile();
+      
+      toast.info('Harmadoló segítség használva - 1 hibás válasz eltávolítva');
+      return;
+    }
     
-    setRemovedAnswer(thirdAnswerKey);
-    setUsedHelp5050(true);
-    
-    // Use RPC to deactivate help
-    await supabase.rpc('use_help', { p_help_type: '50_50' });
-    await refreshProfile();
-    
-    toast.info('Harmadoló segítség használva - 1 hibás válasz eltávolítva');
+    // Ha már használtuk de még nem aktiváltuk újra és van elég arany
+    if (usedHelp5050 && !reactivatedHelp5050) {
+      if (!profile || profile.coins < 15) {
+        toast.error('Nincs elég aranyérme! 15 🪙 szükséges.');
+        return;
+      }
+      
+      const { data: success } = await supabase.rpc('spend_coins', { amount: 15 });
+      if (success) {
+        await refreshProfile();
+        setReactivatedHelp5050(true);
+        const currentQuestion = questions[currentQuestionIndex];
+        const thirdAnswerKey = currentQuestion.third;
+        setRemovedAnswer(thirdAnswerKey);
+        toast.info('Harmadoló újraaktiválva 15 aranyért!');
+      }
+    }
   };
 
   const useHelp2xAnswer = async () => {
-    if (usedHelp2xAnswer || !profile?.help_2x_answer_active || selectedAnswer) return;
+    if (selectedAnswer) return;
     
-    setUsedHelp2xAnswer(true);
+    // Ha még nem használtuk és aktív a profil segítsége
+    if (!usedHelp2xAnswer && profile?.help_2x_answer_active) {
+      setUsedHelp2xAnswer(true);
+      
+      await supabase.rpc('use_help', { p_help_type: '2x_answer' });
+      await refreshProfile();
+      
+      toast.info('2× válasz segítség használva - 2 próbálkozásod van');
+      return;
+    }
     
-    // Use RPC to deactivate help
-    await supabase.rpc('use_help', { p_help_type: '2x_answer' });
-    await refreshProfile();
-    
-    toast.info('2× válasz segítség használva - 2 próbálkozásod van');
+    // Ha már használtuk de még nem aktiváltuk újra és van elég arany
+    if (usedHelp2xAnswer && !reactivatedHelp2xAnswer) {
+      if (!profile || profile.coins < 20) {
+        toast.error('Nincs elég aranyérme! 20 🪙 szükséges.');
+        return;
+      }
+      
+      const { data: success } = await supabase.rpc('spend_coins', { amount: 20 });
+      if (success) {
+        await refreshProfile();
+        setReactivatedHelp2xAnswer(true);
+        setFirstAttempt(null);
+        toast.info('2× válasz újraaktiválva 20 aranyért!');
+      }
+    }
   };
 
   const useHelpAudience = async () => {
-    if (usedHelpAudience || !profile?.help_audience_active || selectedAnswer) return;
+    if (selectedAnswer) return;
     
-    const currentQuestion = questions[currentQuestionIndex];
-    const votes = currentQuestion.audience;
+    // Ha még nem használtuk és aktív a profil segítsége
+    if (!usedHelpAudience && profile?.help_audience_active) {
+      const currentQuestion = questions[currentQuestionIndex];
+      const votes = currentQuestion.audience;
+      
+      setAudienceVotes(votes);
+      setUsedHelpAudience(true);
+      
+      await supabase.rpc('use_help', { p_help_type: 'audience' });
+      await refreshProfile();
+      
+      toast.info('Közönség segítség használva');
+      return;
+    }
     
-    setAudienceVotes(votes);
-    setUsedHelpAudience(true);
-    
-    // Use RPC to deactivate help
-    await supabase.rpc('use_help', { p_help_type: 'audience' });
-    await refreshProfile();
-    
-    toast.info('Közönség segítség használva');
+    // Ha már használtuk de még nem aktiváltuk újra és van elég arany
+    if (usedHelpAudience && !reactivatedHelpAudience) {
+      if (!profile || profile.coins < 30) {
+        toast.error('Nincs elég aranyérme! 30 🪙 szükséges.');
+        return;
+      }
+      
+      const { data: success } = await supabase.rpc('spend_coins', { amount: 30 });
+      if (success) {
+        await refreshProfile();
+        setReactivatedHelpAudience(true);
+        const currentQuestion = questions[currentQuestionIndex];
+        const votes = currentQuestion.audience;
+        setAudienceVotes(votes);
+        toast.info('Közönség segítség újraaktiválva 30 aranyért!');
+      }
+    }
   };
 
   const useQuestionSwap = async () => {
@@ -748,42 +815,57 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                 <div className="flex justify-center gap-3 mb-4 relative">
                   <button
                     onClick={useHelp5050}
-                    disabled={usedHelp5050 || !profile.help_50_50_active || selectedAnswer !== null}
+                    disabled={(!profile.help_50_50_active && !usedHelp5050) || (usedHelp5050 && reactivatedHelp5050) || selectedAnswer !== null}
                     className={`
                       relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                      ${!usedHelp5050 && profile.help_50_50_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
+                      ${(profile.help_50_50_active && !usedHelp5050) || (usedHelp5050 && !reactivatedHelp5050) ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Harmadoló"
                   >
                     <span className="text-black font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
+                    {usedHelp5050 && !reactivatedHelp5050 && (
+                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[8px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
+                        15
+                      </span>
+                    )}
                   </button>
                   <button
                     onClick={useHelp2xAnswer}
-                    disabled={usedHelp2xAnswer || !profile.help_2x_answer_active || selectedAnswer !== null}
+                    disabled={(!profile.help_2x_answer_active && !usedHelp2xAnswer) || (usedHelp2xAnswer && reactivatedHelp2xAnswer) || selectedAnswer !== null}
                     className={`
                       relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                      ${!usedHelp2xAnswer && profile.help_2x_answer_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
+                      ${(profile.help_2x_answer_active && !usedHelp2xAnswer) || (usedHelp2xAnswer && !reactivatedHelp2xAnswer) ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="2× válasz"
                   >
                     <span className="text-black font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>2×</span>
+                    {usedHelp2xAnswer && !reactivatedHelp2xAnswer && (
+                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[8px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
+                        20
+                      </span>
+                    )}
                   </button>
                   <button
                     onClick={useHelpAudience}
-                    disabled={usedHelpAudience || !profile.help_audience_active || selectedAnswer !== null}
+                    disabled={(!profile.help_audience_active && !usedHelpAudience) || (usedHelpAudience && reactivatedHelpAudience) || selectedAnswer !== null}
                     className={`
                       relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                      ${!usedHelpAudience && profile.help_audience_active && !selectedAnswer ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
+                      ${(profile.help_audience_active && !usedHelpAudience) || (usedHelpAudience && !reactivatedHelpAudience) ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Közönség"
                   >
                     <Users className="w-6 h-6 text-black" style={{ transform: 'rotate(-90deg)' }} />
+                    {usedHelpAudience && !reactivatedHelpAudience && (
+                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[8px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
+                        30
+                      </span>
+                    )}
                   </button>
                   <button
                     onClick={handleSkipQuestion}
@@ -797,6 +879,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     title="Kérdés átugrás"
                   >
                     <SkipForward className="w-6 h-6 text-white" style={{ transform: 'rotate(-90deg)' }} />
+                    <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[8px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
+                      {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'}
+                    </span>
                   </button>
                   {/* Skip cost badge - jobb felső sarokban, KÍVÜL a gombon */}
                   <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-extrabold rounded-full px-2.5 py-1 border-2 border-yellow-600 shadow-lg pointer-events-none">

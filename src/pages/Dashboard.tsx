@@ -12,6 +12,7 @@ import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
+import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
 import backmusic from '@/assets/backmusic.mp3';
@@ -344,6 +345,9 @@ const Dashboard = () => {
         <div className="my-3">
           <LeaderboardCarousel />
         </div>
+
+        {/* Weekly Rankings Countdown */}
+        <WeeklyRankingsCountdown />
 
         {/* Ranglista Button */}
         <button
