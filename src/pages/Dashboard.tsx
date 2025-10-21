@@ -339,7 +339,16 @@ const Dashboard = () => {
             </span>
           )}
           <Zap className={`inline w-4 h-4 sm:w-5 sm:h-5 mr-2 ${!hasActiveBooster ? 'text-black' : 'text-white'}`} />
-          <span className="text-sm sm:text-base">BOOSTER {hasActiveBooster && `(AKTÍV - ${timeRemaining})`}</span>
+          {hasActiveBooster ? (
+            <span className="text-sm sm:text-base">AKTÍV BOOSTER ({timeRemaining})</span>
+          ) : availableBoosters.length > 0 ? (
+            <span className="text-sm sm:text-base">
+              BOOSTER AKTIVÁLÁS
+              <span className="block text-xs mt-0.5">Következő: {availableBoosters[0].booster_type}</span>
+            </span>
+          ) : (
+            <span className="text-sm sm:text-base">BOOSTER VÁSÁRLÁS</span>
+          )}
         </button>
 
         {/* Leaderboard Carousel - Top 25 players */}

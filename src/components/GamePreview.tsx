@@ -125,7 +125,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
 
   // Swipe gesture handler
   useEffect(() => {
-    if (gameState !== 'playing' || isTransitioning) return;
+    if (gameState !== 'playing') return;
 
     let touchStartY = 0;
     let touchStartX = 0;
@@ -144,7 +144,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       // Ignore horizontal swipes
       if (deltaX > 50) return;
       // Minimum swipe distance
-      if (Math.abs(deltaY) < 100) return;
+      if (Math.abs(deltaY) < 80) return;
 
       if (deltaY > 0) {
         // Swipe up
@@ -155,14 +155,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       }
     };
 
-    document.addEventListener('touchstart', handleTouchStart);
-    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [gameState, isTransitioning, selectedAnswer, showContinueDialog, profile]);
+  }, [gameState, selectedAnswer, showContinueDialog, profile]);
 
   const handleSwipeUp = async () => {
     // If continue dialog is shown, handle payment
@@ -370,15 +370,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   };
 
   const handleNextQuestion = async () => {
-    if (isTransitioning) return;
-    
     setIsTransitioning(true);
     setShowContinueDialog(false);
     
     if (currentQuestionIndex >= questions.length - 1) {
+      setIsTransitioning(false);
       await finishGame();
     } else {
-      // Animate transition
+      // Quick transition
       setTimeout(() => {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setTimeLeft(10);
@@ -388,7 +387,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
         setAudienceVotes({});
         setQuestionStartTime(Date.now());
         setIsTransitioning(false);
-      }, 300);
+      }, 200);
     }
   };
 
@@ -629,7 +628,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     toast.info('Kérdés kicserélve!');
   };
 
-  if (profileLoading) {
+  if (profileLoading || !userId) {
     return (
       <div className="min-h-screen flex items-center justify-center relative">
         <div 
@@ -648,7 +647,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
           className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
-        <div className="relative z-10 text-white">Hiba a profil betöltésekor</div>
+        <div className="relative z-10 text-white flex flex-col items-center gap-4">
+          <p>Hiba a profil betöltésekor</p>
+          <Button onClick={() => navigate('/dashboard')} variant="outline">
+            Vissza
+          </Button>
+        </div>
       </div>
     );
   }
