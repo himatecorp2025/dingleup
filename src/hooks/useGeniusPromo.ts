@@ -47,10 +47,10 @@ export const useGeniusPromo = (
       }
     };
 
-    // Show after 3 seconds
+    // Show after 30 seconds (give user time to see dashboard first)
     const timer = setTimeout(() => {
       checkAndShow();
-    }, 3000);
+    }, 30000);
 
     return () => clearTimeout(timer);
   }, [userId, isPremium, hasOtherDialogs]);
