@@ -60,14 +60,13 @@ export const QuestionCard = ({
     <div className={`w-full h-full flex flex-col justify-between p-4 ${className}`}>
       {/* Top section: Exit button, Lives, Coins */}
       <div className="flex justify-between items-start mb-4">
-        <Button
-          variant="ghost"
-          size="icon"
+        <button
           onClick={onExit}
-          className="text-white hover:bg-white/20"
+          className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+          title="Vissza"
         >
-          <LogOut className="w-5 h-5" />
-        </Button>
+          <LogOut className="w-6 h-6 -scale-x-100" />
+        </button>
 
         <div className="flex gap-4">
           <div className="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full">
@@ -135,23 +134,23 @@ export const QuestionCard = ({
         </div>
       </div>
 
-      {/* Bottom section: Help buttons */}
-      <div className="grid grid-cols-4 gap-2 mt-6">
+      {/* Bottom section: Help buttons - 1 row below answer C */}
+      <div className="grid grid-cols-4 gap-2 mt-4">
         <Button
           variant="outline"
           size="sm"
           onClick={onUseHelp5050}
           disabled={disabled || usedHelp5050}
-          className={`text-xs ${usedHelp5050 ? 'opacity-50' : ''}`}
+          className={`text-xs font-bold ${usedHelp5050 ? 'opacity-50' : ''}`}
         >
-          50:50
+          1/3
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={onUseHelp2xAnswer}
           disabled={disabled || usedHelp2xAnswer}
-          className={`text-xs ${usedHelp2xAnswer ? 'opacity-50' : ''}`}
+          className={`text-xs font-bold ${usedHelp2xAnswer ? 'opacity-50' : ''}`}
         >
           2x
         </Button>

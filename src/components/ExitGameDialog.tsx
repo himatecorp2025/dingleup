@@ -7,41 +7,29 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Coins, Heart } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
-interface InsufficientResourcesDialogProps {
+interface ExitGameDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  type: 'coins' | 'lives';
-  requiredAmount?: number;
-  currentAmount?: number;
-  onGoToShop: () => void;
+  onConfirmExit: () => void;
 }
 
-export const InsufficientResourcesDialog = ({
+export const ExitGameDialog = ({
   open,
   onOpenChange,
-  type,
-  requiredAmount,
-  currentAmount,
-  onGoToShop
-}: InsufficientResourcesDialogProps) => {
-  const Icon = type === 'coins' ? Coins : Heart;
-  const title = type === 'coins' ? 'Nincs elegendő aranyérme!' : 'Nincs elegendő élet!';
-  const description = requiredAmount && currentAmount !== undefined
-    ? `Szükséges: ${requiredAmount}, Jelenleg: ${currentAmount}`
-    : 'Látogass el a boltba, hogy több erőforrást szerezz!';
-
+  onConfirmExit
+}: ExitGameDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-purple-500/50 text-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Icon className={`w-7 h-7 ${type === 'coins' ? 'text-yellow-500' : 'text-red-500'}`} />
-            {title}
+            <AlertTriangle className="w-7 h-7 text-yellow-500" />
+            Biztosan kilépsz?
           </DialogTitle>
           <DialogDescription className="text-base text-white/80 pt-2">
-            {description}
+            Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex gap-2 sm:gap-2 mt-4">
@@ -53,10 +41,10 @@ export const InsufficientResourcesDialog = ({
             Mégse
           </Button>
           <Button 
-            onClick={onGoToShop} 
-            className="flex-1 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white gap-2"
+            onClick={onConfirmExit} 
+            className="flex-1 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white"
           >
-            Bolt megnyitása
+            Kilépés
           </Button>
         </DialogFooter>
       </DialogContent>

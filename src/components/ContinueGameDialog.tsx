@@ -65,24 +65,31 @@ export const ContinueGameDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-purple-500/50 text-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-2xl">
             {getIcon()}
             {getTitle()}
           </DialogTitle>
-          <DialogDescription className="text-base">
+          <DialogDescription className="text-base text-white/80 pt-2">
             {getDescription()}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+        <DialogFooter className="flex flex-col gap-2 sm:flex-col mt-4">
           {canAfford && (
-            <Button onClick={onContinue} className="w-full gap-2">
+            <Button 
+              onClick={onContinue} 
+              className="w-full gap-2 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white"
+            >
               <Coins className="w-4 h-4" />
               Folytatás ({cost} aranyérme)
             </Button>
           )}
-          <Button variant="outline" onClick={onExit} className="w-full">
+          <Button 
+            variant="outline" 
+            onClick={onExit} 
+            className="w-full border-white/30 text-white hover:bg-white/10"
+          >
             {canAfford ? 'Kilépés és mentés' : 'Vissza a főoldalra'}
           </Button>
         </DialogFooter>

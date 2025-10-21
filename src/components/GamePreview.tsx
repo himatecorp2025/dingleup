@@ -4,16 +4,6 @@ import { Heart, Coins, Gift } from "lucide-react";
 import gameBackground from "@/assets/game-background.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { useGameProfile } from "@/hooks/useGameProfile";
 import { useDailyGift } from "@/hooks/useDailyGift";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +14,8 @@ import { GameStateScreen } from "./GameStateScreen";
 import { QuestionCard } from "./QuestionCard";
 import { InsufficientResourcesDialog } from "./InsufficientResourcesDialog";
 import { ContinueGameDialog } from "./ContinueGameDialog";
+import { ExitGameDialog } from "./ExitGameDialog";
+import BottomNav from "./BottomNav";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -86,6 +78,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const [showInsufficientDialog, setShowInsufficientDialog] = useState(false);
   const [insufficientType, setInsufficientType] = useState<'coins' | 'lives'>('coins');
   const [requiredAmount, setRequiredAmount] = useState(0);
+  const [errorBannerVisible, setErrorBannerVisible] = useState(false);
+  const [errorBannerMessage, setErrorBannerMessage] = useState('');
+  const [questionVisible, setQuestionVisible] = useState(true);
 
   const stopMusic = () => {
     try {
@@ -179,6 +174,25 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   }, [gameState, canSwipe, isAnimating, selectedAnswer, showContinueDialog, showExitDialog, touchStartY]);
 
   const handleSwipeUp = async () => {
+    // Auto-deduct and continue if there's an error (timeout or wrong answer)
+    if (errorBannerVisible && !showContinueDialog) {
+      const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
+      
+      if (profile && profile.coins >= cost) {
+        const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
+        if (success) {
+          await refreshProfile();
+          setErrorBannerVisible(false);
+          toast.success(`${cost} aranyérme levonva - Tovább!`);
+          await handleNextQuestion();
+        }
+      } else {
+        setShowContinueDialog(true);
+        setErrorBannerVisible(false);
+      }
+      return;
+    }
+
     // If continue dialog is shown, handle payment
     if (showContinueDialog) {
       await handleContinueAfterMistake();
@@ -196,14 +210,21 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   };
 
   const handleSwipeDown = async () => {
-    // If continue dialog or error state, exit game automatically
+    // If error banner visible, finish game
+    if (errorBannerVisible) {
+      setErrorBannerVisible(false);
+      await finishGame();
+      return;
+    }
+
+    // If continue dialog, exit game
     if (showContinueDialog) {
       handleRejectContinue();
       return;
     }
 
-    // Normal state - show confirmation dialog only if no answer given
-    if (!selectedAnswer) {
+    // Normal state - show exit confirmation
+    if (!selectedAnswer && !showExitDialog) {
       setShowExitDialog(true);
     }
   };
@@ -213,7 +234,8 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__timeout__');
     setContinueType('timeout');
-    setShowContinueDialog(true);
+    setErrorBannerVisible(true);
+    setErrorBannerMessage(`⏰ Lejárt az idő - ${TIMEOUT_CONTINUE_COST} aranyérme`);
   };
 
   const shuffleAnswers = (questionSet: Question[]): Question[] => {
@@ -383,7 +405,8 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer(answerKey);
     setContinueType('wrong');
-    setShowContinueDialog(true);
+    setErrorBannerVisible(true);
+    setErrorBannerMessage(`❌ Rossz válasz - ${CONTINUE_AFTER_WRONG_COST} aranyérme`);
   };
 
   const handleNextQuestion = async () => {
@@ -392,10 +415,13 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setIsAnimating(true);
     setCanSwipe(false);
     setShowContinueDialog(false);
+    setErrorBannerVisible(false);
+    setQuestionVisible(false);
     
     if (currentQuestionIndex >= questions.length - 1) {
       setIsAnimating(false);
       setCanSwipe(true);
+      setQuestionVisible(true);
       await finishGame();
       return;
     }
@@ -410,8 +436,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       setAudienceVotes({});
       setQuestionStartTime(Date.now());
       
-      // End animation
+      // End animation and show question content
       setTimeout(() => {
+        setQuestionVisible(true);
         setIsAnimating(false);
         setCanSwipe(true);
       }, 100);
@@ -740,65 +767,68 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
         {/* Scrollable question container */}
         <div 
           ref={containerRef}
-          className="fixed inset-0 z-10 overflow-hidden"
+          className="fixed inset-0 z-10 overflow-hidden pb-16"
         >
+          {/* Error banner (red bar) */}
+          {errorBannerVisible && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-2 rounded-full font-bold text-sm shadow-lg animate-fade-in">
+              {errorBannerMessage}
+            </div>
+          )}
+
           {/* Question module with TikTok-style animation */}
           <div 
-            className={`absolute inset-0 w-full h-full transition-transform duration-${isAnimating ? '400' : '0'} ease-in-out`}
+            className={`absolute inset-0 w-full h-full transition-transform ease-in-out`}
             style={{ 
               transform: isAnimating 
                 ? 'translateY(-100%)' 
-                : `translateY(${translateY}px)`
+                : `translateY(${translateY}px)`,
+              transitionDuration: isAnimating ? '400ms' : '0ms'
             }}
           >
-            <QuestionCard
-              question={currentQuestion}
-              questionNumber={currentQuestionIndex + 1}
-              timeLeft={timeLeft}
-              selectedAnswer={selectedAnswer}
-              firstAttempt={firstAttempt}
-              removedAnswer={removedAnswer}
-              audienceVotes={audienceVotes}
-              usedHelp5050={usedHelp5050}
-              usedHelp2xAnswer={usedHelp2xAnswer}
-              usedHelpAudience={usedHelpAudience}
-              usedQuestionSwap={usedQuestionSwap}
-              lives={profile.lives}
-              maxLives={profile.max_lives}
-              coins={profile.coins}
-              onAnswerSelect={handleAnswer}
-              onUseHelp5050={useHelp5050}
-              onUseHelp2xAnswer={useHelp2xAnswer}
-              onUseHelpAudience={useHelpAudience}
-              onUseQuestionSwap={useQuestionSwap}
-              onExit={() => setShowExitDialog(true)}
-              disabled={selectedAnswer !== null || isAnimating}
-            />
+            <div 
+              className="w-full h-full transition-opacity duration-200"
+              style={{ opacity: questionVisible ? 1 : 0 }}
+            >
+              <QuestionCard
+                question={currentQuestion}
+                questionNumber={currentQuestionIndex + 1}
+                timeLeft={timeLeft}
+                selectedAnswer={selectedAnswer}
+                firstAttempt={firstAttempt}
+                removedAnswer={removedAnswer}
+                audienceVotes={audienceVotes}
+                usedHelp5050={usedHelp5050}
+                usedHelp2xAnswer={usedHelp2xAnswer}
+                usedHelpAudience={usedHelpAudience}
+                usedQuestionSwap={usedQuestionSwap}
+                lives={profile.lives}
+                maxLives={profile.max_lives}
+                coins={profile.coins}
+                onAnswerSelect={handleAnswer}
+                onUseHelp5050={useHelp5050}
+                onUseHelp2xAnswer={useHelp2xAnswer}
+                onUseHelpAudience={useHelpAudience}
+                onUseQuestionSwap={useQuestionSwap}
+                onExit={() => setShowExitDialog(true)}
+                disabled={selectedAnswer !== null || isAnimating}
+              />
+            </div>
           </div>
         </div>
 
+        {/* Bottom Nav */}
+        <BottomNav />
+
         {/* Dialogs */}
-        <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Kilépés a játékból?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Ha most kilépsz, az eddigi eredményeidet elveszíted!
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Mégsem</AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={() => {
-                  setGameState('category-select');
-                  setShowExitDialog(false);
-                }}
-              >
-                Kilépés
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <ExitGameDialog
+          open={showExitDialog}
+          onOpenChange={setShowExitDialog}
+          onConfirmExit={() => {
+            setGameState('category-select');
+            setShowExitDialog(false);
+          }}
+        />
 
         <ContinueGameDialog
           open={showContinueDialog}
