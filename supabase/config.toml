@@ -21,6 +21,15 @@ verify_jwt = true
 [functions.verify-payment]
 verify_jwt = true
 
+[functions.create-subscription]
+verify_jwt = true
+
+[functions.check-subscription]
+verify_jwt = true
+
+[functions.create-ingame-payment]
+verify_jwt = true
+
 # Cron job for automatic life regeneration every minute
 [[edge_runtime.cron]]
 schedule = "* * * * *"

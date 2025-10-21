@@ -115,6 +115,13 @@ export const SKIP_COSTS = {
   '11-15': 30
 };
 
+// Dynamic skip cost based on question index (0-indexed)
+export const getSkipCost = (questionIndex: number): number => {
+  if (questionIndex < 5) return 10;  // Questions 1-5
+  if (questionIndex < 10) return 20; // Questions 6-10
+  return 30; // Questions 11-15
+};
+
 export const CONTINUE_AFTER_WRONG_COST = 50;
 export const TIMEOUT_CONTINUE_COST = 150;
 export const EXTRA_LIFE_COST = 100;

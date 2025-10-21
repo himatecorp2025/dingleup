@@ -109,6 +109,16 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
             </HexagonButton>
           )}
 
+          {/* Premium subscription promo */}
+          <div className="bg-gradient-to-r from-yellow-500/20 to-purple-600/20 border border-yellow-500/50 rounded-lg p-3 text-center">
+            <p className="text-xs font-semibold text-yellow-400 mb-1">💎 Prémium Előfizetés 💎</p>
+            <p className="text-xs text-white/90">
+              Csak <span className="font-bold text-yellow-300">$2.99/hó</span> (~$0.09/nap) - 
+              <span className="font-bold text-green-400"> Dupla jutalmak</span> + 
+              <span className="font-bold text-red-400"> 30 max élet</span>!
+            </p>
+          </div>
+
           {/* Info */}
           <p className="text-xs text-center text-muted-foreground">
             A sorozat minden hétfőn nullázódik. A 7. nap után újra kezdődik a ciklus.

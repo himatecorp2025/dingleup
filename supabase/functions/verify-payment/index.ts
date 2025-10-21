@@ -57,12 +57,97 @@ serve(async (req) => {
       });
     }
 
-    const productType = session.metadata?.product_type as keyof typeof BOOSTER_CONFIG;
-    if (!productType || !BOOSTER_CONFIG[productType]) {
+    const productType = session.metadata?.product_type || session.metadata?.productType;
+    
+    // Handle in-game package purchase
+    if (productType === 'InGamePackage') {
+      logStep("Processing in-game package purchase");
+      
+      // Check if purchase already recorded
+      const { data: existingPurchase } = await supabaseClient
+        .from("purchases")
+        .select("id")
+        .eq("stripe_payment_intent_id", session.payment_intent as string)
+        .single();
+
+      if (existingPurchase) {
+        logStep("Purchase already recorded", { purchaseId: existingPurchase.id });
+        return new Response(JSON.stringify({ success: true, alreadyProcessed: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+
+      const coins = parseInt(session.metadata?.coins || '500');
+      const lives = parseInt(session.metadata?.lives || '15');
+
+      // Get payment intent for additional details
+      const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent as string);
+      const charge = paymentIntent.latest_charge;
+
+      // Record purchase
+      const { error: purchaseError } = await supabaseClient
+        .from('purchases')
+        .insert({
+          user_id: user.id,
+          product_type: 'InGamePackage',
+          product_name: 'Játékon Belüli Csomag',
+          amount_usd: session.amount_total ? session.amount_total / 100 : 0,
+          amount_coins: coins,
+          payment_method: 'stripe',
+          stripe_payment_intent_id: session.payment_intent as string,
+          stripe_charge_id: typeof charge === 'string' ? charge : charge?.id,
+          country: session.customer_details?.address?.country || null,
+          currency: session.currency || 'usd',
+          status: 'completed',
+          metadata: {
+            coins,
+            lives,
+            session_id: sessionId,
+            customer_email: session.customer_details?.email,
+          }
+        });
+
+      if (purchaseError) {
+        logStep("Error recording purchase", { error: purchaseError });
+        throw purchaseError;
+      }
+
+      // Award coins and lives
+      await supabaseClient.rpc('award_coins', { amount: coins });
+      
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('lives, max_lives')
+        .eq('id', user.id)
+        .single();
+
+      if (profile) {
+        await supabaseClient
+          .from('profiles')
+          .update({ lives: Math.min(profile.lives + lives, profile.max_lives) })
+          .eq('id', user.id);
+      }
+
+      logStep('In-game package purchase completed', { coins, lives });
+      
+      return new Response(JSON.stringify({ 
+        success: true, 
+        coins, 
+        lives,
+        message: `${coins} aranyérme és ${lives} élet hozzáadva!`
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      });
+    }
+
+    // Handle booster purchase
+    if (!productType || !BOOSTER_CONFIG[productType as keyof typeof BOOSTER_CONFIG]) {
       throw new Error("Invalid product type in session metadata");
     }
 
-    const config = BOOSTER_CONFIG[productType];
+    const config = BOOSTER_CONFIG[productType as keyof typeof BOOSTER_CONFIG];
 
     // Check if purchase already recorded
     const { data: existingPurchase } = await supabaseClient
@@ -89,6 +174,7 @@ serve(async (req) => {
       .insert({
         user_id: user.id,
         product_type: productType,
+        product_name: `${productType} Booster`,
         payment_method: "stripe",
         amount_usd: session.amount_total ? session.amount_total / 100 : 0,
         stripe_payment_intent_id: session.payment_intent as string,
@@ -99,6 +185,8 @@ serve(async (req) => {
         metadata: {
           session_id: sessionId,
           customer_email: session.customer_details?.email,
+          booster_type: productType,
+          lives_bonus: config.livesBonus,
         },
       });
 
