@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type RefObject } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, SkipForward, LogOut } from "lucide-react";
+import { ArrowLeft, Users, Heart, Coins, Gift, Home, RotateCcw, ChevronDown, SkipForward, LogOut, RefreshCw } from "lucide-react";
 import gameBackground from "@/assets/game-background.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -812,21 +812,21 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
 
 
                 {/* Lifelines with enhanced styling - ROTATED to flat side */}
-                <div className="flex justify-center gap-3 mb-4 relative">
+                <div className="flex justify-center gap-2 mb-4 relative">
                   <button
                     onClick={useHelp5050}
                     disabled={(!profile.help_50_50_active && !usedHelp5050) || (usedHelp5050 && reactivatedHelp5050) || selectedAnswer !== null}
                     className={`
-                      relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
+                      relative w-14 h-14 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                       ${(profile.help_50_50_active && !usedHelp5050) || (usedHelp5050 && !reactivatedHelp5050) ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Harmadoló"
                   >
-                    <span className="text-black font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
+                    <span className="text-black font-black text-base" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
                     {usedHelp5050 && !reactivatedHelp5050 && (
-                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[8px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
+                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[7px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
                         15
                       </span>
                     )}
@@ -835,16 +835,16 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     onClick={useHelp2xAnswer}
                     disabled={(!profile.help_2x_answer_active && !usedHelp2xAnswer) || (usedHelp2xAnswer && reactivatedHelp2xAnswer) || selectedAnswer !== null}
                     className={`
-                      relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
+                      relative w-14 h-14 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                       ${(profile.help_2x_answer_active && !usedHelp2xAnswer) || (usedHelp2xAnswer && !reactivatedHelp2xAnswer) ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="2× válasz"
                   >
-                    <span className="text-black font-black text-lg" style={{ transform: 'rotate(-90deg)' }}>2×</span>
+                    <span className="text-black font-black text-base" style={{ transform: 'rotate(-90deg)' }}>2×</span>
                     {usedHelp2xAnswer && !reactivatedHelp2xAnswer && (
-                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[8px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
+                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[7px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
                         20
                       </span>
                     )}
@@ -853,16 +853,16 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     onClick={useHelpAudience}
                     disabled={(!profile.help_audience_active && !usedHelpAudience) || (usedHelpAudience && reactivatedHelpAudience) || selectedAnswer !== null}
                     className={`
-                      relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
+                      relative w-14 h-14 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                       ${(profile.help_audience_active && !usedHelpAudience) || (usedHelpAudience && !reactivatedHelpAudience) ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Közönség"
                   >
-                    <Users className="w-6 h-6 text-black" style={{ transform: 'rotate(-90deg)' }} />
+                    <Users className="w-5 h-5 text-black" style={{ transform: 'rotate(-90deg)' }} />
                     {usedHelpAudience && !reactivatedHelpAudience && (
-                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[8px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
+                      <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[7px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
                         30
                       </span>
                     )}
@@ -871,22 +871,38 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     onClick={handleSkipQuestion}
                     disabled={selectedAnswer !== null || !profile || profile.coins < (currentQuestionIndex < 5 ? 10 : currentQuestionIndex < 10 ? 20 : 30)}
                     className={`
-                      relative w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-yellow-400 
+                      relative w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 border-2 border-blue-400 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                      shadow-lg shadow-yellow-500/40
+                      shadow-lg shadow-blue-500/40
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Kérdés átugrás"
                   >
-                    <SkipForward className="w-6 h-6 text-white" style={{ transform: 'rotate(-90deg)' }} />
-                    <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[8px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
+                    <SkipForward className="w-5 h-5 text-white" style={{ transform: 'rotate(-90deg)' }} />
+                    <span className="absolute -top-1 -right-1 bg-blue-400 text-white text-[7px] font-black px-1 rounded-full border border-blue-600" style={{ transform: 'rotate(-90deg)' }}>
                       {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'}
                     </span>
                   </button>
-                  {/* Skip cost badge - jobb felső sarokban, KÍVÜL a gombon */}
-                  <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-extrabold rounded-full px-2.5 py-1 border-2 border-yellow-600 shadow-lg pointer-events-none">
-                    {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'} 🪙
-                  </div>
+                  
+                  {/* Question Swap button */}
+                  {profile.question_swaps_available > 0 && !usedQuestionSwap && (
+                    <button
+                      onClick={useQuestionSwap}
+                      disabled={selectedAnswer !== null || usedQuestionSwap}
+                      className={`
+                        relative w-14 h-14 bg-gradient-to-br from-green-500 to-green-700 border-2 border-green-400 
+                        disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
+                        shadow-lg shadow-green-500/40 animate-pulse
+                      `}
+                      style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
+                      title="Kérdés csere (ingyenes)"
+                    >
+                      <RefreshCw className="w-5 h-5 text-white" style={{ transform: 'rotate(-90deg)' }} />
+                      <span className="absolute -top-1 -right-1 bg-green-400 text-white text-[7px] font-black px-1 rounded-full border border-green-600" style={{ transform: 'rotate(-90deg)' }}>
+                        {profile.question_swaps_available}
+                      </span>
+                    </button>
+                  )}
                 </div>
               </div>
           </div>
