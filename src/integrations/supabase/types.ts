@@ -156,6 +156,7 @@ export type Database = {
           id: string
           invitation_code: string | null
           invitation_rewards_reset_at: string | null
+          is_subscribed: boolean | null
           last_invitation_reward_reset: string | null
           last_life_regeneration: string | null
           lives: number | null
@@ -165,6 +166,7 @@ export type Database = {
           speed_booster_active: boolean | null
           speed_booster_expires_at: string | null
           speed_booster_multiplier: number | null
+          subscription_tier: string | null
           total_correct_answers: number
           updated_at: string | null
           username: string
@@ -183,6 +185,7 @@ export type Database = {
           id: string
           invitation_code?: string | null
           invitation_rewards_reset_at?: string | null
+          is_subscribed?: boolean | null
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           lives?: number | null
@@ -192,6 +195,7 @@ export type Database = {
           speed_booster_active?: boolean | null
           speed_booster_expires_at?: string | null
           speed_booster_multiplier?: number | null
+          subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
           username: string
@@ -210,6 +214,7 @@ export type Database = {
           id?: string
           invitation_code?: string | null
           invitation_rewards_reset_at?: string | null
+          is_subscribed?: boolean | null
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           lives?: number | null
@@ -219,6 +224,7 @@ export type Database = {
           speed_booster_active?: boolean | null
           speed_booster_expires_at?: string | null
           speed_booster_multiplier?: number | null
+          subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
           username?: string
@@ -236,7 +242,9 @@ export type Database = {
           id: string
           metadata: Json | null
           payment_method: string
+          product_name: string | null
           product_type: string
+          purchase_date: string | null
           status: string
           stripe_charge_id: string | null
           stripe_payment_intent_id: string | null
@@ -251,7 +259,9 @@ export type Database = {
           id?: string
           metadata?: Json | null
           payment_method: string
+          product_name?: string | null
           product_type: string
+          purchase_date?: string | null
           status?: string
           stripe_charge_id?: string | null
           stripe_payment_intent_id?: string | null
@@ -266,7 +276,9 @@ export type Database = {
           id?: string
           metadata?: Json | null
           payment_method?: string
+          product_name?: string | null
           product_type?: string
+          purchase_date?: string | null
           status?: string
           stripe_charge_id?: string | null
           stripe_payment_intent_id?: string | null
@@ -289,6 +301,45 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string | null
+          current_period_end: string
+          id: string
+          product_id: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          current_period_end: string
+          id?: string
+          product_id: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          current_period_end?: string
+          id?: string
+          product_id?: string
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
