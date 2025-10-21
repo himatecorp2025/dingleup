@@ -411,15 +411,14 @@ const Shop = ({ userId }: ShopProps) => {
         </CardContent>
       </Card>
 
-      {/* Shop Items Section - CASINO COLORS */}
-      <Card className="bg-gradient-to-br from-purple-900/40 via-violet-900/40 to-purple-900/40 border-2 border-purple-500/50 backdrop-blur-sm shadow-2xl shadow-purple-500/30 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 opacity-80 animate-pulse"></div>
+      {/* Shop Items Section */}
+      <Card className="bg-black/60 border-2 border-purple-500/30 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <ShoppingCart className="w-6 h-6 text-pink-400 animate-pulse" />
-            <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent font-black">Bolt</span>
+          <CardTitle className="flex items-center gap-2">
+            <ShoppingCart className="w-5 h-5" />
+            Bolt
           </CardTitle>
-          <CardDescription className="text-white/90 font-semibold">Vásárolj extra életeket és segítségeket aranyérméért</CardDescription>
+          <CardDescription>Vásárolj extra életeket és segítségeket aranyérméért</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -429,27 +428,27 @@ const Shop = ({ userId }: ShopProps) => {
               const canAfford = profile.coins >= item.price;
               
               return (
-                <div key={item.id} className="border-2 rounded-xl p-4 transition-all border-pink-500/40 hover:border-pink-500/80 bg-gradient-to-br from-black/60 to-purple-900/20 shadow-lg shadow-purple-500/20">
+                <div key={item.id} className="border rounded-xl p-4 transition-all hover:border-primary">
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2 rounded-lg bg-gradient-to-br from-pink-500/30 to-purple-500/30 border border-pink-400/50">
-                      <Icon className="w-6 h-6 text-pink-400" />
+                    <div className="p-2 rounded-lg bg-purple-500/10">
+                      <Icon className="w-6 h-6 text-purple-500" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-bold mb-1 text-white">{item.name}</h4>
-                      <p className="text-sm text-white/70">{item.description}</p>
+                      <h4 className="font-bold mb-1">{item.name}</h4>
+                      <p className="text-sm text-muted-foreground">{item.description}</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-lg flex items-center gap-1 text-yellow-400">
-                      <Coins className="w-5 h-5 text-yellow-400" />
+                    <span className="font-bold text-lg flex items-center gap-1">
+                      <Coins className="w-5 h-5 text-yellow-500" />
                       {item.price}
                     </span>
-                    <Button onClick={item.action} disabled={!canAfford || isLoading} size="sm" className="bg-gradient-to-r from-pink-600 to-purple-700 hover:from-pink-700 hover:to-purple-800 text-white font-bold shadow-lg shadow-pink-500/50">
+                    <Button onClick={item.action} disabled={!canAfford || isLoading} size="sm">
                       {isLoading ? 'Vásárlás...' : item.disabled ? 'Újraaktivál' : 'Vásárlás'}
                     </Button>
                   </div>
-                  {item.disabled && <p className="text-xs text-white/50 mt-2">Már aktív vagy maximális szinten</p>}
-                  {!canAfford && !item.disabled && <p className="text-xs text-red-400 mt-2 font-bold">Nincs elég aranyérméd</p>}
+                  {item.disabled && <p className="text-xs text-muted-foreground mt-2">Már aktív vagy maximális szinten</p>}
+                  {!canAfford && !item.disabled && <p className="text-xs text-red-500 mt-2">Nincs elég aranyérméd</p>}
                 </div>
               );
             })}

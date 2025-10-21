@@ -140,11 +140,24 @@ const Dashboard = () => {
 
   // Subscription promo logic - THIRD in sequence after Welcome and Daily Gift
   useEffect(() => {
-    if (!userId || isPremiumSubscriber || canClaimWelcome || canClaim) return;
+    console.log('Promo check:', { userId, isPremiumSubscriber, canClaimWelcome, canClaim, showWelcomeBonus, showDailyGift });
+    
+    if (!userId || isPremiumSubscriber) {
+      console.log('Promo skipped: no userId or is premium');
+      return;
+    }
+
+    // Wait for welcome and daily gift checks to complete
+    if (canClaimWelcome || canClaim) {
+      console.log('Promo skipped: welcome or daily gift available');
+      return;
+    }
 
     const checkAndShowPromo = () => {
       const lastPromoDate = localStorage.getItem(`last_promo_date_${userId}`);
       const now = Date.now();
+
+      console.log('Checking promo eligibility...', { lastPromoDate, now });
 
       // Reset counter if it's a new day
       if (lastPromoDate) {
@@ -152,38 +165,45 @@ const Dashboard = () => {
         const today = new Date();
         if (lastDate.toDateString() !== today.toDateString()) {
           localStorage.setItem(`promo_count_today_${userId}`, '0');
+          console.log('Reset promo count for new day');
         }
       }
 
       // Check if we can show promo (max 5 per day)
       const currentCount = parseInt(localStorage.getItem(`promo_count_today_${userId}`) || '0');
+      console.log('Current promo count today:', currentCount);
+      
       if (currentCount < 5) {
         const lastShown = parseInt(localStorage.getItem(`last_promo_shown_${userId}`) || '0');
         const timeSinceLastPromo = now - lastShown;
 
-        // Show promo after random interval (15-45 minutes)
-        const minInterval = 15 * 60 * 1000; // 15 minutes
-        const maxInterval = 45 * 60 * 1000; // 45 minutes
-        const randomInterval = Math.random() * (maxInterval - minInterval) + minInterval;
+        console.log('Time since last promo (ms):', timeSinceLastPromo);
 
-        if (timeSinceLastPromo > randomInterval || lastShown === 0) {
+        // Show promo immediately if never shown, or after 2 minutes
+        const minInterval = 2 * 60 * 1000; // 2 minutes
+
+        if (lastShown === 0 || timeSinceLastPromo > minInterval) {
+          console.log('SHOWING SUBSCRIPTION PROMO!');
           setShowSubscriptionPromo(true);
           localStorage.setItem(`last_promo_shown_${userId}`, now.toString());
           localStorage.setItem(`promo_count_today_${userId}`, (currentCount + 1).toString());
           localStorage.setItem(`last_promo_date_${userId}`, now.toString());
+        } else {
+          console.log('Too soon to show promo again');
         }
+      } else {
+        console.log('Max promos reached for today');
       }
     };
 
-    // Check after 5 seconds for first time
-    const initialDelay = setTimeout(checkAndShowPromo, 5000);
-
-    // Then check periodically every 5 minutes
-    const interval = setInterval(checkAndShowPromo, 5 * 60 * 1000);
+    // Check after 3 seconds for first time
+    const initialDelay = setTimeout(() => {
+      console.log('Initial promo check starting...');
+      checkAndShowPromo();
+    }, 3000);
 
     return () => {
       clearTimeout(initialDelay);
-      clearInterval(interval);
     };
   }, [userId, isPremiumSubscriber, canClaimWelcome, canClaim]);
 
