@@ -76,16 +76,17 @@ export interface SpeedBooster {
   name: string;
   multiplier: number;
   price: number;
+  priceUsd: number; // Price in USD cents
   duration: number; // in minutes
   lives_gained: number;
   max_lives_bonus: number;
 }
 
 export const SPEED_BOOSTERS: SpeedBooster[] = [
-  { name: 'DoubleSpeed', multiplier: 2, price: 500, duration: 60, lives_gained: 10, max_lives_bonus: 10 },
-  { name: 'MegaSpeed', multiplier: 4, price: 750, duration: 60, lives_gained: 20, max_lives_bonus: 20 },
-  { name: 'GigaSpeed', multiplier: 12, price: 1000, duration: 60, lives_gained: 60, max_lives_bonus: 60 },
-  { name: 'DingleSpeed', multiplier: 24, price: 1500, duration: 60, lives_gained: 120, max_lives_bonus: 120 }
+  { name: 'DoubleSpeed', multiplier: 2, price: 500, priceUsd: 149, duration: 60, lives_gained: 10, max_lives_bonus: 10 },
+  { name: 'MegaSpeed', multiplier: 4, price: 750, priceUsd: 199, duration: 60, lives_gained: 20, max_lives_bonus: 20 },
+  { name: 'GigaSpeed', multiplier: 12, price: 1000, priceUsd: 249, duration: 60, lives_gained: 60, max_lives_bonus: 60 },
+  { name: 'DingleSpeed', multiplier: 24, price: 1500, priceUsd: 449, duration: 60, lives_gained: 120, max_lives_bonus: 120 }
 ];
 
 export const COIN_REWARDS = {

@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Heart, Zap, HelpCircle, Users, Eye, ShoppingCart, Coins } from 'lucide-react';
+import { Heart, Zap, HelpCircle, Users, Eye, ShoppingCart, Coins, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { SPEED_BOOSTERS } from '@/types/game';
 import { supabase } from '@/integrations/supabase/client';
+import { QuickBuyOptInDialog } from './QuickBuyOptInDialog';
 
 interface ShopProps {
   userId: string;
@@ -17,15 +18,70 @@ interface ShopItem {
   name: string;
   description: string;
   price: number;
+  priceUsd?: number;
   icon: any;
   action: () => Promise<void>;
   disabled?: boolean;
 }
 
+const QUICK_BUY_KEY = 'quick_buy_enabled';
+
 const Shop = ({ userId }: ShopProps) => {
   const { profile, updateProfile, spendCoins, fetchProfile } = useGameProfile(userId);
   const { purchaseBooster } = useUserBoosters(userId);
   const [loading, setLoading] = useState<string | null>(null);
+  const [showQuickBuyDialog, setShowQuickBuyDialog] = useState(false);
+  const [quickBuyEnabled, setQuickBuyEnabled] = useState(false);
+  const [pendingStripeAction, setPendingStripeAction] = useState<(() => void) | null>(null);
+
+  useEffect(() => {
+    const enabled = localStorage.getItem(QUICK_BUY_KEY) === 'true';
+    setQuickBuyEnabled(enabled);
+  }, []);
+
+  const handleQuickBuyAccept = () => {
+    localStorage.setItem(QUICK_BUY_KEY, 'true');
+    setQuickBuyEnabled(true);
+    setShowQuickBuyDialog(false);
+    if (pendingStripeAction) {
+      pendingStripeAction();
+      setPendingStripeAction(null);
+    }
+  };
+
+  const handleQuickBuyDecline = () => {
+    setShowQuickBuyDialog(false);
+    setPendingStripeAction(null);
+  };
+
+  const buyWithStripe = async (boosterType: 'DoubleSpeed' | 'MegaSpeed' | 'GigaSpeed' | 'DingleSpeed') => {
+    const executeStripePayment = async () => {
+      setLoading(`stripe-${boosterType}`);
+      try {
+        const { data, error } = await supabase.functions.invoke('create-payment', {
+          body: { productType: boosterType }
+        });
+
+        if (error) throw error;
+
+        if (data.url) {
+          window.open(data.url, '_blank');
+          toast.info('Átirányítás a fizetési oldalra...');
+        }
+      } catch (error: any) {
+        console.error('Error creating payment:', error);
+        toast.error('Hiba történt a fizetés indításakor');
+      }
+      setLoading(null);
+    };
+
+    if (!quickBuyEnabled) {
+      setPendingStripeAction(() => executeStripePayment);
+      setShowQuickBuyDialog(true);
+    } else {
+      await executeStripePayment();
+    }
+  };
 
   if (!profile) return null;
 
@@ -220,12 +276,34 @@ const Shop = ({ userId }: ShopProps) => {
     name: booster.name,
     description: `${booster.multiplier}x gyorsítás, +${booster.lives_gained} élet`,
     price: booster.price,
+    priceUsd: booster.priceUsd,
     icon: Zap,
     action: () => buyBooster(booster.name as any)
   }));
 
+  // Check for payment success in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get('payment');
+    const productType = params.get('product');
+
+    if (paymentStatus === 'success' && productType) {
+      toast.success(`${productType} booster vásárlás sikeres!`);
+      // Clean URL
+      window.history.replaceState({}, '', '/shop');
+    } else if (paymentStatus === 'cancelled') {
+      toast.info('Fizetés megszakítva');
+      window.history.replaceState({}, '', '/shop');
+    }
+  }, []);
+
   return (
     <div className="space-y-6">
+      <QuickBuyOptInDialog 
+        open={showQuickBuyDialog} 
+        onAccept={handleQuickBuyAccept}
+        onDecline={handleQuickBuyDecline}
+      />
       {/* Balance Card */}
       <Card className="bg-black/60 border-2 border-purple-500/30 backdrop-blur-sm">
         <CardContent className="pt-6">
@@ -244,17 +322,18 @@ const Shop = ({ userId }: ShopProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-white">
             <Zap className="w-6 h-6 text-yellow-500" />
-            Boosterek
+            Speed Boosterek
           </CardTitle>
           <CardDescription className="text-white/70">
-            Vásárolj boostereket aranyérméért - aktiváld őket a játék előtt!
+            Vásárolj speed boostereket aranyérméért vagy valódi pénzért
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {boosterItems.map((item) => {
               const Icon = item.icon;
-              const isLoading = loading === item.id;
+              const isLoadingCoins = loading === item.id;
+              const isLoadingStripe = loading === `stripe-${item.id}`;
               const canAfford = profile.coins >= item.price;
               
               return (
@@ -272,24 +351,49 @@ const Shop = ({ userId }: ShopProps) => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  {/* Coin Purchase */}
+                  <div className="flex items-center justify-between mb-2">
                     <span className="font-bold text-lg flex items-center gap-1 text-yellow-500">
                       <Coins className="w-5 h-5 text-yellow-500" />
                       {item.price}
                     </span>
                     <Button
                       onClick={item.action}
-                      disabled={!canAfford || isLoading}
+                      disabled={!canAfford || isLoadingCoins || isLoadingStripe}
                       size="sm"
                       className="bg-yellow-600 hover:bg-yellow-700"
                     >
-                      {isLoading ? 'Vásárlás...' : 'Vásárlás'}
+                      {isLoadingCoins ? 'Vásárlás...' : 'Érmével'}
                     </Button>
                   </div>
+
+                  {/* Stripe Purchase */}
+                  {item.priceUsd && (
+                    <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                      <span className="font-bold text-lg flex items-center gap-1 text-green-400">
+                        <CreditCard className="w-5 h-5" />
+                        ${(item.priceUsd / 100).toFixed(2)}
+                      </span>
+                      <Button
+                        onClick={() => buyWithStripe(item.id as any)}
+                        disabled={isLoadingCoins || isLoadingStripe}
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        {isLoadingStripe ? 'Fizetés...' : 'Kártyával'}
+                      </Button>
+                    </div>
+                  )}
 
                   {!canAfford && (
                     <p className="text-xs text-red-500 mt-2">
                       Nincs elég aranyérméd
+                    </p>
+                  )}
+                  
+                  {item.priceUsd && (
+                    <p className="text-xs text-white/50 mt-2">
+                      További lehetőségek a Shopban
                     </p>
                   )}
                 </div>

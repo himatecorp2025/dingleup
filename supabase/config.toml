@@ -15,6 +15,12 @@ verify_jwt = false
 [functions.regenerate-lives-background]
 verify_jwt = false
 
+[functions.create-payment]
+verify_jwt = true
+
+[functions.verify-payment]
+verify_jwt = true
+
 # Cron job for automatic life regeneration every minute
 [[edge_runtime.cron]]
 schedule = "* * * * *"
