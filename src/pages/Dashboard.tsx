@@ -300,9 +300,9 @@ const Dashboard = () => {
 
           {/* Second Row: Weekly Countdown and Action Buttons */}
           <div className="flex items-stretch justify-between gap-2 sm:gap-3">
-            {/* Left: Weekly Countdown */}
-            <div className="flex-1">
-              <WeeklyRankingsCountdown compact />
+          {/* Left: Weekly Countdown - Extended Height */}
+            <div className="flex-1 flex items-stretch">
+              <WeeklyRankingsCountdown compact className="h-full" />
             </div>
 
             {/* Right: Action Buttons - Stacked Vertically */}
@@ -444,14 +444,14 @@ const Dashboard = () => {
           {/* Ranglista Button (moved above) removed here */}
       </div>
 
-      {/* Welcome bonus dialog */}
+      {/* Welcome bonus dialog - FIRST */}
       <WelcomeBonusDialog
         open={showWelcomeBonus}
         onClaim={handleClaimWelcomeBonus}
         claiming={claimingWelcome}
       />
 
-      {/* Daily gift dialog */}
+      {/* Daily gift dialog - SECOND, only if welcome bonus is not shown */}
       <DailyGiftDialog
         open={showDailyGift && !showWelcomeBonus}
         onClose={() => setShowDailyGift(false)}
@@ -462,6 +462,13 @@ const Dashboard = () => {
         isPremium={isPremiumSubscriber}
       />
 
+      {/* Subscription promo dialog - THIRD, only if welcome bonus and daily gift are not shown */}
+      {!showWelcomeBonus && !showDailyGift && (
+        <SubscriptionPromoDialog 
+          userId={userId}
+          isSubscribed={isPremiumSubscriber}
+        />
+      )}
 
       {/* Booster activation dialog */}
       <BoosterActivationDialog

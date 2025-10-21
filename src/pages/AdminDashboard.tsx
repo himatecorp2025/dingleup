@@ -575,6 +575,63 @@ const AdminDashboard = () => {
           </div>
         )}
 
+        {activeTab === 'invitations' && (
+          <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">
+              Meghívások ({invitations.length})
+            </h2>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b border-purple-500/30">
+                  <tr>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Meghívó</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Meghívott</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Kód</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Státusz</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Dátum</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invitations.map((invitation: any) => (
+                    <tr key={invitation.id} className="border-b border-white/5 hover:bg-white/5">
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
+                        {invitation.inviter?.username || 'Ismeretlen'} ({invitation.inviter?.email})
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
+                        {invitation.invited?.username || 'Ismeretlen'} ({invitation.invited?.email})
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4">
+                        <span className="inline-block px-2 py-1 bg-purple-600/30 text-purple-300 rounded-lg text-xs font-mono">
+                          {invitation.invitation_code}
+                        </span>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4">
+                        <span className={`inline-block px-2 py-1 rounded-lg text-xs font-bold ${
+                          invitation.accepted 
+                            ? 'bg-green-600/30 text-green-300' 
+                            : 'bg-yellow-600/30 text-yellow-300'
+                        }`}>
+                          {invitation.accepted ? '✓ Elfogadva' : '⏳ Függőben'}
+                        </span>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm">
+                        {new Date(invitation.created_at).toLocaleDateString('hu-HU')}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              
+              {invitations.length === 0 && (
+                <div className="text-center py-8 text-white/50">
+                  Nincs meghívás
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {activeTab === 'reports' && (
           <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
             <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">

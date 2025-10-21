@@ -112,6 +112,8 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
           <MusicControls />
         </div>
       </div>
+      
+      {/* Note: Daily Gift dialog is now ONLY shown on Dashboard if canClaim is true */}
     </div>
   );
 };
