@@ -106,9 +106,9 @@ const Hero = () => {
             </div>
             
             {/* Mobile-only note */}
-            <p className="text-xs text-white/50 text-center max-w-md">
+            <p className="text-[10px] text-white/40 text-center max-w-md leading-relaxed">
               <Smartphone className="w-3 h-3 inline mr-1" />
-              A játék kizárólag telefonon és táblagépen érhető el
+              A játék kizárólag telefonon és táblagépen érhető el. Desktop és laptop esetén csak a landing page látható.
             </p>
           </div>
 
