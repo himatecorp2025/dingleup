@@ -2,11 +2,23 @@ import { useState, useEffect } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 
+const STORAGE_KEY = 'music_volume';
+const STORAGE_MUTE_KEY = 'music_muted';
+
 export const MusicControls = () => {
-  const [volume, setVolume] = useState(10); // 10%
-  const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? parseInt(saved, 10) : 10;
+  });
+  const [isMuted, setIsMuted] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_MUTE_KEY);
+    return saved === 'true';
+  });
 
   useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, volume.toString());
+    localStorage.setItem(STORAGE_MUTE_KEY, isMuted.toString());
+    
     const w = window as any;
     const audio: HTMLAudioElement | undefined = w.__bgm;
     

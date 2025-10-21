@@ -24,12 +24,22 @@ const Game = () => {
 
   // Global music control - play when page loads (user just clicked Play button)
   useEffect(() => {
+    // Get volume from localStorage
+    const savedVolume = localStorage.getItem('music_volume');
+    const savedMuted = localStorage.getItem('music_muted');
+    const volumeValue = savedVolume ? parseInt(savedVolume, 10) / 100 : 0.1;
+    const isMuted = savedMuted === 'true';
+    
     const globalBgm = (window as any).__bgm as HTMLAudioElement | undefined;
     if (globalBgm) {
       try {
         globalBgm.loop = true;
-        globalBgm.volume = 0.1;
-        globalBgm.play().catch(() => {});
+        globalBgm.volume = isMuted ? 0 : volumeValue;
+        if (!isMuted && volumeValue > 0) {
+          globalBgm.play().catch(() => {});
+        } else {
+          globalBgm.pause();
+        }
       } catch {}
       return;
     }
@@ -41,11 +51,11 @@ const Game = () => {
       if (!sourceRef.current) {
         sourceRef.current = audioCtxRef.current.createMediaElementSource(audioRef.current);
         gainNodeRef.current = audioCtxRef.current.createGain();
-        gainNodeRef.current.gain.value = 0.1; // 10%
+        gainNodeRef.current.gain.value = isMuted ? 0 : volumeValue;
         sourceRef.current.connect(gainNodeRef.current);
         gainNodeRef.current.connect(audioCtxRef.current.destination);
       } else if (gainNodeRef.current) {
-        gainNodeRef.current.gain.value = 0.1;
+        gainNodeRef.current.gain.value = isMuted ? 0 : volumeValue;
       }
     };
 
@@ -53,23 +63,26 @@ const Game = () => {
       if (!audioRef.current) return;
       await setupAudioGraph();
       const el = audioRef.current;
-      el.volume = 0.1;
+      el.volume = isMuted ? 0 : volumeValue;
       el.loop = true;
-      try { 
-        await el.play(); 
-        console.log('Music started playing');
-      } catch (e) {
-        console.log('Autoplay blocked, will retry on interaction:', e);
+      if (!isMuted && volumeValue > 0) {
+        try { 
+          await el.play(); 
+          console.log('Music started playing');
+        } catch (e) {
+          console.log('Autoplay blocked, will retry on interaction:', e);
+        }
       }
     };
 
     const keepVolume = () => {
-      if (gainNodeRef.current && gainNodeRef.current.gain.value !== 0.1) {
-        gainNodeRef.current.gain.value = 0.1;
+      const currentVolume = isMuted ? 0 : volumeValue;
+      if (gainNodeRef.current && gainNodeRef.current.gain.value !== currentVolume) {
+        gainNodeRef.current.gain.value = currentVolume;
       }
       const el = audioRef.current;
-      if (el && el.volume !== 0.1) {
-        el.volume = 0.1;
+      if (el && el.volume !== currentVolume) {
+        el.volume = currentVolume;
       }
     };
 

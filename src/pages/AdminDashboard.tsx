@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
 
-type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'reports';
+type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports';
 type ReportsSubTab = 'development' | 'support';
 
 const AdminDashboard = () => {
@@ -20,6 +20,7 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [purchases, setPurchases] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
+  const [invitations, setInvitations] = useState<any[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Real stats from database
@@ -116,6 +117,20 @@ const AdminDashboard = () => {
 
       if (!reportsError && reportsData) {
         setReports(reportsData);
+      }
+
+      // Fetch all invitations
+      const { data: invitationsData, error: invitationsError } = await supabase
+        .from('invitations')
+        .select(`
+          *,
+          inviter:profiles!invitations_inviter_id_fkey(username, email),
+          invited:profiles!invitations_invited_user_id_fkey(username, email)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (!invitationsError && invitationsData) {
+        setInvitations(invitationsData);
       }
 
       console.log('[Admin] Adatok frissítve ✓');
@@ -228,6 +243,17 @@ const AdminDashboard = () => {
             >
               <ShoppingCart className="w-4 h-4 xl:w-5 xl:h-5" />
               <span className="font-medium">Vásárlások</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('invitations')}
+              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+                activeTab === 'invitations'
+                  ? 'bg-blue-600/20 text-blue-400'
+                  : 'text-white/70 hover:bg-white/5'
+              }`}
+            >
+              <Users className="w-4 h-4 xl:w-5 xl:h-5" />
+              <span className="font-medium">Meghívások ({invitations.length})</span>
             </button>
             <button
               onClick={() => setActiveTab('reports')}
