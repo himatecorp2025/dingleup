@@ -17,14 +17,25 @@ const AdminDashboard = () => {
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [purchases, setPurchases] = useState<any[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Real stats from database
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState('0');
   const [totalPayouts, setTotalPayouts] = useState('0');
 
+  // Initial load
   useEffect(() => {
     checkAuth();
+  }, []);
+
+  // Auto-refresh every 15 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchData();
+    }, 15000); // 15 seconds
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -51,9 +62,52 @@ const AdminDashboard = () => {
     setFilteredUsers(filtered);
   };
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
+  const fetchData = async () => {
+    try {
+      setIsRefreshing(true);
+      console.log('[Admin] Adatok frissítése...');
+      
+      // Fetch all users and their roles
+      const { data: users, error: usersError } = await supabase
+        .from('profiles')
+        .select('id, username, email, lives, max_lives, coins, total_correct_answers, created_at')
+        .order('created_at', { ascending: false });
+
+      if (!usersError && users) {
+        const ids = users.map(u => u.id);
+        const { data: rolesData } = await supabase
+          .from('user_roles')
+          .select('user_id, role')
+          .in('user_id', ids);
+        const roleMap = new Map((rolesData || []).map(r => [r.user_id, r.role]));
+        const merged = users.map(u => ({ ...u, role: roleMap.get(u.id) || 'user' }));
+        setAllUsers(merged);
+        setTotalUsers(users.length);
+      }
+
+      // Fetch all purchases
+      const { data: purchasesData, error: purchasesError } = await supabase
+        .from('purchases')
+        .select('*, profiles!inner(username, email)')
+        .order('created_at', { ascending: false });
+
+      if (!purchasesError && purchasesData) {
+        setPurchases(purchasesData);
+        
+        // Calculate real revenue
+        const revenue = purchasesData
+          .filter(p => p.status === 'completed' && p.amount_usd)
+          .reduce((sum, p) => sum + Number(p.amount_usd), 0);
+        setTotalRevenue(revenue.toFixed(2));
+      }
+
+      console.log('[Admin] Adatok frissítve ✓');
+      setIsRefreshing(false);
+    } catch (error) {
+      console.error('Fetch error:', error);
+      setIsRefreshing(false);
+    }
+  };
 
   const checkAuth = async () => {
     try {
@@ -89,43 +143,8 @@ const AdminDashboard = () => {
         setUserName(profile.username);
       }
 
-      // Fetch all users and their roles
-      const { data: users, error: usersError } = await supabase
-        .from('profiles')
-        .select('id, username, email, lives, max_lives, coins, total_correct_answers, created_at')
-        .order('created_at', { ascending: false });
-
-      if (!usersError && users) {
-        const ids = users.map(u => u.id);
-        const { data: rolesData } = await supabase
-          .from('user_roles')
-          .select('user_id, role')
-          .in('user_id', ids);
-        const roleMap = new Map((rolesData || []).map(r => [r.user_id, r.role]));
-        const merged = users.map(u => ({ ...u, role: roleMap.get(u.id) || 'user' }));
-        setAllUsers(merged);
-        setFilteredUsers(merged);
-        setTotalUsers(users.length);
-      }
-
-      // Fetch all purchases
-      const { data: purchasesData, error: purchasesError } = await supabase
-        .from('purchases')
-        .select('*, profiles!inner(username, email)')
-        .order('created_at', { ascending: false });
-
-      if (!purchasesError && purchasesData) {
-        setPurchases(purchasesData);
-        
-        // Calculate real revenue
-        const revenue = purchasesData
-          .filter(p => p.status === 'completed' && p.amount_usd)
-          .reduce((sum, p) => sum + Number(p.amount_usd), 0);
-        setTotalRevenue(revenue.toFixed(2));
-      }
-
-      // Calculate payouts (demo for now)
-      setTotalPayouts('0');
+      // Fetch initial data
+      await fetchData();
 
       setLoading(false);
     } catch (error) {
