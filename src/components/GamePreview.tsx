@@ -44,6 +44,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading: profileLoading, updateProfile, spendLife, refreshProfile } = useGameProfile(userId);
   const { canClaim, claimDailyGift } = useDailyGift(userId);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const [gameState, setGameState] = useState<GameState>('category-select');
   const [selectedCategory, setSelectedCategory] = useState<GameCategory | null>(null);
@@ -71,8 +72,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const [removedAnswer, setRemovedAnswer] = useState<string | null>(null);
   const [audienceVotes, setAudienceVotes] = useState<Record<string, number>>({});
 
+  // Scroll states
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [canSwipe, setCanSwipe] = useState(true);
+  const [translateY, setTranslateY] = useState(0);
+  const [touchStartY, setTouchStartY] = useState(0);
+  const swipeThreshold = 80;
+
   // UI states
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [showContinueDialog, setShowContinueDialog] = useState(false);
   const [continueType, setContinueType] = useState<'timeout' | 'wrong' | 'out-of-lives'>('wrong');
@@ -93,14 +100,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     }
   };
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session?.user) {
-        navigate('/login');
-      }
-    });
-  }, [navigate]);
-
+  // Auth check
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -113,56 +113,70 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
 
   // Timer countdown
   useEffect(() => {
-    if (gameState === 'playing' && timeLeft > 0 && !selectedAnswer && !isTransitioning) {
+    if (gameState === 'playing' && timeLeft > 0 && !selectedAnswer && !isAnimating) {
       const timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1);
       }, 1000);
       return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && !selectedAnswer && gameState === 'playing' && !isTransitioning) {
+    } else if (timeLeft === 0 && !selectedAnswer && gameState === 'playing' && !isAnimating) {
       handleTimeout();
     }
-  }, [timeLeft, gameState, selectedAnswer, isTransitioning]);
+  }, [timeLeft, gameState, selectedAnswer, isAnimating]);
 
-  // Swipe gesture handler
+  // Touch gesture handler
   useEffect(() => {
-    if (gameState !== 'playing') return;
-
-    let touchStartY = 0;
-    let touchStartX = 0;
+    if (gameState !== 'playing' || !canSwipe) return;
 
     const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
-      touchStartX = e.touches[0].clientX;
+      if (isAnimating || showContinueDialog || showExitDialog) return;
+      setTouchStartY(e.touches[0].clientY);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isAnimating || showContinueDialog || showExitDialog) return;
+      
+      const currentY = e.touches[0].clientY;
+      const delta = currentY - touchStartY;
+      
+      // Only allow swipe if answer is given
+      if (selectedAnswer) {
+        setTranslateY(delta);
+      }
     };
 
     const handleTouchEnd = async (e: TouchEvent) => {
+      if (isAnimating || showContinueDialog || showExitDialog) return;
+      
       const touchEndY = e.changedTouches[0].clientY;
-      const touchEndX = e.changedTouches[0].clientX;
-      const deltaY = touchStartY - touchEndY;
-      const deltaX = Math.abs(touchStartX - touchEndX);
+      const delta = touchStartY - touchEndY;
 
-      // Ignore horizontal swipes
-      if (deltaX > 50) return;
-      // Minimum swipe distance
-      if (Math.abs(deltaY) < 80) return;
+      if (Math.abs(delta) < swipeThreshold) {
+        // Reset position if swipe too small
+        setTranslateY(0);
+        return;
+      }
 
-      if (deltaY > 0) {
+      if (delta > 0) {
         // Swipe up
         await handleSwipeUp();
       } else {
         // Swipe down
         await handleSwipeDown();
       }
+      
+      setTranslateY(0);
     };
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
 
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [gameState, selectedAnswer, showContinueDialog, profile]);
+  }, [gameState, canSwipe, isAnimating, selectedAnswer, showContinueDialog, showExitDialog, touchStartY]);
 
   const handleSwipeUp = async () => {
     // If continue dialog is shown, handle payment
@@ -171,11 +185,11 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
 
-    // If question answered correctly, always go to next
-    if (selectedAnswer) {
+    // If question answered correctly, go to next
+    if (selectedAnswer && !isAnimating) {
       const currentQuestion = questions[currentQuestionIndex];
       const selectedAnswerObj = currentQuestion.answers.find(a => a.key === selectedAnswer);
-      if (selectedAnswerObj?.correct && !isTransitioning) {
+      if (selectedAnswerObj?.correct) {
         await handleNextQuestion();
       }
     }
@@ -188,8 +202,8 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
 
-    // Normal state - show confirmation dialog
-    if (!showContinueDialog && !selectedAnswer) {
+    // Normal state - show confirmation dialog only if no answer given
+    if (!selectedAnswer) {
       setShowExitDialog(true);
     }
   };
@@ -289,10 +303,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setRemovedAnswer(null);
     setAudienceVotes({});
     setQuestionStartTime(Date.now());
+    setCanSwipe(true);
+    setIsAnimating(false);
   };
 
   const handleAnswer = (answerKey: string) => {
-    if (selectedAnswer || isTransitioning) return;
+    if (selectedAnswer || isAnimating) return;
 
     const responseTime = (Date.now() - questionStartTime) / 1000;
     const currentQuestion = questions[currentQuestionIndex];
@@ -354,17 +370,13 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     if (profile) {
       try {
         await supabase.rpc('award_coins', { amount: reward });
+        await refreshProfile();
       } catch (error) {
         console.error('Error awarding coins:', error);
       }
     }
 
     toast.success(`Helyes! +${reward} 🪙`);
-    
-    // Automatikusan lép tovább 1 másodperc után
-    setTimeout(() => {
-      handleNextQuestion();
-    }, 1000);
   };
 
   const handleWrongAnswer = (responseTime: number, answerKey: string) => {
@@ -375,25 +387,35 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   };
 
   const handleNextQuestion = async () => {
-    setIsTransitioning(true);
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setCanSwipe(false);
     setShowContinueDialog(false);
     
     if (currentQuestionIndex >= questions.length - 1) {
-      setIsTransitioning(false);
+      setIsAnimating(false);
+      setCanSwipe(true);
       await finishGame();
-    } else {
-      // Quick transition
-      setTimeout(() => {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setTimeLeft(10);
-        setSelectedAnswer(null);
-        setFirstAttempt(null);
-        setRemovedAnswer(null);
-        setAudienceVotes({});
-        setQuestionStartTime(Date.now());
-        setIsTransitioning(false);
-      }, 200);
+      return;
     }
+    
+    // Animate current module out
+    setTimeout(() => {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setTimeLeft(10);
+      setSelectedAnswer(null);
+      setFirstAttempt(null);
+      setRemovedAnswer(null);
+      setAudienceVotes({});
+      setQuestionStartTime(Date.now());
+      
+      // End animation
+      setTimeout(() => {
+        setIsAnimating(false);
+        setCanSwipe(true);
+      }, 100);
+    }, 400);
   };
 
   const handleSkipQuestion = async () => {
@@ -488,6 +510,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     toast.success(`Játék vége! ${correctAnswers}/${questions.length} helyes válasz`);
   };
 
+  // UseHelp functions
   const useHelp5050 = async () => {
     if (selectedAnswer) return;
     
@@ -710,39 +733,48 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       <>
         {/* Fixed background */}
         <div 
-          className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+          className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
         
-        {/* Question card with animation */}
+        {/* Scrollable question container */}
         <div 
-          className={`fixed inset-0 transition-transform duration-300 ease-in-out ${
-            isTransitioning ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'
-          }`}
+          ref={containerRef}
+          className="fixed inset-0 z-10 overflow-hidden"
         >
-          <QuestionCard
-            question={currentQuestion}
-            questionNumber={currentQuestionIndex + 1}
-            timeLeft={timeLeft}
-            selectedAnswer={selectedAnswer}
-            firstAttempt={firstAttempt}
-            removedAnswer={removedAnswer}
-            audienceVotes={audienceVotes}
-            usedHelp5050={usedHelp5050}
-            usedHelp2xAnswer={usedHelp2xAnswer}
-            usedHelpAudience={usedHelpAudience}
-            usedQuestionSwap={usedQuestionSwap}
-            lives={profile.lives}
-            maxLives={profile.max_lives}
-            coins={profile.coins}
-            onAnswerSelect={handleAnswer}
-            onUseHelp5050={useHelp5050}
-            onUseHelp2xAnswer={useHelp2xAnswer}
-            onUseHelpAudience={useHelpAudience}
-            onUseQuestionSwap={useQuestionSwap}
-            onExit={() => setShowExitDialog(true)}
-            disabled={selectedAnswer !== null || isTransitioning}
-          />
+          {/* Question module with TikTok-style animation */}
+          <div 
+            className={`absolute inset-0 w-full h-full transition-transform duration-${isAnimating ? '400' : '0'} ease-in-out`}
+            style={{ 
+              transform: isAnimating 
+                ? 'translateY(-100%)' 
+                : `translateY(${translateY}px)`
+            }}
+          >
+            <QuestionCard
+              question={currentQuestion}
+              questionNumber={currentQuestionIndex + 1}
+              timeLeft={timeLeft}
+              selectedAnswer={selectedAnswer}
+              firstAttempt={firstAttempt}
+              removedAnswer={removedAnswer}
+              audienceVotes={audienceVotes}
+              usedHelp5050={usedHelp5050}
+              usedHelp2xAnswer={usedHelp2xAnswer}
+              usedHelpAudience={usedHelpAudience}
+              usedQuestionSwap={usedQuestionSwap}
+              lives={profile.lives}
+              maxLives={profile.max_lives}
+              coins={profile.coins}
+              onAnswerSelect={handleAnswer}
+              onUseHelp5050={useHelp5050}
+              onUseHelp2xAnswer={useHelp2xAnswer}
+              onUseHelpAudience={useHelpAudience}
+              onUseQuestionSwap={useQuestionSwap}
+              onExit={() => setShowExitDialog(true)}
+              disabled={selectedAnswer !== null || isAnimating}
+            />
+          </div>
         </div>
 
         {/* Dialogs */}
