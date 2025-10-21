@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, User, ShoppingBag, LogOut, Building2 } from 'lucide-react';
+import { Home, User, ShoppingBag, LogOut, Building2, MessageCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
@@ -28,12 +28,34 @@ const BottomNav = () => {
     }
   };
 
+  // Stop background music when navigating
+  const stopBackgroundMusic = () => {
+    try {
+      const w = window as any;
+      const audio: HTMLAudioElement | undefined = w.__bgm;
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    } catch (err) {
+      console.error('Error stopping music:', err);
+    }
+  };
+
+  const handleNavigation = (path: string) => {
+    stopBackgroundMusic();
+    navigate(path);
+  };
+
   const navItems = [
     { icon: Home, label: 'Dashboard', path: '/dashboard' },
+    { icon: MessageCircle, label: 'Chat', path: '/chat' },
     { icon: User, label: 'Profil', path: '/profile' },
     { icon: ShoppingBag, label: 'Bolt', path: '/shop' },
-    { icon: Building2, label: 'Rólunk', path: '/desktop' },
-    { icon: LogOut, label: 'Kilépés', action: handleLogout }
+    { icon: LogOut, label: 'Kilépés', action: () => {
+      stopBackgroundMusic();
+      handleLogout();
+    }}
   ];
 
   // Don't render on desktop/laptop
@@ -52,7 +74,7 @@ const BottomNav = () => {
           return (
             <button
               key={index}
-              onClick={() => item.action ? item.action() : navigate(item.path!)}
+              onClick={() => item.action ? item.action() : handleNavigation(item.path!)}
               className={`
                 flex flex-col items-center justify-center py-3 px-2 rounded-lg
                 transition-all duration-200 relative overflow-hidden

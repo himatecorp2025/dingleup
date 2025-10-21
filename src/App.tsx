@@ -18,6 +18,7 @@ import Invitation from "./pages/Invitation";
 import IntroVideo from "./pages/IntroVideo";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -78,6 +79,7 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/chat" element={<Chat />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
