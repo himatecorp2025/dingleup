@@ -106,10 +106,6 @@ const Dashboard = () => {
     const t = setTimeout(() => setProfileGrace(false), 5000);
     return () => clearTimeout(t);
   }, []);
-      // Welcome bonus has priority over daily gift
-      setShowWelcomeBonus(true);
-    }
-  }, [canClaimWelcome]);
 
   useEffect(() => {
     const fetchUserRank = async () => {
