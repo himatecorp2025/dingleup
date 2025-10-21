@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Trophy } from 'lucide-react';
 
-export const WeeklyRankingsCountdown = () => {
+interface WeeklyRankingsCountdownProps {
+  compact?: boolean;
+  className?: string;
+}
+
+export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: WeeklyRankingsCountdownProps) => {
   const [timeRemaining, setTimeRemaining] = useState('');
 
   useEffect(() => {
@@ -36,6 +41,23 @@ export const WeeklyRankingsCountdown = () => {
     
     return () => clearInterval(interval);
   }, []);
+
+  if (compact) {
+    return (
+      <div
+        className={`bg-gradient-to-r from-purple-600/30 to-purple-900/30 border-2 border-purple-500/40 px-3 py-3 sm:px-4 sm:py-4 text-center ${className}`}
+        style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
+      >
+        <div className="flex items-center justify-center gap-2 mb-1">
+          <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+          <span className="text-xs sm:text-sm font-bold text-white">Heti díjazásig</span>
+        </div>
+        <p className="text-sm sm:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400">
+          {timeRemaining}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gradient-to-br from-purple-600/20 to-purple-900/20 border-2 border-purple-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-3 sm:mb-4 text-center">

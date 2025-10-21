@@ -14,7 +14,7 @@ import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
-import WeeklyRewards from '@/components/WeeklyRewards';
+
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
 import backmusic from '@/assets/backmusic.mp3';
@@ -29,7 +29,6 @@ const Dashboard = () => {
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
-  const [profileGrace, setProfileGrace] = useState(true);
   
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
@@ -102,10 +101,6 @@ const Dashboard = () => {
     }
   }, [canClaimWelcome]);
 
-  useEffect(() => {
-    const t = setTimeout(() => setProfileGrace(false), 5000);
-    return () => clearTimeout(t);
-  }, []);
 
   useEffect(() => {
     const fetchUserRank = async () => {
@@ -195,16 +190,9 @@ const Dashboard = () => {
   }
 
   if (!profile) {
-    if (profileGrace) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
-          <p className="text-lg text-white">Profil betöltése...</p>
-        </div>
-      );
-    }
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
-        <p className="text-lg text-white">Hiba a profil betöltésekor</p>
+        <p className="text-lg text-white">Betöltés...</p>
       </div>
     );
   }
@@ -215,8 +203,11 @@ const Dashboard = () => {
         {/* Top Section */}
         <div className="flex items-start justify-between mb-3">
       {/* Left: Greeting */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-start gap-2">
             <h1 className="text-base sm:text-xl font-black text-white">Szia, {profile.username}!</h1>
+            <div className="w-40 sm:w-52">
+              <WeeklyRankingsCountdown compact />
+            </div>
           </div>
 
           {/* Right: Stats & Avatar */}
@@ -290,9 +281,6 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
-        {/* Weekly Rewards under username */}
-        <WeeklyRewards />
 
         {/* Logo */}
         <div className="flex justify-center mb-2 sm:mb-3">
@@ -380,8 +368,6 @@ const Dashboard = () => {
           <LeaderboardCarousel />
         </div>
 
-        {/* Weekly Rankings Countdown */}
-          <WeeklyRankingsCountdown />
 
         {/* Ranglista Button moved higher above bottom nav */}
         <button
