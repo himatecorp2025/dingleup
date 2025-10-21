@@ -97,6 +97,11 @@ const Footer = () => {
                   Kapcsolat
                 </a>
               </li>
+              <li>
+                <a href="/admin/login" className="text-white/70 hover:text-accent transition-colors">
+                  Admin felület
+                </a>
+              </li>
             </ul>
           </div>
         </div>

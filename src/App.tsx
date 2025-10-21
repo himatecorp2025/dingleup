@@ -16,6 +16,8 @@ import RegistrationSuccess from "./pages/RegistrationSuccess";
 import InstallApp from "./pages/InstallApp";
 import Invitation from "./pages/Invitation";
 import IntroVideo from "./pages/IntroVideo";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,8 +36,9 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
-  // Landing page mindig elérhető
-  if (location.pathname === '/' || location.pathname === '/desktop') {
+  // Landing page és admin oldalak mindig elérhetőek
+  if (location.pathname === '/' || location.pathname === '/desktop' || 
+      location.pathname.startsWith('/admin')) {
     return <>{children}</>;
   }
 
@@ -85,6 +88,8 @@ const App = () => {
               <Route path="/invitation" element={<Invitation />} />
               <Route path="/intro" element={<IntroVideo />} />
               <Route path="/game" element={<Game />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppRouteGuard>
