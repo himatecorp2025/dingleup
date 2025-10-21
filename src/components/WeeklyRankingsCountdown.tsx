@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Clock } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 
 export const WeeklyRankingsCountdown = () => {
   const [timeRemaining, setTimeRemaining] = useState('');
@@ -8,47 +8,50 @@ export const WeeklyRankingsCountdown = () => {
     const updateCountdown = () => {
       const now = new Date();
       
-      // Find next Sunday 23:55
+      // Calculate next Sunday 23:59:59
       const nextSunday = new Date(now);
       const daysUntilSunday = (7 - now.getDay()) % 7;
-      if (daysUntilSunday === 0 && (now.getHours() < 23 || (now.getHours() === 23 && now.getMinutes() < 55))) {
-        // It's Sunday before 23:55
-        nextSunday.setHours(23, 55, 0, 0);
-      } else {
-        // Go to next Sunday
-        nextSunday.setDate(now.getDate() + (daysUntilSunday || 7));
-        nextSunday.setHours(23, 55, 0, 0);
-      }
-
+      nextSunday.setDate(now.getDate() + (daysUntilSunday === 0 ? 7 : daysUntilSunday));
+      nextSunday.setHours(23, 59, 59, 999);
+      
       const diff = nextSunday.getTime() - now.getTime();
-
+      
       if (diff <= 0) {
-        setTimeRemaining('0 nap 0 óra 0 perc');
+        setTimeRemaining('Díjazás folyamatban...');
         return;
       }
-
+      
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-      setTimeRemaining(`${days} nap ${hours} óra ${minutes} perc`);
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      setTimeRemaining(
+        `${days}n ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+      );
     };
-
+    
     updateCountdown();
-    const interval = setInterval(updateCountdown, 60000); // Update every minute
-
+    const interval = setInterval(updateCountdown, 1000);
+    
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="bg-gradient-to-r from-purple-900/40 to-blue-900/40 rounded-xl p-4 mb-6 border-2 border-purple-500/30">
-      <div className="flex items-center justify-center gap-3">
-        <Clock className="w-6 h-6 text-yellow-400 animate-pulse" />
-        <div className="text-center">
-          <p className="text-sm text-white/70 mb-1">Következő heti díjazás</p>
-          <p className="text-lg font-bold text-white">{timeRemaining}</p>
-        </div>
+    <div className="bg-gradient-to-br from-purple-600/20 to-purple-900/20 border-2 border-purple-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-3 sm:mb-4 text-center">
+      <h3 className="text-sm sm:text-base font-black text-white mb-1 sm:mb-2 flex items-center justify-center gap-2">
+        <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+        Heti Nyeremények
+      </h3>
+      <p className="text-[10px] sm:text-xs text-white/60 mb-2">Következő díjazás:</p>
+      <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2 sm:py-3 border border-purple-500/30">
+        <p className="text-base sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 animate-pulse">
+          {timeRemaining}
+        </p>
       </div>
+      <p className="text-[9px] sm:text-[10px] text-white/40 mt-2">
+        Top 10 játékos kategóriánként jutalmat nyer
+      </p>
     </div>
   );
 };

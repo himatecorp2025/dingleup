@@ -395,6 +395,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      reset_game_helps: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       spend_coins: {
         Args: { amount: number }
         Returns: boolean

@@ -166,6 +166,13 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       try { await g.play(); } catch {}
     }
     
+    // Reset all helps to true at game start
+    try {
+      await supabase.rpc('reset_game_helps');
+    } catch (error) {
+      console.error('Error resetting helps:', error);
+    }
+    
     // Spend one life at game start ONLY
     const canPlay = await spendLife();
     if (!canPlay) {
@@ -220,21 +227,32 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     const selectedAnswerObj = currentQuestion.answers.find(a => a.key === answerKey);
     const isCorrect = selectedAnswerObj?.correct || false;
 
-    // 2x answer logic
+    // 2x answer logic - first attempt (show orange)
     if (usedHelp2xAnswer && !firstAttempt) {
       setFirstAttempt(answerKey);
+      
+      // If first attempt is correct, mark as correct immediately
       if (isCorrect) {
-        handleCorrectAnswer(responseTime, answerKey);
+        setTimeout(() => {
+          handleCorrectAnswer(responseTime, answerKey);
+        }, 500); // Small delay to show orange first
       }
       return;
     }
 
+    // 2x answer logic - second attempt
     if (usedHelp2xAnswer && firstAttempt && answerKey !== firstAttempt) {
       const firstAnswerObj = currentQuestion.answers.find(a => a.key === firstAttempt);
+      
+      // Check if either first or second is correct
       if (isCorrect || firstAnswerObj?.correct) {
-        handleCorrectAnswer(responseTime, answerKey);
+        setTimeout(() => {
+          handleCorrectAnswer(responseTime, answerKey);
+        }, 500); // Small delay to show both orange answers
       } else {
-        handleWrongAnswer(responseTime, answerKey);
+        setTimeout(() => {
+          handleWrongAnswer(responseTime, answerKey);
+        }, 500);
       }
       return;
     }
@@ -674,48 +692,54 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     
     return (
       <>
-        <div className="h-screen w-screen overflow-hidden fixed inset-0 relative">
+        <div className="h-screen w-screen overflow-hidden fixed inset-0">
+        {/* Fixed background - not scrollable */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
-          style={{ backgroundImage: `url(${gameBackground})` }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: `url(${gameBackground})`,
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
         />
         
         {/* Scrollable content container - TikTok style */}
-        <div className="h-full w-full overflow-y-auto overflow-x-hidden relative z-10 snap-y snap-proximity">
+        <div className="h-full w-full overflow-y-auto overflow-x-hidden relative z-10 snap-y snap-mandatory scroll-smooth">
           
-          {/* Main game screen - full viewport height (180% for 80% scroll threshold) */}
-          <div className="min-h-[180vh] w-full flex flex-col p-4 snap-start relative">
+          {/* Main game screen - full viewport height */}
+          <div className="min-h-screen w-full flex flex-col p-4 snap-start relative">
             <button
               onClick={() => setShowExitDialog(true)}
-              className="absolute top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+              className="absolute top-4 left-4 z-50 p-2.5 sm:p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
               title="Kilépés"
             >
-              <LogOut className="w-6 h-6 -scale-x-100" />
+              <LogOut className="w-5 h-5 sm:w-6 sm:h-6 -scale-x-100" />
             </button>
 
-            {/* Header */}
-            <div className="flex-none w-full mb-4 mt-0">
-              <div className="flex items-center justify-between mb-3">
-                {/* Left spacer (exit button is absolute) */}
-                <div className="w-16 h-16" />
+              {/* Header */}
+              <div className="flex-none w-full mb-4 mt-0">
+                <div className="flex items-center justify-between mb-3">
+                  {/* Left spacer (exit button is absolute) */}
+                  <div className="w-12 h-12 sm:w-16 sm:h-16" />
 
-                {/* Timer */}
-                <div className="flex-shrink-0">
-                  <TimerCircle timeLeft={timeLeft} />
-                </div>
+                  {/* Timer */}
+                  <div className="flex-shrink-0">
+                    <TimerCircle timeLeft={timeLeft} />
+                  </div>
 
-                {/* Lives and coins - showing profile data */}
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-red-500/50">
-                    <Heart className="w-4 h-4 text-red-500" />
-                    <span className="font-bold text-sm text-white">{profile.lives}</span>
-                  </div>
-                  <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-500/50">
-                    <Coins className="w-4 h-4 text-yellow-500" />
-                    <span className="font-bold text-sm text-white">{profile.coins}</span>
+                  {/* Lives and coins - showing profile data */}
+                  <div className="flex flex-col gap-1.5 sm:gap-2">
+                    <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 sm:px-3 py-1 border border-red-500/50">
+                      <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-red-500" />
+                      <span className="font-bold text-xs sm:text-sm text-white">{profile.lives}</span>
+                    </div>
+                    <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 sm:px-3 py-1 border border-yellow-500/50">
+                      <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500" />
+                      <span className="font-bold text-xs sm:text-sm text-white">{profile.coins}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
                 {/* Notification panel - below timer, compact horizontal bar */}
                 {(showContinuePanel || showScrollHint) && (
@@ -786,13 +810,17 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     const showResult = selectedAnswer !== null;
                     const isCorrect = answer.correct && showResult;
                     const isWrong = showResult && isSelected && !answer.correct;
+                    
+                    // Double answer orange highlight logic
+                    const isFirstAttempt = usedHelp2xAnswer && firstAttempt === answer.key && !selectedAnswer;
+                    const isSecondAttempt = usedHelp2xAnswer && firstAttempt && selectedAnswer === answer.key && !isCorrect && !isWrong;
 
                     return (
                       <MillionaireAnswer
                         key={answer.key}
                         letter={answer.key as 'A' | 'B' | 'C'}
                         onClick={() => handleAnswer(answer.key)}
-                        isSelected={isSelected && !showResult}
+                        isSelected={(isSelected && !showResult) || isFirstAttempt || isSecondAttempt}
                         isCorrect={isCorrect}
                         isWrong={isWrong}
                         disabled={selectedAnswer !== null}
@@ -812,19 +840,19 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
 
 
                 {/* Lifelines with enhanced styling - ROTATED to flat side */}
-                <div className="flex justify-center gap-2 mb-4 relative">
+                <div className="flex justify-center gap-1.5 sm:gap-2 mb-4 relative flex-wrap">
                   <button
                     onClick={useHelp5050}
                     disabled={(!profile.help_50_50_active && !usedHelp5050) || (usedHelp5050 && reactivatedHelp5050) || selectedAnswer !== null}
                     className={`
-                      relative w-14 h-14 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
+                      relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                       ${(profile.help_50_50_active && !usedHelp5050) || (usedHelp5050 && !reactivatedHelp5050) ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Harmadoló"
                   >
-                    <span className="text-black font-black text-base" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
+                    <span className="text-black font-black text-sm sm:text-base" style={{ transform: 'rotate(-90deg)' }}>1/3</span>
                     {usedHelp5050 && !reactivatedHelp5050 && (
                       <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[7px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
                         15
@@ -835,14 +863,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     onClick={useHelp2xAnswer}
                     disabled={(!profile.help_2x_answer_active && !usedHelp2xAnswer) || (usedHelp2xAnswer && reactivatedHelp2xAnswer) || selectedAnswer !== null}
                     className={`
-                      relative w-14 h-14 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
+                      relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                       ${(profile.help_2x_answer_active && !usedHelp2xAnswer) || (usedHelp2xAnswer && !reactivatedHelp2xAnswer) ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="2× válasz"
                   >
-                    <span className="text-black font-black text-base" style={{ transform: 'rotate(-90deg)' }}>2×</span>
+                    <span className="text-black font-black text-sm sm:text-base" style={{ transform: 'rotate(-90deg)' }}>2×</span>
                     {usedHelp2xAnswer && !reactivatedHelp2xAnswer && (
                       <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[7px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
                         20
@@ -853,14 +881,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     onClick={useHelpAudience}
                     disabled={(!profile.help_audience_active && !usedHelpAudience) || (usedHelpAudience && reactivatedHelpAudience) || selectedAnswer !== null}
                     className={`
-                      relative w-14 h-14 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
+                      relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-500 to-amber-600 border-2 border-black 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                       ${(profile.help_audience_active && !usedHelpAudience) || (usedHelpAudience && !reactivatedHelpAudience) ? 'animate-pulse shadow-lg shadow-yellow-500/50' : ''}
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Közönség"
                   >
-                    <Users className="w-5 h-5 text-black" style={{ transform: 'rotate(-90deg)' }} />
+                    <Users className="w-4 h-4 sm:w-5 sm:h-5 text-black" style={{ transform: 'rotate(-90deg)' }} />
                     {usedHelpAudience && !reactivatedHelpAudience && (
                       <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[7px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
                         30
@@ -871,14 +899,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                     onClick={handleSkipQuestion}
                     disabled={selectedAnswer !== null || !profile || profile.coins < (currentQuestionIndex < 5 ? 10 : currentQuestionIndex < 10 ? 20 : 30)}
                     className={`
-                      relative w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 border-2 border-blue-400 
+                      relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-blue-700 border-2 border-blue-400 
                       disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                       shadow-lg shadow-blue-500/40
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Kérdés átugrás"
                   >
-                    <SkipForward className="w-5 h-5 text-white" style={{ transform: 'rotate(-90deg)' }} />
+                    <SkipForward className="w-4 h-4 sm:w-5 sm:h-5 text-white" style={{ transform: 'rotate(-90deg)' }} />
                     <span className="absolute -top-1 -right-1 bg-blue-400 text-white text-[7px] font-black px-1 rounded-full border border-blue-600" style={{ transform: 'rotate(-90deg)' }}>
                       {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'}
                     </span>
@@ -890,14 +918,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                       onClick={useQuestionSwap}
                       disabled={selectedAnswer !== null || usedQuestionSwap}
                       className={`
-                        relative w-14 h-14 bg-gradient-to-br from-green-500 to-green-700 border-2 border-green-400 
+                        relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-green-700 border-2 border-green-400 
                         disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
                         shadow-lg shadow-green-500/40 animate-pulse
                       `}
                       style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                       title="Kérdés csere (ingyenes)"
                     >
-                      <RefreshCw className="w-5 h-5 text-white" style={{ transform: 'rotate(-90deg)' }} />
+                      <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 text-white" style={{ transform: 'rotate(-90deg)' }} />
                       <span className="absolute -top-1 -right-1 bg-green-400 text-white text-[7px] font-black px-1 rounded-full border border-green-600" style={{ transform: 'rotate(-90deg)' }}>
                         {profile.question_swaps_available}
                       </span>

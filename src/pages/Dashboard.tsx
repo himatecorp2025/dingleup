@@ -193,37 +193,37 @@ const Dashboard = () => {
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4 pb-24 max-w-screen-lg mx-auto">
         {/* Top Section */}
         <div className="flex items-start justify-between mb-3">
-          {/* Left: Greeting */}
+      {/* Left: Greeting */}
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-black text-white">Szia, {profile.username}!</h1>
+            <h1 className="text-base sm:text-xl font-black text-white">Szia, {profile.username}!</h1>
           </div>
 
           {/* Right: Stats & Avatar */}
           <div className="flex flex-col items-end gap-2">
             {/* Stats Row */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {/* Rank Hexagon */}
-              <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-purple-400">
-                <Trophy className="w-4 h-4 text-yellow-500 mb-0.5" />
-                <span className="text-white text-xs font-bold">{currentRank || '...'}</span>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-purple-400">
+                <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 mb-0.5" />
+                <span className="text-white text-[10px] sm:text-xs font-bold">{currentRank || '...'}</span>
               </div>
 
               {/* Coins Hexagon */}
-              <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-yellow-600 to-yellow-900 flex flex-col items-center justify-center border-2 border-yellow-400">
-                <Coins className="w-4 h-4 text-white mb-0.5" />
-                <span className="text-white text-xs font-bold">{profile.coins}</span>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-yellow-600 to-yellow-900 flex flex-col items-center justify-center border-2 border-yellow-400">
+                <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5" />
+                <span className="text-white text-[10px] sm:text-xs font-bold">{profile.coins}</span>
               </div>
 
               {/* Lives Hexagon with Timer */}
               <div className="relative">
-                <div className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400">
-                  <Heart className="w-4 h-4 text-white mb-0.5" />
-                  <span className="text-white text-xs font-bold">{profile.lives}</span>
+                <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400">
+                  <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5" />
+                  <span className="text-white text-[10px] sm:text-xs font-bold">{profile.lives}</span>
                 </div>
                 {profile.lives < profile.max_lives && timeUntilNextLife !== '0:00' && (
-                  <div className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-black/80 px-2 py-0.5 rounded-full flex items-center gap-1 whitespace-nowrap">
-                    <Clock className="w-2.5 h-2.5 text-green-400" />
-                    <span className="text-[9px] text-green-400 font-bold">{timeUntilNextLife}</span>
+                  <div className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-black/80 px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-0.5 sm:gap-1 whitespace-nowrap">
+                    <Clock className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-green-400" />
+                    <span className="text-[8px] sm:text-[9px] text-green-400 font-bold">{timeUntilNextLife}</span>
                   </div>
                 )}
               </div>
@@ -231,7 +231,7 @@ const Dashboard = () => {
               {/* Avatar Hexagon */}
               <button
                 onClick={() => navigate('/profile')}
-                className="w-16 h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-4 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-transform"
+                className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 sm:border-4 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-transform"
               >
                 {profile.avatar_url ? (
                   <img 
@@ -240,7 +240,7 @@ const Dashboard = () => {
                     className="w-full h-full object-cover clip-hexagon"
                   />
                 ) : (
-                  <span className="text-2xl font-black text-white">
+                  <span className="text-lg sm:text-2xl font-black text-white">
                     {getInitials(profile.username)}
                   </span>
                 )}
@@ -248,22 +248,22 @@ const Dashboard = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-2 w-52">
+            <div className="flex flex-col gap-1.5 sm:gap-2 w-40 sm:w-52">
               <button
                 onClick={() => navigate('/invitation')}
-                className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-2"
+                className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-[10px] sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
-                <Share2 className="w-4 h-4" />
+                <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
                 PROFIL MEGOSZTÁSA
               </button>
               
               <button
                 onClick={() => navigate('/shop')}
-                className="w-full py-2 px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-2"
+                className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-[10px] sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
-                <ShoppingBag className="w-4 h-4" />
+                <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4" />
                 BOLT
               </button>
             </div>
@@ -271,8 +271,8 @@ const Dashboard = () => {
         </div>
 
         {/* Logo */}
-        <div className="flex justify-center mb-3">
-          <div className="relative w-36 h-36">
+        <div className="flex justify-center mb-2 sm:mb-3">
+          <div className="relative w-28 h-28 sm:w-36 sm:h-36">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full blur-3xl"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl" />
           </div>
@@ -299,10 +299,10 @@ const Dashboard = () => {
             } catch {}
             navigate('/game');
           }}
-        	  className="w-full py-2.5 px-5 mb-3 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg rounded-2xl border-2 border-green-400 shadow-xl shadow-green-500/40 hover:shadow-green-500/60 hover:scale-105 transition-all animate-pulse-glow-green"
+        	  className="w-full py-2 sm:py-2.5 px-4 sm:px-5 mb-2 sm:mb-3 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-base sm:text-lg rounded-2xl border-2 border-green-400 shadow-xl shadow-green-500/40 hover:shadow-green-500/60 hover:scale-105 transition-all animate-pulse-glow-green"
         	  style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         	>
-        	  <Play className="inline w-5 h-5 mr-2" />
+        	  <Play className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" />
         	  PLAY NOW
         	</button>
 
@@ -329,7 +329,7 @@ const Dashboard = () => {
               window.location.reload();
             }
           }}
-          className={`w-full py-2.5 px-5 mb-3 bg-gradient-to-r ${hasActiveBooster ? 'from-orange-500 via-orange-400 to-orange-500' : 'from-yellow-500 via-yellow-400 to-yellow-500'} ${hasActiveBooster ? 'text-white' : 'text-black'} font-black text-lg rounded-2xl border-2 ${hasActiveBooster ? 'border-orange-600 shadow-orange-500/40' : 'border-yellow-600 shadow-yellow-500/40'} shadow-xl hover:shadow-yellow-500/60 hover:scale-105 transition-all relative`}
+          className={`w-full py-2 sm:py-2.5 px-4 sm:px-5 mb-2 sm:mb-3 bg-gradient-to-r ${hasActiveBooster ? 'from-orange-500 via-orange-400 to-orange-500' : 'from-yellow-500 via-yellow-400 to-yellow-500'} ${hasActiveBooster ? 'text-white' : 'text-black'} font-black text-base sm:text-lg rounded-2xl border-2 ${hasActiveBooster ? 'border-orange-600 shadow-orange-500/40' : 'border-yellow-600 shadow-yellow-500/40'} shadow-xl hover:shadow-yellow-500/60 hover:scale-105 transition-all relative`}
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
           {hasActiveBooster && (
@@ -338,8 +338,8 @@ const Dashboard = () => {
               <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
             </span>
           )}
-          <Zap className={`inline w-5 h-5 mr-2 ${!hasActiveBooster ? 'text-black' : 'text-white'}`} />
-          BOOSTER {hasActiveBooster && `(AKTÍV - ${timeRemaining})`}
+          <Zap className={`inline w-4 h-4 sm:w-5 sm:h-5 mr-2 ${!hasActiveBooster ? 'text-black' : 'text-white'}`} />
+          <span className="text-sm sm:text-base">BOOSTER {hasActiveBooster && `(AKTÍV - ${timeRemaining})`}</span>
         </button>
 
         {/* Leaderboard Carousel - Top 25 players */}
