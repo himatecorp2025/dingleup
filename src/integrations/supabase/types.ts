@@ -207,10 +207,12 @@ export type Database = {
           conversation_id: string
           created_at: string
           id: string
+          is_reported: boolean | null
           link_preview_image: string | null
           link_preview_url: string | null
           media_type: string | null
           media_url: string | null
+          retention_until: string | null
           sender_id: string
         }
         Insert: {
@@ -218,10 +220,12 @@ export type Database = {
           conversation_id: string
           created_at?: string
           id?: string
+          is_reported?: boolean | null
           link_preview_image?: string | null
           link_preview_url?: string | null
           media_type?: string | null
           media_url?: string | null
+          retention_until?: string | null
           sender_id: string
         }
         Update: {
@@ -229,10 +233,12 @@ export type Database = {
           conversation_id?: string
           created_at?: string
           id?: string
+          is_reported?: boolean | null
           link_preview_image?: string | null
           link_preview_url?: string | null
           media_type?: string | null
           media_url?: string | null
+          retention_until?: string | null
           sender_id?: string
         }
         Relationships: [
@@ -540,6 +546,24 @@ export type Database = {
           },
         ]
       }
+      user_presence: {
+        Row: {
+          is_online: boolean
+          last_seen: string
+          user_id: string
+        }
+        Insert: {
+          is_online?: boolean
+          last_seen?: string
+          user_id: string
+        }
+        Update: {
+          is_online?: boolean
+          last_seen?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -642,6 +666,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      cleanup_old_messages: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       distribute_weekly_rewards: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -660,6 +688,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      mark_users_offline: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       process_invitation_reward: {
         Args: { inviter_user_id: string }

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
 
-type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases';
+type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'reports';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ const AdminDashboard = () => {
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [purchases, setPurchases] = useState<any[]>([]);
+  const [reports, setReports] = useState<any[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Real stats from database
@@ -99,6 +100,20 @@ const AdminDashboard = () => {
           .filter(p => p.status === 'completed' && p.amount_usd)
           .reduce((sum, p) => sum + Number(p.amount_usd), 0);
         setTotalRevenue(revenue.toFixed(2));
+      }
+
+      // Fetch all reports
+      const { data: reportsData, error: reportsError } = await supabase
+        .from('reports')
+        .select(`
+          *,
+          reporter:profiles!reports_reporter_id_fkey(username, email),
+          reported_user:profiles!reports_reported_user_id_fkey(username, email)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (!reportsError && reportsData) {
+        setReports(reportsData);
       }
 
       console.log('[Admin] Adatok frissítve ✓');
@@ -211,6 +226,17 @@ const AdminDashboard = () => {
             >
               <ShoppingCart className="w-4 h-4 xl:w-5 xl:h-5" />
               <span className="font-medium">Vásárlások</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('reports')}
+              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+                activeTab === 'reports'
+                  ? 'bg-blue-600/20 text-blue-400'
+                  : 'text-white/70 hover:bg-white/5'
+              }`}
+            >
+              <AlertTriangle className="w-4 h-4 xl:w-5 xl:h-5" />
+              <span className="font-medium">Jelentések ({reports.filter(r => r.status === 'pending').length})</span>
             </button>
           </nav>
         </div>
@@ -517,49 +543,120 @@ const AdminDashboard = () => {
         {activeTab === 'payouts' && (
           <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
             <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">Nyeremény kifizetések</h2>
-            <div className="overflow-x-auto -mx-4 lg:mx-0">
-              <table className="w-full min-w-[700px]">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Neve</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Megnyert nyeremény</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Dátum</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Státusz</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">Antal István László</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">100$</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">2025.03.12</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4">
-                      <span className="bg-green-500/20 text-green-400 px-2 lg:px-3 py-1 rounded-full text-xs font-medium">
-                        Kifizetne
+...
+          </div>
+        )}
+
+        {activeTab === 'reports' && (
+          <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">
+              Jelentések ({reports.length})
+            </h2>
+            <div className="space-y-4">
+              {reports.map((report) => (
+                <div
+                  key={report.id}
+                  className="bg-black/30 border border-purple-500/20 rounded-lg p-4"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
+                        report.report_type === 'bug'
+                          ? 'bg-orange-500/20 text-orange-400'
+                          : 'bg-red-500/20 text-red-400'
+                      }`}>
+                        {report.report_type === 'bug' ? '🐛 Fejlesztői' : '⚠️ Felhasználói'}
                       </span>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">Vadász Attila</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">100$</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">2025.03.04</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4">
-                      <span className="bg-red-500/20 text-red-400 px-2 lg:px-3 py-1 rounded-full text-xs font-medium">
-                        teljesítetlen
+                      <span className={`ml-2 inline-block px-3 py-1 rounded-full text-xs font-bold ${
+                        report.status === 'pending'
+                          ? 'bg-yellow-500/20 text-yellow-400'
+                          : report.status === 'resolved'
+                          ? 'bg-green-500/20 text-green-400'
+                          : 'bg-gray-500/20 text-gray-400'
+                      }`}>
+                        {report.status === 'pending' ? 'Függőben' : report.status === 'resolved' ? 'Megoldva' : 'Elutasítva'}
                       </span>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">Kérdődző Erika</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">100$</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">2025.02.21</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4">
-                      <span className="bg-green-500/20 text-green-400 px-2 lg:px-3 py-1 rounded-full text-xs font-medium">
-                        Kifizetne
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    </div>
+                    <span className="text-xs text-white/50">
+                      {new Date(report.created_at).toLocaleDateString('hu-HU')}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-sm text-white/70">
+                      <strong className="text-white">Bejelentő:</strong>{' '}
+                      {report.reporter?.username || 'Ismeretlen'} ({report.reporter?.email})
+                    </p>
+
+                    {report.report_type === 'bug' ? (
+                      <>
+                        <p className="text-sm text-white/70">
+                          <strong className="text-white">Kategória:</strong> {report.bug_category}
+                        </p>
+                        <p className="text-sm text-white/70">
+                          <strong className="text-white">Leírás:</strong> {report.bug_description}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm text-white/70">
+                          <strong className="text-white">Jelentett felhasználó:</strong>{' '}
+                          {report.reported_user?.username || 'Ismeretlen'}
+                        </p>
+                        <p className="text-sm text-white/70">
+                          <strong className="text-white">Visszaélés típusa:</strong> {report.violation_type}
+                        </p>
+                        <p className="text-sm text-white/70">
+                          <strong className="text-white">Részletek:</strong> {report.violation_description}
+                        </p>
+                      </>
+                    )}
+
+                    {report.admin_notes && (
+                      <p className="text-sm text-purple-300 mt-2">
+                        <strong>Admin megjegyzés:</strong> {report.admin_notes}
+                      </p>
+                    )}
+                  </div>
+
+                  {report.status === 'pending' && (
+                    <div className="flex gap-2 mt-4">
+                      <button
+                        onClick={async () => {
+                          await supabase
+                            .from('reports')
+                            .update({ status: 'resolved', admin_notes: 'Megoldva' })
+                            .eq('id', report.id);
+                          fetchData();
+                          toast.success('Jelentés megoldva');
+                        }}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors"
+                      >
+                        Megoldva
+                      </button>
+                      <button
+                        onClick={async () => {
+                          await supabase
+                            .from('reports')
+                            .update({ status: 'dismissed', admin_notes: 'Elutasítva' })
+                            .eq('id', report.id);
+                          fetchData();
+                          toast.success('Jelentés elutasítva');
+                        }}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors"
+                      >
+                        Elutasítás
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {reports.length === 0 && (
+                <div className="text-center py-8 text-white/50">
+                  Nincs jelentés
+                </div>
+              )}
             </div>
           </div>
         )}

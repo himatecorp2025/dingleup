@@ -1,5 +1,6 @@
 import { GameCategory } from '@/types/game';
 import { Heart, Brain, Palette, TrendingUp, ArrowLeft, LogOut } from 'lucide-react';
+import { MusicControls } from './MusicControls';
 
 interface CategorySelectorProps {
   onSelect: (category: GameCategory) => void;
@@ -101,9 +102,14 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
         </div>
 
         <div className="mt-6 text-center">
-          <p className="text-xs text-yellow-300/90 drop-shadow font-semibold">
+          <p className="text-xs text-yellow-300/90 drop-shadow font-semibold mb-4">
             15 kérdés • 10 mp/kérdés • Akár 100 aranyérme
           </p>
+        </div>
+
+        {/* Music Controls */}
+        <div className="mt-4 max-w-md mx-auto">
+          <MusicControls />
         </div>
       </div>
     </div>
