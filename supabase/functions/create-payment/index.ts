@@ -70,7 +70,7 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/shop?payment=success&product=${productType}`,
+      success_url: `${req.headers.get("origin")}/shop?payment=success&product=${productType}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/shop?payment=cancelled`,
       metadata: {
         user_id: user.id,

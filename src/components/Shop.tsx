@@ -286,16 +286,35 @@ const Shop = ({ userId }: ShopProps) => {
     const params = new URLSearchParams(window.location.search);
     const paymentStatus = params.get('payment');
     const productType = params.get('product');
+    const sessionId = params.get('session_id');
 
-    if (paymentStatus === 'success' && productType) {
-      toast.success(`${productType} booster vásárlás sikeres!`);
-      // Clean URL
-      window.history.replaceState({}, '', '/shop');
-    } else if (paymentStatus === 'cancelled') {
-      toast.info('Fizetés megszakítva');
-      window.history.replaceState({}, '', '/shop');
-    }
-  }, []);
+    const verifyPayment = async () => {
+      if (paymentStatus === 'success' && productType && sessionId) {
+        try {
+          const { data, error } = await supabase.functions.invoke('verify-payment', {
+            body: { sessionId }
+          });
+
+          if (error) throw error;
+
+          if (data.success) {
+            toast.success(`${productType} booster sikeres vásárlás! +${data.livesBonus} élet hozzáadva!`);
+            await fetchProfile();
+          }
+        } catch (error: any) {
+          console.error('Error verifying payment:', error);
+          toast.error('Fizetés ellenőrzése sikertelen, kérlek lépj kapcsolatba a support-tal');
+        }
+        // Clean URL
+        window.history.replaceState({}, '', '/shop');
+      } else if (paymentStatus === 'cancelled') {
+        toast.info('Fizetés megszakítva');
+        window.history.replaceState({}, '', '/shop');
+      }
+    };
+
+    verifyPayment();
+  }, [fetchProfile]);
 
   return (
     <div className="space-y-6">

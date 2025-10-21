@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
+import { Input } from '@/components/ui/input';
 
-type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts';
+type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -13,11 +14,42 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<MenuTab>('dashboard');
   const [userName, setUserName] = useState('Admin');
   const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [purchases, setPurchases] = useState<any[]>([]);
+  
+  // Real stats from database
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState('0');
+  const [totalPayouts, setTotalPayouts] = useState('0');
 
-  // Demo data
-  const [totalUsers, setTotalUsers] = useState(18980);
-  const [totalRevenue, setTotalRevenue] = useState('78.982');
-  const [totalPayouts, setTotalPayouts] = useState('1.290');
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    filterUsers();
+  }, [searchQuery, allUsers]);
+
+  const filterUsers = () => {
+    if (!searchQuery.trim()) {
+      setFilteredUsers(allUsers);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = allUsers.filter(user => 
+      user.id.toLowerCase().includes(query) ||
+      user.username.toLowerCase().includes(query) ||
+      user.email.toLowerCase().includes(query) ||
+      (user.role && user.role.toLowerCase().includes(query)) ||
+      user.lives.toString().includes(query) ||
+      user.coins.toString().includes(query) ||
+      user.total_correct_answers.toString().includes(query) ||
+      new Date(user.created_at).toLocaleDateString('hu-HU').includes(query)
+    );
+    setFilteredUsers(filtered);
+  };
 
   useEffect(() => {
     checkAuth();
@@ -72,8 +104,28 @@ const AdminDashboard = () => {
         const roleMap = new Map((rolesData || []).map(r => [r.user_id, r.role]));
         const merged = users.map(u => ({ ...u, role: roleMap.get(u.id) || 'user' }));
         setAllUsers(merged);
+        setFilteredUsers(merged);
         setTotalUsers(users.length);
       }
+
+      // Fetch all purchases
+      const { data: purchasesData, error: purchasesError } = await supabase
+        .from('purchases')
+        .select('*, profiles!inner(username, email)')
+        .order('created_at', { ascending: false });
+
+      if (!purchasesError && purchasesData) {
+        setPurchases(purchasesData);
+        
+        // Calculate real revenue
+        const revenue = purchasesData
+          .filter(p => p.status === 'completed' && p.amount_usd)
+          .reduce((sum, p) => sum + Number(p.amount_usd), 0);
+        setTotalRevenue(revenue.toFixed(2));
+      }
+
+      // Calculate payouts (demo for now)
+      setTotalPayouts('0');
 
       setLoading(false);
     } catch (error) {
@@ -209,6 +261,17 @@ const AdminDashboard = () => {
             <span className="text-xs font-medium">Felhasználók</span>
           </button>
           <button
+            onClick={() => setActiveTab('purchases')}
+            className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
+              activeTab === 'purchases'
+                ? 'bg-blue-600/20 text-blue-400'
+                : 'text-white/70'
+            }`}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            <span className="text-xs font-medium">Vásárlások</span>
+          </button>
+          <button
             onClick={() => setActiveTab('revenue')}
             className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
               activeTab === 'revenue'
@@ -237,29 +300,38 @@ const AdminDashboard = () => {
       <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
         {/* Top Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
-          <div className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+          <button
+            onClick={() => setActiveTab('users')}
+            className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-[#1a1a3e]/70 transition-colors"
+          >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
               <h3 className="text-white/70 text-xs lg:text-sm">Összes felhasználó</h3>
               <Users className="w-6 h-6 lg:w-8 lg:h-8 text-blue-500 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
             <p className="text-xl lg:text-3xl font-bold text-white">{totalUsers.toLocaleString()}</p>
-          </div>
+          </button>
 
-          <div className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+          <button
+            onClick={() => setActiveTab('revenue')}
+            className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-[#1a1a3e]/70 transition-colors"
+          >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
               <h3 className="text-white/70 text-xs lg:text-sm">Teljes árbevétel</h3>
               <Wallet className="w-6 h-6 lg:w-8 lg:h-8 text-blue-500 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
-            <p className="text-xl lg:text-3xl font-bold text-white">{totalRevenue}$</p>
-          </div>
+            <p className="text-xl lg:text-3xl font-bold text-white">${totalRevenue}</p>
+          </button>
 
-          <div className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+          <button
+            onClick={() => setActiveTab('payouts')}
+            className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-[#1a1a3e]/70 transition-colors"
+          >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
               <h3 className="text-white/70 text-xs lg:text-sm">Teljes nyeremény kifizetés</h3>
               <Award className="w-6 h-6 lg:w-8 lg:h-8 text-blue-500 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
-            <p className="text-xl lg:text-3xl font-bold text-white">{totalPayouts}$</p>
-          </div>
+            <p className="text-xl lg:text-3xl font-bold text-white">${totalPayouts}</p>
+          </button>
         </div>
 
         {/* Content based on active tab */}
@@ -303,7 +375,19 @@ const AdminDashboard = () => {
 
         {activeTab === 'users' && (
           <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">Összes felhasználó ({allUsers.length})</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 lg:mb-6">
+              <h2 className="text-xl lg:text-2xl font-bold text-white">Összes felhasználó ({filteredUsers.length})</h2>
+              <div className="relative max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+                <Input
+                  type="text"
+                  placeholder="Keresés (ID, név, email, szerepkör, életek, érmék...)"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-black/30 border-white/10 text-white placeholder:text-white/50"
+                />
+              </div>
+            </div>
             <div className="overflow-x-auto -mx-4 lg:mx-0">
               <table className="w-full min-w-[800px]">
                 <thead>
@@ -319,7 +403,7 @@ const AdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {allUsers.map((user) => (
+                  {filteredUsers.map((user) => (
                     <tr key={user.id} className="border-b border-white/5 hover:bg-white/5">
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs font-mono">{user.id.slice(0, 8)}...</td>
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{user.username}</td>
@@ -330,6 +414,61 @@ const AdminDashboard = () => {
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{user.total_correct_answers}</td>
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
                         {new Date(user.created_at).toLocaleDateString('hu-HU')}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'purchases' && (
+          <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">Összes vásárlás ({purchases.length})</h2>
+            <div className="overflow-x-auto -mx-4 lg:mx-0">
+              <table className="w-full min-w-[1000px]">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Dátum</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Felhasználó</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Termék</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Összeg</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Fizetési mód</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Ország</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Státusz</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Tranzakció ID</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {purchases.map((purchase) => (
+                    <tr key={purchase.id} className="border-b border-white/5 hover:bg-white/5">
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
+                        {new Date(purchase.created_at).toLocaleString('hu-HU')}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
+                        {purchase.profiles?.username || 'N/A'}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{purchase.product_type}</td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
+                        {purchase.payment_method === 'stripe' 
+                          ? `$${purchase.amount_usd}` 
+                          : `${purchase.amount_coins} coins`}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm capitalize">{purchase.payment_method}</td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{purchase.country || 'N/A'}</td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4">
+                        <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-medium ${
+                          purchase.status === 'completed' ? 'bg-green-500/20 text-green-400' :
+                          purchase.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                          purchase.status === 'failed' ? 'bg-red-500/20 text-red-400' :
+                          'bg-gray-500/20 text-gray-400'
+                        }`}>
+                          {purchase.status}
+                        </span>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs font-mono">
+                        {purchase.stripe_payment_intent_id?.slice(0, 20) || 'N/A'}...
                       </td>
                     </tr>
                   ))}
