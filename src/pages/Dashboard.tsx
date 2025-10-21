@@ -102,6 +102,7 @@ const Dashboard = () => {
   // Show Welcome Bonus dialog FIRST (highest priority)
   useEffect(() => {
     if (canClaimWelcome && userId) {
+      console.log('[Dashboard] WelcomeBonus eligible -> opening dialog');
       setShowWelcomeBonus(true);
       setShowDailyGift(false);
     }
@@ -110,6 +111,7 @@ const Dashboard = () => {
   // Show Daily Gift dialog SECOND (after welcome bonus)
   useEffect(() => {
     if (canClaim && !canClaimWelcome && userId) {
+      console.log('[Dashboard] DailyGift eligible -> opening dialog');
       setShowDailyGift(true);
     }
   }, [canClaim, canClaimWelcome, userId]);
