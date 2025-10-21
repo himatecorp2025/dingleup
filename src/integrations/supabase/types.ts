@@ -226,6 +226,54 @@ export type Database = {
         }
         Relationships: []
       }
+      purchases: {
+        Row: {
+          amount_coins: number | null
+          amount_usd: number | null
+          country: string | null
+          created_at: string
+          currency: string | null
+          id: string
+          metadata: Json | null
+          payment_method: string
+          product_type: string
+          status: string
+          stripe_charge_id: string | null
+          stripe_payment_intent_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_coins?: number | null
+          amount_usd?: number | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method: string
+          product_type: string
+          status?: string
+          stripe_charge_id?: string | null
+          stripe_payment_intent_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_coins?: number | null
+          amount_usd?: number | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method?: string
+          product_type?: string
+          status?: string
+          stripe_charge_id?: string | null
+          stripe_payment_intent_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           created_at: string
