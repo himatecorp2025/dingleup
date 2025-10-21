@@ -111,7 +111,7 @@ const Register = () => {
               });
             } else {
               // Accept invitation using edge function
-              const { error: acceptError } = await supabase.functions.invoke(
+              const { data: acceptData, error: acceptError } = await supabase.functions.invoke(
                 'accept-invitation',
                 {
                   body: {
@@ -127,6 +127,11 @@ const Register = () => {
                 if (import.meta.env.DEV) {
                   console.error('Error accepting invitation:', acceptError);
                 }
+              } else if (acceptData) {
+                // Show reward information to the inviter
+                if (import.meta.env.DEV) {
+                  console.log('Invitation accepted, inviter rewarded:', acceptData);
+                }
               }
             }
           } catch (error) {
@@ -138,7 +143,7 @@ const Register = () => {
 
         toast({
           title: "Sikeres regisztráció!",
-          description: inviterCode ? "A meghívód 100 aranyérmét kapott!" : "Átirányítunk...",
+          description: inviterCode ? "Meghívód jutalmat kapott! Köszönjük, hogy csatlakoztál!" : "Átirányítunk...",
         });
         navigate("/dashboard");
       }
