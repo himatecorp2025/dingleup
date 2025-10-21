@@ -171,11 +171,11 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
 
-    // If question answered correctly, go to next
-    if (selectedAnswer && !showContinueDialog) {
+    // If question answered correctly, always go to next
+    if (selectedAnswer) {
       const currentQuestion = questions[currentQuestionIndex];
       const selectedAnswerObj = currentQuestion.answers.find(a => a.key === selectedAnswer);
-      if (selectedAnswerObj?.correct) {
+      if (selectedAnswerObj?.correct && !isTransitioning) {
         await handleNextQuestion();
       }
     }
@@ -360,6 +360,11 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     }
 
     toast.success(`Helyes! +${reward} 🪙`);
+    
+    // Automatikusan lép tovább 1 másodperc után
+    setTimeout(() => {
+      handleNextQuestion();
+    }, 1000);
   };
 
   const handleWrongAnswer = (responseTime: number, answerKey: string) => {
@@ -734,7 +739,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
             onUseHelp5050={useHelp5050}
             onUseHelp2xAnswer={useHelp2xAnswer}
             onUseHelpAudience={useHelpAudience}
-            onUseQuestionSwap={handleSkipQuestion}
+            onUseQuestionSwap={useQuestionSwap}
             onExit={() => setShowExitDialog(true)}
             disabled={selectedAnswer !== null || isTransitioning}
           />
