@@ -30,6 +30,7 @@ const Dashboard = () => {
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
+  const [isPremiumSubscriber, setIsPremiumSubscriber] = useState(false);
   
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
@@ -101,6 +102,36 @@ const Dashboard = () => {
       setShowWelcomeBonus(true);
     }
   }, [canClaimWelcome]);
+
+  // Check subscription status
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (!userId) return;
+      
+      try {
+        const { data, error } = await supabase.functions.invoke('check-subscription');
+        
+        if (error) {
+          console.error('Error checking subscription:', error);
+          return;
+        }
+        
+        if (data?.subscribed) {
+          setIsPremiumSubscriber(true);
+        } else {
+          setIsPremiumSubscriber(false);
+        }
+      } catch (error) {
+        console.error('Subscription check failed:', error);
+      }
+    };
+    
+    checkSubscription();
+    
+    // Check subscription every 5 minutes
+    const interval = setInterval(checkSubscription, 300000);
+    return () => clearInterval(interval);
+  }, [userId]);
 
 
   useEffect(() => {
@@ -425,6 +456,7 @@ const Dashboard = () => {
         currentStreak={currentStreak}
         nextReward={nextReward}
         canClaim={canClaim}
+        isPremium={isPremiumSubscriber}
       />
 
 

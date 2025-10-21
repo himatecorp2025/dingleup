@@ -106,6 +106,50 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     });
   }, [navigate]);
 
+  // Check for in-game payment success
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get('payment');
+    const sessionId = params.get('session_id');
+
+    const verifyInGamePayment = async () => {
+      if (paymentStatus === 'success' && sessionId && userId) {
+        try {
+          const { data, error } = await supabase.functions.invoke('verify-payment', {
+            body: { sessionId }
+          });
+
+          if (error) throw error;
+
+          if (data.success) {
+            toast.success(`${data.coins} arany és ${data.lives} élet hozzáadva!`);
+            await refreshProfile();
+            
+            // Continue game automatically
+            if (gameState === 'playing') {
+              setTimeout(() => {
+                handleNextQuestion();
+              }, 1500);
+            }
+          }
+        } catch (error: any) {
+          console.error('Error verifying in-game payment:', error);
+          toast.error('Fizetés ellenőrzése sikertelen');
+        }
+        
+        // Clean URL
+        window.history.replaceState({}, '', '/game');
+      } else if (paymentStatus === 'cancelled') {
+        toast.info('Fizetés megszakítva');
+        window.history.replaceState({}, '', '/game');
+      }
+    };
+
+    if (userId) {
+      verifyInGamePayment();
+    }
+  }, [userId, gameState]);
+
   // Timer countdown
   useEffect(() => {
     if (gameState === 'playing' && timeLeft > 0 && !selectedAnswer && !isAnimating) {
@@ -669,7 +713,25 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   };
 
   const useQuestionSwap = async () => {
-    if (usedQuestionSwap || selectedAnswer || !profile?.question_swaps_available || profile.question_swaps_available === 0) return;
+    if (usedQuestionSwap || selectedAnswer) return;
+    
+    const skipCost = getSkipCost(currentQuestionIndex);
+    
+    // Check if user has enough coins
+    if (!profile || profile.coins < skipCost) {
+      toast.error(`Nincs elég aranyérme! ${skipCost} 🪙 szükséges.`);
+      setInsufficientType('coins');
+      setRequiredAmount(skipCost);
+      setShowInsufficientDialog(true);
+      return;
+    }
+    
+    // Spend coins
+    const success = await supabase.rpc('spend_coins', { amount: skipCost });
+    if (!success.data) {
+      toast.error('Hiba az arany levonásakor');
+      return;
+    }
     
     const questionBank = QUESTION_BANKS[selectedCategory!];
     const currentIds = questions.map(q => q.id);
@@ -693,7 +755,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setUsedQuestionSwap(true);
     
     await refreshProfile();
-    toast.info('Kérdés kicserélve!');
+    toast.info(`Kérdés kicserélve! (${skipCost} 🪙 levonva)`);
   };
 
   if (profileLoading || !userId) {
