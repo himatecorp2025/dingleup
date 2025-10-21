@@ -16,46 +16,45 @@ const WeeklyRewards = () => {
   ];
 
   return (
-    <Card className="bg-black/60 border-2 border-yellow-500/30 backdrop-blur-sm mb-6">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-white text-center justify-center">
-          <Trophy className="w-6 h-6 text-yellow-500" />
-          Heti Jutalmak
-        </CardTitle>
-        <p className="text-xs text-white/70 text-center">
+    <div className="bg-gradient-to-br from-yellow-600/20 to-yellow-900/20 border-2 border-yellow-500/40 backdrop-blur-sm mb-4 px-3 py-3 sm:px-4 sm:py-4" 
+      style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}>
+      <div className="text-center">
+        <div className="flex items-center gap-2 justify-center mb-1">
+          <Trophy className="w-5 h-5 text-yellow-500" />
+          <span className="text-white font-bold">Heti Jutalmak</span>
+        </div>
+        <p className="text-[10px] text-white/70">
           Minden vasárnap 23:55-kor lezárul a rangsorolás. 5 perc szünet után hétfő 00:00-kor kihirdetjük a nyerteseket!
         </p>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-2">
-          {rewards.map((reward, index) => (
-            <div
-              key={index}
-              className={`border-2 rounded-lg p-2 ${
-                index < 3
-                  ? 'border-yellow-500/50 bg-yellow-500/10'
-                  : 'border-purple-500/30 bg-black/40'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-white font-bold text-sm">{reward.place}</span>
-              </div>
-              <div className="flex items-center gap-1 text-xs">
-                <Coins className="w-3 h-3 text-yellow-500" />
-                <span className="text-white">{reward.coins}</span>
-              </div>
-              <div className="flex items-center gap-1 text-xs">
-                <Heart className="w-3 h-3 text-red-500" />
-                <span className="text-white">{reward.lives}</span>
-              </div>
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        {rewards.map((reward, index) => (
+          <div
+            key={index}
+            className={`border-2 rounded-lg p-2 ${
+              index < 3
+                ? 'border-yellow-500/50 bg-yellow-500/10'
+                : 'border-purple-500/30 bg-black/40'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-white font-bold text-sm">{reward.place}</span>
             </div>
-          ))}
-        </div>
-        <p className="text-xs text-white/50 text-center mt-3">
-          A jóváírás automatikusan történik a hét lezárása után.
-        </p>
-      </CardContent>
-    </Card>
+            <div className="flex items-center gap-1 text-xs">
+              <Coins className="w-3 h-3 text-yellow-500" />
+              <span className="text-white">{reward.coins}</span>
+            </div>
+            <div className="flex items-center gap-1 text-xs">
+              <Heart className="w-3 h-3 text-red-500" />
+              <span className="text-white">{reward.lives}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="text-[10px] text-white/50 text-center mt-3">
+        A jóváírás automatikusan történik a hét lezárása után.
+      </p>
+    </div>
   );
 };
 

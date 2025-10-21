@@ -57,14 +57,21 @@ const AdminDashboard = () => {
         setUserName(profile.username);
       }
 
-      // Fetch all users
+      // Fetch all users and their roles
       const { data: users, error: usersError } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, username, email, lives, max_lives, coins, total_correct_answers, created_at')
         .order('created_at', { ascending: false });
 
       if (!usersError && users) {
-        setAllUsers(users);
+        const ids = users.map(u => u.id);
+        const { data: rolesData } = await supabase
+          .from('user_roles')
+          .select('user_id, role')
+          .in('user_id', ids);
+        const roleMap = new Map((rolesData || []).map(r => [r.user_id, r.role]));
+        const merged = users.map(u => ({ ...u, role: roleMap.get(u.id) || 'user' }));
+        setAllUsers(merged);
         setTotalUsers(users.length);
       }
 
@@ -242,6 +249,7 @@ const AdminDashboard = () => {
                     <th className="text-left text-white/70 font-medium py-3 px-4">ID</th>
                     <th className="text-left text-white/70 font-medium py-3 px-4">Felhasználónév</th>
                     <th className="text-left text-white/70 font-medium py-3 px-4">Email</th>
+                    <th className="text-left text-white/70 font-medium py-3 px-4">Szerepkör</th>
                     <th className="text-left text-white/70 font-medium py-3 px-4">Életek</th>
                     <th className="text-left text-white/70 font-medium py-3 px-4">Érmék</th>
                     <th className="text-left text-white/70 font-medium py-3 px-4">Helyes válaszok</th>
@@ -254,6 +262,7 @@ const AdminDashboard = () => {
                       <td className="py-4 px-4 text-white text-xs font-mono">{user.id.slice(0, 8)}...</td>
                       <td className="py-4 px-4 text-white">{user.username}</td>
                       <td className="py-4 px-4 text-white">{user.email}</td>
+                      <td className="py-4 px-4 text-white">{(user as any).role}</td>
                       <td className="py-4 px-4 text-white">{user.lives}/{user.max_lives}</td>
                       <td className="py-4 px-4 text-white">{user.coins}</td>
                       <td className="py-4 px-4 text-white">{user.total_correct_answers}</td>

@@ -57,7 +57,7 @@ export const QuestionCard = ({
   const correctAnswerKey = question.answers.find(a => a.correct)?.key || "";
 
   return (
-    <div className={`w-full h-full flex flex-col justify-between p-1 sm:p-2 ${className}`}>
+    <div className={`w-full h-full flex flex-col p-1 sm:p-2 gap-1 sm:gap-2 ${className}`}>
       {/* Top section: Exit button, Lives, Coins */}
       <div className="flex justify-between items-start mb-1">
         <button
@@ -81,7 +81,7 @@ export const QuestionCard = ({
       </div>
 
       {/* Middle section: Question and Answers */}
-      <div className="flex-1 flex flex-col justify-center space-y-1 sm:space-y-2">
+      <div className="flex flex-col justify-start space-y-1 sm:space-y-1.5">
         <div className="flex justify-center mb-0.5 sm:mb-1">
           <TimerCircle timeLeft={timeLeft} />
         </div>

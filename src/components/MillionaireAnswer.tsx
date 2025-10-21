@@ -23,7 +23,7 @@ export const MillionaireAnswer = ({
 }: MillionaireAnswerProps) => {
   if (isRemoved) {
     return (
-      <div className="w-full mb-3 opacity-30">
+      <div className="w-full mb-2 opacity-30">
         <div 
           className="bg-gray-800/50 border-2 border-gray-600/50 px-5 py-4 text-gray-500"
           style={{
@@ -76,7 +76,7 @@ export const MillionaireAnswer = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-full mb-3 touch-manipulation group"
+      className="w-full mb-2 touch-manipulation group"
     >
       <div 
         className={`${bgColor} border-4 ${borderColor} px-5 py-4 transition-all duration-300 hover:scale-[1.02] ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}

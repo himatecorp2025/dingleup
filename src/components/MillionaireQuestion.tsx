@@ -7,9 +7,9 @@ interface MillionaireQuestionProps {
 
 export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
   return (
-    <div className="relative w-full mb-2">
+    <div className="relative w-full mb-3">
       <div 
-        className="bg-slate-900 border-2 border-cyan-500/60 px-4 py-3 text-white"
+        className="bg-slate-900 border-2 border-cyan-500/60 px-4 py-5 sm:py-6 text-white"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
         }}

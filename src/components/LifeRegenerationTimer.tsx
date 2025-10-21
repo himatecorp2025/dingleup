@@ -27,7 +27,7 @@ export const LifeRegenerationTimer = ({
     boosterExpiresAt
   });
 
-  if (!shouldShowTimer) return null;
+  if (!shouldShowTimer) return null; // Displayed inline on Dashboard near the lives indicator
 
   return (
     <div className="flex items-center gap-1 text-xs text-white/80">

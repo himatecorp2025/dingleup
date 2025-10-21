@@ -14,6 +14,7 @@ import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
+import WeeklyRewards from '@/components/WeeklyRewards';
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
 import backmusic from '@/assets/backmusic.mp3';
@@ -22,12 +23,13 @@ import { toast } from 'sonner';
 const Dashboard = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
-  const { profile, loading } = useGameProfile(userId);
+  const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { canClaim, currentStreak, nextReward, claimDailyGift, checkDailyGift } = useDailyGift(userId);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus } = useWelcomeBonus(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
+  const [profileGrace, setProfileGrace] = useState(true);
   
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
@@ -47,6 +49,12 @@ const Dashboard = () => {
     profile?.last_life_regeneration || null,
     lifeRegenRate
   );
+
+  useEffect(() => {
+    if (profile && profile.lives < profile.max_lives && timeUntilNextLife === '0:00') {
+      regenerateLives().then(() => refreshProfile());
+    }
+  }, [timeUntilNextLife]);
 
   // Helper function
   const getInitials = (name: string) => {
@@ -95,11 +103,21 @@ const Dashboard = () => {
   }, [canClaimWelcome]);
 
   useEffect(() => {
+    const t = setTimeout(() => setProfileGrace(false), 5000);
+    return () => clearTimeout(t);
+  }, []);
+      // Welcome bonus has priority over daily gift
+      setShowWelcomeBonus(true);
+    }
+  }, [canClaimWelcome]);
+
+  useEffect(() => {
     const fetchUserRank = async () => {
       if (!userId) return;
       
       const weekStart = getWeekStart();
       const weekEnd = getWeekEnd();
+      if (!userId) return;
       
       // Get current user's total correct answers this week
       const { data: userResults, error: userError } = await supabase
@@ -181,6 +199,13 @@ const Dashboard = () => {
   }
 
   if (!profile) {
+    if (profileGrace) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+          <p className="text-lg text-white">Profil betöltése...</p>
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
         <p className="text-lg text-white">Hiba a profil betöltésekor</p>
@@ -221,7 +246,7 @@ const Dashboard = () => {
                   <span className="text-white text-[10px] sm:text-xs font-bold">{profile.lives}</span>
                 </div>
                 {profile.lives < profile.max_lives && timeUntilNextLife !== '0:00' && (
-                  <div className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-black/80 px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-0.5 sm:gap-1 whitespace-nowrap">
+                  <div className="absolute -right-1 top-1/2 -translate-y-1/2 bg-black/80 px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-0.5 sm:gap-1 whitespace-nowrap border border-green-500/40">
                     <Clock className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-green-400" />
                     <span className="text-[8px] sm:text-[9px] text-green-400 font-bold">{timeUntilNextLife}</span>
                   </div>
@@ -269,6 +294,9 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* Weekly Rewards under username */}
+        <WeeklyRewards />
 
         {/* Logo */}
         <div className="flex justify-center mb-2 sm:mb-3">
@@ -359,6 +387,16 @@ const Dashboard = () => {
         {/* Weekly Rankings Countdown */}
           <WeeklyRankingsCountdown />
 
+        {/* Ranglista Button moved higher above bottom nav */}
+        <button
+          onClick={() => navigate('/leaderboard')}
+          className="w-full py-2 px-4 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-white font-black text-base sm:text-lg rounded-2xl border-2 border-purple-600 shadow-xl shadow-purple-500/40 hover:shadow-purple-500/60 hover:scale-105 transition-all mb-3"
+          style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
+        >
+          <Trophy className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+          RANGLISTA
+        </button>
+
           {/* Life Regeneration Timer */}
           {profile && (
             <LifeRegenerationTimer
@@ -374,15 +412,7 @@ const Dashboard = () => {
             />
           )}
 
-          {/* Ranglista Button */}
-        <button
-          onClick={() => navigate('/leaderboard')}
-          className="w-full py-2.5 px-5 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-white font-black text-lg rounded-2xl border-2 border-purple-600 shadow-xl shadow-purple-500/40 hover:shadow-purple-500/60 hover:scale-105 transition-all"
-          style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
-        >
-          <Trophy className="inline w-5 h-5 mr-2" />
-          RANGLISTA
-        </button>
+          {/* Ranglista Button (moved above) removed here */}
       </div>
 
       {/* Welcome bonus dialog */}
