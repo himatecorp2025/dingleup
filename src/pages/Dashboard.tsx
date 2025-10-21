@@ -16,7 +16,8 @@ import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
 import { FallingCoins } from '@/components/FallingCoins';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
-import { SubscriptionPromoDialog } from '@/components/SubscriptionPromoDialog';
+import { GeniusPromoDialog } from '@/components/GeniusPromoDialog';
+import { useGeniusPromo } from '@/hooks/useGeniusPromo';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
@@ -32,8 +33,13 @@ const Dashboard = () => {
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
-  const [showSubscriptionPromo, setShowSubscriptionPromo] = useState(false);
   const [isPremiumSubscriber, setIsPremiumSubscriber] = useState(false);
+  
+  const { shouldShow: showGeniusPromo, closePromo: closeGeniusPromo } = useGeniusPromo(
+    userId,
+    isPremiumSubscriber,
+    showWelcomeBonus || showDailyGift
+  );
   
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
@@ -138,102 +144,6 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [userId]);
 
-  // Subscription promo logic - FIXED VERSION
-  useEffect(() => {
-    console.log('[PROMO] Effect running...', { 
-      userId, 
-      isPremiumSubscriber, 
-      canClaimWelcome, 
-      canClaim,
-      showWelcomeBonus,
-      showDailyGift
-    });
-
-    // Don't show if premium
-    if (isPremiumSubscriber) {
-      console.log('[PROMO] Skipped: user is premium');
-      return;
-    }
-
-    // Don't show if userId not ready
-    if (!userId) {
-      console.log('[PROMO] Skipped: no userId');
-      return;
-    }
-
-    // Don't show if other dialogs are visible
-    if (showWelcomeBonus || showDailyGift) {
-      console.log('[PROMO] Skipped: other dialogs visible');
-      return;
-    }
-
-    // CRITICAL: Only show if no welcome bonus and no daily gift to claim
-    if (canClaimWelcome) {
-      console.log('[PROMO] Skipped: welcome bonus available');
-      return;
-    }
-
-    if (canClaim) {
-      console.log('[PROMO] Skipped: daily gift available');
-      return;
-    }
-
-    // Check localStorage for promo limits
-    const checkAndShowPromo = () => {
-      const lastPromoDate = localStorage.getItem(`last_promo_date_${userId}`);
-      const now = Date.now();
-
-      console.log('[PROMO] Checking eligibility...', { lastPromoDate, now });
-
-      // Reset counter if it's a new day
-      if (lastPromoDate) {
-        const lastDate = new Date(parseInt(lastPromoDate));
-        const today = new Date();
-        if (lastDate.toDateString() !== today.toDateString()) {
-          localStorage.setItem(`promo_count_today_${userId}`, '0');
-          console.log('[PROMO] Reset count for new day');
-        }
-      }
-
-      // Check if we can show promo (max 5 per day)
-      const currentCount = parseInt(localStorage.getItem(`promo_count_today_${userId}`) || '0');
-      console.log('[PROMO] Current count today:', currentCount);
-      
-      if (currentCount >= 5) {
-        console.log('[PROMO] Max promos reached for today');
-        return;
-      }
-
-      const lastShown = parseInt(localStorage.getItem(`last_promo_shown_${userId}`) || '0');
-      const timeSinceLastPromo = now - lastShown;
-
-      console.log('[PROMO] Time since last promo (ms):', timeSinceLastPromo);
-
-      // Show immediately if never shown, otherwise after 2 minutes
-      const minInterval = 2 * 60 * 1000; // 2 minutes
-
-      if (lastShown === 0 || timeSinceLastPromo > minInterval) {
-        console.log('[PROMO] ✅ SHOWING SUBSCRIPTION PROMO NOW!');
-        setShowSubscriptionPromo(true);
-        localStorage.setItem(`last_promo_shown_${userId}`, now.toString());
-        localStorage.setItem(`promo_count_today_${userId}`, (currentCount + 1).toString());
-        localStorage.setItem(`last_promo_date_${userId}`, now.toString());
-      } else {
-        console.log('[PROMO] Too soon to show again. Need to wait:', Math.ceil((minInterval - timeSinceLastPromo) / 1000), 'seconds');
-      }
-    };
-
-    // Show after 3 seconds
-    console.log('[PROMO] Setting up timer to check in 3 seconds...');
-    const initialDelay = setTimeout(() => {
-      console.log('[PROMO] Timer fired! Starting check...');
-      checkAndShowPromo();
-    }, 3000);
-
-    return () => {
-      clearTimeout(initialDelay);
-    };
-  }, [userId, isPremiumSubscriber, canClaimWelcome, canClaim, showWelcomeBonus, showDailyGift]);
 
 
   useEffect(() => {
@@ -561,13 +471,10 @@ const Dashboard = () => {
         isPremium={isPremiumSubscriber}
       />
 
-      {/* Subscription promo dialog - THIRD */}
-      <SubscriptionPromoDialog 
-        open={showSubscriptionPromo && !showWelcomeBonus && !showDailyGift}
-        onClose={() => {
-          console.log('[PROMO] Dialog closed by user');
-          setShowSubscriptionPromo(false);
-        }}
+      {/* Genius promo dialog - THIRD */}
+      <GeniusPromoDialog 
+        open={showGeniusPromo}
+        onClose={closeGeniusPromo}
       />
 
       {/* Booster activation dialog */}

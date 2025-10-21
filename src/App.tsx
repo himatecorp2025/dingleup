@@ -18,6 +18,7 @@ import Invitation from "./pages/Invitation";
 import IntroVideo from "./pages/IntroVideo";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import GeniusMembers from "./pages/GeniusMembers";
 import ChatEnhanced from "./pages/ChatEnhanced";
 import NotFound from "./pages/NotFound";
 
@@ -92,6 +93,7 @@ const App = () => {
               <Route path="/game" element={<Game />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/genius" element={<GeniusMembers />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppRouteGuard>
