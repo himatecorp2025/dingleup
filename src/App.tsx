@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
 import Game from "./pages/Game";
 import Dashboard from "./pages/Dashboard";
@@ -20,12 +20,13 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+// Komponens ami ellenőrzi a képernyő méretet és korlátozza az app-ot mobile/tablet-re
+const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const checkDevice = () => {
-      // Mobile or tablet: max 1024px width
       setIsMobileOrTablet(window.innerWidth <= 1024);
     };
     checkDevice();
@@ -33,29 +34,60 @@ const App = () => {
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
+  // Landing page mindig elérhető
+  if (location.pathname === '/' || location.pathname === '/desktop') {
+    return <>{children}</>;
+  }
+
+  // Minden más oldal csak mobile/tablet-en
+  if (!isMobileOrTablet) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+        <div className="text-center px-6 max-w-md">
+          <h1 className="text-3xl font-black text-white mb-4">📱 Csak mobilon elérhető</h1>
+          <p className="text-white/80 mb-6">
+            Ez az alkalmazás csak telefonon és táblagépen használható. 
+            Kérjük, nyisd meg mobil eszközön!
+          </p>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-800 text-white font-bold rounded-lg hover:from-purple-700 hover:to-purple-900 transition-all"
+          >
+            Vissza a főoldalra
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+};
+
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={isMobileOrTablet ? <IntroVideo /> : <Index />} />
-            <Route path="/desktop" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/shop" element={<ShopPage />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/registration-success" element={<RegistrationSuccess />} />
-            <Route path="/install" element={<InstallApp />} />
-            <Route path="/invitation" element={<Invitation />} />
-            <Route path="/intro" element={<IntroVideo />} />
-            <Route path="/game" element={<Game />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppRouteGuard>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/desktop" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/shop" element={<ShopPage />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/registration-success" element={<RegistrationSuccess />} />
+              <Route path="/install" element={<InstallApp />} />
+              <Route path="/invitation" element={<Invitation />} />
+              <Route path="/intro" element={<IntroVideo />} />
+              <Route path="/game" element={<Game />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AppRouteGuard>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

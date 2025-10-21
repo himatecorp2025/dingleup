@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.accept-invitation]
 verify_jwt = false
+
+[functions.calculate-weekly-rankings]
+verify_jwt = false
+
+[functions.regenerate-lives-background]
+verify_jwt = false
