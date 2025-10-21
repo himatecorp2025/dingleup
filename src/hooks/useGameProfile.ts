@@ -18,19 +18,29 @@ export const useGameProfile = (userId: string | undefined) => {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      setProfile(data as UserProfile);
+      
+      if (data) {
+        setProfile(data as UserProfile);
+      } else {
+        // Profile doesn't exist yet, retry after a short delay
+        setTimeout(() => fetchProfile(), 1000);
+        return;
+      }
     } catch (error: any) {
       if (import.meta.env.DEV) {
         console.error('Error fetching profile:', error);
       }
-      toast({
-        title: 'Hiba',
-        description: 'Nem sikerült betölteni a profilt',
-        variant: 'destructive'
-      });
+      // Only show toast for real errors, not missing profiles
+      if (error.code !== 'PGRST116') {
+        toast({
+          title: 'Hiba',
+          description: 'Nem sikerült betölteni a profilt',
+          variant: 'destructive'
+        });
+      }
     } finally {
       setLoading(false);
     }
