@@ -12,6 +12,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<MenuTab>('dashboard');
   const [userName, setUserName] = useState('Admin');
+  const [allUsers, setAllUsers] = useState<any[]>([]);
 
   // Demo data
   const [totalUsers, setTotalUsers] = useState(18980);
@@ -54,6 +55,17 @@ const AdminDashboard = () => {
 
       if (profile) {
         setUserName(profile.username);
+      }
+
+      // Fetch all users
+      const { data: users, error: usersError } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!usersError && users) {
+        setAllUsers(users);
+        setTotalUsers(users.length);
       }
 
       setLoading(false);
@@ -222,44 +234,34 @@ const AdminDashboard = () => {
 
         {activeTab === 'users' && (
           <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-2xl p-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Összes felhasználó</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Összes felhasználó ({allUsers.length})</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left text-white/70 font-medium py-3 px-4">Neve</th>
-                    <th className="text-left text-white/70 font-medium py-3 px-4">Regisztrált</th>
-                    <th className="text-left text-white/70 font-medium py-3 px-4">Felhasználó neve</th>
-                    <th className="text-left text-white/70 font-medium py-3 px-4">Jogosultság</th>
+                    <th className="text-left text-white/70 font-medium py-3 px-4">ID</th>
+                    <th className="text-left text-white/70 font-medium py-3 px-4">Felhasználónév</th>
+                    <th className="text-left text-white/70 font-medium py-3 px-4">Email</th>
+                    <th className="text-left text-white/70 font-medium py-3 px-4">Életek</th>
+                    <th className="text-left text-white/70 font-medium py-3 px-4">Érmék</th>
+                    <th className="text-left text-white/70 font-medium py-3 px-4">Helyes válaszok</th>
+                    <th className="text-left text-white/70 font-medium py-3 px-4">Regisztráció</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-4 px-4 text-white">Antal István László</td>
-                    <td className="py-4 px-4 text-white">2005.12.16</td>
-                    <td className="py-4 px-4 text-white">Anthony</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-white">Tulajdonos</span>
-                        <div className="w-10 h-10 rounded-full overflow-hidden">
-                          <img src="https://via.placeholder.com/40" alt="Avatar" />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-4 px-4 text-white">Simon Alex</td>
-                    <td className="py-4 px-4 text-white">1991.05.05</td>
-                    <td className="py-4 px-4 text-white">Simon.A</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-white">Tulajdonos</span>
-                        <div className="w-10 h-10 rounded-full overflow-hidden">
-                          <img src="https://via.placeholder.com/40" alt="Avatar" />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+                  {allUsers.map((user) => (
+                    <tr key={user.id} className="border-b border-white/5 hover:bg-white/5">
+                      <td className="py-4 px-4 text-white text-xs font-mono">{user.id.slice(0, 8)}...</td>
+                      <td className="py-4 px-4 text-white">{user.username}</td>
+                      <td className="py-4 px-4 text-white">{user.email}</td>
+                      <td className="py-4 px-4 text-white">{user.lives}/{user.max_lives}</td>
+                      <td className="py-4 px-4 text-white">{user.coins}</td>
+                      <td className="py-4 px-4 text-white">{user.total_correct_answers}</td>
+                      <td className="py-4 px-4 text-white">
+                        {new Date(user.created_at).toLocaleDateString('hu-HU')}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

@@ -91,7 +91,7 @@ export const MillionaireAnswer = ({
           >
             {letter}:
           </div>
-          <span className={`text-base md:text-lg font-normal text-left ${textColor}`}>
+          <span className={`text-sm sm:text-base font-normal text-center flex-1 ${textColor}`}>
             {children}
           </span>
         </div>
