@@ -44,8 +44,14 @@ const WeeklyRankings = () => {
       )
       .subscribe();
 
+    // Auto-refresh every 15 seconds
+    const refreshInterval = setInterval(() => {
+      fetchRankings();
+    }, 15000);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(refreshInterval);
     };
   }, []);
 

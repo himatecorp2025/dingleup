@@ -21,6 +21,13 @@ const Leaderboard = () => {
 
   useEffect(() => {
     fetchLeaderboard();
+    
+    // Auto-refresh every 15 seconds
+    const interval = setInterval(() => {
+      fetchLeaderboard();
+    }, 15000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const fetchLeaderboard = async () => {

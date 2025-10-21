@@ -8,6 +8,7 @@ import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { SPEED_BOOSTERS } from '@/types/game';
 import { supabase } from '@/integrations/supabase/client';
 import { QuickBuyOptInDialog } from './QuickBuyOptInDialog';
+import { SubscriptionSection } from './SubscriptionSection';
 
 interface ShopProps {
   userId: string;
@@ -33,10 +34,24 @@ const Shop = ({ userId }: ShopProps) => {
   const [showQuickBuyDialog, setShowQuickBuyDialog] = useState(false);
   const [quickBuyEnabled, setQuickBuyEnabled] = useState(false);
   const [pendingStripeAction, setPendingStripeAction] = useState<(() => void) | null>(null);
+  const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
     const enabled = localStorage.getItem(QUICK_BUY_KEY) === 'true';
     setQuickBuyEnabled(enabled);
+
+    // Check subscription status
+    const checkSubscription = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('check-subscription');
+        if (!error && data?.subscribed) {
+          setIsPremium(true);
+        }
+      } catch (error) {
+        console.error('Error checking subscription:', error);
+      }
+    };
+    checkSubscription();
   }, []);
 
   // Check for payment success in URL
@@ -335,6 +350,9 @@ const Shop = ({ userId }: ShopProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Subscription Section */}
+      <SubscriptionSection isPremium={isPremium} />
 
       {/* Boosters Section */}
       <Card className="bg-black/60 border-2 border-purple-500/30 backdrop-blur-sm">

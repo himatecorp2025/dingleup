@@ -15,6 +15,8 @@ import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
 import { FallingCoins } from '@/components/FallingCoins';
+import { OnboardingTutorial } from '@/components/OnboardingTutorial';
+import { SubscriptionPromoDialog } from '@/components/SubscriptionPromoDialog';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
