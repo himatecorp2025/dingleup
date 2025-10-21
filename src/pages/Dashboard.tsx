@@ -13,6 +13,7 @@ import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
+import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
 import backmusic from '@/assets/backmusic.mp3';
@@ -347,9 +348,24 @@ const Dashboard = () => {
         </div>
 
         {/* Weekly Rankings Countdown */}
-        <WeeklyRankingsCountdown />
+          <WeeklyRankingsCountdown />
 
-        {/* Ranglista Button */}
+          {/* Life Regeneration Timer */}
+          {profile && (
+            <LifeRegenerationTimer
+              currentLives={profile.lives}
+              maxLives={profile.max_lives}
+              lastRegeneration={profile.last_life_regeneration}
+              boosterActive={profile.speed_booster_active}
+              boosterType={profile.speed_booster_multiplier === 2 ? 'DoubleSpeed' :
+                          profile.speed_booster_multiplier === 4 ? 'MegaSpeed' :
+                          profile.speed_booster_multiplier === 12 ? 'GigaSpeed' :
+                          profile.speed_booster_multiplier === 24 ? 'DingleSpeed' : null}
+              boosterExpiresAt={profile.speed_booster_expires_at}
+            />
+          )}
+
+          {/* Ranglista Button */}
         <button
           onClick={() => navigate('/leaderboard')}
           className="w-full py-2.5 px-5 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-white font-black text-lg rounded-2xl border-2 border-purple-600 shadow-xl shadow-purple-500/40 hover:shadow-purple-500/60 hover:scale-105 transition-all"
