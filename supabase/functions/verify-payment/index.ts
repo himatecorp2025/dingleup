@@ -34,6 +34,12 @@ serve(async (req) => {
     logStep("Function started");
 
     const { sessionId } = await req.json();
+    
+    // Validate sessionId format (Stripe session IDs start with cs_)
+    if (!sessionId || typeof sessionId !== 'string' || !sessionId.startsWith('cs_')) {
+      throw new Error('Invalid session ID format');
+    }
+    
     logStep("Session ID received", { sessionId });
 
     const authHeader = req.headers.get("Authorization")!;

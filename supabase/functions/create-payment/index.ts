@@ -34,11 +34,18 @@ serve(async (req) => {
     logStep("Function started");
 
     const { productType } = await req.json();
-    logStep("Product type requested", { productType });
-
-    if (!PRICE_IDS[productType as keyof typeof PRICE_IDS]) {
-      throw new Error("Invalid product type");
+    
+    // Validate productType against whitelist
+    if (!productType || typeof productType !== 'string') {
+      throw new Error("Product type is required");
     }
+    
+    const allowedProducts = Object.keys(PRICE_IDS);
+    if (!allowedProducts.includes(productType)) {
+      throw new Error(`Invalid product type. Allowed: ${allowedProducts.join(', ')}`);
+    }
+    
+    logStep("Product type requested", { productType });
 
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");

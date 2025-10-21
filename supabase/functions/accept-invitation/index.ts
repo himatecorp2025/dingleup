@@ -6,18 +6,59 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// UUID validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Create client for authentication
+    const supabaseAuth = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    );
+
+    // Authenticate the user
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Authentication required');
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
+    
+    if (authError || !user) {
+      throw new Error('Invalid authentication');
+    }
+
+    // Create service role client for database operations
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    const { inviterId, invitedUserId, invitedEmail, invitationCode } = await req.json();
+    const { inviterId, invitationCode } = await req.json();
+    
+    // Validate inputs
+    if (!inviterId || !UUID_REGEX.test(inviterId)) {
+      throw new Error('Invalid inviter ID format');
+    }
+    
+    if (!invitationCode || typeof invitationCode !== 'string' || invitationCode.length < 8) {
+      throw new Error('Invalid invitation code format');
+    }
+    
+    if (!user.email || !EMAIL_REGEX.test(user.email)) {
+      throw new Error('Invalid email address');
+    }
+
+    // Use authenticated user's ID and email
+    const invitedUserId = user.id;
+    const invitedEmail = user.email;
 
     console.log('Processing invitation acceptance for user:', invitedUserId);
 

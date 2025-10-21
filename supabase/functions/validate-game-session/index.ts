@@ -6,28 +6,40 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Game session data structures
 interface GameSession {
+  userId: string;
+  sessionId: string;
   category: string;
-  questions: Array<{
-    id: string;
-    question: string;
-    correctAnswer: string;
-  }>;
+  questions: QuestionData[];
+  startTime: number;
+  answers: AnswerSubmission[];
+}
+
+interface QuestionData {
+  id: string;
+  question: string;
+  correctAnswer: string;
 }
 
 interface AnswerSubmission {
-  sessionId: string;
   questionId: string;
   answer: string;
   responseTime: number;
+  isCorrect: boolean;
 }
 
-interface GameCompletion {
-  sessionId: string;
-}
-
-// Store active sessions in memory (in production, use Redis/Upstash)
+// Store active sessions (in production, use Redis/Upstash)
 const activeSessions = new Map<string, GameSession>();
+
+// Hardcoded question bank for validation (in production, use database)
+const QUESTION_BANKS: Record<string, QuestionData[]> = {
+  general: [
+    { id: "q1", question: "Mi Magyarország fővárosa?", correctAnswer: "Budapest" },
+    { id: "q2", question: "Hány kontinens van a Földön?", correctAnswer: "7" },
+    { id: "q3", question: "Ki festette a Mona Lisát?", correctAnswer: "Leonardo da Vinci" },
+  ],
+};
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -38,167 +50,158 @@ serve(async (req) => {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
     );
 
-    const {
-      data: { user },
-    } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-      throw new Error('Unauthorized');
+    // Authenticate user
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Authentication required');
     }
 
-    const { action } = await req.json();
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+    
+    if (authError || !user) {
+      throw new Error('Invalid authentication');
+    }
 
-    // START GAME - Create session with questions
+    const body = await req.json();
+    const { action } = body;
+
+    // Validate action input
+    const validActions = ['start', 'submit_answer', 'complete'];
+    if (!action || typeof action !== 'string' || !validActions.includes(action)) {
+      throw new Error(`Invalid action. Must be one of: ${validActions.join(', ')}`);
+    }
+
+    // Handle game start
     if (action === 'start') {
-      const { category } = await req.json();
+      const { category = 'general' } = body;
       
-      console.log('Starting game session for user:', user.id, 'category:', category);
+      // Validate category
+      if (typeof category !== 'string' || !QUESTION_BANKS[category]) {
+        throw new Error(`Invalid category. Available: ${Object.keys(QUESTION_BANKS).join(', ')}`);
+      }
 
-      // Load questions from JSON files (server-side)
-      const questionFiles: Record<string, string> = {
-        'general': '/questions1.json',
-        'culture': '/questions-culture.json',
-        'finance': '/questions-finance.json',
-        'health': '/questions-health.json',
-        'history': '/questions-history.json',
+      const sessionId = crypto.randomUUID();
+      const questions = QUESTION_BANKS[category];
+
+      const session: GameSession = {
+        userId: user.id,
+        sessionId,
+        category,
+        questions,
+        startTime: Date.now(),
+        answers: [],
       };
 
-      const fileName = questionFiles[category] || questionFiles['general'];
-      
-      // In a real implementation, load from secure storage
-      // For now, we'll create a session without exposing correct answers
-      const sessionId = crypto.randomUUID();
-      
-      // Generate 15 random question IDs (don't send questions to client yet)
-      const questionIds = Array.from({ length: 15 }, (_, i) => `q_${i + 1}`);
-      
-      activeSessions.set(sessionId, {
-        category,
-        questions: [], // Will be populated when validating answers
-      });
+      activeSessions.set(sessionId, session);
+      console.log('Game session started:', { sessionId, userId: user.id });
 
-      console.log('Game session created:', sessionId);
-
+      // Return questions without correct answers
       return new Response(
-        JSON.stringify({ 
-          success: true, 
+        JSON.stringify({
+          success: true,
           sessionId,
-          questionCount: 15
+          questions: questions.map(q => ({ id: q.id, question: q.question })),
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // SUBMIT ANSWER - Validate answer server-side
+    // Handle answer submission
     if (action === 'submit_answer') {
-      const { sessionId, questionIndex, answer, responseTime }: AnswerSubmission & { questionIndex: number } = await req.json();
-      
-      console.log('Validating answer for session:', sessionId, 'question:', questionIndex);
+      const { sessionId, questionId, answer, responseTime } = body;
+
+      // Validate all required inputs
+      if (!sessionId || typeof sessionId !== 'string') {
+        throw new Error('Valid session ID is required');
+      }
+      if (!questionId || typeof questionId !== 'string') {
+        throw new Error('Valid question ID is required');
+      }
+      if (answer === undefined || answer === null || typeof answer !== 'string') {
+        throw new Error('Answer is required');
+      }
+      if (typeof responseTime !== 'number' || responseTime < 1 || responseTime > 120000) {
+        throw new Error('Invalid response time (1-120000ms)');
+      }
 
       const session = activeSessions.get(sessionId);
       if (!session) {
-        throw new Error('Invalid session');
+        throw new Error('Session not found or expired');
       }
 
-      // Validate response time (should be reasonable)
-      if (responseTime < 1 || responseTime > 60000) {
-        throw new Error('Invalid response time');
+      if (session.userId !== user.id) {
+        throw new Error('Unauthorized: Session belongs to different user');
       }
 
-      // In real implementation: fetch correct answer from secure storage
-      // and compare with submitted answer
-      const isCorrect = true; // Placeholder
+      // Find correct answer
+      const question = session.questions.find(q => q.id === questionId);
+      if (!question) {
+        throw new Error('Question not found in session');
+      }
+
+      // SERVER-SIDE VALIDATION: Compare with stored correct answer
+      const normalizedAnswer = answer.trim().toLowerCase();
+      const normalizedCorrect = question.correctAnswer.trim().toLowerCase();
+      const isCorrect = normalizedAnswer === normalizedCorrect;
+
+      session.answers.push({ questionId, answer, responseTime, isCorrect });
+      console.log('Answer validated:', { sessionId, questionId, isCorrect });
 
       return new Response(
-        JSON.stringify({ 
-          success: true, 
-          isCorrect,
-          // Don't reveal correct answer until game ends
-        }),
+        JSON.stringify({ success: true, isCorrect }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // COMPLETE GAME - Calculate final score and award coins
+    // Handle game completion
     if (action === 'complete') {
-      const { sessionId }: GameCompletion = await req.json();
-      
-      console.log('Completing game session:', sessionId);
+      const { sessionId } = body;
+
+      if (!sessionId || typeof sessionId !== 'string') {
+        throw new Error('Valid session ID is required');
+      }
 
       const session = activeSessions.get(sessionId);
       if (!session) {
-        throw new Error('Invalid session');
+        throw new Error('Session not found or expired');
       }
 
-      // In real implementation: calculate score from stored answers
-      const correctAnswers = 10; // Placeholder
-      const avgResponseTime = 5000; // Placeholder
-      const coinsEarned = correctAnswers * 10;
-
-      // Store game result
-      const { error: insertError } = await supabaseClient
-        .from('game_results')
-        .insert({
-          user_id: user.id,
-          category: session.category,
-          total_questions: 15,
-          correct_answers: correctAnswers,
-          average_response_time: avgResponseTime,
-          coins_earned: coinsEarned,
-          completed: true,
-          completed_at: new Date().toISOString(),
-        });
-
-      if (insertError) {
-        console.error('Error inserting game result:', insertError);
-        throw insertError;
+      if (session.userId !== user.id) {
+        throw new Error('Unauthorized: Session belongs to different user');
       }
 
-      // Award coins using secure function
-      const { error: coinsError } = await supabaseClient.rpc('award_coins', {
-        amount: coinsEarned,
+      // Calculate results
+      const correctAnswers = session.answers.filter(a => a.isCorrect).length;
+      const totalQuestions = session.questions.length;
+      const totalTime = Date.now() - session.startTime;
+      const coinsEarned = 10 + (correctAnswers * 5) + (totalTime < 30000 ? 10 : 0);
+
+      // Store results with service role
+      const supabaseService = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      );
+
+      await supabaseService.from('game_results').insert({
+        user_id: user.id,
+        category: session.category,
+        correct_answers: correctAnswers,
+        total_questions: totalQuestions,
+        total_time: totalTime,
+        coins_earned: coinsEarned,
       });
 
-      if (coinsError) {
-        console.error('Error awarding coins:', coinsError);
-        throw coinsError;
-      }
+      await supabaseService.rpc('award_coins', { amount: coinsEarned });
 
-      // Update total correct answers
-      const { data: profile } = await supabaseClient
-        .from('profiles')
-        .select('total_correct_answers')
-        .eq('id', user.id)
-        .single();
-
-      if (profile) {
-        await supabaseClient
-          .from('profiles')
-          .update({
-            total_correct_answers: profile.total_correct_answers + correctAnswers,
-          })
-          .eq('id', user.id);
-      }
-
-      // Clean up session
+      // Clean up
       activeSessions.delete(sessionId);
-
-      console.log('Game completed successfully. Coins awarded:', coinsEarned);
+      console.log('Game completed:', { sessionId, correctAnswers, coinsEarned });
 
       return new Response(
-        JSON.stringify({ 
-          success: true, 
-          correctAnswers,
-          coinsEarned,
-          avgResponseTime,
-        }),
+        JSON.stringify({ success: true, correctAnswers, totalQuestions, totalTime, coinsEarned }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -206,14 +209,10 @@ serve(async (req) => {
     throw new Error('Invalid action');
 
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error in validate-game-session:', error);
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      { 
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
+      JSON.stringify({ success: false, error: error instanceof Error ? error.message : 'An error occurred' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
