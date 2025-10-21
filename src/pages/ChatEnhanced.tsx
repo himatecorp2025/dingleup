@@ -149,6 +149,19 @@ const ChatEnhanced = () => {
   const loadConversations = async () => {
     if (!userId) return;
 
+    // Lekérjük a meghívásokat (barátok)
+    const { data: invitations } = await supabase
+      .from('invitations')
+      .select('inviter_id, invited_user_id')
+      .or(`inviter_id.eq.${userId},invited_user_id.eq.${userId}`)
+      .eq('accepted', true);
+
+    const friendIds = new Set<string>();
+    invitations?.forEach(inv => {
+      if (inv.inviter_id === userId) friendIds.add(inv.invited_user_id);
+      if (inv.invited_user_id === userId) friendIds.add(inv.inviter_id);
+    });
+
     const { data: members } = await supabase
       .from('conversation_members')
       .select('conversation_id')
@@ -166,11 +179,9 @@ const ChatEnhanced = () => {
 
     if (!convos) return;
 
-    // For private chats, get other user info
     const conversationsWithUsers = await Promise.all(
       convos.map(async (conv) => {
         if (!conv.is_group) {
-          // Get other user in private chat
           const { data: otherMembers } = await supabase
             .from('conversation_members')
             .select('user_id')
@@ -180,7 +191,6 @@ const ChatEnhanced = () => {
           if (otherMembers && otherMembers.length > 0) {
             const otherUserId = otherMembers[0].user_id;
             
-            // Get user profile and presence
             const { data: profile } = await supabase
               .from('profiles')
               .select('id, username, avatar_url')
@@ -199,6 +209,7 @@ const ChatEnhanced = () => {
                 ...profile,
                 is_online: presence?.is_online || false,
               },
+              is_friend: friendIds.has(otherUserId),
             };
           }
         }
@@ -206,7 +217,14 @@ const ChatEnhanced = () => {
       })
     );
 
-    setConversations(conversationsWithUsers as Conversation[]);
+    // Barátok kerüljenek előre
+    const sorted = conversationsWithUsers.sort((a: any, b: any) => {
+      if (a.is_friend && !b.is_friend) return -1;
+      if (!a.is_friend && b.is_friend) return 1;
+      return 0;
+    });
+
+    setConversations(sorted as Conversation[]);
   };
 
   const loadMessages = async (conversationId: string) => {

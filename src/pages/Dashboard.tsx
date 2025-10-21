@@ -93,7 +93,8 @@ const Dashboard = () => {
   }, [navigate]);
 
   useEffect(() => {
-    if (canClaim) {
+    // Csak akkor jelenjen meg, ha tényleg igényelhető
+    if (canClaim && !showDailyGift) {
       setShowDailyGift(true);
     }
   }, [canClaim]);

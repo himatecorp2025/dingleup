@@ -21,6 +21,27 @@ interface ReportDialogProps {
   reportedMessageId?: string;
 }
 
+// Development categories
+const DEV_CATEGORIES = [
+  { value: 'crash', label: 'Összeomlás / Crash' },
+  { value: 'ui_bug', label: 'UI/Design hiba' },
+  { value: 'functionality', label: 'Funkcionalitás hiba' },
+  { value: 'performance', label: 'Teljesítmény probléma' },
+  { value: 'data_loss', label: 'Adatvesztés' },
+  { value: 'other', label: 'Egyéb' },
+];
+
+// Support categories
+const SUPPORT_CATEGORIES = [
+  { value: 'harassment', label: 'Zaklatás' },
+  { value: 'spam', label: 'Spam / Reklám' },
+  { value: 'inappropriate', label: 'Nem megfelelő tartalom' },
+  { value: 'hate_speech', label: 'Gyűlöletbeszéd' },
+  { value: 'impersonation', label: 'Személyazonosság visszaélés' },
+  { value: 'discrimination', label: 'Diszkrimináció' },
+  { value: 'other', label: 'Egyéb' },
+];
+
 export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessageId }: ReportDialogProps) => {
   const [reportType, setReportType] = useState<'bug' | 'user_behavior'>('bug');
   const [bugCategory, setBugCategory] = useState<string>('');
@@ -31,6 +52,16 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
   const handleSubmit = async () => {
     if (!description.trim()) {
       toast.error('Kérlek, add meg a jelentés részleteit!');
+      return;
+    }
+
+    if (reportType === 'bug' && !bugCategory) {
+      toast.error('Kérlek, válassz kategóriát!');
+      return;
+    }
+
+    if (reportType === 'user_behavior' && !violationType) {
+      toast.error('Kérlek, válassz kategóriát!');
       return;
     }
 
@@ -112,10 +143,11 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                     <SelectValue placeholder="Válassz kategóriát" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="functionality">Működési hiba</SelectItem>
-                    <SelectItem value="ui">Megjelenítési probléma</SelectItem>
-                    <SelectItem value="performance">Teljesítmény</SelectItem>
-                    <SelectItem value="other">Egyéb</SelectItem>
+                    {DEV_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -138,12 +170,11 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                     <SelectValue placeholder="Válassz típust" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="discrimination">
-                      Diszkrimináció (vallás, etnikai, nemi)
-                    </SelectItem>
-                    <SelectItem value="harassment">Zaklatás</SelectItem>
-                    <SelectItem value="spam">Spam</SelectItem>
-                    <SelectItem value="other">Egyéb</SelectItem>
+                    {SUPPORT_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -170,4 +201,4 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
       </DialogContent>
     </Dialog>
   );
-};
+}
