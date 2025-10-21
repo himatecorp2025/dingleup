@@ -1,7 +1,7 @@
 export type GameCategory = 'health' | 'history' | 'culture' | 'finance';
 
 export interface Answer {
-  key: string;
+  key: 'A' | 'B' | 'C';
   text: string;
   correct: boolean;
 }
@@ -10,8 +10,8 @@ export interface Question {
   id: string;
   question: string;
   answers: Answer[];
-  audience: { A: number; B: number; C: number };
-  third: string;
+  audience?: { A: number; B: number; C: number };
+  third?: string;
   topic: string;
 }
 

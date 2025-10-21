@@ -24,7 +24,7 @@ import financeQuestions from "@/data/questions-finance.json";
 
 type GameState = 'category-select' | 'playing' | 'finished' | 'out-of-lives';
 
-const QUESTION_BANKS = {
+const QUESTION_BANKS: Record<GameCategory, Question[]> = {
   health: healthQuestions as Question[],
   history: historyQuestions as Question[],
   culture: cultureQuestions as Question[],
