@@ -771,8 +771,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
         >
           {/* Error banner (red bar) */}
           {errorBannerVisible && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-2 rounded-full font-bold text-sm shadow-lg animate-fade-in">
-              {errorBannerMessage}
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-lg animate-fade-in max-w-xs text-center">
+              <div className="mb-1">{errorBannerMessage}</div>
+              <div className="text-[10px] opacity-90">
+                ⬆️ Felfelé: tovább ({continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙 levonva)
+              </div>
+              <div className="text-[10px] opacity-90">
+                ⬇️ Lefelé: kilépés (nyeremény megőrzése)
+              </div>
             </div>
           )}
 

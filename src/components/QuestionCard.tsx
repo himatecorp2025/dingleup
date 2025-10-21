@@ -2,7 +2,7 @@ import { RefreshCw, LogOut, Users, SkipForward } from "lucide-react";
 import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
 import { TimerCircle } from "./TimerCircle";
-import { Button } from "./ui/button";
+import { HexagonButton } from "./HexagonButton";
 import { Question } from "@/types/game";
 
 interface QuestionCardProps {
@@ -136,7 +136,7 @@ export const QuestionCard = ({
 
       {/* Bottom section: Help buttons - 1 row below answer C */}
       <div className="grid grid-cols-4 gap-2 mt-4">
-        <Button
+        <HexagonButton
           variant="outline"
           size="sm"
           onClick={onUseHelp5050}
@@ -144,8 +144,8 @@ export const QuestionCard = ({
           className={`text-xs font-bold ${usedHelp5050 ? 'opacity-50' : ''}`}
         >
           1/3
-        </Button>
-        <Button
+        </HexagonButton>
+        <HexagonButton
           variant="outline"
           size="sm"
           onClick={onUseHelp2xAnswer}
@@ -153,8 +153,8 @@ export const QuestionCard = ({
           className={`text-xs font-bold ${usedHelp2xAnswer ? 'opacity-50' : ''}`}
         >
           2x
-        </Button>
-        <Button
+        </HexagonButton>
+        <HexagonButton
           variant="outline"
           size="sm"
           onClick={onUseHelpAudience}
@@ -162,8 +162,8 @@ export const QuestionCard = ({
           className={`text-xs ${usedHelpAudience ? 'opacity-50' : ''}`}
         >
           <Users className="w-4 h-4" />
-        </Button>
-        <Button
+        </HexagonButton>
+        <HexagonButton
           variant="outline"
           size="sm"
           onClick={onUseQuestionSwap}
@@ -171,7 +171,7 @@ export const QuestionCard = ({
           className={`text-xs ${usedQuestionSwap ? 'opacity-50' : ''}`}
         >
           <SkipForward className="w-4 h-4" />
-        </Button>
+        </HexagonButton>
       </div>
     </div>
   );

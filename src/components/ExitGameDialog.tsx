@@ -32,19 +32,19 @@ export const ExitGameDialog = ({
             Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex gap-2 sm:gap-2 mt-4">
-          <Button 
-            variant="outline" 
-            onClick={() => onOpenChange(false)}
-            className="flex-1 border-white/30 text-white hover:bg-white/10"
-          >
-            Mégse
-          </Button>
+        <DialogFooter className="flex flex-col gap-2 sm:gap-2 mt-4">
           <Button 
             onClick={onConfirmExit} 
             className="flex-1 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white"
           >
             Kilépés
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => onOpenChange(false)}
+            className="flex-1 border-green-500/50 text-green-400 hover:bg-green-500/10 bg-green-500/5"
+          >
+            Maradok
           </Button>
         </DialogFooter>
       </DialogContent>
