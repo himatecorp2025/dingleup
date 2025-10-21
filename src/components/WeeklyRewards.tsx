@@ -17,9 +17,8 @@ const WeeklyRewards = () => {
 
   return (
     <div 
-      className="relative mb-4 px-3 py-4 sm:px-4 sm:py-5 overflow-hidden"
+      className="relative mb-4 px-3 py-4 sm:px-4 sm:py-5 overflow-hidden rounded-2xl"
       style={{ 
-        clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)',
         background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF8C00 50%, #FFA500 75%, #FFD700 100%)',
         boxShadow: '0 0 40px rgba(255, 215, 0, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.3)',
         border: '3px solid #FFD700',
@@ -28,7 +27,7 @@ const WeeklyRewards = () => {
     >
       {/* Arany ragyogás effekt */}
       <div 
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-30 rounded-2xl"
         style={{
           background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, transparent 70%)',
           animation: 'pulse 2s ease-in-out infinite'
@@ -37,9 +36,8 @@ const WeeklyRewards = () => {
       
       {/* Belső arany keret */}
       <div 
-        className="absolute inset-2"
+        className="absolute inset-2 rounded-xl"
         style={{
-          clipPath: 'polygon(11% 1%, 89% 1%, 99% 50%, 89% 99%, 11% 99%, 1% 50%)',
           border: '2px solid rgba(255, 215, 0, 0.5)',
           boxShadow: 'inset 0 0 20px rgba(255, 215, 0, 0.4)'
         }}
