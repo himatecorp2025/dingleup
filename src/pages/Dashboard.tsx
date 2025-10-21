@@ -138,8 +138,17 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [userId]);
 
-  // Subscription promo logic - show IMMEDIATELY on first load if user is not premium and no other dialogs
+  // Subscription promo logic - FIXED VERSION
   useEffect(() => {
+    console.log('[PROMO] Effect running...', { 
+      userId, 
+      isPremiumSubscriber, 
+      canClaimWelcome, 
+      canClaim,
+      showWelcomeBonus,
+      showDailyGift
+    });
+
     // Don't show if premium
     if (isPremiumSubscriber) {
       console.log('[PROMO] Skipped: user is premium');
@@ -149,6 +158,12 @@ const Dashboard = () => {
     // Don't show if userId not ready
     if (!userId) {
       console.log('[PROMO] Skipped: no userId');
+      return;
+    }
+
+    // Don't show if other dialogs are visible
+    if (showWelcomeBonus || showDailyGift) {
+      console.log('[PROMO] Skipped: other dialogs visible');
       return;
     }
 
@@ -218,7 +233,7 @@ const Dashboard = () => {
     return () => {
       clearTimeout(initialDelay);
     };
-  }, [userId, isPremiumSubscriber, canClaimWelcome, canClaim]);
+  }, [userId, isPremiumSubscriber, canClaimWelcome, canClaim, showWelcomeBonus, showDailyGift]);
 
 
   useEffect(() => {
