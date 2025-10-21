@@ -241,15 +241,17 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     let lastCorrectCount = 0;
     
     return questionSet.map((q) => {
-      const answerTexts = q.answers as string[];
-      const correctAnswer = q.correct;
+      // JSON files already have answers as Answer[] objects
+      const existingAnswers = q.answers as Answer[];
       
-      // Shuffle the answer texts
-      const shuffledTexts = [...answerTexts].sort(() => Math.random() - 0.5);
+      // Extract just the Answer objects and shuffle them
+      const shuffledAnswers = [...existingAnswers].sort(() => Math.random() - 0.5);
+      
+      // Always assign to A, B, C in order (fixed keys, shuffled content)
       const newAnswers: Answer[] = [
-        { key: 'A', text: shuffledTexts[0], correct: shuffledTexts[0] === correctAnswer },
-        { key: 'B', text: shuffledTexts[1], correct: shuffledTexts[1] === correctAnswer },
-        { key: 'C', text: shuffledTexts[2], correct: shuffledTexts[2] === correctAnswer }
+        { key: 'A', text: shuffledAnswers[0].text, correct: shuffledAnswers[0].correct },
+        { key: 'B', text: shuffledAnswers[1].text, correct: shuffledAnswers[1].correct },
+        { key: 'C', text: shuffledAnswers[2].text, correct: shuffledAnswers[2].correct }
       ];
       
       const newCorrectIdx = newAnswers.findIndex(a => a.correct);
@@ -257,10 +259,10 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       // Check if we need to reshuffle to avoid patterns
       let attempts = 0;
       while ((newCorrectIdx === lastCorrectIndex && lastCorrectCount >= 2) && attempts < 10) {
-        const reshuffled = [...answerTexts].sort(() => Math.random() - 0.5);
-        newAnswers[0] = { key: 'A', text: reshuffled[0], correct: reshuffled[0] === correctAnswer };
-        newAnswers[1] = { key: 'B', text: reshuffled[1], correct: reshuffled[1] === correctAnswer };
-        newAnswers[2] = { key: 'C', text: reshuffled[2], correct: reshuffled[2] === correctAnswer };
+        const reshuffled = [...existingAnswers].sort(() => Math.random() - 0.5);
+        newAnswers[0] = { key: 'A', text: reshuffled[0].text, correct: reshuffled[0].correct };
+        newAnswers[1] = { key: 'B', text: reshuffled[1].text, correct: reshuffled[1].correct };
+        newAnswers[2] = { key: 'C', text: reshuffled[2].text, correct: reshuffled[2].correct };
         attempts++;
       }
       
