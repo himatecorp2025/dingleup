@@ -16,8 +16,6 @@ import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
 import { FallingCoins } from '@/components/FallingCoins';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
-import { GeniusPromoDialog } from '@/components/GeniusPromoDialog';
-import { useGeniusPromo } from '@/hooks/useGeniusPromo';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
@@ -33,14 +31,6 @@ const Dashboard = () => {
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
-  const [isPremiumSubscriber, setIsPremiumSubscriber] = useState(false);
-  
-  const { shouldShow: showGeniusPromo, closePromo: closeGeniusPromo } = useGeniusPromo(
-    userId,
-    isPremiumSubscriber,
-    showWelcomeBonus || showDailyGift
-  );
-  
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
@@ -102,7 +92,6 @@ const Dashboard = () => {
   // Show Welcome Bonus dialog FIRST (highest priority)
   useEffect(() => {
     if (canClaimWelcome && userId) {
-      console.log('[Dashboard] WelcomeBonus eligible -> opening dialog');
       setShowWelcomeBonus(true);
       setShowDailyGift(false);
     }
@@ -111,40 +100,9 @@ const Dashboard = () => {
   // Show Daily Gift dialog SECOND (after welcome bonus)
   useEffect(() => {
     if (canClaim && !canClaimWelcome && userId) {
-      console.log('[Dashboard] DailyGift eligible -> opening dialog');
       setShowDailyGift(true);
     }
   }, [canClaim, canClaimWelcome, userId]);
-
-  // Check subscription status
-  useEffect(() => {
-    const checkSubscription = async () => {
-      if (!userId) return;
-      
-      try {
-        const { data, error } = await supabase.functions.invoke('check-subscription');
-        
-        if (error) {
-          console.error('Error checking subscription:', error);
-          return;
-        }
-        
-        if (data?.subscribed) {
-          setIsPremiumSubscriber(true);
-        } else {
-          setIsPremiumSubscriber(false);
-        }
-      } catch (error) {
-        console.error('Subscription check failed:', error);
-      }
-    };
-    
-    checkSubscription();
-    
-    // Check subscription every 5 minutes
-    const interval = setInterval(checkSubscription, 300000);
-    return () => clearInterval(interval);
-  }, [userId]);
 
 
 
@@ -470,13 +428,6 @@ const Dashboard = () => {
         currentStreak={currentStreak}
         nextReward={nextReward}
         canClaim={canClaim}
-        isPremium={isPremiumSubscriber}
-      />
-
-      {/* Genius promo dialog - THIRD */}
-      <GeniusPromoDialog 
-        open={showGeniusPromo}
-        onClose={closeGeniusPromo}
       />
 
       {/* Booster activation dialog */}

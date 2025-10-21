@@ -9,13 +9,11 @@ interface DailyGiftDialogProps {
   currentStreak: number;
   nextReward: number;
   canClaim: boolean;
-  isPremium?: boolean;
 }
 
 const DAILY_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 
-const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, canClaim, isPremium = false }: DailyGiftDialogProps) => {
-  const actualReward = isPremium ? nextReward * 2 : nextReward;
+const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, canClaim }: DailyGiftDialogProps) => {
   
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -36,10 +34,9 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-xl sm:text-2xl font-black text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg animate-pulse">
             🎰 NAPI AJÁNDÉK 🎰
-            {isPremium && <span className="ml-2">💎</span>}
           </DialogTitle>
           <DialogDescription className="text-center text-xs sm:text-sm text-yellow-300/90 font-semibold">
-            {isPremium ? '⭐ PRÉMIUM TAG - DUPLA JUTALMAK! ⭐' : '🎲 Jelentkezz be minden nap és szerezz aranyérméket! 🎲'}
+            🎲 Jelentkezz be minden nap és szerezz aranyérméket! 🎲
           </DialogDescription>
         </DialogHeader>
 
@@ -56,7 +53,6 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
             {DAILY_REWARDS.map((reward, index) => {
               const isCompleted = index < currentStreak;
               const isCurrent = index === currentStreak;
-              const displayReward = isPremium ? reward * 2 : reward;
               
               return (
                 <div
@@ -71,7 +67,7 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
                   <span className="text-[10px] sm:text-xs font-bold">{index + 1}</span>
                   <span className="text-[10px] sm:text-xs flex items-center gap-0.5 sm:gap-1">
                     <Coins className="w-2 h-2 sm:w-3 sm:h-3" />
-                    {displayReward}
+                    {reward}
                   </span>
                 </div>
               );
@@ -86,20 +82,15 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
             {canClaim ? (
               <>
                 <p className="text-xs sm:text-sm text-yellow-200 font-bold mb-2 relative z-10">
-                  🎉 {currentStreak + 1}. NAPI AJÁNDÉKOD {isPremium && '(x2 PRÉMIUM BÓNUSZ!)'}
+                  🎉 {currentStreak + 1}. NAPI AJÁNDÉKOD
                 </p>
                 <p className="text-4xl sm:text-5xl font-black text-yellow-400 flex items-center justify-center gap-2 sm:gap-3 mb-2 drop-shadow-2xl relative z-10 animate-bounce">
                   <Coins className="w-10 h-10 sm:w-12 sm:h-12 animate-spin" style={{ animationDuration: '3s' }} />
-                  +{actualReward}
+                  +{nextReward}
                 </p>
                 <p className="text-lg sm:text-xl text-white font-black relative z-10">
-                  💰 {actualReward} ARANYÉRME A TIÉD! 💰
+                  💰 {nextReward} ARANYÉRME A TIÉD! 💰
                 </p>
-                {isPremium && (
-                  <p className="text-sm text-green-300 font-bold mt-2 relative z-10 animate-pulse">
-                    ✅ PRÉMIUM ELŐFIZETÉS AKTÍV - DUPLA JUTALMAK!
-                  </p>
-                )}
               </>
             ) : (
               <>
@@ -112,18 +103,6 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
               </>
             )}
           </div>
-
-          {/* Premium subscription promo - only if not premium */}
-          {!isPremium && (
-            <div className="bg-gradient-to-r from-yellow-500/30 to-purple-600/30 border-2 border-yellow-500/70 rounded-xl p-4 text-center shadow-xl shadow-yellow-500/30 animate-pulse">
-              <p className="text-sm font-black text-yellow-400 mb-2">💎 LEGYÉL PRÉMIUM TAG! 💎</p>
-              <p className="text-xs sm:text-sm text-white font-bold leading-relaxed">
-                Csak <span className="text-yellow-300 text-lg">$2.99/hó</span> (~$0.09/nap)<br/>
-                <span className="text-green-300">✨ Dupla napi jutalmak ✨</span><br/>
-                <span className="text-red-300">❤️ 30 max élet ❤️</span>
-              </p>
-            </div>
-          )}
 
           {/* Action button */}
           {canClaim ? (

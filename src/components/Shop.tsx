@@ -8,7 +8,6 @@ import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { SPEED_BOOSTERS } from '@/types/game';
 import { supabase } from '@/integrations/supabase/client';
 import { QuickBuyOptInDialog } from './QuickBuyOptInDialog';
-import { SubscriptionSection } from './SubscriptionSection';
 
 interface ShopProps {
   userId: string;
@@ -34,24 +33,10 @@ const Shop = ({ userId }: ShopProps) => {
   const [showQuickBuyDialog, setShowQuickBuyDialog] = useState(false);
   const [quickBuyEnabled, setQuickBuyEnabled] = useState(false);
   const [pendingStripeAction, setPendingStripeAction] = useState<(() => void) | null>(null);
-  const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
     const enabled = localStorage.getItem(QUICK_BUY_KEY) === 'true';
     setQuickBuyEnabled(enabled);
-
-    // Check subscription status
-    const checkSubscription = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke('check-subscription');
-        if (!error && data?.subscribed) {
-          setIsPremium(true);
-        }
-      } catch (error) {
-        console.error('Error checking subscription:', error);
-      }
-    };
-    checkSubscription();
   }, []);
 
   // Check for payment success in URL
@@ -349,9 +334,6 @@ const Shop = ({ userId }: ShopProps) => {
           <p className="text-yellow-900 mt-2">Jelenlegi egyenleged</p>
         </div>
 
-        {/* Subscription Section */}
-        <SubscriptionSection isPremium={isPremium} />
-
         {/* Speed Boosters Section */}
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
@@ -377,19 +359,45 @@ const Shop = ({ userId }: ShopProps) => {
                     <h3 className="text-xl font-bold text-white mb-1">{item.name}</h3>
                     <p className="text-white/70 text-sm mb-3">{item.description}</p>
                     
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Coins className="w-5 h-5 text-yellow-500" />
-                        <span className="text-2xl font-bold text-yellow-500">{item.price}</span>
+                    <div className="flex flex-col gap-3">
+                      {/* Coins purchase option */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Coins className="w-5 h-5 text-yellow-500" />
+                          <span className="text-2xl font-bold text-yellow-500">{item.price}</span>
+                        </div>
+                        
+                        <button
+                          onClick={() => item.action()}
+                          disabled={loading === item.id || profile.coins < item.price}
+                          className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white font-bold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {loading === item.id ? 'Betöltés...' : 'Vásárlás Coins-ért'}
+                        </button>
                       </div>
-                      
-                      <button
-                        onClick={() => item.action()}
-                        disabled={loading === item.id || profile.coins < item.price}
-                        className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white font-bold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {loading === item.id ? 'Betöltés...' : 'Vásárlás'}
-                      </button>
+
+                      {/* Stripe USD purchase option */}
+                      {item.priceUsd && (
+                        <div className="flex items-center justify-between border-t border-white/10 pt-3">
+                          <div className="flex items-center gap-2">
+                            <CreditCard className="w-5 h-5 text-green-500" />
+                            <span className="text-2xl font-bold text-green-500">${item.priceUsd}</span>
+                          </div>
+                          
+                          <button
+                            onClick={() => buyWithStripe(item.id as any)}
+                            disabled={loading === `stripe-${item.id}`}
+                            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                          >
+                            {loading === `stripe-${item.id}` ? 'Betöltés...' : (
+                              <>
+                                <CreditCard className="w-4 h-4" />
+                                Vásárlás USD-ért
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
