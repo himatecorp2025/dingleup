@@ -59,7 +59,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
 
 
-  // Lifelines
+  // Lifelines - track usage and reactivation
   const [usedHelp5050, setUsedHelp5050] = useState(false);
   const [usedHelp2xAnswer, setUsedHelp2xAnswer] = useState(false);
   const [usedHelpAudience, setUsedHelpAudience] = useState(false);
@@ -67,6 +67,11 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const [reactivatedHelp5050, setReactivatedHelp5050] = useState(false);
   const [reactivatedHelp2xAnswer, setReactivatedHelp2xAnswer] = useState(false);
   const [reactivatedHelpAudience, setReactivatedHelpAudience] = useState(false);
+  
+  // Track reactivation count per game (max 1 reactivation per help per game)
+  const [help5050ReactivationCount, setHelp5050ReactivationCount] = useState(0);
+  const [help2xReactivationCount, setHelp2xReactivationCount] = useState(0);
+  const [helpAudienceReactivationCount, setHelpAudienceReactivationCount] = useState(0);
   const [firstAttempt, setFirstAttempt] = useState<string | null>(null);
   const [removedAnswer, setRemovedAnswer] = useState<string | null>(null);
   const [audienceVotes, setAudienceVotes] = useState<Record<string, number>>({});
@@ -211,6 +216,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setReactivatedHelp5050(false);
     setReactivatedHelp2xAnswer(false);
     setReactivatedHelpAudience(false);
+    setHelp5050ReactivationCount(0);
+    setHelp2xReactivationCount(0);
+    setHelpAudienceReactivationCount(0);
     setFirstAttempt(null);
     setRemovedAnswer(null);
     setAudienceVotes({});
@@ -897,23 +905,23 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                   </button>
                   <button
                     onClick={handleSkipQuestion}
-                    disabled={selectedAnswer !== null || !profile || profile.coins < (currentQuestionIndex < 5 ? 10 : currentQuestionIndex < 10 ? 20 : 30)}
+                    disabled={selectedAnswer !== null}
                     className={`
-                      relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-blue-700 border-2 border-blue-400 
-                      disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center
-                      shadow-lg shadow-blue-500/40
+                      relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-blue-700 border-2 border-black 
+                      disabled:opacity-40 hover:scale-110 transition-all flex items-center justify-center shadow-lg shadow-blue-500/50
                     `}
                     style={{ clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)', transform: 'rotate(90deg)' }}
                     title="Kérdés átugrás"
                   >
                     <SkipForward className="w-4 h-4 sm:w-5 sm:h-5 text-white" style={{ transform: 'rotate(-90deg)' }} />
-                    <span className="absolute -top-1 -right-1 bg-blue-400 text-white text-[7px] font-black px-1 rounded-full border border-blue-600" style={{ transform: 'rotate(-90deg)' }}>
-                      {currentQuestionIndex < 5 ? '10' : currentQuestionIndex < 10 ? '20' : '30'}
+                    <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[7px] font-black px-1 rounded-full border border-black" style={{ transform: 'rotate(-90deg)' }}>
+                      {currentQuestionIndex >= 0 && currentQuestionIndex <= 4 ? 10 :
+                       currentQuestionIndex >= 5 && currentQuestionIndex <= 9 ? 20 : 30}
                     </span>
-                  </button>
-                  
-                  {/* Question Swap button */}
-                  {profile.question_swaps_available > 0 && !usedQuestionSwap && (
+                   </button>
+                   
+                   {/* Question Swap button */}
+                   {profile.question_swaps_available > 0 && !usedQuestionSwap && (
                     <button
                       onClick={useQuestionSwap}
                       disabled={selectedAnswer !== null || usedQuestionSwap}

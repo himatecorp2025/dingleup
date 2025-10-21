@@ -16,12 +16,12 @@ const DAILY_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, canClaim }: DailyGiftDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] max-w-md max-h-[70vh] overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/30">
-        <DialogHeader>
-          <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text text-transparent">
+      <DialogContent className="w-[95vw] max-w-md h-auto max-h-[70vh] overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/30 flex flex-col">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text text-transparent">
             Napi Ajándék 🎁
           </DialogTitle>
-          <DialogDescription className="text-center text-purple-300">
+          <DialogDescription className="text-center text-xs sm:text-sm text-purple-300">
             Jelentkezz be minden nap és szerezz aranyérméket!
           </DialogDescription>
         </DialogHeader>

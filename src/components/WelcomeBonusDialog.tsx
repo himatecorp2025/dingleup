@@ -44,20 +44,20 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="w-[95vw] max-w-md max-h-[70vh] overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50 shadow-2xl shadow-purple-500/30">
-        <DialogHeader>
-          <DialogTitle className="text-xl sm:text-2xl font-bold text-center bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent">
+      <DialogContent className="w-[95vw] max-w-md h-auto max-h-[70vh] overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50 shadow-2xl shadow-purple-500/30 flex flex-col">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-lg sm:text-xl font-bold text-center bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent">
             🎉 ÜDVÖZLŐ BÓNUSZ! 🎉
           </DialogTitle>
-          <DialogDescription className="text-center text-xs sm:text-sm font-medium text-white">
+          <DialogDescription className="text-center text-[10px] sm:text-xs font-medium text-white">
             Köszönjük, hogy csatlakoztál! 🎁
           </DialogDescription>
         </DialogHeader>
 
         {/* Animation container - KOMPAKT */}
-        <div className="flex flex-col items-center justify-center py-1">
+        <div className="flex flex-col items-center justify-center py-1 flex-shrink-0">
           {showAnimation && (
-            <div className="relative w-full flex items-center justify-center h-24 sm:h-32">
+            <div className="relative w-full flex items-center justify-center h-20 sm:h-24">
               {/* Chest phase */}
               <div 
                 className={`transition-all duration-1000 ${
@@ -95,34 +95,34 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
           )}
         </div>
 
-        {/* Bonus details - KOMPAKT */}
-        <div className="space-y-1.5 sm:space-y-2 bg-black/80 backdrop-blur-sm rounded-xl p-3 sm:p-4 border-2 border-yellow-500/50">
-          <h3 className="text-center text-xs sm:text-sm font-bold mb-1 sm:mb-2 text-white">
+        {/* Bonus details - KOMPAKT - stays within viewport */}
+        <div className="space-y-1 sm:space-y-1.5 bg-black/80 backdrop-blur-sm rounded-lg p-2 sm:p-3 border-2 border-yellow-500/50 flex-shrink-0">
+          <h3 className="text-center text-[10px] sm:text-xs font-bold mb-1 text-white">
             🎁 Regisztrációs Bónuszod:
           </h3>
           
-          <div className="flex items-center justify-between p-1.5 sm:p-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30">
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
-              <span className="font-bold text-xs sm:text-sm text-white">Aranyérmék</span>
+          <div className="flex items-center justify-between p-1 sm:p-1.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30">
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500" />
+              <span className="font-bold text-[10px] sm:text-xs text-white">Aranyérmék</span>
             </div>
-            <span className="text-base sm:text-xl font-black text-white">+2,500</span>
+            <span className="text-sm sm:text-base font-black text-white">+2,500</span>
           </div>
           
-          <div className="flex items-center justify-between p-1.5 sm:p-2 bg-gradient-to-r from-red-500/20 to-pink-500/20 rounded-lg border border-red-500/30">
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
-              <span className="font-bold text-xs sm:text-sm text-white">Életek</span>
+          <div className="flex items-center justify-between p-1 sm:p-1.5 bg-gradient-to-r from-red-500/20 to-pink-500/20 rounded-lg border border-red-500/30">
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-red-500" />
+              <span className="font-bold text-[10px] sm:text-xs text-white">Életek</span>
             </div>
-            <span className="text-base sm:text-xl font-black text-white">+50</span>
+            <span className="text-sm sm:text-base font-black text-white">+50</span>
           </div>
 
-          <div className="flex items-center justify-between p-1.5 sm:p-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
-              <span className="font-bold text-xs sm:text-sm text-white">DingleSpeed</span>
+          <div className="flex items-center justify-between p-1 sm:p-1.5 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-purple-500" />
+              <span className="font-bold text-[10px] sm:text-xs text-white">DingleSpeed</span>
             </div>
-            <span className="text-base sm:text-xl font-black text-white">+1</span>
+            <span className="text-sm sm:text-base font-black text-white">+1</span>
           </div>
         </div>
 
@@ -132,12 +132,12 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
           size="lg"
           onClick={handleClaim}
           disabled={claiming}
-          className="w-full text-base sm:text-lg font-black py-2 sm:py-3"
+          className="w-full text-sm sm:text-base font-black py-1.5 sm:py-2 flex-shrink-0"
         >
           {claiming ? '⏳ Feldolgozás...' : '✅ ELFOGADOM! 🎉'}
         </HexagonButton>
 
-        <p className="text-center text-white/70 text-[10px] sm:text-xs">
+        <p className="text-center text-white/70 text-[9px] sm:text-[10px] flex-shrink-0">
           ⭐ Egyszer kapható meg ⭐
         </p>
       </DialogContent>

@@ -334,6 +334,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_invitation: {
+        Args: { invitation_code_input: string }
+        Returns: Json
+      }
       activate_booster: {
         Args: {
           p_booster_type: string
