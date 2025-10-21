@@ -135,42 +135,61 @@ export const QuestionCard = ({
 
       {/* Bottom section: Help buttons - directly below answer C, above BottomNav */}
       <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mt-2 mb-2">
-        <HexagonButton
-          variant="outline"
-          size="sm"
-          onClick={onUseHelp5050}
-          disabled={disabled || usedHelp5050}
-          className={`text-xs font-bold ${usedHelp5050 ? 'opacity-50' : ''}`}
-        >
-          1/3
-        </HexagonButton>
-        <HexagonButton
-          variant="outline"
-          size="sm"
-          onClick={onUseHelp2xAnswer}
-          disabled={disabled || usedHelp2xAnswer}
-          className={`text-xs font-bold ${usedHelp2xAnswer ? 'opacity-50' : ''}`}
-        >
-          2x
-        </HexagonButton>
-        <HexagonButton
-          variant="outline"
-          size="sm"
-          onClick={onUseHelpAudience}
-          disabled={disabled || usedHelpAudience}
-          className={`text-xs ${usedHelpAudience ? 'opacity-50' : ''}`}
-        >
-          <Users className="w-4 h-4" />
-        </HexagonButton>
-        <HexagonButton
-          variant="outline"
-          size="sm"
-          onClick={onUseQuestionSwap}
-          disabled={disabled || usedQuestionSwap}
-          className={`text-xs ${usedQuestionSwap ? 'opacity-50' : ''}`}
-        >
-          <SkipForward className="w-4 h-4" />
-        </HexagonButton>
+        <div className={`relative ${usedHelp5050 ? 'opacity-50' : ''}`}>
+          <div className="clip-hexagon-tall bg-gradient-to-br from-blue-600 to-blue-900 border-2 border-blue-400 shadow-lg shadow-blue-500/50 hover:scale-105 transition-all casino-card">
+            <HexagonButton
+              variant="outline"
+              size="sm"
+              onClick={onUseHelp5050}
+              disabled={disabled || usedHelp5050}
+              className="text-xs font-bold bg-transparent border-none"
+            >
+              1/3
+            </HexagonButton>
+          </div>
+        </div>
+        
+        <div className={`relative ${usedHelp2xAnswer ? 'opacity-50' : ''}`}>
+          <div className="clip-hexagon-tall bg-gradient-to-br from-green-600 to-green-900 border-2 border-green-400 shadow-lg shadow-green-500/50 hover:scale-105 transition-all casino-card">
+            <HexagonButton
+              variant="outline"
+              size="sm"
+              onClick={onUseHelp2xAnswer}
+              disabled={disabled || usedHelp2xAnswer}
+              className="text-xs font-bold bg-transparent border-none"
+            >
+              2x
+            </HexagonButton>
+          </div>
+        </div>
+        
+        <div className={`relative ${usedHelpAudience ? 'opacity-50' : ''}`}>
+          <div className="clip-hexagon-tall bg-gradient-to-br from-purple-600 to-purple-900 border-2 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-all casino-card">
+            <HexagonButton
+              variant="outline"
+              size="sm"
+              onClick={onUseHelpAudience}
+              disabled={disabled || usedHelpAudience}
+              className="text-xs bg-transparent border-none"
+            >
+              <Users className="w-4 h-4" />
+            </HexagonButton>
+          </div>
+        </div>
+        
+        <div className={`relative ${usedQuestionSwap ? 'opacity-50' : ''}`}>
+          <div className="clip-hexagon-tall bg-gradient-to-br from-red-600 to-red-900 border-2 border-red-400 shadow-lg shadow-red-500/50 hover:scale-105 transition-all casino-card">
+            <HexagonButton
+              variant="outline"
+              size="sm"
+              onClick={onUseQuestionSwap}
+              disabled={disabled || usedQuestionSwap}
+              className="text-xs bg-transparent border-none"
+            >
+              <SkipForward className="w-4 h-4" />
+            </HexagonButton>
+          </div>
+        </div>
       </div>
     </div>
   );

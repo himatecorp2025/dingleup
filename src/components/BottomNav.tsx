@@ -2,8 +2,19 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, User, ShoppingBag, LogOut, Building2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useEffect, useState } from 'react';
 
 const BottomNav = () => {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024); // lg breakpoint
+    };
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,6 +35,11 @@ const BottomNav = () => {
     { icon: Building2, label: 'Rólunk', path: '/desktop' },
     { icon: LogOut, label: 'Kilépés', action: handleLogout }
   ];
+
+  // Don't render on desktop/laptop
+  if (isDesktop) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-black/90 border-t-2 border-yellow-500/50 backdrop-blur-sm z-50 shadow-[0_-5px_20px_rgba(255,215,0,0.3)]">

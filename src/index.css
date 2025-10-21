@@ -403,6 +403,23 @@ body {
   }
 }
 
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(calc(100vh + 100px)) rotate(360deg);
+    opacity: 0;
+  }
+}
+
 .casino-card {
   position: relative;
   overflow: hidden;
@@ -428,13 +445,8 @@ body {
   animation: gold-spin 4s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.6;
-  }
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Slide in from right animation */
@@ -447,4 +459,12 @@ body {
     transform: translateX(0) translateY(-50%);
     opacity: 1;
   }
+}
+
+.animate-slide-in-right-custom {
+  animation: slide-in-right-custom 0.3s ease-out;
+}
+
+.animate-fall {
+  animation: fall linear infinite;
 }

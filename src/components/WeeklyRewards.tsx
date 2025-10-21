@@ -60,10 +60,10 @@ const WeeklyRewards = () => {
         {rewards.map((reward, index) => (
           <div
             key={index}
-            className={`relative rounded-xl p-3 backdrop-blur-sm transition-all hover:scale-105 ${
+            className={`relative rounded-xl p-1.5 sm:p-2 backdrop-blur-sm transition-all hover:scale-105 ${
               index < 3
-                ? 'bg-gradient-to-br from-emerald-700/95 to-emerald-800/95 border-3 border-yellow-500 shadow-lg shadow-yellow-500/50'
-                : 'bg-gradient-to-br from-emerald-800/90 to-emerald-900/90 border-2 border-yellow-500/60'
+                ? 'bg-gradient-to-br from-emerald-700/95 to-emerald-800/95 border-2 sm:border-3 border-yellow-500 shadow-lg shadow-yellow-500/50'
+                : 'bg-gradient-to-br from-emerald-800/90 to-emerald-900/90 border border-yellow-500/60'
             }`}
             style={{
               boxShadow: index < 3 
@@ -72,19 +72,19 @@ const WeeklyRewards = () => {
             }}
           >
             {index < 3 && (
-              <div className="absolute -top-1 -right-1">
-                <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
+              <div className="absolute -top-0.5 -right-0.5">
+                <Sparkles className="w-3 h-3 text-yellow-400 animate-pulse" />
               </div>
             )}
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-yellow-400 font-black text-base drop-shadow-lg">{reward.place}</span>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-yellow-400 font-black text-xs sm:text-sm drop-shadow-lg">{reward.place}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm mb-1">
-              <Coins className="w-4 h-4 text-yellow-400 drop-shadow-lg" />
+            <div className="flex items-center gap-1 text-xs mb-0.5">
+              <Coins className="w-3 h-3 text-yellow-400 drop-shadow-lg" />
               <span className="text-yellow-300 font-bold drop-shadow-lg">{reward.coins}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Heart className="w-4 h-4 text-red-400 drop-shadow-lg" />
+            <div className="flex items-center gap-1 text-xs">
+              <Heart className="w-3 h-3 text-red-400 drop-shadow-lg" />
               <span className="text-yellow-300 font-bold drop-shadow-lg">{reward.lives}</span>
             </div>
           </div>

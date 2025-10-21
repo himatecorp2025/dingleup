@@ -14,6 +14,7 @@ import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
+import { FallingCoins } from '@/components/FallingCoins';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
@@ -199,18 +200,18 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
+      {/* Falling coins background */}
+      <FallingCoins />
+      
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4 pb-24 max-w-screen-lg mx-auto">
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4 pb-24 max-w-screen-lg mx-auto relative z-10">
         {/* Top Section */}
         <div className="flex items-start justify-between mb-3">
       {/* Left: Greeting */}
           <div className="flex flex-col items-start gap-2">
             <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">Szia, {profile.username}!</h1>
-            <div className="w-40 sm:w-52 flex-shrink-0">
-              <WeeklyRankingsCountdown compact />
-            </div>
           </div>
 
           {/* Right: Stats & Avatar */}
@@ -264,6 +265,9 @@ const Dashboard = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-1.5 sm:gap-2 w-40 sm:w-52 flex-shrink-0">
+              <div className="w-full">
+                <WeeklyRankingsCountdown compact />
+              </div>
               <button
                 onClick={() => navigate('/invitation')}
                 className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-[10px] sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"

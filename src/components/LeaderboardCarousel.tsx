@@ -90,16 +90,16 @@ export const LeaderboardCarousel = () => {
                 className={`clip-hexagon w-16 h-16 flex flex-col items-center justify-center bg-gradient-to-br ${getMedalColor(actualIndex)} border border-purple-400 shadow-md transform hover:scale-105 transition-transform flex-shrink-0`}
               >
                 {actualIndex < 3 && (
-                  <Crown className={`w-3 h-3 mb-0.5 ${
+                  <Crown className={`${actualIndex === 0 ? 'w-4 h-4' : 'w-3 h-3'} mb-0.5 ${
                     actualIndex === 0 ? 'text-yellow-200' :
                     actualIndex === 1 ? 'text-gray-200' :
                     'text-orange-200'
                   }`} />
                 )}
-                <p className="text-[8px] font-bold text-white text-center px-1 truncate w-full">
+                <p className={`${actualIndex < 3 ? 'text-[9px]' : 'text-[8px]'} font-bold text-white text-center px-1 truncate w-full`}>
                   {actualIndex + 1}. {player.username}
                 </p>
-                <p className="text-xs font-black text-white">
+                <p className={`${actualIndex < 3 ? 'text-sm' : 'text-xs'} font-black text-white`}>
                   {player.total_correct_answers}
                 </p>
               </div>
