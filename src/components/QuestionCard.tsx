@@ -133,8 +133,8 @@ export const QuestionCard = ({
         </div>
       </div>
 
-      {/* Bottom section: Help buttons - 1 row below answer C */}
-      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mt-1">
+      {/* Bottom section: Help buttons - directly below answer C, above BottomNav */}
+      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mt-2 mb-2">
         <HexagonButton
           variant="outline"
           size="sm"

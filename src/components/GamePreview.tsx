@@ -133,10 +133,8 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       const currentY = e.touches[0].clientY;
       const delta = currentY - touchStartY;
       
-      // Only allow swipe if answer is given
-      if (selectedAnswer) {
-        setTranslateY(delta);
-      }
+      // Smooth scroll - always allow swiping
+      setTranslateY(delta * 0.3); // Damped movement for smooth feel
     };
 
     const handleTouchEnd = async (e: TouchEvent) => {
@@ -146,7 +144,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       const delta = touchStartY - touchEndY;
 
       if (Math.abs(delta) < swipeThreshold) {
-        // Reset position if swipe too small
+        // Smooth reset with transition
         setTranslateY(0);
         return;
       }
@@ -244,27 +242,37 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     
     return questionSet.map((q) => {
       const answers = [...q.answers];
-      const correctIdx = answers.findIndex(a => a.correct);
+      const correctAnswer = answers.find(a => a === q.correct);
       
-      let newCorrectIdx = correctIdx;
+      // Shuffle the answers but maintain A, B, C keys
+      const shuffledTexts = [...answers].sort(() => Math.random() - 0.5);
+      const newAnswers = [
+        { key: 'A', text: shuffledTexts[0], correct: shuffledTexts[0] === correctAnswer },
+        { key: 'B', text: shuffledTexts[1], correct: shuffledTexts[1] === correctAnswer },
+        { key: 'C', text: shuffledTexts[2], correct: shuffledTexts[2] === correctAnswer }
+      ];
+      
+      const newCorrectIdx = newAnswers.findIndex(a => a.correct);
+      
+      // Check if we need to reshuffle to avoid patterns
       let attempts = 0;
       while ((newCorrectIdx === lastCorrectIndex && lastCorrectCount >= 2) && attempts < 10) {
-        for (let i = answers.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [answers[i], answers[j]] = [answers[j], answers[i]];
-        }
-        newCorrectIdx = answers.findIndex(a => a.correct);
+        const reshuffled = [...answers].sort(() => Math.random() - 0.5);
+        newAnswers[0] = { key: 'A', text: reshuffled[0], correct: reshuffled[0] === correctAnswer };
+        newAnswers[1] = { key: 'B', text: reshuffled[1], correct: reshuffled[1] === correctAnswer };
+        newAnswers[2] = { key: 'C', text: reshuffled[2], correct: reshuffled[2] === correctAnswer };
         attempts++;
       }
       
-      if (newCorrectIdx === lastCorrectIndex) {
+      const finalCorrectIdx = newAnswers.findIndex(a => a.correct);
+      if (finalCorrectIdx === lastCorrectIndex) {
         lastCorrectCount++;
       } else {
-        lastCorrectIndex = newCorrectIdx;
+        lastCorrectIndex = finalCorrectIdx;
         lastCorrectCount = 1;
       }
       
-      return { ...q, answers };
+      return { ...q, answers: newAnswers };
     });
   };
 

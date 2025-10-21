@@ -86,12 +86,12 @@ export const MillionaireAnswer = ({
       >
         <div className="flex items-center gap-4">
           <div 
-            className={`w-10 h-10 ${letterBg} border-2 ${letterBorder} flex items-center justify-center flex-shrink-0 text-base font-black ${letterText}`}
+            className={`w-10 h-10 ${letterBg} border-2 ${letterBorder} flex items-center justify-center flex-shrink-0 text-sm font-black ${letterText}`}
             style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
           >
             {letter}:
           </div>
-          <span className={`text-sm sm:text-base font-normal text-center flex-1 ${textColor}`}>
+          <span className={`text-base sm:text-lg font-normal text-center flex-1 ${textColor}`}>
             {children}
           </span>
         </div>

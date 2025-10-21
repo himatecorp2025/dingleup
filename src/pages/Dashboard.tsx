@@ -205,7 +205,7 @@ const Dashboard = () => {
       {/* Left: Greeting */}
           <div className="flex flex-col items-start gap-2">
             <h1 className="text-base sm:text-xl font-black text-white">Szia, {profile.username}!</h1>
-            <div className="w-40 sm:w-52">
+            <div className="w-40 sm:w-52 flex-shrink-0">
               <WeeklyRankingsCountdown compact />
             </div>
           </div>
@@ -260,7 +260,7 @@ const Dashboard = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-1.5 sm:gap-2 w-40 sm:w-52">
+            <div className="flex flex-col gap-1.5 sm:gap-2 w-40 sm:w-52 flex-shrink-0">
               <button
                 onClick={() => navigate('/invitation')}
                 className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-[10px] sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
