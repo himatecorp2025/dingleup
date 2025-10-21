@@ -93,19 +93,20 @@ const Dashboard = () => {
     });
   }, [navigate]);
 
+  // Show Welcome Bonus dialog FIRST (highest priority)
   useEffect(() => {
-    // Csak akkor jelenjen meg, ha tényleg igényelhető
-    if (canClaim && !showDailyGift) {
+    if (canClaimWelcome && userId) {
+      setShowWelcomeBonus(true);
+      setShowDailyGift(false);
+    }
+  }, [canClaimWelcome, userId]);
+
+  // Show Daily Gift dialog SECOND (after welcome bonus)
+  useEffect(() => {
+    if (canClaim && !canClaimWelcome && userId) {
       setShowDailyGift(true);
     }
-  }, [canClaim]);
-
-  useEffect(() => {
-    if (canClaimWelcome) {
-      // Welcome bonus has priority over daily gift
-      setShowWelcomeBonus(true);
-    }
-  }, [canClaimWelcome]);
+  }, [canClaim, canClaimWelcome, userId]);
 
   // Check subscription status
   useEffect(() => {
@@ -139,11 +140,10 @@ const Dashboard = () => {
 
   // Subscription promo logic - THIRD in sequence after Welcome and Daily Gift
   useEffect(() => {
-    if (!userId || isPremiumSubscriber || showWelcomeBonus || showDailyGift) return;
+    if (!userId || isPremiumSubscriber || canClaimWelcome || canClaim) return;
 
     const checkAndShowPromo = () => {
       const lastPromoDate = localStorage.getItem(`last_promo_date_${userId}`);
-      const promoCountToday = parseInt(localStorage.getItem(`promo_count_today_${userId}`) || '0');
       const now = Date.now();
 
       // Reset counter if it's a new day
@@ -166,7 +166,7 @@ const Dashboard = () => {
         const maxInterval = 45 * 60 * 1000; // 45 minutes
         const randomInterval = Math.random() * (maxInterval - minInterval) + minInterval;
 
-        if (timeSinceLastPromo > randomInterval) {
+        if (timeSinceLastPromo > randomInterval || lastShown === 0) {
           setShowSubscriptionPromo(true);
           localStorage.setItem(`last_promo_shown_${userId}`, now.toString());
           localStorage.setItem(`promo_count_today_${userId}`, (currentCount + 1).toString());
@@ -175,8 +175,8 @@ const Dashboard = () => {
       }
     };
 
-    // Check after 30 seconds
-    const initialDelay = setTimeout(checkAndShowPromo, 30000);
+    // Check after 5 seconds for first time
+    const initialDelay = setTimeout(checkAndShowPromo, 5000);
 
     // Then check periodically every 5 minutes
     const interval = setInterval(checkAndShowPromo, 5 * 60 * 1000);
@@ -185,7 +185,7 @@ const Dashboard = () => {
       clearTimeout(initialDelay);
       clearInterval(interval);
     };
-  }, [userId, isPremiumSubscriber, showWelcomeBonus, showDailyGift]);
+  }, [userId, isPremiumSubscriber, canClaimWelcome, canClaim]);
 
 
   useEffect(() => {
@@ -503,21 +503,25 @@ const Dashboard = () => {
       />
 
       {/* Daily gift dialog - SECOND, only if welcome bonus is not shown */}
-      <DailyGiftDialog
-        open={showDailyGift && !showWelcomeBonus}
-        onClose={() => setShowDailyGift(false)}
-        onClaim={handleClaimDailyGift}
-        currentStreak={currentStreak}
-        nextReward={nextReward}
-        canClaim={canClaim}
-        isPremium={isPremiumSubscriber}
-      />
+      {!showWelcomeBonus && (
+        <DailyGiftDialog
+          open={showDailyGift}
+          onClose={() => setShowDailyGift(false)}
+          onClaim={handleClaimDailyGift}
+          currentStreak={currentStreak}
+          nextReward={nextReward}
+          canClaim={canClaim}
+          isPremium={isPremiumSubscriber}
+        />
+      )}
 
       {/* Subscription promo dialog - THIRD, only if welcome bonus and daily gift are not shown */}
-      <SubscriptionPromoDialog 
-        open={showSubscriptionPromo && !showWelcomeBonus && !showDailyGift}
-        onClose={() => setShowSubscriptionPromo(false)}
-      />
+      {!showWelcomeBonus && !showDailyGift && (
+        <SubscriptionPromoDialog 
+          open={showSubscriptionPromo}
+          onClose={() => setShowSubscriptionPromo(false)}
+        />
+      )}
 
       {/* Booster activation dialog */}
       <BoosterActivationDialog
