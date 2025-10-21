@@ -110,12 +110,12 @@ const Leaderboard = () => {
                 </div>
 
                 {/* Avatar */}
-                <div className="clip-hexagon w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 border-purple-400">
+                <div className="rounded-xl w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 border-purple-400">
                   {player.avatar_url ? (
                     <img
                       src={player.avatar_url}
                       alt={player.username}
-                      className="w-full h-full object-cover clip-hexagon"
+                      className="w-full h-full object-cover rounded-xl"
                     />
                   ) : (
                     <span className="text-2xl font-black text-white">

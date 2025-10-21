@@ -45,14 +45,39 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
   if (compact) {
     return (
       <div
-        className={`bg-gradient-to-r from-purple-600/30 to-purple-900/30 border-2 border-purple-500/40 px-3 py-3 sm:px-4 sm:py-4 text-center ${className}`}
-        style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
+        className={`relative px-3 py-3 sm:px-4 sm:py-4 text-center overflow-hidden ${className}`}
+        style={{ 
+          clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)',
+          background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF8C00 50%, #FFA500 75%, #FFD700 100%)',
+          boxShadow: '0 0 40px rgba(255, 215, 0, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.3)',
+          border: '3px solid #FFD700',
+          animation: 'shimmer 3s ease-in-out infinite'
+        }}
       >
-        <div className="flex items-center justify-center gap-2 mb-1">
-          <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
-          <span className="text-xs sm:text-sm font-bold text-white">Heti díjazásig</span>
+        {/* Arany ragyogás effekt */}
+        <div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, transparent 70%)',
+            animation: 'pulse 2s ease-in-out infinite'
+          }}
+        />
+        
+        {/* Belső arany keret */}
+        <div 
+          className="absolute inset-2"
+          style={{
+            clipPath: 'polygon(11% 1%, 89% 1%, 99% 50%, 89% 99%, 11% 99%, 1% 50%)',
+            border: '2px solid rgba(255, 215, 0, 0.5)',
+            boxShadow: 'inset 0 0 20px rgba(255, 215, 0, 0.4)'
+          }}
+        />
+
+        <div className="relative z-10 flex items-center justify-center gap-2 mb-1">
+          <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-900" />
+          <span className="text-xs sm:text-sm font-bold text-yellow-900 drop-shadow-lg">Heti díjazásig</span>
         </div>
-        <p className="text-sm sm:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400">
+        <p className="relative z-10 text-sm sm:text-lg font-black text-yellow-900 drop-shadow">
           {timeRemaining}
         </p>
       </div>
@@ -60,20 +85,48 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
   }
 
   return (
-    <div className="bg-gradient-to-br from-purple-600/20 to-purple-900/20 border-2 border-purple-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-3 sm:mb-4 text-center">
-      <h3 className="text-sm sm:text-base font-black text-white mb-1 sm:mb-2 flex items-center justify-center gap-2">
-        <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
-        Heti Nyeremények
-      </h3>
-      <p className="text-[10px] sm:text-xs text-white/60 mb-2">Következő díjazás:</p>
-      <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2 sm:py-3 border border-purple-500/30">
-        <p className="text-base sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 animate-pulse">
-          {timeRemaining}
+    <div 
+      className="relative mb-4 px-3 py-4 sm:px-4 sm:py-5 overflow-hidden rounded-xl sm:rounded-2xl"
+      style={{ 
+        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF8C00 50%, #FFA500 75%, #FFD700 100%)',
+        boxShadow: '0 0 40px rgba(255, 215, 0, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.3)',
+        border: '3px solid #FFD700',
+        animation: 'shimmer 3s ease-in-out infinite'
+      }}
+    >
+      {/* Arany ragyogás effekt */}
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, transparent 70%)',
+          animation: 'pulse 2s ease-in-out infinite'
+        }}
+      />
+      
+      {/* Belső arany keret */}
+      <div 
+        className="absolute inset-2 rounded-lg"
+        style={{
+          border: '2px solid rgba(255, 215, 0, 0.5)',
+          boxShadow: 'inset 0 0 20px rgba(255, 215, 0, 0.4)'
+        }}
+      />
+
+      <div className="relative z-10 text-center">
+        <h3 className="text-sm sm:text-base font-black text-yellow-900 mb-1 sm:mb-2 flex items-center justify-center gap-2 drop-shadow-lg">
+          <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-900" />
+          Heti Nyeremények
+        </h3>
+        <p className="text-[10px] sm:text-xs text-yellow-900/80 font-semibold mb-2">Következő díjazás:</p>
+        <div className="bg-yellow-100/50 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2 sm:py-3 border-2 border-yellow-600">
+          <p className="text-base sm:text-xl font-black text-yellow-900 drop-shadow">
+            {timeRemaining}
+          </p>
+        </div>
+        <p className="text-[9px] sm:text-[10px] text-yellow-900/70 font-semibold mt-2 drop-shadow">
+          Top 10 játékos kategóriánként jutalmat nyer
         </p>
       </div>
-      <p className="text-[9px] sm:text-[10px] text-white/40 mt-2">
-        Top 10 játékos kategóriánként jutalmat nyer
-      </p>
     </div>
   );
 };
