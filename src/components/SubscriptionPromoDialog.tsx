@@ -11,13 +11,21 @@ interface SubscriptionPromoDialogProps {
 export const SubscriptionPromoDialog = ({ open, onClose }: SubscriptionPromoDialogProps) => {
   const navigate = useNavigate();
 
+  console.log('[PROMO DIALOG] Render with open=', open);
+
   const handleSubscribe = () => {
+    console.log('[PROMO DIALOG] Subscribe button clicked');
     onClose();
     navigate('/shop');
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={(newOpen) => {
+      console.log('[PROMO DIALOG] onOpenChange called with:', newOpen);
+      if (!newOpen) {
+        onClose();
+      }
+    }}>
       <DialogContent className="w-[95vw] max-w-md h-auto max-h-[70vh] overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-yellow-500/50 shadow-2xl shadow-yellow-500/30 flex flex-col relative overflow-hidden z-[9999]">
         {/* Casino lights animation */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>

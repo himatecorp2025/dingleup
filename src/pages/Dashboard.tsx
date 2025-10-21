@@ -138,26 +138,37 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [userId]);
 
-  // Subscription promo logic - THIRD in sequence after Welcome and Daily Gift
+  // Subscription promo logic - show IMMEDIATELY on first load if user is not premium and no other dialogs
   useEffect(() => {
-    console.log('Promo check:', { userId, isPremiumSubscriber, canClaimWelcome, canClaim, showWelcomeBonus, showDailyGift });
-    
-    if (!userId || isPremiumSubscriber) {
-      console.log('Promo skipped: no userId or is premium');
+    // Don't show if premium
+    if (isPremiumSubscriber) {
+      console.log('[PROMO] Skipped: user is premium');
       return;
     }
 
-    // Wait for welcome and daily gift checks to complete
-    if (canClaimWelcome || canClaim) {
-      console.log('Promo skipped: welcome or daily gift available');
+    // Don't show if userId not ready
+    if (!userId) {
+      console.log('[PROMO] Skipped: no userId');
       return;
     }
 
+    // CRITICAL: Only show if no welcome bonus and no daily gift to claim
+    if (canClaimWelcome) {
+      console.log('[PROMO] Skipped: welcome bonus available');
+      return;
+    }
+
+    if (canClaim) {
+      console.log('[PROMO] Skipped: daily gift available');
+      return;
+    }
+
+    // Check localStorage for promo limits
     const checkAndShowPromo = () => {
       const lastPromoDate = localStorage.getItem(`last_promo_date_${userId}`);
       const now = Date.now();
 
-      console.log('Checking promo eligibility...', { lastPromoDate, now });
+      console.log('[PROMO] Checking eligibility...', { lastPromoDate, now });
 
       // Reset counter if it's a new day
       if (lastPromoDate) {
@@ -165,40 +176,42 @@ const Dashboard = () => {
         const today = new Date();
         if (lastDate.toDateString() !== today.toDateString()) {
           localStorage.setItem(`promo_count_today_${userId}`, '0');
-          console.log('Reset promo count for new day');
+          console.log('[PROMO] Reset count for new day');
         }
       }
 
       // Check if we can show promo (max 5 per day)
       const currentCount = parseInt(localStorage.getItem(`promo_count_today_${userId}`) || '0');
-      console.log('Current promo count today:', currentCount);
+      console.log('[PROMO] Current count today:', currentCount);
       
-      if (currentCount < 5) {
-        const lastShown = parseInt(localStorage.getItem(`last_promo_shown_${userId}`) || '0');
-        const timeSinceLastPromo = now - lastShown;
+      if (currentCount >= 5) {
+        console.log('[PROMO] Max promos reached for today');
+        return;
+      }
 
-        console.log('Time since last promo (ms):', timeSinceLastPromo);
+      const lastShown = parseInt(localStorage.getItem(`last_promo_shown_${userId}`) || '0');
+      const timeSinceLastPromo = now - lastShown;
 
-        // Show promo immediately if never shown, or after 2 minutes
-        const minInterval = 2 * 60 * 1000; // 2 minutes
+      console.log('[PROMO] Time since last promo (ms):', timeSinceLastPromo);
 
-        if (lastShown === 0 || timeSinceLastPromo > minInterval) {
-          console.log('SHOWING SUBSCRIPTION PROMO!');
-          setShowSubscriptionPromo(true);
-          localStorage.setItem(`last_promo_shown_${userId}`, now.toString());
-          localStorage.setItem(`promo_count_today_${userId}`, (currentCount + 1).toString());
-          localStorage.setItem(`last_promo_date_${userId}`, now.toString());
-        } else {
-          console.log('Too soon to show promo again');
-        }
+      // Show immediately if never shown, otherwise after 2 minutes
+      const minInterval = 2 * 60 * 1000; // 2 minutes
+
+      if (lastShown === 0 || timeSinceLastPromo > minInterval) {
+        console.log('[PROMO] ✅ SHOWING SUBSCRIPTION PROMO NOW!');
+        setShowSubscriptionPromo(true);
+        localStorage.setItem(`last_promo_shown_${userId}`, now.toString());
+        localStorage.setItem(`promo_count_today_${userId}`, (currentCount + 1).toString());
+        localStorage.setItem(`last_promo_date_${userId}`, now.toString());
       } else {
-        console.log('Max promos reached for today');
+        console.log('[PROMO] Too soon to show again. Need to wait:', Math.ceil((minInterval - timeSinceLastPromo) / 1000), 'seconds');
       }
     };
 
-    // Check after 3 seconds for first time
+    // Show after 3 seconds
+    console.log('[PROMO] Setting up timer to check in 3 seconds...');
     const initialDelay = setTimeout(() => {
-      console.log('Initial promo check starting...');
+      console.log('[PROMO] Timer fired! Starting check...');
       checkAndShowPromo();
     }, 3000);
 
@@ -522,26 +535,25 @@ const Dashboard = () => {
         claiming={claimingWelcome}
       />
 
-      {/* Daily gift dialog - SECOND, only if welcome bonus is not shown */}
-      {!showWelcomeBonus && (
-        <DailyGiftDialog
-          open={showDailyGift}
-          onClose={() => setShowDailyGift(false)}
-          onClaim={handleClaimDailyGift}
-          currentStreak={currentStreak}
-          nextReward={nextReward}
-          canClaim={canClaim}
-          isPremium={isPremiumSubscriber}
-        />
-      )}
+      {/* Daily gift dialog - SECOND */}
+      <DailyGiftDialog
+        open={showDailyGift && !showWelcomeBonus}
+        onClose={() => setShowDailyGift(false)}
+        onClaim={handleClaimDailyGift}
+        currentStreak={currentStreak}
+        nextReward={nextReward}
+        canClaim={canClaim}
+        isPremium={isPremiumSubscriber}
+      />
 
-      {/* Subscription promo dialog - THIRD, only if welcome bonus and daily gift are not shown */}
-      {!showWelcomeBonus && !showDailyGift && (
-        <SubscriptionPromoDialog 
-          open={showSubscriptionPromo}
-          onClose={() => setShowSubscriptionPromo(false)}
-        />
-      )}
+      {/* Subscription promo dialog - THIRD */}
+      <SubscriptionPromoDialog 
+        open={showSubscriptionPromo && !showWelcomeBonus && !showDailyGift}
+        onClose={() => {
+          console.log('[PROMO] Dialog closed by user');
+          setShowSubscriptionPromo(false);
+        }}
+      />
 
       {/* Booster activation dialog */}
       <BoosterActivationDialog
