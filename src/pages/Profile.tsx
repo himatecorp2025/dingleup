@@ -82,8 +82,8 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] pb-24 overflow-x-hidden overflow-y-auto">
       <div className="max-w-md mx-auto p-4">
-        {/* Header - Egységes vissza gomb */}
-        <div className="flex items-center justify-between mb-6 pt-4">
+        {/* Header - Back button and Avatar in same line */}
+        <div className="flex items-center justify-between mb-4 pt-2">
           <button
             onClick={() => navigate('/dashboard')}
             className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
@@ -91,13 +91,11 @@ const Profile = () => {
           >
             <LogOut className="w-6 h-6 -scale-x-100" />
           </button>
-        </div>
 
-        {/* Avatar Section */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="relative mb-4">
+          {/* Avatar on the same line as back button */}
+          <div className="relative">
             <div 
-              className="w-32 h-32 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-4 border-purple-400 shadow-xl shadow-purple-500/50"
+              className="w-20 h-20 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-4 border-purple-400 shadow-xl shadow-purple-500/50"
             >
               {profile.avatar_url ? (
                 <img 
@@ -106,7 +104,7 @@ const Profile = () => {
                   className="w-full h-full object-cover clip-hexagon"
                 />
               ) : (
-                <span className="text-5xl font-black text-white">
+                <span className="text-3xl font-black text-white">
                   {getInitials(profile.username)}
                 </span>
               )}
@@ -114,9 +112,9 @@ const Profile = () => {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="absolute bottom-0 right-0 bg-purple-600 hover:bg-purple-700 p-3 rounded-full border-2 border-purple-400 shadow-lg transition-all"
+              className="absolute bottom-0 right-0 bg-purple-600 hover:bg-purple-700 p-2 rounded-full border-2 border-purple-400 shadow-lg transition-all"
             >
-              <Camera className="w-5 h-5 text-white" />
+              <Camera className="w-4 h-4 text-white" />
             </button>
             <input
               ref={fileInputRef}
@@ -126,6 +124,10 @@ const Profile = () => {
               className="hidden"
             />
           </div>
+        </div>
+
+        {/* User Info */}
+        <div className="text-center mb-6">
           <h1 className="text-3xl font-black text-white mb-1">{profile.username}</h1>
           <p className="text-purple-300">{profile.email}</p>
         </div>

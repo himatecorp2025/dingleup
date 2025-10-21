@@ -1,25 +1,27 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Copy, Check, Gift, Coins, Heart, Users } from 'lucide-react';
+import { LogOut, Copy, Gift, Coins, Heart, Users, Check, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import BottomNav from '@/components/BottomNav';
 
-const INVITATION_REWARDS = [
-  { count: 1, coins: 200, lives: 3 },
-  { count: 3, coins: 1000, lives: 5 },
-  { count: 5, coins: 2500, lives: 10 },
-  { count: 10, coins: 6000, lives: 20 }
-];
+interface InvitedFriend {
+  id: string;
+  invited_email: string | null;
+  invited_user_id: string | null;
+  accepted: boolean;
+  created_at: string;
+  accepted_at: string | null;
+}
 
 const Invitation = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string>('');
   const [invitationCode, setInvitationCode] = useState('');
   const [invitationLink, setInvitationLink] = useState('');
-  const [copied, setCopied] = useState(false);
   const [invitedCount, setInvitedCount] = useState(0);
+  const [invitedFriends, setInvitedFriends] = useState<InvitedFriend[]>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -46,15 +48,17 @@ const Invitation = () => {
       setInvitationCode(profile.invitation_code);
       setInvitationLink(`${window.location.origin}/register?code=${profile.invitation_code}`);
 
-      // Count accepted invitations
-      const { count, error: countError } = await supabase
+      // Get all invitations (accepted and pending)
+      const { data: invitations, error: invitationsError } = await supabase
         .from('invitations')
-        .select('*', { count: 'exact', head: true })
+        .select('*')
         .eq('inviter_id', uid)
-        .eq('accepted', true);
+        .order('created_at', { ascending: false });
 
-      if (countError) throw countError;
-      setInvitedCount(count || 0);
+      if (invitationsError) throw invitationsError;
+      
+      setInvitedFriends(invitations || []);
+      setInvitedCount(invitations?.filter(i => i.accepted).length || 0);
     } catch (error) {
       console.error('Error fetching invitation data:', error);
       toast.error('Hiba a meghívó adatok betöltésekor');
@@ -71,110 +75,200 @@ const Invitation = () => {
     }
   };
 
-  return (
-    <div className="h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-3 overflow-hidden">
-      {/* Back button - same style as shop */}
-      <button
-        onClick={() => navigate('/dashboard')}
-        className="absolute top-3 left-3 p-2 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50 z-10"
-        title="Vissza"
-      >
-        <LogOut className="w-5 h-5 -scale-x-100" />
-      </button>
+  const getRewardForCount = (count: number) => {
+    if (count === 1 || count === 2) return { coins: 200, lives: 3 };
+    if (count >= 3 && count <= 9) return { coins: 1000, lives: 5 };
+    if (count >= 10) return { coins: 6000, lives: 20 };
+    return { coins: 0, lives: 0 };
+  };
 
-      <div className="max-w-md mx-auto pt-12 h-full overflow-hidden">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] pb-20">
+      {/* Back button */}
+      <div className="fixed top-4 left-4 z-50">
+        <button
+          onClick={() => {
+            navigate('/dashboard');
+          }}
+          className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+          title="Vissza"
+        >
+          <LogOut className="w-6 h-6 -scale-x-100" />
+        </button>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4 pt-20 pb-8">
         {/* Header */}
-        <div className="text-center mb-3">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <Users className="w-6 h-6 text-purple-400" />
-            <h1 className="text-xl font-black text-white">Hívd meg barátaidat!</h1>
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Users className="w-8 h-8 text-purple-400" />
+            <h1 className="text-3xl font-black text-white">Hívd meg barátaidat!</h1>
           </div>
-          <p className="text-sm text-white/70">Osztd meg meghívó kódodat vagy linkedet</p>
+          <p className="text-white/70">Oszd meg meghívó kódodat vagy linkedet</p>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-4">
           {/* Invitation Code */}
-          <div className="bg-purple-900/30 rounded-lg p-2 border border-purple-500/30">
-            <label className="text-xs font-medium mb-1 block text-white">Meghívó kód</label>
+          <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
+            <label className="text-sm font-bold mb-2 block text-white">Meghívó kód</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={invitationCode}
                 readOnly
-                className="flex-1 px-3 py-1.5 bg-black/40 border border-purple-500/50 rounded-lg font-mono text-sm text-center text-white"
+                className="flex-1 px-4 py-3 bg-black/40 border-2 border-purple-500/50 rounded-lg font-mono text-lg text-center text-white"
               />
               <Button
                 onClick={() => copyToClipboard(invitationCode, 'code')}
-                className="bg-purple-600 hover:bg-purple-700 text-white h-auto px-2"
-                size="icon"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4"
               >
-                {<Copy className="w-4 h-4" />}
+                <Copy className="w-5 h-5" />
               </Button>
             </div>
           </div>
 
           {/* Invitation Link */}
-          <div className="bg-purple-900/30 rounded-lg p-2 border border-purple-500/30">
-            <label className="text-xs font-medium mb-1 block text-white">Meghívó link</label>
+          <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
+            <label className="text-sm font-bold mb-2 block text-white">Meghívó link</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={invitationLink}
                 readOnly
-                className="flex-1 px-3 py-1.5 bg-black/40 border border-purple-500/50 rounded-lg text-xs text-white"
+                className="flex-1 px-4 py-3 bg-black/40 border-2 border-purple-500/50 rounded-lg text-sm text-white overflow-hidden text-ellipsis"
               />
               <Button
                 onClick={() => copyToClipboard(invitationLink, 'link')}
-                className="bg-purple-600 hover:bg-purple-700 text-white h-auto px-2"
-                size="icon"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4"
               >
-                {<Copy className="w-4 h-4" />}
+                <Copy className="w-5 h-5" />
               </Button>
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="bg-purple-900/30 rounded-lg p-2 text-center border border-purple-500/30">
-            <div className="flex items-center justify-center gap-2 mb-1">
-              <Gift className="w-4 h-4 text-yellow-400" />
-              <span className="text-xs font-medium text-white">Meghívott barátok</span>
+          {/* Rewards Section */}
+          <div className="bg-gradient-to-br from-yellow-900/40 to-purple-900/40 rounded-xl p-5 border-2 border-yellow-500/30">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Gift className="w-6 h-6 text-yellow-400" />
+              <h2 className="text-xl font-black text-white">Jutalmak</h2>
             </div>
-            <p className="text-2xl font-bold text-yellow-400">{invitedCount}</p>
+            
+            <div className="space-y-2">
+              <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                invitedCount >= 1 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
+              }`}>
+                <span className="text-white font-bold">1 barát {invitedCount >= 1 && '✓'}</span>
+                <div className="flex gap-3">
+                  <span className="flex items-center gap-1 text-white">
+                    <Coins className="w-4 h-4 text-yellow-500" /> 200
+                  </span>
+                  <span className="flex items-center gap-1 text-white">
+                    <Heart className="w-4 h-4 text-red-500" /> 3
+                  </span>
+                </div>
+              </div>
+
+              <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                invitedCount >= 3 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
+              }`}>
+                <span className="text-white font-bold">3 barát {invitedCount >= 3 && '✓'}</span>
+                <div className="flex gap-3">
+                  <span className="flex items-center gap-1 text-white">
+                    <Coins className="w-4 h-4 text-yellow-500" /> 1000
+                  </span>
+                  <span className="flex items-center gap-1 text-white">
+                    <Heart className="w-4 h-4 text-red-500" /> 5
+                  </span>
+                </div>
+              </div>
+
+              <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                invitedCount >= 5 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
+              }`}>
+                <span className="text-white font-bold">5 barát {invitedCount >= 5 && '✓'}</span>
+                <div className="flex gap-3">
+                  <span className="flex items-center gap-1 text-white">
+                    <Coins className="w-4 h-4 text-yellow-500" /> 2500
+                  </span>
+                  <span className="flex items-center gap-1 text-white">
+                    <Heart className="w-4 h-4 text-red-500" /> 10
+                  </span>
+                </div>
+              </div>
+
+              <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                invitedCount >= 10 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
+              }`}>
+                <span className="text-white font-bold">10 barát {invitedCount >= 10 && '✓'}</span>
+                <div className="flex gap-3">
+                  <span className="flex items-center gap-1 text-white">
+                    <Coins className="w-4 h-4 text-yellow-500" /> 6000
+                  </span>
+                  <span className="flex items-center gap-1 text-white">
+                    <Heart className="w-4 h-4 text-red-500" /> 20
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-white/60 mt-4 text-center">
+              A sorozat minden 60 napban nullázódik. Ezek a jutalmak minden barátodért jár!
+            </p>
           </div>
 
-          {/* Rewards */}
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-xs text-white mb-1">Jutalmak:</h3>
-            {INVITATION_REWARDS.map((reward) => {
-              const achieved = invitedCount >= reward.count;
-              return (
-                <div
-                  key={reward.count}
-                  className={`flex items-center justify-between p-2 rounded-lg border ${
-                    achieved
-                      ? 'bg-purple-600/30 border-purple-400'
-                      : 'bg-black/40 border-purple-500/30'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs font-medium ${achieved ? 'text-purple-300' : 'text-white/70'}`}>
-                      {reward.count} barát
-                    </span>
-                    {achieved && <Check className="w-4 h-4 text-purple-300" />}
-                  </div>
-                  <div className="flex items-center gap-2 text-xs">
-                    <div className="flex items-center gap-1">
-                      <Coins className="w-4 h-4 text-yellow-500" />
-                      <span className="font-bold text-white">{reward.coins}</span>
+          {/* Invited Friends List */}
+          <div className="bg-purple-900/30 rounded-xl p-5 border-2 border-purple-500/30">
+            <h2 className="text-lg font-black text-white mb-4 flex items-center gap-2">
+              <Users className="w-5 h-5 text-purple-400" />
+              Meghívott barátok ({invitedFriends.length})
+            </h2>
+            
+            {invitedFriends.length === 0 ? (
+              <p className="text-white/60 text-center py-4">Még nem hívtál meg senkit</p>
+            ) : (
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {invitedFriends.map((friend) => (
+                  <div
+                    key={friend.id}
+                    className={`flex items-center justify-between p-3 rounded-lg border ${
+                      friend.accepted
+                        ? 'bg-green-900/20 border-green-500/30'
+                        : 'bg-black/40 border-purple-500/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      {friend.accepted ? (
+                        <Check className="w-5 h-5 text-green-400" />
+                      ) : (
+                        <X className="w-5 h-5 text-gray-500" />
+                      )}
+                      <div>
+                        <p className="text-white font-medium">
+                          {friend.invited_email || 'Ismeretlen'}
+                        </p>
+                        <p className="text-xs text-white/60">
+                          {friend.accepted 
+                            ? `Csatlakozott: ${new Date(friend.accepted_at!).toLocaleDateString()}`
+                            : 'Függőben'}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Heart className="w-4 h-4 text-red-500" />
-                      <span className="font-bold text-white">{reward.lives}</span>
-                    </div>
+                    {friend.accepted && (
+                      <div className="flex gap-2 text-xs">
+                        <span className="flex items-center gap-1 text-yellow-400">
+                          <Coins className="w-3 h-3" />
+                          {getRewardForCount(invitedCount).coins}
+                        </span>
+                        <span className="flex items-center gap-1 text-red-400">
+                          <Heart className="w-3 h-3" />
+                          {getRewardForCount(invitedCount).lives}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

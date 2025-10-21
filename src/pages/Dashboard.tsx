@@ -15,6 +15,7 @@ import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
 import backmusic from '@/assets/backmusic.mp3';
+import { toast } from 'sonner';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -305,7 +306,27 @@ const Dashboard = () => {
 
         {/* Booster Button */}
         <button
-          onClick={() => setShowBoosterActivation(true)}
+          onClick={async () => {
+            // Ha már van aktív booster, mutassuk meg a részleteket
+            if (hasActiveBooster) {
+              setShowBoosterActivation(true);
+              return;
+            }
+            
+            // Ha nincs elérhető booster, irányítsuk a boltba
+            if (availableBoosters.length === 0) {
+              toast.error('Nincs elérhető booster! Vásárolj egyet a boltban.');
+              navigate('/shop');
+              return;
+            }
+            
+            // Egyből aktiváljuk az első elérhető boostert
+            const firstBooster = availableBoosters[0];
+            const success = await activateBooster(firstBooster.id);
+            if (success) {
+              window.location.reload();
+            }
+          }}
           className={`w-full py-2.5 px-5 mb-3 bg-gradient-to-r ${hasActiveBooster ? 'from-orange-500 via-orange-400 to-orange-500' : 'from-yellow-500 via-yellow-400 to-yellow-500'} ${hasActiveBooster ? 'text-white' : 'text-black'} font-black text-lg rounded-2xl border-2 ${hasActiveBooster ? 'border-orange-600 shadow-orange-500/40' : 'border-yellow-600 shadow-yellow-500/40'} shadow-xl hover:shadow-yellow-500/60 hover:scale-105 transition-all relative`}
           style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         >
