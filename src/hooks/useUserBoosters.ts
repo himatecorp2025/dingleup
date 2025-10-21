@@ -41,10 +41,10 @@ export const useUserBoosters = (userId: string | undefined) => {
       }
 
       const boosterConfig = {
-        DoubleSpeed: { multiplier: 2, duration: 60, maxLives: 20 },
-        MegaSpeed: { multiplier: 4, duration: 60, maxLives: 25 },
-        GigaSpeed: { multiplier: 12, duration: 60, maxLives: 30 },
-        DingleSpeed: { multiplier: 24, duration: 60, maxLives: 35 }
+        DoubleSpeed: { multiplier: 2, duration: 60, maxLives: 25 },
+        MegaSpeed: { multiplier: 4, duration: 60, maxLives: 35 },
+        GigaSpeed: { multiplier: 12, duration: 60, maxLives: 75 },
+        DingleSpeed: { multiplier: 24, duration: 60, maxLives: 135 }
       }[booster.booster_type];
 
       const now = new Date();
