@@ -208,15 +208,15 @@ const Dashboard = () => {
       
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4 pb-24 max-w-screen-lg mx-auto relative z-10">
         {/* Top Section */}
-        <div className="flex items-start justify-between mb-3">
-      {/* Left: Greeting */}
-          <div className="flex flex-col items-start gap-2">
-            <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">Szia, {profile.username}!</h1>
-          </div>
+        <div className="flex flex-col gap-3 mb-3">
+          {/* First Row: Username and Stats */}
+          <div className="flex items-start justify-between">
+            {/* Left: Greeting */}
+            <div className="flex flex-col items-start">
+              <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">Szia, {profile.username}!</h1>
+            </div>
 
-          {/* Right: Stats & Avatar */}
-          <div className="flex flex-col items-end gap-2">
-            {/* Stats Row */}
+            {/* Right: Stats & Avatar */}
             <div className="flex items-center gap-1.5 sm:gap-2">
               {/* Rank Hexagon */}
               <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.5)] neon-border">
@@ -262,24 +262,30 @@ const Dashboard = () => {
                 )}
               </button>
             </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col gap-1.5 sm:gap-2 w-40 sm:w-52 flex-shrink-0">
-              <div className="w-full">
-                <WeeklyRankingsCountdown compact />
-              </div>
+          {/* Second Row: Weekly Countdown and Action Buttons */}
+          <div className="flex items-center justify-between gap-2">
+            {/* Left: Weekly Countdown */}
+            <div className="flex-shrink-0 w-40 sm:w-52">
+              <WeeklyRankingsCountdown compact />
+            </div>
+
+            {/* Right: Action Buttons */}
+            <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={() => navigate('/invitation')}
-                className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-[10px] sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                className="py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-[10px] sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
                 <Share2 className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
-                PROFIL MEGOSZTÁSA
+                <span className="hidden sm:inline">PROFIL MEGOSZTÁSA</span>
+                <span className="sm:hidden">MEGOSZTÁS</span>
               </button>
               
               <button
                 onClick={() => navigate('/shop')}
-                className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-[10px] sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(234,179,8,0.6)] gold-glow"
+                className="py-1.5 sm:py-2 px-3 sm:px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-[10px] sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(234,179,8,0.6)] gold-glow"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
                 <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
