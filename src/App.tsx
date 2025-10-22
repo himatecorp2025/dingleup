@@ -31,7 +31,11 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const checkDevice = () => {
-      setIsMobileOrTablet(window.innerWidth <= 1024);
+      // A fejlesztés során mindig engedélyezzük (preview mode)
+      const isDevelopment = window.location.hostname === 'localhost' || 
+                           window.location.hostname.includes('lovable.app') ||
+                           window.location.hostname.includes('lovable.dev');
+      setIsMobileOrTablet(isDevelopment || window.innerWidth <= 1024);
     };
     checkDevice();
     window.addEventListener('resize', checkDevice);
