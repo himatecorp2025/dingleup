@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 export const useGeniusPromo = (
   userId: string | undefined,
   isPremium: boolean,
-  hasOtherDialogs: boolean
+  hasOtherDialogs: boolean,
+  dailyGiftJustClaimed: boolean = false
 ) => {
   const [shouldShow, setShouldShow] = useState(false);
 
@@ -15,6 +16,35 @@ export const useGeniusPromo = (
 
     const checkAndShow = () => {
       const now = Date.now();
+      const today = new Date().toISOString().split('T')[0];
+      const dailyFirstShownKey = `subPromoShownDate`;
+      const dailyFirstShown = localStorage.getItem(dailyFirstShownKey);
+      
+      // PRIORITY: Daily first show after Daily Gift
+      if (dailyGiftJustClaimed && dailyFirstShown !== today) {
+        setShouldShow(true);
+        localStorage.setItem(dailyFirstShownKey, today);
+        
+        // Track in promo data
+        const promoDataKey = `genius_promo_data_${userId}`;
+        const storedData = localStorage.getItem(promoDataKey);
+        let promoData = storedData ? JSON.parse(storedData) : { date: today, count: 0, lastShown: 0, cooldownUntil: 0 };
+        if (promoData.date !== today) {
+          promoData = { date: today, count: 0, lastShown: 0, cooldownUntil: 0 };
+        }
+        promoData.count += 1;
+        promoData.lastShown = now;
+        promoData.cooldownUntil = now + (2 * 60 * 60 * 1000);
+        localStorage.setItem(promoDataKey, JSON.stringify(promoData));
+        
+        trackEvent('popup_impression', 'daily_first_sub');
+        return;
+      }
+
+      // If daily first already shown today, don't show again as "mandatory"
+      if (dailyFirstShown === today) {
+        return;
+      }
       
       // Check first eligible time (30-60 minutes after first login)
       const firstEligibleKey = `genius_promo_first_eligible_${userId}`;
@@ -32,8 +62,6 @@ export const useGeniusPromo = (
       if (now < parseInt(firstEligibleTime)) {
         return;
       }
-      
-      const today = new Date().toDateString();
       
       // Get today's data
       const promoDataKey = `genius_promo_data_${userId}`;
@@ -80,13 +108,13 @@ export const useGeniusPromo = (
       trackEvent('popup_impression', 'sub_promo');
     };
 
-    // Show after 30 seconds
+    // Show after 30 seconds (or immediately if daily gift just claimed)
     const timer = setTimeout(() => {
       checkAndShow();
-    }, 30000);
+    }, dailyGiftJustClaimed ? 0 : 30000);
 
     return () => clearTimeout(timer);
-  }, [userId, isPremium, hasOtherDialogs]);
+  }, [userId, isPremium, hasOtherDialogs, dailyGiftJustClaimed]);
 
   const closePromo = () => {
     setShouldShow(false);

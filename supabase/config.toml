@@ -57,6 +57,9 @@ verify_jwt = true
 [functions.process-speed-ticks]
 verify_jwt = false
 
+[functions.log-activity-ping]
+verify_jwt = true
+
 # Cron job for automatic life regeneration every minute
 [[edge_runtime.cron]]
 schedule = "* * * * *"
@@ -66,3 +69,4 @@ function = "regenerate-lives-background"
 [[edge_runtime.cron]]
 schedule = "*/30 * * * * *"
 function = "process-speed-ticks"
+

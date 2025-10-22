@@ -13,6 +13,7 @@ import { useScrollBehavior } from '@/hooks/useScrollBehavior';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useWallet } from '@/hooks/useWallet';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
+import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
@@ -36,6 +37,7 @@ const Dashboard = () => {
   const [userId, setUserId] = useState<string | undefined>();
   const isHandheld = usePlatformDetection();
   const { canMountModals } = useScrollBehavior();
+  const { markActive } = useActivityTracker('route_view');
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { walletData, serverDriftMs, refetchWallet } = useWallet(userId);
   
@@ -48,6 +50,7 @@ const Dashboard = () => {
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
   const [showPromo, setShowPromo] = useState(false);
+  const [dailyGiftJustClaimed, setDailyGiftJustClaimed] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
   // Promo scheduler with time intelligence
@@ -56,7 +59,8 @@ const Dashboard = () => {
   const { shouldShow: shouldShowGeniusPromo, closePromo, handleSubscribe, handleLater: handlePromoLater } = useGeniusPromo(
     userId,
     profile?.is_subscribed || false,
-    hasOtherDialogs
+    hasOtherDialogs,
+    dailyGiftJustClaimed
   );
   
   const hasActiveBooster = profile?.speed_booster_active || false;
@@ -497,6 +501,10 @@ return (
       <DailyGiftDialog
         open={showDailyGift && !showWelcomeBonus}
         onClaim={handleClaimDailyGift}
+        onClaimSuccess={() => {
+          setDailyGiftJustClaimed(true);
+          setTimeout(() => setDailyGiftJustClaimed(false), 2000);
+        }}
         onLater={() => {
           handleDailyLater();
           setShowDailyGift(false);

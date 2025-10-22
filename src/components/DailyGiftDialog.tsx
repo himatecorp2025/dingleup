@@ -6,6 +6,7 @@ import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 interface DailyGiftDialogProps {
   open: boolean;
   onClaim: () => void;
+  onClaimSuccess?: () => void;
   onLater: () => void;
   weeklyEntryCount: number;
   nextReward: number;
@@ -17,13 +18,21 @@ const DAILY_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 
 const DailyGiftDialog = ({ 
   open, 
-  onClaim, 
+  onClaim,
+  onClaimSuccess,
   onLater,
   weeklyEntryCount, 
   nextReward, 
   canClaim,
   isPremium = false 
 }: DailyGiftDialogProps) => {
+  const handleClaim = () => {
+    onClaim();
+    // Signal that claim was successful - trigger genius promo
+    if (onClaimSuccess) {
+      setTimeout(() => onClaimSuccess(), 500);
+    }
+  };
   const isHandheld = usePlatformDetection();
 
   // Don't render on desktop/laptop
@@ -138,7 +147,7 @@ const DailyGiftDialog = ({
           {canClaim ? (
           <div className="space-y-3">
               <button
-                onClick={onClaim}
+                onClick={handleClaim}
                 className="w-full bg-[hsl(var(--dup-green-500))] hover:bg-[hsl(var(--dup-green-400))] text-white font-black text-lg sm:text-xl py-4 rounded-[12px] border border-[hsl(var(--dup-green-700))] shadow-[0_0_20px_hsl(var(--dup-green-500)/0.6)] transition-all focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] flex items-center justify-center gap-2"
               >
                 <Gift className="w-6 h-6" />

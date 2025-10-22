@@ -418,6 +418,7 @@ export type Database = {
           speed_lives_per_tick: number | null
           speed_tick_interval_seconds: number | null
           speed_tick_last_processed_at: string | null
+          sub_promo_last_shown: string | null
           subscription_tier: string | null
           total_correct_answers: number
           updated_at: string | null
@@ -451,6 +452,7 @@ export type Database = {
           speed_lives_per_tick?: number | null
           speed_tick_interval_seconds?: number | null
           speed_tick_last_processed_at?: string | null
+          sub_promo_last_shown?: string | null
           subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
@@ -484,6 +486,7 @@ export type Database = {
           speed_lives_per_tick?: number | null
           speed_tick_interval_seconds?: number | null
           speed_tick_last_processed_at?: string | null
+          sub_promo_last_shown?: string | null
           subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
@@ -655,6 +658,57 @@ export type Database = {
           stripe_customer_id?: string
           stripe_subscription_id?: string
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_activity_daily: {
+        Row: {
+          date: string
+          histogram: number[]
+          top_slots: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          date: string
+          histogram?: number[]
+          top_slots?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          date?: string
+          histogram?: number[]
+          top_slots?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_activity_pings: {
+        Row: {
+          bucket_start: string
+          created_at: string
+          device_class: string
+          id: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          bucket_start: string
+          created_at?: string
+          device_class: string
+          id?: string
+          source: string
+          user_id: string
+        }
+        Update: {
+          bucket_start?: string
+          created_at?: string
+          device_class?: string
+          id?: string
+          source?: string
           user_id?: string
         }
         Relationships: []
