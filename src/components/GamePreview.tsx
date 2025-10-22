@@ -213,12 +213,22 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   }, [gameState, canSwipe, isAnimating, selectedAnswer, showExitDialog, touchStartY]);
 
   const handleSwipeUp = async () => {
-    // If error banner visible and has coins, spend coins and continue
+    // If error banner visible and user wants to continue
     if (errorBannerVisible && profile) {
       const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
-      if (profile.coins >= cost) {
-        await handleContinueAfterMistake();
+      
+      // Check if user has enough coins NOW (when they try to continue)
+      if (profile.coins < cost) {
+        // Not enough coins - show insufficient dialog NOW
+        setInsufficientType('coins');
+        setRequiredAmount(cost);
+        setShowInsufficientDialog(true);
+        setErrorBannerVisible(false);
+        return;
       }
+      
+      // Has enough coins - continue
+      await handleContinueAfterMistake();
       return;
     }
 
@@ -252,17 +262,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setSelectedAnswer('__timeout__');
     setContinueType('timeout');
     
-    // Check if user has enough coins to continue
-    if (!profile || profile.coins < TIMEOUT_CONTINUE_COST) {
-      // Not enough coins - show insufficient dialog immediately
-      setInsufficientType('coins');
-      setRequiredAmount(TIMEOUT_CONTINUE_COST);
-      setShowInsufficientDialog(true);
-    } else {
-      // Has enough coins - show banner for swipe up to continue
-      setErrorBannerVisible(true);
-      setErrorBannerMessage(`⏰ Lejárt az idő - ${TIMEOUT_CONTINUE_COST} aranyérme`);
-    }
+    // Always show banner first - DO NOT check for insufficient coins here
+    setErrorBannerVisible(true);
+    setErrorBannerMessage(`⏰ Lejárt az idő - ${TIMEOUT_CONTINUE_COST} aranyérme`);
   };
 
   const shuffleAnswers = (questionSet: any[]): Question[] => {
@@ -448,17 +450,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setSelectedAnswer(answerKey);
     setContinueType('wrong');
     
-    // Check if user has enough coins to continue
-    if (!profile || profile.coins < CONTINUE_AFTER_WRONG_COST) {
-      // Not enough coins - show insufficient dialog immediately
-      setInsufficientType('coins');
-      setRequiredAmount(CONTINUE_AFTER_WRONG_COST);
-      setShowInsufficientDialog(true);
-    } else {
-      // Has enough coins - show banner for swipe up to continue
+    // Always show banner first - let user see the red highlight
+    // DO NOT check for insufficient coins here - only when they try to continue
+    setTimeout(() => {
       setErrorBannerVisible(true);
       setErrorBannerMessage(`❌ Rossz válasz - ${CONTINUE_AFTER_WRONG_COST} aranyérme`);
-    }
+    }, 500);
   };
 
   const handleNextQuestion = async () => {
