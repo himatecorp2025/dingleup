@@ -923,6 +923,10 @@ export type Database = {
         Args: { amount: number }
         Returns: boolean
       }
+      start_speed_booster: {
+        Args: { p_duration_minutes?: number; p_multiplier: number }
+        Returns: Json
+      }
       use_help: {
         Args: { p_help_type: string }
         Returns: Json
