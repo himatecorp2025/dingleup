@@ -286,6 +286,7 @@ return (
                   livesCurrent={profile.lives}
                   livesMax={profile.max_lives}
                   serverDriftMs={serverDriftMs}
+                  speedBoosterActive={profile.speed_booster_active || false}
                 />
               </div>
 

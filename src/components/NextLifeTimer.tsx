@@ -5,19 +5,25 @@ interface NextLifeTimerProps {
   livesCurrent: number;
   livesMax: number;
   serverDriftMs?: number;
+  speedBoosterActive?: boolean;
 }
 
 export const NextLifeTimer = ({ 
   nextLifeAt, 
   livesCurrent, 
   livesMax,
-  serverDriftMs = 0 
+  serverDriftMs = 0,
+  speedBoosterActive = false
 }: NextLifeTimerProps) => {
   const [remainingMs, setRemainingMs] = useState(0);
 
   useEffect(() => {
-    // Don't show timer if at max lives or no next life time
-    if (livesCurrent >= livesMax || !nextLifeAt) {
+    // Show timer only if:
+    // 1. Speed booster is active OR
+    // 2. Lives are below 15
+    const shouldShowTimer = speedBoosterActive || livesCurrent < 15;
+    
+    if (!shouldShowTimer || !nextLifeAt || livesCurrent >= livesMax) {
       setRemainingMs(0);
       return;
     }
@@ -37,10 +43,11 @@ export const NextLifeTimer = ({
     const intervalId = setInterval(updateRemaining, 1000);
 
     return () => clearInterval(intervalId);
-  }, [nextLifeAt, livesCurrent, livesMax, serverDriftMs]);
+  }, [nextLifeAt, livesCurrent, livesMax, serverDriftMs, speedBoosterActive]);
 
-  // Don't render if at max lives or no remaining time
-  if (livesCurrent >= livesMax || remainingMs === 0) {
+  // Don't render if conditions not met
+  const shouldShowTimer = speedBoosterActive || livesCurrent < 15;
+  if (!shouldShowTimer || livesCurrent >= livesMax || remainingMs === 0) {
     return null;
   }
 
@@ -52,10 +59,12 @@ export const NextLifeTimer = ({
 
   return (
     <div 
-      className="text-xs text-[hsl(var(--dup-crimson-300))] mt-1"
-      title="Perc:másodperc múlva +1 élet"
+      className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-yellow-500 border-2 border-yellow-400 rounded px-2 py-0.5 shadow-[0_0_10px_rgba(234,179,8,0.6)]"
+      title="Következő élet érkezése"
     >
-      köv. élet: {formattedTime}
+      <span className="text-[10px] font-black text-black drop-shadow">
+        {formattedTime}
+      </span>
     </div>
   );
 };
