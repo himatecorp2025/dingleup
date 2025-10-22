@@ -1,6 +1,7 @@
 import { HexagonButton } from './HexagonButton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
-import { Gift, Coins, Sun, Sparkles } from 'lucide-react';
+import { Gift, Coins, Sun, Sparkles, Star, Zap } from 'lucide-react';
+import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 
 interface DailyGiftDialogProps {
   open: boolean;
@@ -23,46 +24,54 @@ const DailyGiftDialog = ({
   canClaim,
   isPremium = false 
 }: DailyGiftDialogProps) => {
+  const isHandheld = usePlatformDetection();
+
+  // Don't render on desktop/laptop
+  if (!isHandheld || !open) return null;
   
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="w-[95vw] max-w-md bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-4 border-yellow-500/70 shadow-2xl shadow-yellow-500/50 overflow-hidden"
+        className="w-[95vw] max-w-md bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] border-4 border-cyan-400/70 shadow-2xl shadow-cyan-500/50 overflow-hidden rounded-[20px]"
         style={{ 
-          paddingTop: 'env(safe-area-inset-top)',
-          paddingBottom: 'env(safe-area-inset-bottom)' 
+          paddingTop: 'max(env(safe-area-inset-top), 1rem)',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)' 
         }}
       >
-        {/* Casino lights animation */}
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-90 animate-pulse z-50"></div>
-        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-red-500 to-yellow-500 opacity-90 animate-pulse z-50" style={{ animationDelay: '0.5s' }}></div>
+        {/* Casino lights animation - cyan/blue theme */}
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 opacity-90 animate-pulse z-50"></div>
+        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 opacity-90 animate-pulse z-50" style={{ animationDelay: '0.5s' }}></div>
         
-        {/* Floating sparkles */}
+        {/* Floating sparkles - blue/cyan theme */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <Sparkles className="absolute top-10 left-10 w-6 h-6 text-yellow-400 animate-pulse" style={{ animationDuration: '2s' }} />
-          <Sparkles className="absolute top-20 right-10 w-4 h-4 text-red-400 animate-pulse" style={{ animationDuration: '3s', animationDelay: '0.5s' }} />
-          <Sparkles className="absolute bottom-20 left-20 w-5 h-5 text-purple-400 animate-pulse" style={{ animationDuration: '2.5s', animationDelay: '1s' }} />
+          <Star className="absolute top-8 left-8 w-8 h-8 text-cyan-300 animate-pulse drop-shadow-[0_0_10px_rgba(103,232,249,0.8)]" style={{ animationDuration: '1.5s' }} />
+          <Sparkles className="absolute top-16 right-10 w-6 h-6 text-blue-400 animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
+          <Zap className="absolute bottom-20 left-16 w-7 h-7 text-purple-400 animate-pulse drop-shadow-[0_0_10px_rgba(192,132,252,0.8)]" style={{ animationDuration: '1.8s', animationDelay: '0.6s' }} />
+          <Star className="absolute bottom-24 right-12 w-6 h-6 text-pink-400 animate-pulse" style={{ animationDuration: '2.2s', animationDelay: '0.9s' }} />
         </div>
         
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-black text-center bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg animate-pulse">
+        <DialogHeader className="relative z-10">
+          <DialogTitle className="text-2xl sm:text-3xl font-black text-center bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-lg animate-pulse">
             🎁 Napi ajándék 🎁
           </DialogTitle>
-          <DialogDescription className="text-center text-sm text-yellow-300/90 font-semibold">
+          <DialogDescription className="text-center text-base sm:text-lg text-cyan-100 font-bold mt-2">
             Ez a(z) {weeklyEntryCount + 1}. belépésed ezen a héten.
           </DialogDescription>
         </DialogHeader>
 
-        {/* Sun icon if can claim */}
+        {/* Sun icon if can claim - vibrant */}
         {canClaim && (
-          <div className="flex justify-center py-4">
-            <Sun className="w-32 h-32 text-yellow-400 animate-pulse drop-shadow-2xl" />
+          <div className="flex justify-center py-6 relative z-10">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/40 via-orange-400/40 to-yellow-400/40 blur-3xl rounded-full animate-pulse"></div>
+              <Sun className="relative w-36 h-36 sm:w-40 sm:h-40 text-yellow-300 animate-pulse drop-shadow-[0_0_30px_rgba(253,224,71,1)]" />
+            </div>
           </div>
         )}
 
-        <div className="space-y-4">
-          {/* Streak display */}
-          <div className="grid grid-cols-7 gap-2">
+        <div className="space-y-5 relative z-10">
+          {/* Streak display - enhanced */}
+          <div className="grid grid-cols-7 gap-2 sm:gap-3">
             {DAILY_REWARDS.map((reward, index) => {
               const isCompleted = index < weeklyEntryCount;
               const isCurrent = index === weeklyEntryCount;
@@ -71,14 +80,14 @@ const DailyGiftDialog = ({
                 <div
                   key={index}
                   className={`
-                    aspect-square rounded-xl flex flex-col items-center justify-center p-2
-                    ${isCompleted ? 'bg-yellow-500/30 border-2 border-yellow-500' : ''}
-                    ${isCurrent ? 'bg-yellow-500/20 border-2 border-yellow-500 border-dashed animate-pulse' : ''}
-                    ${!isCompleted && !isCurrent ? 'bg-gray-800 border-2 border-gray-600' : ''}
+                    aspect-square rounded-[10px] flex flex-col items-center justify-center p-2 transition-all shadow-lg
+                    ${isCompleted ? 'bg-gradient-to-br from-cyan-500/40 to-blue-500/40 border-2 border-cyan-400 shadow-cyan-400/50' : ''}
+                    ${isCurrent ? 'bg-gradient-to-br from-yellow-500/40 to-orange-500/40 border-2 border-yellow-400 border-dashed animate-pulse shadow-yellow-400/50' : ''}
+                    ${!isCompleted && !isCurrent ? 'bg-gray-800/50 border-2 border-gray-600' : ''}
                   `}
                 >
-                  <span className="text-xs font-bold text-white">{index + 1}</span>
-                  <span className="text-xs flex items-center gap-1 text-white">
+                  <span className="text-xs sm:text-sm font-black text-white drop-shadow-md">{index + 1}</span>
+                  <span className="text-xs sm:text-sm flex items-center gap-1 text-white font-bold">
                     <Coins className="w-3 h-3" />
                     {reward}
                   </span>
@@ -87,51 +96,51 @@ const DailyGiftDialog = ({
             })}
           </div>
 
-          {/* Current status */}
-          <div className="bg-gradient-to-br from-yellow-600/30 via-orange-600/20 to-red-600/30 border-4 border-yellow-500/70 rounded-2xl p-6 text-center shadow-2xl shadow-yellow-500/50 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 via-transparent to-orange-500/20 animate-pulse"></div>
+          {/* Current status - enhanced casino style */}
+          <div className="bg-gradient-to-br from-blue-900/50 via-cyan-900/40 to-purple-900/50 border-4 border-cyan-400/70 rounded-[15px] p-6 sm:p-8 text-center shadow-2xl shadow-cyan-500/50 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-transparent to-blue-500/20 animate-pulse"></div>
             
             {canClaim ? (
               <>
-                <p className="text-sm text-yellow-200 font-bold mb-2 relative z-10">
-                  🎉 Jutalmad
+                <p className="text-base sm:text-lg text-cyan-200 font-black mb-3 relative z-10 drop-shadow-md">
+                  🎉 JUTALMAD
                 </p>
-                <p className="text-5xl font-black text-yellow-400 flex items-center justify-center gap-3 mb-2 drop-shadow-2xl relative z-10 animate-bounce">
-                  <Coins className="w-12 h-12 animate-spin" style={{ animationDuration: '3s' }} />
+                <p className="text-5xl sm:text-6xl font-black text-cyan-300 flex items-center justify-center gap-4 mb-3 drop-shadow-[0_0_20px_rgba(103,232,249,1)] relative z-10 animate-bounce">
+                  <Coins className="w-14 h-14 sm:w-16 sm:h-16 animate-spin" style={{ animationDuration: '3s' }} />
                   +{nextReward}
                 </p>
-                <p className="text-xl text-white font-black relative z-10">
-                  💰 {nextReward} ARANYÉRME {isPremium && '(Genius 2x)'}
+                <p className="text-xl sm:text-2xl text-white font-black relative z-10 drop-shadow-lg">
+                  💰 {nextReward} ARANYÉRME {isPremium && '(Genius 2×)'}
                 </p>
               </>
             ) : (
               <>
-                <p className="text-sm text-yellow-200 font-bold mb-2 relative z-10">
+                <p className="text-base sm:text-lg text-cyan-200 font-black mb-3 relative z-10">
                   ✅ MAI AJÁNDÉKOD MÁR ÁTVÉVE!
                 </p>
-                <p className="text-3xl font-black text-yellow-400 relative z-10">
+                <p className="text-3xl sm:text-4xl font-black text-cyan-300 relative z-10 drop-shadow-lg">
                   🔥 SOROZAT: {weeklyEntryCount} BELÉPÉS 🔥
                 </p>
               </>
             )}
           </div>
 
-          {/* Action buttons */}
+          {/* Action buttons - responsive */}
           {canClaim ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               <HexagonButton
                 variant="yellow"
                 size="lg"
                 onClick={onClaim}
-                className="w-full"
+                className="w-full text-lg sm:text-xl font-black py-4 shadow-[0_0_20px_rgba(34,211,238,0.6)]"
               >
-                <Gift className="w-5 h-5 mr-2" />
+                <Gift className="w-6 h-6 mr-2" />
                 Felveszem
               </HexagonButton>
               
               <button
                 onClick={onLater}
-                className="w-full py-2 text-sm text-white/70 hover:text-white transition-colors"
+                className="w-full py-3 text-base sm:text-lg text-cyan-200/80 hover:text-cyan-100 transition-colors font-bold"
               >
                 Később
               </button>
@@ -141,16 +150,16 @@ const DailyGiftDialog = ({
               variant="outline"
               size="lg"
               onClick={onLater}
-              className="w-full"
+              className="w-full text-lg font-black py-4"
             >
               Bezárás
             </HexagonButton>
           )}
 
           {/* Info */}
-          <p className="text-xs text-center text-white/70">
+          <p className="text-xs sm:text-sm text-center text-cyan-100/70 leading-relaxed">
             A heti számláló hétfő 00:00-kor indul újra.
-            {isPremium && ' Genius tag vagy? A jutalmad dupla!'}
+            {isPremium && ' 🌟 Genius tag vagy? A jutalmad dupla!'}
           </p>
         </div>
       </DialogContent>

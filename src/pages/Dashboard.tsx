@@ -7,9 +7,13 @@ import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { useBoosterTimer } from '@/hooks/useBoosterTimer';
 import { useLifeRegenerationTimer } from '@/hooks/useLifeRegenerationTimer';
+import { useGeniusPromo } from '@/hooks/useGeniusPromo';
+import { usePromoScheduler } from '@/hooks/usePromoScheduler';
+import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
+import { GeniusPromoDialog } from '@/components/GeniusPromoDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
@@ -25,6 +29,7 @@ import { toast } from 'sonner';
 const Dashboard = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
+  const isHandheld = usePlatformDetection();
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
@@ -32,7 +37,17 @@ const Dashboard = () => {
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
+  const [showPromo, setShowPromo] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
+  
+  // Promo scheduler with time intelligence
+  const canShowPromo = usePromoScheduler(userId);
+  const hasOtherDialogs = showWelcomeBonus || showDailyGift;
+  const { shouldShow: shouldShowGeniusPromo, closePromo, handleSubscribe, handleLater: handlePromoLater } = useGeniusPromo(
+    userId,
+    profile?.is_subscribed || false,
+    hasOtherDialogs
+  );
   
   const hasActiveBooster = profile?.speed_booster_active || false;
   const availableBoosters = boosters.filter(b => !b.activated);
@@ -89,20 +104,29 @@ const Dashboard = () => {
     });
   }, [navigate]);
 
-  // Show Welcome Bonus dialog FIRST (highest priority)
+  // Show Welcome Bonus dialog FIRST (highest priority) - only on handheld
   useEffect(() => {
-    if (canClaimWelcome && userId) {
+    if (isHandheld && canClaimWelcome && userId) {
       setShowWelcomeBonus(true);
       setShowDailyGift(false);
+      setShowPromo(false);
     }
-  }, [canClaimWelcome, userId]);
+  }, [isHandheld, canClaimWelcome, userId]);
 
-  // Show Daily Gift dialog SECOND (after welcome bonus)
+  // Show Daily Gift dialog SECOND (after welcome bonus) - only on handheld
   useEffect(() => {
-    if (canClaim && !canClaimWelcome && userId) {
+    if (isHandheld && canClaim && !canClaimWelcome && userId) {
       setShowDailyGift(true);
+      setShowPromo(false);
     }
-  }, [canClaim, canClaimWelcome, userId]);
+  }, [isHandheld, canClaim, canClaimWelcome, userId]);
+
+  // Show Genius Promo THIRD (after welcome and daily, with scheduler) - only on handheld
+  useEffect(() => {
+    if (isHandheld && shouldShowGeniusPromo && canShowPromo && !canClaimWelcome && !canClaim) {
+      setShowPromo(true);
+    }
+  }, [isHandheld, shouldShowGeniusPromo, canShowPromo, canClaimWelcome, canClaim]);
 
 
 
@@ -436,6 +460,17 @@ const Dashboard = () => {
         nextReward={nextReward}
         canClaim={canClaim}
         isPremium={profile?.is_subscribed || false}
+      />
+
+      {/* Genius Promo dialog - THIRD */}
+      <GeniusPromoDialog
+        open={showPromo && !showWelcomeBonus && !showDailyGift}
+        onClose={() => {
+          closePromo();
+          setShowPromo(false);
+        }}
+        onSubscribe={handleSubscribe}
+        onLater={handlePromoLater}
       />
 
       {/* Booster activation dialog */}
