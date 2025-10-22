@@ -276,24 +276,26 @@ return (
               </div>
 
               {/* Lives Hexagon with Timer */}
-              <div className="relative flex flex-col items-center gap-1">
+              <div className="relative flex flex-col items-center">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.5)]">
                   <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
                   <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.lives}</span>
                 </div>
-                {/* Life Regeneration Timer - below hexagon */}
+                {/* Life Regeneration Timer - next to hexagon with 10% overlap */}
                 {profile.lives < profile.max_lives && (
-                  <LifeRegenerationTimer
-                    currentLives={profile.lives}
-                    maxLives={profile.max_lives}
-                    lastRegeneration={profile.last_life_regeneration}
-                    boosterActive={profile.speed_booster_active}
-                    boosterType={profile.speed_booster_multiplier === 2 ? 'DoubleSpeed' :
-                                profile.speed_booster_multiplier === 4 ? 'MegaSpeed' :
-                                profile.speed_booster_multiplier === 12 ? 'GigaSpeed' :
-                                profile.speed_booster_multiplier === 24 ? 'DingleSpeed' : null}
-                    boosterExpiresAt={profile.speed_booster_expires_at}
-                  />
+                  <div className="absolute -bottom-1 -left-2">
+                    <LifeRegenerationTimer
+                      currentLives={profile.lives}
+                      maxLives={profile.max_lives}
+                      lastRegeneration={profile.last_life_regeneration}
+                      boosterActive={profile.speed_booster_active}
+                      boosterType={profile.speed_booster_multiplier === 2 ? 'DoubleSpeed' :
+                                  profile.speed_booster_multiplier === 4 ? 'MegaSpeed' :
+                                  profile.speed_booster_multiplier === 12 ? 'GigaSpeed' :
+                                  profile.speed_booster_multiplier === 24 ? 'DingleSpeed' : null}
+                      boosterExpiresAt={profile.speed_booster_expires_at}
+                    />
+                  </div>
                 )}
               </div>
 
