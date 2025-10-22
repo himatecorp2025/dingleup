@@ -5,6 +5,7 @@ import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, Sho
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
+import { UserGrowthChart } from '@/components/UserGrowthChart';
 
 type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports';
 type ReportsSubTab = 'development' | 'support';
@@ -430,6 +431,8 @@ const AdminDashboard = () => {
                 </p>
               </div>
             </div>
+
+            <UserGrowthChart />
 
             <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
               <h3 className="text-lg lg:text-xl font-bold text-white mb-3 lg:mb-4">Gyors elérési útvonalak</h3>
