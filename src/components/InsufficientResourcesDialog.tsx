@@ -267,7 +267,7 @@ export const InsufficientResourcesDialog = ({
             <Button 
               onClick={handleStartPayment}
               disabled={isLoadingPayment}
-              className="w-full bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 hover:from-yellow-600 hover:via-yellow-700 hover:to-yellow-600 text-black font-black text-xl gap-3 py-6 shadow-[0_0_25px_rgba(234,179,8,0.7)] hover:shadow-[0_0_35px_rgba(234,179,8,0.9)] transition-all duration-300 animate-pulse hover:animate-none border-4 border-yellow-400"
+              className="w-full bg-gradient-to-r from-green-500 via-green-600 to-green-500 hover:from-green-600 hover:via-green-700 hover:to-green-600 text-black font-black text-xl gap-3 py-6 shadow-[0_0_25px_rgba(34,197,94,0.6)] hover:shadow-[0_0_35px_rgba(34,197,94,0.8)] transition-all duration-300 animate-pulse hover:animate-none border-4 border-yellow-400"
             >
               {isLoadingPayment ? (
                 <>

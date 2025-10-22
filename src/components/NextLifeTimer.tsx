@@ -41,20 +41,20 @@ export const NextLifeTimer = ({
     return () => clearInterval(intervalId);
   }, [nextLifeAt, livesCurrent, livesMax, serverDriftMs, speedBoosterActive]);
 
-  // Don't render if at max lives or no time remaining
-  if (livesCurrent >= livesMax || remainingMs === 0) {
+  // Show timer whenever lives are below max, even at 00:00 while next cycle starts
+  if (livesCurrent >= livesMax) {
     return null;
   }
 
   const totalSeconds = Math.floor(remainingMs / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
+  const minutes = Math.max(0, Math.floor(totalSeconds / 60));
+  const seconds = Math.max(0, totalSeconds % 60);
 
   const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
   return (
     <div 
-      className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-yellow-500 border-2 border-yellow-400 rounded px-2 py-0.5 shadow-[0_0_10px_rgba(234,179,8,0.6)]"
+      className="absolute -top-1 -right-1 bg-yellow-500 border-2 border-yellow-400 rounded px-1.5 py-0.5 shadow-[0_0_10px_rgba(234,179,8,0.6)]"
       title="Következő élet érkezése"
     >
       <span className="text-[10px] font-black text-black drop-shadow">
