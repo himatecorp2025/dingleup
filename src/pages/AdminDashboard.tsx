@@ -5,6 +5,7 @@ import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, Sho
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { UserGrowthChart } from '@/components/UserGrowthChart';
 
 type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports';
@@ -610,9 +611,27 @@ const AdminDashboard = () => {
 
         {activeTab === 'invitations' && (
           <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">
-              Meghívások ({invitations.length})
-            </h2>
+            <div className="flex items-center justify-between mb-4 lg:mb-6">
+              <h2 className="text-xl lg:text-2xl font-bold text-white">
+                Meghívások ({invitations.length})
+              </h2>
+              <Button
+                onClick={async () => {
+                  try {
+                    toast.info('Barátságok létrehozása...');
+                    const { data, error } = await supabase.functions.invoke('backfill-friendships');
+                    if (error) throw error;
+                    toast.success(`Kész! ${data.successful} barátság létrehozva`);
+                    await fetchData();
+                  } catch (err: any) {
+                    toast.error('Hiba: ' + (err.message || 'Ismeretlen hiba'));
+                  }
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white text-xs lg:text-sm"
+              >
+                🔄 Barátságok szinkronizálása
+              </Button>
+            </div>
             
             <div className="overflow-x-auto">
               <table className="w-full">

@@ -928,12 +928,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
           requiredAmount={requiredAmount}
           currentAmount={insufficientType === 'coins' ? profile.coins : profile.lives}
           onGoToShop={() => {
-            stopMusic();
-            navigate('/shop');
+            // Keep modal open for in-game purchase
           }}
           userId={userId}
           onPurchaseComplete={async () => {
             await refreshProfile();
+            setShowInsufficientDialog(false);
           }}
         />
       </>

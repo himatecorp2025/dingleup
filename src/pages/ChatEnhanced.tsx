@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Send, Trash2, User, Menu } from 'lucide-react';
+import { Send, Trash2, User, Menu, AlertTriangle } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import { FriendsList } from '@/components/FriendsList';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { ReportDialog } from '@/components/ReportDialog';
 
 interface Message {
   id: string;
@@ -34,6 +35,7 @@ const ChatEnhanced = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
   const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -202,9 +204,17 @@ const ChatEnhanced = () => {
         >
           <Menu className="w-6 h-6 text-yellow-400" />
         </button>
-        <h1 className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
+        <h1 className="flex-1 text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
           Chat
         </h1>
+        <button
+          onClick={() => setShowReportDialog(true)}
+          className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-all border border-red-500/50"
+          aria-label="Jelentések"
+          title="Jelentés küldése"
+        >
+          <AlertTriangle className="w-5 h-5 text-red-400" />
+        </button>
       </div>
 
       {/* Main Content Area - Single Surface Chat with Drawer */}
@@ -332,7 +342,10 @@ const ChatEnhanced = () => {
         </div>
       </div>
 
-      <BottomNav />
+      <ReportDialog
+        open={showReportDialog}
+        onOpenChange={setShowReportDialog}
+      />
     </div>
   );
 };
