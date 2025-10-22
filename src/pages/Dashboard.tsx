@@ -12,6 +12,7 @@ import { usePromoScheduler } from '@/hooks/usePromoScheduler';
 import { useScrollBehavior } from '@/hooks/useScrollBehavior';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useWallet } from '@/hooks/useWallet';
+import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
@@ -36,6 +37,9 @@ const Dashboard = () => {
   const { canMountModals } = useScrollBehavior();
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { walletData, serverDriftMs, refetchWallet } = useWallet(userId);
+  
+  // Auto logout on inactivity
+  useAutoLogout();
   const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);

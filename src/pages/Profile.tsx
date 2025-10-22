@@ -6,6 +6,7 @@ import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 
 const Profile = () => {
@@ -15,6 +16,9 @@ const Profile = () => {
   const { boosters, getBoosterCounts } = useUserBoosters(userId);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Auto logout on inactivity
+  useAutoLogout();
 
   const boosterCounts = getBoosterCounts();
 

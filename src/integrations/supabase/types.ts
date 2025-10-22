@@ -821,30 +821,12 @@ export type Database = {
         }
         Returns: Json
       }
-      activate_speed_booster: {
-        Args: { booster_id: string }
-        Returns: boolean
-      }
-      archive_thread_for_user: {
-        Args: { p_thread_id: string }
-        Returns: Json
-      }
-      award_coins: {
-        Args: { amount: number }
-        Returns: undefined
-      }
-      claim_daily_gift: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      claim_welcome_bonus: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      cleanup_old_messages: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      activate_speed_booster: { Args: { booster_id: string }; Returns: boolean }
+      archive_thread_for_user: { Args: { p_thread_id: string }; Returns: Json }
+      award_coins: { Args: { amount: number }; Returns: undefined }
+      claim_daily_gift: { Args: never; Returns: Json }
+      claim_welcome_bonus: { Args: never; Returns: Json }
+      cleanup_old_messages: { Args: never; Returns: undefined }
       create_friendship_from_invitation: {
         Args: { p_invitee_id: string; p_inviter_id: string }
         Returns: Json
@@ -860,22 +842,13 @@ export type Database = {
         }
         Returns: Json
       }
-      distribute_weekly_rewards: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      generate_invitation_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      distribute_weekly_rewards: { Args: never; Returns: undefined }
+      generate_invitation_code: { Args: never; Returns: string }
       get_invitation_tier_reward: {
         Args: { accepted_count: number }
         Returns: Json
       }
-      get_next_life_at: {
-        Args: { p_user_id: string }
-        Returns: string
-      }
+      get_next_life_at: { Args: { p_user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -883,58 +856,28 @@ export type Database = {
         }
         Returns: boolean
       }
-      mark_users_offline: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      mark_users_offline: { Args: never; Returns: undefined }
       normalize_user_ids: {
         Args: { uid1: string; uid2: string }
         Returns: string[]
       }
-      process_invitation_reward: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      purchase_life: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
+      process_invitation_reward: { Args: never; Returns: Json }
+      purchase_life: { Args: never; Returns: Json }
       reactivate_help: {
         Args: { p_cost?: number; p_help_type: string }
         Returns: Json
       }
-      regenerate_invitation_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      regenerate_lives: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      regenerate_lives_background: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      reset_game_helps: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      spend_coins: {
-        Args: { amount: number }
-        Returns: boolean
-      }
+      regenerate_invitation_code: { Args: never; Returns: string }
+      regenerate_lives: { Args: never; Returns: undefined }
+      regenerate_lives_background: { Args: never; Returns: undefined }
+      reset_game_helps: { Args: never; Returns: undefined }
+      spend_coins: { Args: { amount: number }; Returns: boolean }
       start_speed_booster: {
         Args: { p_duration_minutes?: number; p_multiplier: number }
         Returns: Json
       }
-      use_help: {
-        Args: { p_help_type: string }
-        Returns: Json
-      }
-      use_life: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      use_help: { Args: { p_help_type: string }; Returns: Json }
+      use_life: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

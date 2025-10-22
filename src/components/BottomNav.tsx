@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 const BottomNav = () => {
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const checkDesktop = () => {
@@ -15,6 +16,21 @@ const BottomNav = () => {
     window.addEventListener('resize', checkDesktop);
     return () => window.removeEventListener('resize', checkDesktop);
   }, []);
+
+  useEffect(() => {
+    // Check authentication status
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -43,6 +59,13 @@ const BottomNav = () => {
   };
 
   const handleNavigation = (path: string) => {
+    // Check if user is authenticated when on landing page
+    if (location.pathname === '/' && !isAuthenticated) {
+      toast.error('Nem vagy bejelentkezve! Kérlek jelentkezz be!');
+      navigate('/login');
+      return;
+    }
+    
     stopBackgroundMusic();
     navigate(path);
   };

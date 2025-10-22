@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Send, Trash2, User, Menu, AlertTriangle } from 'lucide-react';
+import { Send, Trash2, User, Menu, AlertTriangle, Search } from 'lucide-react';
 import { FriendsList } from '@/components/FriendsList';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { ReportDialog } from '@/components/ReportDialog';
+import { UserSearchDialog } from '@/components/UserSearchDialog';
+import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
+import { toast } from 'sonner';
 
 interface Message {
   id: string;
@@ -28,6 +31,10 @@ interface Thread {
 const ChatEnhanced = () => {
   const navigate = useNavigate();
   const isHandheld = usePlatformDetection();
+  
+  // Auto logout on inactivity
+  useAutoLogout();
+  
   const [userId, setUserId] = useState<string | undefined>();
   const [threads, setThreads] = useState<Thread[]>([]);
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
@@ -36,6 +43,7 @@ const ChatEnhanced = () => {
   const [messageText, setMessageText] = useState('');
   const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
+  const [showSearchDialog, setShowSearchDialog] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -186,6 +194,41 @@ const ChatEnhanced = () => {
     setFriendsDrawerOpen(false);
   };
 
+  const handleUserSelect = async (selectedUserId: string, username: string) => {
+    if (!userId) return;
+    
+    // Check if friendship already exists
+    const { data: existingFriendship } = await supabase
+      .from('friendships')
+      .select('*')
+      .or(`and(user_id_a.eq.${userId},user_id_b.eq.${selectedUserId}),and(user_id_a.eq.${selectedUserId},user_id_b.eq.${userId})`)
+      .maybeSingle();
+
+    // If no friendship exists, create one
+    if (!existingFriendship) {
+      const { error } = await supabase
+        .from('friendships')
+        .insert({
+          user_id_a: userId,
+          user_id_b: selectedUserId,
+          status: 'active'
+        });
+
+      if (error) {
+        console.error('Error creating friendship:', error);
+        toast.error('Hiba az ismerős hozzáadása során');
+        return;
+      }
+
+      toast.success(`${username} hozzáadva az ismerősökhöz!`);
+    }
+
+    // Select the user for chat
+    setSelectedFriendId(selectedUserId);
+    setShowSearchDialog(false);
+    setFriendsDrawerOpen(false);
+  };
+
   const handleDeleteThread = async (threadId: string) => {
     try {
       const { error } = await supabase.rpc('archive_thread_for_user', { p_thread_id: threadId });
@@ -235,6 +278,14 @@ const ChatEnhanced = () => {
         <h1 className="flex-1 text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
           Chat
         </h1>
+        <button
+          onClick={() => setShowSearchDialog(true)}
+          className="p-2 bg-purple-500/20 hover:bg-purple-500/30 rounded-lg transition-all border border-purple-500/50"
+          aria-label="Keresés"
+          title="Felhasználó keresése"
+        >
+          <Search className="w-5 h-5 text-purple-400" />
+        </button>
         <button
           onClick={() => setShowReportDialog(true)}
           className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-all border border-red-500/50"
@@ -374,6 +425,12 @@ const ChatEnhanced = () => {
       <ReportDialog
         open={showReportDialog}
         onOpenChange={setShowReportDialog}
+      />
+
+      <UserSearchDialog
+        open={showSearchDialog}
+        onOpenChange={setShowSearchDialog}
+        onUserSelect={handleUserSelect}
       />
 
       <BottomNav />

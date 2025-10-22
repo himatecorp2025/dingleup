@@ -27,6 +27,20 @@ export const MusicControls = () => {
     
     if (audio) {
       audio.volume = actualVolume;
+      audio.muted = isMuted;
+      
+      // If unmuting or changing volume, try to play
+      if (!isMuted && actualVolume > 0) {
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            // Autoplay was prevented, user needs to interact first
+          });
+        }
+      } else if (isMuted) {
+        audio.pause();
+      }
+      
       console.log(`[MusicControls] Volume set to ${actualVolume} (muted: ${isMuted}, slider: ${volume})`);
     }
     
@@ -37,16 +51,27 @@ export const MusicControls = () => {
   }, [volume, isMuted]);
 
   const handleVolumeChange = (value: number[]) => {
-    setVolume(value[0]);
-    if (value[0] === 0) {
-      setIsMuted(true);
-    } else if (isMuted) {
+    const newVolume = value[0];
+    setVolume(newVolume);
+    
+    // If changing from 0, unmute
+    if (newVolume > 0 && isMuted) {
       setIsMuted(false);
+    }
+    // If changing to 0, mute
+    else if (newVolume === 0) {
+      setIsMuted(true);
     }
   };
 
   const toggleMute = () => {
-    setIsMuted(!isMuted);
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    
+    // If unmuting and volume is 0, set to 50%
+    if (!newMuted && volume === 0) {
+      setVolume(50);
+    }
   };
 
   return (
