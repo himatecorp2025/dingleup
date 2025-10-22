@@ -281,14 +281,16 @@ return (
                   <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
                   <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.lives}</span>
                 </div>
-                {/* Next Life Timer - bottom right */}
-                <NextLifeTimer
-                  nextLifeAt={walletData?.nextLifeAt || null}
-                  livesCurrent={profile.lives}
-                  livesMax={profile.max_lives}
-                  serverDriftMs={serverDriftMs}
-                  speedBoosterActive={profile.speed_booster_active || false}
-                />
+                {/* Next Life Timer - show only if server provides nextLifeAt */}
+                {walletData?.nextLifeAt && profile.lives < profile.max_lives && (
+                  <NextLifeTimer
+                    nextLifeAt={walletData.nextLifeAt}
+                    livesCurrent={profile.lives}
+                    livesMax={profile.max_lives}
+                    serverDriftMs={serverDriftMs}
+                    speedBoosterActive={profile.speed_booster_active || false}
+                  />
+                )}
               </div>
 
               {/* Avatar Hexagon */}
@@ -461,20 +463,7 @@ return (
           RANGLISTA
         </button>
 
-          {/* Life Regeneration Timer */}
-          {profile && (
-            <LifeRegenerationTimer
-              currentLives={profile.lives}
-              maxLives={profile.max_lives}
-              lastRegeneration={profile.last_life_regeneration}
-              boosterActive={profile.speed_booster_active}
-              boosterType={profile.speed_booster_multiplier === 2 ? 'DoubleSpeed' :
-                          profile.speed_booster_multiplier === 4 ? 'MegaSpeed' :
-                          profile.speed_booster_multiplier === 12 ? 'GigaSpeed' :
-                          profile.speed_booster_multiplier === 24 ? 'DingleSpeed' : null}
-              boosterExpiresAt={profile.speed_booster_expires_at}
-            />
-          )}
+          {/* Life Regeneration Timer moved to fixed bottom-left overlay */}
 
           {/* Ranglista Button (moved above) removed here */}
       </div>
@@ -532,6 +521,23 @@ return (
           }
         }}
       />
+
+      {/* Fixed bottom-left Lives timer (design-less) */}
+      {profile && (
+        <div className="fixed left-2 bottom-20 z-50">
+          <LifeRegenerationTimer
+            currentLives={profile.lives}
+            maxLives={profile.max_lives}
+            lastRegeneration={profile.last_life_regeneration}
+            boosterActive={profile.speed_booster_active}
+            boosterType={profile.speed_booster_multiplier === 2 ? 'DoubleSpeed' :
+                        profile.speed_booster_multiplier === 4 ? 'MegaSpeed' :
+                        profile.speed_booster_multiplier === 12 ? 'GigaSpeed' :
+                        profile.speed_booster_multiplier === 24 ? 'DingleSpeed' : null}
+            boosterExpiresAt={profile.speed_booster_expires_at}
+          />
+        </div>
+      )}
 
       <BottomNav />
     </div>
