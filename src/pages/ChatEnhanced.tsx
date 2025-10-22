@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Send, Trash2, User, Menu, AlertTriangle } from 'lucide-react';
-import BottomNav from '@/components/BottomNav';
 import { FriendsList } from '@/components/FriendsList';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { ReportDialog } from '@/components/ReportDialog';
@@ -346,8 +345,6 @@ const ChatEnhanced = () => {
         open={showReportDialog}
         onOpenChange={setShowReportDialog}
       />
-
-      <BottomNav />
     </div>
   );
 };

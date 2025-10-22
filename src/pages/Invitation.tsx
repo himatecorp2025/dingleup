@@ -4,7 +4,6 @@ import { LogOut, Copy, Gift, Coins, Heart, Users, Check, X, Trophy } from 'lucid
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import BottomNav from '@/components/BottomNav';
 
 interface InvitedFriend {
   id: string;
@@ -299,8 +298,6 @@ const Invitation = () => {
           </div>
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 };

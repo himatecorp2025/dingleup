@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
-import BottomNav from '@/components/BottomNav';
 import { Building2 } from 'lucide-react';
 
 const About = () => {
@@ -112,8 +111,6 @@ const About = () => {
           </div>
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 };

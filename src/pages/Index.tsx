@@ -6,7 +6,6 @@ import Features from "@/components/Features";
 import DevelopmentStatus from "@/components/DevelopmentStatus";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
-import BottomNav from "@/components/BottomNav";
 import { AlertCircle } from "lucide-react";
 
 const Index = () => {
@@ -31,7 +30,6 @@ const Index = () => {
       <DevelopmentStatus />
       <Newsletter />
       <Footer />
-      <BottomNav />
     </main>
   );
 };

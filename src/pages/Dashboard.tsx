@@ -275,12 +275,13 @@ return (
                 <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.coins}</span>
               </div>
 
-              {/* Lives Hexagon with NextLifeTimer */}
+              {/* Lives Hexagon with NextLifeTimer AND WeeklyRankingsCountdown */}
               <div className="relative flex flex-col items-center">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.5)]">
                   <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
                   <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.lives}</span>
                 </div>
+                {/* Next Life Timer - bottom right */}
                 <NextLifeTimer
                   nextLifeAt={walletData?.nextLifeAt || null}
                   livesCurrent={profile.lives}
@@ -288,6 +289,10 @@ return (
                   serverDriftMs={serverDriftMs}
                   speedBoosterActive={profile.speed_booster_active || false}
                 />
+                {/* Weekly Rankings Countdown - bottom left */}
+                <div className="absolute -bottom-0.5 -left-0.5 z-50">
+                  <WeeklyRankingsCountdown compact />
+                </div>
               </div>
 
               {/* Avatar Hexagon */}
@@ -310,34 +315,27 @@ return (
             </div>
           </div>
 
-          {/* Second Row: Weekly Countdown and Action Buttons */}
+          {/* Second Row: Action Buttons */}
           <div className="flex items-stretch justify-between gap-2 sm:gap-3">
-          {/* Left: Weekly Countdown - Extended Height */}
-            <div className="flex-1 flex items-stretch">
-              <WeeklyRankingsCountdown compact className="h-full" />
-            </div>
-
-            {/* Right: Action Buttons - Stacked Vertically */}
-            <div className="flex flex-col gap-2 flex-1">
-              <button
-                onClick={() => navigate('/invitation')}
-                className="flex-1 py-2 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-xs sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"
-                style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
-              >
-                <Share2 className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
-                <span className="hidden sm:inline">MEGOSZTÁS</span>
-                <span className="sm:hidden text-[10px]">SHARE</span>
-              </button>
-              
-              <button
-                onClick={() => navigate('/shop')}
-                className="flex-1 py-2 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-xs sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(234,179,8,0.6)] gold-glow"
-                style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
-              >
-                <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
-                <span className="text-[10px] sm:text-sm">BOLT</span>
-              </button>
-            </div>
+            {/* Action Buttons - Full Width */}
+            <button
+              onClick={() => navigate('/invitation')}
+              className="flex-1 py-2 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-xs sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+              style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
+            >
+              <Share2 className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
+              <span className="hidden sm:inline">MEGOSZTÁS</span>
+              <span className="sm:hidden text-[10px]">SHARE</span>
+            </button>
+            
+            <button
+              onClick={() => navigate('/shop')}
+              className="flex-1 py-2 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-xs sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1.5 sm:gap-2 casino-card shadow-[0_0_15px_rgba(234,179,8,0.6)] gold-glow"
+              style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
+            >
+              <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
+              <span className="text-[10px] sm:text-sm">BOLT</span>
+            </button>
           </div>
         </div>
 

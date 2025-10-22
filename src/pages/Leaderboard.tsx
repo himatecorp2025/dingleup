@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { LogOut, Crown, Medal } from 'lucide-react';
-import BottomNav from '@/components/BottomNav';
 import WeeklyRewards from '@/components/WeeklyRewards';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 
@@ -168,8 +167,6 @@ const Leaderboard = () => {
           </div>
         )}
       </div>
-
-      <BottomNav />
     </div>
   );
 };

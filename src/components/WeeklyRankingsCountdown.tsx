@@ -44,42 +44,13 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
 
   if (compact) {
     return (
-      <div
-        className={`relative px-3 py-3 sm:px-4 sm:py-4 text-center overflow-hidden ${className}`}
-        style={{ 
-          clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)',
-          background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF8C00 50%, #FFA500 75%, #FFD700 100%)',
-          boxShadow: '0 0 40px rgba(255, 215, 0, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.3)',
-          border: '3px solid #FFD700',
-          animation: 'shimmer 3s ease-in-out infinite'
-        }}
+      <div 
+        className={`bg-purple-600 border border-purple-400 rounded px-1 py-0.5 shadow-[0_0_8px_rgba(168,85,247,0.6)] ${className}`}
+        title="Heti verseny vége"
       >
-        {/* Arany ragyogás effekt */}
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, transparent 70%)',
-            animation: 'pulse 2s ease-in-out infinite'
-          }}
-        />
-        
-        {/* Belső arany keret */}
-        <div 
-          className="absolute inset-2"
-          style={{
-            clipPath: 'polygon(11% 1%, 89% 1%, 99% 50%, 89% 99%, 11% 99%, 1% 50%)',
-            border: '2px solid rgba(255, 215, 0, 0.5)',
-            boxShadow: 'inset 0 0 20px rgba(255, 215, 0, 0.4)'
-          }}
-        />
-
-        <div className="relative z-10 flex items-center justify-center gap-2 mb-1">
-          <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-900" />
-          <span className="text-xs sm:text-sm font-bold text-yellow-900 drop-shadow-lg">Heti díjazásig</span>
-        </div>
-        <p className="relative z-10 text-sm sm:text-lg font-black text-yellow-900 drop-shadow">
+        <span className="text-[8px] font-extrabold text-white drop-shadow leading-none whitespace-nowrap">
           {timeRemaining}
-        </p>
+        </span>
       </div>
     );
   }

@@ -15,7 +15,6 @@ import { QuestionCard } from "./QuestionCard";
 import { InsufficientResourcesDialog } from "./InsufficientResourcesDialog";
 import { ContinueGameDialog } from "./ContinueGameDialog";
 import { ExitGameDialog } from "./ExitGameDialog";
-import BottomNav from "./BottomNav";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -897,9 +896,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
             </div>
           </div>
         </div>
-
-        {/* Bottom Nav */}
-        <BottomNav />
 
         {/* Dialogs */}
         <ExitGameDialog
