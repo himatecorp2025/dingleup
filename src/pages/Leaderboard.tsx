@@ -78,7 +78,7 @@ const Leaderboard = () => {
       {/* Back Button - same as shop */}
       <button
         onClick={() => navigate('/dashboard')}
-        className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50 neon-border"
+        className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
         title="Vissza"
       >
         <LogOut className="w-6 h-6 -scale-x-100" />
@@ -87,15 +87,17 @@ const Leaderboard = () => {
       <div className="max-w-4xl mx-auto p-4 pt-4 pb-24 min-h-screen">
 
         {/* Title */}
-        <h1 className="text-4xl font-black text-center mb-8 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent pt-safe">
+        <h1 className="text-4xl font-black text-center mb-4 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent pt-safe">
           🏆 Ranglista 🏆
         </h1>
 
+        {/* Countdown Timer - below title */}
+        <div className="flex justify-center mb-6">
+          <WeeklyRankingsCountdown compact={false} />
+        </div>
+
         {/* Weekly Rewards Section */}
         <WeeklyRewards />
-        
-        {/* Countdown Timer */}
-        <WeeklyRankingsCountdown />
 
         {/* Leaderboard */}
         {loading ? (
