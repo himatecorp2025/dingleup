@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
@@ -29,55 +29,55 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
 
-  const handleSearch = async () => {
+  // Auto-search when typing (with debounce)
+  useEffect(() => {
     if (!searchTerm.trim()) {
-      toast.error('Írj be egy felhasználónevet vagy meghívókódot!');
+      setResults([]);
       return;
     }
 
-    setSearching(true);
+    const timer = setTimeout(async () => {
+      setSearching(true);
 
-    try {
-      const term = searchTerm.trim();
-      
-      // Search by username (exact match) or invitation code (exact match) or partial username
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          username,
-          avatar_url,
-          invitation_code
-        `)
-        .or(`username.eq.${term},invitation_code.eq.${term},username.ilike.%${term}%`)
-        .limit(20);
+      try {
+        const term = searchTerm.trim();
+        
+        // Search by username or invitation code
+        const { data, error } = await supabase
+          .from('profiles')
+          .select(`
+            id,
+            username,
+            avatar_url,
+            invitation_code
+          `)
+          .or(`username.ilike.%${term}%,invitation_code.eq.${term}`)
+          .limit(20);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // Get online status
-      const userIds = data?.map(u => u.id) || [];
-      const { data: presenceData } = await supabase
-        .from('user_presence')
-        .select('user_id, is_online')
-        .in('user_id', userIds);
+        // Get online status
+        const userIds = data?.map(u => u.id) || [];
+        const { data: presenceData } = await supabase
+          .from('user_presence')
+          .select('user_id, is_online')
+          .in('user_id', userIds);
 
-      const resultsWithPresence = data?.map(user => ({
-        ...user,
-        is_online: presenceData?.find(p => p.user_id === user.id)?.is_online || false,
-      })) || [];
+        const resultsWithPresence = data?.map(user => ({
+          ...user,
+          is_online: presenceData?.find(p => p.user_id === user.id)?.is_online || false,
+        })) || [];
 
-      setResults(resultsWithPresence);
-
-      if (resultsWithPresence.length === 0) {
-        toast.info('Nincs találat');
+        setResults(resultsWithPresence);
+      } catch (error) {
+        console.error('Search error:', error);
+      } finally {
+        setSearching(false);
       }
-    } catch (error) {
-      console.error('Search error:', error);
-      toast.error('Hiba történt a keresés során');
-    } finally {
-      setSearching(false);
-    }
-  };
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -89,21 +89,14 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="flex gap-2">
+          <div className="relative">
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               placeholder="Felhasználónév vagy meghívókód..."
-              className="flex-1 bg-gray-800 border-purple-500/50 text-white"
+              className="bg-gray-800 border-purple-500/50 text-white pr-10"
             />
-            <Button
-              onClick={handleSearch}
-              disabled={searching}
-              className="bg-gradient-to-r from-purple-600 to-purple-800"
-            >
-              <Search className="w-4 h-4" />
-            </Button>
+            <Search className="w-5 h-5 text-purple-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
           <div className="space-y-2 max-h-[300px] overflow-y-auto">

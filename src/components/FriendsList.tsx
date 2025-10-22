@@ -45,6 +45,10 @@ export const FriendsList = ({ userId, onSelectFriend, selectedFriendId }: Friend
         console.log('[FriendsList] User presence changed, reloading...');
         loadFriends();
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'message_reads' }, () => {
+        console.log('[FriendsList] Message reads changed, reloading...');
+        loadFriends();
+      })
       .subscribe();
 
     return () => {

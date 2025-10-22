@@ -174,9 +174,15 @@ const Profile = () => {
         </div>
 
         {/* Invitation Code - Full width */}
-        <div className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center mb-4 sm:mb-6 shadow-[0_0_15px_rgba(168,85,247,0.4)] casino-card">
+        <div 
+          onClick={() => {
+            navigator.clipboard.writeText(profile.invitation_code || '');
+            toast.success('Meghívókód vágólapra másolva!');
+          }}
+          className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center mb-4 sm:mb-6 shadow-[0_0_15px_rgba(168,85,247,0.4)] casino-card cursor-pointer hover:scale-105 transition-transform active:scale-95"
+        >
           <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 mx-auto mb-2 drop-shadow-lg" />
-          <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Meghívó kód</p>
+          <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Meghívó kód (kattints a másoláshoz)</p>
           <p className="text-xl sm:text-2xl font-black text-white drop-shadow-lg">{profile.invitation_code}</p>
         </div>
 
