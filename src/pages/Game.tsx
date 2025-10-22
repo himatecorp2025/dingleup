@@ -37,12 +37,11 @@ const Game = () => {
         globalBgm.volume = isMuted ? 0 : volumeValue;
         if (!isMuted && volumeValue > 0) {
           globalBgm.play().catch(() => {});
-        } else {
-          globalBgm.pause();
         }
       } catch {}
       return;
     }
+    
     const setupAudioGraph = async () => {
       if (!audioRef.current) return;
       const Ctx: typeof AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
@@ -75,48 +74,33 @@ const Game = () => {
       }
     };
 
-    const keepVolume = () => {
-      const currentVolume = isMuted ? 0 : volumeValue;
-      if (gainNodeRef.current && gainNodeRef.current.gain.value !== currentVolume) {
-        gainNodeRef.current.gain.value = currentVolume;
+    const handleVolumeChange = (e: Event) => {
+      const { volume: newVolume } = (e as CustomEvent).detail;
+      if (gainNodeRef.current) {
+        gainNodeRef.current.gain.value = newVolume;
       }
-      const el = audioRef.current;
-      if (el && el.volume !== currentVolume) {
-        el.volume = currentVolume;
+      if (audioRef.current) {
+        audioRef.current.volume = newVolume;
       }
     };
 
-    // Try immediately (user just clicked Play)
-    tryPlay();
+    // Listen for volume changes from controls
+    window.addEventListener('musicVolumeChange', handleVolumeChange);
 
-    const volumeInterval = setInterval(keepVolume, 300);
+    tryPlay();
 
     const onUserInteract = async () => {
       try { await audioCtxRef.current?.resume(); } catch {}
       tryPlay();
     };
 
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        onUserInteract();
-      }
-    };
-
     window.addEventListener('pageshow', onUserInteract);
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    
-    // Backup: retry on any interaction
     document.addEventListener('pointerdown', onUserInteract, { once: true });
-    document.addEventListener('touchstart', onUserInteract, { once: true });
-    document.addEventListener('click', onUserInteract, { once: true });
 
     return () => {
-      clearInterval(volumeInterval);
+      window.removeEventListener('musicVolumeChange', handleVolumeChange);
       window.removeEventListener('pageshow', onUserInteract);
-      document.removeEventListener('visibilitychange', onVisibilityChange);
       document.removeEventListener('pointerdown', onUserInteract);
-      document.removeEventListener('touchstart', onUserInteract);
-      document.removeEventListener('click', onUserInteract);
       try { audioCtxRef.current?.close(); } catch {}
       sourceRef.current = null;
       gainNodeRef.current = null;

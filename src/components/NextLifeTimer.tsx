@@ -18,12 +18,8 @@ export const NextLifeTimer = ({
   const [remainingMs, setRemainingMs] = useState(0);
 
   useEffect(() => {
-    // Show timer only if:
-    // 1. Speed booster is active OR
-    // 2. Lives are below 15
-    const shouldShowTimer = speedBoosterActive || livesCurrent < 15;
-    
-    if (!shouldShowTimer || !nextLifeAt || livesCurrent >= livesMax) {
+    // Always show timer if lives are below max
+    if (!nextLifeAt || livesCurrent >= livesMax) {
       setRemainingMs(0);
       return;
     }
@@ -45,9 +41,8 @@ export const NextLifeTimer = ({
     return () => clearInterval(intervalId);
   }, [nextLifeAt, livesCurrent, livesMax, serverDriftMs, speedBoosterActive]);
 
-  // Don't render if conditions not met
-  const shouldShowTimer = speedBoosterActive || livesCurrent < 15;
-  if (!shouldShowTimer || livesCurrent >= livesMax || remainingMs === 0) {
+  // Don't render if at max lives or no time remaining
+  if (livesCurrent >= livesMax || remainingMs === 0) {
     return null;
   }
 

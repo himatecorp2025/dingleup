@@ -16,20 +16,24 @@ export const MusicControls = () => {
   });
 
   useEffect(() => {
+    const actualVolume = isMuted ? 0 : volume / 100;
+    
     localStorage.setItem(STORAGE_KEY, volume.toString());
     localStorage.setItem(STORAGE_MUTE_KEY, isMuted.toString());
     
+    // Update global audio element if exists
     const w = window as any;
     const audio: HTMLAudioElement | undefined = w.__bgm;
     
     if (audio) {
-      const actualVolume = isMuted ? 0 : volume / 100;
       audio.volume = actualVolume;
-      
-      console.log(`[MusicControls] Setting volume to ${actualVolume} (muted: ${isMuted}, volume: ${volume})`);
-    } else {
-      console.log('[MusicControls] No background music audio element found');
+      console.log(`[MusicControls] Volume set to ${actualVolume} (muted: ${isMuted}, slider: ${volume})`);
     }
+    
+    // Dispatch custom event for other components to listen
+    window.dispatchEvent(new CustomEvent('musicVolumeChange', { 
+      detail: { volume: actualVolume, isMuted } 
+    }));
   }, [volume, isMuted]);
 
   const handleVolumeChange = (value: number[]) => {

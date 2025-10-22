@@ -50,18 +50,14 @@ serve(async (req) => {
       logStep("New customer created", { customerId });
     }
 
-    // Create checkout session for in-game package
-    const session = await stripe.checkout.sessions.create({
+    // Create PaymentIntent for in-game package
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 99, // $0.99 in cents
+      currency: "usd",
       customer: customerId,
-      line_items: [
-        {
-          price: "price_1SKmI0KKw7HPC0ZDpolrOdxP", // In-game package: 500 coins + 15 lives
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      success_url: `${req.headers.get("origin")}/game?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/game?payment=cancelled`,
+      automatic_payment_methods: {
+        enabled: true,
+      },
       metadata: {
         user_id: user.id,
         product_type: "InGamePackage",
@@ -70,9 +66,12 @@ serve(async (req) => {
       },
     });
 
-    logStep("Checkout session created", { sessionId: session.id });
+    logStep("PaymentIntent created", { intentId: paymentIntent.id });
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ 
+      clientSecret: paymentIntent.client_secret,
+      intentId: paymentIntent.id 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
