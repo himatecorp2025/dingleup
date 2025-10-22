@@ -57,30 +57,52 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
 
   return (
     <div 
-      className="relative px-3 py-2 sm:px-4 overflow-hidden h-full flex items-center"
+      className="relative px-6 py-2 sm:px-8 overflow-hidden h-full flex items-center min-w-[180px] sm:min-w-[220px]"
       style={{ 
-        background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 25%, #D97706 50%, #F59E0B 75%, #FBBF24 100%)',
-        boxShadow: '0 0 20px rgba(251, 191, 36, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.4)',
-        border: '2px solid #FBBF24',
-        clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-        animation: 'shimmer 3s ease-in-out infinite'
+        background: 'linear-gradient(135deg, #FFD700 0%, #FDB931 20%, #FBBF24 40%, #F59E0B 60%, #D97706 80%, #FBBF24 100%)',
+        boxShadow: '0 0 30px rgba(255, 215, 0, 1), 0 0 60px rgba(251, 191, 36, 0.8), inset 0 0 40px rgba(255, 255, 255, 0.5), inset 0 -5px 20px rgba(217, 119, 6, 0.5)',
+        border: '3px solid #FFD700',
+        clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
       }}
     >
-      {/* Shimmer effect overlay */}
+      {/* Animated shimmer overlay */}
+      <div 
+        className="absolute inset-0 opacity-60 animate-pulse"
+        style={{
+          background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 1) 0%, transparent 70%)',
+        }}
+      />
+      
+      {/* Moving light streak */}
+      <div 
+        className="absolute inset-0 opacity-50"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%)',
+          animation: 'slide-in-right 3s ease-in-out infinite'
+        }}
+      />
+      
+      {/* Sparkle dots */}
+      <div className="absolute top-1 left-1/4 w-1 h-1 bg-white rounded-full animate-pulse" />
+      <div className="absolute bottom-1 right-1/4 w-1.5 h-1.5 bg-yellow-200 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
+      <div className="absolute top-1/2 right-1/3 w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+      
+      {/* Casino lights border effect */}
       <div 
         className="absolute inset-0 opacity-40"
         style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 0%, transparent 60%)',
-          animation: 'pulse 2s ease-in-out infinite'
+          border: '2px solid transparent',
+          borderImage: 'linear-gradient(90deg, #FFD700, #FFF, #FFD700, #FFF, #FFD700) 1',
+          animation: 'pulse 1s ease-in-out infinite'
         }}
       />
       
       <div className="relative z-10 text-center w-full">
-        <div className="flex items-center justify-center gap-1 mb-0.5">
-          <Trophy className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-yellow-900 drop-shadow" />
-          <p className="text-[9px] sm:text-[10px] text-yellow-900 font-black">Díjazásig</p>
+        <div className="flex items-center justify-center gap-1.5 mb-0.5">
+          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-900 drop-shadow-[0_2px_8px_rgba(217,119,6,0.8)] animate-pulse" />
+          <p className="text-[10px] sm:text-xs text-yellow-900 font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">DÍJAZÁSIG</p>
         </div>
-        <p className="text-[10px] sm:text-xs font-black text-yellow-900 drop-shadow-lg leading-tight">
+        <p className="text-xs sm:text-sm font-black text-yellow-900 drop-shadow-[0_3px_6px_rgba(0,0,0,0.6)] leading-tight tracking-wider">
           {timeRemaining}
         </p>
       </div>
