@@ -66,20 +66,23 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] pb-24">
+    <div className="page-scroll bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+      {/* Casino lights animation at top */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
+      
       {/* Back Button - top left like in game */}
       <button
         onClick={() => navigate('/dashboard')}
-        className="fixed top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+        className="fixed top-4 left-4 z-50 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50 pt-safe"
         title="Vissza"
       >
         <LogOut className="w-6 h-6 -scale-x-100" />
       </button>
 
-      <div className="max-w-4xl mx-auto p-4 pt-20">
+      <div className="max-w-4xl mx-auto p-4 pt-20 pb-24 min-h-screen">
 
         {/* Title */}
-        <h1 className="text-4xl font-black text-center mb-8 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-black text-center mb-8 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent pt-safe">
           🏆 Ranglista 🏆
         </h1>
 

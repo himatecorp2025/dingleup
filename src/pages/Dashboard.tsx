@@ -9,6 +9,7 @@ import { useBoosterTimer } from '@/hooks/useBoosterTimer';
 import { useLifeRegenerationTimer } from '@/hooks/useLifeRegenerationTimer';
 import { useGeniusPromo } from '@/hooks/useGeniusPromo';
 import { usePromoScheduler } from '@/hooks/usePromoScheduler';
+import { useScrollBehavior } from '@/hooks/useScrollBehavior';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
@@ -30,6 +31,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const isHandheld = usePlatformDetection();
+  const { canMountModals } = useScrollBehavior();
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
@@ -104,29 +106,29 @@ const Dashboard = () => {
     });
   }, [navigate]);
 
-  // Show Welcome Bonus dialog FIRST (highest priority) - only on handheld
+  // Show Welcome Bonus dialog FIRST (highest priority) - only on handheld, not during gameplay
   useEffect(() => {
-    if (isHandheld && canClaimWelcome && userId) {
+    if (isHandheld && canMountModals && canClaimWelcome && userId) {
       setShowWelcomeBonus(true);
       setShowDailyGift(false);
       setShowPromo(false);
     }
-  }, [isHandheld, canClaimWelcome, userId]);
+  }, [isHandheld, canMountModals, canClaimWelcome, userId]);
 
-  // Show Daily Gift dialog SECOND (after welcome bonus) - only on handheld
+  // Show Daily Gift dialog SECOND (after welcome bonus) - only on handheld, not during gameplay
   useEffect(() => {
-    if (isHandheld && canClaim && !canClaimWelcome && userId) {
+    if (isHandheld && canMountModals && canClaim && !canClaimWelcome && userId) {
       setShowDailyGift(true);
       setShowPromo(false);
     }
-  }, [isHandheld, canClaim, canClaimWelcome, userId]);
+  }, [isHandheld, canMountModals, canClaim, canClaimWelcome, userId]);
 
-  // Show Genius Promo THIRD (after welcome and daily, with scheduler) - only on handheld
+  // Show Genius Promo THIRD (after welcome and daily, with scheduler) - only on handheld, not during gameplay
   useEffect(() => {
-    if (isHandheld && shouldShowGeniusPromo && canShowPromo && !canClaimWelcome && !canClaim) {
+    if (isHandheld && canMountModals && shouldShowGeniusPromo && canShowPromo && !canClaimWelcome && !canClaim) {
       setShowPromo(true);
     }
-  }, [isHandheld, shouldShowGeniusPromo, canShowPromo, canClaimWelcome, canClaim]);
+  }, [isHandheld, canMountModals, shouldShowGeniusPromo, canShowPromo, canClaimWelcome, canClaim]);
 
 
 
@@ -210,25 +212,28 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
-        <p className="text-lg text-white">Betöltés...</p>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
-        <p className="text-lg text-white">Betöltés...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
-      {/* Falling coins background */}
-      <FallingCoins />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+      <p className="text-lg text-white">Betöltés...</p>
+    </div>
+  );
+}
+
+if (!profile) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+      <p className="text-lg text-white">Betöltés...</p>
+    </div>
+  );
+}
+
+return (
+  <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+    paddingTop: 'env(safe-area-inset-top)',
+    paddingBottom: 'env(safe-area-inset-bottom)'
+  }}>
+    {/* Falling coins background */}
+    <FallingCoins />
       
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>

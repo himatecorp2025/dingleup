@@ -102,9 +102,9 @@ const Invitation = () => {
   const { totalCoins, totalLives } = getTotalRewards();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] pb-20">
-      {/* Back button */}
-      <div className="fixed top-4 left-4 z-50">
+    <div className="page-scroll bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+      {/* Back Button */}
+      <div className="fixed top-4 left-4 z-50 pt-safe">
         <button
           onClick={() => {
             navigate('/dashboard');
@@ -116,9 +116,9 @@ const Invitation = () => {
         </button>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pt-20 pb-8">
+      <div className="max-w-2xl mx-auto px-4 pt-20 pb-24 min-h-screen">
         {/* Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-6 pt-safe">
           <div className="flex items-center justify-center gap-3 mb-2">
             <Users className="w-8 h-8 text-purple-400" />
             <h1 className="text-3xl font-black text-white">Hívd meg barátaidat!</h1>

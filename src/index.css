@@ -12,6 +12,25 @@ html, body {
   touch-action: manipulation;
 }
 
+/* Safe area support for notched devices */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Scrollable page wrapper (for Profile, Shop, Leaderboard, etc.) */
+.page-scroll {
+  height: 100dvh;
+  height: 100vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
+}
+
 #root {
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);

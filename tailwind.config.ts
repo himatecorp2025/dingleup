@@ -126,6 +126,10 @@ export default {
             transform: "translateX(0)",
             opacity: "1"
           }
+        },
+        "shimmer": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" }
         }
       },
       animation: {
@@ -135,6 +139,8 @@ export default {
         "float": "float 3s ease-in-out infinite",
         "glow": "glow 2s ease-in-out infinite",
         "slide-in-right": "slide-in-right 0.5s ease-out",
+        "shimmer": "shimmer 2s infinite",
+        "spin-slow": "spin 3s linear infinite"
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',

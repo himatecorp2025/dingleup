@@ -38,10 +38,10 @@ const ShopPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] pb-24 overflow-x-hidden overflow-y-auto">
-      <div className="max-w-6xl mx-auto p-4">
+    <div className="page-scroll bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+      <div className="max-w-6xl mx-auto p-4 pb-24 min-h-screen">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6 pt-4">
+        <div className="flex items-center justify-between mb-6 pt-safe">
           <button 
             onClick={() => navigate('/dashboard')}
             className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
