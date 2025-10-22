@@ -17,6 +17,7 @@ interface ContinueGameDialogProps {
   currentCoins: number;
   onContinue: () => void;
   onExit: () => void;
+  onNeedCoins?: () => void;
 }
 
 export const ContinueGameDialog = ({
@@ -26,7 +27,8 @@ export const ContinueGameDialog = ({
   cost,
   currentCoins,
   onContinue,
-  onExit
+  onExit,
+  onNeedCoins
 }: ContinueGameDialogProps) => {
   const canAfford = currentCoins >= cost;
 
@@ -76,13 +78,20 @@ export const ContinueGameDialog = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-col gap-2 sm:flex-col mt-4">
-          {canAfford && (
+          {canAfford ? (
             <Button 
               onClick={onContinue} 
               className="w-full gap-2 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white"
             >
               <Coins className="w-4 h-4" />
               Folytatás ({cost} aranyérme)
+            </Button>
+          ) : (
+            <Button 
+              onClick={() => onNeedCoins?.()} 
+              className="w-full gap-2 bg-gradient-to-r from-yellow-600 to-yellow-800 hover:from-yellow-700 hover:to-yellow-900 text-black font-bold"
+            >
+              🛒 Azonnali vásárlás
             </Button>
           )}
           <Button 

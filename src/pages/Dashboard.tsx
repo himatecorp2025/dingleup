@@ -364,6 +364,19 @@ return (
                 const volume = savedMuted ? 0 : (savedVolume ? parseInt(savedVolume, 10) / 100 : 0.1);
                 a.volume = volume;
                 console.log(`[Dashboard] Created new audio with volume: ${volume}`);
+                // Attach live volume listener once
+                if (!(a as any).__volListenerAdded) {
+                  const handler = (e: any) => {
+                    try {
+                      const vol = e?.detail?.volume;
+                      if (typeof vol === 'number') {
+                        a!.volume = vol;
+                      }
+                    } catch {}
+                  };
+                  window.addEventListener('musicVolumeChange', handler);
+                  (a as any).__volListenerAdded = true;
+                }
                 w.__bgm = a;
               } else {
                 a.loop = true;

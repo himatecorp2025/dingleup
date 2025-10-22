@@ -54,10 +54,10 @@ export const NextLifeTimer = ({
 
   return (
     <div 
-      className="absolute top-0 -right-8 sm:-right-10 bg-yellow-500 border-2 border-yellow-400 rounded-md px-2 py-1 shadow-[0_0_15px_rgba(234,179,8,0.8)]"
+      className="absolute -bottom-1 -right-1 bg-yellow-500 border border-yellow-400 rounded px-1.5 py-0.5 shadow-[0_0_10px_rgba(234,179,8,0.6)] z-50"
       title="Következő élet érkezése"
     >
-      <span className="text-xs sm:text-sm font-black text-black drop-shadow-lg">
+      <span className="text-[10px] sm:text-xs font-extrabold text-black drop-shadow">
         {formattedTime}
       </span>
     </div>

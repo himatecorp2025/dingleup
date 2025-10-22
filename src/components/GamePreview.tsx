@@ -919,6 +919,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
           currentCoins={profile.coins}
           onContinue={handleContinueAfterMistake}
           onExit={handleRejectContinue}
+          onNeedCoins={() => {
+            const c = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
+            setInsufficientType('coins');
+            setRequiredAmount(c);
+            setShowInsufficientDialog(true);
+          }}
         />
 
         <InsufficientResourcesDialog

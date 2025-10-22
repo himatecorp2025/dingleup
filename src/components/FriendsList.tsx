@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Users, Search as SearchIcon } from 'lucide-react';
+import { Users, Search as SearchIcon, RefreshCw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -110,10 +110,19 @@ export const FriendsList = ({ userId, onSelectFriend, selectedFriendId }: Friend
     <div className="h-full flex flex-col bg-[hsl(var(--dup-ui-bg-900))]">
       {/* Header */}
       <div className="p-4 border-b border-[hsl(var(--dup-gold-600)/0.3)]">
-        <h2 className="text-xl font-black text-[hsl(var(--dup-gold-300))] mb-3 flex items-center gap-2">
-          <Users className="w-5 h-5" />
-          Ismerősök
-        </h2>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-xl font-black text-[hsl(var(--dup-gold-300))] flex items-center gap-2">
+            <Users className="w-5 h-5" />
+            Ismerősök
+          </h2>
+          <button
+            onClick={() => loadFriends()}
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-bold rounded-lg bg-[hsl(var(--dup-gold-600)/0.2)] hover:bg-[hsl(var(--dup-gold-600)/0.3)] text-[hsl(var(--dup-gold-200))] border border-[hsl(var(--dup-gold-500)/0.4)]"
+            title="Ismerősök frissítése"
+          >
+            <RefreshCw className="w-4 h-4" /> Frissítés
+          </button>
+        </div>
         
         {/* Search */}
         <div className="relative">

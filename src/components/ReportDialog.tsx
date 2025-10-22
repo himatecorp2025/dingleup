@@ -108,7 +108,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-purple-900 to-purple-950 border-2 border-yellow-500/50 text-white">
+      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-purple-900 to-purple-950 border-2 border-yellow-500/50 text-white z-[9999]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-black text-yellow-400">
             Jelentés beküldése
@@ -119,20 +119,18 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
         </DialogHeader>
 
         <div className="space-y-4">
-          <RadioGroup value={reportType} onValueChange={(v) => setReportType(v as any)}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="bug" id="bug" />
-              <Label htmlFor="bug" className="cursor-pointer">
-                🐛 Fejlesztői jelentés (Bug, hiba)
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="user_behavior" id="user_behavior" />
-              <Label htmlFor="user_behavior" className="cursor-pointer">
-                ⚠️ Felhasználói jelentés (Visszaélés)
-              </Label>
-            </div>
-          </RadioGroup>
+          <div>
+            <Label>Jelentés típusa</Label>
+            <Select value={reportType} onValueChange={(v) => setReportType(v as 'bug' | 'user_behavior')}>
+              <SelectTrigger className="bg-gray-800 border-purple-500/50">
+                <SelectValue placeholder="Válassz típust" />
+              </SelectTrigger>
+              <SelectContent className="z-[1000] bg-gray-900 border border-yellow-500/40 text-white">
+                <SelectItem value="bug">🐛 Fejlesztői jelentés (Bug, hiba)</SelectItem>
+                <SelectItem value="user_behavior">⚠️ Felhasználói jelentés (Visszaélés)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
           {reportType === 'bug' ? (
             <div className="space-y-3">
@@ -142,7 +140,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                   <SelectTrigger className="bg-gray-800 border-purple-500/50">
                     <SelectValue placeholder="Válassz kategóriát" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[1000] bg-gray-900 border border-yellow-500/40 text-white">
                     {DEV_CATEGORIES.map((cat) => (
                       <SelectItem key={cat.value} value={cat.value}>
                         {cat.label}
@@ -169,7 +167,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                   <SelectTrigger className="bg-gray-800 border-purple-500/50">
                     <SelectValue placeholder="Válassz típust" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[1000] bg-gray-900 border border-yellow-500/40 text-white">
                     {SUPPORT_CATEGORIES.map((cat) => (
                       <SelectItem key={cat.value} value={cat.value}>
                         {cat.label}
