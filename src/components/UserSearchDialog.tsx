@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, MessageCircle } from 'lucide-react';
+import { Search, MessageCircle, Info, UserPlus } from 'lucide-react';
+import { useFriendshipStatus } from '@/hooks/useFriendshipStatus';
 
 interface UserSearchDialogProps {
   open: boolean;
@@ -24,25 +25,97 @@ interface SearchResult {
   is_online?: boolean;
 }
 
+interface FriendActionProps {
+  currentUserId?: string;
+  targetUserId: string;
+  username: string;
+}
+
+const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionProps) => {
+  const { status, sendRequest, loading } = useFriendshipStatus(currentUserId, targetUserId);
+
+  if (!currentUserId) return null;
+
+  if (status === 'active') return null;
+  if (status === 'blocked') {
+    return (
+      <div className="px-2 py-1 bg-red-500/20 border border-red-500/50 rounded text-xs text-red-300 flex items-center gap-1">
+        <Info className="w-3 h-3" />
+        Nem elérhető
+      </div>
+    );
+  }
+
+  if (status === 'pending_sent') {
+    return (
+      <div className="px-2 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded text-xs text-yellow-300">
+        Folyamatban
+      </div>
+    );
+  }
+
+  if (status === 'pending_received') {
+    return (
+      <div className="px-2 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded text-xs text-yellow-300">
+        Várakozik jóváhagyásra
+      </div>
+    );
+  }
+
+  return (
+    <Button
+      onClick={async () => {
+        try {
+          await sendRequest();
+          toast.success(`${username} ismerősnek jelölve – folyamatban`);
+        } catch (e) {
+          toast.error('Ismerős jelölés sikertelen');
+        }
+      }}
+      size="sm"
+      className="bg-gradient-to-r from-green-600 to-green-800"
+      disabled={loading}
+    >
+      <UserPlus className="w-4 h-4 mr-1" />
+      Bejelölöm
+    </Button>
+  );
+};
+
 export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearchDialogProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | undefined>();
 
-  // Auto-search when typing (with debounce)
+  // Load current user id
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setCurrentUserId(session?.user?.id);
+    });
+  }, []);
+
+  // Reset search when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setSearchTerm('');
+      setResults([]);
+      setSearching(false);
+    }
+  }, [open]);
+
+  // Auto-search when typing (with debounce) + unmount safety
   useEffect(() => {
     if (!searchTerm.trim()) {
       setResults([]);
       return;
     }
 
+    let alive = true;
     const timer = setTimeout(async () => {
       setSearching(true);
-
       try {
         const term = searchTerm.trim();
-        
-        // Search by username or invitation code
         const { data, error } = await supabase
           .from('profiles')
           .select(`
@@ -53,31 +126,34 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
           `)
           .or(`username.ilike.%${term}%,invitation_code.eq.${term}`)
           .limit(20);
-
         if (error) throw error;
 
-        // Get online status
         const userIds = data?.map(u => u.id) || [];
         const { data: presenceData } = await supabase
           .from('user_presence')
           .select('user_id, is_online')
           .in('user_id', userIds);
 
+        if (!alive) return;
+
         const resultsWithPresence = data?.map(user => ({
           ...user,
           is_online: presenceData?.find(p => p.user_id === user.id)?.is_online || false,
         })) || [];
 
-        setResults(resultsWithPresence);
+        setResults(resultsWithPresence.filter(u => u.id !== currentUserId));
       } catch (error) {
         console.error('Search error:', error);
       } finally {
-        setSearching(false);
+        if (alive) setSearching(false);
       }
     }, 300);
 
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
+  }, [searchTerm, currentUserId]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -141,17 +217,20 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
                     </p>
                   </div>
                 </div>
-                <Button
-                  onClick={() => {
-                    onUserSelect(user.id, user.username);
-                    onOpenChange(false);
-                  }}
-                  size="sm"
-                  className="bg-gradient-to-r from-green-600 to-green-800"
-                >
-                  <MessageCircle className="w-4 h-4 mr-1" />
-                  Üzenet
-                </Button>
+                <div className="flex items-center gap-2">
+                  <FriendAction currentUserId={currentUserId} targetUserId={user.id} username={user.username} />
+                  <Button
+                    onClick={() => {
+                      onUserSelect(user.id, user.username);
+                      onOpenChange(false);
+                    }}
+                    size="sm"
+                    className="bg-gradient-to-r from-green-600 to-green-800"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-1" />
+                    Üzenet
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

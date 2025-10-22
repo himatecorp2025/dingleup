@@ -90,34 +90,8 @@ const ChatEnhanced = () => {
 
   const handleUserSelect = async (selectedUserId: string, username: string) => {
     if (!userId) return;
-    
-    // Check if friendship already exists
-    const { data: existingFriendship } = await supabase
-      .from('friendships')
-      .select('*')
-      .or(`and(user_id_a.eq.${userId},user_id_b.eq.${selectedUserId}),and(user_id_a.eq.${selectedUserId},user_id_b.eq.${userId})`)
-      .maybeSingle();
 
-    // If no friendship exists, create one
-    if (!existingFriendship) {
-      const { error } = await supabase
-        .from('friendships')
-        .insert({
-          user_id_a: userId,
-          user_id_b: selectedUserId,
-          status: 'active'
-        });
-
-      if (error) {
-        console.error('Error creating friendship:', error);
-        toast.error('Hiba az ismerős hozzáadása során');
-        return;
-      }
-
-      toast.success(`${username} hozzáadva az ismerősökhöz!`);
-    }
-
-    // Select the user for chat
+    // Csak a beszélgetés megnyitása; az ismerős-jelölés külön gombbal történik
     setSelectedFriendId(selectedUserId);
     setShowSearchDialog(false);
   };
@@ -181,6 +155,7 @@ const ChatEnhanced = () => {
       <div className="h-[calc(100%-64px)]">
         {selectedFriendId ? (
           <ThreadView 
+            key={selectedFriendId}
             friendId={selectedFriendId}
             userId={userId!}
             onBack={() => setSelectedFriendId(null)}
