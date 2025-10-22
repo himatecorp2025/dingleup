@@ -8,6 +8,9 @@ import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { SPEED_BOOSTERS } from '@/types/game';
 import { supabase } from '@/integrations/supabase/client';
 import { QuickBuyOptInDialog } from './QuickBuyOptInDialog';
+import { GeniusSubscriptionDialog } from './GeniusSubscriptionDialog';
+import { TipsVideosGrid } from './TipsVideosGrid';
+import { calculateUsdPrice, calculateCoinCost } from '@/lib/geniusPricing';
 
 interface ShopProps {
   userId: string;
@@ -19,6 +22,8 @@ interface ShopItem {
   description: string;
   price: number;
   priceUsd?: number;
+  baseCoinPrice?: number;
+  baseUsdPrice?: number;
   icon: any;
   action: () => Promise<void>;
   disabled?: boolean;
@@ -33,6 +38,9 @@ const Shop = ({ userId }: ShopProps) => {
   const [showQuickBuyDialog, setShowQuickBuyDialog] = useState(false);
   const [quickBuyEnabled, setQuickBuyEnabled] = useState(false);
   const [pendingStripeAction, setPendingStripeAction] = useState<(() => void) | null>(null);
+  const [showGeniusDialog, setShowGeniusDialog] = useState(false);
+
+  const isGenius = profile?.is_subscribed || false;
 
   useEffect(() => {
     const enabled = localStorage.getItem(QUICK_BUY_KEY) === 'true';
@@ -306,20 +314,29 @@ const Shop = ({ userId }: ShopProps) => {
     }
   ];
 
-  // Booster items in correct order: DingleSpeed → GigaSpeed → MegaSpeed → DoubleSpeed
+  // Booster items with Genius pricing
   const boosterOrder = ['DingleSpeed', 'GigaSpeed', 'MegaSpeed', 'DoubleSpeed'];
   const boosterItems: ShopItem[] = boosterOrder
     .map(name => SPEED_BOOSTERS.find(b => b.name === name))
     .filter(Boolean)
-    .map(booster => ({
-      id: booster!.name,
-      name: booster!.name,
-      description: `${booster!.multiplier}x gyorsítás, +${booster!.lives_gained} élet`,
-      price: booster!.price,
-      priceUsd: booster!.priceUsd,
-      icon: Zap,
-      action: () => buyBooster(booster!.name as any)
-    }));
+    .map(booster => {
+      const baseCoinCost = booster!.price;
+      const baseUsdPrice = booster!.priceUsd;
+      const discountedCoinCost = calculateCoinCost(baseCoinCost, { is_subscriber: isGenius });
+      const discountedUsdPrice = baseUsdPrice ? calculateUsdPrice(baseUsdPrice, { is_subscriber: isGenius }) : undefined;
+      
+      return {
+        id: booster!.name,
+        name: booster!.name,
+        description: `${booster!.multiplier}x gyorsítás, +${booster!.lives_gained} élet`,
+        price: discountedCoinCost,
+        priceUsd: discountedUsdPrice,
+        baseCoinPrice: baseCoinCost,
+        baseUsdPrice: baseUsdPrice,
+        icon: Zap,
+        action: () => buyBooster(booster!.name as any)
+      };
+    });
 
   return (
     <>
@@ -327,6 +344,10 @@ const Shop = ({ userId }: ShopProps) => {
         open={showQuickBuyDialog} 
         onAccept={handleQuickBuyAccept}
         onDecline={handleQuickBuyDecline}
+      />
+      <GeniusSubscriptionDialog
+        open={showGeniusDialog}
+        onOpenChange={setShowGeniusDialog}
       />
       
       <div className="space-y-8">
@@ -339,21 +360,26 @@ const Shop = ({ userId }: ShopProps) => {
           <p className="text-yellow-900 mt-2">Jelenlegi egyenleged</p>
         </div>
 
-        {/* Subscription Info Box */}
-        <div className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/50 rounded-xl p-4 backdrop-blur-sm" data-tutorial="genius-section">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <Crown className="w-6 h-6 text-purple-300" />
+        {/* Subscription Info Box - only show if NOT Genius */}
+        {!isGenius && (
+          <div className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/50 rounded-xl p-4 backdrop-blur-sm animate-pulse" data-tutorial="genius-section" style={{ animationDuration: '3s' }}>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-yellow-500/30 rounded-lg">
+                <Crown className="w-6 h-6 text-yellow-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+              </div>
+              <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">Genius Előfizetés</h3>
             </div>
-            <h3 className="text-lg font-black text-purple-200">Genius Előfizetés</h3>
+            <p className="text-white/90 text-sm mb-3 font-semibold">
+              🌟 Dupla napi jutalmak, 50% kedvezmény speed boosterekre, 25% kedvezmény valódi pénzes vásárlásoknál, és exkluzív Tippek & Trükkök videók!
+            </p>
+            <button 
+              onClick={() => setShowGeniusDialog(true)}
+              className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-black py-3 px-4 rounded-lg transition-all shadow-lg shadow-yellow-500/50"
+            >
+              Előfizetek $2.99/hó
+            </button>
           </div>
-          <p className="text-white/80 text-sm mb-3">
-            Dupla jutalmak, exkluzív tartalmak és korlátlan élvezet!
-          </p>
-          <button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-2 px-4 rounded-lg transition-all">
-            Előfizetek
-          </button>
-        </div>
+        )}
 
         {/* Speed Boosters Section */}
         <div className="space-y-4" data-tutorial="boosters-section">
@@ -385,7 +411,15 @@ const Shop = ({ userId }: ShopProps) => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Coins className="w-5 h-5 text-yellow-500" />
-                          <span className="text-2xl font-bold text-yellow-500">{item.price}</span>
+                          {isGenius && item.baseCoinPrice && item.baseCoinPrice !== item.price ? (
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg font-bold text-yellow-600/50 line-through">{item.baseCoinPrice}</span>
+                              <span className="text-2xl font-bold text-yellow-400 animate-pulse">{item.price}</span>
+                              <span className="text-xs bg-yellow-500 text-black font-black px-2 py-1 rounded-full">-50%</span>
+                            </div>
+                          ) : (
+                            <span className="text-2xl font-bold text-yellow-500">{item.price}</span>
+                          )}
                         </div>
                         
                         <button
@@ -402,9 +436,21 @@ const Shop = ({ userId }: ShopProps) => {
                         <div className="flex items-center justify-between border-t border-white/10 pt-3">
                           <div className="flex items-center gap-2">
                             <CreditCard className="w-5 h-5 text-green-500" />
-                            <span className="text-2xl font-bold text-green-500">
-                              ${item.priceUsd.toFixed(2).replace('.', ',')}
-                            </span>
+                            {isGenius && item.baseUsdPrice && item.baseUsdPrice !== item.priceUsd ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg font-bold text-green-600/50 line-through">
+                                  ${item.baseUsdPrice.toFixed(2)}
+                                </span>
+                                <span className="text-2xl font-bold text-green-400 animate-pulse">
+                                  ${item.priceUsd.toFixed(2)}
+                                </span>
+                                <span className="text-xs bg-green-500 text-black font-black px-2 py-1 rounded-full">-25%</span>
+                              </div>
+                            ) : (
+                              <span className="text-2xl font-bold text-green-500">
+                                ${item.priceUsd.toFixed(2)}
+                              </span>
+                            )}
                           </div>
                           
                           <button
@@ -427,6 +473,24 @@ const Shop = ({ userId }: ShopProps) => {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Tips & Tricks Section - only for Genius or show teaser */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <Crown className="w-8 h-8 text-yellow-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+            <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
+              Tippek & Trükkök
+            </h2>
+          </div>
+          <p className="text-white/80 mb-4">
+            {isGenius ? 'Exkluzív videók csak Genius tagoknak!' : 'Exkluzív videók - Genius előfizetéssel!'}
+          </p>
+          
+          <TipsVideosGrid 
+            isGenius={isGenius} 
+            onSubscribeClick={() => setShowGeniusDialog(true)} 
+          />
         </div>
 
         {/* Shop Items Section */}

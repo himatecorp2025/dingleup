@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
+import { GeniusCrownBadge } from '@/components/GeniusCrownBadge';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -139,7 +140,10 @@ const Profile = () => {
 
         {/* User Info */}
         <div className="text-center mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 mb-1">{profile.username}</h1>
+          <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 mb-1 flex items-center justify-center gap-2">
+            {profile.username}
+            {profile.is_subscribed && <GeniusCrownBadge size="md" />}
+          </h1>
           <p className="text-sm sm:text-base text-yellow-200/90">{profile.email}</p>
         </div>
 

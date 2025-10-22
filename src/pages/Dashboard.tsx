@@ -26,6 +26,7 @@ import { NextLifeTimer } from '@/components/NextLifeTimer';
 import { FallingCoins } from '@/components/FallingCoins';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
+import { GeniusCrownBadge } from '@/components/GeniusCrownBadge';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
@@ -267,7 +268,10 @@ return (
           <div className="flex items-start justify-between">
             {/* Left: Greeting */}
             <div className="flex flex-col items-start">
-              <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">Szia, {profile.username}!</h1>
+              <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 flex items-center gap-2">
+                Szia, {profile.username}!
+                {profile.is_subscribed && <GeniusCrownBadge size="sm" />}
+              </h1>
             </div>
 
             {/* Right: Stats & Avatar */}

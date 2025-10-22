@@ -123,12 +123,27 @@ const DailyGiftDialog = ({
                 <p className="text-base sm:text-lg text-cyan-200 font-black mb-3 relative z-10 drop-shadow-md">
                   🎉 JUTALMAD
                 </p>
-                <p className="text-5xl sm:text-6xl font-black text-cyan-300 flex items-center justify-center gap-4 mb-3 drop-shadow-[0_0_20px_rgba(103,232,249,1)] relative z-10 animate-bounce">
-                  <Coins className="w-14 h-14 sm:w-16 sm:h-16 animate-spin" style={{ animationDuration: '3s' }} />
-                  +{nextReward}
-                </p>
+                {isPremium ? (
+                  <div className="space-y-2 mb-3">
+                    <p className="text-3xl sm:text-4xl font-black text-cyan-400/50 line-through relative z-10">
+                      +{nextReward / 2}
+                    </p>
+                    <p className="text-5xl sm:text-6xl font-black text-yellow-300 flex items-center justify-center gap-4 drop-shadow-[0_0_20px_rgba(253,224,71,1)] relative z-10 animate-bounce">
+                      <Coins className="w-14 h-14 sm:w-16 sm:h-16 animate-spin" style={{ animationDuration: '3s' }} />
+                      +{nextReward}
+                    </p>
+                    <p className="text-xs sm:text-sm text-yellow-200 font-black relative z-10 animate-pulse">
+                      🌟 GENIUS TAG VAGY? DUPLA JÁR! 🌟
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-5xl sm:text-6xl font-black text-cyan-300 flex items-center justify-center gap-4 mb-3 drop-shadow-[0_0_20px_rgba(103,232,249,1)] relative z-10 animate-bounce">
+                    <Coins className="w-14 h-14 sm:w-16 sm:h-16 animate-spin" style={{ animationDuration: '3s' }} />
+                    +{nextReward}
+                  </p>
+                )}
                 <p className="text-xl sm:text-2xl text-white font-black relative z-10 drop-shadow-lg">
-                  💰 {nextReward} ARANYÉRME {isPremium && '(Genius 2×)'}
+                  💰 {nextReward} ARANYÉRME
                 </p>
               </>
             ) : (
@@ -173,7 +188,11 @@ const DailyGiftDialog = ({
           {/* Info */}
           <p className="text-xs sm:text-sm text-center text-[hsl(var(--dup-text-300))] leading-relaxed">
             A heti számláló hétfő 00:00-kor indul újra.
-            {isPremium && ' 🌟 Genius tag vagy? A jutalmad dupla!'}
+            {isPremium && (
+              <span className="block mt-2 text-yellow-300 font-black animate-pulse">
+                🌟 Genius tag vagy! A jutalmad dupla! 🌟
+              </span>
+            )}
           </p>
         </div>
       </DialogContent>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart, AlertTriangle, Star, Activity } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart, AlertTriangle, Star, Activity, Crown } from 'lucide-react';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
@@ -253,6 +253,13 @@ const AdminDashboard = () => {
             >
               <Star className="w-4 h-4 xl:w-5 xl:h-5 text-[#ffd700]" />
               <span className="font-medium">Genius Tagok</span>
+            </button>
+            <button
+              onClick={() => navigate('/admin/tips')}
+              className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
+            >
+              <Crown className="w-4 h-4 xl:w-5 xl:h-5 text-yellow-400" />
+              <span className="font-medium">Tippek & Trükkök</span>
             </button>
             <button
               onClick={() => setActiveTab('purchases')}
