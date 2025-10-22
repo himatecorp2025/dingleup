@@ -218,9 +218,9 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#0F1116]">
+    <div className="h-full flex flex-col bg-[#0F1116] relative">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 bg-[#0f0f2a]/80 border-b border-[#D4AF37]/30">
+      <div className="flex-none flex items-center gap-3 p-4 bg-[#0f0f2a]/80 border-b border-[#D4AF37]/30 z-10">
         <button
           onClick={onBack}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -254,7 +254,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-32">
         {isLoading ? (
           <div className="text-center py-12">
             <p className="text-white/60">Üzenetek betöltése...</p>
@@ -291,8 +291,8 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
-      <div className="p-4 bg-[#0F1116] border-t border-[#D4AF37]/30">
+      {/* Message Input - Absolute positioned above BottomNav */}
+      <div className="absolute bottom-16 left-0 right-0 p-4 bg-[#0F1116] border-t border-[#D4AF37]/30 z-20">
         <div className="flex items-end gap-2">
           <textarea
             ref={textareaRef}
