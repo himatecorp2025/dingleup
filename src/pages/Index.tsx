@@ -7,7 +7,6 @@ import DevelopmentStatus from "@/components/DevelopmentStatus";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { AlertCircle } from "lucide-react";
-import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 
 const Index = () => {
@@ -26,7 +25,7 @@ const Index = () => {
   }, [navigate]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-x-hidden overflow-y-auto relative pb-24">
+    <main className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-x-hidden overflow-y-auto relative">
       <div data-tutorial="hero">
         <Hero />
       </div>
@@ -36,7 +35,6 @@ const Index = () => {
       <DevelopmentStatus />
       <Newsletter />
       <Footer />
-      <BottomNav />
       <TutorialManager route="landing" />
     </main>
   );

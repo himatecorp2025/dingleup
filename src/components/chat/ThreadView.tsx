@@ -291,8 +291,8 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
-      <div className="flex-none p-4 bg-[#0F1116] border-t border-[#D4AF37]/30">
+      {/* Message Input - Mobile optimized with safe area */}
+      <div className="flex-none p-4 bg-[#0F1116] border-t border-[#D4AF37]/30 pb-safe">
         <div className="flex items-end gap-2">
           <textarea
             ref={textareaRef}
@@ -305,14 +305,14 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
                 sendMessage();
               }
             }}
-            className="flex-1 bg-black/30 border border-[#D4AF37]/40 text-white placeholder:text-white/50 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#138F5E] resize-none min-h-[40px] max-h-[120px]"
+            className="flex-1 bg-black/30 border border-[#D4AF37]/40 text-white placeholder:text-white/50 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#138F5E] resize-none min-h-[44px] max-h-[120px] text-base"
             rows={1}
             maxLength={2000}
           />
           <button
             onClick={sendMessage}
             disabled={!messageText.trim()}
-            className="bg-[#138F5E] hover:bg-[#138F5E]/80 disabled:bg-[#138F5E]/30 text-white font-bold p-3 rounded-lg transition-all disabled:cursor-not-allowed flex-shrink-0"
+            className="bg-[#138F5E] hover:bg-[#138F5E]/80 disabled:bg-[#138F5E]/30 text-white font-bold p-3 rounded-lg transition-all disabled:cursor-not-allowed flex-shrink-0 min-h-[44px]"
           >
             <Send className="w-5 h-5" />
           </button>
