@@ -69,28 +69,9 @@ export const InsufficientResourcesDialog = ({
       if (error) throw error;
       
       if (data.url) {
-        // Open Stripe checkout in new tab
-        window.open(data.url, '_blank');
-        
-        if (!quickBuyEnabled) {
-          localStorage.setItem(QUICK_BUY_KEY, 'true');
-        }
-        
-        onOpenChange(false);
-        
-        // Poll for payment completion
-        const checkInterval = setInterval(async () => {
-          const params = new URLSearchParams(window.location.search);
-          if (params.get('payment') === 'success') {
-            clearInterval(checkInterval);
-            if (onPurchaseComplete) {
-              onPurchaseComplete();
-            }
-          }
-        }, 2000);
-        
-        // Stop checking after 5 minutes
-        setTimeout(() => clearInterval(checkInterval), 300000);
+        // Open Stripe checkout in the same tab so we can capture success params
+        window.location.href = data.url;
+        return; // Stop further execution; redirecting away
       }
     } catch (error: any) {
       console.error('Error creating payment:', error);
