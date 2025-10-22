@@ -80,6 +80,7 @@ export type Database = {
           id: string
           is_deleted: boolean
           sender_id: string
+          status: string | null
           thread_id: string
         }
         Insert: {
@@ -88,6 +89,7 @@ export type Database = {
           id?: string
           is_deleted?: boolean
           sender_id: string
+          status?: string | null
           thread_id: string
         }
         Update: {
@@ -96,6 +98,7 @@ export type Database = {
           id?: string
           is_deleted?: boolean
           sender_id?: string
+          status?: string | null
           thread_id?: string
         }
         Relationships: [
@@ -373,6 +376,79 @@ export type Database = {
             columns: ["inviter_id"]
             isOneToOne: false
             referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_media: {
+        Row: {
+          created_at: string | null
+          file_name: string | null
+          file_size: number | null
+          id: string
+          media_type: string
+          media_url: string
+          message_id: string
+          thumbnail_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          media_type: string
+          media_url: string
+          message_id: string
+          thumbnail_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          media_type?: string
+          media_url?: string
+          message_id?: string
+          thumbnail_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_media_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "dm_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          message_id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message_id: string
+          reaction: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message_id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "dm_messages"
             referencedColumns: ["id"]
           },
         ]
@@ -778,6 +854,35 @@ export type Database = {
           video_url?: string
         }
         Relationships: []
+      }
+      typing_status: {
+        Row: {
+          is_typing: boolean | null
+          thread_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          is_typing?: boolean | null
+          thread_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          is_typing?: boolean | null
+          thread_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "typing_status_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "dm_threads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_activity_daily: {
         Row: {

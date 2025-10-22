@@ -1,14 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Info, Send, UserPlus } from 'lucide-react';
+import { ArrowLeft, Info, Send, UserPlus, ImagePlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFriendshipStatus } from '@/hooks/useFriendshipStatus';
 import { toast } from 'sonner';
+import { useTypingStatus } from '@/hooks/useTypingStatus';
+import { MessageBubble } from './MessageBubble';
 
 interface Message {
   id: string;
+  thread_id?: string;
   sender_id: string;
   body: string;
   created_at: string;
+  is_deleted?: boolean;
 }
 
 interface FriendProfile {
@@ -35,13 +39,16 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const PAGE_SIZE = 50;
+  const [partnerTyping, setPartnerTyping] = useState(false);
+  const [threadId, setThreadId] = useState<string | null>(null);
   const { status: friendshipStatus, sendRequest } = useFriendshipStatus(userId, friendId);
+  const { handleTyping, stopTyping } = useTypingStatus(threadId, userId);
 
   useEffect(() => {
     loadFriendProfile();
     loadMessages();
 
-    // Realtime subscription for messages + presence + friendship
+    // Realtime subscription for messages + presence + friendship + typing
     const messagesChannel = supabase
       .channel(`thread-${friendId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, (payload) => {
@@ -54,12 +61,23 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, (payload) => {
         console.log('[ThreadView] friendships changed', payload);
-        // Friendship status hook will auto-refresh
+      })
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'typing_status',
+        filter: `user_id=eq.${friendId}`
+      }, (payload) => {
+        console.log('[ThreadView] typing_status changed', payload);
+        if (payload.new && typeof payload.new === 'object' && 'is_typing' in payload.new) {
+          setPartnerTyping(payload.new.is_typing as boolean);
+        }
       })
       .subscribe();
 
     return () => {
       supabase.removeChannel(messagesChannel);
+      stopTyping();
     };
   }, [friendId]);
 
@@ -147,9 +165,17 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const loadMessages = async () => {
     try {
       setIsLoading(true);
-      const msgs = await fetchMessages({ limit: PAGE_SIZE });
-      setMessages(msgs || []);
-      setHasMore((msgs?.length || 0) === PAGE_SIZE);
+      const result = await supabase.functions.invoke(
+        `get-thread-messages?otherUserId=${friendId}`
+      );
+      if (result.error) throw result.error;
+      const msgs = result.data?.messages || [];
+      setMessages(msgs);
+      setHasMore(msgs.length === PAGE_SIZE);
+      // Extract threadId from first message
+      if (msgs.length > 0 && msgs[0].thread_id) {
+        setThreadId(msgs[0].thread_id);
+      }
     } catch (error) {
       console.error('Error loading messages:', error);
     } finally {
@@ -165,7 +191,8 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     if (!messageText.trim()) return;
     
     const textToSend = messageText.trim();
-    setMessageText(''); // Azonnal töröljük a mezőt
+    setMessageText('');
+    stopTyping();
     
     const tempMsg = {
       id: `temp-${Date.now()}`,
@@ -182,12 +209,11 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         body: { recipientId: friendId, body: textToSend }
       });
       if (error) throw error;
-      // A realtime sub automatikusan frissít
     } catch (error) {
       console.error('Error sending message:', error);
-      // Hiba esetén visszarakjuk az üzenetet
       setMessages(prev => prev.filter(m => m.id !== tempMsg.id));
       setMessageText(textToSend);
+      toast.error('Üzenet küldése sikertelen');
     }
   };
 
@@ -287,9 +313,13 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
 
         <div className="flex-1 min-w-0">
           <h2 className="font-semibold text-white text-[15px] leading-tight">{friendProfile.username}</h2>
-          <p className="text-[12px] text-white/60 leading-tight">
-            {friendProfile.online_status === 'online' ? 'Online' : 'Legutóbb elérhető: 1 órája'}
-          </p>
+          {partnerTyping ? (
+            <p className="text-[12px] text-[#D4AF37] leading-tight">💬 éppen ír...</p>
+          ) : (
+            <p className="text-[12px] text-white/60 leading-tight">
+              {friendProfile.online_status === 'online' ? 'Online' : 'Legutóbb elérhető: 1 órája'}
+            </p>
+          )}
         </div>
 
         {getFriendshipButton()}
@@ -322,40 +352,25 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
             <p className="text-white/40 text-sm mt-2">Kezdj egy új beszélgetést!</p>
           </div>
         ) : (
-          messages.map((msg) => {
-            const isOwn = msg.sender_id === userId;
-            return (
-              <div key={msg.id} className={`flex items-end gap-1.5 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                {!isOwn && (
-                  <div className="w-7 h-7 rounded-full flex-shrink-0 overflow-hidden bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center">
-                    {friendProfile.avatar_url ? (
-                      <img src={friendProfile.avatar_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-white text-xs font-bold">{getInitials(friendProfile.username)}</span>
-                    )}
-                  </div>
-                )}
-                <div className={`max-w-[70%] rounded-[18px] px-3.5 py-2 ${
-                  isOwn 
-                    ? 'bg-[#0a7cff] text-white' 
-                    : 'bg-[#3a3a3c] text-white'
-                }`}>
-                  <p className="text-[15px] leading-[1.4] break-words whitespace-pre-wrap">{msg.body}</p>
-                </div>
-              </div>
-            );
-          })
+          messages.map((msg) => (
+            <MessageBubble
+              key={msg.id}
+              message={msg}
+              isOwn={msg.sender_id === userId}
+              partnerAvatar={friendProfile.avatar_url}
+              partnerName={friendProfile.username}
+              showTime={formatTime(msg.created_at)}
+            />
+          ))
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input - Fixed at bottom */}
-      <div className="flex-none px-2 py-2 bg-[#000000] pb-safe border-t border-[#D4AF37]/10">
+      {/* Message Input - Fixed at bottom with z-index */}
+      <div className="flex-none px-2 py-2 bg-[#000000] pb-safe border-t border-[#D4AF37]/10 relative z-50">
         <div className="flex items-center gap-1.5">
           <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
-            <svg className="w-6 h-6 text-[#0a7cff]" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-            </svg>
+            <ImagePlus className="w-6 h-6 text-[#0a7cff]" />
           </button>
 
           <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
@@ -381,13 +396,17 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
               ref={textareaRef}
               placeholder="Üzenet..."
               value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
+              onChange={(e) => {
+                setMessageText(e.target.value);
+                handleTyping();
+              }}
               onKeyPress={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   sendMessage();
                 }
               }}
+              onBlur={stopTyping}
               className="flex-1 bg-transparent border-0 text-white placeholder:text-white/60 focus:outline-none resize-none min-h-[24px] max-h-[100px] text-[15px] leading-snug"
               rows={1}
               maxLength={2000}
