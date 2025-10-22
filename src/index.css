@@ -52,6 +52,16 @@ button, a {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Hide scrollbar utility */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Design system - Color variables */
 :root {
   /* Bottom Nav Height for Mobile Layout */

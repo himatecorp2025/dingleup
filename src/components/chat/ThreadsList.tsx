@@ -83,16 +83,39 @@ export const ThreadsList = ({
   return (
     <div className="h-full flex flex-col bg-[#000000]">
       {/* Search Bar */}
-      <div className="p-3 border-b border-[#D4AF37]/20">
+      <div className="flex-none p-3 border-b border-[#D4AF37]/10">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-white/40" />
           <input
             type="search"
             placeholder="Keresés..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 bg-[#262626] border-0 text-white placeholder:text-white/50 rounded-full focus:outline-none focus:ring-2 focus:ring-[#138F5E]/50 text-[15px]"
+            className="w-full pl-11 pr-4 py-2.5 bg-[#3a3a3c] border-0 text-white placeholder:text-white/50 rounded-full focus:outline-none text-[15px]"
           />
+        </div>
+      </div>
+
+      {/* Online Friends Stories */}
+      <div className="flex-none border-b border-[#D4AF37]/10 px-3 py-3">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+          {filteredThreads.slice(0, 6).map((thread) => (
+            <div key={`story-${thread.id}`} className="flex-shrink-0 flex flex-col items-center gap-1.5">
+              <div className="relative">
+                <div className="w-14 h-14 rounded-full overflow-hidden bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 border-[#138F5E]">
+                  {thread.other_user_avatar ? (
+                    <img src={thread.other_user_avatar} alt={thread.other_user_name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-white font-bold text-lg">{getInitials(thread.other_user_name)}</span>
+                  )}
+                </div>
+                {thread.online_status === 'online' && (
+                  <div className="absolute bottom-0 right-0 w-4 h-4 bg-[#00FF66] rounded-full border-2 border-[#000000]" />
+                )}
+              </div>
+              <span className="text-white text-xs max-w-[60px] truncate">{thread.other_user_name}</span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -120,7 +143,7 @@ export const ThreadsList = ({
                   key={thread.id}
                   onClick={() => onThreadSelect(thread)}
                   className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-all relative ${
-                    selectedThreadId === thread.other_user_id ? 'bg-[#1a1a1a]' : 'hover:bg-[#1a1a1a]/50'
+                    selectedThreadId === thread.other_user_id ? 'bg-[#2a2a2c]' : 'hover:bg-[#1a1a1a]'
                   }`}
                 >
                   {/* Avatar with status */}
@@ -140,51 +163,22 @@ export const ThreadsList = ({
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <h3 className={`font-semibold text-white truncate`}>
+                      <h3 className={`${hasUnread ? 'font-semibold' : 'font-normal'} text-white truncate text-[15px]`}>
                         {thread.other_user_name}
                       </h3>
-                      <span className="text-xs text-white/50 flex-shrink-0">
+                      <span className="text-[13px] text-white/50 flex-shrink-0">
                         {formatTime(thread.last_message_at)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                      <p className={`text-[15px] truncate ${hasUnread ? 'text-white font-medium' : 'text-white/60'}`}>
+                      <p className={`text-[13px] truncate ${hasUnread ? 'text-white font-medium' : 'text-white/60'}`}>
                         {truncateMessage(thread.last_message_preview)}
                       </p>
                       {hasUnread && (
-                        <div className="flex-shrink-0 min-w-[18px] h-[18px] bg-[#138F5E] rounded-full flex items-center justify-center px-1">
-                          <span className="text-white text-xs font-bold leading-none">{thread.unread_count}</span>
-                        </div>
+                        <div className="flex-shrink-0 min-w-[8px] h-[8px] bg-[#0a7cff] rounded-full" />
                       )}
                     </div>
                   </div>
-
-                  {/* Context menu button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setContextMenuThreadId(contextMenuThreadId === thread.id ? null : thread.id);
-                    }}
-                    className="flex-shrink-0 p-1 hover:bg-white/10 rounded transition-colors"
-                  >
-                    <MoreVertical className="w-4 h-4 text-white/50" />
-                  </button>
-
-                  {/* Context menu */}
-                  {contextMenuThreadId === thread.id && (
-                    <div className="absolute right-4 top-16 bg-[#262626] border border-white/10 rounded-lg shadow-lg z-10 min-w-[150px]">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onThreadDelete(thread.id);
-                          setContextMenuThreadId(null);
-                        }}
-                        className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/10 transition-colors rounded-lg"
-                      >
-                        Archiválás
-                      </button>
-                    </div>
-                  )}
                 </div>
               );
             })}
