@@ -100,7 +100,19 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
           </div>
 
           <div className="space-y-2 max-h-[300px] overflow-y-auto">
-            {results.map((user) => (
+            {searching && (
+              <div className="text-center text-purple-300 py-4">
+                Keresés...
+              </div>
+            )}
+            
+            {!searching && searchTerm && results.length === 0 && (
+              <div className="text-center text-purple-300 py-4">
+                Nincs találat
+              </div>
+            )}
+            
+            {!searching && results.map((user) => (
               <div
                 key={user.id}
                 className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-purple-500/30 hover:bg-gray-800/80 transition-colors"

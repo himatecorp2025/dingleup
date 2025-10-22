@@ -27,7 +27,6 @@ export const MusicControls = () => {
     
     if (audio) {
       audio.volume = actualVolume;
-      audio.muted = isMuted;
       
       // If unmuting or changing volume, try to play
       if (!isMuted && actualVolume > 0) {
@@ -90,7 +89,7 @@ export const MusicControls = () => {
         
         <div className="flex-1">
           <Slider
-            value={[isMuted ? 0 : volume]}
+            value={[volume]}
             onValueChange={handleVolumeChange}
             max={100}
             step={1}
@@ -99,7 +98,7 @@ export const MusicControls = () => {
         </div>
         
         <span className="text-white text-sm font-bold w-12 text-right">
-          {isMuted ? 0 : volume}%
+          {volume}%
         </span>
       </div>
     </div>
