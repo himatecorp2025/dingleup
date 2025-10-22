@@ -196,8 +196,8 @@ export const InsufficientResourcesDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 duration-[3000ms]">
-        <div className="animate-scale-in duration-[3000ms] origin-center will-change-transform">
+      <DialogContent className="sm:max-w-sm bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] data-[state=open]:animate-none data-[state=closed]:animate-none">
+        <div className="dialog-enter-slow">
         <DialogHeader className="animate-in fade-in-0 duration-[2500ms] delay-500">
           <DialogTitle className="flex items-center gap-2 text-2xl font-black animate-in fade-in-0 zoom-in-90 duration-[2000ms] delay-1000">
             <Icon className={`w-7 h-7 ${type === 'coins' || type === 'both' ? 'text-yellow-400' : 'text-red-500'}`} />
@@ -210,7 +210,7 @@ export const InsufficientResourcesDialog = ({
         
         {userId && !clientSecret && (
           <>
-            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-6 my-3 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-in fade-in-0 zoom-in-75 duration-[2000ms] delay-1700">
+            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-6 my-3 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)]" >
               {/* Animated background sparkles */}
               <div className="absolute inset-0 opacity-30">
                 <Sparkles className="absolute top-2 right-2 w-6 h-6 text-yellow-200" />
