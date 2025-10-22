@@ -261,11 +261,11 @@ const ChatEnhanced = () => {
   }
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
-      paddingTop: 'env(safe-area-inset-top)',
-      paddingBottom: 'env(safe-area-inset-bottom)'
-    }}>
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: selectedFriendId ? '140px' : '80px' }}>
+    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
+      <div className="h-full w-full flex flex-col" style={{ 
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: selectedFriendId ? 'calc(140px + env(safe-area-inset-bottom))' : 'calc(80px + env(safe-area-inset-bottom))'
+      }}>
       {/* Header with Hamburger */}
       <div className="chat-topbar bg-[#0f0f2a]/80 border-b-2 border-yellow-500/50 p-4 flex items-center gap-4 backdrop-blur-sm">
         <button
@@ -297,7 +297,7 @@ const ChatEnhanced = () => {
       </div>
 
       {/* Main Content Area - Single Surface Chat with Drawer */}
-      <div className="chat-body flex-1 relative overflow-hidden">
+      <div className="chat-body flex-1 relative overflow-hidden min-h-0">
         {/* Friends Drawer */}
         <aside 
           className="friends-drawer absolute left-0 top-0 bottom-0 bg-[#0F1116] border-r border-yellow-500/35 z-10 overflow-y-auto transition-transform duration-250 ease-out"
@@ -315,9 +315,9 @@ const ChatEnhanced = () => {
         </aside>
 
         {/* Main Threads/Chat Area */}
-        <div className="threads-list flex-1 flex flex-col overflow-hidden">
+        <div className="threads-list flex-1 flex flex-col overflow-hidden min-h-0">
           {selectedFriendId && friendProfile ? (
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-hidden min-h-0">
               {/* Friend Header */}
               <div className="bg-[#0f0f2a]/80 p-4 border-b border-yellow-500/30 flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-900 rounded-full flex items-center justify-center border-2 border-purple-400">
@@ -336,7 +336,7 @@ const ChatEnhanced = () => {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
                 {messages.map((msg) => {
                   const isOwn = msg.sender_id === userId;
                   return (
@@ -404,7 +404,10 @@ const ChatEnhanced = () => {
 
       {/* Fixed Input at Bottom - Only when friend is selected */}
       {selectedFriendId && (
-        <div className="fixed bottom-16 left-0 right-0 p-4 bg-[#0F1116] border-t border-yellow-500/30 flex gap-2 z-20" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 4rem)' }}>
+        <div 
+          className="fixed left-0 right-0 p-4 bg-[#0F1116] border-t border-yellow-500/30 flex gap-2 z-20" 
+          style={{ bottom: 'calc(64px + env(safe-area-inset-bottom))' }}
+        >
           <input
             type="text"
             placeholder="Írj üzenetet..."
