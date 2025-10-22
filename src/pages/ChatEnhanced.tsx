@@ -265,7 +265,7 @@ const ChatEnhanced = () => {
       paddingTop: 'env(safe-area-inset-top)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden pb-24 relative z-10">
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: selectedFriendId ? '140px' : '80px' }}>
       {/* Header with Hamburger */}
       <div className="chat-topbar bg-[#0f0f2a]/80 border-b-2 border-yellow-500/50 p-4 flex items-center gap-4 backdrop-blur-sm">
         <button
@@ -352,26 +352,6 @@ const ChatEnhanced = () => {
                 })}
                 <div ref={messagesEndRef} />
               </div>
-
-              {/* Input */}
-              <div className="p-4 bg-[#0F1116] border-t border-yellow-500/30 flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Írj üzenetet..."
-                  value={messageText}
-                  onChange={(e) => setMessageText(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  className="flex-1 bg-black/50 border border-yellow-500/40 text-white placeholder:text-white/50 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  maxLength={2000}
-                />
-                <button
-                  onClick={sendMessage}
-                  disabled={!messageText.trim()}
-                  className="bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-500/30 text-black font-bold p-3 rounded-lg transition-all disabled:cursor-not-allowed"
-                >
-                  <Send className="w-5 h-5" />
-                </button>
-              </div>
             </div>
           ) : (
             <div className="flex-1 overflow-y-auto p-3">
@@ -421,6 +401,28 @@ const ChatEnhanced = () => {
         </div>
       </div>
       </div>
+
+      {/* Fixed Input at Bottom - Only when friend is selected */}
+      {selectedFriendId && (
+        <div className="fixed bottom-16 left-0 right-0 p-4 bg-[#0F1116] border-t border-yellow-500/30 flex gap-2 z-20" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 4rem)' }}>
+          <input
+            type="text"
+            placeholder="Írj üzenetet..."
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            className="flex-1 bg-black/50 border border-yellow-500/40 text-white placeholder:text-white/50 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            maxLength={2000}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={!messageText.trim()}
+            className="bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-500/30 text-black font-bold p-3 rounded-lg transition-all disabled:cursor-not-allowed"
+          >
+            <Send className="w-5 h-5" />
+          </button>
+        </div>
+      )}
 
       <ReportDialog
         open={showReportDialog}
