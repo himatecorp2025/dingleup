@@ -1,60 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { MessageCircle, Users, Plus, MoreVertical, Send, Search as SearchIcon } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
-import { ReportDialog } from '@/components/ReportDialog';
-import { UserSearchDialog } from '@/components/UserSearchDialog';
-import { useUserPresence } from '@/hooks/useUserPresence';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-interface Conversation {
-  id: string;
-  name: string | null;
-  is_group: boolean;
-  created_at: string;
-  other_user?: {
-    id: string;
-    username: string;
-    avatar_url: string | null;
-    is_online: boolean;
-  };
-}
+import { FriendsList } from '@/components/FriendsList';
+import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 
 interface Message {
   id: string;
   sender_id: string;
-  content: string | null;
-  media_url: string | null;
-  media_type: string | null;
+  body: string;
   created_at: string;
-  sender?: {
-    username: string;
-    avatar_url: string | null;
-  };
 }
 
 const ChatEnhanced = () => {
   const navigate = useNavigate();
+  const isHandheld = usePlatformDetection();
   const [userId, setUserId] = useState<string | undefined>();
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
+  const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
+  const [friendProfile, setFriendProfile] = useState<any>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
-  const [showReportDialog, setShowReportDialog] = useState(false);
-  const [showUserSearch, setShowUserSearch] = useState(false);
+  const [threadId, setThreadId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Track user presence
-  useUserPresence(userId);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -66,64 +38,49 @@ const ChatEnhanced = () => {
     });
   }, [navigate]);
 
+  // Load friend profile when selected
   useEffect(() => {
-    if (!userId) return;
-    loadConversations();
+    if (!selectedFriendId) {
+      setFriendProfile(null);
+      return;
+    }
 
-    // Subscribe to conversation changes
-    const channel = supabase
-      .channel('conversations-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'conversations',
-        },
-        () => {
-          loadConversations();
-        }
-      )
-      .subscribe();
+    const loadFriendProfile = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, username, avatar_url')
+        .eq('id', selectedFriendId)
+        .single();
 
-    return () => {
-      supabase.removeChannel(channel);
+      if (!error && data) {
+        setFriendProfile(data);
+      }
     };
-  }, [userId]);
 
+    loadFriendProfile();
+  }, [selectedFriendId]);
+
+  // Load messages when friend selected
   useEffect(() => {
-    if (!selectedConversation) return;
-    loadMessages(selectedConversation);
+    if (!selectedFriendId || !userId) return;
+    
+    loadMessages();
 
-    // Subscribe to new messages
+    // Subscribe to new messages in this thread
     const channel = supabase
-      .channel(`messages:${selectedConversation}`)
+      .channel('dm-messages-changes')
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=eq.${selectedConversation}`,
+          table: 'dm_messages',
         },
-        async (payload) => {
-          const newMessage = payload.new as Message;
-          
-          // Fetch sender info
-          const { data: sender } = await supabase
-            .from('profiles')
-            .select('username, avatar_url')
-            .eq('id', newMessage.sender_id)
-            .single();
-
-          setMessages((prev) => [...prev, { ...newMessage, sender }]);
-          
-          // Show notification if message is from another user
-          if (newMessage.sender_id !== userId && 'Notification' in window && Notification.permission === 'granted') {
-            new Notification('Új üzenet', {
-              body: `${sender?.username}: ${newMessage.content?.substring(0, 50)}...`,
-              icon: sender?.avatar_url || '/logo.png',
-            });
+        (payload) => {
+          console.log('[ChatEnhanced] New message received:', payload);
+          if (payload.new && 'thread_id' in payload.new && payload.new.thread_id === threadId) {
+            setMessages(prev => [...prev, payload.new as Message]);
+            scrollToBottom();
           }
         }
       )
@@ -132,410 +89,218 @@ const ChatEnhanced = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedConversation, userId]);
+  }, [selectedFriendId, userId, threadId]);
 
-  // Auto scroll to bottom
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  const loadMessages = async () => {
+    if (!selectedFriendId) return;
 
-  // Request notification permission
-  useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+    try {
+      const { data, error } = await supabase.functions.invoke('get-thread-messages', {
+        body: { otherUserId: selectedFriendId }
+      });
+
+      if (error) {
+        console.error('[ChatEnhanced] Error loading messages:', error);
+        return;
+      }
+
+      console.log('[ChatEnhanced] Loaded messages:', data);
+      setMessages(data.messages || []);
+      setThreadId(data.threadId);
+      scrollToBottom();
+    } catch (err) {
+      console.error('[ChatEnhanced] Exception loading messages:', err);
     }
-  }, []);
-
-  const loadConversations = async () => {
-    if (!userId) return;
-
-    // Lekérjük a meghívásokat (barátok)
-    const { data: invitations } = await supabase
-      .from('invitations')
-      .select('inviter_id, invited_user_id')
-      .or(`inviter_id.eq.${userId},invited_user_id.eq.${userId}`)
-      .eq('accepted', true);
-
-    const friendIds = new Set<string>();
-    invitations?.forEach(inv => {
-      if (inv.inviter_id === userId) friendIds.add(inv.invited_user_id);
-      if (inv.invited_user_id === userId) friendIds.add(inv.inviter_id);
-    });
-
-    const { data: members } = await supabase
-      .from('conversation_members')
-      .select('conversation_id')
-      .eq('user_id', userId);
-
-    if (!members) return;
-
-    const conversationIds = members.map((m) => m.conversation_id);
-
-    const { data: convos } = await supabase
-      .from('conversations')
-      .select('*')
-      .in('id', conversationIds)
-      .order('updated_at', { ascending: false });
-
-    if (!convos) return;
-
-    const conversationsWithUsers = await Promise.all(
-      convos.map(async (conv) => {
-        if (!conv.is_group) {
-          const { data: otherMembers } = await supabase
-            .from('conversation_members')
-            .select('user_id')
-            .eq('conversation_id', conv.id)
-            .neq('user_id', userId);
-
-          if (otherMembers && otherMembers.length > 0) {
-            const otherUserId = otherMembers[0].user_id;
-            
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('id, username, avatar_url')
-              .eq('id', otherUserId)
-              .single();
-
-            const { data: presence } = await supabase
-              .from('user_presence')
-              .select('is_online')
-              .eq('user_id', otherUserId)
-              .single();
-
-            return {
-              ...conv,
-              other_user: {
-                ...profile,
-                is_online: presence?.is_online || false,
-              },
-              is_friend: friendIds.has(otherUserId),
-            };
-          }
-        }
-        return conv;
-      })
-    );
-
-    // Barátok kerüljenek előre
-    const sorted = conversationsWithUsers.sort((a: any, b: any) => {
-      if (a.is_friend && !b.is_friend) return -1;
-      if (!a.is_friend && b.is_friend) return 1;
-      return 0;
-    });
-
-    setConversations(sorted as Conversation[]);
   };
 
-  const loadMessages = async (conversationId: string) => {
-    const { data } = await supabase
-      .from('messages')
-      .select(`
-        *,
-        sender:profiles!messages_sender_id_fkey(username, avatar_url)
-      `)
-      .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: true });
-
-    if (data) {
-      setMessages(data as any);
-    }
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   const sendMessage = async () => {
-    if (!messageText.trim() || !selectedConversation || !userId) return;
+    if (!messageText.trim() || !selectedFriendId) return;
 
-    const { error } = await supabase.from('messages').insert({
-      conversation_id: selectedConversation,
-      sender_id: userId,
-      content: messageText.trim(),
-    });
+    const tempMessage: Message = {
+      id: `temp-${Date.now()}`,
+      sender_id: userId!,
+      body: messageText.trim(),
+      created_at: new Date().toISOString()
+    };
 
-    if (error) {
-      toast.error('Hiba az üzenet küldésekor');
-    } else {
-      setMessageText('');
-      
-      // Update conversation timestamp
-      await supabase
-        .from('conversations')
-        .update({ updated_at: new Date().toISOString() })
-        .eq('id', selectedConversation);
-    }
-  };
-
-  const createPrivateConversation = async (otherUserId: string, username: string) => {
-    if (!userId) return;
+    setMessages(prev => [...prev, tempMessage]);
+    const text = messageText;
+    setMessageText('');
+    scrollToBottom();
 
     try {
-      // Check if conversation already exists
-      const { data: existingMembers } = await supabase
-        .from('conversation_members')
-        .select('conversation_id')
-        .eq('user_id', userId);
+      const { error } = await supabase.functions.invoke('send-dm', {
+        body: { recipientId: selectedFriendId, body: text }
+      });
 
-      if (existingMembers) {
-        for (const member of existingMembers) {
-          const { data: otherMember } = await supabase
-            .from('conversation_members')
-            .select('user_id')
-            .eq('conversation_id', member.conversation_id)
-            .eq('user_id', otherUserId)
-            .single();
-
-          if (otherMember) {
-            setSelectedConversation(member.conversation_id);
-            toast.success(`Beszélgetés nyitva: ${username}`);
-            return;
-          }
-        }
+      if (error) {
+        console.error('[ChatEnhanced] Error sending message:', error);
+        toast.error('Üzenet küldése sikertelen');
+        // Remove temp message
+        setMessages(prev => prev.filter(m => m.id !== tempMessage.id));
+        setMessageText(text);
       }
-
-      // Create new conversation
-      const { data: newConv, error: convError } = await supabase
-        .from('conversations')
-        .insert({
-          is_group: false,
-          created_by: userId,
-        })
-        .select()
-        .single();
-
-      if (convError) throw convError;
-
-      // Add both users as members
-      const { error: membersError } = await supabase
-        .from('conversation_members')
-        .insert([
-          { conversation_id: newConv.id, user_id: userId },
-          { conversation_id: newConv.id, user_id: otherUserId },
-        ]);
-
-      if (membersError) throw membersError;
-
-      toast.success(`Új beszélgetés létrehozva: ${username}`);
-      loadConversations();
-      setSelectedConversation(newConv.id);
-    } catch (error) {
-      console.error('Create conversation error:', error);
-      toast.error('Hiba a beszélgetés létrehozásakor');
+    } catch (err) {
+      console.error('[ChatEnhanced] Exception sending message:', err);
+      toast.error('Hiba történt');
+      setMessages(prev => prev.filter(m => m.id !== tempMessage.id));
+      setMessageText(text);
     }
   };
 
-  const selectedConvData = conversations.find(c => c.id === selectedConversation);
+  const handleSelectFriend = (friendId: string) => {
+    setSelectedFriendId(friendId);
+    setMessages([]);
+    setThreadId(null);
+  };
+
+  const getInitials = (name: string) => {
+    return name?.charAt(0)?.toUpperCase() || '?';
+  };
+
+  // Platform gate: only show on mobile/tablet
+  if (!isHandheld) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[hsl(var(--dup-ui-bg-900))] px-4">
+        <div className="text-center max-w-md">
+          <MessageCircle className="w-24 h-24 text-[hsl(var(--dup-gold-500))] mx-auto mb-6 opacity-50" />
+          <h1 className="text-2xl font-black text-[hsl(var(--dup-gold-300))] mb-4">
+            Chat csak mobilon/tableten
+          </h1>
+          <p className="text-[hsl(var(--dup-text-200))]">
+            A chat funkció csak mobil és tablet eszközökön érhető el.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
-      <div className="h-full flex flex-col pb-16">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-purple-900/80 to-purple-700/80 backdrop-blur-md border-b-2 border-yellow-500/50 p-4 shadow-lg flex items-center justify-between">
-          <h1 className="text-2xl font-black text-white flex items-center gap-2">
-            <MessageCircle className="w-6 h-6 text-yellow-400" />
-            {selectedConvData?.other_user ? selectedConvData.other_user.username : 'Chat'}
-          </h1>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setShowUserSearch(true)}
-              size="icon"
-              variant="ghost"
-              className="text-white"
-            >
-              <SearchIcon className="w-5 h-5" />
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-white">
-                  <MoreVertical className="w-5 h-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
-                  Jelentés beküldése
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
+    <div className="h-screen w-screen flex bg-[hsl(var(--dup-ui-bg-900))] overflow-hidden" style={{
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: 'env(safe-area-inset-bottom)'
+    }}>
+      {/* Left Sidebar - Friends List */}
+      <div className="w-80 border-r border-[hsl(var(--dup-gold-600)/0.3)] flex flex-col">
+        <FriendsList 
+          userId={userId!}
+          onSelectFriend={handleSelectFriend}
+          selectedFriendId={selectedFriendId}
+        />
+      </div>
 
-        {/* Content */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* Conversations List */}
-          <div className="w-1/3 border-r border-purple-500/30 overflow-y-auto bg-black/20">
-            <div className="p-2">
-              <Button
-                onClick={() => setShowUserSearch(true)}
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Új üzenet
-              </Button>
-            </div>
-            
-            {/* Friends Section */}
-            {conversations.filter((c: any) => c.is_friend).length > 0 && (
-              <div className="px-2 py-3 border-b border-purple-500/20">
-                <p className="text-xs font-bold text-purple-300 mb-2 px-2">BARÁTOK</p>
-                {conversations.filter((c: any) => c.is_friend).map((conv) => (
-                  <button
-                    key={conv.id}
-                    onClick={() => setSelectedConversation(conv.id)}
-                    className={`w-full p-3 text-left border-b border-purple-500/10 transition-colors ${
-                      selectedConversation === conv.id
-                        ? 'bg-purple-600/40'
-                        : 'hover:bg-purple-600/20'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="relative">
-                        {conv.is_group ? (
-                          <Users className="w-5 h-5 text-purple-400" />
-                        ) : conv.other_user?.avatar_url ? (
-                          <img
-                            src={conv.other_user.avatar_url}
-                            alt={conv.other_user.username}
-                            className="w-10 h-10 rounded-full"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
-                            {conv.other_user?.username.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        {!conv.is_group && conv.other_user?.is_online && (
-                          <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></span>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-white font-semibold text-sm">
-                          {conv.is_group ? conv.name : conv.other_user?.username || 'Ismeretlen'}
-                        </p>
-                        {!conv.is_group && conv.other_user && (
-                          <p className="text-xs text-green-400 font-semibold">
-                            {conv.other_user.is_online ? '● Online' : '○ Offline'}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-            
-            {/* All Conversations */}
-            {conversations.filter((c: any) => !c.is_friend).length > 0 && (
-              <div className="px-2 py-3">
-                <p className="text-xs font-bold text-purple-300 mb-2 px-2">ÖSSZES BESZÉLGETÉS</p>
-                {conversations.filter((c: any) => !c.is_friend).map((conv) => (
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col">
+        {selectedFriendId && friendProfile ? (
+          <>
+            {/* Chat Header */}
+            <div className="p-4 bg-[#0F1116] border-b border-[hsl(var(--dup-gold-600)/0.3)] flex items-center gap-3">
               <button
-                key={conv.id}
-                onClick={() => setSelectedConversation(conv.id)}
-                className={`w-full p-3 text-left border-b border-purple-500/20 transition-colors ${
-                  selectedConversation === conv.id
-                    ? 'bg-purple-600/40'
-                    : 'hover:bg-purple-600/20'
-                }`}
+                onClick={() => setSelectedFriendId(null)}
+                className="lg:hidden p-2 hover:bg-[hsl(var(--dup-gold-600)/0.1)] rounded-lg"
               >
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    {conv.is_group ? (
-                      <Users className="w-5 h-5 text-purple-400" />
-                    ) : conv.other_user?.avatar_url ? (
-                      <img
-                        src={conv.other_user.avatar_url}
-                        alt={conv.other_user.username}
-                        className="w-10 h-10 rounded-full"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
-                        {conv.other_user?.username.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    {!conv.is_group && conv.other_user?.is_online && (
-                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></span>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-white font-semibold">
-                      {conv.is_group ? conv.name : conv.other_user?.username || 'Ismeretlen'}
-                    </p>
-                    {!conv.is_group && conv.other_user && (
-                      <p className="text-xs text-purple-300">
-                        {conv.other_user.is_online ? 'Online' : 'Offline'}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                <ArrowLeft className="w-5 h-5 text-[hsl(var(--dup-text-200))]" />
               </button>
-            ))}
+              
+              <Avatar className="w-10 h-10 border-2 border-[hsl(var(--dup-gold-500))]">
+                <AvatarImage src={friendProfile.avatar_url || undefined} />
+                <AvatarFallback className="bg-[hsl(var(--dup-gold-600))] text-white font-bold">
+                  {getInitials(friendProfile.username)}
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="flex-1">
+                <h2 className="font-black text-[hsl(var(--dup-text-100))]">
+                  {friendProfile.username}
+                </h2>
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 flex flex-col">
-            {selectedConversation ? (
-              <>
-                <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                  {messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`flex ${
-                        msg.sender_id === userId ? 'justify-end' : 'justify-start'
-                      }`}
-                    >
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0B0B0F]">
+              {messages.length === 0 ? (
+                <div className="h-full flex items-center justify-center">
+                  <p className="text-[hsl(var(--dup-text-300))] text-center">
+                    Nincs még üzenet.<br />Kezdj el beszélgetni!
+                  </p>
+                </div>
+              ) : (
+                messages.map((msg) => {
+                  const isOwn = msg.sender_id === userId;
+                  return (
+                    <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                       <div
-                        className={`max-w-[70%] rounded-2xl p-3 ${
-                          msg.sender_id === userId
-                            ? 'bg-gradient-to-r from-purple-600 to-purple-800 text-white'
-                            : 'bg-gray-700 text-white'
+                        className={`max-w-[70%] p-3 rounded-[12px] ${
+                          isOwn
+                            ? 'bg-[hsl(var(--dup-green-500))] text-white'
+                            : 'bg-[#1F1F23] border border-[hsl(var(--dup-gold-600)/0.3)] text-[hsl(var(--dup-text-100))]'
                         }`}
                       >
-                        {msg.sender_id !== userId && (
-                          <p className="text-xs text-purple-300 mb-1">
-                            {msg.sender?.username || 'Ismeretlen'}
-                          </p>
-                        )}
-                        <p className="text-sm">{msg.content}</p>
+                        <p className="text-sm break-words">{msg.body}</p>
+                        <p className={`text-xs mt-1 ${isOwn ? 'text-white/70' : 'text-[hsl(var(--dup-text-300))]'}`}>
+                          {new Date(msg.created_at).toLocaleTimeString('hu-HU', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
                       </div>
                     </div>
-                  ))}
-                  <div ref={messagesEndRef} />
-                </div>
+                  );
+                })
+              )}
+              <div ref={messagesEndRef} />
+            </div>
 
-                {/* Message Input */}
-                <div className="border-t border-purple-500/30 p-4 bg-black/20">
-                  <div className="flex gap-2">
-                    <Input
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                      placeholder="Írj üzenetet..."
-                      className="flex-1 bg-gray-800 border-purple-500/50 text-white"
-                    />
-                    <Button
-                      onClick={sendMessage}
-                      className="bg-gradient-to-r from-purple-600 to-purple-800"
-                    >
-                      <Send className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center text-white/50">
-                <p>Válassz vagy kezdj egy beszélgetést</p>
+            {/* Message Input */}
+            <div className="p-4 bg-[#0F1116] border-t border-[hsl(var(--dup-gold-600)/0.3)]">
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Írj üzenetet..."
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage();
+                    }
+                  }}
+                  className="flex-1 bg-black/50 border-[hsl(var(--dup-gold-600)/0.4)] text-[hsl(var(--dup-text-100))] placeholder:text-[hsl(var(--dup-text-300))] focus-visible:ring-[hsl(var(--dup-gold-500))]"
+                  maxLength={2000}
+                />
+                <Button
+                  onClick={sendMessage}
+                  disabled={!messageText.trim()}
+                  className="bg-[hsl(var(--dup-green-500))] hover:bg-[hsl(var(--dup-green-400))] disabled:bg-[hsl(var(--dup-green-300))] text-white border border-[hsl(var(--dup-green-700))] shadow-[0_0_10px_hsl(var(--dup-green-500)/0.4)]"
+                >
+                  <Send className="w-5 h-5" />
+                </Button>
               </div>
-            )}
+            </div>
+          </>
+        ) : (
+          // No conversation selected
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <MessageCircle className="w-24 h-24 text-[hsl(var(--dup-gold-600))] mx-auto mb-6 opacity-50" />
+              <h2 className="text-2xl font-black text-[hsl(var(--dup-gold-300))] mb-2">
+                Válassz egy ismerőst
+              </h2>
+              <p className="text-[hsl(var(--dup-text-200))]">
+                Kezdj el beszélgetni!
+              </p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <BottomNav />
-      <ReportDialog open={showReportDialog} onOpenChange={setShowReportDialog} />
-      <UserSearchDialog
-        open={showUserSearch}
-        onOpenChange={setShowUserSearch}
-        onUserSelect={createPrivateConversation}
-      />
     </div>
   );
 };

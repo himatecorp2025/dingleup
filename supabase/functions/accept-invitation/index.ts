@@ -172,6 +172,21 @@ serve(async (req) => {
       // Don't fail the whole operation if coin award fails
     }
 
+    // Create friendship automatically
+    console.log('[AcceptInvitation] Creating automatic friendship:', inviterId, '<->', invitedUserId);
+    const { data: friendshipData, error: friendshipError } = await supabaseClient
+      .rpc('create_friendship_from_invitation', {
+        p_inviter_id: inviterId,
+        p_invitee_id: invitedUserId
+      });
+
+    if (friendshipError) {
+      console.error('[AcceptInvitation] Error creating friendship:', friendshipError);
+      // Don't fail the whole operation if friendship creation fails
+    } else {
+      console.log('[AcceptInvitation] Friendship created successfully:', friendshipData);
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true,

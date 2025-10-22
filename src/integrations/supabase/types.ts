@@ -73,6 +73,92 @@ export type Database = {
         }
         Relationships: []
       }
+      dm_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_deleted: boolean
+          sender_id: string
+          thread_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          sender_id: string
+          thread_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          sender_id?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dm_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "dm_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dm_threads: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string | null
+          user_id_a: string
+          user_id_b: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          user_id_a: string
+          user_id_b: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          user_id_a?: string
+          user_id_b?: string
+        }
+        Relationships: []
+      }
+      friendships: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+          user_id_a: string
+          user_id_b: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id_a: string
+          user_id_b: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id_a?: string
+          user_id_b?: string
+        }
+        Relationships: []
+      }
       game_results: {
         Row: {
           average_response_time: number | null
@@ -197,6 +283,32 @@ export type Database = {
             columns: ["inviter_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_reads: {
+        Row: {
+          last_read_at: string
+          thread_id: string
+          user_id: string
+        }
+        Insert: {
+          last_read_at?: string
+          thread_id: string
+          user_id: string
+        }
+        Update: {
+          last_read_at?: string
+          thread_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_reads_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "dm_threads"
             referencedColumns: ["id"]
           },
         ]
@@ -670,6 +782,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      create_friendship_from_invitation: {
+        Args: { p_invitee_id: string; p_inviter_id: string }
+        Returns: Json
+      }
       distribute_weekly_rewards: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -692,6 +808,10 @@ export type Database = {
       mark_users_offline: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      normalize_user_ids: {
+        Args: { uid1: string; uid2: string }
+        Returns: string[]
       }
       process_invitation_reward: {
         Args: Record<PropertyKey, never>
