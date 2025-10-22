@@ -93,7 +93,12 @@ const GeniusMembers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] pb-24">
+    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: 'env(safe-area-inset-bottom)'
+    }}>
+      <div className="h-full w-full overflow-y-auto overflow-x-hidden pb-24 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 py-4">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#0a1f14] via-[#0e4d2e] to-[#0a1f14] border-b-2 border-[#d4af37] p-4">
         <div className="max-w-4xl mx-auto flex items-center gap-4">
@@ -177,6 +182,8 @@ const GeniusMembers = () => {
             </div>
           </CardContent>
         </Card>
+      </div>
+      </div>
       </div>
 
       <BottomNav />

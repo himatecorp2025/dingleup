@@ -21,11 +21,14 @@ const About = () => {
   }
 
   return (
-    <div className="page-scroll bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: 'env(safe-area-inset-bottom)'
+    }}>
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="max-w-4xl mx-auto p-6 pt-12 pb-24">
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-6 py-4 pb-24 max-w-4xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-12 pt-safe">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-600 to-yellow-900 rounded-2xl mb-6 border-4 border-yellow-400/50 shadow-xl">

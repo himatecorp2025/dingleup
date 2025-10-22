@@ -194,7 +194,11 @@ const ChatEnhanced = () => {
   }
 
   return (
-    <div className="page-scroll flex flex-col bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] pb-24">
+    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: 'env(safe-area-inset-bottom)'
+    }}>
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden pb-24 relative z-10">
       {/* Header with Hamburger */}
       <div className="chat-topbar bg-[#0f0f2a]/80 border-b-2 border-yellow-500/50 p-4 flex items-center gap-4 backdrop-blur-sm">
         <button
@@ -340,6 +344,7 @@ const ChatEnhanced = () => {
             </div>
           )}
         </div>
+      </div>
       </div>
 
       <ReportDialog

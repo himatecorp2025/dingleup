@@ -38,8 +38,12 @@ const ShopPage = () => {
   }
 
   return (
-    <div className="page-scroll bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-      <div className="max-w-6xl mx-auto p-4 pb-24 min-h-screen">
+    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: 'env(safe-area-inset-bottom)'
+    }}>
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden pb-24 relative z-10">
+        <div className="max-w-6xl mx-auto p-4 w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 pt-safe">
           <button 
@@ -64,6 +68,7 @@ const ShopPage = () => {
 
         {/* Shop Component */}
         <Shop userId={userId!} />
+      </div>
       </div>
 
       <BottomNav />

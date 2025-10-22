@@ -102,7 +102,10 @@ const Invitation = () => {
   const { totalCoins, totalLives } = getTotalRewards();
 
   return (
-    <div className="page-scroll bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: 'env(safe-area-inset-bottom)'
+    }}>
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50 pt-safe">
         <button
@@ -116,7 +119,8 @@ const Invitation = () => {
         </button>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pt-20 pb-24 min-h-screen">
+      <div className="h-full w-full overflow-y-auto overflow-x-hidden pb-24 relative z-10">
+        <div className="max-w-2xl mx-auto px-4 pt-20">
         {/* Header */}
         <div className="text-center mb-6 pt-safe">
           <div className="flex items-center justify-center gap-3 mb-2">
@@ -298,6 +302,7 @@ const Invitation = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
 
       <BottomNav />
