@@ -281,9 +281,9 @@ return (
                   <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
                   <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.lives}</span>
                 </div>
-                {/* Life Regeneration Timer - next to hexagon with 10% overlap */}
+                {/* Life Regeneration Timer - right side with 10% overlap */}
                 {profile.lives < profile.max_lives && (
-                  <div className="absolute -bottom-1 -left-2">
+                  <div className="absolute -bottom-1 -right-2">
                     <LifeRegenerationTimer
                       currentLives={profile.lives}
                       maxLives={profile.max_lives}
