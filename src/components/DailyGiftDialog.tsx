@@ -54,7 +54,7 @@ const DailyGiftDialog = ({
         {/* Close button - crimson */}
         <button
           onClick={onLater}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-[hsl(var(--dup-crimson-500))] hover:text-[hsl(var(--dup-crimson-400))] hover:bg-[hsl(var(--dup-crimson-500)/0.1)] transition-all focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] z-50"
+          className="absolute top-4 right-4 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-[hsl(var(--dup-crimson-500))] hover:text-[hsl(var(--dup-crimson-400))] hover:bg-[hsl(var(--dup-crimson-500)/0.1)] transition-all focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] z-50 text-xl"
           aria-label="Bezárás"
         >
           ✕
@@ -166,7 +166,7 @@ const DailyGiftDialog = ({
           <div className="space-y-3">
               <button
                 onClick={handleClaim}
-                className="w-full bg-[hsl(var(--dup-green-500))] hover:bg-[hsl(var(--dup-green-400))] text-white font-black text-lg sm:text-xl py-4 rounded-[12px] border border-[hsl(var(--dup-green-700))] shadow-[0_0_20px_hsl(var(--dup-green-500)/0.6)] transition-all focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] flex items-center justify-center gap-2"
+                className="w-full bg-[hsl(var(--dup-green-500))] hover:bg-[hsl(var(--dup-green-400))] text-white font-black text-lg sm:text-xl py-4 rounded-[12px] border border-[hsl(var(--dup-green-700))] shadow-[0_0_20px_hsl(var(--dup-green-500)/0.6)] transition-all focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] flex items-center justify-center gap-2 min-h-[48px]"
               >
                 <Gift className="w-6 h-6" />
                 Felveszem
@@ -174,7 +174,7 @@ const DailyGiftDialog = ({
               
               <button
                 onClick={onLater}
-                className="w-full py-3 text-base sm:text-lg text-[hsl(var(--dup-text-100))] hover:text-[hsl(var(--dup-text-100))] transition-colors font-bold border border-[hsl(var(--dup-gold-600))] bg-transparent hover:bg-[rgba(212,175,55,0.12)] rounded-[12px] focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)]"
+                className="w-full py-4 text-base sm:text-lg text-[hsl(var(--dup-text-100))] hover:text-[hsl(var(--dup-text-100))] transition-colors font-bold border border-[hsl(var(--dup-gold-600))] bg-transparent hover:bg-[rgba(212,175,55,0.12)] rounded-[12px] focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] min-h-[48px]"
               >
                 Később
               </button>
@@ -182,7 +182,7 @@ const DailyGiftDialog = ({
           ) : (
             <button
               onClick={onLater}
-              className="w-full py-4 text-lg font-black text-[hsl(var(--dup-text-100))] border border-[hsl(var(--dup-gold-600))] bg-transparent hover:bg-[rgba(212,175,55,0.12)] rounded-[12px] focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] transition-all"
+              className="w-full py-4 text-lg font-black text-[hsl(var(--dup-text-100))] border border-[hsl(var(--dup-gold-600))] bg-transparent hover:bg-[rgba(212,175,55,0.12)] rounded-[12px] focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] transition-all min-h-[48px]"
             >
               Bezárás
             </button>
