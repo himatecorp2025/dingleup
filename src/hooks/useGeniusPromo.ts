@@ -32,7 +32,7 @@ export const useGeniusPromo = (
       if (now < parseInt(firstEligibleTime)) {
         return;
       }
-      const now = Date.now();
+      
       const today = new Date().toDateString();
       
       // Get today's data
