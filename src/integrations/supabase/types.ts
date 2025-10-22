@@ -110,6 +110,8 @@ export type Database = {
       }
       dm_threads: {
         Row: {
+          archived_by_user_a: boolean | null
+          archived_by_user_b: boolean | null
           created_at: string
           id: string
           last_message_at: string | null
@@ -117,6 +119,8 @@ export type Database = {
           user_id_b: string
         }
         Insert: {
+          archived_by_user_a?: boolean | null
+          archived_by_user_b?: boolean | null
           created_at?: string
           id?: string
           last_message_at?: string | null
@@ -124,6 +128,8 @@ export type Database = {
           user_id_b: string
         }
         Update: {
+          archived_by_user_a?: boolean | null
+          archived_by_user_b?: boolean | null
           created_at?: string
           id?: string
           last_message_at?: string | null
@@ -765,6 +771,10 @@ export type Database = {
       activate_speed_booster: {
         Args: { booster_id: string }
         Returns: boolean
+      }
+      archive_thread_for_user: {
+        Args: { p_thread_id: string }
+        Returns: Json
       }
       award_coins: {
         Args: { amount: number }

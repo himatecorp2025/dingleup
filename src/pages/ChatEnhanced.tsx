@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { MessageCircle, Send, ArrowLeft } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, Users } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import { FriendsList } from '@/components/FriendsList';
+import { ThreadCard } from '@/components/ThreadCard';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 
 interface Message {
@@ -17,15 +18,29 @@ interface Message {
   created_at: string;
 }
 
+interface Thread {
+  threadId: string;
+  userId: string;
+  displayName: string;
+  avatarUrl: string | null;
+  lastMessageSnippet: string | null;
+  lastMessageAt: string | null;
+  unreadCount: number;
+  onlineStatus: 'online' | 'away' | 'offline';
+}
+
 const ChatEnhanced = () => {
   const navigate = useNavigate();
   const isHandheld = usePlatformDetection();
   const [userId, setUserId] = useState<string | undefined>();
+  const [threads, setThreads] = useState<Thread[]>([]);
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
   const [friendProfile, setFriendProfile] = useState<any>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
   const [threadId, setThreadId] = useState<string | null>(null);
+  const [showFriendsList, setShowFriendsList] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,6 +52,62 @@ const ChatEnhanced = () => {
       }
     });
   }, [navigate]);
+
+  // Load threads
+  useEffect(() => {
+    if (!userId) return;
+    
+    loadThreads();
+
+    // Subscribe to changes in dm_messages and dm_threads
+    const channel = supabase
+      .channel('threads-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'dm_messages',
+        },
+        () => {
+          console.log('[ChatEnhanced] Message changed, reloading threads...');
+          loadThreads();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'dm_threads',
+        },
+        () => {
+          console.log('[ChatEnhanced] Thread changed, reloading threads...');
+          loadThreads();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId]);
+
+  const loadThreads = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-threads');
+
+      if (error) {
+        console.error('[ChatEnhanced] Error loading threads:', error);
+        return;
+      }
+
+      console.log('[ChatEnhanced] Loaded threads:', data);
+      setThreads(data.threads || []);
+    } catch (err) {
+      console.error('[ChatEnhanced] Exception loading threads:', err);
+    }
+  };
 
   // Load friend profile when selected
   useEffect(() => {
@@ -158,6 +229,43 @@ const ChatEnhanced = () => {
     setSelectedFriendId(friendId);
     setMessages([]);
     setThreadId(null);
+    setShowFriendsList(false);
+  };
+
+  const handleSelectThread = (thread: Thread) => {
+    setSelectedThreadId(thread.threadId);
+    setSelectedFriendId(thread.userId);
+    setMessages([]);
+    setThreadId(thread.threadId);
+  };
+
+  const handleDeleteThread = async (threadId: string) => {
+    try {
+      const { error } = await supabase.rpc('archive_thread_for_user', {
+        p_thread_id: threadId
+      });
+
+      if (error) {
+        console.error('[ChatEnhanced] Error archiving thread:', error);
+        toast.error('Nem sikerült törölni a beszélgetést');
+        return;
+      }
+
+      // Remove from local state
+      setThreads(prev => prev.filter(t => t.threadId !== threadId));
+      
+      // If this was the selected thread, clear selection
+      if (selectedThreadId === threadId) {
+        setSelectedThreadId(null);
+        setSelectedFriendId(null);
+        setMessages([]);
+      }
+
+      toast.success('Beszélgetés törölve');
+    } catch (err) {
+      console.error('[ChatEnhanced] Exception archiving thread:', err);
+      toast.error('Hiba történt');
+    }
   };
 
   const getInitials = (name: string) => {
@@ -182,28 +290,35 @@ const ChatEnhanced = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex bg-[hsl(var(--dup-ui-bg-900))] overflow-hidden" style={{
-      paddingTop: 'env(safe-area-inset-top)',
-      paddingBottom: 'env(safe-area-inset-bottom)'
-    }}>
-      {/* Left Sidebar - Friends List */}
-      <div className="w-80 border-r border-[hsl(var(--dup-gold-600)/0.3)] flex flex-col">
+    <div className="chat-layout h-screen w-screen grid gap-3 p-3 bg-[#0B0B0F] overflow-hidden" 
+      style={{
+        paddingTop: 'calc(env(safe-area-inset-top) + 12px)',
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)',
+        gridTemplateColumns: '30% 70%'
+      }}
+    >
+      {/* Left Panel - Friends List (30%) */}
+      <aside className="chat-friends border border-[hsl(var(--dup-gold-600))] rounded-[12px] overflow-hidden flex flex-col bg-[#0F1116]">
         <FriendsList 
           userId={userId!}
           onSelectFriend={handleSelectFriend}
           selectedFriendId={selectedFriendId}
         />
-      </div>
+      </aside>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      {/* Right Panel - Threads List (70%) */}
+      <section className="chat-threads border border-[hsl(var(--dup-gold-600))] rounded-[12px] bg-[#0F1116] overflow-auto p-2 flex flex-col">
         {selectedFriendId && friendProfile ? (
-          <>
+          // Chat view when a conversation is selected
+          <div className="h-full flex flex-col">
             {/* Chat Header */}
-            <div className="p-4 bg-[#0F1116] border-b border-[hsl(var(--dup-gold-600)/0.3)] flex items-center gap-3">
+            <div className="p-4 bg-[#0F1116] border-b border-[hsl(var(--dup-gold-600)/0.3)] flex items-center gap-3 flex-shrink-0">
               <button
-                onClick={() => setSelectedFriendId(null)}
-                className="lg:hidden p-2 hover:bg-[hsl(var(--dup-gold-600)/0.1)] rounded-lg"
+                onClick={() => {
+                  setSelectedFriendId(null);
+                  setSelectedThreadId(null);
+                }}
+                className="p-2 hover:bg-[hsl(var(--dup-gold-600)/0.1)] rounded-lg"
               >
                 <ArrowLeft className="w-5 h-5 text-[hsl(var(--dup-text-200))]" />
               </button>
@@ -258,7 +373,7 @@ const ChatEnhanced = () => {
             </div>
 
             {/* Message Input */}
-            <div className="p-4 bg-[#0F1116] border-t border-[hsl(var(--dup-gold-600)/0.3)]">
+            <div className="p-4 bg-[#0F1116] border-t border-[hsl(var(--dup-gold-600)/0.3)] flex-shrink-0">
               <div className="flex gap-2">
                 <Input
                   type="text"
@@ -283,22 +398,63 @@ const ChatEnhanced = () => {
                 </Button>
               </div>
             </div>
-          </>
-        ) : (
-          // No conversation selected
+          </div>
+        ) : threads.length === 0 ? (
+          // Empty state - no threads
           <div className="h-full flex items-center justify-center">
-            <div className="text-center">
-              <MessageCircle className="w-24 h-24 text-[hsl(var(--dup-gold-600))] mx-auto mb-6 opacity-50" />
-              <h2 className="text-2xl font-black text-[hsl(var(--dup-gold-300))] mb-2">
-                Válassz egy ismerőst
+            <div className="text-center max-w-md p-8">
+              <MessageCircle className="w-24 h-24 text-[hsl(var(--dup-gold-500))] mx-auto mb-6 opacity-50" />
+              <h2 className="text-2xl font-black text-[hsl(var(--dup-gold-300))] mb-4">
+                Nincs még beszélgetésed
               </h2>
-              <p className="text-[hsl(var(--dup-text-200))]">
-                Kezdj el beszélgetni!
+              <p className="text-[hsl(var(--dup-text-200))] mb-6">
+                Kezdj új beszélgetést egy ismerőssel!
               </p>
+              <Button
+                onClick={() => setShowFriendsList(true)}
+                className="bg-[hsl(var(--dup-green-500))] hover:bg-[hsl(var(--dup-green-400))] text-white border border-[hsl(var(--dup-green-700))] shadow-[0_0_10px_hsl(var(--dup-green-500)/0.4)]"
+              >
+                <Users className="w-5 h-5 mr-2" />
+                Ismerősök megtekintése
+              </Button>
             </div>
           </div>
+        ) : (
+          // Threads list
+          <>
+            <div className="p-4 border-b border-[hsl(var(--dup-gold-600)/0.3)] flex items-center justify-between">
+              <h2 className="text-xl font-black text-[hsl(var(--dup-gold-300))]">
+                Beszélgetések
+              </h2>
+              <Button
+                onClick={() => setShowFriendsList(true)}
+                variant="ghost"
+                size="sm"
+                className="text-[hsl(var(--dup-text-200))] hover:text-[hsl(var(--dup-gold-300))]"
+              >
+                <Users className="w-5 h-5" />
+              </Button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              {threads.map((thread) => (
+                <ThreadCard
+                  key={thread.threadId}
+                  threadId={thread.threadId}
+                  displayName={thread.displayName}
+                  avatarUrl={thread.avatarUrl}
+                  lastMessageSnippet={thread.lastMessageSnippet}
+                  lastMessageAt={thread.lastMessageAt}
+                  unreadCount={thread.unreadCount}
+                  onlineStatus={thread.onlineStatus}
+                  onClick={() => handleSelectThread(thread)}
+                  onDelete={handleDeleteThread}
+                />
+              ))}
+            </div>
+          </>
         )}
-      </div>
+      </section>
 
       <BottomNav />
     </div>
