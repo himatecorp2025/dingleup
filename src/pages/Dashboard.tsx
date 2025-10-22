@@ -44,7 +44,7 @@ const Dashboard = () => {
   
   // Auto logout on inactivity
   useAutoLogout();
-  const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
+  const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscriber || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
@@ -59,7 +59,7 @@ const Dashboard = () => {
   const hasOtherDialogs = showWelcomeBonus || showDailyGift;
   const { shouldShow: shouldShowGeniusPromo, closePromo, handleSubscribe, handleLater: handlePromoLater } = useGeniusPromo(
     userId,
-    profile?.is_subscribed || false,
+    profile?.is_subscriber || false,
     hasOtherDialogs,
     dailyGiftJustClaimed
   );
@@ -270,7 +270,7 @@ return (
             <div className="flex flex-col items-start">
               <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 flex items-center gap-2">
                 Szia, {profile.username}!
-                {profile.is_subscribed && <GeniusCrownBadge size="sm" />}
+                {profile.is_subscriber && <GeniusCrownBadge size="sm" />}
               </h1>
             </div>
 

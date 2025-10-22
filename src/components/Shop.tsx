@@ -40,7 +40,7 @@ const Shop = ({ userId }: ShopProps) => {
   const [pendingStripeAction, setPendingStripeAction] = useState<(() => void) | null>(null);
   const [showGeniusDialog, setShowGeniusDialog] = useState(false);
 
-  const isGenius = profile?.is_subscribed || false;
+  const isGenius = profile?.is_subscriber || false;
 
   useEffect(() => {
     const enabled = localStorage.getItem(QUICK_BUY_KEY) === 'true';

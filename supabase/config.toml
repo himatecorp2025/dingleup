@@ -1,5 +1,8 @@
 project_id = "wdpxmwsxhckazwxufttk"
 
+[functions.stripe-webhook]
+verify_jwt = false
+
 [functions.send-subscription-expiry-notification]
 verify_jwt = false
 

@@ -52,7 +52,7 @@ const GeniusMembers = () => {
       const { data: profiles, error } = await supabase
         .from('profiles')
         .select('id, username, email, avatar_url, subscription_tier, created_at')
-        .eq('is_subscribed', true)
+        .eq('is_subscriber', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
