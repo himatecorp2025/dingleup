@@ -58,6 +58,9 @@ export interface UserProfile {
   question_swaps_available: number;
   total_correct_answers: number;
   is_subscribed: boolean;
+  subscriber_type: 'paid' | 'comp' | null;
+  subscriber_since: string | null;
+  subscriber_renew_at: string | null;
   created_at: string;
   updated_at: string;
 }
