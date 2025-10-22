@@ -27,7 +27,7 @@ const Game = () => {
     // Get volume from localStorage
     const savedVolume = localStorage.getItem('music_volume');
     const savedMuted = localStorage.getItem('music_muted');
-    const volumeValue = savedVolume ? parseInt(savedVolume, 10) / 100 : 0.1;
+    const volumeValue = savedVolume ? parseInt(savedVolume, 10) / 100 : 0.3;
     const isMuted = savedMuted === 'true';
     
     const globalBgm = (window as any).__bgm as HTMLAudioElement | undefined;
