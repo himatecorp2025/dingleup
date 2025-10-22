@@ -27,18 +27,16 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Komponens ami ellenőrzi a képernyő méretet és korlátozza az app-ot mobile/tablet-re
+// Platform korlátozás: csak landing page és admin elérhető asztali nézetben
 const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     const checkDevice = () => {
-      // A fejlesztés során mindig engedélyezzük (preview mode)
-      const isDevelopment = window.location.hostname === 'localhost' || 
-                           window.location.hostname.includes('lovable.app') ||
-                           window.location.hostname.includes('lovable.dev');
-      setIsMobileOrTablet(isDevelopment || window.innerWidth <= 1024);
+      const width = window.innerWidth;
+      // Tablet és mobil: <= 1024px szélesség
+      setIsMobileOrTablet(width <= 1024);
     };
     checkDevice();
     window.addEventListener('resize', checkDevice);
@@ -56,7 +54,7 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
         <div className="text-center px-6 max-w-md">
-          <h1 className="text-3xl font-black text-white mb-4">📱 Csak mobilon elérhető</h1>
+          <h1 className="text-3xl font-black text-white mb-4">📱 Csak mobilon és táblagépen elérhető</h1>
           <p className="text-white/80 mb-6">
             Ez az alkalmazás csak telefonon és táblagépen használható. 
             Kérjük, nyisd meg mobil eszközön!

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { AlertTriangle, Search, UserPlus } from 'lucide-react';
+import { AlertTriangle, UserPlus } from 'lucide-react';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { ReportDialog } from '@/components/ReportDialog';
 import { UserSearchDialog } from '@/components/UserSearchDialog';
@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { ThreadsList } from '@/components/chat/ThreadsList';
 import { ThreadView } from '@/components/chat/ThreadView';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
+import { FriendsList } from '@/components/FriendsList';
 
 interface Thread {
   id: string;
@@ -26,47 +27,32 @@ interface Thread {
 const ChatEnhanced = () => {
   const navigate = useNavigate();
   const isHandheld = usePlatformDetection();
-  
-  // Auto logout on inactivity
   useAutoLogout();
   
   const [userId, setUserId] = useState<string | undefined>();
   const [threads, setThreads] = useState<Thread[]>([]);
-  const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
-  const [showReportDialog, setShowReportDialog] = useState(false);
-  const [showSearchDialog, setShowSearchDialog] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState<{ userId: string; username: string } | null>(null);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Set presence on mount
   useEffect(() => {
     if (!userId) return;
-
     const setPresence = async () => {
-      await supabase
-        .from('user_presence')
-        .upsert({
-          user_id: userId,
-          is_online: true,
-          last_seen: new Date().toISOString()
-        });
+      await supabase.from('user_presence').upsert({
+        user_id: userId,
+        is_online: true,
+        last_seen: new Date().toISOString()
+      });
     };
-
     setPresence();
-
-    // Update presence every 30 seconds
     const interval = setInterval(setPresence, 30000);
-
-    // Set offline on unmount
     return () => {
       clearInterval(interval);
-      supabase
-        .from('user_presence')
-        .update({
-          is_online: false,
-          last_seen: new Date().toISOString()
-        })
-        .eq('user_id', userId)
-        .then(() => console.log('[ChatEnhanced] Set offline'));
+      supabase.from('user_presence').update({
+        is_online: false,
+        last_seen: new Date().toISOString()
+      }).eq('user_id', userId);
     };
   }, [userId]);
 
@@ -80,36 +66,16 @@ const ChatEnhanced = () => {
     });
   }, [navigate]);
 
-
   useEffect(() => {
     if (!userId) return;
-    
     loadThreads();
-
-    // Realtime subscriptions for immediate updates
-    const channel = supabase
-      .channel('threads-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, (payload) => {
-        console.log('[ChatEnhanced] dm_messages changed', payload);
-        loadThreads();
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, (payload) => {
-        console.log('[ChatEnhanced] dm_threads changed', payload);
-        loadThreads();
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, (payload) => {
-        console.log('[ChatEnhanced] user_presence changed', payload);
-        loadThreads();
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, (payload) => {
-        console.log('[ChatEnhanced] friendships changed', payload);
-        loadThreads();
-      })
+    const channel = supabase.channel('threads-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, () => loadThreads())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, () => loadThreads())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, () => loadThreads())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, () => loadThreads())
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [userId]);
 
   const loadThreads = async () => {
@@ -123,15 +89,13 @@ const ChatEnhanced = () => {
   };
 
   const handleSelectThread = (thread: Thread) => {
-    setSelectedFriendId(thread.other_user_id);
+    setSelectedFriend({ userId: thread.other_user_id, username: thread.other_user_name });
   };
 
   const handleUserSelect = async (selectedUserId: string, username: string) => {
     if (!userId) return;
-
-    // Csak a beszélgetés megnyitása; az ismerős-jelölés külön gombbal történik
-    setSelectedFriendId(selectedUserId);
-    setShowSearchDialog(false);
+    setSelectedFriend({ userId: selectedUserId, username });
+    setSearchDialogOpen(false);
   };
 
   const handleDeleteThread = async (threadId: string) => {
@@ -140,8 +104,8 @@ const ChatEnhanced = () => {
       if (error) throw error;
       loadThreads();
       const deletedThread = threads.find(t => t.id === threadId);
-      if (deletedThread?.other_user_id === selectedFriendId) {
-        setSelectedFriendId(null);
+      if (deletedThread?.other_user_id === selectedFriend?.userId) {
+        setSelectedFriend(null);
       }
       toast.success('Beszélgetés archiválva');
     } catch (error) {
@@ -162,67 +126,75 @@ const ChatEnhanced = () => {
   }
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
-      paddingTop: 'env(safe-area-inset-top)',
-      paddingBottom: 'calc(64px + env(safe-area-inset-bottom))'
-    }}>
-      {/* Header */}
-      <div className="bg-[#0f0f2a]/80 border-b-2 border-[#D4AF37]/50 p-4 flex items-center gap-4 backdrop-blur-sm">
-        <h1 className="flex-1 text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-white to-[#D4AF37]">
-          Chat
-        </h1>
-        <button
-          data-tutorial="search-friends"
-          onClick={() => setShowSearchDialog(true)}
-          className="p-2 bg-[#138F5E]/20 hover:bg-[#138F5E]/30 rounded-lg transition-all border border-[#138F5E]/50"
-          aria-label="Új beszélgetés"
-          title="Új beszélgetés indítása"
-        >
-          <UserPlus className="w-5 h-5 text-[#138F5E]" />
-        </button>
-        <button
-          onClick={() => setShowReportDialog(true)}
-          className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-all border border-red-500/50"
-          aria-label="Jelentések"
-          title="Jelentés küldése"
-        >
-          <AlertTriangle className="w-5 h-5 text-red-400" />
-        </button>
+    <div className="h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex flex-col">
+      <div className="flex-none bg-black/30 backdrop-blur-sm border-b border-white/10 p-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-black text-white">💬 Chat</h1>
+          <div className="flex gap-2">
+            <button
+              data-tutorial="search-friends"
+              onClick={() => setSearchDialogOpen(true)}
+              className="p-2 bg-[#138F5E]/20 hover:bg-[#138F5E]/30 rounded-lg transition-all border border-[#138F5E]/50"
+              title="Új beszélgetés indítása"
+            >
+              <UserPlus className="w-5 h-5 text-[#138F5E]" />
+            </button>
+            <button
+              onClick={() => setReportDialogOpen(true)}
+              className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-all border border-red-500/50"
+              title="Jelentés küldése"
+            >
+              <AlertTriangle className="w-5 h-5 text-red-400" />
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Main Content */}
-      <div className="h-[calc(100%-64px)]" data-tutorial="threads-list">
-        {selectedFriendId ? (
-          <ThreadView 
-            key={selectedFriendId}
-            friendId={selectedFriendId}
-            userId={userId!}
-            onBack={() => setSelectedFriendId(null)}
-          />
-        ) : (
-          <ThreadsList 
-            threads={threads}
-            selectedThreadId={selectedFriendId}
-            onThreadSelect={handleSelectThread}
-            onThreadDelete={handleDeleteThread}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
-        )}
+      <div className="flex-1 overflow-hidden flex">
+        <FriendsList
+          userId={userId || ''}
+          onSelectFriend={(friendId, username) => {
+            setSelectedFriend({ userId: friendId, username });
+          }}
+          selectedFriendId={selectedFriend?.userId || null}
+        />
+
+        <div className="flex-1 overflow-hidden" data-tutorial="threads-list">
+          {selectedFriend ? (
+            <ThreadView
+              friendId={selectedFriend.userId}
+              userId={userId || ''}
+              onBack={() => setSelectedFriend(null)}
+            />
+          ) : (
+            <ThreadsList
+              threads={threads}
+              selectedThreadId={null}
+              onThreadSelect={handleSelectThread}
+              onThreadDelete={handleDeleteThread}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+            />
+          )}
+        </div>
       </div>
+
+      <BottomNav />
 
       <ReportDialog
-        open={showReportDialog}
-        onOpenChange={setShowReportDialog}
+        open={reportDialogOpen}
+        onOpenChange={setReportDialogOpen}
+        reportedUserId={selectedFriend?.userId || null}
+        reportedUsername={selectedFriend?.username || null}
+        reporterUserId={userId || ''}
       />
 
       <UserSearchDialog
-        open={showSearchDialog}
-        onOpenChange={setShowSearchDialog}
+        open={searchDialogOpen}
+        onOpenChange={setSearchDialogOpen}
         onUserSelect={handleUserSelect}
       />
 
-      <BottomNav />
       <TutorialManager route="chat" />
     </div>
   );

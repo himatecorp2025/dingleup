@@ -51,6 +51,7 @@ export const useTutorial = (route: TutorialRoute) => {
 
   const closeTutorial = () => {
     setIsVisible(false);
+    setCurrentStep(0);
     markTutorialAsSeen();
   };
 
