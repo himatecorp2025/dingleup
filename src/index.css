@@ -556,7 +556,7 @@ body {
   }
 }
 .dialog-enter-slow {
-  animation: zoom-from-center 3s ease-out forwards !important;
+  animation: zoom-from-center 2s ease-out forwards !important;
   transform-origin: center !important;
   will-change: transform, opacity;
   position: fixed !important;
