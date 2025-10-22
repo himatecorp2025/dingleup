@@ -68,11 +68,33 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
     setSubmitting(true);
 
     try {
+      // SECURITY: Comprehensive input validation
+      if (!description.trim()) {
+        toast.error('A leírás mező kötelező!');
+        return;
+      }
+
+      if (description.length < 10) {
+        toast.error('A leírás túl rövid (minimum 10 karakter)!');
+        return;
+      }
+
+      if (description.length > 2000) {
+        toast.error('A leírás túl hosszú (maximum 2000 karakter)!');
+        return;
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast.error('Jelentkezz be a jelentés beküldéséhez!');
         return;
       }
+
+      // SECURITY: Sanitize input to prevent XSS
+      const sanitizedDescription = description
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<[^>]+>/g, '')
+        .trim();
 
       const reportData: any = {
         reporter_id: session.user.id,
@@ -80,10 +102,10 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
       };
 
       if (reportType === 'bug') {
-        reportData.bug_description = description;
+        reportData.bug_description = sanitizedDescription;
         reportData.bug_category = bugCategory;
       } else {
-        reportData.violation_description = description;
+        reportData.violation_description = sanitizedDescription;
         reportData.violation_type = violationType;
         if (reportedUserId) reportData.reported_user_id = reportedUserId;
         if (reportedMessageId) reportData.reported_message_id = reportedMessageId;
