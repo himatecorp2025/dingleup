@@ -26,7 +26,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
-  const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_premium || false);
+  const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
@@ -427,11 +427,15 @@ const Dashboard = () => {
       {/* Daily gift dialog - SECOND */}
       <DailyGiftDialog
         open={showDailyGift && !showWelcomeBonus}
-        onClose={() => setShowDailyGift(false)}
         onClaim={handleClaimDailyGift}
-        currentStreak={currentStreak}
+        onLater={() => {
+          handleDailyLater();
+          setShowDailyGift(false);
+        }}
+        weeklyEntryCount={weeklyEntryCount}
         nextReward={nextReward}
         canClaim={canClaim}
+        isPremium={profile?.is_subscribed || false}
       />
 
       {/* Booster activation dialog */}

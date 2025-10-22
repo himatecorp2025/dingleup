@@ -57,6 +57,7 @@ export interface UserProfile {
   welcome_bonus_claimed: boolean;
   question_swaps_available: number;
   total_correct_answers: number;
+  is_subscribed: boolean;
   created_at: string;
   updated_at: string;
 }
