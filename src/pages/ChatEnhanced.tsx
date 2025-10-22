@@ -10,7 +10,6 @@ import { toast } from 'sonner';
 import { ThreadsList } from '@/components/chat/ThreadsList';
 import { ThreadView } from '@/components/chat/ThreadView';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
-import { FriendsList } from '@/components/FriendsList';
 
 interface Thread {
   id: string;
@@ -113,10 +112,10 @@ const ChatEnhanced = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex flex-col">
-      <div className="flex-none bg-black/30 backdrop-blur-sm border-b border-white/10 p-4">
+    <div className="h-screen bg-[#000000] flex flex-col">
+      <div className="flex-none bg-[#1a1a1a] border-b border-[#D4AF37]/10 p-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-black text-white">💬 Chat</h1>
+          <h1 className="text-xl font-black text-white">💬 Chats</h1>
           <div className="flex gap-2">
             <button
               data-tutorial="search-friends"
@@ -137,16 +136,8 @@ const ChatEnhanced = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex pb-16">
-        <FriendsList
-          userId={userId || ''}
-          onSelectFriend={(friendId, username) => {
-            setSelectedFriend({ userId: friendId, username });
-          }}
-          selectedFriendId={selectedFriend?.userId || null}
-        />
-
-        <div className="flex-1 flex flex-col bg-[#000000]" data-tutorial="threads-list">
+      <div className="flex-1 flex pb-16 bg-[#000000]">
+        <div className="flex-1 flex flex-col" data-tutorial="threads-list">
           {selectedFriend ? (
             <ThreadView
               friendId={selectedFriend.userId}
