@@ -72,6 +72,9 @@ verify_jwt = true
 [functions.aggregate-daily-activity]
 verify_jwt = false
 
+[functions.complete-game]
+verify_jwt = true
+
 # Cron job for automatic life regeneration every minute
 [[edge_runtime.cron]]
 schedule = "* * * * *"

@@ -544,41 +544,54 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     if (!profile || !selectedCategory) return;
 
     setGameState('finished');
-    await refreshProfile();
 
     const avgResponseTime = responseTimes.length > 0 
       ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length 
       : 0;
 
-    await supabase.from('game_results').insert({
-      user_id: userId!,
-      category: selectedCategory,
-      correct_answers: correctAnswers,
-      total_questions: questions.length,
-      coins_earned: coinsEarned,
-      average_response_time: avgResponseTime,
-      completed: true,
-      completed_at: new Date().toISOString()
-    });
+    try {
+      // SECURITY: Use secure edge function for game completion
+      // Server calculates and validates all rewards
+      const { data, error } = await supabase.functions.invoke('complete-game', {
+        body: {
+          category: selectedCategory,
+          correctAnswers: correctAnswers,
+          totalQuestions: questions.length,
+          averageResponseTime: avgResponseTime
+        }
+      });
 
-    if (correctAnswers > 0) {
-      const { data: currentProfile } = await supabase
-        .from('profiles')
-        .select('total_correct_answers')
-        .eq('id', userId!)
-        .single();
+      if (error) throw error;
 
-      if (currentProfile) {
-        await supabase
+      // Server returns the validated coins earned
+      const serverCoinsEarned = data?.coinsEarned || 0;
+      setCoinsEarned(serverCoinsEarned);
+
+      await refreshProfile();
+
+      if (correctAnswers > 0) {
+        const { data: currentProfile } = await supabase
           .from('profiles')
-          .update({ 
-            total_correct_answers: (currentProfile.total_correct_answers || 0) + correctAnswers 
-          })
-          .eq('id', userId!);
-      }
-    }
+          .select('total_correct_answers')
+          .eq('id', userId!)
+          .single();
 
-    toast.success(`Játék vége! ${correctAnswers}/${questions.length} helyes válasz`);
+        if (currentProfile) {
+          await supabase
+            .from('profiles')
+            .update({ 
+              total_correct_answers: (currentProfile.total_correct_answers || 0) + correctAnswers 
+            })
+            .eq('id', userId!);
+        }
+      }
+
+      toast.success(`Játék vége! ${correctAnswers}/${questions.length} helyes válasz`);
+    } catch (error) {
+      console.error('Error finishing game:', error);
+      toast.error('Hiba történt a játék befejezésekor');
+      await refreshProfile();
+    }
   };
 
   // UseHelp functions

@@ -116,14 +116,10 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
       setSearching(true);
       try {
         const term = searchTerm.trim();
+        // SECURITY: Csak biztonságos mezőket kérdezünk le (NEM email, coins, lives, stb.)
         const { data, error } = await supabase
           .from('profiles')
-          .select(`
-            id,
-            username,
-            avatar_url,
-            invitation_code
-          `)
+          .select('id, username, avatar_url, invitation_code')
           .or(`username.ilike.%${term}%,invitation_code.eq.${term}`)
           .limit(20);
         if (error) throw error;
