@@ -57,6 +57,11 @@ export const TipsVideosGrid = ({ isGenius, onSubscribeClick }: TipsVideosGridPro
       return;
     }
     setSelectedVideo(video);
+    
+    // Track tips open
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'tips_open', { isGenius: true });
+    }
   };
 
   if (loading) {
@@ -137,6 +142,7 @@ export const TipsVideosGrid = ({ isGenius, onSubscribeClick }: TipsVideosGridPro
         <VideoPlayer
           videoUrl={selectedVideo.video_url}
           title={selectedVideo.title}
+          videoId={selectedVideo.id}
           onClose={() => setSelectedVideo(null)}
         />
       )}

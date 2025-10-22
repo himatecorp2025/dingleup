@@ -5,14 +5,26 @@ import { Button } from './ui/button';
 interface VideoPlayerProps {
   videoUrl: string;
   title: string;
+  videoId?: string;
+  userId?: string;
   onClose: () => void;
 }
 
-export const VideoPlayer = ({ videoUrl, title, onClose }: VideoPlayerProps) => {
+export const VideoPlayer = ({ videoUrl, title, videoId, userId, onClose }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(true);
+  const [hasTrackedPlay, setHasTrackedPlay] = useState(false);
+  const [hasTrackedComplete, setHasTrackedComplete] = useState(false);
 
   useEffect(() => {
+    // Track video play
+    if (!hasTrackedPlay && userId && videoId) {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'tips_play', { userId, videoId, videoTitle: title });
+      }
+      setHasTrackedPlay(true);
+    }
+
     // Enter fullscreen on mount
     const enterFullscreen = async () => {
       try {
@@ -45,7 +57,17 @@ export const VideoPlayer = ({ videoUrl, title, onClose }: VideoPlayerProps) => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
     };
-  }, [onClose]);
+  }, [onClose, hasTrackedPlay, userId, videoId, title]);
+
+  const handleVideoEnded = () => {
+    // Track video complete
+    if (!hasTrackedComplete && userId && videoId) {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'tips_complete', { userId, videoId, videoTitle: title });
+      }
+      setHasTrackedComplete(true);
+    }
+  };
 
   const handleClose = () => {
     if (document.fullscreenElement) {
@@ -75,6 +97,7 @@ export const VideoPlayer = ({ videoUrl, title, onClose }: VideoPlayerProps) => {
         playsInline
         className="w-full h-full object-contain"
         autoPlay
+        onEnded={handleVideoEnded}
       >
         <source src={videoUrl} type="video/mp4" />
         A böngésződ nem támogatja a videó lejátszást.

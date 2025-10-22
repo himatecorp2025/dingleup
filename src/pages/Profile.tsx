@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap } from 'lucide-react';
+import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
@@ -18,6 +18,7 @@ const Profile = () => {
   const { boosters, getBoosterCounts } = useUserBoosters(userId);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isManagingSubscription, setIsManagingSubscription] = useState(false);
   
   // Auto logout on inactivity
   useAutoLogout();
@@ -33,6 +34,25 @@ const Profile = () => {
       }
     });
   }, [navigate]);
+
+  const handleManageSubscription = async () => {
+    setIsManagingSubscription(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      
+      if (error) throw error;
+      
+      if (data.url) {
+        window.open(data.url, '_blank');
+        toast.info('Átirányítás a Stripe kezelő felületre...');
+      }
+    } catch (error: any) {
+      console.error('Error opening customer portal:', error);
+      toast.error('Hiba történt az előfizetés kezelő felület megnyitásakor');
+    } finally {
+      setIsManagingSubscription(false);
+    }
+  };
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -146,6 +166,57 @@ const Profile = () => {
           </h1>
           <p className="text-sm sm:text-base text-yellow-200/90">{profile.email}</p>
         </div>
+
+        {/* Genius Subscription Management - Only for subscribers */}
+        {profile.is_subscribed && (
+          <div className="bg-gradient-to-br from-yellow-600/20 to-yellow-900/20 border-2 border-yellow-500/60 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-[0_0_20px_rgba(234,179,8,0.4)] casino-card gold-glow">
+            <div className="flex items-center gap-3 mb-3">
+              <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+              <div className="flex-1">
+                <h2 className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
+                  Genius Előfizetés
+                </h2>
+                {profile.subscriber_type === 'comp' && (
+                  <p className="text-xs text-yellow-300/80">Ingyenes teszt előfizetés</p>
+                )}
+              </div>
+            </div>
+            
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-white/80">Státusz:</span>
+                <span className="text-green-400 font-bold">✓ Aktív</span>
+              </div>
+              {profile.subscriber_since && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/80">Aktiválva:</span>
+                  <span className="text-white font-bold">
+                    {new Date(profile.subscriber_since).toLocaleDateString('hu-HU')}
+                  </span>
+                </div>
+              )}
+              {profile.subscriber_renew_at && profile.subscriber_type === 'paid' && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/80">Megújul:</span>
+                  <span className="text-white font-bold">
+                    {new Date(profile.subscriber_renew_at).toLocaleDateString('hu-HU')}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {profile.subscriber_type === 'paid' && (
+              <button
+                onClick={handleManageSubscription}
+                disabled={isManagingSubscription}
+                className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-black py-3 px-4 rounded-lg transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <Settings className="w-4 h-4" />
+                {isManagingSubscription ? 'Betöltés...' : 'Előfizetés Kezelése'}
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6" data-tutorial="stats">

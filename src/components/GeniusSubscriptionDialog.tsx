@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Crown, Sparkles, Zap, Trophy, CreditCard, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -25,8 +25,30 @@ export const GeniusSubscriptionDialog = ({
 }: GeniusSubscriptionDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  // Track subscription modal view
+  useEffect(() => {
+    if (open) {
+      const trackView = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'sub_view', { userId: user.id, route: window.location.pathname });
+        }
+      };
+      trackView();
+    }
+  }, [open]);
+
   const handleSubscribe = async () => {
     setIsLoading(true);
+    
+    // Track subscription start
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'sub_start', { userId: user.id });
+      }
+    }
+    
     try {
       const { data, error } = await supabase.functions.invoke('create-subscription');
       

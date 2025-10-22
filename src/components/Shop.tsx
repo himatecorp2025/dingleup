@@ -47,6 +47,36 @@ const Shop = ({ userId }: ShopProps) => {
     setQuickBuyEnabled(enabled);
   }, []);
 
+  // Track price renders for discounted items
+  useEffect(() => {
+    if (isGenius && profile) {
+      boosterItems.forEach(item => {
+        if (item.baseCoinPrice && item.baseCoinPrice !== item.price) {
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'price_render', {
+              userId,
+              itemType: item.id,
+              basePrice: item.baseCoinPrice,
+              discountedPrice: item.price,
+              discountPercent: 50
+            });
+          }
+        }
+        if (item.baseUsdPrice && item.priceUsd && item.baseUsdPrice !== item.priceUsd) {
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'price_render', {
+              userId,
+              itemType: item.id,
+              basePrice: item.baseUsdPrice,
+              discountedPrice: item.priceUsd,
+              discountPercent: 25
+            });
+          }
+        }
+      });
+    }
+  }, [isGenius, profile]);
+
   // Check for payment success in URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

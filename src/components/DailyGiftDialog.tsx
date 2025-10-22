@@ -125,14 +125,17 @@ const DailyGiftDialog = ({
                 </p>
                 {isPremium ? (
                   <div className="space-y-2 mb-3">
-                    <p className="text-3xl sm:text-4xl font-black text-cyan-400/50 line-through relative z-10">
-                      +{nextReward / 2}
-                    </p>
-                    <p className="text-5xl sm:text-6xl font-black text-yellow-300 flex items-center justify-center gap-4 drop-shadow-[0_0_20px_rgba(253,224,71,1)] relative z-10 animate-bounce">
-                      <Coins className="w-14 h-14 sm:w-16 sm:h-16 animate-spin" style={{ animationDuration: '3s' }} />
-                      +{nextReward}
-                    </p>
-                    <p className="text-xs sm:text-sm text-yellow-200 font-black relative z-10 animate-pulse">
+                    <div className="flex items-center justify-center gap-3">
+                      <p className="text-3xl sm:text-4xl font-black text-cyan-400/40 line-through relative z-10">
+                        {nextReward / 2}
+                      </p>
+                      <span className="text-2xl font-black text-yellow-300">→</span>
+                      <p className="text-5xl sm:text-6xl font-black text-yellow-300 flex items-center gap-2 drop-shadow-[0_0_20px_rgba(253,224,71,1)] relative z-10 animate-bounce">
+                        <Coins className="w-12 h-12 sm:w-14 sm:h-14 animate-spin" style={{ animationDuration: '3s' }} />
+                        {nextReward}
+                      </p>
+                    </div>
+                    <p className="text-lg sm:text-xl text-yellow-200 font-black relative z-10 animate-pulse">
                       🌟 GENIUS TAG VAGY? DUPLA JÁR! 🌟
                     </p>
                   </div>
