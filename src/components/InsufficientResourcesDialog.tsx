@@ -208,43 +208,44 @@ export const InsufficientResourcesDialog = ({
         
         {userId && !clientSecret && (
           <>
-            <div className="relative bg-gradient-to-br from-yellow-400/30 via-yellow-500/30 to-yellow-600/30 border-4 border-yellow-400/80 rounded-2xl p-6 my-4 overflow-hidden shadow-[0_0_30px_rgba(234,179,8,0.4)]">
+            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-8 my-4 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-pulse">
               {/* Animated background sparkles */}
-              <div className="absolute inset-0 opacity-20">
-                <Sparkles className="absolute top-2 right-2 w-6 h-6 text-yellow-200 animate-pulse" />
-                <Sparkles className="absolute bottom-2 left-2 w-5 h-5 text-yellow-200 animate-pulse delay-75" />
-                <Trophy className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 text-yellow-300/20" />
+              <div className="absolute inset-0 opacity-30">
+                <Sparkles className="absolute top-3 right-3 w-8 h-8 text-yellow-200 animate-pulse" />
+                <Sparkles className="absolute bottom-3 left-3 w-6 h-6 text-yellow-200 animate-pulse delay-75" />
+                <Sparkles className="absolute top-1/2 right-1/4 w-5 h-5 text-yellow-300 animate-pulse delay-150" />
+                <Trophy className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 text-yellow-300/10" />
               </div>
               
               <div className="relative z-10">
-                <div className="flex items-center justify-center gap-4 mb-4">
-                  <div className="flex items-center gap-2 bg-black/30 px-4 py-2 rounded-full">
-                    <Coins className="w-8 h-8 text-yellow-300 drop-shadow-[0_0_8px_rgba(253,224,71,0.8)]" />
-                    <span className="text-2xl font-black text-yellow-200">500</span>
+                <div className="flex items-center justify-center gap-6 mb-6">
+                  <div className="flex items-center gap-3 bg-black/40 px-6 py-3 rounded-full shadow-lg">
+                    <Coins className="w-10 h-10 text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]" />
+                    <span className="text-3xl font-black text-yellow-200 drop-shadow-lg">500</span>
                   </div>
-                  <div className="text-4xl font-black text-yellow-200 animate-pulse">+</div>
-                  <div className="flex items-center gap-2 bg-black/30 px-4 py-2 rounded-full">
-                    <Heart className="w-8 h-8 text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.8)]" />
-                    <span className="text-2xl font-black text-red-300">15</span>
+                  <div className="text-5xl font-black text-yellow-200 animate-pulse drop-shadow-lg">+</div>
+                  <div className="flex items-center gap-3 bg-black/40 px-6 py-3 rounded-full shadow-lg">
+                    <Heart className="w-10 h-10 text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,1)]" />
+                    <span className="text-3xl font-black text-red-300 drop-shadow-lg">15</span>
                   </div>
                 </div>
                 
-                <div className="text-center space-y-2">
-                  <p className="text-5xl font-black text-yellow-300 drop-shadow-[0_0_15px_rgba(253,224,71,0.8)] animate-pulse">
+                <div className="text-center space-y-3">
+                  <p className="text-6xl font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)] animate-pulse">
                     $0.99
                   </p>
                   <div className="flex items-center justify-center gap-2">
-                    <Sparkles className="w-4 h-4 text-yellow-300" />
-                    <p className="text-sm text-yellow-100 font-bold">Azonnal jóváírva • Korlátlan ideig használható</p>
-                    <Sparkles className="w-4 h-4 text-yellow-300" />
+                    <Sparkles className="w-5 h-5 text-yellow-300 animate-pulse" />
+                    <p className="text-base text-yellow-100 font-bold drop-shadow-md">Azonnal jóváírva • Játék folytatása</p>
+                    <Sparkles className="w-5 h-5 text-yellow-300 animate-pulse" />
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-4 mb-2">
-              <p className="text-center text-white font-bold text-sm flex items-center justify-center gap-2">
-                <CreditCard className="w-5 h-5" />
+            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-3 mb-2">
+              <p className="text-center text-white font-bold text-xs flex items-center justify-center gap-2">
+                <CreditCard className="w-4 h-4" />
                 Biztonságos fizetés • Apple Pay • Google Pay • Kártya
               </p>
             </div>
@@ -262,49 +263,49 @@ export const InsufficientResourcesDialog = ({
         )}
         
         {userId && !clientSecret && (
-          <DialogFooter className="flex gap-3 sm:gap-3">
-            <Button 
-              variant="outline" 
-              onClick={() => onOpenChange(false)}
-              className="flex-1 border-white/30 text-white hover:bg-white/10"
-            >
-              Később
-            </Button>
-            
+          <DialogFooter className="flex flex-col gap-3 sm:gap-3">
             <Button 
               onClick={handleStartPayment}
               disabled={isLoadingPayment}
-              className="flex-1 bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 hover:from-yellow-600 hover:via-yellow-700 hover:to-yellow-600 text-black font-black text-lg gap-2 shadow-[0_0_20px_rgba(234,179,8,0.6)] hover:shadow-[0_0_30px_rgba(234,179,8,0.8)] transition-all duration-300 animate-pulse hover:animate-none"
+              className="w-full bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 hover:from-yellow-600 hover:via-yellow-700 hover:to-yellow-600 text-black font-black text-xl gap-3 py-6 shadow-[0_0_25px_rgba(234,179,8,0.7)] hover:shadow-[0_0_35px_rgba(234,179,8,0.9)] transition-all duration-300 animate-pulse hover:animate-none border-4 border-yellow-400"
             >
               {isLoadingPayment ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-3 border-black border-t-transparent rounded-full animate-spin" />
                   Betöltés...
                 </>
               ) : (
                 <>
-                  <CreditCard className="w-5 h-5" />
-                  VÁSÁRLÁS MOST! 🚀
+                  <CreditCard className="w-6 h-6" />
+                  VÁSÁRLÁS $0.99 🎰
                 </>
               )}
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              onClick={() => onOpenChange(false)}
+              className="text-white/60 hover:text-white/80 hover:bg-transparent text-sm"
+            >
+              Később
             </Button>
           </DialogFooter>
         )}
 
         {!userId && (
-          <DialogFooter className="flex gap-2 sm:gap-2 mt-4">
-            <Button 
-              variant="outline" 
-              onClick={() => onOpenChange(false)}
-              className="flex-1 border-white/30 text-white hover:bg-white/10"
-            >
-              Mégse
-            </Button>
+          <DialogFooter className="flex flex-col gap-3 sm:gap-3 mt-4">
             <Button 
               onClick={onGoToShop} 
-              className="flex-1 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white gap-2"
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white gap-2 py-5 text-lg font-bold"
             >
-              Bolt megnyitása
+              Bejelentkezés és vásárlás
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => onOpenChange(false)}
+              className="text-white/60 hover:text-white/80 hover:bg-transparent text-sm"
+            >
+              Mégse
             </Button>
           </DialogFooter>
         )}

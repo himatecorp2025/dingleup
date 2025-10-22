@@ -8,7 +8,7 @@ const STORAGE_MUTE_KEY = 'music_muted';
 export const MusicControls = () => {
   const [volume, setVolume] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? parseInt(saved, 10) : 10;
+    return saved ? parseInt(saved, 10) : 30;
   });
   const [isMuted, setIsMuted] = useState(() => {
     const saved = localStorage.getItem(STORAGE_MUTE_KEY);

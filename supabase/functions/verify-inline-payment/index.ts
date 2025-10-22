@@ -78,7 +78,39 @@ serve(async (req) => {
     const coins = parseInt(paymentIntent.metadata?.coins || '500');
     const lives = parseInt(paymentIntent.metadata?.lives || '15');
 
-    // Record purchase
+    // Use credit_wallet for idempotent operation
+    const { data: creditResult, error: creditError } = await supabaseClient.rpc('credit_wallet', {
+      p_user_id: user.id,
+      p_delta_coins: coins,
+      p_delta_lives: lives,
+      p_source: 'inline_purchase',
+      p_idempotency_key: `pi_${paymentIntentId}`,
+      p_metadata: {
+        payment_intent_id: paymentIntentId,
+        amount_usd: paymentIntent.amount / 100,
+        currency: paymentIntent.currency
+      }
+    });
+
+    if (creditError) {
+      logStep("Error crediting wallet", { error: creditError });
+      throw creditError;
+    }
+
+    if (creditResult.already_processed) {
+      logStep("Purchase already processed via credit_wallet", { paymentIntentId });
+      return new Response(JSON.stringify({ 
+        granted: true, 
+        coins,
+        lives,
+        alreadyProcessed: true 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
+    // Record purchase for tracking
     const { error: purchaseError } = await supabaseClient
       .from('purchases')
       .insert({
@@ -102,31 +134,11 @@ serve(async (req) => {
       });
 
     if (purchaseError) {
-      logStep("Error recording purchase", { error: purchaseError });
-      throw purchaseError;
+      logStep("Error recording purchase (non-critical)", { error: purchaseError });
+      // Don't throw - wallet already credited, this is just for tracking
     }
 
-    // Award coins
-    await supabaseClient.rpc('award_coins', { amount: coins });
-    
-    // Award lives
-    const { data: profile } = await supabaseClient
-      .from('profiles')
-      .select('lives, max_lives')
-      .eq('id', user.id)
-      .single();
-
-    if (profile) {
-      const newLives = Math.min(profile.lives + lives, profile.max_lives);
-      await supabaseClient
-        .from('profiles')
-        .update({ lives: newLives })
-        .eq('id', user.id);
-      
-      logStep('Lives awarded', { oldLives: profile.lives, newLives, added: lives });
-    }
-
-    logStep('Inline purchase completed successfully', { coins, lives });
+    logStep('Inline purchase completed successfully', { coins, lives, newCoins: creditResult.new_coins, newLives: creditResult.new_lives });
     
     return new Response(JSON.stringify({ 
       granted: true,
