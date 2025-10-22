@@ -148,27 +148,22 @@ serve(async (req) => {
       }
     }
 
-    // Award 100 coins to inviter using RPC
-    const inviterClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}` },
-        },
+    // Award 100 coins to inviter using idempotent wallet credit
+    const idempotencyKey = `invitation:${inviterId}:${invitedUserId}`;
+    const { error: creditError } = await supabaseClient.rpc('credit_wallet', {
+      p_user_id: inviterId,
+      p_delta_coins: 100,
+      p_delta_lives: 0,
+      p_source: 'invitation',
+      p_idempotency_key: idempotencyKey,
+      p_metadata: {
+        invited_user_id: invitedUserId,
+        invited_email: invitedEmail
       }
-    );
+    });
 
-    // Directly update coins (bypassing RLS with service role)
-    const { error: coinsError } = await supabaseClient
-      .from('profiles')
-      .update({
-        coins: inviterProfile.coins + 100,
-      })
-      .eq('id', inviterId);
-
-    if (coinsError) {
-      console.error('[INTERNAL] Error awarding coins:', coinsError);
+    if (creditError) {
+      console.error('[INTERNAL] Error awarding coins:', creditError);
       // Don't fail the whole operation if coin award fails
     }
 

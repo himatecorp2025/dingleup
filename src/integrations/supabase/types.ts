@@ -393,6 +393,10 @@ export type Database = {
           speed_booster_active: boolean | null
           speed_booster_expires_at: string | null
           speed_booster_multiplier: number | null
+          speed_coins_per_tick: number | null
+          speed_lives_per_tick: number | null
+          speed_tick_interval_seconds: number | null
+          speed_tick_last_processed_at: string | null
           subscription_tier: string | null
           total_correct_answers: number
           updated_at: string | null
@@ -422,6 +426,10 @@ export type Database = {
           speed_booster_active?: boolean | null
           speed_booster_expires_at?: string | null
           speed_booster_multiplier?: number | null
+          speed_coins_per_tick?: number | null
+          speed_lives_per_tick?: number | null
+          speed_tick_interval_seconds?: number | null
+          speed_tick_last_processed_at?: string | null
           subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
@@ -451,6 +459,10 @@ export type Database = {
           speed_booster_active?: boolean | null
           speed_booster_expires_at?: string | null
           speed_booster_multiplier?: number | null
+          speed_coins_per_tick?: number | null
+          speed_lives_per_tick?: number | null
+          speed_tick_interval_seconds?: number | null
+          speed_tick_last_processed_at?: string | null
           subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
@@ -703,6 +715,47 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_ledger: {
+        Row: {
+          created_at: string
+          delta_coins: number
+          delta_lives: number
+          id: string
+          idempotency_key: string
+          metadata: Json | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delta_coins?: number
+          delta_lives?: number
+          id?: string
+          idempotency_key: string
+          metadata?: Json | null
+          source: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delta_coins?: number
+          delta_lives?: number
+          id?: string
+          idempotency_key?: string
+          metadata?: Json | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_ledger_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       weekly_rankings: {
         Row: {
           average_response_time: number | null
@@ -796,6 +849,17 @@ export type Database = {
         Args: { p_invitee_id: string; p_inviter_id: string }
         Returns: Json
       }
+      credit_wallet: {
+        Args: {
+          p_delta_coins: number
+          p_delta_lives: number
+          p_idempotency_key: string
+          p_metadata?: Json
+          p_source: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
       distribute_weekly_rewards: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -807,6 +871,10 @@ export type Database = {
       get_invitation_tier_reward: {
         Args: { accepted_count: number }
         Returns: Json
+      }
+      get_next_life_at: {
+        Args: { p_user_id: string }
+        Returns: string
       }
       has_role: {
         Args: {
