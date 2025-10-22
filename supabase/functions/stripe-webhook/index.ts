@@ -86,7 +86,7 @@ serve(async (req) => {
         await supabaseClient
           .from('profiles')
           .update({
-            is_subscriber: isActive,
+            is_subscribed: isActive,
             subscriber_since: isActive ? new Date().toISOString() : null,
             subscriber_renew_at: isActive ? currentPeriodEnd.toISOString() : null,
             lives_regeneration_rate: isActive ? 6 : 12,
@@ -144,7 +144,7 @@ serve(async (req) => {
         await supabaseClient
           .from('profiles')
           .update({
-            is_subscriber: false,
+            is_subscribed: false,
             subscriber_renew_at: null,
             lives_regeneration_rate: 12,
             max_lives: 15

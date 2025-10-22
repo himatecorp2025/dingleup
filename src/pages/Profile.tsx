@@ -142,7 +142,7 @@ const Profile = () => {
         <div className="text-center mb-4 sm:mb-6">
           <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 mb-1 flex items-center justify-center gap-2">
             {profile.username}
-            {profile.is_subscriber && <GeniusCrownBadge size="md" />}
+            {profile.is_subscribed && <GeniusCrownBadge size="md" />}
           </h1>
           <p className="text-sm sm:text-base text-yellow-200/90">{profile.email}</p>
         </div>
