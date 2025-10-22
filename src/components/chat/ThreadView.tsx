@@ -73,9 +73,9 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
 
   const loadFriendProfile = async () => {
     try {
-      // SECURITY: Csak biztonságos mezőket kérdezünk le
+      // SECURITY: Use public_profiles view
       const { data, error } = await supabase
-        .from('profiles')
+        .from('public_profiles')
         .select('id, username, avatar_url')
         .eq('id', friendId)
         .single();

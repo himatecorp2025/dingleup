@@ -44,9 +44,10 @@ serve(async (req) => {
       );
     }
 
-    // Check if invitation code exists (using service role)
+    // SECURITY: Check if invitation code exists using public_profiles view
+    // (csak username kell, NEM email vagy pénzügyi adatok!)
     const { data: inviterProfile, error: profileError } = await supabaseClient
-      .from('profiles')
+      .from('public_profiles')
       .select('id, username')
       .eq('invitation_code', invitationCode)
       .single();

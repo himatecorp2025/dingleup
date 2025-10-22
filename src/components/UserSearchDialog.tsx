@@ -116,9 +116,9 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
       setSearching(true);
       try {
         const term = searchTerm.trim();
-        // SECURITY: Csak biztonságos mezőket kérdezünk le (NEM email, coins, lives, stb.)
+        // SECURITY: Use public_profiles view - csak biztonságos mezők, NEM email/coins/lives!
         const { data, error } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('id, username, avatar_url, invitation_code')
           .or(`username.ilike.%${term}%,invitation_code.eq.${term}`)
           .limit(20);

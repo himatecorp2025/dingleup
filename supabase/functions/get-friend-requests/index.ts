@@ -75,8 +75,9 @@ Deno.serve(async (req) => {
     const sentRequestsWithProfiles = await Promise.all(
       (sentRequests || []).map(async (req) => {
         const targetUserId = req.user_id_a === user.id ? req.user_id_b : req.user_id_a;
+        // SECURITY: Use public_profiles view
         const { data: profile } = await supabaseClient
-          .from('profiles')
+          .from('public_profiles')
           .select('id, username, avatar_url')
           .eq('id', targetUserId)
           .single();

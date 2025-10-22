@@ -64,9 +64,9 @@ Deno.serve(async (req) => {
       f.user_id_a === user.id ? f.user_id_b : f.user_id_a
     );
 
-    // SECURITY: Get friend profiles - csak biztonságos mezők (NEM email, coins, stb.)
+    // SECURITY: Get friend profiles - use public_profiles view (NEM email, coins!)
     const { data: profiles, error: profilesError } = await supabase
-      .from('profiles')
+      .from('public_profiles')
       .select('id, username, avatar_url')
       .in('id', friendIds);
 

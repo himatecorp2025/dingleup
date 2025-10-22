@@ -62,9 +62,9 @@ serve(async (req) => {
       activeThreads.map(async (thread) => {
         const otherUserId = thread.user_id_a === user.id ? thread.user_id_b : thread.user_id_a;
 
-        // SECURITY: Get other user's profile - csak biztonságos mezők
+        // SECURITY: Get other user's profile - use public_profiles view
         const { data: profile } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('id, username, avatar_url')
           .eq('id', otherUserId)
           .single();

@@ -31,8 +31,18 @@ Deno.serve(async (req) => {
 
     const { userId: targetUserId } = await req.json();
 
-    if (!targetUserId) {
+    // SECURITY: Comprehensive input validation
+    if (!targetUserId || typeof targetUserId !== 'string') {
       return new Response(JSON.stringify({ error: 'Target user ID required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // SECURITY: UUID format validation
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(targetUserId)) {
+      return new Response(JSON.stringify({ error: 'Invalid user ID format' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
