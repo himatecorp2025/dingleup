@@ -128,7 +128,7 @@ const DailyGiftDialog = ({ open, onClose, onClaim, currentStreak, nextReward, ca
 
           {/* Info */}
           <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
-            A sorozat minden hétfőn nullázódik. A 7. nap után újra kezdődik a ciklus.
+            Minden belépés +arany! 7 lépés/hét, hétfőn újrakezdődik.
           </p>
         </div>
       </DialogContent>

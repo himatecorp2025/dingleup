@@ -50,17 +50,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
       
       const result = data as { success: boolean; coins: number; error?: string };
       if (result.success) {
-        // Add DingleSpeed booster
-        const { error: boosterError } = await supabase
-          .from('user_boosters')
-          .insert({
-            user_id: userId,
-            booster_type: 'DingleSpeed'
-          });
-
-        if (boosterError) throw boosterError;
-
-        toast.success('🎉 Welcome bónusz felvéve! +2500 arany, +50 élet és +1 DingleSpeed booster!');
+        toast.success('🎉 Welcome bónusz felvéve! +2500 arany és +50 élet!');
         setCanClaim(false);
         return true;
       } else {

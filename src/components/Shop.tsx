@@ -381,7 +381,9 @@ const Shop = ({ userId }: ShopProps) => {
                         <div className="flex items-center justify-between border-t border-white/10 pt-3">
                           <div className="flex items-center gap-2">
                             <CreditCard className="w-5 h-5 text-green-500" />
-                            <span className="text-2xl font-bold text-green-500">${item.priceUsd}</span>
+                            <span className="text-2xl font-bold text-green-500">
+                              ${item.priceUsd.toFixed(2).replace('.', ',')}
+                            </span>
                           </div>
                           
                           <button

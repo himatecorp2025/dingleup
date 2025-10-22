@@ -25,9 +25,6 @@ export const useDailyGift = (userId: string | undefined) => {
       const lastClaimed = profile.daily_gift_last_claimed 
         ? new Date(profile.daily_gift_last_claimed)
         : null;
-
-      // Check if it's a new week (Monday reset)
-      const isNewWeek = lastClaimed && now.getDay() === 1 && lastClaimed.getDay() !== 1;
       
       // Check if already claimed today
       const isToday = lastClaimed && 
@@ -35,11 +32,7 @@ export const useDailyGift = (userId: string | undefined) => {
         lastClaimed.getMonth() === now.getMonth() &&
         lastClaimed.getFullYear() === now.getFullYear();
 
-      let streak = profile.daily_gift_streak || 0;
-      
-      if (isNewWeek) {
-        streak = 0; // Reset on new week
-      }
+      const streak = profile.daily_gift_streak || 0;
 
       setCurrentStreak(streak);
       setNextReward(DAILY_GIFT_REWARDS[streak % 7]);

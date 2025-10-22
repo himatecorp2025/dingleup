@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { HexagonButton } from './HexagonButton';
-import { Gift, Coins, Heart, Zap } from 'lucide-react';
+import { Gift, Coins, Heart } from 'lucide-react';
 
 interface WelcomeBonusDialogProps {
   open: boolean;
@@ -117,14 +117,6 @@ export const WelcomeBonusDialog = ({ open, onClaim, claiming }: WelcomeBonusDial
               <span className="font-bold text-[10px] sm:text-xs text-white">Életek</span>
             </div>
             <span className="text-sm sm:text-base font-black text-white">+50</span>
-          </div>
-
-          <div className="flex items-center justify-between p-1 sm:p-1.5 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-purple-500" />
-              <span className="font-bold text-[10px] sm:text-xs text-white">DingleSpeed</span>
-            </div>
-            <span className="text-sm sm:text-base font-black text-white">+1</span>
           </div>
         </div>
 
