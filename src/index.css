@@ -87,6 +87,40 @@ button, a {
   /* Transitions */
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+  /* DUP Casino Popup Color System (MANDATORY) */
+  /* Alap felület (sötét kaszinó háttér) */
+  --dup-ui-bg-900: 240 9% 6%;        /* #0B0B0F - nagyon sötét háttér */
+  --dup-backdrop: 240 9% 6% / 0.60;  /* backdrop átlátszóság */
+
+  /* Kaszinó zöld (primary) – CTA-k, pozitív állapotok */
+  --dup-green-700: 167 82% 23%;      /* #0B6E4F - mély */
+  --dup-green-600: 167 82% 28%;      /* #0F7F56 */
+  --dup-green-500: 167 82% 32%;      /* #138F5E - alap CTA */
+  --dup-green-400: 167 79% 38%;      /* #1AA56B - hover */
+  --dup-green-300: 167 52% 50%;      /* #3FC082 - disabled */
+
+  /* Arany (secondary / brand díszítő) */
+  --dup-gold-800: 45 81% 31%;        /* #8C6A10 - sötét arany */
+  --dup-gold-700: 45 81% 36%;        /* #A47C12 */
+  --dup-gold-600: 45 79% 43%;        /* #C0911A */
+  --dup-gold-500: 45 59% 52%;        /* #D4AF37 - klasszikus arany */
+  --dup-gold-400: 45 73% 65%;        /* #E4C766 - highlight */
+  --dup-gold-300: 45 82% 75%;        /* #F1DA8A */
+
+  /* Bíborvörös (accent / veszély / zárás) */
+  --dup-crimson-700: 348 82% 30%;    /* #8E0B26 */
+  --dup-crimson-600: 348 85% 38%;    /* #B30E2F */
+  --dup-crimson-500: 348 83% 47%;    /* #DC143C - bíborvörös */
+  --dup-crimson-400: 353 75% 60%;    /* #E94B67 */
+
+  /* Tipográfia */
+  --dup-text-100: 210 17% 98%;       /* #F8F9FA - fő szöveg */
+  --dup-text-200: 220 9% 91%;        /* #E6E7EA - másodlagos */
+  --dup-text-300: 220 6% 80%;        /* #C7C9CF - kiegészítő */
+
+  /* Fókusz/kiemelés (AA megfelelés) - arany fénykoszorú */
+  --dup-focus-ring: 0 0 0 3px hsl(45 59% 52% / 0.55);
+
   /* Sidebar */
   --sidebar-background: 0 0% 98%;
   --sidebar-foreground: 240 5.3% 26.1%;

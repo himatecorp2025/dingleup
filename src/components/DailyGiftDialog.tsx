@@ -32,29 +32,38 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="w-[95vw] max-w-md bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] border-4 border-cyan-400/70 shadow-2xl shadow-cyan-500/50 overflow-hidden rounded-[20px]"
+        className="w-[95vw] max-w-md bg-[#0F1116] border border-[hsl(var(--dup-gold-600))] shadow-[0_12px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(212,175,55,0.15)] overflow-hidden rounded-[20px]"
         style={{ 
           paddingTop: 'max(env(safe-area-inset-top), 1rem)',
           paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)' 
         }}
       >
-        {/* Casino lights animation - cyan/blue theme */}
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 opacity-90 animate-pulse z-50"></div>
-        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 opacity-90 animate-pulse z-50" style={{ animationDelay: '0.5s' }}></div>
+        {/* Casino lights animation - gold theme */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[hsl(var(--dup-gold-400))] to-transparent opacity-80 animate-shimmer z-50"></div>
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[hsl(var(--dup-gold-400))] to-transparent opacity-80 animate-shimmer z-50" style={{ animationDelay: '1s' }}></div>
         
-        {/* Floating sparkles - blue/cyan theme */}
+        {/* Close button - crimson */}
+        <button
+          onClick={onLater}
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-[hsl(var(--dup-crimson-500))] hover:text-[hsl(var(--dup-crimson-400))] hover:bg-[hsl(var(--dup-crimson-500)/0.1)] transition-all focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] z-50"
+          aria-label="Bezárás"
+        >
+          ✕
+        </button>
+        
+        {/* Floating sparkles - gold theme */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <Star className="absolute top-8 left-8 w-8 h-8 text-cyan-300 animate-pulse drop-shadow-[0_0_10px_rgba(103,232,249,0.8)]" style={{ animationDuration: '1.5s' }} />
-          <Sparkles className="absolute top-16 right-10 w-6 h-6 text-blue-400 animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
-          <Zap className="absolute bottom-20 left-16 w-7 h-7 text-purple-400 animate-pulse drop-shadow-[0_0_10px_rgba(192,132,252,0.8)]" style={{ animationDuration: '1.8s', animationDelay: '0.6s' }} />
-          <Star className="absolute bottom-24 right-12 w-6 h-6 text-pink-400 animate-pulse" style={{ animationDuration: '2.2s', animationDelay: '0.9s' }} />
+          <Star className="absolute top-8 left-8 w-8 h-8 text-[hsl(var(--dup-gold-400))] animate-pulse drop-shadow-[0_0_10px_hsl(var(--dup-gold-500))]" style={{ animationDuration: '1.5s' }} />
+          <Sparkles className="absolute top-16 right-10 w-6 h-6 text-[hsl(var(--dup-gold-300))] animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
+          <Gift className="absolute bottom-20 left-16 w-7 h-7 text-[hsl(var(--dup-gold-500))] animate-pulse drop-shadow-[0_0_10px_hsl(var(--dup-gold-400))]" style={{ animationDuration: '1.8s', animationDelay: '0.6s' }} />
+          <Sparkles className="absolute bottom-24 right-12 w-5 h-5 text-[hsl(var(--dup-gold-400))] animate-pulse" style={{ animationDuration: '2.2s', animationDelay: '0.9s' }} />
         </div>
         
         <DialogHeader className="relative z-10">
-          <DialogTitle className="text-2xl sm:text-3xl font-black text-center bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-lg animate-pulse">
+          <DialogTitle className="text-2xl sm:text-3xl font-black text-center bg-gradient-to-r from-[hsl(var(--dup-gold-300))] via-[hsl(var(--dup-gold-500))] to-[hsl(var(--dup-gold-300))] bg-clip-text text-transparent drop-shadow-lg animate-pulse">
             🎁 Napi ajándék 🎁
           </DialogTitle>
-          <DialogDescription className="text-center text-base sm:text-lg text-cyan-100 font-bold mt-2">
+          <DialogDescription className="text-center text-base sm:text-lg text-[hsl(var(--dup-text-100))] font-bold mt-2">
             Ez a(z) {weeklyEntryCount + 1}. belépésed ezen a héten.
           </DialogDescription>
         </DialogHeader>
@@ -127,37 +136,33 @@ const DailyGiftDialog = ({
 
           {/* Action buttons - responsive */}
           {canClaim ? (
-            <div className="space-y-3">
-              <HexagonButton
-                variant="yellow"
-                size="lg"
+          <div className="space-y-3">
+              <button
                 onClick={onClaim}
-                className="w-full text-lg sm:text-xl font-black py-4 shadow-[0_0_20px_rgba(34,211,238,0.6)]"
+                className="w-full bg-[hsl(var(--dup-green-500))] hover:bg-[hsl(var(--dup-green-400))] text-white font-black text-lg sm:text-xl py-4 rounded-[12px] border border-[hsl(var(--dup-green-700))] shadow-[0_0_20px_hsl(var(--dup-green-500)/0.6)] transition-all focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] flex items-center justify-center gap-2"
               >
-                <Gift className="w-6 h-6 mr-2" />
+                <Gift className="w-6 h-6" />
                 Felveszem
-              </HexagonButton>
+              </button>
               
               <button
                 onClick={onLater}
-                className="w-full py-3 text-base sm:text-lg text-cyan-200/80 hover:text-cyan-100 transition-colors font-bold"
+                className="w-full py-3 text-base sm:text-lg text-[hsl(var(--dup-text-100))] hover:text-[hsl(var(--dup-text-100))] transition-colors font-bold border border-[hsl(var(--dup-gold-600))] bg-transparent hover:bg-[rgba(212,175,55,0.12)] rounded-[12px] focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)]"
               >
                 Később
               </button>
             </div>
           ) : (
-            <HexagonButton
-              variant="outline"
-              size="lg"
+            <button
               onClick={onLater}
-              className="w-full text-lg font-black py-4"
+              className="w-full py-4 text-lg font-black text-[hsl(var(--dup-text-100))] border border-[hsl(var(--dup-gold-600))] bg-transparent hover:bg-[rgba(212,175,55,0.12)] rounded-[12px] focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] transition-all"
             >
               Bezárás
-            </HexagonButton>
+            </button>
           )}
 
           {/* Info */}
-          <p className="text-xs sm:text-sm text-center text-cyan-100/70 leading-relaxed">
+          <p className="text-xs sm:text-sm text-center text-[hsl(var(--dup-text-300))] leading-relaxed">
             A heti számláló hétfő 00:00-kor indul újra.
             {isPremium && ' 🌟 Genius tag vagy? A jutalmad dupla!'}
           </p>

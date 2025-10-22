@@ -48,42 +48,48 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
   return (
     <Dialog open={open} onOpenChange={handleLater}>
       <DialogContent 
-        className="w-[95vw] max-w-md bg-gradient-to-br from-[#0a1f14] via-[#0e4d2e] to-[#0a1f14] border-4 border-[#d4af37] shadow-2xl shadow-[#d4af37]/50 overflow-hidden rounded-[20px]"
+        className="w-[95vw] max-w-md bg-[#0F1116] border border-[hsl(var(--dup-gold-600))] shadow-[0_12px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(212,175,55,0.15)] overflow-hidden rounded-[20px]"
         style={{ 
           paddingTop: 'max(env(safe-area-inset-top), 1rem)',
           paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)' 
         }}
       >
-        {/* Casino lights animation - gold/green poker theme */}
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#d4af37] via-[#c41e3a] to-[#2a7a4f] opacity-90 animate-pulse z-50"></div>
-        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#2a7a4f] via-[#d4af37] to-[#c41e3a] opacity-90 animate-pulse z-50" style={{ animationDelay: '0.5s' }}></div>
+        {/* Casino lights animation - gold theme */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[hsl(var(--dup-gold-400))] to-transparent opacity-80 animate-shimmer z-50"></div>
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[hsl(var(--dup-gold-400))] to-transparent opacity-80 animate-shimmer z-50" style={{ animationDelay: '1s' }}></div>
         
-        {/* Poker green felt texture overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(26,95,58,0.4),transparent)] opacity-60"></div>
+        {/* Close button - crimson */}
+        <button
+          onClick={handleLater}
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-[hsl(var(--dup-crimson-500))] hover:text-[hsl(var(--dup-crimson-400))] hover:bg-[hsl(var(--dup-crimson-500)/0.1)] transition-all focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] z-50"
+          aria-label="Bezárás"
+        >
+          ✕
+        </button>
         
-        {/* Floating sparkles - gold/red poker theme */}
+        {/* Floating sparkles - gold theme */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <Star className="absolute top-8 left-8 w-8 h-8 text-[#ffd700] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.9)]" style={{ animationDuration: '1.5s' }} />
-          <Sparkles className="absolute top-16 right-10 w-6 h-6 text-[#c41e3a] animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
-          <Crown className="absolute bottom-20 left-16 w-8 h-8 text-[#ffd700] animate-pulse drop-shadow-[0_0_10px_rgba(255,215,0,0.9)]" style={{ animationDuration: '1.8s', animationDelay: '0.6s' }} />
-          <Zap className="absolute bottom-24 right-12 w-7 h-7 text-[#ffb700] animate-pulse" style={{ animationDuration: '2.2s', animationDelay: '0.9s' }} />
+          <Star className="absolute top-8 left-8 w-8 h-8 text-[hsl(var(--dup-gold-400))] animate-pulse drop-shadow-[0_0_10px_hsl(var(--dup-gold-500))]" style={{ animationDuration: '1.5s' }} />
+          <Sparkles className="absolute top-16 right-10 w-6 h-6 text-[hsl(var(--dup-gold-300))] animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
+          <Crown className="absolute bottom-20 left-16 w-8 h-8 text-[hsl(var(--dup-gold-400))] animate-pulse drop-shadow-[0_0_10px_hsl(var(--dup-gold-500))]" style={{ animationDuration: '1.8s', animationDelay: '0.6s' }} />
+          <Zap className="absolute bottom-24 right-12 w-7 h-7 text-[hsl(var(--dup-gold-300))] animate-pulse" style={{ animationDuration: '2.2s', animationDelay: '0.9s' }} />
         </div>
 
         <DialogHeader className="relative z-10">
           <DialogTitle className="flex items-center justify-center gap-3 text-white text-2xl sm:text-3xl">
             <div className="relative">
-              <div className="absolute inset-0 bg-[#ffd700]/60 blur-2xl animate-pulse"></div>
-              <Crown className="relative w-10 h-10 sm:w-12 sm:h-12 text-[#ffd700] animate-bounce drop-shadow-[0_0_15px_rgba(255,215,0,1)]" />
+              <div className="absolute inset-0 bg-[hsl(var(--dup-gold-400)/0.6)] blur-2xl animate-pulse"></div>
+              <Crown className="relative w-10 h-10 sm:w-12 sm:h-12 text-[hsl(var(--dup-gold-400))] animate-bounce drop-shadow-[0_0_15px_hsl(var(--dup-gold-500))]" />
             </div>
-            <span className="bg-gradient-to-r from-[#ffd700] via-[#ffed4e] to-[#ffd700] bg-clip-text text-transparent font-black drop-shadow-[0_2px_10px_rgba(255,215,0,0.5)]">
+            <span className="bg-gradient-to-r from-[hsl(var(--dup-gold-300))] via-[hsl(var(--dup-gold-500))] to-[hsl(var(--dup-gold-300))] bg-clip-text text-transparent font-black drop-shadow-lg">
               GENIUS ELŐFIZETÉS
             </span>
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-5 relative z-10 mt-4">
-          {/* Lead text - vibrant */}
-          <p className="text-center text-[#ffd700] text-xl sm:text-2xl font-black drop-shadow-lg">
+          {/* Lead text */}
+          <p className="text-center text-[hsl(var(--dup-gold-300))] text-xl sm:text-2xl font-black drop-shadow-lg">
             Légy Genius, vedd fel a tempót!
           </p>
 
@@ -132,28 +138,27 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
             </div>
           </div>
 
-          {/* CTA Buttons - enhanced */}
+          {/* CTA Buttons */}
           <div className="space-y-3">
             <button
               onClick={handleSubscribe}
               disabled={loading}
-              className="w-full py-5 text-xl sm:text-2xl font-black bg-gradient-to-r from-[#ffd700] via-[#ffed4e] to-[#ffd700] text-black hover:opacity-95 shadow-[0_0_30px_rgba(255,215,0,0.7)] animate-pulse border-4 border-[#ffb700] rounded-[15px] transition-all relative overflow-hidden"
+              className="w-full py-5 text-xl sm:text-2xl font-black bg-[hsl(var(--dup-green-500))] hover:bg-[hsl(var(--dup-green-400))] disabled:bg-[hsl(var(--dup-green-300))] disabled:cursor-not-allowed text-white shadow-[0_0_20px_hsl(var(--dup-green-500)/0.6)] border border-[hsl(var(--dup-green-700))] rounded-[15px] transition-all relative overflow-hidden focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] flex items-center justify-center gap-2"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-              <Crown className="w-7 h-7 mr-2 inline" />
+              <Crown className="w-7 h-7" />
               {loading ? 'Átirányítás...' : 'Előfizetek $2.99/hó'}
             </button>
 
             <button
               onClick={handleLater}
               disabled={loading}
-              className="w-full py-3 text-base sm:text-lg text-[#d4af37] hover:text-[#ffd700] transition-colors font-bold"
+              className="w-full py-3 text-base sm:text-lg text-[hsl(var(--dup-text-100))] hover:text-[hsl(var(--dup-text-100))] transition-colors font-bold border border-[hsl(var(--dup-gold-600))] bg-transparent hover:bg-[rgba(212,175,55,0.12)] rounded-[12px] focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] disabled:cursor-not-allowed"
             >
               Mutasd később
             </button>
           </div>
 
-          <p className="text-center text-[#d4af37] text-xs sm:text-sm font-bold leading-relaxed">
+          <p className="text-center text-[hsl(var(--dup-text-300))] text-xs sm:text-sm font-bold leading-relaxed">
             Transzparens előfizetés • Automatikusan megújul • Bármikor lemondható
           </p>
         </div>
