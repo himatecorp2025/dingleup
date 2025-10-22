@@ -4,15 +4,21 @@ import { toast } from '@/hooks/use-toast';
 
 const DAILY_GIFT_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 
-export const useDailyGift = (userId: string | undefined) => {
+export const useDailyGift = (userId: string | undefined, isPremium: boolean = false) => {
   const [canClaim, setCanClaim] = useState(false);
-  const [currentStreak, setCurrentStreak] = useState(0);
+  const [weeklyEntryCount, setWeeklyEntryCount] = useState(0);
   const [nextReward, setNextReward] = useState(0);
+  const [hasSeenToday, setHasSeenToday] = useState(false);
 
   const checkDailyGift = async () => {
     if (!userId) return;
 
     try {
+      // Check localStorage for today's view
+      const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
+      const seenToday = localStorage.getItem(todayKey) === 'true';
+      setHasSeenToday(seenToday);
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('daily_gift_streak, daily_gift_last_claimed')
@@ -32,11 +38,19 @@ export const useDailyGift = (userId: string | undefined) => {
         lastClaimed.getMonth() === now.getMonth() &&
         lastClaimed.getFullYear() === now.getFullYear();
 
-      const streak = profile.daily_gift_streak || 0;
+      const entryCount = profile.daily_gift_streak || 0;
+      const reward = DAILY_GIFT_REWARDS[entryCount % 7];
 
-      setCurrentStreak(streak);
-      setNextReward(DAILY_GIFT_REWARDS[streak % 7]);
-      setCanClaim(!isToday);
+      setWeeklyEntryCount(entryCount);
+      setNextReward(isPremium ? reward * 2 : reward);
+      
+      // Can claim if not claimed today AND not seen today
+      setCanClaim(!isToday && !seenToday);
+
+      // Track impression if showing
+      if (!isToday && !seenToday) {
+        trackEvent('popup_impression', 'daily');
+      }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error checking daily gift:', error);
@@ -54,14 +68,23 @@ export const useDailyGift = (userId: string | undefined) => {
       
       const result = data as { success: boolean; coins: number; streak: number; error?: string };
       if (result.success) {
+        const actualCoins = isPremium ? result.coins * 2 : result.coins;
+        
         toast({
           title: '🎁 Napi ajándék',
-          description: `+${result.coins} aranyérme a ${result.streak}. belépésért!`,
+          description: `+${actualCoins} aranyérme a ${result.streak}. belépésért!${isPremium ? ' (Genius 2x)' : ''}`,
         });
 
         setCanClaim(false);
-        setCurrentStreak(result.streak);
-        setNextReward(DAILY_GIFT_REWARDS[result.streak % 7]);
+        setWeeklyEntryCount(result.streak);
+        setNextReward(isPremium ? DAILY_GIFT_REWARDS[result.streak % 7] * 2 : DAILY_GIFT_REWARDS[result.streak % 7]);
+        
+        // Mark as seen today
+        const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
+        localStorage.setItem(todayKey, 'true');
+
+        // Track claim
+        trackEvent('popup_cta_click', 'daily', 'claim');
       } else {
         toast({
           title: 'Hiba',
@@ -81,15 +104,43 @@ export const useDailyGift = (userId: string | undefined) => {
     }
   };
 
+  const handleLater = () => {
+    if (!userId) return;
+    
+    // Mark as seen today
+    const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
+    localStorage.setItem(todayKey, 'true');
+    setCanClaim(false);
+    
+    // Track later action
+    trackEvent('popup_cta_click', 'daily', 'later');
+  };
+
   useEffect(() => {
     checkDailyGift();
-  }, [userId]);
+  }, [userId, isPremium]);
 
   return {
     canClaim,
-    currentStreak,
+    weeklyEntryCount,
     nextReward,
     claimDailyGift,
-    checkDailyGift
+    checkDailyGift,
+    handleLater
   };
+};
+
+// Analytics helper
+const trackEvent = (event: string, type: string, action?: string) => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', event, {
+      type,
+      action,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  if (import.meta.env.DEV) {
+    console.log(`[Analytics] ${event}`, { type, action });
+  }
 };

@@ -14,40 +14,55 @@ export const useGeniusPromo = (
     }
 
     const checkAndShow = () => {
-      const lastPromoDate = localStorage.getItem(`genius_promo_date_${userId}`);
       const now = Date.now();
+      const today = new Date().toDateString();
+      
+      // Get today's data
+      const promoDataKey = `genius_promo_data_${userId}`;
+      const storedData = localStorage.getItem(promoDataKey);
+      
+      let promoData = {
+        date: today,
+        count: 0,
+        lastShown: 0,
+        cooldownUntil: 0
+      };
 
-      // Reset counter if it's a new day
-      if (lastPromoDate) {
-        const lastDate = new Date(parseInt(lastPromoDate));
-        const today = new Date();
-        if (lastDate.toDateString() !== today.toDateString()) {
-          localStorage.setItem(`genius_promo_count_${userId}`, '0');
+      if (storedData) {
+        const parsed = JSON.parse(storedData);
+        // Reset if it's a new day
+        if (parsed.date !== today) {
+          promoData = { date: today, count: 0, lastShown: 0, cooldownUntil: 0 };
+        } else {
+          promoData = parsed;
         }
       }
 
-      // Check if we can show promo (max 5 per day)
-      const currentCount = parseInt(localStorage.getItem(`genius_promo_count_${userId}`) || '0');
-      
-      if (currentCount >= 5) {
+      // Check max 5 per day
+      if (promoData.count >= 5) {
         return;
       }
 
-      const lastShown = parseInt(localStorage.getItem(`genius_promo_last_${userId}`) || '0');
-      const timeSinceLastPromo = now - lastShown;
-
-      // Show immediately if never shown, otherwise after 2 minutes
-      const minInterval = 2 * 60 * 1000; // 2 minutes
-
-      if (lastShown === 0 || timeSinceLastPromo > minInterval) {
-        setShouldShow(true);
-        localStorage.setItem(`genius_promo_last_${userId}`, now.toString());
-        localStorage.setItem(`genius_promo_count_${userId}`, (currentCount + 1).toString());
-        localStorage.setItem(`genius_promo_date_${userId}`, now.toString());
+      // Check 2 hour cooldown
+      if (now < promoData.cooldownUntil) {
+        return;
       }
+
+      // Show the promo
+      setShouldShow(true);
+      
+      // Update data
+      promoData.count += 1;
+      promoData.lastShown = now;
+      promoData.cooldownUntil = now + (2 * 60 * 60 * 1000); // +2 hours
+      
+      localStorage.setItem(promoDataKey, JSON.stringify(promoData));
+
+      // Track impression
+      trackEvent('popup_impression', 'sub_promo');
     };
 
-    // Show after 30 seconds (give user time to see dashboard first)
+    // Show after 30 seconds
     const timer = setTimeout(() => {
       checkAndShow();
     }, 30000);
@@ -55,7 +70,34 @@ export const useGeniusPromo = (
     return () => clearTimeout(timer);
   }, [userId, isPremium, hasOtherDialogs]);
 
-  const closePromo = () => setShouldShow(false);
+  const closePromo = () => {
+    setShouldShow(false);
+    trackEvent('popup_close', 'sub_promo');
+  };
 
-  return { shouldShow, closePromo };
+  const handleSubscribe = () => {
+    trackEvent('popup_cta_click', 'sub_promo', 'subscribe');
+  };
+
+  const handleLater = () => {
+    trackEvent('popup_cta_click', 'sub_promo', 'later');
+    closePromo();
+  };
+
+  return { shouldShow, closePromo, handleSubscribe, handleLater };
+};
+
+// Analytics helper
+const trackEvent = (event: string, type: string, action?: string) => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', event, {
+      type,
+      action,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  if (import.meta.env.DEV) {
+    console.log(`[Analytics] ${event}`, { type, action });
+  }
 };

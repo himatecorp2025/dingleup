@@ -26,8 +26,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
-  const { canClaim, currentStreak, nextReward, claimDailyGift, checkDailyGift } = useDailyGift(userId);
-  const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus } = useWelcomeBonus(userId);
+  const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_premium || false);
+  const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
@@ -414,11 +414,15 @@ const Dashboard = () => {
       </div>
 
       {/* Welcome bonus dialog - FIRST */}
-      <WelcomeBonusDialog
-        open={showWelcomeBonus}
-        onClaim={handleClaimWelcomeBonus}
-        claiming={claimingWelcome}
-      />
+        <WelcomeBonusDialog
+          open={showWelcomeBonus}
+          onClaim={handleClaimWelcomeBonus}
+          onLater={() => {
+            handleWelcomeLater();
+            setShowWelcomeBonus(false);
+          }}
+          claiming={claimingWelcome}
+        />
 
       {/* Daily gift dialog - SECOND */}
       <DailyGiftDialog
