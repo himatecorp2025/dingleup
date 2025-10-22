@@ -219,11 +219,15 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       
       // Check if user has enough coins NOW (when they try to continue)
       if (profile.coins < cost) {
-        // Not enough coins - show insufficient dialog NOW
+        // Not enough coins - show insufficient dialog with delay for dramatic effect
         setInsufficientType('coins');
         setRequiredAmount(cost);
-        setShowInsufficientDialog(true);
         setErrorBannerVisible(false);
+        
+        // Delay before showing dialog (dramatic reveal)
+        setTimeout(() => {
+          setShowInsufficientDialog(true);
+        }, 2000); // 2 seconds delay
         return;
       }
       
