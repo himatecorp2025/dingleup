@@ -13,6 +13,7 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
     const authHeader = req.headers.get('Authorization');
@@ -20,16 +21,21 @@ serve(async (req) => {
       throw new Error('No authorization header');
     }
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    // Client for auth verification (with user's token)
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       global: {
         headers: { Authorization: authHeader },
       },
     });
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Verify user authentication
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
     if (authError || !user) {
       throw new Error('Unauthorized');
     }
+
+    // Client for database operations (bypasses RLS)
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     console.log('[GetWallet] Fetching wallet for user:', user.id);
 
