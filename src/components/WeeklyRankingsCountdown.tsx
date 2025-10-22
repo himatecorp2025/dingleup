@@ -99,10 +99,10 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
       
       <div className="relative z-10 text-center w-full">
         <div className="flex items-center justify-center gap-1.5 mb-0.5">
-          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-900 drop-shadow-[0_2px_8px_rgba(217,119,6,0.8)] animate-pulse" />
-          <p className="text-[10px] sm:text-xs text-yellow-900 font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">DÍJAZÁSIG</p>
+          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] animate-pulse" />
+          <p className="text-xl sm:text-2xl text-black font-black drop-shadow-[0_2px_4px_rgba(255,215,0,0.5)]">DÍJAZÁSIG</p>
         </div>
-        <p className="text-xs sm:text-sm font-black text-yellow-900 drop-shadow-[0_3px_6px_rgba(0,0,0,0.6)] leading-tight tracking-wider">
+        <p className="text-2xl sm:text-3xl font-black text-black drop-shadow-[0_3px_6px_rgba(255,215,0,0.6)] leading-tight tracking-wider">
           {timeRemaining}
         </p>
       </div>
