@@ -184,9 +184,7 @@ const ChatEnhanced = () => {
       <ReportDialog
         open={reportDialogOpen}
         onOpenChange={setReportDialogOpen}
-        reportedUserId={selectedFriend?.userId || null}
-        reportedUsername={selectedFriend?.username || null}
-        reporterUserId={userId || ''}
+        reportedUserId={selectedFriend?.userId}
       />
 
       <UserSearchDialog
