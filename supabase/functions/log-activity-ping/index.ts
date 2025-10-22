@@ -38,6 +38,37 @@ serve(async (req) => {
       throw new Error("Missing required fields");
     }
 
+    // Validate timestamp is recent (within last 15 minutes)
+    const now = Date.now();
+    const bucketTime = new Date(bucketStart).getTime();
+    const maxAge = 15 * 60 * 1000; // 15 minutes
+    
+    if (isNaN(bucketTime)) {
+      throw new Error("Invalid timestamp format");
+    }
+    
+    if (bucketTime > now + 60000) {
+      throw new Error("Timestamp cannot be in the future");
+    }
+    
+    if (bucketTime < now - maxAge) {
+      throw new Error("Timestamp too old (max 15 minutes)");
+    }
+
+    // Validate enum values
+    const VALID_SOURCES = ['app_open', 'route_view', 'interaction', 'gameplay', 'purchase', 'chat'];
+    const VALID_DEVICE_CLASSES = ['mobile', 'tablet', 'desktop'];
+    
+    if (!VALID_SOURCES.includes(source)) {
+      throw new Error(`Invalid source. Must be one of: ${VALID_SOURCES.join(', ')}`);
+    }
+    
+    if (!VALID_DEVICE_CLASSES.includes(deviceClass)) {
+      throw new Error(`Invalid device class. Must be one of: ${VALID_DEVICE_CLASSES.join(', ')}`);
+    }
+
+    logStep("Input validation passed", { bucketStart, source, deviceClass });
+
     // Round to 5-minute bucket
     const bucketDate = new Date(bucketStart);
     const minutes = Math.floor(bucketDate.getMinutes() / 5) * 5;
