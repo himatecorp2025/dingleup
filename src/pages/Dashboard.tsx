@@ -358,11 +358,21 @@ return (
               if (!a) {
                 a = new Audio(backmusic);
                 a.loop = true;
-                a.volume = 0.1; // FIXED 10%
+                // Get saved volume from localStorage
+                const savedVolume = localStorage.getItem('music_volume');
+                const savedMuted = localStorage.getItem('music_muted') === 'true';
+                const volume = savedMuted ? 0 : (savedVolume ? parseInt(savedVolume, 10) / 100 : 0.1);
+                a.volume = volume;
+                console.log(`[Dashboard] Created new audio with volume: ${volume}`);
                 w.__bgm = a;
               } else {
                 a.loop = true;
-                a.volume = 0.1; // FIXED 10%
+                // Apply current volume settings to existing audio
+                const savedVolume = localStorage.getItem('music_volume');
+                const savedMuted = localStorage.getItem('music_muted') === 'true';
+                const volume = savedMuted ? 0 : (savedVolume ? parseInt(savedVolume, 10) / 100 : 0.1);
+                a.volume = volume;
+                console.log(`[Dashboard] Updated existing audio volume to: ${volume}`);
               }
               const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
               ctx.resume();

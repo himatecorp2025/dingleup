@@ -44,7 +44,7 @@ export const InsufficientResourcesDialog = ({
   };
   
   const getDescription = () => {
-    if (type === 'both') {
+    if (userId) {
       return 'Elfogy az életed vagy aranyérméd? Vásárolj most 500 aranyat + 15 életet csak $0.99-ért!';
     }
     if (requiredAmount && currentAmount !== undefined) {

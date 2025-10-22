@@ -26,17 +26,9 @@ export const MusicControls = () => {
       const actualVolume = isMuted ? 0 : volume / 100;
       audio.volume = actualVolume;
       
-      // Ha ki van némítva vagy 0 a hangerő, állítsuk le a zenét
-      if (actualVolume === 0) {
-        audio.pause();
-      } else {
-        // Ha van hangerő, indítsuk el ha nincs lejátszás
-        if (audio.paused) {
-          audio.play().catch(() => {
-            // Autoplay blocked, user interaction needed
-          });
-        }
-      }
+      console.log(`[MusicControls] Setting volume to ${actualVolume} (muted: ${isMuted}, volume: ${volume})`);
+    } else {
+      console.log('[MusicControls] No background music audio element found');
     }
   }, [volume, isMuted]);
 
