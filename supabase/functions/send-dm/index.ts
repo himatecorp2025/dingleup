@@ -38,6 +38,15 @@ Deno.serve(async (req) => {
       );
     }
 
+    // SECURITY: Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(recipientId)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid recipient ID format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     if (body.length > 2000) {
       return new Response(
         JSON.stringify({ error: 'Üzenet túl hosszú (max 2000 karakter)' }),
@@ -48,6 +57,20 @@ Deno.serve(async (req) => {
     if (body.trim().length === 0) {
       return new Response(
         JSON.stringify({ error: 'Üzenet nem lehet üres' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // SECURITY: Sanitize message content to prevent XSS
+    // Remove HTML tags and script content
+    const sanitizedBody = body
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/<[^>]+>/g, '')
+      .trim();
+
+    if (sanitizedBody.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'Message body cannot be empty after sanitization' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -102,13 +125,13 @@ Deno.serve(async (req) => {
       throw threadError;
     }
 
-    // Insert message
+    // Insert message with sanitized content
     const { data: message, error: messageError } = await supabase
       .from('dm_messages')
       .insert({
         thread_id: threadId,
         sender_id: user.id,
-        body: body.trim()
+        body: sanitizedBody
       })
       .select()
       .single();

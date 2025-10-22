@@ -40,6 +40,31 @@ Deno.serve(async (req) => {
       );
     }
 
+    // SECURITY: Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(otherUserId)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid otherUserId format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // SECURITY: Validate limit to prevent abuse
+    if (limit < 1 || limit > 100) {
+      return new Response(
+        JSON.stringify({ error: 'Limit must be between 1 and 100' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // SECURITY: Validate cursor format if provided
+    if (before && !before.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid cursor format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     console.log('[GetThreadMessages] Fetching messages for', user.id, '<->', otherUserId);
 
     // Get thread

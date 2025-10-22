@@ -30,6 +30,16 @@ Deno.serve(async (req) => {
 
     console.log('[GetFriends] Fetching friends for user:', user.id);
 
+    // SECURITY: Validate user ID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(user.id)) {
+      console.error('[GetFriends] Invalid user ID format');
+      return new Response(
+        JSON.stringify({ error: 'Invalid user ID format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Get all friendships where user is either user_id_a or user_id_b
     const { data: friendships, error: friendshipsError } = await supabase
       .from('friendships')
