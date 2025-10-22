@@ -195,20 +195,20 @@ export const InsufficientResourcesDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] animate-in">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-3 text-3xl font-black">
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-bottom-4 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-bottom-4 duration-500">
+        <DialogHeader className="data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-top-2 data-[state=open]:duration-700 data-[state=open]:delay-100">
+          <DialogTitle className="flex items-center gap-3 text-3xl font-black animate-in fade-in-0 zoom-in-95 duration-500 delay-200">
             <Icon className={`w-8 h-8 ${type === 'coins' || type === 'both' ? 'text-yellow-400 animate-pulse' : 'text-red-500 animate-pulse'}`} />
             {title}
           </DialogTitle>
-          <DialogDescription className="text-lg text-white/90 pt-2 font-bold">
+          <DialogDescription className="text-lg text-white/90 pt-2 font-bold animate-in fade-in-0 slide-in-from-top-1 duration-500 delay-300">
             {description}
           </DialogDescription>
         </DialogHeader>
         
         {userId && !clientSecret && (
           <>
-            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-8 my-4 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-pulse">
+            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-8 my-4 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-pulse animate-in fade-in-0 zoom-in-90 duration-700 delay-400">
               {/* Animated background sparkles */}
               <div className="absolute inset-0 opacity-30">
                 <Sparkles className="absolute top-3 right-3 w-8 h-8 text-yellow-200 animate-pulse" />
@@ -243,7 +243,7 @@ export const InsufficientResourcesDialog = ({
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-3 mb-2">
+            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-3 mb-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-500 delay-500">
               <p className="text-center text-white font-bold text-xs flex items-center justify-center gap-2">
                 <CreditCard className="w-4 h-4" />
                 Biztonságos fizetés • Apple Pay • Google Pay • Kártya
@@ -263,7 +263,7 @@ export const InsufficientResourcesDialog = ({
         )}
         
         {userId && !clientSecret && (
-          <DialogFooter className="flex flex-col gap-3 sm:gap-3">
+          <DialogFooter className="flex flex-col gap-3 sm:gap-3 animate-in fade-in-0 slide-in-from-bottom-3 duration-600 delay-600">
             <Button 
               onClick={handleStartPayment}
               disabled={isLoadingPayment}
