@@ -338,13 +338,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
     
-    try {
-      await supabase.rpc('award_coins', { amount: 1 });
-      setCoinsEarned(1);
-    } catch (error) {
-      console.error('Error awarding welcome coin:', error);
-    }
-
+    // SECURITY: Removed client-side award_coins - handled by complete-game edge function
     await refreshProfile();
 
     setSelectedCategory(category);
@@ -435,17 +429,9 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       reward = 55;
     }
     
+    // SECURITY: Local counter only - actual coins awarded by complete-game edge function
     setCoinsEarned(coinsEarned + reward);
     
-    if (profile) {
-      try {
-        await supabase.rpc('award_coins', { amount: reward });
-        await refreshProfile();
-      } catch (error) {
-        console.error('Error awarding coins:', error);
-      }
-    }
-
     toast.success(`Helyes! +${reward} 🪙`);
   };
 
