@@ -58,21 +58,31 @@ Deno.serve(async (req) => {
     let aggregated = 0;
     const uniqueUserDates = new Set<string>();
 
-    // Get distinct user-date pairs more efficiently
-    const { data: userDates, error: userDatesError } = await supabaseAdmin.rpc('exec_sql', {
-      sql: `
-        SELECT DISTINCT 
-          user_id,
-          DATE(bucket_start) as activity_date
-        FROM user_activity_pings
-        ORDER BY activity_date DESC
-        LIMIT 1000
-      `
-    });
+    // Get distinct user-date pairs using safe Supabase client methods
+    const { data: pings, error: pingsError } = await supabaseAdmin
+      .from('user_activity_pings')
+      .select('user_id, bucket_start')
+      .order('bucket_start', { ascending: false })
+      .limit(10000);
 
-    if (!userDatesError && userDates) {
-      for (const row of userDates) {
-        const { user_id, activity_date } = row;
+    // Process in JavaScript to get distinct user-date pairs
+    const distinctUserDates: Array<{ user_id: string; activity_date: string }> = [];
+    
+    if (!pingsError && pings) {
+      for (const ping of pings) {
+        const activity_date = new Date(ping.bucket_start).toISOString().split('T')[0];
+        const key = `${ping.user_id}:${activity_date}`;
+        
+        if (uniqueUserDates.has(key)) continue;
+        uniqueUserDates.add(key);
+        
+        distinctUserDates.push({ user_id: ping.user_id, activity_date });
+        
+        // Limit to 1000 distinct user-date pairs
+        if (distinctUserDates.length >= 1000) break;
+      }
+
+      for (const { user_id, activity_date } of distinctUserDates) {
         const key = `${user_id}:${activity_date}`;
         
         if (uniqueUserDates.has(key)) continue;
@@ -116,6 +126,8 @@ Deno.serve(async (req) => {
           await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
+    } else if (pingsError) {
+      console.error('Error fetching pings:', pingsError);
     }
 
     console.log(`Successfully aggregated ${aggregated} user-date records`);
