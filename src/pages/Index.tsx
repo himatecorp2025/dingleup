@@ -8,6 +8,7 @@ import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { AlertCircle } from "lucide-react";
 import BottomNav from '@/components/BottomNav';
+import { TutorialManager } from '@/components/tutorial/TutorialManager';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -26,12 +27,17 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-x-hidden overflow-y-auto relative pb-24">
-      <Hero />
-      <Features />
+      <div data-tutorial="hero">
+        <Hero />
+      </div>
+      <div data-tutorial="features">
+        <Features />
+      </div>
       <DevelopmentStatus />
       <Newsletter />
       <Footer />
       <BottomNav />
+      <TutorialManager route="landing" />
     </main>
   );
 };

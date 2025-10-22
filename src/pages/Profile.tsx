@@ -8,6 +8,7 @@ import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap } from '
 import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
+import { TutorialManager } from '@/components/tutorial/TutorialManager';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -103,7 +104,7 @@ const Profile = () => {
           </button>
 
           {/* Avatar on the same line as back button */}
-          <div className="relative">
+          <div className="relative" data-tutorial="profile-pic">
             <div 
               className="w-16 h-16 sm:w-20 sm:h-20 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 sm:border-4 border-yellow-400 shadow-xl shadow-yellow-500/50 gold-glow"
             >
@@ -143,7 +144,7 @@ const Profile = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6" data-tutorial="stats">
           {/* Lives */}
           <div className="bg-gradient-to-br from-red-600/30 to-red-900/30 border-2 border-red-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center shadow-[0_0_15px_rgba(239,68,68,0.4)] casino-card">
             <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-red-400 mx-auto mb-2 drop-shadow-lg" />
@@ -254,6 +255,7 @@ const Profile = () => {
       </div>
 
       <BottomNav />
+      <TutorialManager route="profile" />
     </div>
   );
 };

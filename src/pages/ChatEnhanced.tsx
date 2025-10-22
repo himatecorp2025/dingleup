@@ -10,6 +10,7 @@ import BottomNav from '@/components/BottomNav';
 import { toast } from 'sonner';
 import { ThreadsList } from '@/components/chat/ThreadsList';
 import { ThreadView } from '@/components/chat/ThreadView';
+import { TutorialManager } from '@/components/tutorial/TutorialManager';
 
 interface Thread {
   id: string;
@@ -171,6 +172,7 @@ const ChatEnhanced = () => {
           Chat
         </h1>
         <button
+          data-tutorial="search-friends"
           onClick={() => setShowSearchDialog(true)}
           className="p-2 bg-[#138F5E]/20 hover:bg-[#138F5E]/30 rounded-lg transition-all border border-[#138F5E]/50"
           aria-label="Új beszélgetés"
@@ -189,7 +191,7 @@ const ChatEnhanced = () => {
       </div>
 
       {/* Main Content */}
-      <div className="h-[calc(100%-64px)]">
+      <div className="h-[calc(100%-64px)]" data-tutorial="threads-list">
         {selectedFriendId ? (
           <ThreadView 
             key={selectedFriendId}
@@ -221,6 +223,7 @@ const ChatEnhanced = () => {
       />
 
       <BottomNav />
+      <TutorialManager route="chat" />
     </div>
   );
 };

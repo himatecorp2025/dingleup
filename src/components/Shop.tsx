@@ -340,7 +340,7 @@ const Shop = ({ userId }: ShopProps) => {
         </div>
 
         {/* Subscription Info Box */}
-        <div className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/50 rounded-xl p-4 backdrop-blur-sm">
+        <div className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/50 rounded-xl p-4 backdrop-blur-sm" data-tutorial="genius-section">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-500/20 rounded-lg">
               <Crown className="w-6 h-6 text-purple-300" />
@@ -356,7 +356,7 @@ const Shop = ({ userId }: ShopProps) => {
         </div>
 
         {/* Speed Boosters Section */}
-        <div className="space-y-4">
+        <div className="space-y-4" data-tutorial="boosters-section">
           <div className="flex items-center gap-3 mb-4">
             <Zap className="w-8 h-8 text-yellow-500" />
             <h2 className="text-2xl font-bold text-white">Boosterek</h2>

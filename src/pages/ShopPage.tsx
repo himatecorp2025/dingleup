@@ -5,6 +5,7 @@ import { LogOut, Coins, Heart } from 'lucide-react';
 import Shop from '@/components/Shop';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import BottomNav from '@/components/BottomNav';
+import { TutorialManager } from '@/components/tutorial/TutorialManager';
 
 const ShopPage = () => {
   const navigate = useNavigate();
@@ -67,11 +68,14 @@ const ShopPage = () => {
         </div>
 
         {/* Shop Component */}
-        <Shop userId={userId!} />
+        <div data-tutorial="coins-section">
+          <Shop userId={userId!} />
+        </div>
       </div>
       </div>
 
       <BottomNav />
+      <TutorialManager route="shop" />
     </div>
   );
 };

@@ -24,6 +24,7 @@ import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
 import { FallingCoins } from '@/components/FallingCoins';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
+import { TutorialManager } from '@/components/tutorial/TutorialManager';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
@@ -266,7 +267,7 @@ return (
             </div>
 
             {/* Right: Stats & Avatar */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2" data-tutorial="profile-header">
               {/* Rank Hexagon */}
               <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.5)] neon-border">
                 <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 mb-0.5" />
@@ -334,6 +335,7 @@ return (
             <div className="flex flex-col gap-2 flex-1" style={{ maxWidth: 'calc(100% - 180px)' }}>
               <button
                 onClick={() => navigate('/invitation')}
+                data-tutorial="daily-gift"
                 className="w-full py-2 sm:py-2.5 px-2 sm:px-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-xs sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1 sm:gap-1.5 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                 style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
               >
@@ -363,6 +365,7 @@ return (
 
         {/* Play Button */}
         <button
+          data-tutorial="play-button"
           onClick={() => {
             try {
               const w = window as any;
@@ -414,6 +417,7 @@ return (
 
         {/* Booster Button */}
         <button
+          data-tutorial="booster-button"
           onClick={async () => {
             // Ha már van aktív booster, mutassuk meg a részleteket
             if (hasActiveBooster) {
@@ -532,7 +536,10 @@ return (
         }}
       />
 
-      <BottomNav />
+      <div data-tutorial="bottom-nav">
+        <BottomNav />
+      </div>
+      <TutorialManager route="dashboard" />
     </div>
   );
 };
