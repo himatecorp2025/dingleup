@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertTriangle, UserPlus } from 'lucide-react';
-import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { ReportDialog } from '@/components/ReportDialog';
 import { UserSearchDialog } from '@/components/UserSearchDialog';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
@@ -26,7 +25,6 @@ interface Thread {
 
 const ChatEnhanced = () => {
   const navigate = useNavigate();
-  const isHandheld = usePlatformDetection();
   useAutoLogout();
   
   const [userId, setUserId] = useState<string | undefined>();
@@ -113,17 +111,6 @@ const ChatEnhanced = () => {
       toast.error('Hiba történt');
     }
   };
-
-  if (!isHandheld) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-        <div className="text-center px-6 max-w-md">
-          <h1 className="text-3xl font-black text-white mb-4">📱 Csak mobilon elérhető</h1>
-          <p className="text-white/80">A chat funkció csak telefonon és táblagépen használható.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex flex-col">
