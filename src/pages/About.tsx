@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { Building2 } from 'lucide-react';
+import BottomNav from '@/components/BottomNav';
 
 const About = () => {
   const isHandheld = usePlatformDetection();
@@ -111,6 +112,8 @@ const About = () => {
           </div>
         </div>
       </div>
+
+      <BottomNav />
     </div>
   );
 };

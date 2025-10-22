@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { LogOut, Crown, Medal } from 'lucide-react';
 import WeeklyRewards from '@/components/WeeklyRewards';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
+import BottomNav from '@/components/BottomNav';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -167,6 +168,8 @@ const Leaderboard = () => {
           </div>
         )}
       </div>
+
+      <BottomNav />
     </div>
   );
 };

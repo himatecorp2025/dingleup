@@ -6,6 +6,7 @@ import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap } from 'lucide-react';
 import { toast } from 'sonner';
+import BottomNav from '@/components/BottomNav';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -238,6 +239,8 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      <BottomNav />
     </div>
   );
 };

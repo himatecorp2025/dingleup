@@ -13,7 +13,6 @@ import { HexagonButton } from "./HexagonButton";
 import { GameStateScreen } from "./GameStateScreen";
 import { QuestionCard } from "./QuestionCard";
 import { InsufficientResourcesDialog } from "./InsufficientResourcesDialog";
-import { ContinueGameDialog } from "./ContinueGameDialog";
 import { ExitGameDialog } from "./ExitGameDialog";
 
 import healthQuestions from "@/data/questions-health.json";
@@ -72,7 +71,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
 
   // UI states
   const [showExitDialog, setShowExitDialog] = useState(false);
-  const [showContinueDialog, setShowContinueDialog] = useState(false);
   const [continueType, setContinueType] = useState<'timeout' | 'wrong' | 'out-of-lives'>('wrong');
   const [showInsufficientDialog, setShowInsufficientDialog] = useState(false);
   const [insufficientType, setInsufficientType] = useState<'coins' | 'lives'>('coins');
@@ -166,12 +164,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     if (gameState !== 'playing' || !canSwipe) return;
 
     const handleTouchStart = (e: TouchEvent) => {
-      if (isAnimating || showContinueDialog || showExitDialog) return;
+      if (isAnimating || showExitDialog) return;
       setTouchStartY(e.touches[0].clientY);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (isAnimating || showContinueDialog || showExitDialog) return;
+      if (isAnimating || showExitDialog) return;
       
       const currentY = e.touches[0].clientY;
       const delta = currentY - touchStartY;
@@ -181,7 +179,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     };
 
     const handleTouchEnd = async (e: TouchEvent) => {
-      if (isAnimating || showContinueDialog || showExitDialog) return;
+      if (isAnimating || showExitDialog) return;
       
       const touchEndY = e.changedTouches[0].clientY;
       const delta = touchStartY - touchEndY;
@@ -212,31 +210,15 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [gameState, canSwipe, isAnimating, selectedAnswer, showContinueDialog, showExitDialog, touchStartY]);
+  }, [gameState, canSwipe, isAnimating, selectedAnswer, showExitDialog, touchStartY]);
 
   const handleSwipeUp = async () => {
-    // Auto-deduct and continue if there's an error (timeout or wrong answer)
-    if (errorBannerVisible && !showContinueDialog) {
+    // If error banner visible and has coins, spend coins and continue
+    if (errorBannerVisible && profile) {
       const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
-      
-      if (profile && profile.coins >= cost) {
-        const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
-        if (success) {
-          await refreshProfile();
-          setErrorBannerVisible(false);
-          toast.success(`${cost} aranyérme levonva - Tovább!`);
-          await handleNextQuestion();
-        }
-      } else {
-        setShowContinueDialog(true);
-        setErrorBannerVisible(false);
+      if (profile.coins >= cost) {
+        await handleContinueAfterMistake();
       }
-      return;
-    }
-
-    // If continue dialog is shown, handle payment
-    if (showContinueDialog) {
-      await handleContinueAfterMistake();
       return;
     }
 
@@ -258,12 +240,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
 
-    // If continue dialog, exit game
-    if (showContinueDialog) {
-      handleRejectContinue();
-      return;
-    }
-
     // Normal state - show exit confirmation
     if (!selectedAnswer && !showExitDialog) {
       setShowExitDialog(true);
@@ -275,8 +251,18 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer('__timeout__');
     setContinueType('timeout');
-    setErrorBannerVisible(true);
-    setErrorBannerMessage(`⏰ Lejárt az idő - ${TIMEOUT_CONTINUE_COST} aranyérme`);
+    
+    // Check if user has enough coins to continue
+    if (!profile || profile.coins < TIMEOUT_CONTINUE_COST) {
+      // Not enough coins - show insufficient dialog immediately
+      setInsufficientType('coins');
+      setRequiredAmount(TIMEOUT_CONTINUE_COST);
+      setShowInsufficientDialog(true);
+    } else {
+      // Has enough coins - show banner for swipe up to continue
+      setErrorBannerVisible(true);
+      setErrorBannerMessage(`⏰ Lejárt az idő - ${TIMEOUT_CONTINUE_COST} aranyérme`);
+    }
   };
 
   const shuffleAnswers = (questionSet: any[]): Question[] => {
@@ -461,8 +447,18 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer(answerKey);
     setContinueType('wrong');
-    setErrorBannerVisible(true);
-    setErrorBannerMessage(`❌ Rossz válasz - ${CONTINUE_AFTER_WRONG_COST} aranyérme`);
+    
+    // Check if user has enough coins to continue
+    if (!profile || profile.coins < CONTINUE_AFTER_WRONG_COST) {
+      // Not enough coins - show insufficient dialog immediately
+      setInsufficientType('coins');
+      setRequiredAmount(CONTINUE_AFTER_WRONG_COST);
+      setShowInsufficientDialog(true);
+    } else {
+      // Has enough coins - show banner for swipe up to continue
+      setErrorBannerVisible(true);
+      setErrorBannerMessage(`❌ Rossz válasz - ${CONTINUE_AFTER_WRONG_COST} aranyérme`);
+    }
   };
 
   const handleNextQuestion = async () => {
@@ -470,7 +466,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     
     setIsAnimating(true);
     setCanSwipe(false);
-    setShowContinueDialog(false);
     setErrorBannerVisible(false);
     setQuestionVisible(false);
     
@@ -528,14 +523,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     
     const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
     
-    if (profile.coins < cost) {
-      setShowContinueDialog(false);
-      setInsufficientType('coins');
-      setRequiredAmount(cost);
-      setShowInsufficientDialog(true);
-      return;
-    }
-    
+    // This function is now only called when user has enough coins
     const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
     if (success) {
       await refreshProfile();
@@ -548,7 +536,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   };
 
   const handleRejectContinue = () => {
-    setShowContinueDialog(false);
     finishGame();
   };
 
@@ -904,22 +891,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
           onConfirmExit={() => {
             setGameState('category-select');
             setShowExitDialog(false);
-          }}
-        />
-
-        <ContinueGameDialog
-          open={showContinueDialog}
-          onOpenChange={setShowContinueDialog}
-          type={continueType}
-          cost={continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST}
-          currentCoins={profile.coins}
-          onContinue={handleContinueAfterMistake}
-          onExit={handleRejectContinue}
-          onNeedCoins={() => {
-            const c = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
-            setInsufficientType('coins');
-            setRequiredAmount(c);
-            setShowInsufficientDialog(true);
           }}
         />
 

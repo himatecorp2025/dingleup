@@ -7,6 +7,7 @@ import DevelopmentStatus from "@/components/DevelopmentStatus";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { AlertCircle } from "lucide-react";
+import BottomNav from '@/components/BottomNav';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const Index = () => {
       <DevelopmentStatus />
       <Newsletter />
       <Footer />
+      <BottomNav />
     </main>
   );
 };

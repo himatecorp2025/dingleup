@@ -275,7 +275,7 @@ return (
                 <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.coins}</span>
               </div>
 
-              {/* Lives Hexagon with NextLifeTimer AND WeeklyRankingsCountdown */}
+              {/* Lives Hexagon with NextLifeTimer */}
               <div className="relative flex flex-col items-center">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.5)]">
                   <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
@@ -289,10 +289,6 @@ return (
                   serverDriftMs={serverDriftMs}
                   speedBoosterActive={profile.speed_booster_active || false}
                 />
-                {/* Weekly Rankings Countdown - bottom left */}
-                <div className="absolute -bottom-0.5 -left-0.5 z-50">
-                  <WeeklyRankingsCountdown compact />
-                </div>
               </div>
 
               {/* Avatar Hexagon */}
@@ -346,6 +342,9 @@ return (
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
         </div>
+
+        {/* Weekly Rankings Countdown */}
+        <WeeklyRankingsCountdown />
 
         {/* Play Button */}
         <button

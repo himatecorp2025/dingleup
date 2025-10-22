@@ -5,6 +5,7 @@ import { Send, Trash2, User, Menu, AlertTriangle } from 'lucide-react';
 import { FriendsList } from '@/components/FriendsList';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { ReportDialog } from '@/components/ReportDialog';
+import BottomNav from '@/components/BottomNav';
 
 interface Message {
   id: string;
@@ -345,6 +346,8 @@ const ChatEnhanced = () => {
         open={showReportDialog}
         onOpenChange={setShowReportDialog}
       />
+
+      <BottomNav />
     </div>
   );
 };

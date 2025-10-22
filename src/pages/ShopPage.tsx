@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { LogOut, Coins, Heart } from 'lucide-react';
 import Shop from '@/components/Shop';
 import { useGameProfile } from '@/hooks/useGameProfile';
+import BottomNav from '@/components/BottomNav';
 
 const ShopPage = () => {
   const navigate = useNavigate();
@@ -64,6 +65,8 @@ const ShopPage = () => {
         {/* Shop Component */}
         <Shop userId={userId!} />
       </div>
+
+      <BottomNav />
     </div>
   );
 };
