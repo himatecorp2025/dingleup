@@ -197,12 +197,11 @@ export const InsufficientResourcesDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] dialog-enter-slow">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl font-black">
-            <Icon className={`w-7 h-7 ${type === 'coins' || type === 'both' ? 'text-yellow-400' : 'text-red-500'}`} />
+        <DialogHeader className="text-center">
+          <DialogTitle className="text-2xl font-black text-center justify-center">
             {title}
           </DialogTitle>
-          <DialogDescription className="text-base text-white/90 pt-2 font-bold">
+          <DialogDescription className="text-base text-white/90 pt-2 font-bold text-center">
             {description}
           </DialogDescription>
         </DialogHeader>
