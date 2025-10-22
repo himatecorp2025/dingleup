@@ -21,6 +21,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import GeniusMembers from "./pages/GeniusMembers";
 import ChatEnhanced from "./pages/ChatEnhanced";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -97,6 +98,7 @@ const App = () => {
               <Route path="/invitation" element={<Invitation />} />
               <Route path="/intro" element={<IntroVideo />} />
               <Route path="/game" element={<Game />} />
+              <Route path="/about" element={<About />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/genius" element={<GeniusMembers />} />

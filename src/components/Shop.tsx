@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Heart, Zap, HelpCircle, Users, Eye, ShoppingCart, Coins, CreditCard } from 'lucide-react';
+import { Heart, Zap, HelpCircle, Users, Eye, ShoppingCart, Coins, CreditCard, Crown } from 'lucide-react';
 import { toast } from 'sonner';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
@@ -306,15 +306,20 @@ const Shop = ({ userId }: ShopProps) => {
     }
   ];
 
-  const boosterItems: ShopItem[] = SPEED_BOOSTERS.map(booster => ({
-    id: booster.name,
-    name: booster.name,
-    description: `${booster.multiplier}x gyorsítás, +${booster.lives_gained} élet`,
-    price: booster.price,
-    priceUsd: booster.priceUsd,
-    icon: Zap,
-    action: () => buyBooster(booster.name as any)
-  }));
+  // Booster items in correct order: DingleSpeed → GigaSpeed → MegaSpeed → DoubleSpeed
+  const boosterOrder = ['DingleSpeed', 'GigaSpeed', 'MegaSpeed', 'DoubleSpeed'];
+  const boosterItems: ShopItem[] = boosterOrder
+    .map(name => SPEED_BOOSTERS.find(b => b.name === name))
+    .filter(Boolean)
+    .map(booster => ({
+      id: booster!.name,
+      name: booster!.name,
+      description: `${booster!.multiplier}x gyorsítás, +${booster!.lives_gained} élet`,
+      price: booster!.price,
+      priceUsd: booster!.priceUsd,
+      icon: Zap,
+      action: () => buyBooster(booster!.name as any)
+    }));
 
   return (
     <>
@@ -332,6 +337,22 @@ const Shop = ({ userId }: ShopProps) => {
             <span className="text-3xl font-bold text-yellow-900">{profile.coins}</span>
           </div>
           <p className="text-yellow-900 mt-2">Jelenlegi egyenleged</p>
+        </div>
+
+        {/* Subscription Info Box */}
+        <div className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/50 rounded-xl p-4 backdrop-blur-sm">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-purple-500/20 rounded-lg">
+              <Crown className="w-6 h-6 text-purple-300" />
+            </div>
+            <h3 className="text-lg font-black text-purple-200">Genius Előfizetés</h3>
+          </div>
+          <p className="text-white/80 text-sm mb-3">
+            Dupla jutalmak, exkluzív tartalmak és korlátlan élvezet!
+          </p>
+          <button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-2 px-4 rounded-lg transition-all">
+            Előfizetek
+          </button>
         </div>
 
         {/* Speed Boosters Section */}

@@ -21,14 +21,18 @@ html, body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Scrollable page wrapper (for Profile, Shop, Leaderboard, etc.) */
+/* Page scroll wrapper for mobile layouts */
 .page-scroll {
   height: 100dvh;
-  height: 100vh;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  overscroll-behavior-y: contain;
+  padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 32px);
+  scroll-padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px);
+}
+
+.page-scroll > :last-child {
+  margin-bottom: 24px;
 }
 
 #root {
@@ -50,6 +54,9 @@ button, a {
 
 /* Design system - Color variables */
 :root {
+  /* Bottom Nav Height for Mobile Layout */
+  --bottom-nav-h: 72px;
+  
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
   --card: 0 0% 100%;
