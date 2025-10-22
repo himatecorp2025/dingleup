@@ -51,6 +51,9 @@ verify_jwt = true
 [functions.get-wallet]
 verify_jwt = true
 
+[functions.get-friend-requests]
+verify_jwt = true
+
 [functions.process-speed-ticks]
 verify_jwt = false
 

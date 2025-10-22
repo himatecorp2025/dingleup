@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
 
     const { userId: requesterUserId } = await req.json();
 
-    // Validate requester user ID
+    // Validate requesterUserId
     if (!requesterUserId || typeof requesterUserId !== 'string') {
       return new Response(JSON.stringify({ error: 'Requester user ID required' }), {
         status: 400,
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Validate UUID format
+    // UUID format validation
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(requesterUserId)) {
       return new Response(JSON.stringify({ error: 'Invalid user ID format' }), {
@@ -94,7 +94,7 @@ Deno.serve(async (req) => {
       .eq('user_id_b', userB);
 
     if (updateError) {
-      console.error('Error updating friendship:', updateError);
+      console.error('[INTERNAL] Error updating friendship:', updateError);
       return new Response(JSON.stringify({ error: 'Failed to decline request' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

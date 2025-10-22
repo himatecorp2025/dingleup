@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
 
     const { userId: targetUserId, action } = await req.json();
 
-    // Validate target user ID
+    // Validate targetUserId
     if (!targetUserId || typeof targetUserId !== 'string') {
       return new Response(JSON.stringify({ error: 'Target user ID required' }), {
         status: 400,
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Validate UUID format
+    // UUID format validation
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(targetUserId)) {
       return new Response(JSON.stringify({ error: 'Invalid user ID format' }), {
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
       });
 
     if (upsertError) {
-      console.error('Error updating friendship status:', upsertError);
+      console.error('[INTERNAL] Error updating friendship status:', upsertError);
       return new Response(JSON.stringify({ error: 'Failed to update status' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('[INTERNAL] Error in block-user:', error);
-    return new Response(JSON.stringify({ error: 'A művelet végrehajtása sikertelen' }), {
+    return new Response(JSON.stringify({ error: 'A kérés feldolgozása sikertelen' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
