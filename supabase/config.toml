@@ -45,7 +45,21 @@ verify_jwt = true
 [functions.get-thread-messages]
 verify_jwt = true
 
+[functions.get-threads]
+verify_jwt = true
+
+[functions.get-wallet]
+verify_jwt = true
+
+[functions.process-speed-ticks]
+verify_jwt = false
+
 # Cron job for automatic life regeneration every minute
 [[edge_runtime.cron]]
 schedule = "* * * * *"
 function = "regenerate-lives-background"
+
+# Cron job for speed tick processing every 30 seconds
+[[edge_runtime.cron]]
+schedule = "*/30 * * * * *"
+function = "process-speed-ticks"

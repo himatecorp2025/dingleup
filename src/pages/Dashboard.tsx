@@ -11,6 +11,7 @@ import { useGeniusPromo } from '@/hooks/useGeniusPromo';
 import { usePromoScheduler } from '@/hooks/usePromoScheduler';
 import { useScrollBehavior } from '@/hooks/useScrollBehavior';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { useWallet } from '@/hooks/useWallet';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
@@ -19,6 +20,7 @@ import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
+import { NextLifeTimer } from '@/components/NextLifeTimer';
 import { FallingCoins } from '@/components/FallingCoins';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 
@@ -33,6 +35,7 @@ const Dashboard = () => {
   const isHandheld = usePlatformDetection();
   const { canMountModals } = useScrollBehavior();
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
+  const { walletData, serverDriftMs, refetchWallet } = useWallet(userId);
   const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
@@ -68,10 +71,19 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    if (profile && profile.lives < profile.max_lives && timeUntilNextLife === '0:00') {
-      regenerateLives().then(() => refreshProfile());
+    if (profile && walletData && profile.lives < profile.max_lives && walletData.nextLifeAt) {
+      const nextLifeTime = new Date(walletData.nextLifeAt).getTime();
+      const now = Date.now() + serverDriftMs;
+      
+      if (now >= nextLifeTime) {
+        // Time for next life, trigger regeneration
+        regenerateLives().then(() => {
+          refreshProfile();
+          refetchWallet();
+        });
+      }
     }
-  }, [timeUntilNextLife]);
+  }, [walletData, profile, serverDriftMs]);
 
   // Helper function
   const getInitials = (name: string) => {
@@ -205,8 +217,9 @@ const Dashboard = () => {
     const success = await claimWelcomeBonus();
     if (success) {
       setShowWelcomeBonus(false);
-      // Reload profile to show updated coins and question swaps
-      window.location.reload();
+      // Reload profile and wallet to show updated coins and lives
+      await refreshProfile();
+      await refetchWallet();
     }
     return success;
   };
@@ -262,18 +275,18 @@ return (
                 <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.coins}</span>
               </div>
 
-              {/* Lives Hexagon with Timer */}
-              <div className="relative">
+              {/* Lives Hexagon with NextLifeTimer */}
+              <div className="relative flex flex-col items-center">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.5)]">
                   <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
                   <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.lives}</span>
                 </div>
-                {profile.lives < profile.max_lives && timeUntilNextLife !== '0:00' && (
-                  <div className="absolute -right-1 top-1/2 -translate-y-1/2 bg-black/90 px-1.5 sm:px-2 py-0.5 rounded-full flex items-center gap-0.5 sm:gap-1 whitespace-nowrap border border-green-500/60 shadow-[0_0_10px_rgba(34,197,94,0.4)]">
-                    <Clock className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-green-400" />
-                    <span className="text-[8px] sm:text-[9px] text-green-400 font-bold">{timeUntilNextLife}</span>
-                  </div>
-                )}
+                <NextLifeTimer
+                  nextLifeAt={walletData?.nextLifeAt || null}
+                  livesCurrent={profile.lives}
+                  livesMax={profile.max_lives}
+                  serverDriftMs={serverDriftMs}
+                />
               </div>
 
               {/* Avatar Hexagon */}

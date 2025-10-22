@@ -1,0 +1,68 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface WalletData {
+  livesCurrent: number;
+  livesMax: number;
+  coinsCurrent: number;
+  nextLifeAt: string | null;
+  regenIntervalSec: number;
+  ledger: any[];
+}
+
+export const useWallet = (userId: string | undefined) => {
+  const [walletData, setWalletData] = useState<WalletData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [serverDriftMs, setServerDriftMs] = useState(0);
+
+  const fetchWallet = async () => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const requestTime = Date.now();
+      
+      const { data, error } = await supabase.functions.invoke('get-wallet');
+
+      if (error) {
+        console.error('[useWallet] Error fetching wallet:', error);
+        setLoading(false);
+        return;
+      }
+
+      const responseTime = Date.now();
+      const roundTripTime = responseTime - requestTime;
+      
+      // Estimate server time (assuming symmetric latency)
+      const estimatedServerTime = responseTime - (roundTripTime / 2);
+      const clientServerDrift = estimatedServerTime - Date.now();
+      setServerDriftMs(clientServerDrift);
+
+      setWalletData(data);
+    } catch (err) {
+      console.error('[useWallet] Exception fetching wallet:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWallet();
+
+    // Refresh every minute to correct drift
+    const intervalId = setInterval(() => {
+      fetchWallet();
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [userId]);
+
+  return {
+    walletData,
+    loading,
+    serverDriftMs,
+    refetchWallet: fetchWallet
+  };
+};
