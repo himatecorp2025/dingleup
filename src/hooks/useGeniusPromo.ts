@@ -15,6 +15,24 @@ export const useGeniusPromo = (
 
     const checkAndShow = () => {
       const now = Date.now();
+      
+      // Check first eligible time (30-60 minutes after first login)
+      const firstEligibleKey = `genius_promo_first_eligible_${userId}`;
+      let firstEligibleTime = localStorage.getItem(firstEligibleKey);
+      
+      if (!firstEligibleTime) {
+        // Calculate random delay: 30 + random(0-30) minutes
+        const jitterMinutes = 30 + Math.floor(Math.random() * 31);
+        const eligibleAt = now + (jitterMinutes * 60 * 1000);
+        localStorage.setItem(firstEligibleKey, eligibleAt.toString());
+        firstEligibleTime = eligibleAt.toString();
+      }
+      
+      // Don't show if first eligible time hasn't passed
+      if (now < parseInt(firstEligibleTime)) {
+        return;
+      }
+      const now = Date.now();
       const today = new Date().toDateString();
       
       // Get today's data
