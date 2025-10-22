@@ -195,20 +195,20 @@ export const InsufficientResourcesDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-bottom-4 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-bottom-4 duration-1000">
-        <DialogHeader className="data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-top-2 data-[state=open]:duration-1000 data-[state=open]:delay-200">
-          <DialogTitle className="flex items-center gap-2 text-2xl font-black animate-in fade-in-0 zoom-in-95 duration-800 delay-400">
+      <DialogContent className="sm:max-w-sm bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 duration-[2000ms]">
+        <DialogHeader className="animate-in fade-in-0 duration-[2000ms] delay-500">
+          <DialogTitle className="flex items-center gap-2 text-2xl font-black animate-in fade-in-0 zoom-in-90 duration-[1500ms] delay-700">
             <Icon className={`w-7 h-7 ${type === 'coins' || type === 'both' ? 'text-yellow-400' : 'text-red-500'}`} />
             {title}
           </DialogTitle>
-          <DialogDescription className="text-base text-white/90 pt-2 font-bold animate-in fade-in-0 slide-in-from-top-1 duration-800 delay-600">
+          <DialogDescription className="text-base text-white/90 pt-2 font-bold animate-in fade-in-0 slide-in-from-top-1 duration-[1500ms] delay-1000">
             {description}
           </DialogDescription>
         </DialogHeader>
         
         {userId && !clientSecret && (
           <>
-            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-6 my-3 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-in fade-in-0 zoom-in-90 duration-1000 delay-700">
+            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-6 my-3 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-in fade-in-0 zoom-in-75 duration-[1500ms] delay-1200">
               {/* Animated background sparkles */}
               <div className="absolute inset-0 opacity-30">
                 <Sparkles className="absolute top-2 right-2 w-6 h-6 text-yellow-200" />
@@ -243,7 +243,7 @@ export const InsufficientResourcesDialog = ({
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-3 mb-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-800 delay-900">
+            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-3 mb-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-[1200ms] delay-1500">
               <p className="text-center text-white font-bold text-xs flex items-center justify-center gap-2">
                 <CreditCard className="w-4 h-4" />
                 Biztonságos fizetés • Apple Pay • Google Pay • Kártya
@@ -263,7 +263,7 @@ export const InsufficientResourcesDialog = ({
         )}
         
         {userId && !clientSecret && (
-          <DialogFooter className="flex flex-col gap-3 sm:gap-3 animate-in fade-in-0 slide-in-from-bottom-3 duration-800 delay-1000">
+          <DialogFooter className="flex flex-col gap-3 sm:gap-3 animate-in fade-in-0 slide-in-from-bottom-3 duration-[1200ms] delay-1700">
             <Button 
               onClick={handleStartPayment}
               disabled={isLoadingPayment}
