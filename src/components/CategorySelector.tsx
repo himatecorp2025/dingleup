@@ -1,12 +1,47 @@
 import { GameCategory } from '@/types/game';
 import { Heart, Brain, Palette, TrendingUp, ArrowLeft, LogOut } from 'lucide-react';
 import { MusicControls } from './MusicControls';
+import { InsufficientResourcesDialog } from './InsufficientResourcesDialog';
+import { useGameProfile } from '@/hooks/useGameProfile';
+import { supabase } from '@/integrations/supabase/client';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 interface CategorySelectorProps {
   onSelect: (category: GameCategory) => void;
 }
 
 const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
+  const [userId, setUserId] = useState<string | undefined>();
+  const { profile, refreshProfile } = useGameProfile(userId);
+  const [showInsufficientDialog, setShowInsufficientDialog] = useState(false);
+
+  // Auth check
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUserId(session.user.id);
+      }
+    });
+  }, []);
+
+  const handleCategorySelect = (category: GameCategory) => {
+    // Check if user has enough lives
+    if (profile && profile.lives < 1) {
+      setShowInsufficientDialog(true);
+      return;
+    }
+    onSelect(category);
+  };
+
+  const handleGoToShop = () => {
+    window.location.href = '/shop';
+  };
+
+  const handlePurchaseComplete = () => {
+    refreshProfile();
+    toast.success('Vásárlás sikeres! Most már játszhatsz! 🎉');
+  };
   const categories = [
     {
       id: 'health' as GameCategory,
@@ -77,7 +112,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
             return (
               <button
                 key={category.id}
-                onClick={() => onSelect(category.id)}
+                onClick={() => handleCategorySelect(category.id)}
                 className={`group relative overflow-hidden rounded-2xl p-4 border-3 ${category.borderColor} bg-black/80 hover:border-yellow-400/70 transition-all duration-300 hover:scale-105 ${category.shadowColor} shadow-xl text-left touch-manipulation active:scale-95 aspect-square flex flex-col justify-between casino-card`}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-20 group-hover:opacity-30 transition-opacity duration-300`}></div>
@@ -114,6 +149,17 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
       </div>
       
       {/* Note: Daily Gift dialog is now ONLY shown on Dashboard if canClaim is true */}
+      
+      <InsufficientResourcesDialog
+        open={showInsufficientDialog}
+        onOpenChange={setShowInsufficientDialog}
+        type="lives"
+        requiredAmount={1}
+        currentAmount={profile?.lives || 0}
+        onGoToShop={handleGoToShop}
+        userId={userId}
+        onPurchaseComplete={handlePurchaseComplete}
+      />
     </div>
   );
 };
