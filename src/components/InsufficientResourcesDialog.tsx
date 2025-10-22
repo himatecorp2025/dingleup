@@ -195,49 +195,49 @@ export const InsufficientResourcesDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-bottom-4 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-bottom-4 duration-500">
+      <DialogContent className="sm:max-w-sm bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-bottom-4 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-bottom-4 duration-500">
         <DialogHeader className="data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-top-2 data-[state=open]:duration-700 data-[state=open]:delay-100">
-          <DialogTitle className="flex items-center gap-3 text-3xl font-black animate-in fade-in-0 zoom-in-95 duration-500 delay-200">
-            <Icon className={`w-8 h-8 ${type === 'coins' || type === 'both' ? 'text-yellow-400 animate-pulse' : 'text-red-500 animate-pulse'}`} />
+          <DialogTitle className="flex items-center gap-2 text-2xl font-black animate-in fade-in-0 zoom-in-95 duration-500 delay-200">
+            <Icon className={`w-7 h-7 ${type === 'coins' || type === 'both' ? 'text-yellow-400' : 'text-red-500'}`} />
             {title}
           </DialogTitle>
-          <DialogDescription className="text-lg text-white/90 pt-2 font-bold animate-in fade-in-0 slide-in-from-top-1 duration-500 delay-300">
+          <DialogDescription className="text-base text-white/90 pt-2 font-bold animate-in fade-in-0 slide-in-from-top-1 duration-500 delay-300">
             {description}
           </DialogDescription>
         </DialogHeader>
         
         {userId && !clientSecret && (
           <>
-            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-8 my-4 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-pulse animate-in fade-in-0 zoom-in-90 duration-700 delay-400">
+            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-6 my-3 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-in fade-in-0 zoom-in-90 duration-700 delay-400">
               {/* Animated background sparkles */}
               <div className="absolute inset-0 opacity-30">
-                <Sparkles className="absolute top-3 right-3 w-8 h-8 text-yellow-200 animate-pulse" />
-                <Sparkles className="absolute bottom-3 left-3 w-6 h-6 text-yellow-200 animate-pulse delay-75" />
-                <Sparkles className="absolute top-1/2 right-1/4 w-5 h-5 text-yellow-300 animate-pulse delay-150" />
-                <Trophy className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 text-yellow-300/10" />
+                <Sparkles className="absolute top-2 right-2 w-6 h-6 text-yellow-200" />
+                <Sparkles className="absolute bottom-2 left-2 w-5 h-5 text-yellow-200" />
+                <Sparkles className="absolute top-1/2 right-1/4 w-4 h-4 text-yellow-300" />
+                <Trophy className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 text-yellow-300/10" />
               </div>
               
               <div className="relative z-10">
-                <div className="flex items-center justify-center gap-6 mb-6">
-                  <div className="flex items-center gap-3 bg-black/40 px-6 py-3 rounded-full shadow-lg">
-                    <Coins className="w-10 h-10 text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]" />
-                    <span className="text-3xl font-black text-yellow-200 drop-shadow-lg">500</span>
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full shadow-lg">
+                    <Coins className="w-8 h-8 text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]" />
+                    <span className="text-2xl font-black text-yellow-200 drop-shadow-lg">500</span>
                   </div>
-                  <div className="text-5xl font-black text-yellow-200 animate-pulse drop-shadow-lg">+</div>
-                  <div className="flex items-center gap-3 bg-black/40 px-6 py-3 rounded-full shadow-lg">
-                    <Heart className="w-10 h-10 text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,1)]" />
-                    <span className="text-3xl font-black text-red-300 drop-shadow-lg">15</span>
+                  <div className="text-4xl font-black text-yellow-200 drop-shadow-lg">+</div>
+                  <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full shadow-lg">
+                    <Heart className="w-8 h-8 text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,1)]" />
+                    <span className="text-2xl font-black text-red-300 drop-shadow-lg">15</span>
                   </div>
                 </div>
                 
-                <div className="text-center space-y-3">
-                  <p className="text-6xl font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)] animate-pulse">
+                <div className="text-center space-y-2">
+                  <p className="text-4xl font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]">
                     $0.99
                   </p>
                   <div className="flex items-center justify-center gap-2">
-                    <Sparkles className="w-5 h-5 text-yellow-300 animate-pulse" />
-                    <p className="text-base text-yellow-100 font-bold drop-shadow-md">Azonnal jóváírva • Játék folytatása</p>
-                    <Sparkles className="w-5 h-5 text-yellow-300 animate-pulse" />
+                    <Sparkles className="w-4 h-4 text-yellow-300" />
+                    <p className="text-sm text-yellow-100 font-bold drop-shadow-md">Azonnal jóváírva • Játék folytatása</p>
+                    <Sparkles className="w-4 h-4 text-yellow-300" />
                   </div>
                 </div>
               </div>
