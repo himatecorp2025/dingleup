@@ -1,5 +1,6 @@
 import { Search, MoreVertical } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { FriendRequestsList } from './FriendRequestsList';
 
 interface Thread {
   id: string;
@@ -94,6 +95,9 @@ export const ThreadsList = ({
           />
         </div>
       </div>
+
+      {/* Friend Requests */}
+      <FriendRequestsList onRequestHandled={() => {}} />
 
       {/* Threads List */}
       <div className="flex-1 overflow-y-auto">

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Info, Send } from 'lucide-react';
+import { ArrowLeft, Info, Send, UserPlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useFriendshipStatus } from '@/hooks/useFriendshipStatus';
+import { toast } from 'sonner';
 
 interface Message {
   id: string;
@@ -29,6 +31,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { status: friendshipStatus, sendRequest } = useFriendshipStatus(userId, friendId);
 
   useEffect(() => {
     loadFriendProfile();
@@ -146,6 +149,50 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     return date.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
   };
 
+  const handleSendFriendRequest = async () => {
+    try {
+      await sendRequest();
+      toast.success('Ismerős jelölés elküldve!');
+    } catch (error) {
+      toast.error('Hiba történt');
+    }
+  };
+
+  const getFriendshipButton = () => {
+    switch (friendshipStatus) {
+      case 'none':
+        return (
+          <button 
+            onClick={handleSendFriendRequest}
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#138F5E]/20 hover:bg-[#138F5E]/30 border border-[#138F5E]/50 rounded-lg transition-colors text-sm"
+          >
+            <UserPlus className="w-4 h-4 text-[#138F5E]" />
+            <span className="text-[#138F5E] font-medium">Bejelölöm</span>
+          </button>
+        );
+      case 'pending_sent':
+        return (
+          <div className="px-3 py-1.5 bg-[#D4AF37]/20 border border-[#D4AF37]/50 rounded-lg text-sm">
+            <span className="text-[#D4AF37]">Folyamatban</span>
+          </div>
+        );
+      case 'pending_received':
+        return (
+          <div className="px-3 py-1.5 bg-[#D4AF37]/20 border border-[#D4AF37]/50 rounded-lg text-sm">
+            <span className="text-[#D4AF37]">Várakozik jóváhagyásra</span>
+          </div>
+        );
+      case 'blocked':
+        return (
+          <div className="px-3 py-1.5 bg-red-500/20 border border-red-500/50 rounded-lg text-sm">
+            <span className="text-red-400">Nem elérhető</span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   if (!friendProfile) {
     return (
       <div className="h-full flex items-center justify-center bg-[#0F1116]">
@@ -176,14 +223,16 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
           <div className={`absolute bottom-0 right-0 w-3 h-3 ${getStatusColor(friendProfile.online_status)} rounded-full border-2 border-[#0f0f2a]`} />
         </div>
 
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <h2 className="font-bold text-white">{friendProfile.username}</h2>
           <p className="text-xs text-[#D4AF37]/60">
             {friendProfile.online_status === 'online' ? 'Online' : 'Offline'}
           </p>
         </div>
 
-        <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+        {getFriendshipButton()}
+
+        <button className="p-2 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0">
           <Info className="w-5 h-5 text-[#D4AF37]" />
         </button>
       </div>

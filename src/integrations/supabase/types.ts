@@ -138,10 +138,29 @@ export type Database = {
         }
         Relationships: []
       }
+      friend_request_rate_limit: {
+        Row: {
+          last_request_at: string
+          target_user_id: string
+          user_id: string
+        }
+        Insert: {
+          last_request_at?: string
+          target_user_id: string
+          user_id: string
+        }
+        Update: {
+          last_request_at?: string
+          target_user_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       friendships: {
         Row: {
           created_at: string
           id: string
+          requested_by: string | null
           status: string
           updated_at: string
           user_id_a: string
@@ -150,6 +169,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          requested_by?: string | null
           status?: string
           updated_at?: string
           user_id_a: string
@@ -158,6 +178,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          requested_by?: string | null
           status?: string
           updated_at?: string
           user_id_a?: string
@@ -805,7 +826,23 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      friend_requests: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          receiver_avatar: string | null
+          receiver_id: string | null
+          receiver_name: string | null
+          requested_by: string | null
+          requester_avatar: string | null
+          requester_name: string | null
+          status: string | null
+          updated_at: string | null
+          user_id_a: string | null
+          user_id_b: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       accept_invitation: {
