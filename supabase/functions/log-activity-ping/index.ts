@@ -33,7 +33,8 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id });
 
     const { bucketStart, source, deviceClass } = await req.json();
-    
+
+    // Validate required fields
     if (!bucketStart || !source || !deviceClass) {
       throw new Error("Missing required fields");
     }
@@ -44,15 +45,18 @@ serve(async (req) => {
     const maxAge = 15 * 60 * 1000; // 15 minutes
     
     if (isNaN(bucketTime)) {
+      logStep('validation-error', { error: 'Invalid timestamp format' });
       throw new Error("Invalid timestamp format");
     }
     
     if (bucketTime > now + 60000) {
+      logStep('validation-error', { error: 'Timestamp is in the future' });
       throw new Error("Timestamp cannot be in the future");
     }
     
     if (bucketTime < now - maxAge) {
-      throw new Error("Timestamp too old (max 15 minutes)");
+      logStep('validation-error', { error: 'Timestamp too old' });
+      throw new Error("Timestamp too old (must be within last 15 minutes)");
     }
 
     // Validate enum values
@@ -60,11 +64,13 @@ serve(async (req) => {
     const VALID_DEVICE_CLASSES = ['mobile', 'tablet', 'desktop'];
     
     if (!VALID_SOURCES.includes(source)) {
-      throw new Error(`Invalid source. Must be one of: ${VALID_SOURCES.join(', ')}`);
+      logStep('validation-error', { error: 'Invalid source', source });
+      throw new Error(`Invalid source: must be one of ${VALID_SOURCES.join(', ')}`);
     }
     
     if (!VALID_DEVICE_CLASSES.includes(deviceClass)) {
-      throw new Error(`Invalid device class. Must be one of: ${VALID_DEVICE_CLASSES.join(', ')}`);
+      logStep('validation-error', { error: 'Invalid device class', deviceClass });
+      throw new Error(`Invalid device class: must be one of ${VALID_DEVICE_CLASSES.join(', ')}`);
     }
 
     logStep("Input validation passed", { bucketStart, source, deviceClass });
