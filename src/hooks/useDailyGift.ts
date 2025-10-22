@@ -66,18 +66,16 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       
       if (error) throw error;
       
-      const result = data as { success: boolean; coins: number; streak: number; error?: string };
+      const result = data as { success: boolean; coins: number; streak: number; is_genius?: boolean; error?: string };
       if (result.success) {
-        const actualCoins = isPremium ? result.coins * 2 : result.coins;
-        
         toast({
           title: '🎁 Napi ajándék',
-          description: `+${actualCoins} aranyérme a ${result.streak}. belépésért!${isPremium ? ' (Genius 2x)' : ''}`,
+          description: `+${result.coins} aranyérme a ${result.streak}. belépésért!${result.is_genius ? ' (Genius 2x)' : ''}`,
         });
 
         setCanClaim(false);
         setWeeklyEntryCount(result.streak);
-        setNextReward(isPremium ? DAILY_GIFT_REWARDS[result.streak % 7] * 2 : DAILY_GIFT_REWARDS[result.streak % 7]);
+        setNextReward(DAILY_GIFT_REWARDS[result.streak % 7]);
         
         // Mark as seen today
         const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
