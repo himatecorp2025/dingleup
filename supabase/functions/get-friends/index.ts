@@ -80,23 +80,30 @@ Deno.serve(async (req) => {
       (profiles || []).map(async (profile) => {
         const normalizedIds = [user.id, profile.id].sort();
         
+        // Get online status
+        const { data: presenceData } = await supabase
+          .from('user_presence')
+          .select('is_online')
+          .eq('user_id', profile.id)
+          .maybeSingle();
+        
         // Get thread
         const { data: thread } = await supabase
           .from('dm_threads')
           .select('id, last_message_at')
           .eq('user_id_a', normalizedIds[0])
           .eq('user_id_b', normalizedIds[1])
-          .single();
+          .maybeSingle();
 
         if (!thread) {
           return {
-            userId: profile.id,
-            displayName: profile.username,
-            avatarUrl: profile.avatar_url,
-            lastMessageSnippet: null,
-            lastMessageAt: null,
-            unreadCount: 0,
-            onlineStatus: 'offline'
+            id: profile.id,
+            display_name: profile.username,
+            avatar_url: profile.avatar_url,
+            last_message: null,
+            last_message_at: null,
+            unread_count: 0,
+            is_online: presenceData?.is_online || false
           };
         }
 
@@ -105,9 +112,10 @@ Deno.serve(async (req) => {
           .from('dm_messages')
           .select('body, created_at')
           .eq('thread_id', thread.id)
+          .eq('is_deleted', false)
           .order('created_at', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         // Get unread count
         const { data: readData } = await supabase
@@ -115,31 +123,33 @@ Deno.serve(async (req) => {
           .select('last_read_at')
           .eq('thread_id', thread.id)
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         const { count: unreadCount } = await supabase
           .from('dm_messages')
           .select('*', { count: 'exact', head: true })
           .eq('thread_id', thread.id)
+          .neq('sender_id', user.id)
+          .eq('is_deleted', false)
           .gt('created_at', readData?.last_read_at || '1970-01-01');
 
         return {
-          userId: profile.id,
-          displayName: profile.username,
-          avatarUrl: profile.avatar_url,
-          lastMessageSnippet: lastMessage?.body?.substring(0, 50) || null,
-          lastMessageAt: lastMessage?.created_at || thread.last_message_at,
-          unreadCount: unreadCount || 0,
-          onlineStatus: 'offline' // TODO: implement real presence
+          id: profile.id,
+          display_name: profile.username,
+          avatar_url: profile.avatar_url,
+          last_message: lastMessage?.body?.substring(0, 50) || null,
+          last_message_at: lastMessage?.created_at || thread.last_message_at,
+          unread_count: unreadCount || 0,
+          is_online: presenceData?.is_online || false
         };
       })
     );
 
     // Sort by last message time
     friendsData.sort((a, b) => {
-      if (!a.lastMessageAt) return 1;
-      if (!b.lastMessageAt) return -1;
-      return new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime();
+      if (!a.last_message_at) return 1;
+      if (!b.last_message_at) return -1;
+      return new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime();
     });
 
     console.log(`[GetFriends] Returning ${friendsData.length} friends`);

@@ -100,9 +100,10 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const loadMessages = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.functions.invoke('get-thread-messages', {
-        body: { friendId }
-      });
+      const params = new URLSearchParams({ otherUserId: friendId });
+      const { data, error } = await supabase.functions.invoke(
+        `get-thread-messages?${params.toString()}`
+      );
       if (error) throw error;
       setMessages(data?.messages || []);
     } catch (error) {

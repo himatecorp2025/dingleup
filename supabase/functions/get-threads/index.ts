@@ -108,22 +108,22 @@ serve(async (req) => {
         }
 
         return {
-          threadId: thread.id,
-          userId: otherUserId,
-          displayName: profile?.username || 'Unknown',
-          avatarUrl: profile?.avatar_url || null,
-          lastMessageSnippet: lastMessage?.body || null,
-          lastMessageAt: lastMessage?.created_at || thread.last_message_at,
-          unreadCount,
-          onlineStatus: presence?.is_online ? 'online' : 'offline',
+          id: thread.id,
+          other_user_id: otherUserId,
+          other_user_name: profile?.username || 'Unknown',
+          other_user_avatar: profile?.avatar_url || null,
+          last_message_preview: lastMessage?.body || null,
+          last_message_at: lastMessage?.created_at || thread.last_message_at,
+          unread_count: unreadCount,
+          online_status: presence?.is_online ? 'online' : 'offline',
         };
       })
     );
 
     // Sort by last message time (most recent first)
     threadsWithData.sort((a, b) => {
-      const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
-      const timeB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
+      const timeA = a.last_message_at ? new Date(a.last_message_at).getTime() : 0;
+      const timeB = b.last_message_at ? new Date(b.last_message_at).getTime() : 0;
       return timeB - timeA;
     });
 
