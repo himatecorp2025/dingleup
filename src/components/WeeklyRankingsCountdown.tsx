@@ -57,19 +57,30 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
 
   return (
     <div 
-      className="relative px-4 py-3 sm:px-5 sm:py-4 overflow-hidden"
+      className="relative px-3 py-2 sm:px-4 overflow-hidden h-full flex items-center"
       style={{ 
-        background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #F59E0B 100%)',
-        boxShadow: '0 4px 20px rgba(245, 158, 11, 0.5)',
-        clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)',
+        background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 25%, #D97706 50%, #F59E0B 75%, #FBBF24 100%)',
+        boxShadow: '0 0 20px rgba(251, 191, 36, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.4)',
+        border: '2px solid #FBBF24',
+        clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
+        animation: 'shimmer 3s ease-in-out infinite'
       }}
     >
-      <div className="relative z-10 text-center">
-        <div className="flex items-center justify-center gap-1.5 mb-1">
-          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-900" />
-          <p className="text-[10px] sm:text-xs text-yellow-900 font-bold">Heti díjazásig</p>
+      {/* Shimmer effect overlay */}
+      <div 
+        className="absolute inset-0 opacity-40"
+        style={{
+          background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 0%, transparent 60%)',
+          animation: 'pulse 2s ease-in-out infinite'
+        }}
+      />
+      
+      <div className="relative z-10 text-center w-full">
+        <div className="flex items-center justify-center gap-1 mb-0.5">
+          <Trophy className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-yellow-900 drop-shadow" />
+          <p className="text-[9px] sm:text-[10px] text-yellow-900 font-black">Díjazásig</p>
         </div>
-        <p className="text-sm sm:text-base font-black text-yellow-900 drop-shadow">
+        <p className="text-[10px] sm:text-xs font-black text-yellow-900 drop-shadow-lg leading-tight">
           {timeRemaining}
         </p>
       </div>

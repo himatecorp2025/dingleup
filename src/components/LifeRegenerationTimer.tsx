@@ -31,7 +31,8 @@ export const LifeRegenerationTimer = ({
 
   return (
     <div 
-      className="bg-gradient-to-r from-yellow-600 to-yellow-800 border border-yellow-400 rounded px-1.5 py-0.5 shadow-[0_0_8px_rgba(234,179,8,0.6)] text-[8px] sm:text-[9px] gold-glow"
+      className="bg-gradient-to-r from-yellow-400 to-yellow-600 border-2 border-yellow-300 rounded px-1.5 py-0.5 shadow-[0_0_12px_rgba(250,204,21,0.8)] text-[8px] sm:text-[9px]"
+      style={{ boxShadow: '0 0 15px rgba(250, 204, 21, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3)' }}
       title="Következő élet regenerálás"
     >
       <span className="font-extrabold text-black drop-shadow leading-none whitespace-nowrap">
