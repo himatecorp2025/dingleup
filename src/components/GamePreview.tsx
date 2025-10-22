@@ -931,6 +931,10 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
             stopMusic();
             navigate('/shop');
           }}
+          userId={userId}
+          onPurchaseComplete={async () => {
+            await refreshProfile();
+          }}
         />
       </>
     );

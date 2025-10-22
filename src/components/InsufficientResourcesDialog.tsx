@@ -116,7 +116,7 @@ export const InsufficientResourcesDialog = ({
           </DialogDescription>
         </DialogHeader>
         
-        {type === 'both' && userId && (
+        {userId && (
           <div className="bg-gradient-to-br from-yellow-500/20 to-purple-600/20 border-2 border-yellow-500/50 rounded-xl p-4 my-2">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ export const InsufficientResourcesDialog = ({
             Mégse
           </Button>
           
-          {type === 'both' && userId ? (
+          {userId ? (
             <Button 
               onClick={handleQuickBuy}
               disabled={isProcessing}
