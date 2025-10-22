@@ -31,8 +31,18 @@ Deno.serve(async (req) => {
 
     const { userId: requesterUserId } = await req.json();
 
-    if (!requesterUserId) {
+    // Validate requester user ID
+    if (!requesterUserId || typeof requesterUserId !== 'string') {
       return new Response(JSON.stringify({ error: 'Requester user ID required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(requesterUserId)) {
+      return new Response(JSON.stringify({ error: 'Invalid user ID format' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -99,8 +109,8 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in decline-friend-request:', error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }), {
+    console.error('[INTERNAL] Error in decline-friend-request:', error);
+    return new Response(JSON.stringify({ error: 'A kérés feldolgozása sikertelen' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

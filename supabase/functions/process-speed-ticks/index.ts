@@ -12,6 +12,17 @@ serve(async (req) => {
   }
 
   try {
+    // Security: Verify cron authentication
+    const authHeader = req.headers.get('authorization');
+    const expectedAuth = `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`;
+    
+    if (authHeader !== expectedAuth) {
+      console.error('[Security] Unauthorized cron access attempt');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      );
+    }
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
@@ -127,9 +138,9 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[ProcessSpeedTicks] Error:', error);
+    console.error('[INTERNAL] [ProcessSpeedTicks] Error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: 'Internal server error' }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500

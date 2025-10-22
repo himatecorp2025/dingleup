@@ -12,6 +12,17 @@ serve(async (req) => {
   }
 
   try {
+    // Security: Verify cron authentication
+    const authHeader = req.headers.get('authorization');
+    const expectedAuth = `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`;
+    
+    if (authHeader !== expectedAuth) {
+      console.error('[Security] Unauthorized cron access attempt');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      );
+    }
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -36,9 +47,9 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     )
   } catch (error) {
-    console.error('Error in regenerate-lives-background function:', error)
+    console.error('[INTERNAL] Error in regenerate-lives-background function:', error)
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: 'Internal server error' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     )
   }

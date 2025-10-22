@@ -31,14 +31,24 @@ Deno.serve(async (req) => {
 
     const { userId: targetUserId, action } = await req.json();
 
-    if (!targetUserId || !action) {
-      return new Response(JSON.stringify({ error: 'Target user ID and action required' }), {
+    // Validate target user ID
+    if (!targetUserId || typeof targetUserId !== 'string') {
+      return new Response(JSON.stringify({ error: 'Target user ID required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    if (!['block', 'unblock'].includes(action)) {
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(targetUserId)) {
+      return new Response(JSON.stringify({ error: 'Invalid user ID format' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!action || !['block', 'unblock'].includes(action)) {
       return new Response(JSON.stringify({ error: 'Invalid action' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -84,8 +94,8 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in block-user:', error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }), {
+    console.error('[INTERNAL] Error in block-user:', error);
+    return new Response(JSON.stringify({ error: 'A művelet végrehajtása sikertelen' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
