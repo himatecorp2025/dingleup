@@ -96,32 +96,6 @@ export const ThreadsList = ({
         </div>
       </div>
 
-      {/* Online Friends Stories */}
-      <div className="flex-none border-b border-[#D4AF37]/10 px-3 py-3">
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
-          {filteredThreads.slice(0, 6).map((thread) => (
-            <div key={`story-${thread.id}`} className="flex-shrink-0 flex flex-col items-center gap-1.5">
-              <div className="relative">
-                <div className="w-14 h-14 rounded-full overflow-hidden bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 border-[#138F5E]">
-                  {thread.other_user_avatar ? (
-                    <img src={thread.other_user_avatar} alt={thread.other_user_name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-white font-bold text-lg">{getInitials(thread.other_user_name)}</span>
-                  )}
-                </div>
-                {thread.online_status === 'online' && (
-                  <div className="absolute bottom-0 right-0 w-4 h-4 bg-[#00FF66] rounded-full border-2 border-[#000000]" />
-                )}
-              </div>
-              <span className="text-white text-xs max-w-[60px] truncate">{thread.other_user_name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Friend Requests */}
-      <FriendRequestsList onRequestHandled={() => {}} />
-
       {/* Threads List */}
       <div className="flex-1 overflow-y-auto">
         {filteredThreads.length === 0 ? (
