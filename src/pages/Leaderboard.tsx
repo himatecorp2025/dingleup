@@ -73,18 +73,20 @@ const Leaderboard = () => {
       {/* Casino lights animation at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden pb-24 relative z-10 px-4 py-4">
-      
-      {/* Back Button - same as shop */}
-      <button
-        onClick={() => navigate('/dashboard')}
-        className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
-        title="Vissza"
-      >
-        <LogOut className="w-6 h-6 -scale-x-100" />
-      </button>
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden pb-24 relative z-10">
+        <div className="max-w-6xl mx-auto p-4 w-full">
+          {/* Header with Back Button */}
+          <div className="flex items-center mb-6 pt-safe">
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+              title="Vissza"
+            >
+              <LogOut className="w-6 h-6 -scale-x-100" />
+            </button>
+          </div>
 
-      <div className="max-w-4xl mx-auto p-4 pt-4 pb-24 min-h-screen">
+        <div className="max-w-4xl mx-auto w-full">
 
         {/* Title */}
         <h1 className="text-4xl font-black text-center mb-4 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent pt-safe">
@@ -174,7 +176,8 @@ const Leaderboard = () => {
             )}
           </div>
         )}
-      </div>
+        </div>
+        </div>
       </div>
 
       <BottomNav />
