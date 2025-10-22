@@ -106,11 +106,12 @@ serve(async (req) => {
 
     console.log('Invitation code validated successfully');
 
+    // SECURITY: Only return minimal info pre-registration
+    // Full inviter details shown after successful registration
     return new Response(
       JSON.stringify({ 
         valid: true,
-        inviterId: inviterProfile.id,
-        inviterUsername: inviterProfile.username,
+        // Removed inviterId and inviterUsername to prevent enumeration
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
