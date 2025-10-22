@@ -405,6 +405,7 @@ export type Database = {
           invitation_code: string | null
           invitation_rewards_reset_at: string | null
           is_subscribed: boolean | null
+          is_subscriber: boolean | null
           last_invitation_reward_reset: string | null
           last_life_regeneration: string | null
           lives: number | null
@@ -419,6 +420,9 @@ export type Database = {
           speed_tick_interval_seconds: number | null
           speed_tick_last_processed_at: string | null
           sub_promo_last_shown: string | null
+          subscriber_renew_at: string | null
+          subscriber_since: string | null
+          subscriber_type: string | null
           subscription_tier: string | null
           total_correct_answers: number
           updated_at: string | null
@@ -439,6 +443,7 @@ export type Database = {
           invitation_code?: string | null
           invitation_rewards_reset_at?: string | null
           is_subscribed?: boolean | null
+          is_subscriber?: boolean | null
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           lives?: number | null
@@ -453,6 +458,9 @@ export type Database = {
           speed_tick_interval_seconds?: number | null
           speed_tick_last_processed_at?: string | null
           sub_promo_last_shown?: string | null
+          subscriber_renew_at?: string | null
+          subscriber_since?: string | null
+          subscriber_type?: string | null
           subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
@@ -473,6 +481,7 @@ export type Database = {
           invitation_code?: string | null
           invitation_rewards_reset_at?: string | null
           is_subscribed?: boolean | null
+          is_subscriber?: boolean | null
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           lives?: number | null
@@ -487,6 +496,9 @@ export type Database = {
           speed_tick_interval_seconds?: number | null
           speed_tick_last_processed_at?: string | null
           sub_promo_last_shown?: string | null
+          subscriber_renew_at?: string | null
+          subscriber_since?: string | null
+          subscriber_type?: string | null
           subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
@@ -659,6 +671,48 @@ export type Database = {
           stripe_subscription_id?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      tips_tricks_videos: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_sec: number | null
+          id: string
+          is_active: boolean | null
+          published_at: string | null
+          sort_order: number | null
+          thumb_url: string
+          title: string
+          updated_at: string | null
+          video_url: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_sec?: number | null
+          id?: string
+          is_active?: boolean | null
+          published_at?: string | null
+          sort_order?: number | null
+          thumb_url: string
+          title: string
+          updated_at?: string | null
+          video_url: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_sec?: number | null
+          id?: string
+          is_active?: boolean | null
+          published_at?: string | null
+          sort_order?: number | null
+          thumb_url?: string
+          title?: string
+          updated_at?: string | null
+          video_url?: string
         }
         Relationships: []
       }
