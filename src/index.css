@@ -550,8 +550,8 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 .dialog-enter-slow {
-  animation: zoom-from-center 3s ease-out forwards;
-  transform-origin: center;
+  animation: zoom-from-center 3s ease-out forwards !important;
+  transform-origin: center !important;
   will-change: transform, opacity;
 }
 
