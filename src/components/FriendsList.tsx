@@ -54,7 +54,7 @@ export const FriendsList = ({ userId, onSelectFriend, selectedFriendId }: Friend
       setLoading(true);
       const { data, error } = await supabase.functions.invoke('get-friends');
       if (error) throw error;
-      setFriends(data || []);
+      setFriends(data?.friends || []);
     } catch (error) {
       console.error('[FriendsList] Error loading friends:', error);
       setFriends([]);

@@ -15,22 +15,26 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       throw new Error('No authorization header');
     }
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       global: {
         headers: { Authorization: authHeader },
       },
     });
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
     if (authError || !user) {
       throw new Error('Unauthorized');
     }
+
+    // DB client with service role for queries
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     console.log('[GetThreads] Fetching threads for user:', user.id);
 
