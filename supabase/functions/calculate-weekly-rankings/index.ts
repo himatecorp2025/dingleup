@@ -18,6 +18,18 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Security: Verify this is a legitimate cron request
+    const userAgent = req.headers.get('user-agent') || '';
+    const isCronRequest = userAgent.includes('Deno') || userAgent.includes('Supabase');
+    
+    if (!isCronRequest) {
+      console.warn('[SECURITY] Unauthorized access attempt to cron endpoint');
+      return new Response(
+        JSON.stringify({ error: 'This endpoint is for scheduled tasks only' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
