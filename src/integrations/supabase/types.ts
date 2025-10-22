@@ -240,6 +240,48 @@ export type Database = {
           },
         ]
       }
+      game_sessions: {
+        Row: {
+          category: string
+          completed_at: string | null
+          correct_answers: number
+          created_at: string
+          current_question: number
+          expires_at: string
+          id: string
+          questions: Json
+          session_id: string
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          completed_at?: string | null
+          correct_answers?: number
+          created_at?: string
+          current_question?: number
+          expires_at: string
+          id?: string
+          questions: Json
+          session_id: string
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          completed_at?: string | null
+          correct_answers?: number
+          created_at?: string
+          current_question?: number
+          expires_at?: string
+          id?: string
+          questions?: Json
+          session_id?: string
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       global_leaderboard: {
         Row: {
           avatar_url: string | null
@@ -1037,6 +1079,7 @@ export type Database = {
       award_coins: { Args: { amount: number }; Returns: undefined }
       claim_daily_gift: { Args: never; Returns: Json }
       claim_welcome_bonus: { Args: never; Returns: Json }
+      cleanup_expired_game_sessions: { Args: never; Returns: undefined }
       cleanup_old_messages: { Args: never; Returns: undefined }
       create_friendship_from_invitation: {
         Args: { p_invitee_id: string; p_inviter_id: string }
