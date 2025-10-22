@@ -57,7 +57,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
 
   return (
     <div 
-      className="relative px-6 py-2 sm:px-8 overflow-hidden h-full flex items-center min-w-[180px] sm:min-w-[220px]"
+      className="relative px-6 py-2 sm:px-8 overflow-hidden h-full flex items-center w-[180px] sm:w-[220px]"
       style={{ 
         background: 'linear-gradient(135deg, #FFD700 0%, #FDB931 20%, #FBBF24 40%, #F59E0B 60%, #D97706 80%, #FBBF24 100%)',
         boxShadow: '0 0 30px rgba(255, 215, 0, 1), 0 0 60px rgba(251, 191, 36, 0.8), inset 0 0 40px rgba(255, 255, 255, 0.5), inset 0 -5px 20px rgba(217, 119, 6, 0.5)',
