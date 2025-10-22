@@ -80,14 +80,14 @@ const Profile = () => {
   };
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+    <div className="min-h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] fixed inset-0 overflow-y-auto" style={{
       paddingTop: 'env(safe-area-inset-top)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-3 py-4 pb-24 max-w-screen-sm mx-auto relative z-10">
+      <div className="w-full flex flex-col px-3 py-4 pb-24 max-w-screen-sm mx-auto relative z-10">
         {/* Header - Back button and Avatar in same line - HIGHER UP */}
         <div className="flex items-center justify-between mb-2 sm:mb-4 pt-safe">
           <button
