@@ -25,7 +25,8 @@ interface InsufficientResourcesDialogProps {
   onPurchaseComplete?: () => void;
 }
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined;
+const stripePromise = publishableKey ? loadStripe(publishableKey) : null as any;
 
 const PaymentForm = ({ 
   clientSecret, 
@@ -196,6 +197,7 @@ export const InsufficientResourcesDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 duration-[3000ms]">
+        <div className="animate-scale-in duration-[3000ms] origin-center will-change-transform">
         <DialogHeader className="animate-in fade-in-0 duration-[2500ms] delay-500">
           <DialogTitle className="flex items-center gap-2 text-2xl font-black animate-in fade-in-0 zoom-in-90 duration-[2000ms] delay-1000">
             <Icon className={`w-7 h-7 ${type === 'coins' || type === 'both' ? 'text-yellow-400' : 'text-red-500'}`} />
@@ -252,7 +254,7 @@ export const InsufficientResourcesDialog = ({
           </>
         )}
 
-        {clientSecret && (
+        {clientSecret && stripePromise && (
           <Elements stripe={stripePromise} options={{ clientSecret }}>
             <PaymentForm 
               clientSecret={clientSecret} 
@@ -260,6 +262,11 @@ export const InsufficientResourcesDialog = ({
               onCancel={handlePaymentCancel}
             />
           </Elements>
+        )}
+        {clientSecret && !stripePromise && (
+          <div className="text-center text-sm text-red-300">
+            Fizetés nem elérhető: hiányzó Stripe kulcs.
+          </div>
         )}
         
         {userId && !clientSecret && (
@@ -309,6 +316,7 @@ export const InsufficientResourcesDialog = ({
             </Button>
           </DialogFooter>
         )}
+        </div>
       </DialogContent>
     </Dialog>
   );
