@@ -63,7 +63,8 @@ Deno.serve(async (req) => {
     console.log(`Admin activity query: action=${action}, from=${from}, to=${to}, tz=${tz}`);
 
     if (action === 'summary') {
-      const summary = await getSummary(supabaseClient, { from, to, tz, device, plan });
+      const trendRange = url.searchParams.get('trendRange') || 'last30';
+      const summary = await getSummary(supabaseClient, { from, to, tz, device, plan, action: trendRange });
       return new Response(JSON.stringify(summary), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -112,7 +113,7 @@ Deno.serve(async (req) => {
 });
 
 async function getSummary(supabase: any, params: ActivityQueryParams) {
-  const { from, to, tz } = params;
+  const { from, to, tz, action } = params;
 
   const dauQuery = `
     SELECT count(DISTINCT user_id) AS dau
@@ -139,6 +140,7 @@ async function getSummary(supabase: any, params: ActivityQueryParams) {
   const topSlots7d = await getTopSlots7d(supabase, from, tz, 5);
   const topHourLast7d = await getTopHour7d(supabase, from, tz);
   const topDayLast7d = await getTopDay7d(supabase, from);
+  const avgActivityTrend = await getAvgActivityTrend(supabase, from, action || 'last30', tz);
 
   return {
     dateRange: { from, to, tz },
@@ -151,6 +153,7 @@ async function getSummary(supabase: any, params: ActivityQueryParams) {
     heatmap_week: heatmapWeek,
     topSlotsToday,
     topSlots7d,
+    avgActivityTrend,
   };
 }
 
@@ -323,6 +326,40 @@ async function getTopDay7d(supabase: any, endDate: string) {
 
   const maxDay = Object.entries(days).sort((a, b) => b[1] - a[1])[0];
   return { date: maxDay[0], events: maxDay[1] };
+}
+
+async function getAvgActivityTrend(supabase: any, endDate: string, range: string, tz: string) {
+  let daysBack = 30;
+  if (range === 'last7') daysBack = 7;
+  else if (range === 'last90') daysBack = 90;
+  else if (range === 'all') daysBack = 365;
+
+  const trend: Array<{ date: string; avgEvents: number; activeUsers: number }> = [];
+
+  for (let i = 0; i < daysBack; i++) {
+    const date = new Date(endDate);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+
+    const { data: pings } = await supabase
+      .from('user_activity_pings')
+      .select('user_id')
+      .gte('bucket_start', `${dateStr}T00:00:00Z`)
+      .lt('bucket_start', `${dateStr}T23:59:59Z`);
+
+    if (pings && pings.length > 0) {
+      const uniqueUsers = new Set(pings.map((p: any) => p.user_id)).size;
+      const avgEvents = pings.length / uniqueUsers;
+
+      trend.unshift({
+        date: dateStr,
+        avgEvents: Math.round(avgEvents * 10) / 10,
+        activeUsers: uniqueUsers,
+      });
+    }
+  }
+
+  return trend;
 }
 
 async function getTable5Min(supabase: any, params: ActivityQueryParams, page: number, size: number) {

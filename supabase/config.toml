@@ -63,6 +63,9 @@ verify_jwt = true
 [functions.admin-activity]
 verify_jwt = true
 
+[functions.aggregate-daily-activity]
+verify_jwt = false
+
 # Cron job for automatic life regeneration every minute
 [[edge_runtime.cron]]
 schedule = "* * * * *"
@@ -72,4 +75,9 @@ function = "regenerate-lives-background"
 [[edge_runtime.cron]]
 schedule = "*/30 * * * * *"
 function = "process-speed-ticks"
+
+# Cron job for daily activity aggregation every day at 2 AM
+[[edge_runtime.cron]]
+schedule = "0 2 * * *"
+function = "aggregate-daily-activity"
 

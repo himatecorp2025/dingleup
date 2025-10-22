@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Download, RefreshCw } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { Download, RefreshCw, TrendingUp } from 'lucide-react';
 
 interface ActivitySummary {
   dateRange: { from: string; to: string; tz: string };
@@ -18,13 +18,16 @@ interface ActivitySummary {
   heatmap_week: number[][];
   topSlotsToday: Array<{ start: string; end: string; events: number; share: number }>;
   topSlots7d: Array<{ start: string; end: string; events: number; share: number }>;
+  avgActivityTrend?: Array<{ date: string; avgEvents: number; activeUsers: number }>;
 }
 
 export function ActivityTab() {
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState('today');
+  const [trendRange, setTrendRange] = useState('last30');
   const [timezone, setTimezone] = useState('Europe/Budapest');
   const [summary, setSummary] = useState<ActivitySummary | null>(null);
+  const [aggregating, setAggregating] = useState(false);
 
   const fetchSummary = async () => {
     setLoading(true);
@@ -50,7 +53,7 @@ export function ActivityTab() {
       }
 
       const { data, error } = await supabase.functions.invoke('admin-activity', {
-        body: { action: 'summary', from, to, tz: timezone },
+        body: { action: 'summary', from, to, tz: timezone, trendRange },
       });
 
       if (error) throw error;
@@ -65,7 +68,22 @@ export function ActivityTab() {
 
   useEffect(() => {
     fetchSummary();
-  }, [dateRange, timezone]);
+  }, [dateRange, timezone, trendRange]);
+
+  const runAggregation = async () => {
+    setAggregating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('aggregate-daily-activity');
+      if (error) throw error;
+      toast.success(`Aggregálás sikeres: ${data.aggregated} rekord feldolgozva`);
+      fetchSummary();
+    } catch (error: any) {
+      console.error('Error running aggregation:', error);
+      toast.error('Aggregálás sikertelen');
+    } finally {
+      setAggregating(false);
+    }
+  };
 
   const exportCSV = async (type: '5min' | 'hourly') => {
     try {
@@ -109,8 +127,79 @@ export function ActivityTab() {
 
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+  const trendData = summary?.avgActivityTrend?.map(item => ({
+    date: new Date(item.date).toLocaleDateString('hu-HU', { month: 'short', day: 'numeric' }),
+    avgEvents: item.avgEvents,
+    activeUsers: item.activeUsers,
+  })) || [];
+
   return (
     <div className="space-y-6">
+      {/* Average Activity Trend Chart */}
+      {summary?.avgActivityTrend && summary.avgActivityTrend.length > 0 && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  Átlagos Felhasználói Aktivitás Időben
+                </CardTitle>
+                <CardDescription>
+                  Napi átlagos eseményszám felhasználónként
+                </CardDescription>
+              </div>
+              <Select value={trendRange} onValueChange={setTrendRange}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="last7">Utolsó 7 nap</SelectItem>
+                  <SelectItem value="last30">Utolsó 30 nap</SelectItem>
+                  <SelectItem value="last90">Utolsó 90 nap</SelectItem>
+                  <SelectItem value="all">Összes adat</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={trendData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="hsl(var(--muted-foreground))"
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis 
+                  stroke="hsl(var(--muted-foreground))"
+                  label={{ value: 'Átlag események/user', angle: -90, position: 'insideLeft', style: { fontSize: 12 } }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                  }}
+                  formatter={(value: any, name: string) => {
+                    if (name === 'avgEvents') return [value.toFixed(1), 'Átlag események'];
+                    if (name === 'activeUsers') return [value, 'Aktív felhasználók'];
+                    return [value, name];
+                  }}
+                />
+                <Bar dataKey="avgEvents" fill="#D4AF37" name="Átlag események" />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="mt-4 flex items-center justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded" style={{ backgroundColor: '#D4AF37' }} />
+                <span>Átlagos aktivitás felhasználónként</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filters */}
       <Card>
         <CardHeader>
@@ -154,6 +243,15 @@ export function ActivityTab() {
           <Button onClick={() => exportCSV('hourly')} variant="outline">
             <Download className="mr-2 h-4 w-4" />
             Óránkénti CSV
+          </Button>
+
+          <Button 
+            onClick={runAggregation} 
+            disabled={aggregating} 
+            variant="secondary"
+          >
+            <RefreshCw className={`mr-2 h-4 w-4 ${aggregating ? 'animate-spin' : ''}`} />
+            Aggregálás futtatása
           </Button>
         </CardContent>
       </Card>
