@@ -137,7 +137,7 @@ const ChatEnhanced = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex pb-20">
+      <div className="flex-1 flex pb-16">
         <FriendsList
           userId={userId || ''}
           onSelectFriend={(friendId, username) => {
@@ -146,7 +146,7 @@ const ChatEnhanced = () => {
           selectedFriendId={selectedFriend?.userId || null}
         />
 
-        <div className="flex-1 flex flex-col" data-tutorial="threads-list">
+        <div className="flex-1 flex flex-col bg-[#000000]" data-tutorial="threads-list">
           {selectedFriend ? (
             <ThreadView
               friendId={selectedFriend.userId}

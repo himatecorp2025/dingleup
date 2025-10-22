@@ -254,7 +254,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-4">
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
         {isLoading ? (
           <div className="text-center py-12">
             <p className="text-white/60">Üzenetek betöltése...</p>
@@ -268,21 +268,22 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
           messages.map((msg) => {
             const isOwn = msg.sender_id === userId;
             return (
-              <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${
-                  isOwn 
-                    ? 'bg-[#138F5E] text-white' 
-                    : 'bg-[#1a1a2e] text-[#D4AF37] border border-[#D4AF37]/20'
-                }`}>
-                  <p className="text-sm break-words whitespace-pre-wrap">{msg.body}</p>
-                  <div className="flex items-center justify-end gap-1 mt-1">
-                    <span className={`text-xs ${isOwn ? 'text-white/70' : 'text-[#D4AF37]/50'}`}>
-                      {formatTime(msg.created_at)}
-                    </span>
-                    {isOwn && (
-                      <span className="text-[#D4AF37] text-xs">✓✓</span>
+              <div key={msg.id} className={`flex items-end gap-2 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                {!isOwn && (
+                  <div className="w-7 h-7 rounded-full flex-shrink-0 overflow-hidden bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center">
+                    {friendProfile.avatar_url ? (
+                      <img src={friendProfile.avatar_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-white text-xs font-bold">{getInitials(friendProfile.username)}</span>
                     )}
                   </div>
+                )}
+                <div className={`max-w-[70%] rounded-[20px] px-4 py-2.5 ${
+                  isOwn 
+                    ? 'bg-[#138F5E] text-white rounded-br-md' 
+                    : 'bg-[#262626] text-white rounded-bl-md'
+                }`}>
+                  <p className="text-[15px] leading-snug break-words whitespace-pre-wrap">{msg.body}</p>
                 </div>
               </div>
             );
@@ -291,12 +292,18 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input - Mobile optimized with safe area */}
-      <div className="flex-none p-4 bg-[#0F1116] border-t border-[#D4AF37]/30 pb-safe">
-        <div className="flex items-end gap-2">
+      {/* Message Input - Messenger style */}
+      <div className="flex-none px-3 py-2.5 bg-[#0F1116] pb-safe">
+        <div className="flex items-center gap-1.5 bg-[#262626] rounded-full px-3 py-2">
+          <button className="p-1.5 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
+            <svg className="w-5 h-5 text-[#138F5E]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+            </svg>
+          </button>
+          
           <textarea
             ref={textareaRef}
-            placeholder="Írj üzenetet..."
+            placeholder="Üzenet..."
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             onKeyPress={(e) => {
@@ -305,17 +312,32 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
                 sendMessage();
               }
             }}
-            className="flex-1 bg-black/30 border border-[#D4AF37]/40 text-white placeholder:text-white/50 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#138F5E] resize-none min-h-[48px] max-h-[120px] text-[16px] leading-relaxed"
+            className="flex-1 bg-transparent border-0 text-white placeholder:text-white/50 px-2 py-1.5 focus:outline-none resize-none min-h-[24px] max-h-[100px] text-[15px] leading-snug"
             rows={1}
             maxLength={2000}
           />
-          <button
-            onClick={sendMessage}
-            disabled={!messageText.trim()}
-            className="bg-[#138F5E] hover:bg-[#138F5E]/80 disabled:bg-[#138F5E]/30 text-white font-bold p-3 rounded-lg transition-all disabled:cursor-not-allowed flex-shrink-0 min-h-[48px] min-w-[48px]"
-          >
-            <Send className="w-5 h-5" />
-          </button>
+          
+          {!messageText.trim() ? (
+            <div className="flex items-center gap-1">
+              <button className="p-1.5 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
+                <svg className="w-5 h-5 text-[#138F5E]" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+              </button>
+              <button className="p-1.5 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
+                <svg className="w-5 h-5 text-[#138F5E]" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={sendMessage}
+              className="p-1.5 hover:bg-[#138F5E]/20 rounded-full transition-colors flex-shrink-0"
+            >
+              <Send className="w-5 h-5 text-[#138F5E]" fill="currentColor" />
+            </button>
+          )}
         </div>
       </div>
     </div>
