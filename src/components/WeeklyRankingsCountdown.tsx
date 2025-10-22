@@ -57,45 +57,20 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
 
   return (
     <div 
-      className="relative mb-4 px-3 py-4 sm:px-4 sm:py-5 overflow-hidden rounded-xl sm:rounded-2xl"
+      className="relative px-4 py-3 sm:px-5 sm:py-4 overflow-hidden"
       style={{ 
-        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF8C00 50%, #FFA500 75%, #FFD700 100%)',
-        boxShadow: '0 0 40px rgba(255, 215, 0, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.3)',
-        border: '3px solid #FFD700',
-        animation: 'shimmer 3s ease-in-out infinite'
+        background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #F59E0B 100%)',
+        boxShadow: '0 4px 20px rgba(245, 158, 11, 0.5)',
+        clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)',
       }}
     >
-      {/* Arany ragyogás effekt */}
-      <div 
-        className="absolute inset-0 opacity-30"
-        style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, transparent 70%)',
-          animation: 'pulse 2s ease-in-out infinite'
-        }}
-      />
-      
-      {/* Belső arany keret */}
-      <div 
-        className="absolute inset-2 rounded-lg"
-        style={{
-          border: '2px solid rgba(255, 215, 0, 0.5)',
-          boxShadow: 'inset 0 0 20px rgba(255, 215, 0, 0.4)'
-        }}
-      />
-
       <div className="relative z-10 text-center">
-        <h3 className="text-sm sm:text-base font-black text-yellow-900 mb-1 sm:mb-2 flex items-center justify-center gap-2 drop-shadow-lg">
-          <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-900" />
-          Heti Nyeremények
-        </h3>
-        <p className="text-[10px] sm:text-xs text-yellow-900/80 font-semibold mb-2">Következő díjazás:</p>
-        <div className="bg-yellow-100/50 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2 sm:py-3 border-2 border-yellow-600">
-          <p className="text-base sm:text-xl font-black text-yellow-900 drop-shadow">
-            {timeRemaining}
-          </p>
+        <div className="flex items-center justify-center gap-1.5 mb-1">
+          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-900" />
+          <p className="text-[10px] sm:text-xs text-yellow-900 font-bold">Heti díjazásig</p>
         </div>
-        <p className="text-[9px] sm:text-[10px] text-yellow-900/70 font-semibold mt-2 drop-shadow">
-          Top 10 játékos kategóriánként jutalmat nyer
+        <p className="text-sm sm:text-base font-black text-yellow-900 drop-shadow">
+          {timeRemaining}
         </p>
       </div>
     </div>
