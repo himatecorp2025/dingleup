@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart, AlertTriangle, Star } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart, AlertTriangle, Star, Activity } from 'lucide-react';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserGrowthChart } from '@/components/UserGrowthChart';
+import { ActivityTab } from '@/components/admin/ActivityTab';
 
-type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports';
+type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports' | 'activity';
 type ReportsSubTab = 'development' | 'support';
 
 const AdminDashboard = () => {
@@ -285,6 +286,17 @@ const AdminDashboard = () => {
             >
               <AlertTriangle className="w-4 h-4 xl:w-5 xl:h-5" />
               <span className="font-medium">Jelentések ({reports.filter(r => r.status === 'pending').length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('activity')}
+              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+                activeTab === 'activity'
+                  ? 'bg-blue-600/20 text-blue-400'
+                  : 'text-white/70 hover:bg-white/5'
+              }`}
+            >
+              <Activity className="w-4 h-4 xl:w-5 xl:h-5" />
+              <span className="font-medium">Aktivitás</span>
             </button>
           </nav>
         </div>
@@ -825,6 +837,10 @@ const AdminDashboard = () => {
               )}
             </div>
           </div>
+        )}
+
+        {activeTab === 'activity' && (
+          <ActivityTab />
         )}
       </div>
     </div>
