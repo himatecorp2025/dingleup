@@ -30,21 +30,21 @@ export const FriendsList = ({ userId, onSelectFriend, selectedFriendId }: Friend
   useEffect(() => {
     loadFriends();
     
-    // Realtime subscription for new friendships
+    // Realtime subscriptions for immediate updates
     const channel = supabase
       .channel('friendships-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'friendships',
-        },
-        () => {
-          console.log('[FriendsList] Friendship changed, reloading...');
-          loadFriends();
-        }
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, () => {
+        console.log('[FriendsList] Friendship changed, reloading...');
+        loadFriends();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, () => {
+        console.log('[FriendsList] Message changed, reloading friends...');
+        loadFriends();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, () => {
+        console.log('[FriendsList] User presence changed, reloading...');
+        loadFriends();
+      })
       .subscribe();
 
     return () => {

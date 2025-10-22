@@ -95,8 +95,8 @@ export const usePromoScheduler = (userId: string | undefined) => {
     // Check immediately
     checkPromoTiming();
 
-    // Re-check every 15 minutes
-    const interval = setInterval(checkPromoTiming, 15 * 60 * 1000);
+    // Re-check every minute for immediate promo triggers
+    const interval = setInterval(checkPromoTiming, 60 * 1000);
 
     return () => clearInterval(interval);
   }, [userId]);

@@ -185,7 +185,7 @@ export const useGameProfile = (userId: string | undefined) => {
 
   useEffect(() => {
     if (profile) {
-      const interval = setInterval(regenerateLives, 60000); // Check every minute
+      const interval = setInterval(regenerateLives, 5000); // Check every 5 seconds for immediate updates
       return () => clearInterval(interval);
     }
   }, [profile]);

@@ -201,8 +201,8 @@ const Dashboard = () => {
     // Fetch immediately
     fetchUserRank();
     
-    // Then fetch every minute (60000ms)
-    const interval = setInterval(fetchUserRank, 60000);
+    // Then fetch every 10 seconds for immediate updates
+    const interval = setInterval(fetchUserRank, 10000);
     
     return () => clearInterval(interval);
   }, [userId]);

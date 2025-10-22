@@ -14,9 +14,9 @@ export const useUserPresence = (userId: string | undefined) => {
       });
     };
 
-    // Update presence every 60 seconds
+    // Update presence every 10 seconds for real-time status
     setOnline();
-    const interval = setInterval(setOnline, 60000);
+    const interval = setInterval(setOnline, 10000);
 
     // Set offline on unmount or page close
     const setOffline = async () => {

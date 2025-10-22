@@ -16,8 +16,8 @@ export const UserGrowthChart = () => {
   useEffect(() => {
     fetchChartData();
     
-    // Refresh every minute
-    const interval = setInterval(fetchChartData, 60000);
+    // Refresh every 15 seconds for faster updates
+    const interval = setInterval(fetchChartData, 15000);
     return () => clearInterval(interval);
   }, []);
 

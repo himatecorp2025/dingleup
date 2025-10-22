@@ -36,11 +36,11 @@ const AdminDashboard = () => {
     checkAuth();
   }, []);
 
-  // Auto-refresh every 15 seconds
+  // Auto-refresh every 10 seconds for immediate updates
   useEffect(() => {
     const interval = setInterval(() => {
       fetchData();
-    }, 15000); // 15 seconds
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);

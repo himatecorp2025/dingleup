@@ -66,10 +66,21 @@ const ChatEnhanced = () => {
     
     loadThreads();
 
+    // Realtime subscriptions for immediate updates
     const channel = supabase
       .channel('threads-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, () => loadThreads())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, () => loadThreads())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, () => {
+        console.log('[ChatEnhanced] dm_messages changed, reloading threads');
+        loadThreads();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, () => {
+        console.log('[ChatEnhanced] dm_threads changed, reloading threads');
+        loadThreads();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, () => {
+        console.log('[ChatEnhanced] user_presence changed, reloading threads');
+        loadThreads();
+      })
       .subscribe();
 
     return () => {
@@ -91,6 +102,19 @@ const ChatEnhanced = () => {
     if (!selectedFriendId) return;
     loadFriendProfile();
     loadMessages();
+
+    // Realtime subscription for immediate message updates
+    const messagesChannel = supabase
+      .channel(`messages-${selectedFriendId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, (payload) => {
+        console.log('[ChatEnhanced] Message changed:', payload);
+        loadMessages();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(messagesChannel);
+    };
   }, [selectedFriendId]);
 
   const loadFriendProfile = async () => {

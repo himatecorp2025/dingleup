@@ -51,10 +51,10 @@ export const useWallet = (userId: string | undefined) => {
   useEffect(() => {
     fetchWallet();
 
-    // Refresh every minute to correct drift
+    // Refresh every 3 seconds for immediate updates
     const intervalId = setInterval(() => {
       fetchWallet();
-    }, 60000);
+    }, 3000);
 
     return () => clearInterval(intervalId);
   }, [userId]);
