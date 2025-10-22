@@ -36,6 +36,39 @@ const ChatEnhanced = () => {
   const [showSearchDialog, setShowSearchDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Set presence on mount
+  useEffect(() => {
+    if (!userId) return;
+
+    const setPresence = async () => {
+      await supabase
+        .from('user_presence')
+        .upsert({
+          user_id: userId,
+          is_online: true,
+          last_seen: new Date().toISOString()
+        });
+    };
+
+    setPresence();
+
+    // Update presence every 30 seconds
+    const interval = setInterval(setPresence, 30000);
+
+    // Set offline on unmount
+    return () => {
+      clearInterval(interval);
+      supabase
+        .from('user_presence')
+        .update({
+          is_online: false,
+          last_seen: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+        .then(() => console.log('[ChatEnhanced] Set offline'));
+    };
+  }, [userId]);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -55,16 +88,20 @@ const ChatEnhanced = () => {
     // Realtime subscriptions for immediate updates
     const channel = supabase
       .channel('threads-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, () => {
-        console.log('[ChatEnhanced] dm_messages changed, reloading threads');
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, (payload) => {
+        console.log('[ChatEnhanced] dm_messages changed', payload);
         loadThreads();
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, () => {
-        console.log('[ChatEnhanced] dm_threads changed, reloading threads');
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, (payload) => {
+        console.log('[ChatEnhanced] dm_threads changed', payload);
         loadThreads();
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, () => {
-        console.log('[ChatEnhanced] user_presence changed, reloading threads');
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, (payload) => {
+        console.log('[ChatEnhanced] user_presence changed', payload);
+        loadThreads();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, (payload) => {
+        console.log('[ChatEnhanced] friendships changed', payload);
         loadThreads();
       })
       .subscribe();

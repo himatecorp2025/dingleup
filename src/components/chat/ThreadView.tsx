@@ -37,11 +37,20 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     loadFriendProfile();
     loadMessages();
 
-    // Realtime subscription for messages
+    // Realtime subscription for messages + presence + friendship
     const messagesChannel = supabase
-      .channel(`messages-${friendId}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, () => {
+      .channel(`thread-${friendId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, (payload) => {
+        console.log('[ThreadView] dm_messages changed', payload);
         loadMessages();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, (payload) => {
+        console.log('[ThreadView] user_presence changed', payload);
+        loadFriendProfile();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, (payload) => {
+        console.log('[ThreadView] friendships changed', payload);
+        // Friendship status hook will auto-refresh
       })
       .subscribe();
 
@@ -110,25 +119,30 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const sendMessage = async () => {
     if (!messageText.trim()) return;
     
+    const textToSend = messageText.trim();
+    setMessageText(''); // Azonnal töröljük a mezőt
+    
     const tempMsg = {
       id: `temp-${Date.now()}`,
       sender_id: userId,
-      body: messageText,
+      body: textToSend,
       created_at: new Date().toISOString()
     };
     
     setMessages(prev => [...prev, tempMsg]);
-    setMessageText('');
     scrollToBottom();
 
     try {
       const { error } = await supabase.functions.invoke('send-dm', {
-        body: { recipientId: friendId, body: messageText }
+        body: { recipientId: friendId, body: textToSend }
       });
       if (error) throw error;
-      loadMessages();
+      // A realtime sub automatikusan frissít
     } catch (error) {
       console.error('Error sending message:', error);
+      // Hiba esetén visszarakjuk az üzenetet
+      setMessages(prev => prev.filter(m => m.id !== tempMsg.id));
+      setMessageText(textToSend);
     }
   };
 

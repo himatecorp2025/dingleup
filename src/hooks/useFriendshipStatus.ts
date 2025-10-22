@@ -15,17 +15,15 @@ export const useFriendshipStatus = (userId: string | undefined, targetUserId: st
 
     loadStatus();
 
-    // Realtime subscription
-    const [userA, userB] = (userId < targetUserId) ? [userId, targetUserId] : [targetUserId, userId];
-    
+    // Realtime subscription (bármely friendship változás)
     const channel = supabase
-      .channel(`friendship-${targetUserId}`)
+      .channel(`friendship-status-${targetUserId}`)
       .on('postgres_changes', { 
         event: '*', 
         schema: 'public', 
-        table: 'friendships',
-        filter: `user_id_a=eq.${userA}`
-      }, () => {
+        table: 'friendships'
+      }, (payload) => {
+        console.log('[useFriendshipStatus] friendships changed', payload);
         loadStatus();
       })
       .subscribe();

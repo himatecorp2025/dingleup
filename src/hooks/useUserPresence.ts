@@ -1,37 +1,54 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export const useUserPresence = (userId: string | undefined) => {
+  const [isOnline, setIsOnline] = useState(false);
+
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      setIsOnline(false);
+      return;
+    }
 
-    // Set user as online
-    const setOnline = async () => {
-      await supabase.from('user_presence').upsert({
-        user_id: userId,
-        is_online: true,
-        last_seen: new Date().toISOString(),
-      });
-    };
+    // Initial load
+    loadPresence();
 
-    // Update presence every 10 seconds for real-time status
-    setOnline();
-    const interval = setInterval(setOnline, 10000);
-
-    // Set offline on unmount or page close
-    const setOffline = async () => {
-      await supabase.from('user_presence').update({
-        is_online: false,
-        last_seen: new Date().toISOString(),
-      }).eq('user_id', userId);
-    };
-
-    window.addEventListener('beforeunload', setOffline);
+    // Realtime subscription
+    const channel = supabase
+      .channel(`presence-${userId}`)
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'user_presence',
+        filter: `user_id=eq.${userId}`
+      }, (payload) => {
+        console.log('[useUserPresence] presence changed', payload);
+        loadPresence();
+      })
+      .subscribe();
 
     return () => {
-      clearInterval(interval);
-      setOffline();
-      window.removeEventListener('beforeunload', setOffline);
+      supabase.removeChannel(channel);
     };
   }, [userId]);
+
+  const loadPresence = async () => {
+    if (!userId) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_presence')
+        .select('is_online, last_seen')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (error) throw error;
+      setIsOnline(data?.is_online || false);
+    } catch (error) {
+      console.error('Error loading presence:', error);
+      setIsOnline(false);
+    }
+  };
+
+  return { isOnline, refresh: loadPresence };
 };
