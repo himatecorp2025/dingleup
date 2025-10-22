@@ -1018,23 +1018,6 @@ export type Database = {
       }
     }
     Views: {
-      friend_requests: {
-        Row: {
-          created_at: string | null
-          id: string | null
-          receiver_avatar: string | null
-          receiver_id: string | null
-          receiver_name: string | null
-          requested_by: string | null
-          requester_avatar: string | null
-          requester_name: string | null
-          status: string | null
-          updated_at: string | null
-          user_id_a: string | null
-          user_id_b: string | null
-        }
-        Relationships: []
-      }
       public_profiles: {
         Row: {
           avatar_url: string | null
