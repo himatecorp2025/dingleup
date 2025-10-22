@@ -24,15 +24,13 @@ serve(async (req) => {
   }
 
   try {
-    // Security: Verify this is a legitimate cron request
-    const userAgent = req.headers.get('user-agent') || '';
-    const isCronRequest = userAgent.includes('Deno') || userAgent.includes('Supabase');
-    
-    if (!isCronRequest) {
+    // Security: Verify this is a legitimate cron request using secret
+    const cronSecret = req.headers.get('x-supabase-cron-secret');
+    if (cronSecret !== Deno.env.get('SUPABASE_CRON_SECRET')) {
       console.warn('[SECURITY] Unauthorized access attempt to cron endpoint');
       return new Response(
-        JSON.stringify({ error: 'This endpoint is for scheduled tasks only' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+        JSON.stringify({ error: 'Unauthorized' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
       );
     }
 
