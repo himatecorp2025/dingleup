@@ -75,8 +75,9 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
         setCanClaim(false);
         setWeeklyEntryCount(result.streak);
-        setNextReward(DAILY_GIFT_REWARDS[result.streak % 7]);
-        
+        const nextBase = DAILY_GIFT_REWARDS[result.streak % 7];
+        const genius = (result.is_genius ?? isPremium) === true;
+        setNextReward(genius ? nextBase * 2 : nextBase);
         // Mark as seen today
         const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
         localStorage.setItem(todayKey, 'true');

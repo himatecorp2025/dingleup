@@ -31,6 +31,10 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 50;
   const { status: friendshipStatus, sendRequest } = useFriendshipStatus(userId, friendId);
 
   useEffect(() => {
@@ -71,6 +75,37 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     }
   }, [messageText]);
 
+  // Infinite scroll: load older messages when scrolled to top
+  useEffect(() => {
+    const el = messagesContainerRef.current;
+    if (!el) return;
+
+    const onScroll = async () => {
+      if (el.scrollTop <= 50 && hasMore && !isLoadingMore && messages.length > 0) {
+        try {
+          setIsLoadingMore(true);
+          const oldest = messages[0]?.created_at;
+          const prevHeight = el.scrollHeight;
+          const older = await fetchMessages({ before: oldest, limit: PAGE_SIZE });
+          if (older.length < PAGE_SIZE) setHasMore(false);
+          setMessages(prev => [...older, ...prev]);
+          requestAnimationFrame(() => {
+            const newHeight = el.scrollHeight;
+            el.scrollTop = newHeight - prevHeight;
+          });
+        } catch (e) {
+          console.error('Error loading older messages:', e);
+          setHasMore(false);
+        } finally {
+          setIsLoadingMore(false);
+        }
+      }
+    };
+
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [messages, hasMore, isLoadingMore, friendId]);
+
   const loadFriendProfile = async () => {
     try {
       // SECURITY: Use public_profiles view
@@ -98,15 +133,23 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     }
   };
 
+  const fetchMessages = async ({ before, limit }: { before?: string; limit?: number }) => {
+    const params = new URLSearchParams({ otherUserId: friendId });
+    if (before) params.set('before', before);
+    if (limit) params.set('limit', String(limit));
+    const { data, error } = await supabase.functions.invoke(
+      `get-thread-messages?${params.toString()}`
+    );
+    if (error) throw error;
+    return (data?.messages as Message[]) || [];
+  };
+
   const loadMessages = async () => {
     try {
       setIsLoading(true);
-      const params = new URLSearchParams({ otherUserId: friendId });
-      const { data, error } = await supabase.functions.invoke(
-        `get-thread-messages?${params.toString()}`
-      );
-      if (error) throw error;
-      setMessages(data?.messages || []);
+      const msgs = await fetchMessages({ limit: PAGE_SIZE });
+      setMessages(msgs || []);
+      setHasMore((msgs?.length || 0) === PAGE_SIZE);
     } catch (error) {
       console.error('Error loading messages:', error);
     } finally {
@@ -265,7 +308,10 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
       </div>
 
       {/* Messages - Scrollable */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
+        {isLoadingMore && (
+          <div className="text-center py-2 text-white/50 text-sm">Régebbi üzenetek betöltése...</div>
+        )}
         {isLoading ? (
           <div className="text-center py-12">
             <p className="text-white/60">Üzenetek betöltése...</p>
