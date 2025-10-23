@@ -146,6 +146,14 @@ Deno.serve(async (req) => {
         ], {
           onConflict: 'thread_id,user_id'
         });
+
+      // Update thread permissions: both users can now send messages
+      await supabaseClient
+        .from('thread_participants')
+        .upsert([
+          { thread_id: threadId, user_id: user.id, can_send: true },
+          { thread_id: threadId, user_id: requesterUserId, can_send: true }
+        ], { onConflict: 'thread_id,user_id' });
     }
 
     console.log(`Friend request accepted: ${requesterUserId} -> ${user.id}`);

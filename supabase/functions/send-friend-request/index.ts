@@ -134,6 +134,7 @@ Deno.serve(async (req) => {
         user_id_b: userB,
         status: 'pending',
         requested_by: user.id,
+        source: 'invite'
       }, {
         onConflict: 'user_id_a,user_id_b'
       });
@@ -144,6 +145,43 @@ Deno.serve(async (req) => {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    }
+
+    // Create or get thread for this friendship
+    const { data: existingThread } = await supabaseClient
+      .from('dm_threads')
+      .select('id')
+      .eq('user_id_a', userA)
+      .eq('user_id_b', userB)
+      .single();
+
+    let threadId = existingThread?.id;
+
+    if (!threadId) {
+      const { data: newThread, error: threadError } = await supabaseClient
+        .from('dm_threads')
+        .insert({
+          user_id_a: userA,
+          user_id_b: userB
+        })
+        .select('id')
+        .single();
+
+      if (threadError) {
+        console.error('Error creating thread:', threadError);
+      } else {
+        threadId = newThread.id;
+      }
+    }
+
+    // Set thread permissions: requester can send, target cannot until accepted
+    if (threadId) {
+      await supabaseClient
+        .from('thread_participants')
+        .upsert([
+          { thread_id: threadId, user_id: user.id, can_send: true },
+          { thread_id: threadId, user_id: targetUserId, can_send: false }
+        ], { onConflict: 'thread_id,user_id' });
     }
 
     // Update rate limit
@@ -161,7 +199,8 @@ Deno.serve(async (req) => {
 
     return new Response(JSON.stringify({ 
       success: true, 
-      status: 'pending' 
+      status: 'pending',
+      threadId 
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -24,6 +24,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminTipsVideos from "./pages/AdminTipsVideos";
 import GeniusMembers from "./pages/GeniusMembers";
 import ChatEnhanced from "./pages/ChatEnhanced";
+import Chat from "./pages/Chat";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 

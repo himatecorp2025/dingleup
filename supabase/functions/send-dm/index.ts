@@ -110,18 +110,29 @@ Deno.serve(async (req) => {
 
     console.log('[SendDM] Sending message from', user.id, 'to', recipientId);
 
-    // Check if friendship exists and is active
+    // Check if friendship exists and status allows messaging
     const normalizedIds = [user.id, recipientId].sort();
     const { data: friendship, error: friendshipError } = await supabase
       .from('friendships')
-      .select('status')
+      .select('status, requested_by')
       .eq('user_id_a', normalizedIds[0])
       .eq('user_id_b', normalizedIds[1])
       .single();
 
-    if (friendshipError || !friendship || friendship.status !== 'active') {
+    if (friendshipError || !friendship) {
       return new Response(
         JSON.stringify({ error: 'Nem küldhetsz üzenetet ennek a felhasználónak' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check if allowed: active OR (pending AND current user is requester)
+    const isAllowed = friendship.status === 'active' || 
+                     (friendship.status === 'pending' && friendship.requested_by === user.id);
+    
+    if (!isAllowed) {
+      return new Response(
+        JSON.stringify({ error: 'Még nem küldhetsz üzenetet - várd meg a visszaigazolást' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -156,6 +167,21 @@ Deno.serve(async (req) => {
     } else if (threadError) {
       console.error('[SendDM] Error fetching thread:', threadError);
       throw threadError;
+    }
+
+    // Check thread permissions
+    const { data: permission } = await supabase
+      .from('thread_participants')
+      .select('can_send')
+      .eq('thread_id', threadId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (permission && !permission.can_send) {
+      return new Response(
+        JSON.stringify({ error: 'Még nem küldhetsz üzenetet ebben a beszélgetésben' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Insert message with sanitized content

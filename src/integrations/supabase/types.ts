@@ -164,6 +164,7 @@ export type Database = {
           created_at: string
           id: string
           requested_by: string | null
+          source: string | null
           status: string
           updated_at: string
           user_id_a: string
@@ -173,6 +174,7 @@ export type Database = {
           created_at?: string
           id?: string
           requested_by?: string | null
+          source?: string | null
           status?: string
           updated_at?: string
           user_id_a: string
@@ -182,6 +184,7 @@ export type Database = {
           created_at?: string
           id?: string
           requested_by?: string | null
+          source?: string | null
           status?: string
           updated_at?: string
           user_id_a?: string
@@ -842,6 +845,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      thread_participants: {
+        Row: {
+          can_send: boolean
+          created_at: string
+          thread_id: string
+          user_id: string
+        }
+        Insert: {
+          can_send?: boolean
+          created_at?: string
+          thread_id: string
+          user_id: string
+        }
+        Update: {
+          can_send?: boolean
+          created_at?: string
+          thread_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thread_participants_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "dm_threads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tips_tricks_videos: {
         Row: {

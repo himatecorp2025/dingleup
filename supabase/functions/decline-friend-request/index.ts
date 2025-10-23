@@ -109,6 +109,23 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Update thread permissions: neither can send after decline
+    const { data: thread } = await supabaseClient
+      .from('dm_threads')
+      .select('id')
+      .eq('user_id_a', userA)
+      .eq('user_id_b', userB)
+      .single();
+
+    if (thread) {
+      await supabaseClient
+        .from('thread_participants')
+        .upsert([
+          { thread_id: thread.id, user_id: user.id, can_send: false },
+          { thread_id: thread.id, user_id: requesterUserId, can_send: false }
+        ], { onConflict: 'thread_id,user_id' });
+    }
+
     console.log(`Friend request declined: ${requesterUserId} -> ${user.id}`);
 
     return new Response(JSON.stringify({ success: true }), {
