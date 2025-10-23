@@ -39,13 +39,81 @@ const AdminDashboard = () => {
     checkAuth();
   }, []);
 
-  // Auto-refresh every 10 seconds for immediate updates
+  // Auto-refresh every 30 seconds + realtime subscriptions for immediate updates
   useEffect(() => {
     const interval = setInterval(() => {
       fetchData();
-    }, 10000);
+    }, 30000);
+    
+    // Realtime subscriptions for instant updates
+    const invitationsChannel = supabase
+      .channel('admin-invitations')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'invitations'
+      }, () => {
+        console.log('[Admin] Invitations changed, refreshing...');
+        fetchData();
+      })
+      .subscribe();
+    
+    const reportsChannel = supabase
+      .channel('admin-reports')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'reports'
+      }, () => {
+        console.log('[Admin] Reports changed, refreshing...');
+        fetchData();
+      })
+      .subscribe();
+    
+    const friendshipsChannel = supabase
+      .channel('admin-friendships')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'friendships'
+      }, () => {
+        console.log('[Admin] Friendships changed, refreshing...');
+        fetchData();
+      })
+      .subscribe();
 
-    return () => clearInterval(interval);
+    const purchasesChannel = supabase
+      .channel('admin-purchases')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'purchases'
+      }, () => {
+        console.log('[Admin] Purchases changed, refreshing...');
+        fetchData();
+      })
+      .subscribe();
+
+    const profilesChannel = supabase
+      .channel('admin-profiles')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'profiles'
+      }, () => {
+        console.log('[Admin] Profiles changed, refreshing...');
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(invitationsChannel);
+      supabase.removeChannel(reportsChannel);
+      supabase.removeChannel(friendshipsChannel);
+      supabase.removeChannel(purchasesChannel);
+      supabase.removeChannel(profilesChannel);
+    };
   }, []);
 
   useEffect(() => {
