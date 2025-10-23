@@ -160,11 +160,8 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
             continue;
           }
 
-          const { data: { publicUrl } } = supabase.storage
-            .from('report-screenshots')
-            .getPublicUrl(fileName);
-          
-          screenshotUrls.push(publicUrl);
+          // Store only the path, not the full URL
+          screenshotUrls.push(fileName);
         }
       }
 

@@ -841,21 +841,30 @@ const AdminDashboard = () => {
                     {/* Screenshots Section */}
                     {report.screenshot_urls && report.screenshot_urls.length > 0 && (
                       <div className="mt-3">
-                        <strong className="text-white text-sm block mb-2">Csatolt képek:</strong>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <strong className="text-white text-sm block mb-2">Csatolt képek ({report.screenshot_urls.length}):</strong>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                           {report.screenshot_urls.map((url: string, idx: number) => (
                             <a 
                               key={idx} 
                               href={url} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="block"
+                              className="group relative block overflow-hidden rounded-lg border-2 border-purple-500/30 hover:border-yellow-500 transition-all"
                             >
                               <img 
                                 src={url} 
-                                alt={`Screenshot ${idx + 1}`}
-                                className="w-full h-32 object-cover rounded border border-purple-500/30 hover:border-purple-500 transition-all cursor-pointer"
+                                alt={`Képernyőkép ${idx + 1}`}
+                                className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-300"
+                                onError={(e) => {
+                                  console.error('Image load error:', url);
+                                  e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23333" width="100" height="100"/%3E%3Ctext x="50" y="50" text-anchor="middle" fill="%23999"%3EHiba%3C/text%3E%3C/svg%3E';
+                                }}
                               />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                <span className="opacity-0 group-hover:opacity-100 text-white text-xs bg-black/70 px-2 py-1 rounded">
+                                  Megnyitás
+                                </span>
+                              </div>
                             </a>
                           ))}
                         </div>

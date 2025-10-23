@@ -117,11 +117,45 @@ Deno.serve(async (req) => {
       .in('id', reportUserIds);
 
     const reportProfileMap = new Map(reportProfiles?.map(p => [p.id, p]) || []);
-    const reportsWithProfiles = reports?.map(r => ({
-      ...r,
-      reporter: reportProfileMap.get(r.reporter_id),
-      reported_user: r.reported_user_id ? reportProfileMap.get(r.reported_user_id) : null
-    })) || [];
+    
+    // Generate signed URLs for report screenshots
+    const reportsWithProfiles = await Promise.all(reports?.map(async (r) => {
+      let signedScreenshotUrls: string[] = [];
+      
+      if (r.screenshot_urls && Array.isArray(r.screenshot_urls) && r.screenshot_urls.length > 0) {
+        signedScreenshotUrls = await Promise.all(
+          r.screenshot_urls.map(async (url: string) => {
+            try {
+              // Extract path from URL or use as-is if it's already a path
+              const path = url.includes('report-screenshots/') 
+                ? url.split('report-screenshots/')[1].split('?')[0]
+                : url;
+              
+              const { data: signedData, error: signedError } = await serviceClient.storage
+                .from('report-screenshots')
+                .createSignedUrl(path, 3600); // 1 hour expiry
+              
+              if (signedError) {
+                console.error('[AdminAllData] Signed URL error:', signedError, 'for path:', path);
+                return url; // fallback to original URL
+              }
+              
+              return signedData.signedUrl;
+            } catch (err) {
+              console.error('[AdminAllData] Screenshot URL processing error:', err);
+              return url;
+            }
+          })
+        );
+      }
+      
+      return {
+        ...r,
+        reporter: reportProfileMap.get(r.reporter_id),
+        reported_user: r.reported_user_id ? reportProfileMap.get(r.reported_user_id) : null,
+        screenshot_urls: signedScreenshotUrls
+      };
+    }) || []);
 
     // Fetch ALL invitations
     const { data: invitations, error: invitationsError } = await serviceClient
