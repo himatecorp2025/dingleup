@@ -1213,6 +1213,18 @@ export type Database = {
       regenerate_lives: { Args: never; Returns: undefined }
       regenerate_lives_background: { Args: never; Returns: undefined }
       reset_game_helps: { Args: never; Returns: undefined }
+      search_users_by_name: {
+        Args: {
+          current_user_id: string
+          result_limit?: number
+          search_query: string
+        }
+        Returns: {
+          avatar_url: string
+          id: string
+          username: string
+        }[]
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       spend_coins: { Args: { amount: number }; Returns: boolean }

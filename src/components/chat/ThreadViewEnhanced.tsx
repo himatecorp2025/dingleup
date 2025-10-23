@@ -41,6 +41,8 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const { handleTyping } = useTypingStatus(friendId, userId);
   const { isOnline } = useUserPresence(friendId);
@@ -189,15 +191,49 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     }
   };
 
-  const handleImageSelect = (file: File, preview: string) => {
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Validate
+    if (!file.type.startsWith('image/')) {
+      toast.error('Csak képfájlok engedélyezettek');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Kép maximum 10 MB lehet');
+      return;
+    }
+    
+    const preview = URL.createObjectURL(file);
     addAttachment(file, 'image', preview);
     setShowAttachmentMenu(false);
+    
+    // Reset input
+    if (imageInputRef.current) imageInputRef.current.value = '';
   };
 
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Validate
+    const allowedTypes = ['application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument', 'text/plain'];
+    if (!allowedTypes.some(type => file.type.includes(type))) {
+      toast.error('Nem engedélyezett fájltípus');
+      return;
+    }
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error('Fájl maximum 25 MB lehet');
+      return;
+    }
+    
     const preview = URL.createObjectURL(file);
     addAttachment(file, 'file', preview);
     setShowAttachmentMenu(false);
+    
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleEmojiSelect = (emoji: string) => {
@@ -412,11 +448,27 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       
       {showAttachmentMenu && (
         <AttachmentMenu
-          onImageSelect={() => {}}
-          onFileSelect={() => {}}
+          onImageSelect={() => imageInputRef.current?.click()}
+          onFileSelect={() => fileInputRef.current?.click()}
           onClose={() => setShowAttachmentMenu(false)}
         />
       )}
+      
+      {/* Hidden file inputs */}
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        onChange={handleImageSelect}
+        className="hidden"
+      />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/pdf,application/zip,application/vnd.openxmlformats-officedocument.*,text/plain"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
     </div>
   );
 };

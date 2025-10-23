@@ -61,28 +61,42 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
 
   useEffect(() => {
     if (searchQuery.length >= 2) {
+      // Abort previous request
+      const controller = new AbortController();
+      
       const timer = setTimeout(() => {
-        searchUsers();
-      }, 200); // 200ms debounce for instant feel
-      return () => clearTimeout(timer);
+        searchUsers(controller.signal);
+      }, 200); // 200ms debounce
+      
+      return () => {
+        clearTimeout(timer);
+        controller.abort();
+      };
     } else {
       setSearchResults([]);
     }
   }, [searchQuery]);
 
-  const searchUsers = async () => {
+  const searchUsers = async (signal?: AbortSignal) => {
     setIsSearching(true);
     try {
       const { data, error } = await supabase.functions.invoke(
-        `search-users?query=${encodeURIComponent(searchQuery)}`
+        `search-users?query=${encodeURIComponent(searchQuery)}`,
+        { headers: { 'Cache-Control': 'no-store, no-cache', 'Pragma': 'no-cache' } }
       );
       if (error) throw error;
-      setSearchResults(data?.results || []);
-    } catch (error) {
-      console.error('Search error:', error);
-      toast.error('Keresési hiba');
+      if (!signal?.aborted) {
+        setSearchResults(data?.results || []);
+      }
+    } catch (error: any) {
+      if (!signal?.aborted && error.name !== 'AbortError') {
+        console.error('Search error:', error);
+        toast.error('Keresési hiba');
+      }
     } finally {
-      setIsSearching(false);
+      if (!signal?.aborted) {
+        setIsSearching(false);
+      }
     }
   };
 

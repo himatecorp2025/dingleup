@@ -55,9 +55,9 @@ Deno.serve(async (req) => {
     if (searchError) throw searchError;
 
     // Get friendship status for each user
-    const userIds = users?.map(u => u.id) || [];
+    const userIds = users?.map((u: any) => u.id) || [];
     const friendshipChecks = await Promise.all(
-      userIds.map(async (targetId) => {
+      userIds.map(async (targetId: string) => {
         const [userA, userB] = user.id < targetId ? [user.id, targetId] : [targetId, user.id];
         
         const { data: friendship } = await supabaseClient
@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
       })
     );
 
-    const results = users?.map((u, idx) => ({
+    const results = users?.map((u: any, idx: number) => ({
       ...u,
       friendship_status: friendshipChecks[idx].status
     })) || [];
