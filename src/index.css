@@ -5,11 +5,19 @@
 /* Mobile & touch optimizations */
 html, body {
   height: 100%;
+  width: 100%;
+  max-width: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden !important;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 /* Safe area support for notched devices */
@@ -575,9 +583,20 @@ body {
 }
 
 /* Chat - Messenger-style UI utilities */
+.chat-thread-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+}
+
 .chat-thread {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
 .chat-thread::-webkit-scrollbar {
@@ -587,6 +606,25 @@ body {
 .chat-thread {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Chat composer - ALWAYS FIXED */
+.chat-composer {
+  position: fixed !important;
+  bottom: var(--bottom-nav-h, 72px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  z-index: 10010;
+}
+
+.chat-composer * {
+  box-sizing: border-box;
 }
 
 /* Typing indicator animation */

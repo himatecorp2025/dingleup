@@ -313,9 +313,9 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#0F1116] chat-thread-container">
+    <div className="h-full w-full flex flex-col bg-[#0F1116] chat-thread-container overflow-x-hidden">
       {/* Header - Messenger style */}
-      <header className="chat-header flex-none flex items-center gap-3 px-4 py-3 bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-[#D4AF37]/20">
+      <header className="chat-header flex-none flex items-center gap-3 px-4 py-3 bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-[#D4AF37]/20 w-full">
         <button
           onClick={onBack}
           className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 flex-shrink-0"
@@ -363,10 +363,11 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
       {/* Messages - Scrollable area with proper padding for fixed composer */}
       <main 
         ref={messagesContainerRef} 
-        className="chat-thread flex-1 overflow-y-auto px-4 py-4"
+        className="chat-thread flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 w-full"
         style={{
           paddingBottom: 'calc(72px + var(--bottom-nav-h, 72px) + env(safe-area-inset-bottom))',
-          height: '100dvh'
+          height: '100dvh',
+          maxWidth: '100%'
         }}
       >
         {isLoadingMore && (
@@ -404,15 +405,17 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         <div ref={messagesEndRef} />
       </main>
 
-      {/* Composer - Fixed above bottom nav, Messenger style */}
+      {/* Composer - Fixed above bottom nav, Messenger style - ALWAYS VISIBLE */}
       <div 
-        className="chat-composer fixed left-0 right-0 bg-[#0F1116]/98 backdrop-blur-sm border-t border-[#D4AF37]/20 px-3 py-2 z-[10010]"
+        className="chat-composer fixed left-0 right-0 w-full bg-[#0F1116]/98 backdrop-blur-sm border-t border-[#D4AF37]/20 px-3 py-2 z-[10010]"
         style={{
-          bottom: 'calc(var(--bottom-nav-h, 72px))',
-          paddingBottom: 'calc(8px + env(safe-area-inset-bottom))'
+          bottom: 'var(--bottom-nav-h, 72px)',
+          paddingBottom: 'calc(8px + env(safe-area-inset-bottom))',
+          maxWidth: '100vw',
+          boxSizing: 'border-box'
         }}
       >
-        <div className="flex items-end gap-2 max-w-4xl mx-auto">
+        <div className="flex items-end gap-2 max-w-4xl mx-auto w-full" style={{ maxWidth: '100%' }}>
           {threadId && (
             <ImageUploader
               threadId={threadId}
