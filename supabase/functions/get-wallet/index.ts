@@ -42,7 +42,7 @@ serve(async (req) => {
     // Get current balances with subscriber status and booster info
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate, is_subscriber, speed_booster_active, speed_booster_multiplier')
+      .select('coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate, is_subscribed, is_subscriber, speed_booster_active, speed_booster_multiplier')
       .eq('id', user.id)
       .single();
 
@@ -54,9 +54,11 @@ serve(async (req) => {
     // Determine effective max lives and regen rate based on subscription and booster
     let effectiveMaxLives = 15; // Default for non-subscribers
     let effectiveRegenMinutes = 12; // Default for non-subscribers
+
+    const isSubscriberEffective = Boolean(profile.is_subscribed || profile.is_subscriber);
     
     // Genius subscription gives base bonuses
-    if (profile.is_subscriber) {
+    if (isSubscriberEffective) {
       effectiveMaxLives = 30;
       effectiveRegenMinutes = 6;
     }
@@ -64,10 +66,11 @@ serve(async (req) => {
     // Active speed booster overrides (adds to base max_lives)
     if (profile.speed_booster_active && profile.speed_booster_multiplier) {
       const multiplier = profile.speed_booster_multiplier;
-      effectiveRegenMinutes = Math.floor(12 / multiplier);
+      // Avoid 0 minutes, align with background job logic (min 0.5 min)
+      effectiveRegenMinutes = Math.max(0.5, 12 / multiplier);
       
       // Booster adds extra lives on top of base
-      const baseMax = profile.is_subscriber ? 30 : 15;
+      const baseMax = isSubscriberEffective ? 30 : 15;
       switch (multiplier) {
         case 2:
           effectiveMaxLives = baseMax + 10;
@@ -96,7 +99,7 @@ serve(async (req) => {
 
     // Get subscription renewal date if subscriber
     let subscriberRenewAt = null;
-    if (profile.is_subscriber) {
+    if (isSubscriberEffective) {
       const { data: subscription } = await supabase
         .from('subscriptions')
         .select('current_period_end')
@@ -124,7 +127,7 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        isSubscriber: profile.is_subscriber || false,
+        isSubscriber: isSubscriberEffective,
         livesCurrent: profile.lives,
         livesMax: effectiveMaxLives,
         coinsCurrent: profile.coins,
