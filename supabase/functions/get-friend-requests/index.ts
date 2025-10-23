@@ -78,6 +78,16 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Map received requests to include requester_id
+    const mappedReceivedRequests = (receivedRequests || []).map((req: any) => ({
+      id: req.id,
+      requester_id: req.requested_by,
+      requester: req.requester,
+      status: req.status,
+      created_at: req.created_at,
+      updated_at: req.updated_at
+    }));
+
     // Get requests sent by user
     let sentQuery = supabaseClient
       .from('friendships')
@@ -126,7 +136,7 @@ Deno.serve(async (req) => {
     );
 
     return new Response(JSON.stringify({ 
-      received: receivedRequests || [],
+      received: mappedReceivedRequests || [],
       sent: sentRequestsWithProfiles || []
     }), {
       status: 200,

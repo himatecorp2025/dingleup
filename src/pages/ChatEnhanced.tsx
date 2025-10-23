@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertTriangle, UserPlus } from 'lucide-react';
@@ -33,6 +33,7 @@ const ChatEnhanced = () => {
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
+  const prevPendingCountRef = useRef(0);
 
   useEffect(() => {
     if (!userId) return;
@@ -95,7 +96,17 @@ const ChatEnhanced = () => {
     try {
       const { data, error } = await supabase.functions.invoke('get-friend-requests');
       if (error) throw error;
-      setPendingRequestsCount(data?.received?.length || 0);
+      const newCount = data?.received?.length || 0;
+      
+      // Show notification if count increased
+      if (newCount > prevPendingCountRef.current && prevPendingCountRef.current > 0) {
+        toast.success('🎉 Új ismerős jelölés érkezett!', {
+          duration: 4000,
+        });
+      }
+      
+      prevPendingCountRef.current = newCount;
+      setPendingRequestsCount(newCount);
     } catch (error) {
       console.error('Error loading pending requests count:', error);
     }

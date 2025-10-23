@@ -156,11 +156,12 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
   const declineRequest = async (requesterId: string) => {
     try {
       const { error } = await supabase.functions.invoke('decline-friend-request', {
-        body: { requesterUserId: requesterId }
+        body: { userId: requesterId }
       });
       if (error) throw error;
       
       setPendingRequests(prev => prev.filter(r => r.requester_id !== requesterId));
+      loadPendingRequests(); // Reload to refresh the list
       toast.success('Jelölés elutasítva');
     } catch (error) {
       console.error('Decline error:', error);
