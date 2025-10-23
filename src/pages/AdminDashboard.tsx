@@ -39,11 +39,11 @@ const AdminDashboard = () => {
     checkAuth();
   }, []);
 
-  // Auto-refresh every 30 seconds + realtime subscriptions for immediate updates
+  // Auto-refresh every 5 seconds + realtime subscriptions for immediate updates
   useEffect(() => {
     const interval = setInterval(() => {
       fetchData();
-    }, 30000);
+    }, 5000);
     
     // Realtime subscriptions for instant updates
     const invitationsChannel = supabase
@@ -193,13 +193,13 @@ const AdminDashboard = () => {
         setReports(reportsData);
       }
 
-      // Fetch all invitations
+      // Fetch all invitations with BOTH inviter and invited user profiles
       const { data: invitationsData, error: invitationsError } = await supabase
         .from('invitations')
         .select(`
           *,
-          inviter:profiles!invitations_inviter_id_fkey(username, email),
-          invited:profiles!invitations_invited_user_id_fkey(username, email)
+          inviter:profiles!invitations_inviter_id_fkey(id, username, email, avatar_url),
+          invited:profiles!invitations_invited_user_id_fkey(id, username, email, avatar_url)
         `)
         .order('created_at', { ascending: false });
 
@@ -657,26 +657,31 @@ const AdminDashboard = () => {
 
         {activeTab === 'invitations' && (
           <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-            <div className="flex items-center justify-between mb-4 lg:mb-6">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 mb-4 lg:mb-6">
               <h2 className="text-xl lg:text-2xl font-bold text-white">
                 Meghívások ({invitations.length})
               </h2>
-              <Button
-                onClick={async () => {
-                  try {
-                    toast.info('Barátságok létrehozása...');
-                    const { data, error } = await supabase.functions.invoke('backfill-friendships');
-                    if (error) throw error;
-                    toast.success(`Kész! ${data.successful} barátság létrehozva`);
-                    await fetchData();
-                  } catch (err: any) {
-                    toast.error('Hiba: ' + (err.message || 'Ismeretlen hiba'));
-                  }
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-xs lg:text-sm"
-              >
-                🔄 Barátságok szinkronizálása
-              </Button>
+              <div className="flex gap-2 items-center">
+                <span className="text-white/50 text-xs">
+                  {isRefreshing ? '🔄 Frissítés...' : '✓ Automatikus szinkronizálás aktív (5mp)'}
+                </span>
+                <Button
+                  onClick={async () => {
+                    try {
+                      toast.info('Manuális barátság-szinkronizálás indítása...');
+                      const { data, error } = await supabase.functions.invoke('backfill-friendships');
+                      if (error) throw error;
+                      toast.success(`Kész! ${data.successful} barátság létrehozva`);
+                      await fetchData();
+                    } catch (err: any) {
+                      toast.error('Hiba: ' + (err.message || 'Ismeretlen hiba'));
+                    }
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs lg:text-sm"
+                >
+                  🔄 Barátságok manuális szinkronizálása
+                </Button>
+              </div>
             </div>
             
             <div className="overflow-x-auto">
@@ -694,10 +699,14 @@ const AdminDashboard = () => {
                   {invitations.map((invitation: any) => (
                     <tr key={invitation.id} className="border-b border-white/5 hover:bg-white/5">
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
-                        {invitation.inviter?.username || 'Ismeretlen'} ({invitation.inviter?.email})
+                        {invitation.inviter?.username || 'N/A'} 
+                        <span className="text-white/50 ml-1">({invitation.inviter?.email || 'N/A'})</span>
                       </td>
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
-                        {invitation.invited?.username || 'Ismeretlen'} ({invitation.invited?.email})
+                        {invitation.invited?.username || 'Még nem regisztrált'} 
+                        <span className="text-white/50 ml-1">
+                          ({invitation.invited?.email || invitation.invited_email || 'N/A'})
+                        </span>
                       </td>
                       <td className="py-3 lg:py-4 px-2 lg:px-4">
                         <span className="inline-block px-2 py-1 bg-purple-600/30 text-purple-300 rounded-lg text-xs font-mono">
