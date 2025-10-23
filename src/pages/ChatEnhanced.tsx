@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertTriangle, UserPlus } from 'lucide-react';
 import { ReportDialog } from '@/components/ReportDialog';
-import { UserSearchDialog } from '@/components/UserSearchDialog';
+import { UserSearchDialog } from '@/components/chat/UserSearchDialog';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { toast } from 'sonner';
@@ -32,6 +32,7 @@ const ChatEnhanced = () => {
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
 
   useEffect(() => {
     if (!userId) return;
@@ -66,11 +67,16 @@ const ChatEnhanced = () => {
   useEffect(() => {
     if (!userId) return;
     loadThreads();
+    loadPendingRequestsCount();
+    
     const channel = supabase.channel('threads-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, () => loadThreads())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, () => loadThreads())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, () => loadThreads())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, () => loadThreads())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, () => {
+        loadThreads();
+        loadPendingRequestsCount();
+      })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [userId]);
@@ -85,15 +91,20 @@ const ChatEnhanced = () => {
     }
   };
 
+  const loadPendingRequestsCount = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-friend-requests');
+      if (error) throw error;
+      setPendingRequestsCount(data?.received?.length || 0);
+    } catch (error) {
+      console.error('Error loading pending requests count:', error);
+    }
+  };
+
   const handleSelectThread = (thread: Thread) => {
     setSelectedFriend({ userId: thread.other_user_id, username: thread.other_user_name });
   };
 
-  const handleUserSelect = async (selectedUserId: string, username: string) => {
-    if (!userId) return;
-    setSelectedFriend({ userId: selectedUserId, username });
-    setSearchDialogOpen(false);
-  };
 
   const handleDeleteThread = async (threadId: string) => {
     try {
@@ -120,10 +131,15 @@ const ChatEnhanced = () => {
             <button
               data-tutorial="search-friends"
               onClick={() => setSearchDialogOpen(true)}
-              className="p-2 bg-[#138F5E]/20 hover:bg-[#138F5E]/30 rounded-lg transition-all border border-[#138F5E]/50"
-              title="Új beszélgetés indítása"
+              className="relative p-2 bg-[#138F5E]/20 hover:bg-[#138F5E]/30 rounded-lg transition-all border border-[#138F5E]/50"
+              title="Új ismerős felvétele"
             >
               <UserPlus className="w-5 h-5 text-[#138F5E]" />
+              {pendingRequestsCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#D4AF37] rounded-full text-white text-xs flex items-center justify-center font-bold">
+                  {pendingRequestsCount}
+                </span>
+              )}
             </button>
             <button
               onClick={() => setReportDialogOpen(true)}
@@ -165,11 +181,12 @@ const ChatEnhanced = () => {
         reportedUserId={selectedFriend?.userId}
       />
 
-      <UserSearchDialog
-        open={searchDialogOpen}
-        onOpenChange={setSearchDialogOpen}
-        onUserSelect={handleUserSelect}
-      />
+      {searchDialogOpen && (
+        <UserSearchDialog
+          onClose={() => setSearchDialogOpen(false)}
+          userId={userId || ''}
+        />
+      )}
 
       <TutorialManager route="chat" />
     </div>

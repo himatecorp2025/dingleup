@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Info, Send, UserPlus } from 'lucide-react';
+import { ArrowLeft, Info, Send, UserPlus, Plus, Smile } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFriendshipStatus } from '@/hooks/useFriendshipStatus';
 import { toast } from 'sonner';
 import { useTypingStatus } from '@/hooks/useTypingStatus';
 import { MessageBubble } from './MessageBubble';
 import { ImageUploader } from './ImageUploader';
+import { FileUploader } from './FileUploader';
+import { EmojiPicker } from './EmojiPicker';
+import { AttachmentMenu } from './AttachmentMenu';
 
 interface Message {
   id: string;
@@ -43,6 +46,9 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const [partnerTyping, setPartnerTyping] = useState(false);
   const [threadId, setThreadId] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<{ file: File; preview: string } | null>(null);
+  const [selectedFile, setSelectedFile] = useState<{ file: File; preview: string } | null>(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const { status: friendshipStatus, sendRequest } = useFriendshipStatus(userId, friendId);
   const { handleTyping, stopTyping } = useTypingStatus(threadId, userId);
 
@@ -243,6 +249,48 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     }
   };
 
+  const handleFileUploadComplete = async (
+    url: string,
+    path: string,
+    fileName: string,
+    fileSize: number,
+    mimeType: string
+  ) => {
+    setSelectedFile(null);
+    
+    try {
+      // Send message with file
+      await sendMessage(url, path);
+    } catch (error) {
+      console.error('Error sending file:', error);
+      toast.error('Hiba a fájl küldésekor');
+    }
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = messageText;
+    const before = text.substring(0, start);
+    const after = text.substring(end);
+    
+    setMessageText(before + emoji + after);
+    
+    // Set cursor position after emoji
+    setTimeout(() => {
+      textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+      textarea.focus();
+    }, 0);
+    
+    setShowEmojiPicker(false);
+  };
+
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const getInitials = (name: string) => {
     return name?.charAt(0)?.toUpperCase() || '?';
   };
@@ -416,7 +464,17 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         }}
       >
         <div className="flex items-end gap-2 max-w-4xl mx-auto w-full" style={{ maxWidth: '100%' }}>
-          {threadId && (
+          {/* Attachment button (Plus icon) */}
+          <button
+            onClick={() => setShowAttachmentMenu(true)}
+            className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 flex-shrink-0 mb-1"
+            aria-label="Csatolmány"
+          >
+            <Plus className="w-5 h-5 text-[#D4AF37]" />
+          </button>
+
+          {/* Image/File preview (if selected) */}
+          {selectedImage && threadId && (
             <ImageUploader
               threadId={threadId}
               onImageSelected={(file, preview) => setSelectedImage({ file, preview })}
@@ -426,32 +484,46 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
             />
           )}
           
-          <div className="flex-1 bg-[#1a1a1a] rounded-[22px] border border-[#D4AF37]/20 px-4 py-2 flex items-center min-h-[44px]">
-            <textarea
-              ref={textareaRef}
-              placeholder="Írj üzenetet…"
-              value={messageText}
-              onChange={(e) => {
-                setMessageText(e.target.value);
-                handleTyping();
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
-                }
-              }}
-              onBlur={stopTyping}
-              className="flex-1 bg-transparent border-0 text-white placeholder:text-white/50 focus:outline-none resize-none max-h-[120px] text-[15px] leading-[1.4]"
-              rows={1}
-              maxLength={2000}
-              style={{ 
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
-              }}
+          {selectedFile && threadId && (
+            <FileUploader
+              threadId={threadId}
+              onFileSelected={(file, preview) => setSelectedFile({ file, preview })}
+              onUploadComplete={handleFileUploadComplete}
+              onCancel={() => setSelectedFile(null)}
+              selectedFile={selectedFile}
             />
-          </div>
+          )}
+          
+          {/* Text input */}
+          {!selectedImage && !selectedFile && (
+            <div className="flex-1 bg-[#1a1a1a] rounded-[22px] border border-[#D4AF37]/20 px-4 py-2 flex items-center min-h-[44px]">
+              <textarea
+                ref={textareaRef}
+                placeholder="Írj üzenetet…"
+                value={messageText}
+                onChange={(e) => {
+                  setMessageText(e.target.value);
+                  handleTyping();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
+                onBlur={stopTyping}
+                className="flex-1 bg-transparent border-0 text-white placeholder:text-white/50 focus:outline-none resize-none max-h-[120px] text-[15px] leading-[1.4]"
+                rows={1}
+                maxLength={2000}
+                style={{ 
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none'
+                }}
+              />
+            </div>
+          )}
 
+          {/* Send or Emoji button */}
           {messageText.trim() ? (
             <button
               onClick={() => sendMessage()}
@@ -462,16 +534,61 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
             </button>
           ) : (
             <button 
+              onClick={() => setShowEmojiPicker(true)}
               className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 flex-shrink-0 mb-1"
               aria-label="Emoji"
             >
-              <svg className="w-5 h-5 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <Smile className="w-5 h-5 text-[#D4AF37]" />
             </button>
           )}
         </div>
+        
+        {/* Hidden file inputs */}
+        <input
+          ref={imageInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setSelectedImage({ file, preview: reader.result as string });
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+          className="hidden"
+        />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.zip,.docx,.xlsx,.pptx,.txt"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              setSelectedFile({ file, preview: file.name });
+            }
+          }}
+          className="hidden"
+        />
       </div>
+
+      {/* Modals */}
+      {showEmojiPicker && (
+        <EmojiPicker
+          onSelect={handleEmojiSelect}
+          onClose={() => setShowEmojiPicker(false)}
+        />
+      )}
+
+      {showAttachmentMenu && (
+        <AttachmentMenu
+          onImageSelect={() => imageInputRef.current?.click()}
+          onFileSelect={() => fileInputRef.current?.click()}
+          onClose={() => setShowAttachmentMenu(false)}
+        />
+      )}
     </div>
   );
 };

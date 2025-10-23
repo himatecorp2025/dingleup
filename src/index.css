@@ -627,6 +627,16 @@ body {
   box-sizing: border-box;
 }
 
+/* Hide scrollbar in various contexts */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Typing indicator animation */
 .typing-dots::after {
   content: '';
