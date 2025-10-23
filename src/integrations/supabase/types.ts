@@ -1414,6 +1414,17 @@ export type Database = {
         Returns: Json
       }
       get_next_life_at: { Args: { p_user_id: string }; Returns: string }
+      get_user_threads_optimized: {
+        Args: { p_user_id: string }
+        Returns: {
+          is_online: boolean
+          last_message_at: string
+          other_user_avatar: string
+          other_user_id: string
+          other_user_name: string
+          thread_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
