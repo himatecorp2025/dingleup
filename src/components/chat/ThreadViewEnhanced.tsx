@@ -342,11 +342,9 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
     // Validation: need text or attachments
     if (!messageText.trim() && attachments.length === 0) return;
 
-    // If uploading, wait or auto-send after upload
-    if (hasUploading) {
-      toast.info('Feltöltés folyamatban...');
-      return;
-    }
+    // Don't block if attachments are queued - they will be uploaded during send
+    // Only block if actively uploading to prevent duplicate sends
+    if (sending) return;
 
     setSending(true);
     const clientMessageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -817,12 +815,12 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         {messageText.trim() || attachments.length > 0 ? (
           <button
             onClick={handleSendMessage}
-            disabled={sending || (hasUploading && attachments.length > 0)}
+            disabled={sending}
             className="send p-2 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all disabled:opacity-50"
             aria-label="Küldés"
             style={{ border: 0, cursor: 'pointer', fontWeight: 600 }}
           >
-            {sending || hasUploading ? (
+            {sending ? (
               <Loader2 className="w-5 h-5 text-white animate-spin" />
             ) : (
               <Send className="w-5 h-5 text-white" />
