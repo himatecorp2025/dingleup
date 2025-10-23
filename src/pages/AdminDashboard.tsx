@@ -152,6 +152,7 @@ const AdminDashboard = () => {
         .order('created_at', { ascending: false });
 
       if (!usersError && users) {
+        console.log('[Admin] Users loaded:', users.length);
         const ids = users.map(u => u.id);
         const { data: rolesData } = await supabase
           .from('user_roles')
@@ -161,6 +162,8 @@ const AdminDashboard = () => {
         const merged = users.map(u => ({ ...u, role: roleMap.get(u.id) || 'user' }));
         setAllUsers(merged);
         setTotalUsers(users.length);
+      } else {
+        console.error('[Admin] Users error:', usersError);
       }
 
       // Fetch all purchases
@@ -170,6 +173,7 @@ const AdminDashboard = () => {
         .order('created_at', { ascending: false });
 
       if (!purchasesError && purchasesData) {
+        console.log('[Admin] Purchases loaded:', purchasesData.length);
         setPurchases(purchasesData);
         
         // Calculate real revenue
@@ -177,6 +181,8 @@ const AdminDashboard = () => {
           .filter(p => p.status === 'completed' && p.amount_usd)
           .reduce((sum, p) => sum + Number(p.amount_usd), 0);
         setTotalRevenue(revenue.toFixed(2));
+      } else {
+        console.error('[Admin] Purchases error:', purchasesError);
       }
 
       // Fetch all reports
@@ -190,10 +196,14 @@ const AdminDashboard = () => {
         .order('created_at', { ascending: false });
 
       if (!reportsError && reportsData) {
+        console.log('[Admin] Reports loaded:', reportsData.length);
         setReports(reportsData);
+      } else {
+        console.error('[Admin] Reports error:', reportsError);
       }
 
-      // Fetch all invitations with BOTH inviter and invited user profiles
+      // Fetch ALL invitations with detailed logging
+      console.log('[Admin] Loading invitations...');
       const { data: invitationsData, error: invitationsError } = await supabase
         .from('invitations')
         .select(`
@@ -203,8 +213,19 @@ const AdminDashboard = () => {
         `)
         .order('created_at', { ascending: false });
 
+      console.log('[Admin] Invitations query result:', { 
+        data: invitationsData, 
+        error: invitationsError,
+        count: invitationsData?.length 
+      });
+
       if (!invitationsError && invitationsData) {
+        console.log('[Admin] Invitations loaded successfully:', invitationsData.length);
+        console.log('[Admin] First few invitations:', invitationsData.slice(0, 3));
         setInvitations(invitationsData);
+      } else {
+        console.error('[Admin] Invitations error:', invitationsError);
+        setInvitations([]);
       }
 
       // Fetch genius users count
@@ -214,13 +235,16 @@ const AdminDashboard = () => {
         .eq('is_subscribed', true);
 
       if (!geniusError && geniusCount !== null) {
+        console.log('[Admin] Genius users loaded:', geniusCount);
         setGeniusCount(geniusCount);
+      } else {
+        console.error('[Admin] Genius users error:', geniusError);
       }
 
       console.log('[Admin] Adatok frissítve ✓');
       setIsRefreshing(false);
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error('[Admin] Fetch error:', error);
       setIsRefreshing(false);
     }
   };
