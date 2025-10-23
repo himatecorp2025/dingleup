@@ -323,18 +323,21 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
 
   const handleAcceptRequest = async () => {
     try {
-      const { error } = await supabase.functions.invoke('accept-friend-request', {
+      const { data, error } = await supabase.functions.invoke('accept-friend-request', {
         body: { userId: friendId }
       });
       if (error) throw error;
-      
-      // Refresh all states immediately for instant UI update
-      await Promise.all([
-        loadMessages(),
-        refreshFriendship(),
-        refreshPermissions()
-      ]);
-      
+
+      // If backend returned the threadId, set it immediately to avoid race conditions
+      if (data?.threadId && !threadId) {
+        setThreadId(data.threadId as string);
+      }
+
+      // Prioritize enabling send permissions immediately, then refresh other data
+      await refreshPermissions();
+      refreshFriendship();
+      loadMessages();
+
       toast.success('✅ Jelölés elfogadva! Most már írhatsz neki.');
     } catch (e) {
       console.error(e);
