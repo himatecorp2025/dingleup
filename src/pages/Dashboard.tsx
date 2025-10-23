@@ -287,7 +287,7 @@ return (
                 <NextLifeTimer
                   nextLifeAt={walletData?.nextLifeAt || null}
                   livesCurrent={profile.lives}
-                  livesMax={profile.max_lives}
+                  livesMax={walletData?.livesMax || profile.max_lives}
                   serverDriftMs={serverDriftMs}
                   onExpired={() => {
                     refetchWallet();

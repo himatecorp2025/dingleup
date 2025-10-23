@@ -24,8 +24,10 @@ export const TipsVideosGrid = ({ isGenius, onSubscribeClick }: TipsVideosGridPro
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
   useEffect(() => {
-    fetchVideos();
-  }, []);
+    if (isGenius) {
+      fetchVideos();
+    }
+  }, [isGenius]);
 
   const fetchVideos = async () => {
     try {
@@ -63,6 +65,10 @@ export const TipsVideosGrid = ({ isGenius, onSubscribeClick }: TipsVideosGridPro
       (window as any).gtag('event', 'tips_open', { isGenius: true });
     }
   };
+
+  if (!isGenius) {
+    return null;
+  }
 
   if (loading) {
     return (

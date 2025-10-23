@@ -70,19 +70,8 @@ const ShopPage = () => {
           </div>
         </div>
 
-        {/* Wallet Balance Box */}
-        <div className="mb-4 bg-gradient-to-r from-purple-900/30 to-pink-900/30 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30">
-          <h3 className="text-xl font-bold text-yellow-400 mb-2">💰 Aranyérme egyenleg</h3>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Coins className="w-6 h-6 text-yellow-500" />
-              <span className="text-2xl font-bold text-white">{profile.coins}</span>
-            </div>
-          </div>
-        </div>
-
         {/* Tips & Tricks - Only for Genius subscribers */}
-        {walletData?.isSubscriber && (
+        {profile.is_subscribed && walletData?.isSubscriber && (
           <div className="mb-4">
             <TipsVideosGrid 
               isGenius={true} 
