@@ -70,8 +70,46 @@ Deno.serve(async (req) => {
     // Use service role to bypass RLS
     const serviceClient = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get or create thread between admin and reporter
-    const normalizedIds = [user.id, reporterId].sort();
+    // Create a system user for DingleUP! if not exists
+    let systemUserId: string;
+    const { data: systemUser } = await serviceClient
+      .from('profiles')
+      .select('id')
+      .eq('email', 'system@dingleup.com')
+      .single();
+
+    if (systemUser) {
+      systemUserId = systemUser.id;
+    } else {
+      // Create system user account
+      const { data: authUser, error: authError } = await serviceClient.auth.admin.createUser({
+        email: 'system@dingleup.com',
+        email_confirm: true,
+        user_metadata: {
+          username: 'DingleUP!',
+          avatar_url: '/dingleup-logo.png'
+        }
+      });
+
+      if (authError || !authUser.user) {
+        console.error('[AdminReportNotification] System user creation error:', authError);
+        throw new Error('Failed to create system user');
+      }
+
+      systemUserId = authUser.user.id;
+
+      // Update profile with logo
+      await serviceClient
+        .from('profiles')
+        .update({
+          username: 'DingleUP!',
+          avatar_url: '/dingleup-logo.png'
+        })
+        .eq('id', systemUserId);
+    }
+
+    // Get or create thread between DingleUP! and reporter
+    const normalizedIds = [systemUserId, reporterId].sort();
     let threadId: string;
 
     const { data: existingThread } = await serviceClient
@@ -125,12 +163,12 @@ Deno.serve(async (req) => {
       .replace(/<[^>]+>/g, '')
       .trim();
 
-    // Insert message from admin
+    // Insert message from DingleUP! system
     const { data: dmMessage, error: messageError } = await serviceClient
       .from('dm_messages')
       .insert({
         thread_id: threadId,
-        sender_id: user.id,
+        sender_id: systemUserId,
         body: sanitizedMessage
       })
       .select()
