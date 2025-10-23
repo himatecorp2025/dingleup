@@ -97,7 +97,13 @@ Deno.serve(async (req) => {
         message_media (
           media_url,
           media_type,
-          thumbnail_url
+          thumbnail_url,
+          file_name,
+          file_size,
+          width,
+          height,
+          duration_ms,
+          mime_type
         )
       `)
       .eq('thread_id', thread.id)
@@ -127,10 +133,27 @@ Deno.serve(async (req) => {
 
     console.log(`[GetThreadMessages] Returning ${messages?.length || 0} messages`);
 
-    // Transform messages to include media array
-    const transformedMessages = (messages || []).map((msg: any) => ({
-      ...msg,
-      media: msg.message_media || []
+    // Transform messages to include media array with signed URLs
+    const transformedMessages = await Promise.all((messages || []).map(async (msg: any) => {
+      const mediaWithSignedUrls = await Promise.all((msg.message_media || []).map(async (media: any) => {
+        // Generate signed URL for private storage (valid for 1 hour)
+        const { data: signedData } = await supabase.storage
+          .from('chat-media')
+          .createSignedUrl(media.media_url, 3600); // 1 hour expiry
+        
+        return {
+          ...media,
+          media_url: signedData?.signedUrl || media.media_url,
+          thumbnail_url: media.thumbnail_url 
+            ? (await supabase.storage.from('chat-media').createSignedUrl(media.thumbnail_url, 3600)).data?.signedUrl || media.thumbnail_url
+            : undefined
+        };
+      }));
+
+      return {
+        ...msg,
+        media: mediaWithSignedUrls
+      };
     }));
 
     return new Response(

@@ -22,6 +22,12 @@ interface Message {
     media_url: string;
     media_type: string;
     thumbnail_url?: string;
+    file_name?: string;
+    file_size?: number;
+    width?: number;
+    height?: number;
+    duration_ms?: number;
+    mime_type?: string;
   }>;
 }
 
@@ -126,6 +132,17 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     const textToSend = messageText.trim();
 
     try {
+      // Store preview URLs for optimistic UI before upload
+      const attachmentPreviews = attachments.map(att => ({
+        kind: att.kind,
+        previewUrl: att.previewUrl,
+        name: att.file.name,
+        size: att.bytes,
+        w: att.w,
+        h: att.h,
+        duration: att.duration
+      }));
+
       // Upload all attachments if any
       let uploadedAttachments: any[] = [];
       if (attachments.length > 0) {
@@ -143,7 +160,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         }
       }
 
-      // Optimistic UI: add message immediately
+      // Optimistic UI: use blob URLs for immediate preview
       const optimisticMessage: Message = {
         id: clientMessageId,
         thread_id: '',
@@ -151,10 +168,16 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         body: textToSend,
         created_at: new Date().toISOString(),
         is_deleted: false,
-        media: uploadedAttachments.map(att => ({
-          media_url: att.url,
+        media: attachmentPreviews.map(att => ({
+          media_url: att.previewUrl, // Temporary blob URL for immediate preview
           media_type: att.kind,
-          thumbnail_url: att.kind === 'image' ? att.url : undefined
+          thumbnail_url: att.kind === 'image' ? att.previewUrl : undefined,
+          file_name: att.name,
+          file_size: att.size,
+          width: att.w,
+          height: att.h,
+          duration_ms: att.duration,
+          mime_type: 'image/jpeg' // Temporary
         }))
       };
       setMessages(prev => [...prev, optimisticMessage]);

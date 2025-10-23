@@ -83,17 +83,13 @@ export const useAttachments = () => {
         throw new Error('Upload failed');
       }
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('chat-media')
-        .getPublicUrl(uploadData.path);
-
+      // Upload successful - return path for storage, signed URL will be generated on fetch
       updateAttachmentStatus(localId, 'uploaded', {
         w,
         h,
         remote: {
           key: uploadData.path,
-          url: publicUrl,
+          url: uploadData.path, // Store path, not URL (signed URL generated on fetch)
           mime: attachment.file.type
         }
       });
@@ -101,7 +97,7 @@ export const useAttachments = () => {
       return {
         kind: attachment.kind,
         key: uploadData.path,
-        url: publicUrl,
+        url: uploadData.path, // This will be the storage path
         mime: attachment.file.type,
         name: attachment.file.name,
         w,
