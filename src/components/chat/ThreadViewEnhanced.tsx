@@ -416,6 +416,10 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         });
       });
       
+      // Clear form immediately after sending
+      setMessageText('');
+      clearAttachments();
+      
       // Auto-scroll ONLY if at bottom
       if (isNearBottomRef.current) {
         requestAnimationFrame(() => scrollToBottom('smooth', 'send-optimistic'));
@@ -468,10 +472,6 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
           requestAnimationFrame(() => scrollToBottom('smooth', 'send-confirmed'));
         }
       }
-
-      // Clear state on success
-      setMessageText('');
-      clearAttachments();
     } catch (error: any) {
       console.error('Send error:', error);
       toast.error('Hiba az üzenet küldésekor');
@@ -789,36 +789,34 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         </button>
 
         {/* Text Input */}
-        {attachments.length === 0 && (
-          <textarea
-            ref={textareaRef}
-            value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage();
-              }
-            }}
-            placeholder="Írj üzenetet..."
-            className="input"
-            rows={1}
-            style={{ 
-              width: '100%',
-              padding: '12px 14px',
-              borderRadius: '22px',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              background: 'rgba(255, 255, 255, 0.06)',
-              color: '#fff',
-              outline: 'none',
-              resize: 'none',
-              minHeight: '40px',
-              maxHeight: '120px',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none'
-            }}
-          />
-        )}
+        <textarea
+          ref={textareaRef}
+          value={messageText}
+          onChange={(e) => setMessageText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSendMessage();
+            }
+          }}
+          placeholder="Írj üzenetet..."
+          className="input"
+          rows={1}
+          style={{ 
+            width: '100%',
+            padding: '12px 14px',
+            borderRadius: '22px',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'rgba(255, 255, 255, 0.06)',
+            color: '#fff',
+            outline: 'none',
+            resize: 'none',
+            minHeight: '40px',
+            maxHeight: '120px',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}
+        />
 
         {/* Send Button with Brain Icon - Right side */}
         <button
