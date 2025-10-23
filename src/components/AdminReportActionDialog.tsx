@@ -165,18 +165,28 @@ export const AdminReportActionDialog = ({
 
         <div className="space-y-3 mt-2">
           <div>
-            <Label className="text-sm text-white mb-2 block">
-              Üzenet a felhasználónak
+            <Label className="text-base text-yellow-400 mb-2 block font-bold">
+              ⚠️ Indoklás (KÖTELEZŐ) - Miért {actionType === 'reviewing' ? 'van folyamatban' : actionType === 'resolved' ? 'lett megoldva' : 'lett elutasítva'}?
             </Label>
+            <p className="text-xs text-white/70 mb-2">
+              Magyarázd el részletesen a döntésed okát. Ez az üzenet el lesz küldve a bejelentőnek.
+            </p>
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Írd meg az üzenetet a felhasználónak..."
-              className="min-h-[120px] bg-gray-800 border-purple-500/50 text-white text-sm resize-none"
+              placeholder={`Pl.: ${
+                actionType === 'reviewing' 
+                  ? 'A hibát vizsgáljuk, a fejlesztői csapat 24 órán belül válaszol...' 
+                  : actionType === 'resolved'
+                  ? 'A hibát javítottuk a legújabb frissítésben. Köszönjük a jelzést!'
+                  : 'Ez a bejelentés nem igényel intézkedést, mert...'
+              }`}
+              className="min-h-[140px] bg-gray-800 border-2 border-yellow-500/50 text-white text-sm resize-none focus:border-yellow-500"
               maxLength={2000}
+              autoFocus
             />
             <p className="text-xs text-white/50 mt-1">
-              {message.length} / 2000 karakter
+              {message.length} / 2000 karakter {message.length < 10 && message.length > 0 ? '(túl rövid, minimum 10 karakter)' : ''}
             </p>
           </div>
 
