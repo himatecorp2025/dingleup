@@ -13,7 +13,8 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
-    VitePWA({
+    // Only enable PWA in production builds to avoid sandbox proxy issues in preview/dev
+    mode === "production" && VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['logo.png'],
       manifest: {

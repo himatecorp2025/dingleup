@@ -32,6 +32,22 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // Disable service workers inside sandbox/iframe to avoid proxy errors
+      (function() {
+        try {
+          var inIframe = window.self !== window.top;
+          var isLovable = /lovableproject\.com$/.test(window.location.hostname);
+          if (inIframe || isLovable) {
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function(regs){ regs.forEach(function(r){ r.unregister(); }); }).catch(function(){});
+              // Ensure network bypass of any existing controller
+              navigator.serviceWorker.addEventListener('controllerchange', function(){ /* no-op */ });
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
