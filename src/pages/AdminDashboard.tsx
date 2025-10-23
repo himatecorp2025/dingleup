@@ -800,11 +800,19 @@ const AdminDashboard = () => {
                       <span className={`ml-2 inline-block px-3 py-1 rounded-full text-xs font-bold ${
                         report.status === 'pending'
                           ? 'bg-yellow-500/20 text-yellow-400'
+                          : report.status === 'reviewing'
+                          ? 'bg-blue-500/20 text-blue-400'
                           : report.status === 'resolved'
                           ? 'bg-green-500/20 text-green-400'
                           : 'bg-gray-500/20 text-gray-400'
                       }`}>
-                        {report.status === 'pending' ? 'Függőben' : report.status === 'resolved' ? 'Megoldva' : 'Elutasítva'}
+                        {report.status === 'pending' 
+                          ? '⏳ Függőben' 
+                          : report.status === 'reviewing'
+                          ? '📋 Folyamatban'
+                          : report.status === 'resolved' 
+                          ? '✅ Megoldva' 
+                          : '❌ Elutasítva'}
                       </span>
                     </div>
                     <span className="text-xs text-white/50">
