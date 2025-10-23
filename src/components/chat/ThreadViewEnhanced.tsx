@@ -746,7 +746,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         aria-label="Üzenet írása"
         className="composer"
         style={{
-          position: 'absolute',
+          position: 'fixed',
           bottom: `calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 8px)`,
           left: 0,
           right: 0,
