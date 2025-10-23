@@ -52,7 +52,6 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
   const [sending, setSending] = useState(false);
   const [friendInfo, setFriendInfo] = useState<{ username: string; avatar_url: string | null } | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const [showNewBadge, setShowNewBadge] = useState(false);
   const [composerHeight, setComposerHeight] = useState(68);
   const [isSendAnimating, setIsSendAnimating] = useState(false);
@@ -528,14 +527,19 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
     if (imageInputRef.current) {
       imageInputRef.current.click();
     }
-    setShowAttachmentMenu(false);
   };
 
   const handleFileSelect = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
-    setShowAttachmentMenu(false);
+  };
+
+  const handleAttachClick = () => {
+    // Directly open file picker for all file types
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const processFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -797,7 +801,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
 
         {/* Attach Button */}
         <button
-          onClick={() => setShowAttachmentMenu(true)}
+          onClick={handleAttachClick}
           className="attach p-2 hover:bg-white/10 rounded-full transition-all"
           aria-label="Csatolás"
           style={{ background: 'transparent', border: 0, cursor: 'pointer' }}
@@ -863,14 +867,6 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         <EmojiPicker
           onSelect={handleEmojiSelect}
           onClose={() => setShowEmojiPicker(false)}
-        />
-      )}
-      
-      {showAttachmentMenu && (
-        <AttachmentMenu
-          onImageSelect={handleImageSelect}
-          onFileSelect={handleFileSelect}
-          onClose={() => setShowAttachmentMenu(false)}
         />
       )}
       
