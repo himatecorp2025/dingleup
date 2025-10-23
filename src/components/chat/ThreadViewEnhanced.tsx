@@ -182,15 +182,20 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
                 
                 setMessages(prev => {
                   const exists = prev.find(m => m.id === newMsg.id);
-                  if (exists) {
-                    // Replace optimistic or update existing
-                    console.log('[ThreadView] Updating existing message');
-                    return prev.map(m => m.id === newMsg.id ? fetchedMessage : m);
-                  }
-                  // Add new message (receiver side)
-                  console.log('[ThreadView] Adding new message to list');
-                  return [...prev, fetchedMessage];
+                  const next = exists
+                    ? prev.map(m => (m.id === newMsg.id ? fetchedMessage : m))
+                    : [...prev, fetchedMessage];
+                  // Ensure chronological order
+                  const sorted = next.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+                  return sorted;
                 });
+                
+                // Auto-scroll if user is near bottom, otherwise show "new" badge
+                if (isNearBottomRef.current) {
+                  requestAnimationFrame(() => scrollToBottom('smooth'));
+                } else {
+                  setShowNewBadge(true);
+                }
               } else {
                 console.warn('[ThreadView] Message not found in response, reloading all');
                 loadMessages();
@@ -642,7 +647,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           scrollBehavior: 'smooth',
           padding: '12px',
           paddingTop: 'var(--appbar-h)',
-          paddingBottom: `calc(var(--composer-h) + 12px)`,
+          paddingBottom: `calc(var(--composer-h) + var(--bottom-nav-h) + env(safe-area-inset-bottom) + 12px)`,
           WebkitOverflowScrolling: 'touch',
           position: 'relative'
         }}
@@ -726,7 +731,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         className="composer"
         style={{
           position: 'absolute',
-          bottom: 0,
+          bottom: `calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))`,
           left: 0,
           right: 0,
           display: 'flex',

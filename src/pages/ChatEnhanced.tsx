@@ -8,7 +8,7 @@ import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { toast } from 'sonner';
 import { ThreadsList } from '@/components/chat/ThreadsList';
-import { ThreadView } from '@/components/chat/ThreadView';
+import { ThreadViewEnhanced } from '@/components/chat/ThreadViewEnhanced';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { FriendsHexagonBar } from '@/components/chat/FriendsHexagonBar';
 
@@ -202,7 +202,7 @@ const ChatEnhanced = () => {
       <div className="flex-1 flex pb-16 bg-[#000000]">
         <div className="flex-1 flex flex-col" data-tutorial="threads-list">
           {selectedFriend ? (
-            <ThreadView
+            <ThreadViewEnhanced
               friendId={selectedFriend.userId}
               userId={userId || ''}
               onBack={() => setSelectedFriend(null)}
