@@ -416,33 +416,45 @@ export type Database = {
       message_media: {
         Row: {
           created_at: string | null
+          duration_ms: number | null
           file_name: string | null
           file_size: number | null
+          height: number | null
           id: string
           media_type: string
           media_url: string
           message_id: string
+          mime_type: string | null
           thumbnail_url: string | null
+          width: number | null
         }
         Insert: {
           created_at?: string | null
+          duration_ms?: number | null
           file_name?: string | null
           file_size?: number | null
+          height?: number | null
           id?: string
           media_type: string
           media_url: string
           message_id: string
+          mime_type?: string | null
           thumbnail_url?: string | null
+          width?: number | null
         }
         Update: {
           created_at?: string | null
+          duration_ms?: number | null
           file_name?: string | null
           file_size?: number | null
+          height?: number | null
           id?: string
           media_type?: string
           media_url?: string
           message_id?: string
+          mime_type?: string | null
           thumbnail_url?: string | null
+          width?: number | null
         }
         Relationships: [
           {

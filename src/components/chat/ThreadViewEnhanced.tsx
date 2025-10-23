@@ -217,22 +217,23 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // Validate
-    const allowedTypes = ['application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument', 'text/plain'];
-    if (!allowedTypes.some(type => file.type.includes(type))) {
-      toast.error('Nem engedélyezett fájltípus');
-      return;
-    }
-    if (file.size > 25 * 1024 * 1024) {
-      toast.error('Fájl maximum 25 MB lehet');
+    // Determine file kind
+    let kind: 'video' | 'audio' | 'document' | 'file' = 'file';
+    if (file.type.startsWith('video/')) kind = 'video';
+    else if (file.type.startsWith('audio/')) kind = 'audio';
+    else if (file.type.includes('pdf') || file.type.includes('document') || file.type.includes('sheet') || file.type.includes('presentation') || file.type.includes('text')) kind = 'document';
+    
+    // Size limits
+    const maxSize = kind === 'video' ? 200 : kind === 'audio' ? 50 : 50;
+    if (file.size > maxSize * 1024 * 1024) {
+      toast.error(`Fájl maximum ${maxSize} MB lehet`);
       return;
     }
     
     const preview = URL.createObjectURL(file);
-    addAttachment(file, 'file', preview);
+    addAttachment(file, kind, preview);
     setShowAttachmentMenu(false);
     
-    // Reset input
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -458,14 +459,14 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       <input
         ref={imageInputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/heic"
         onChange={handleImageSelect}
         className="hidden"
       />
       <input
         ref={fileInputRef}
         type="file"
-        accept="application/pdf,application/zip,application/vnd.openxmlformats-officedocument.*,text/plain"
+        accept="video/mp4,video/quicktime,video/webm,audio/mpeg,audio/mp4,audio/wav,audio/flac,audio/ogg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.*,text/plain,text/csv,application/zip,application/x-rar-compressed"
         onChange={handleFileSelect}
         className="hidden"
       />

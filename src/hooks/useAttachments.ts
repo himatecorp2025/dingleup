@@ -6,7 +6,7 @@ import { Attachment, AttachmentMeta, AttachmentStatus } from '@/components/chat/
 export const useAttachments = () => {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
 
-  const addAttachment = useCallback((file: File, kind: 'image' | 'file', previewUrl: string) => {
+  const addAttachment = useCallback((file: File, kind: 'image' | 'video' | 'audio' | 'document' | 'file', previewUrl: string) => {
     const localId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const newAttachment: Attachment = {
       localId,

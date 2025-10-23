@@ -8,10 +8,49 @@ const EMOJI_CATEGORIES = {
   'Kaszinó': ['🎰', '🎲', '🃏', '💰', '💎', '👑', '🏆', '🎯', '🎪', '🎭', '🎬', '🎮'],
 };
 
+// Emoji kódok autocomplete-hez
+const EMOJI_SHORTCUTS: Record<string, string> = {
+  ':smile:': '😊',
+  ':grin:': '😀',
+  ':joy:': '😂',
+  ':heart:': '❤️',
+  ':fire:': '🔥',
+  ':thumbs:': '👍',
+  ':clap:': '👏',
+  ':crown:': '👑',
+  ':trophy:': '🏆',
+  ':money:': '💰',
+  ':diamond:': '💎',
+  ':slot:': '🎰',
+  ':dice:': '🎲',
+  ':cards:': '🃏',
+};
+
 interface EmojiPickerProps {
   onSelect: (emoji: string) => void;
   onClose: () => void;
+  inputRef?: React.RefObject<HTMLTextAreaElement | HTMLInputElement>;
 }
+
+export const getEmojiFromShortcut = (text: string): string | null => {
+  const match = text.match(/:(\w+):$/);
+  if (match) {
+    const code = `:${match[1]}:`;
+    return EMOJI_SHORTCUTS[code] || null;
+  }
+  return null;
+};
+
+export const getEmojiSuggestions = (text: string): Array<{code: string, emoji: string}> => {
+  const match = text.match(/:(\w*)$/);
+  if (!match) return [];
+  
+  const query = match[1].toLowerCase();
+  return Object.entries(EMOJI_SHORTCUTS)
+    .filter(([code]) => code.slice(1, -1).includes(query))
+    .map(([code, emoji]) => ({ code, emoji }))
+    .slice(0, 5);
+};
 
 export const EmojiPicker = ({ onSelect, onClose }: EmojiPickerProps) => {
   const [searchQuery, setSearchQuery] = useState('');

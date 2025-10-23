@@ -34,11 +34,30 @@ Deno.serve(async (req) => {
 
     const { filename, contentType, threadId } = await req.json();
 
-    // Validate content type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    // Bővített fájltípus támogatás - képek, videók, audió, dokumentumok
+    const allowedTypes = [
+      // Képek
+      'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/heic',
+      // Videók
+      'video/mp4', 'video/quicktime', 'video/webm',
+      // Audió
+      'audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/flac', 'audio/ogg',
+      // Dokumentumok
+      'application/pdf', 
+      'application/msword', 
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'text/plain', 'text/csv',
+      // Archívumok
+      'application/zip', 'application/x-rar-compressed'
+    ];
+    
     if (!allowedTypes.includes(contentType)) {
       return new Response(
-        JSON.stringify({ error: 'Invalid content type' }),
+        JSON.stringify({ error: 'Nem támogatott fájltípus' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

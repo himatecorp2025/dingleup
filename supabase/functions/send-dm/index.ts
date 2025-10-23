@@ -216,13 +216,19 @@ Deno.serve(async (req) => {
       }
     }
 
-    // If attachments array, insert all media records
+    // If attachments array, insert all media records with extended metadata
     if (attachments && Array.isArray(attachments) && attachments.length > 0) {
       const mediaRecords = attachments.map((att: any) => ({
         message_id: message.id,
-        media_type: att.kind === 'image' ? 'image' : 'file',
+        media_type: att.kind || 'file',
         media_url: att.url,
-        file_name: att.name || att.key?.split('/').pop() || 'file'
+        file_name: att.name || att.key?.split('/').pop() || 'file',
+        file_size: att.bytes || null,
+        mime_type: att.mime || null,
+        thumbnail_url: att.thumbnailUrl || null,
+        width: att.w || null,
+        height: att.h || null,
+        duration_ms: att.duration || null
       }));
 
       const { error: mediaError } = await supabase

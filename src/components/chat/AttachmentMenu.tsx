@@ -70,7 +70,7 @@ export const AttachmentMenu = ({ onImageSelect, onFileSelect, onClose }: Attachm
             </div>
             <div>
               <p className="font-medium text-white">Fájl</p>
-              <p className="text-xs text-white/50">PDF, ZIP, dokumentumok</p>
+              <p className="text-xs text-white/50">PDF, videó, audió, dokumentumok</p>
             </div>
           </button>
         </div>
