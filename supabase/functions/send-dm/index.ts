@@ -218,18 +218,32 @@ Deno.serve(async (req) => {
 
     // If attachments array, insert all media records with extended metadata
     if (attachments && Array.isArray(attachments) && attachments.length > 0) {
-      const mediaRecords = attachments.map((att: any) => ({
-        message_id: message.id,
-        media_type: att.kind || 'file',
-        media_url: att.url,
-        file_name: att.name || att.key?.split('/').pop() || 'file',
-        file_size: att.bytes || null,
-        mime_type: att.mime || null,
-        thumbnail_url: att.thumbnailUrl || null,
-        width: att.w || null,
-        height: att.h || null,
-        duration_ms: att.duration || null
-      }));
+      const toStoragePath = (u: string | undefined, key: string | undefined) => {
+        if (key) return key;
+        if (!u) return null;
+        if (!u.startsWith('http')) return u; // already a path
+        const publicMarker = '/storage/v1/object/public/chat-media/';
+        const signedMarker = '/storage/v1/object/sign/chat-media/';
+        if (u.includes(publicMarker)) return u.substring(u.indexOf(publicMarker) + publicMarker.length);
+        if (u.includes(signedMarker)) return u.substring(u.indexOf(signedMarker) + signedMarker.length).split('?')[0];
+        return null;
+      };
+
+      const mediaRecords = attachments.map((att: any) => {
+        const path = toStoragePath(att.url, att.key);
+        return {
+          message_id: message.id,
+          media_type: att.kind || 'file',
+          media_url: path || att.key || att.url, // store path when possible
+          file_name: att.name || att.key?.split('/').pop() || 'file',
+          file_size: att.bytes || null,
+          mime_type: att.mime || null,
+          thumbnail_url: att.thumbnailUrl || null,
+          width: att.w || null,
+          height: att.h || null,
+          duration_ms: att.duration || null
+        };
+      });
 
       const { error: mediaError } = await supabase
         .from('message_media')

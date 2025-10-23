@@ -141,32 +141,41 @@ Deno.serve(async (req) => {
         // Generate signed URLs for private storage (valid for 1 hour)
         let signedMediaUrl = media.media_url;
         let signedThumbnailUrl = media.thumbnail_url;
-        
-        // Only generate signed URL if it's a storage path (not already a URL)
-        if (media.media_url && !media.media_url.startsWith('http')) {
+
+        const toStoragePath = (u: string | null | undefined) => {
+          if (!u) return null;
+          if (!u.startsWith('http')) return u;
+          const publicMarker = '/storage/v1/object/public/chat-media/';
+          const signedMarker = '/storage/v1/object/sign/chat-media/';
+          if (u.includes(publicMarker)) return u.substring(u.indexOf(publicMarker) + publicMarker.length);
+          if (u.includes(signedMarker)) return u.substring(u.indexOf(signedMarker) + signedMarker.length).split('?')[0];
+          return null;
+        };
+
+        const mediaPath = toStoragePath(media.media_url);
+        if (mediaPath) {
           const { data: mediaData, error: mediaError } = await supabase.storage
             .from('chat-media')
-            .createSignedUrl(media.media_url, 3600);
-          
+            .createSignedUrl(mediaPath, 600); // 10 perc
           if (!mediaError && mediaData?.signedUrl) {
             signedMediaUrl = mediaData.signedUrl;
           } else {
-            console.error('[GetThreadMessages] Signed URL error for media:', mediaError?.message, 'path:', media.media_url);
+            console.error('[GetThreadMessages] Signed URL error for media:', mediaError?.message, 'path:', mediaPath);
           }
         }
-        
-        if (media.thumbnail_url && !media.thumbnail_url.startsWith('http')) {
+
+        const thumbPath = toStoragePath(media.thumbnail_url);
+        if (thumbPath) {
           const { data: thumbData, error: thumbError } = await supabase.storage
             .from('chat-media')
-            .createSignedUrl(media.thumbnail_url, 3600);
-          
+            .createSignedUrl(thumbPath, 600);
           if (!thumbError && thumbData?.signedUrl) {
             signedThumbnailUrl = thumbData.signedUrl;
           } else {
-            console.error('[GetThreadMessages] Signed URL error for thumbnail:', thumbError?.message);
+            console.error('[GetThreadMessages] Signed URL error for thumbnail:', thumbError?.message, 'path:', thumbPath);
           }
         }
-        
+
         return {
           ...media,
           media_url: signedMediaUrl,
