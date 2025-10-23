@@ -4,6 +4,7 @@ import { useMessageReactions } from '@/hooks/useMessageReactions';
 import { ImageViewer } from './ImageViewer';
 import { FileText, Download, Play, Music, FileArchive } from 'lucide-react';
 import { DeliveryStatus } from './DeliveryStatus';
+import { AttachmentGrid } from './AttachmentGrid';
 
 interface MessageMedia {
   media_url: string;
@@ -283,16 +284,10 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
             onMouseEnter={() => setShowReactionPicker(true)}
             onMouseLeave={() => setShowReactionPicker(false)}
           >
-            {/* Media if present */}
+            {/* Media if present - Use AttachmentGrid */}
             {message.media && message.media.length > 0 && (
-              <div className={`mb-1 space-y-2 ${message.media.length > 1 ? 'max-w-md' : ''}`}>
-                {message.media.map((media, idx) => (
-                  <MediaPreview 
-                    key={idx} 
-                    media={media} 
-                    onImageClick={setSelectedImage}
-                  />
-                ))}
+              <div className={`mb-1 ${isOwn ? 'bg-[#138F5E]' : 'bg-[#1a1a1a]'} rounded-2xl p-2`}>
+                <AttachmentGrid media={message.media} />
               </div>
             )}
 

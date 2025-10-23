@@ -727,4 +727,17 @@ body {
   animation: slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Hexagon clip path for avatars */
+.hexagon-clip {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+/* Hide scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 

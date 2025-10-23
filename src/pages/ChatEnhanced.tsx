@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { ThreadsList } from '@/components/chat/ThreadsList';
 import { ThreadView } from '@/components/chat/ThreadView';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
+import { FriendsHexagonBar } from '@/components/chat/FriendsHexagonBar';
 
 interface Thread {
   id: string;
@@ -207,14 +208,20 @@ const ChatEnhanced = () => {
               onBack={() => setSelectedFriend(null)}
             />
           ) : (
-            <ThreadsList
-              threads={threads}
-              selectedThreadId={null}
-              onThreadSelect={handleSelectThread}
-              onThreadDelete={handleDeleteThread}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-            />
+            <>
+              <FriendsHexagonBar 
+                friends={threads.filter(t => t.online_status === 'online')} 
+                onFriendClick={handleSelectThread}
+              />
+              <ThreadsList
+                threads={threads}
+                selectedThreadId={null}
+                onThreadSelect={handleSelectThread}
+                onThreadDelete={handleDeleteThread}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
+            </>
           )}
         </div>
       </div>

@@ -439,18 +439,10 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   };
 
   return (
-    <div className="flex flex-col h-screen w-full overflow-hidden bg-[#000000]">
-      {/* Header - Fixed */}
+    <div className="flex flex-col h-full bg-[#000000] relative">
+      {/* Header - Fixed at top */}
       <header 
-        className="flex-shrink-0 bg-[#1a1a1a] border-b border-[#D4AF37]/10 px-4 py-3 flex items-center gap-3 w-full"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 10020,
-          maxWidth: '100vw'
-        }}
+        className="flex-shrink-0 bg-[#1a1a1a] border-b border-[#D4AF37]/10 px-4 py-3 flex items-center gap-3 w-full sticky top-0 z-20"
       >
         <button
           onClick={onBack}
@@ -474,6 +466,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="font-bold text-white truncate">{friendInfo?.username || 'Betöltés...'}</h2>
+            {isOnline && <p className="text-xs text-[#138F5E]">Online</p>}
           </div>
         </div>
       </header>
@@ -481,11 +474,8 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       {/* Messages - Scrollable Area */}
       <main 
         className="flex-1 overflow-y-auto p-4 space-y-2 w-full"
-        style={{ 
-          marginTop: '60px', // Header height
-          marginBottom: '130px', // Composer height (adjusted for chips)
-          maxWidth: '100vw',
-          paddingBottom: 'env(safe-area-inset-bottom)'
+        style={{
+          minHeight: 0,
         }}
       >
         {loading ? (
@@ -514,22 +504,11 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
             );
           })
         )}
-        <div ref={messagesEndRef} />
       </main>
 
-      {/* Composer - Fixed Bottom */}
+      {/* Composer - Fixed at bottom */}
       <div 
-        className="chat-composer flex-shrink-0 bg-[#0F1116] border-t border-[#D4AF37]/30 w-full"
-        style={{ 
-          position: 'fixed', 
-          bottom: '72px', // BottomNav height
-          left: 0, 
-          right: 0, 
-          width: '100%',
-          maxWidth: '100vw',
-          zIndex: 10015,
-          paddingBottom: 'env(safe-area-inset-bottom)'
-        }}
+        className="flex-shrink-0 bg-[#0F1116] border-t border-[#D4AF37]/30 w-full sticky bottom-0 z-10"
       >
         {/* Attachment Preview Chips */}
         <AttachmentPreviewChips 
