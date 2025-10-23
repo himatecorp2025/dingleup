@@ -79,6 +79,7 @@ export type Database = {
           created_at: string
           id: string
           is_deleted: boolean
+          message_seq: number
           sender_id: string
           status: string | null
           thread_id: string
@@ -88,6 +89,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_deleted?: boolean
+          message_seq?: never
           sender_id: string
           status?: string | null
           thread_id: string
@@ -97,6 +99,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_deleted?: boolean
+          message_seq?: never
           sender_id?: string
           status?: string | null
           thread_id?: string

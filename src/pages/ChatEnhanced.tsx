@@ -9,6 +9,7 @@ import BottomNav from '@/components/BottomNav';
 import { toast } from 'sonner';
 import { ThreadsList } from '@/components/chat/ThreadsList';
 import { ThreadViewEnhanced } from '@/components/chat/ThreadViewEnhanced';
+import { ScrollInspector } from '@/components/ScrollInspector';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { FriendsHexagonBar } from '@/components/chat/FriendsHexagonBar';
 
@@ -227,6 +228,9 @@ const ChatEnhanced = () => {
       </div>
 
       <BottomNav />
+
+      {/* Dev Scroll Inspector (Ctrl+Alt+S to toggle) */}
+      <ScrollInspector />
 
       <ReportDialog
         open={reportDialogOpen}

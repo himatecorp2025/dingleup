@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { MessageBubble } from './MessageBubble';
 import { useTypingStatus } from '@/hooks/useTypingStatus';
 import { useUserPresence } from '@/hooks/useUserPresence';
+import { useIOSViewport } from '@/hooks/useIOSViewport';
+import { recordScrollToBottom } from '@/hooks/useScrollInspector';
 import { ImageUploader } from './ImageUploader';
 import { FileUploader } from './FileUploader';
 import { EmojiPicker } from './EmojiPicker';
@@ -63,6 +65,9 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   const { handleTyping } = useTypingStatus(friendId, userId);
   const { isOnline } = useUserPresence(friendId);
   
+  // iOS viewport fix for keyboard handling
+  useIOSViewport();
+  
   const {
     attachments,
     addAttachment,
@@ -74,7 +79,8 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     hasFailed
   } = useAttachments();
 
-  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
+  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth', source = 'unknown') => {
+    recordScrollToBottom(source);
     messagesEndRef.current?.scrollIntoView({ behavior });
   };
 
@@ -121,17 +127,8 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     return () => ro.disconnect();
   }, []);
 
-  useEffect(() => {
-    // Auto-scroll only if user is near bottom
-    if (isNearBottomRef.current) {
-      setTimeout(() => scrollToBottom('smooth'), 100);
-    } else {
-      // Show "new messages" badge when not at bottom
-      if (messages.length > 0) {
-        setShowNewBadge(true);
-      }
-    }
-  }, [messages.length]);
+  // REMOVED: Auto-scroll on every messages.length change (caused jumps)
+  // Now handled explicitly in message send/receive events only
 
   useEffect(() => {
     loadFriendInfo();
@@ -185,14 +182,16 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
                   const next = exists
                     ? prev.map(m => (m.id === newMsg.id ? fetchedMessage : m))
                     : [...prev, fetchedMessage];
-                  // Ensure chronological order
-                  const sorted = next.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-                  return sorted;
+                  // Stable sort (epoch + id fallback)
+                  return next.sort((a, b) => {
+                    const timeDiff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                    return timeDiff !== 0 ? timeDiff : a.id.localeCompare(b.id);
+                  });
                 });
                 
                 // Auto-scroll if user is near bottom, otherwise show "new" badge
                 if (isNearBottomRef.current) {
-                  requestAnimationFrame(() => scrollToBottom('smooth'));
+                  requestAnimationFrame(() => scrollToBottom('smooth', 'ws-new-message'));
                 } else {
                   setShowNewBadge(true);
                 }
@@ -252,17 +251,18 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       const data = await response.json();
       console.log('[ThreadView] Loaded messages:', data);
-      // Sort messages by created_at to ensure chronological order (oldest first)
-      const sortedMessages = (data?.messages || []).sort((a: Message, b: Message) => 
-        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      );
+      // Sort messages with stable ordering (epoch + id fallback)
+      const sortedMessages = (data?.messages || []).sort((a: Message, b: Message) => {
+        const timeDiff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        return timeDiff !== 0 ? timeDiff : a.id.localeCompare(b.id);
+      });
       setMessages(sortedMessages);
       setHasMore(data?.messages?.length === 50);
       
       if (initial) {
         // Scroll to bottom on initial load
         setTimeout(() => {
-          scrollToBottom('auto');
+          scrollToBottom('auto', 'initial-load');
           isNearBottomRef.current = true;
         }, 100);
       }
@@ -301,17 +301,21 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       const olderMessages = data?.messages || [];
       
       if (olderMessages.length > 0) {
-        // Sort older messages
-        const sortedOlder = olderMessages.sort((a: Message, b: Message) => 
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
+        // Sort older messages with stable ordering
+        const sortedOlder = olderMessages.sort((a: Message, b: Message) => {
+          const timeDiff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          return timeDiff !== 0 ? timeDiff : a.id.localeCompare(b.id);
+        });
         setMessages(prev => {
           const combined = [...sortedOlder, ...prev];
           // Remove duplicates based on id
           const unique = combined.filter((msg, index, self) =>
             index === self.findIndex(m => m.id === msg.id)
           );
-          return unique.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+          return unique.sort((a, b) => {
+            const timeDiff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+            return timeDiff !== 0 ? timeDiff : a.id.localeCompare(b.id);
+          });
         });
         setHasMore(olderMessages.length === 50);
         
@@ -400,12 +404,17 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       };
       setMessages(prev => {
         const updated = [...prev, optimisticMessage];
-        // Sort to ensure chronological order
-        return updated.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        // Stable sort
+        return updated.sort((a, b) => {
+          const timeDiff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          return timeDiff !== 0 ? timeDiff : a.id.localeCompare(b.id);
+        });
       });
       
-      // Auto-scroll to bottom after adding message
-      requestAnimationFrame(() => scrollToBottom('smooth'));
+      // Auto-scroll ONLY if at bottom
+      if (isNearBottomRef.current) {
+        requestAnimationFrame(() => scrollToBottom('smooth', 'send-optimistic'));
+      }
 
       // Send to server
       const { data: response, error } = await supabase.functions.invoke('send-dm', {
@@ -437,14 +446,19 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
             }
             return m;
           });
-          // Sort to maintain chronological order
-          const sorted = updated.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+          // Stable sort
+          const sorted = updated.sort((a, b) => {
+            const timeDiff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+            return timeDiff !== 0 ? timeDiff : a.id.localeCompare(b.id);
+          });
           console.log('[ThreadView] Updated messages, total:', sorted.length);
           return sorted;
         });
         
-        // Auto-scroll after message is confirmed
-        requestAnimationFrame(() => scrollToBottom('smooth'));
+        // Auto-scroll ONLY if at bottom
+        if (isNearBottomRef.current) {
+          requestAnimationFrame(() => scrollToBottom('smooth', 'send-confirmed'));
+        }
       }
 
       // Clear state on success
@@ -640,6 +654,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         role="list"
         aria-label="Üzenetek"
         className="messages"
+        data-scroll-root="thread"
         style={{
           flex: 1,
           overflowY: 'auto',
@@ -649,6 +664,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           paddingTop: 'var(--appbar-h)',
           paddingBottom: `calc(var(--composer-h) + var(--bottom-nav-h) + env(safe-area-inset-bottom) + 12px)`,
           WebkitOverflowScrolling: 'touch',
+          overscrollBehaviorY: 'contain',
           position: 'relative'
         }}
       >
@@ -693,7 +709,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
               <button 
                 className="new-badge"
                 onClick={() => {
-                  scrollToBottom('smooth');
+                  scrollToBottom('smooth', 'new-badge-click');
                   setShowNewBadge(false);
                 }}
                 style={{

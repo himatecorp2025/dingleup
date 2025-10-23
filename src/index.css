@@ -6,7 +6,7 @@
 :root {
   --appbar-h: 56px;
   --composer-h: 68px;
-  --bottom-nav-h: 64px;
+  --bottom-nav-h: 72px; /* Fixed: unified value */
 }
 
 /* Mobile & touch optimizations */
@@ -82,8 +82,7 @@ button, a {
 
 /* Design system - Color variables */
 :root {
-  /* Bottom Nav Height for Mobile Layout */
-  --bottom-nav-h: 72px;
+  /* Bottom Nav Height for Mobile Layout - now unified */
   
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
