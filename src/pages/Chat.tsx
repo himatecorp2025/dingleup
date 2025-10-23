@@ -13,7 +13,7 @@ import { Search } from 'lucide-react';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { usePresenceHeartbeat } from '@/hooks/usePresenceHeartbeat';
 
-interface Thread {
+interface ChatThread {
   id: string;
   otherUserId: string;
   otherUsername: string;
@@ -31,7 +31,7 @@ export default function Chat() {
   
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
   const [selectedFriendUsername, setSelectedFriendUsername] = useState<string>('');
-  const [threads, setThreads] = useState<Thread[]>([]);
+  const [threads, setThreads] = useState<ChatThread[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserSearch, setShowUserSearch] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -142,6 +142,18 @@ export default function Chat() {
     is_online: t.isOnline
   }));
 
+  // Convert ChatThread to Thread format expected by ThreadsList
+  const threadsForList = threads.map(t => ({
+    id: t.id,
+    other_user_id: t.otherUserId,
+    other_user_name: t.otherUsername,
+    other_user_avatar: t.otherAvatar,
+    last_message_preview: t.lastMessage,
+    last_message_at: t.lastMessageAt,
+    unread_count: t.unreadCount,
+    online_status: (t.isOnline ? 'online' : 'offline') as 'online' | 'away' | 'offline'
+  }));
+
   return (
     <div className="flex flex-col h-screen bg-background">
       <header className="flex items-center justify-between p-4 border-b border-border bg-card">
@@ -179,12 +191,12 @@ export default function Chat() {
 
           {/* Threads List */}
           <ThreadsList
-            threads={threads}
+            threads={threadsForList}
             selectedThreadId={selectedFriendId}
-            onSelectThread={(thread) => handleSelectFriend(thread.otherUserId, thread.otherUsername)}
-            onDeleteThread={handleDeleteThread}
-            onOpenSearch={() => setShowUserSearch(true)}
+            onThreadSelect={(thread) => handleSelectFriend(thread.other_user_id, thread.other_user_name)}
+            onThreadDelete={handleDeleteThread}
             searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
           />
         </div>
 
@@ -217,7 +229,7 @@ export default function Chat() {
         />
       )}
 
-      <TutorialManager route="/chat" />
+      <TutorialManager route="chat" />
     </div>
   );
 }
