@@ -25,8 +25,11 @@ const Game = () => {
 
   // Global music control - singleton instance
   useEffect(() => {
-    const { loadSettings, volume, musicEnabled } = useAudioStore.getState();
-    loadSettings();
+    // Load settings FIRST, then get the values
+    useAudioStore.getState().loadSettings();
+    const { volume, musicEnabled } = useAudioStore.getState();
+    
+    console.log('[Game] Loading audio settings:', { volume, musicEnabled });
     
     // Check if global audio already exists
     const existingBgm = (window as any).__bgm as HTMLAudioElement | undefined;
@@ -34,7 +37,10 @@ const Game = () => {
       existingBgm.volume = volume;
       if (musicEnabled && volume > 0) {
         existingBgm.play().catch(() => {});
+      } else if (!musicEnabled) {
+        existingBgm.pause();
       }
+      console.log('[Game] Applied settings to existing audio');
       return;
     }
     
