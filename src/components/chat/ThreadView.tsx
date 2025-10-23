@@ -50,9 +50,9 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const [selectedFile, setSelectedFile] = useState<{ file: File; preview: string } | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
-  const { status: friendshipStatus, sendRequest } = useFriendshipStatus(userId, friendId);
+  const { status: friendshipStatus, sendRequest, refresh: refreshFriendship } = useFriendshipStatus(userId, friendId);
   const { handleTyping, stopTyping } = useTypingStatus(threadId, userId);
-  const { canSend, loading: permsLoading } = useChatPermissions(threadId, userId);
+  const { canSend, loading: permsLoading, refresh: refreshPermissions } = useChatPermissions(threadId, userId);
 
   useEffect(() => {
     loadFriendProfile();
@@ -136,25 +136,26 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
 
   const loadFriendProfile = async () => {
     try {
-      // SECURITY: Use public_profiles view
-      const { data, error } = await supabase
-        .from('public_profiles')
-        .select('id, username, avatar_url')
-        .eq('id', friendId)
-        .single();
+      // Parallel fetch for better performance
+      const [profileRes, presenceRes] = await Promise.all([
+        supabase
+          .from('public_profiles')
+          .select('id, username, avatar_url')
+          .eq('id', friendId)
+          .maybeSingle(),
+        supabase
+          .from('user_presence')
+          .select('is_online, last_seen')
+          .eq('user_id', friendId)
+          .maybeSingle()
+      ]);
       
-      if (error) throw error;
-      
-      // Get online status
-      const { data: presenceData } = await supabase
-        .from('user_presence')
-        .select('is_online, last_seen')
-        .eq('user_id', friendId)
-        .single();
+      if (profileRes.error) throw profileRes.error;
+      if (!profileRes.data) return;
 
       setFriendProfile({
-        ...data,
-        online_status: presenceData?.is_online ? 'online' : 'offline'
+        ...profileRes.data,
+        online_status: presenceRes.data?.is_online ? 'online' : 'offline'
       });
     } catch (error) {
       console.error('Error loading friend profile:', error);
@@ -176,15 +177,16 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     try {
       setIsLoading(true);
       const result = await supabase.functions.invoke(
-        `get-thread-messages?otherUserId=${friendId}`
+        `get-thread-messages?otherUserId=${friendId}&limit=${PAGE_SIZE}`
       );
       if (result.error) throw result.error;
       const msgs = result.data?.messages || [];
       setMessages(msgs);
       setHasMore(msgs.length === PAGE_SIZE);
-      // Extract threadId from first message
-      if (msgs.length > 0 && msgs[0].thread_id) {
-        setThreadId(msgs[0].thread_id);
+      // Extract threadId from response or first message
+      const newThreadId = result.data?.threadId || (msgs.length > 0 && msgs[0].thread_id);
+      if (newThreadId) {
+        setThreadId(newThreadId);
       }
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -325,8 +327,15 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         body: { userId: friendId }
       });
       if (error) throw error;
-      toast.success('Jelölés elfogadva. Most már üzenhetsz!');
-      await loadMessages();
+      
+      // Refresh all states immediately for instant UI update
+      await Promise.all([
+        loadMessages(),
+        refreshFriendship(),
+        refreshPermissions()
+      ]);
+      
+      toast.success('✅ Jelölés elfogadva! Most már írhatsz neki.');
     } catch (e) {
       console.error(e);
       toast.error('Elfogadás sikertelen');

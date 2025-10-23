@@ -100,17 +100,34 @@ const ChatEnhanced = () => {
 
   const loadThreads = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('get-threads');
+      // Fast fetch with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      
+      const { data, error } = await supabase.functions.invoke('get-threads', {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
       if (error) throw error;
       setThreads(data?.threads || []);
     } catch (error) {
-      console.error('Error loading threads:', error);
+      if ((error as any).name !== 'AbortError') {
+        console.error('Error loading threads:', error);
+      }
     }
   };
 
   const loadPendingRequestsCount = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('get-friend-requests');
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      const { data, error } = await supabase.functions.invoke('get-friend-requests', {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
       if (error) throw error;
       const newCount = data?.received?.length || 0;
       
@@ -124,7 +141,9 @@ const ChatEnhanced = () => {
       prevPendingCountRef.current = newCount;
       setPendingRequestsCount(newCount);
     } catch (error) {
-      console.error('Error loading pending requests count:', error);
+      if ((error as any).name !== 'AbortError') {
+        console.error('Error loading pending requests count:', error);
+      }
     }
   };
 
