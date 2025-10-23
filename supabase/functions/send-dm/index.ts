@@ -37,10 +37,20 @@ Deno.serve(async (req) => {
 
     const { recipientId, body, mediaUrl, mediaPath, attachments, clientMessageId } = await req.json();
 
+    console.log('[SendDM] Request:', { recipientId, bodyLength: body?.length, attachmentsCount: attachments?.length });
+
     // Validate input
-    if (!recipientId || (!body && !mediaUrl && (!attachments || attachments.length === 0))) {
+    if (!recipientId) {
       return new Response(
-        JSON.stringify({ error: 'Missing recipientId or message content' }),
+        JSON.stringify({ error: 'Missing recipientId' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Must have either text body or attachments
+    if ((!body || body.trim() === '') && (!attachments || attachments.length === 0) && !mediaUrl) {
+      return new Response(
+        JSON.stringify({ error: 'Message must have text or attachments' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

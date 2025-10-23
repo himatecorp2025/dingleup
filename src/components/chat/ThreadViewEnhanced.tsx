@@ -415,10 +415,6 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         });
       });
       
-      // Clear form immediately after sending
-      setMessageText('');
-      clearAttachments();
-      
       // Auto-scroll ONLY if at bottom
       if (isNearBottomRef.current) {
         requestAnimationFrame(() => scrollToBottom('smooth', 'send-optimistic'));
@@ -426,6 +422,8 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
 
       // Wait for uploads to complete before sending (but show optimistic UI immediately)
       const uploadedAttachments = uploadPromise ? await uploadPromise : [];
+
+      console.log('[ThreadView] Uploads completed:', uploadedAttachments.length, 'attachments');
 
       // Send to server with uploaded attachments
       const { data: response, error } = await supabase.functions.invoke('send-dm', {
@@ -441,6 +439,12 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
       });
 
       if (error) throw error;
+
+      console.log('[ThreadView] Server response:', response);
+
+      // Clear form AFTER successful send
+      setMessageText('');
+      clearAttachments();
 
       // Replace optimistic message with server response containing media
       if (response?.message) {
