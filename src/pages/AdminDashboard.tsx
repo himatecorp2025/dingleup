@@ -143,108 +143,67 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       setIsRefreshing(true);
-      console.log('[Admin] Adatok frissítése...');
+      console.log('[Admin] Adatok frissítése SERVICE ROLE-al...');
       
-      // Fetch all users and their roles
-      const { data: users, error: usersError } = await supabase
-        .from('profiles')
-        .select('id, username, email, lives, max_lives, coins, total_correct_answers, created_at')
-        .order('created_at', { ascending: false });
-
-      if (!usersError && users) {
-        console.log('[Admin] Users loaded:', users.length);
-        const ids = users.map(u => u.id);
-        const { data: rolesData } = await supabase
-          .from('user_roles')
-          .select('user_id, role')
-          .in('user_id', ids);
-        const roleMap = new Map((rolesData || []).map(r => [r.user_id, r.role]));
-        const merged = users.map(u => ({ ...u, role: roleMap.get(u.id) || 'user' }));
-        setAllUsers(merged);
-        setTotalUsers(users.length);
-      } else {
-        console.error('[Admin] Users error:', usersError);
+      // Use admin edge function with service role to bypass RLS
+      const { data: adminData, error: adminError } = await supabase.functions.invoke('admin-all-data');
+      
+      if (adminError) {
+        console.error('[Admin] Admin data fetch error:', adminError);
+        toast.error('Hiba az adatok betöltésekor');
+        setIsRefreshing(false);
+        return;
       }
 
-      // Fetch all purchases
-      const { data: purchasesData, error: purchasesError } = await supabase
-        .from('purchases')
-        .select('*, profiles!inner(username, email)')
-        .order('created_at', { ascending: false });
-
-      if (!purchasesError && purchasesData) {
-        console.log('[Admin] Purchases loaded:', purchasesData.length);
-        setPurchases(purchasesData);
-        
-        // Calculate real revenue
-        const revenue = purchasesData
-          .filter(p => p.status === 'completed' && p.amount_usd)
-          .reduce((sum, p) => sum + Number(p.amount_usd), 0);
-        setTotalRevenue(revenue.toFixed(2));
-      } else {
-        console.error('[Admin] Purchases error:', purchasesError);
-      }
-
-      // Fetch all reports
-      const { data: reportsData, error: reportsError } = await supabase
-        .from('reports')
-        .select(`
-          *,
-          reporter:profiles!reports_reporter_id_fkey(username, email),
-          reported_user:profiles!reports_reported_user_id_fkey(username, email)
-        `)
-        .order('created_at', { ascending: false });
-
-      if (!reportsError && reportsData) {
-        console.log('[Admin] Reports loaded:', reportsData.length);
-        setReports(reportsData);
-      } else {
-        console.error('[Admin] Reports error:', reportsError);
-      }
-
-      // Fetch ALL invitations with detailed logging
-      console.log('[Admin] Loading invitations...');
-      const { data: invitationsData, error: invitationsError } = await supabase
-        .from('invitations')
-        .select(`
-          *,
-          inviter:profiles!invitations_inviter_id_fkey(id, username, email, avatar_url),
-          invited:profiles!invitations_invited_user_id_fkey(id, username, email, avatar_url)
-        `)
-        .order('created_at', { ascending: false });
-
-      console.log('[Admin] Invitations query result:', { 
-        data: invitationsData, 
-        error: invitationsError,
-        count: invitationsData?.length 
+      console.log('[Admin] Raw admin data:', {
+        users: adminData?.users?.length,
+        invitations: adminData?.invitations?.length,
+        reports: adminData?.reports?.length,
+        purchases: adminData?.purchases?.length
       });
 
-      if (!invitationsError && invitationsData) {
-        console.log('[Admin] Invitations loaded successfully:', invitationsData.length);
-        console.log('[Admin] First few invitations:', invitationsData.slice(0, 3));
-        setInvitations(invitationsData);
-      } else {
-        console.error('[Admin] Invitations error:', invitationsError);
-        setInvitations([]);
+      // Process users with roles
+      if (adminData?.users) {
+        const roleMap = new Map((adminData.roles || []).map((r: any) => [r.user_id, r.role]));
+        const merged = adminData.users.map((u: any) => ({ ...u, role: roleMap.get(u.id) || 'user' }));
+        setAllUsers(merged);
+        setTotalUsers(adminData.users.length);
+        console.log('[Admin] ✓ Users:', adminData.users.length);
       }
 
-      // Fetch genius users count
-      const { count: geniusCount, error: geniusError } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_subscribed', true);
-
-      if (!geniusError && geniusCount !== null) {
-        console.log('[Admin] Genius users loaded:', geniusCount);
-        setGeniusCount(geniusCount);
-      } else {
-        console.error('[Admin] Genius users error:', geniusError);
+      // Process purchases
+      if (adminData?.purchases) {
+        setPurchases(adminData.purchases);
+        const revenue = adminData.purchases
+          .filter((p: any) => p.status === 'completed' && p.amount_usd)
+          .reduce((sum: number, p: any) => sum + Number(p.amount_usd), 0);
+        setTotalRevenue(revenue.toFixed(2));
+        console.log('[Admin] ✓ Purchases:', adminData.purchases.length);
       }
 
-      console.log('[Admin] Adatok frissítve ✓');
+      // Process reports
+      if (adminData?.reports) {
+        setReports(adminData.reports);
+        console.log('[Admin] ✓ Reports:', adminData.reports.length);
+      }
+
+      // Process invitations
+      if (adminData?.invitations) {
+        setInvitations(adminData.invitations);
+        console.log('[Admin] ✓ Invitations:', adminData.invitations.length);
+      }
+
+      // Set genius count
+      if (typeof adminData?.geniusCount === 'number') {
+        setGeniusCount(adminData.geniusCount);
+        console.log('[Admin] ✓ Genius:', adminData.geniusCount);
+      }
+
+      console.log('[Admin] ✓✓✓ MINDEN ADAT BETÖLTVE (service role bypass)');
       setIsRefreshing(false);
     } catch (error) {
-      console.error('[Admin] Fetch error:', error);
+      console.error('[Admin] Fatal fetch error:', error);
+      toast.error('Kritikus hiba az adatok betöltésekor');
       setIsRefreshing(false);
     }
   };
