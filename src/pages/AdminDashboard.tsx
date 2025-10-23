@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart, AlertTriangle, Star, Activity, Crown } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart, AlertTriangle, Star, Activity, Crown, Menu, X } from 'lucide-react';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserGrowthChart } from '@/components/UserGrowthChart';
 import { ActivityTab } from '@/components/admin/ActivityTab';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports' | 'activity';
 type ReportsSubTab = 'development' | 'support';
@@ -31,6 +32,7 @@ const AdminDashboard = () => {
   const [totalRevenue, setTotalRevenue] = useState('0');
   const [totalPayouts, setTotalPayouts] = useState('0');
   const [geniusCount, setGeniusCount] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Initial load
   useEffect(() => {
@@ -213,187 +215,144 @@ const AdminDashboard = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex flex-col lg:flex-row">
-      {/* Sidebar - Mobile Hidden, Tablet+ Shown */}
-      <div className="hidden lg:flex lg:w-64 bg-[#0a0a1e] border-r border-purple-500/30 p-4 xl:p-6 flex-col">
-        <div className="mb-6 xl:mb-8">
-          <img src={logo} alt="Logo" className="w-12 h-12 xl:w-16 xl:h-16 mb-2" />
-          <h2 className="text-white font-bold text-xs xl:text-sm">Szia, {userName}! ✨</h2>
-        </div>
-
-        <div className="mb-6 xl:mb-8">
-          <h3 className="text-white/60 text-xs font-bold mb-3 xl:mb-4 uppercase">Főmenü</h3>
-          <nav className="space-y-2">
-            <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-                activeTab === 'dashboard'
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'text-white/70 hover:bg-white/5'
-              }`}
-            >
-              <Home className="w-4 h-4 xl:w-5 xl:h-5" />
-              <span className="font-medium">Dashboard</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('users')}
-              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-                activeTab === 'users'
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'text-white/70 hover:bg-white/5'
-              }`}
-            >
-              <Users className="w-4 h-4 xl:w-5 xl:h-5" />
-              <span className="font-medium">Összes felhasználó</span>
-            </button>
-            <button
-              onClick={() => navigate('/admin/genius')}
-              className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
-            >
-              <Star className="w-4 h-4 xl:w-5 xl:h-5 text-[#ffd700]" />
-              <span className="font-medium">Genius Tagok</span>
-            </button>
-            <button
-              onClick={() => navigate('/admin/tips')}
-              className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
-            >
-              <Crown className="w-4 h-4 xl:w-5 xl:h-5 text-yellow-400" />
-              <span className="font-medium">Tippek & Trükkök</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('purchases')}
-              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-                activeTab === 'purchases'
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'text-white/70 hover:bg-white/5'
-              }`}
-            >
-              <ShoppingCart className="w-4 h-4 xl:w-5 xl:h-5" />
-              <span className="font-medium">Vásárlások</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('invitations')}
-              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-                activeTab === 'invitations'
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'text-white/70 hover:bg-white/5'
-              }`}
-            >
-              <Users className="w-4 h-4 xl:w-5 xl:h-5" />
-              <span className="font-medium">Meghívások ({invitations.length})</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('reports')}
-              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-                activeTab === 'reports'
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'text-white/70 hover:bg-white/5'
-              }`}
-            >
-              <AlertTriangle className="w-4 h-4 xl:w-5 xl:h-5" />
-              <span className="font-medium">Jelentések ({reports.filter(r => r.status === 'pending').length})</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('activity')}
-              className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-                activeTab === 'activity'
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'text-white/70 hover:bg-white/5'
-              }`}
-            >
-              <Activity className="w-4 h-4 xl:w-5 xl:h-5" />
-              <span className="font-medium">Aktivitás</span>
-            </button>
-          </nav>
-        </div>
-
-        <div className="mt-auto">
-          <h3 className="text-white/60 text-xs font-bold mb-3 xl:mb-4 uppercase">Admin fiók szerkesztése</h3>
-          <button className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/70 hover:bg-white/5 transition-colors mb-2 text-sm">
-            <Users className="w-4 h-4 xl:w-5 xl:h-5" />
-            <span className="font-medium">Profil szerkesztése</span>
-          </button>
-          <button 
-            onClick={handleLogout}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/70 hover:bg-white/5 transition-colors text-sm"
-          >
-            <LogOut className="w-4 h-4 xl:w-5 xl:h-5" />
-            <span className="font-medium">Kijelentkezés</span>
-          </button>
-        </div>
+  // Sidebar menu component for reuse
+  const SidebarMenu = ({ onItemClick }: { onItemClick?: () => void }) => (
+    <>
+      <div className="mb-6 xl:mb-8">
+        <img src={logo} alt="Logo" className="w-12 h-12 xl:w-16 xl:h-16 mb-2" />
+        <h2 className="text-white font-bold text-xs xl:text-sm">Szia, {userName}! ✨</h2>
       </div>
 
-      {/* Mobile Navigation */}
+      <div className="mb-6 xl:mb-8">
+        <h3 className="text-white/60 text-xs font-bold mb-3 xl:mb-4 uppercase">Főmenü</h3>
+        <nav className="space-y-2">
+          <button
+            onClick={() => { setActiveTab('dashboard'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+              activeTab === 'dashboard'
+                ? 'bg-blue-600/20 text-blue-400'
+                : 'text-white/70 hover:bg-white/5'
+            }`}
+          >
+            <Home className="w-4 h-4 xl:w-5 xl:h-5" />
+            <span className="font-medium">Dashboard</span>
+          </button>
+          <button
+            onClick={() => { setActiveTab('users'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+              activeTab === 'users'
+                ? 'bg-blue-600/20 text-blue-400'
+                : 'text-white/70 hover:bg-white/5'
+            }`}
+          >
+            <Users className="w-4 h-4 xl:w-5 xl:h-5" />
+            <span className="font-medium">Összes felhasználó</span>
+          </button>
+          <button
+            onClick={() => { navigate('/admin/genius'); onItemClick?.(); }}
+            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
+          >
+            <Star className="w-4 h-4 xl:w-5 xl:h-5 text-[#ffd700]" />
+            <span className="font-medium">Genius Tagok</span>
+          </button>
+          <button
+            onClick={() => { navigate('/admin/tips'); onItemClick?.(); }}
+            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
+          >
+            <Crown className="w-4 h-4 xl:w-5 xl:h-5 text-yellow-400" />
+            <span className="font-medium">Tippek & Trükkök</span>
+          </button>
+          <button
+            onClick={() => { setActiveTab('purchases'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+              activeTab === 'purchases'
+                ? 'bg-blue-600/20 text-blue-400'
+                : 'text-white/70 hover:bg-white/5'
+            }`}
+          >
+            <ShoppingCart className="w-4 h-4 xl:w-5 xl:h-5" />
+            <span className="font-medium">Vásárlások</span>
+          </button>
+          <button
+            onClick={() => { setActiveTab('invitations'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+              activeTab === 'invitations'
+                ? 'bg-blue-600/20 text-blue-400'
+                : 'text-white/70 hover:bg-white/5'
+            }`}
+          >
+            <Users className="w-4 h-4 xl:w-5 xl:h-5" />
+            <span className="font-medium">Meghívások ({invitations.length})</span>
+          </button>
+          <button
+            onClick={() => { setActiveTab('reports'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+              activeTab === 'reports'
+                ? 'bg-blue-600/20 text-blue-400'
+                : 'text-white/70 hover:bg-white/5'
+            }`}
+          >
+            <AlertTriangle className="w-4 h-4 xl:w-5 xl:h-5" />
+            <span className="font-medium">Jelentések ({reports.filter(r => r.status === 'pending').length})</span>
+          </button>
+          <button
+            onClick={() => { setActiveTab('activity'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+              activeTab === 'activity'
+                ? 'bg-blue-600/20 text-blue-400'
+                : 'text-white/70 hover:bg-white/5'
+            }`}
+          >
+            <Activity className="w-4 h-4 xl:w-5 xl:h-5" />
+            <span className="font-medium">Aktivitás</span>
+          </button>
+        </nav>
+      </div>
+
+      <div className="mt-auto">
+        <h3 className="text-white/60 text-xs font-bold mb-3 xl:mb-4 uppercase">Admin fiók szerkesztése</h3>
+        <button className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/70 hover:bg-white/5 transition-colors mb-2 text-sm">
+          <Users className="w-4 h-4 xl:w-5 xl:h-5" />
+          <span className="font-medium">Profil szerkesztése</span>
+        </button>
+        <button 
+          onClick={() => { handleLogout(); onItemClick?.(); }}
+          className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/70 hover:bg-white/5 transition-colors text-sm"
+        >
+          <LogOut className="w-4 h-4 xl:w-5 xl:h-5" />
+          <span className="font-medium">Kijelentkezés</span>
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex flex-col lg:flex-row">
+      {/* Desktop Sidebar - Tablet+ Shown */}
+      <div className="hidden lg:flex lg:w-64 bg-[#0a0a1e] border-r border-purple-500/30 p-4 xl:p-6 flex-col">
+        <SidebarMenu />
+      </div>
+
+      {/* Mobile Header with Hamburger Menu */}
       <div className="lg:hidden bg-[#0a0a1e] border-b border-purple-500/30 p-4">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <button className="p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
+                  <Menu className="w-6 h-6" />
+                </button>
+              </SheetTrigger>
+              <SheetContent 
+                side="left" 
+                className="w-72 bg-[#0a0a1e] border-r border-purple-500/30 p-4"
+              >
+                <SidebarMenu onItemClick={() => setMobileMenuOpen(false)} />
+              </SheetContent>
+            </Sheet>
             <img src={logo} alt="Logo" className="w-10 h-10" />
             <h2 className="text-white font-bold text-sm">Szia, {userName}! ✨</h2>
           </div>
-          <button 
-            onClick={handleLogout}
-            className="p-2 rounded-lg text-white/70 hover:bg-white/5 transition-colors"
-          >
-            <LogOut className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="grid grid-cols-4 gap-2">
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
-              activeTab === 'dashboard'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70'
-            }`}
-          >
-            <Home className="w-5 h-5" />
-            <span className="text-xs font-medium">Dashboard</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('users')}
-            className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
-              activeTab === 'users'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70'
-            }`}
-          >
-            <Users className="w-5 h-5" />
-            <span className="text-xs font-medium">Felhasználók</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('purchases')}
-            className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
-              activeTab === 'purchases'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70'
-            }`}
-          >
-            <ShoppingCart className="w-5 h-5" />
-            <span className="text-xs font-medium">Vásárlások</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('revenue')}
-            className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
-              activeTab === 'revenue'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70'
-            }`}
-          >
-            <Wallet className="w-5 h-5" />
-            <span className="text-xs font-medium">Árbevétel</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('payouts')}
-            className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
-              activeTab === 'payouts'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70'
-            }`}
-          >
-            <Award className="w-5 h-5" />
-            <span className="text-xs font-medium">Kifizetések</span>
-          </button>
         </div>
       </div>
 
