@@ -200,7 +200,7 @@ const ChatEnhanced = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex pb-16 bg-[#000000]">
+      <div className="flex-1 flex bg-[#000000]">
         <div className="flex-1 flex flex-col" data-tutorial="threads-list">
           {selectedFriend ? (
             <ThreadViewEnhanced

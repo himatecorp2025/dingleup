@@ -2,11 +2,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, User, ShoppingBag, LogOut, Building2, MessageCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const BottomNav = () => {
   const [isDesktop, setIsDesktop] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const checkDesktop = () => {
@@ -15,6 +16,24 @@ const BottomNav = () => {
     checkDesktop();
     window.addEventListener('resize', checkDesktop);
     return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+
+  // Dynamically sync --bottom-nav-h with actual nav height
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const setVar = () => {
+      const h = el.offsetHeight;
+      document.documentElement.style.setProperty('--bottom-nav-h', `${h}px`);
+    };
+    setVar();
+    const ro = new ResizeObserver(setVar);
+    ro.observe(el);
+    window.addEventListener('resize', setVar);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', setVar);
+    };
   }, []);
 
   useEffect(() => {
@@ -71,7 +90,7 @@ const BottomNav = () => {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-black/90 border-t-2 border-yellow-500/50 backdrop-blur-sm z-[9999] shadow-[0_-5px_20px_rgba(255,215,0,0.3)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div ref={containerRef} className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-black/90 border-t-2 border-yellow-500/50 backdrop-blur-sm z-[9999] shadow-[0_-5px_20px_rgba(255,215,0,0.3)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-60"></div>
       <div className="grid grid-cols-6 gap-1 p-2 max-w-screen-sm mx-auto">
         {navItems.map((item, index) => {

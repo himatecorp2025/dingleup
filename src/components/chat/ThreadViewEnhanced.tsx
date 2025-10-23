@@ -747,7 +747,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         className="composer"
         style={{
           position: 'absolute',
-          bottom: `calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))`,
+          bottom: `calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 8px)`,
           left: 0,
           right: 0,
           display: 'flex',
@@ -756,7 +756,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           background: 'rgba(0, 0, 0, 0.85)',
           backdropFilter: 'blur(6px)',
           borderTop: '1px solid rgba(212, 175, 55, 0.1)',
-          zIndex: 30
+          zIndex: 10050
         }}
       >
         {/* Attachment Preview Chips */}
