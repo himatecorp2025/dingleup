@@ -380,6 +380,36 @@ export type Database = {
           },
         ]
       }
+      lives_ledger: {
+        Row: {
+          correlation_id: string
+          created_at: string | null
+          delta_lives: number
+          id: string
+          metadata: Json | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          correlation_id: string
+          created_at?: string | null
+          delta_lives: number
+          id?: string
+          metadata?: Json | null
+          source: string
+          user_id: string
+        }
+        Update: {
+          correlation_id?: string
+          created_at?: string | null
+          delta_lives?: number
+          id?: string
+          metadata?: Json | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       message_media: {
         Row: {
           created_at: string | null
@@ -1067,6 +1097,102 @@ export type Database = {
           },
         ]
       }
+      weekly_leaderboard_snapshot: {
+        Row: {
+          id: string
+          rank: number
+          score: number
+          snapshot_at: string | null
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          id?: string
+          rank: number
+          score: number
+          snapshot_at?: string | null
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          id?: string
+          rank?: number
+          score?: number
+          snapshot_at?: string | null
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
+      weekly_login_rewards: {
+        Row: {
+          created_at: string | null
+          gold_amount: number
+          lives_bonus: number | null
+          reward_index: number
+        }
+        Insert: {
+          created_at?: string | null
+          gold_amount: number
+          lives_bonus?: number | null
+          reward_index: number
+        }
+        Update: {
+          created_at?: string | null
+          gold_amount?: number
+          lives_bonus?: number | null
+          reward_index?: number
+        }
+        Relationships: []
+      }
+      weekly_login_state: {
+        Row: {
+          awarded_login_index: number | null
+          created_at: string | null
+          last_counted_at: string | null
+          updated_at: string | null
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          awarded_login_index?: number | null
+          created_at?: string | null
+          last_counted_at?: string | null
+          updated_at?: string | null
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          awarded_login_index?: number | null
+          created_at?: string | null
+          last_counted_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
+      weekly_prize_table: {
+        Row: {
+          created_at: string | null
+          gold: number
+          lives: number
+          rank: number
+        }
+        Insert: {
+          created_at?: string | null
+          gold: number
+          lives: number
+          rank: number
+        }
+        Update: {
+          created_at?: string | null
+          gold?: number
+          lives?: number
+          rank?: number
+        }
+        Relationships: []
+      }
       weekly_rankings: {
         Row: {
           average_response_time: number | null
@@ -1121,6 +1247,45 @@ export type Database = {
           },
         ]
       }
+      weekly_winner_awarded: {
+        Row: {
+          awarded_at: string | null
+          rank: number
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          awarded_at?: string | null
+          rank: number
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          awarded_at?: string | null
+          rank?: number
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
+      weekly_winner_popup_shown: {
+        Row: {
+          shown_at: string | null
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          shown_at?: string | null
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          shown_at?: string | null
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       public_profiles: {
@@ -1173,6 +1338,16 @@ export type Database = {
         Args: { p_invitee_id: string; p_inviter_id: string }
         Returns: Json
       }
+      credit_lives: {
+        Args: {
+          p_delta_lives: number
+          p_idempotency_key: string
+          p_metadata?: Json
+          p_source: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
       credit_wallet: {
         Args: {
           p_delta_coins: number
@@ -1186,6 +1361,7 @@ export type Database = {
       }
       distribute_weekly_rewards: { Args: never; Returns: undefined }
       generate_invitation_code: { Args: never; Returns: string }
+      get_current_week_start: { Args: never; Returns: string }
       get_invitation_tier_reward: {
         Args: { accepted_count: number }
         Returns: Json
