@@ -42,13 +42,17 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
     onClose();
   };
 
+  // Calculate discounted price (-25%)
+  const basePrice = 2.99;
+  const discountedPrice = Math.round(basePrice * 0.75 * 100) / 100;
+
   // Don't render on desktop/laptop
   if (!isHandheld || !open) return null;
 
   return (
     <Dialog open={open} onOpenChange={handleLater}>
       <DialogContent 
-        className="w-[95vw] max-w-md bg-[#0F1116] border border-[hsl(var(--dup-gold-600))] shadow-[0_12px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(212,175,55,0.15)] overflow-hidden rounded-[20px]"
+        className="w-[95vw] max-w-md max-h-[80dvh] bg-[#0F1116] border border-[hsl(var(--dup-gold-600))] shadow-[0_12px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(212,175,55,0.15)] overflow-y-auto rounded-[20px]"
         style={{ 
           paddingTop: 'max(env(safe-area-inset-top), 1rem)',
           paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)' 
@@ -93,15 +97,19 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
             Légy Genius, vedd fel a tempót!
           </p>
 
-          {/* Price tag - enhanced poker casino style */}
+          {/* Price tag - enhanced poker casino style with -25% discount */}
           <div className="bg-gradient-to-br from-[#1a5f3a]/60 via-[#0e4d2e]/80 to-[#1a5f3a]/60 rounded-[15px] p-6 border-4 border-[#d4af37] text-center relative overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.5)]">
             <div className="absolute inset-0 bg-gradient-to-r from-[#ffd700]/20 via-transparent to-[#ffd700]/20 animate-pulse"></div>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,215,0,0.15),transparent)]"></div>
             
             <div className="relative z-10">
               <TrendingUp className="w-10 h-10 sm:w-12 sm:h-12 text-[#ffd700] mx-auto mb-2 drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]" />
-              <p className="text-[#d4af37] text-sm sm:text-base mb-2 font-black drop-shadow-md">Csak</p>
-              <p className="text-6xl sm:text-7xl font-black text-[#ffd700] drop-shadow-[0_0_20px_rgba(255,215,0,1)]">$2.99</p>
+              <p className="text-[#d4af37] text-sm sm:text-base mb-2 font-black drop-shadow-md">Genius Ár</p>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="text-2xl font-bold text-[#d4af37]/70 line-through">${basePrice.toFixed(2)}</span>
+                <span className="px-3 py-1 bg-[#6a0d37] text-white text-sm font-black rounded-full">-25%</span>
+              </div>
+              <p className="text-6xl sm:text-7xl font-black text-[#ffd700] drop-shadow-[0_0_20px_rgba(255,215,0,1)]">${discountedPrice.toFixed(2)}</p>
               <p className="text-[#d4af37] text-base sm:text-lg font-bold mt-1">/ hó</p>
               <p className="text-white/80 text-sm sm:text-base mt-2 font-semibold">Bármikor lemondható</p>
             </div>
@@ -146,7 +154,7 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
               className="w-full py-5 text-xl sm:text-2xl font-black bg-[hsl(var(--dup-green-500))] hover:bg-[hsl(var(--dup-green-400))] disabled:bg-[hsl(var(--dup-green-300))] disabled:cursor-not-allowed text-white shadow-[0_0_20px_hsl(var(--dup-green-500)/0.6)] border border-[hsl(var(--dup-green-700))] rounded-[15px] transition-all relative overflow-hidden focus-visible:outline-none focus-visible:shadow-[var(--dup-focus-ring)] flex items-center justify-center gap-2"
             >
               <Crown className="w-7 h-7" />
-              {loading ? 'Átirányítás...' : 'Előfizetek $2.99/hó'}
+              {loading ? 'Átirányítás...' : `Előfizetek $${discountedPrice.toFixed(2)}/hó`}
             </button>
 
             <button

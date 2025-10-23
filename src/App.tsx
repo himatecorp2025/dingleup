@@ -76,7 +76,7 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
 };
 
 // Route-based music control
-const MUSIC_ALLOWED_ROUTES = [/^\/game$/];
+const MUSIC_ALLOWED_ROUTES = [/^\/dashboard$/, /^\/game$/];
 
 function isMusicAllowed(pathname: string): boolean {
   return MUSIC_ALLOWED_ROUTES.some(pattern => pattern.test(pathname));

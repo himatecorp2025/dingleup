@@ -32,7 +32,6 @@ import { LoginPromoManager } from '@/components/LoginPromoManager';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
-import backmusic from '@/assets/backmusic.mp3';
 import { toast } from 'sonner';
 
 const Dashboard = () => {
@@ -393,48 +392,7 @@ return (
         {/* Play Button */}
         <button
           data-tutorial="play-button"
-          onClick={() => {
-            try {
-              const w = window as any;
-              let a: HTMLAudioElement | undefined = w.__bgm;
-              if (!a) {
-                a = new Audio(backmusic);
-                a.loop = true;
-                // Get saved volume from localStorage
-                const savedVolume = localStorage.getItem('music_volume');
-                const savedMuted = localStorage.getItem('music_muted') === 'true';
-                const volume = savedMuted ? 0 : (savedVolume ? parseInt(savedVolume, 10) / 100 : 0.1);
-                a.volume = volume;
-                console.log(`[Dashboard] Created new audio with volume: ${volume}`);
-                // Attach live volume listener once
-                if (!(a as any).__volListenerAdded) {
-                  const handler = (e: any) => {
-                    try {
-                      const vol = e?.detail?.volume;
-                      if (typeof vol === 'number') {
-                        a!.volume = vol;
-                      }
-                    } catch {}
-                  };
-                  window.addEventListener('musicVolumeChange', handler);
-                  (a as any).__volListenerAdded = true;
-                }
-                w.__bgm = a;
-              } else {
-                a.loop = true;
-                // Apply current volume settings to existing audio
-                const savedVolume = localStorage.getItem('music_volume');
-                const savedMuted = localStorage.getItem('music_muted') === 'true';
-                const volume = savedMuted ? 0 : (savedVolume ? parseInt(savedVolume, 10) / 100 : 0.1);
-                a.volume = volume;
-                console.log(`[Dashboard] Updated existing audio volume to: ${volume}`);
-              }
-              const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-              ctx.resume();
-              a.play().catch(() => {});
-            } catch {}
-            navigate('/game');
-          }}
+          onClick={() => navigate('/game')}
         	  className="w-full py-2 sm:py-2.5 px-4 sm:px-5 mb-2 sm:mb-3 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-base sm:text-lg rounded-2xl border-2 border-green-400 shadow-xl shadow-green-500/50 hover:shadow-green-500/70 hover:scale-105 transition-all animate-pulse-glow-green casino-card"
         	  style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
         	>

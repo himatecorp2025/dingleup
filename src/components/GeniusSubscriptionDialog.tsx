@@ -67,9 +67,13 @@ export const GeniusSubscriptionDialog = ({
     setIsLoading(false);
   };
 
+  // Calculate discounted price (-25%)
+  const basePrice = 2.99;
+  const discountedPrice = Math.round(basePrice * 0.75 * 100) / 100;
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] dialog-enter-slow">
+      <DialogContent className="w-[95vw] max-w-[600px] max-h-[80dvh] bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] dialog-enter-slow overflow-y-auto">
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-black text-center justify-center flex items-center gap-2">
             <Crown className="w-8 h-8 text-yellow-400 animate-bounce" />
@@ -90,9 +94,13 @@ export const GeniusSubscriptionDialog = ({
           </div>
           
           <div className="relative z-10 text-center space-y-3">
-            <p className="text-yellow-200 text-sm font-bold">Csak</p>
+            <p className="text-yellow-200 text-sm font-bold">Genius Ár</p>
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <span className="text-2xl font-bold text-yellow-200/70 line-through">${basePrice.toFixed(2)}</span>
+              <span className="px-3 py-1 bg-purple-600 text-white text-sm font-black rounded-full">-25%</span>
+            </div>
             <p className="text-5xl font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]">
-              $2.99
+              ${discountedPrice.toFixed(2)}
             </p>
             <p className="text-yellow-200 text-base font-semibold">/ hónap</p>
             <div className="flex items-center justify-center gap-2 pt-2">
@@ -163,7 +171,7 @@ export const GeniusSubscriptionDialog = ({
             ) : (
               <>
                 <Crown className="w-6 h-6" />
-                ELŐFIZETEK $2.99/HÓ 🎰
+                ELŐFIZETEK ${discountedPrice.toFixed(2)}/HÓ 🎰
               </>
             )}
           </Button>
