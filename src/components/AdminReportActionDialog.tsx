@@ -27,7 +27,7 @@ const actionConfig = {
     description: 'Jelezd a felhasználónak, hogy a jelentést folyamatban van vizsgálva.',
     buttonText: 'Folyamatba helyezés',
     buttonClass: 'bg-blue-600 hover:bg-blue-700',
-    defaultMessage: 'Köszönjük a jelentésedet! A csapatunk vizsgálja az ügyet, és hamarosan válaszolunk.'
+    defaultMessage: 'Folyamatban van. Köszönjük a jelzésedet! A csapatunk vizsgálja az ügyet, és hamarosan válaszolunk.'
   },
   resolved: {
     title: 'Jelentés megoldva',
@@ -72,6 +72,13 @@ export const AdminReportActionDialog = ({
       return;
     }
 
+    // Ensure valid admin session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast.error('Lejárt admin munkamenet. Jelentkezz be újra az admin felületen.');
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -110,7 +117,15 @@ export const AdminReportActionDialog = ({
       setMessage(actionConfig[actionType].defaultMessage);
     } catch (error: any) {
       console.error('[AdminAction] Fatal error:', error);
-      toast.error(`Hiba: ${error.message || 'Ismeretlen hiba történt'}`);
+      const status = error?.status || error?.context?.status;
+      const msg: string = error?.message || '';
+      if (status === 401 || status === 403 || /authorization|token/i.test(msg)) {
+        toast.error('Lejárt admin munkamenet. Jelentkezz be újra.');
+      } else if (/function returned non-?2xx/i.test(msg)) {
+        toast.error('Hiba történt a küldés közben. Próbáld újra.');
+      } else {
+        toast.error(`Hiba: ${msg || 'Ismeretlen hiba történt'}`);
+      }
     } finally {
       setSubmitting(false);
     }
