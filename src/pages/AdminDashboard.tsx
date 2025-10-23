@@ -35,7 +35,11 @@ const AdminDashboard = () => {
   const [geniusCount, setGeniusCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
-  const [selectedReport, setSelectedReport] = useState<{ id: string; reporterId: string } | null>(null);
+  const [selectedReport, setSelectedReport] = useState<{ 
+    id: string; 
+    reporterId: string;
+    report: any;
+  } | null>(null);
   const [actionType, setActionType] = useState<'reviewing' | 'resolved' | 'dismissed'>('reviewing');
 
   // Initial load
@@ -894,7 +898,7 @@ const AdminDashboard = () => {
                     <div className="flex flex-wrap gap-2 mt-4">
                       <button
                         onClick={() => {
-                          setSelectedReport({ id: report.id, reporterId: report.reporter_id });
+                          setSelectedReport({ id: report.id, reporterId: report.reporter_id, report });
                           setActionType('reviewing');
                           setActionDialogOpen(true);
                         }}
@@ -904,7 +908,7 @@ const AdminDashboard = () => {
                       </button>
                       <button
                         onClick={() => {
-                          setSelectedReport({ id: report.id, reporterId: report.reporter_id });
+                          setSelectedReport({ id: report.id, reporterId: report.reporter_id, report });
                           setActionType('resolved');
                           setActionDialogOpen(true);
                         }}
@@ -914,7 +918,7 @@ const AdminDashboard = () => {
                       </button>
                       <button
                         onClick={() => {
-                          setSelectedReport({ id: report.id, reporterId: report.reporter_id });
+                          setSelectedReport({ id: report.id, reporterId: report.reporter_id, report });
                           setActionType('dismissed');
                           setActionDialogOpen(true);
                         }}
@@ -948,8 +952,7 @@ const AdminDashboard = () => {
         <AdminReportActionDialog
           open={actionDialogOpen}
           onOpenChange={setActionDialogOpen}
-          reportId={selectedReport.id}
-          reporterId={selectedReport.reporterId}
+          report={selectedReport.report}
           actionType={actionType}
           onSuccess={() => {
             fetchData();

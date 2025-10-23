@@ -48,9 +48,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { reporterId, message, reportId, newStatus } = await req.json();
+    const { reporterId, message, reportId, newStatus, reportDetails } = await req.json();
 
-    if (!reporterId || !message || !reportId || !newStatus) {
+    if (!reporterId || !message || !reportId || !newStatus || !reportDetails) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -163,13 +163,50 @@ Deno.serve(async (req) => {
       .replace(/<[^>]+>/g, '')
       .trim();
 
+    // Build detailed message
+    const statusLabels: Record<string, string> = {
+      reviewing: '📋 Folyamatban',
+      resolved: '✅ Megoldva',
+      dismissed: '❌ Elutasítva'
+    };
+
+    let detailsSection = '';
+    if (reportDetails.reportType === 'bug') {
+      detailsSection = `
+📱 Jelentés típusa: Fejlesztői (Bug)
+🏷️ Kategória: ${reportDetails.bugCategory || 'N/A'}
+📝 Leírás: ${reportDetails.bugDescription || 'N/A'}`;
+    } else {
+      detailsSection = `
+⚠️ Jelentés típusa: Felhasználói (Visszaélés)
+👤 Jelentett felhasználó: ${reportDetails.reportedUsername || 'N/A'}
+🚫 Visszaélés típusa: ${reportDetails.violationType || 'N/A'}
+📝 Részletek: ${reportDetails.violationDescription || 'N/A'}`;
+    }
+
+    const fullMessage = `${statusLabels[newStatus]}
+
+━━━━━━━━━━━━━━━━━━━━━━
+📋 JELENTÉS RÉSZLETEI
+━━━━━━━━━━━━━━━━━━━━━━
+${detailsSection}
+
+━━━━━━━━━━━━━━━━━━━━━━
+💬 ADMIN ÜZENETE
+━━━━━━━━━━━━━━━━━━━━━━
+${sanitizedMessage}
+
+━━━━━━━━━━━━━━━━━━━━━━
+Köszönjük türelmedet!
+- DingleUP! Csapat 🎮`;
+
     // Insert message from DingleUP! system
     const { data: dmMessage, error: messageError } = await serviceClient
       .from('dm_messages')
       .insert({
         thread_id: threadId,
         sender_id: systemUserId,
-        body: sanitizedMessage
+        body: fullMessage
       })
       .select()
       .single();

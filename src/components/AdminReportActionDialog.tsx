@@ -15,8 +15,17 @@ import { Label } from '@/components/ui/label';
 interface AdminReportActionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  reportId: string;
-  reporterId: string;
+  report: {
+    id: string;
+    reporter_id: string;
+    report_type: string;
+    bug_category?: string;
+    bug_description?: string;
+    violation_type?: string;
+    violation_description?: string;
+    reported_user?: { username: string };
+    reporter?: { username: string; email: string };
+  };
   actionType: 'reviewing' | 'resolved' | 'dismissed';
   onSuccess: () => void;
 }
@@ -48,8 +57,7 @@ const actionConfig = {
 export const AdminReportActionDialog = ({ 
   open, 
   onOpenChange, 
-  reportId, 
-  reporterId,
+  report,
   actionType,
   onSuccess 
 }: AdminReportActionDialogProps) => {
@@ -83,18 +91,28 @@ export const AdminReportActionDialog = ({
 
     try {
       console.log('[AdminAction] Sending notification:', {
-        reportId,
-        reporterId,
+        reportId: report.id,
+        reporterId: report.reporter_id,
         actionType,
         messageLength: message.length
       });
 
       const { data, error } = await supabase.functions.invoke('admin-send-report-notification', {
         body: {
-          reporterId,
+          reporterId: report.reporter_id,
           message: message.trim(),
-          reportId,
-          newStatus: actionType
+          reportId: report.id,
+          newStatus: actionType,
+          reportDetails: {
+            reportType: report.report_type,
+            bugCategory: report.bug_category,
+            bugDescription: report.bug_description,
+            violationType: report.violation_type,
+            violationDescription: report.violation_description,
+            reportedUsername: report.reported_user?.username,
+            reporterUsername: report.reporter?.username,
+            reporterEmail: report.reporter?.email
+          }
         }
       });
 
