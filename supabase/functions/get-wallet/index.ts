@@ -93,12 +93,39 @@ serve(async (req) => {
       }
     }
 
-    // Calculate next life time
+    // Calculate next life time with proper regeneration tracking
     let nextLifeAt = null;
     if (profile.lives < effectiveMaxLives) {
-      const lastRegen = new Date(profile.last_life_regeneration);
+      const now = Date.now();
+      const lastRegen = new Date(profile.last_life_regeneration).getTime();
       const regenIntervalMs = effectiveRegenMinutes * 60 * 1000;
-      nextLifeAt = new Date(lastRegen.getTime() + regenIntervalMs).toISOString();
+      const timeSinceLastRegen = now - lastRegen;
+      
+      // Calculate how many lives should have been regenerated
+      const livesShouldBeAdded = Math.floor(timeSinceLastRegen / regenIntervalMs);
+      
+      // If lives should have been added, update the last_life_regeneration
+      if (livesShouldBeAdded > 0) {
+        const newLastRegen = lastRegen + (livesShouldBeAdded * regenIntervalMs);
+        const newLives = Math.min(profile.lives + livesShouldBeAdded, effectiveMaxLives);
+        
+        // Update profile with new values
+        await supabase
+          .from('profiles')
+          .update({
+            lives: newLives,
+            last_life_regeneration: new Date(newLastRegen).toISOString()
+          })
+          .eq('id', user.id);
+        
+        // Recalculate nextLifeAt based on new last_life_regeneration
+        if (newLives < effectiveMaxLives) {
+          nextLifeAt = new Date(newLastRegen + regenIntervalMs).toISOString();
+        }
+      } else {
+        // No lives added yet, calculate when next life will come
+        nextLifeAt = new Date(lastRegen + regenIntervalMs).toISOString();
+      }
     }
 
     // Get subscription renewal date if subscriber
