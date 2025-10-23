@@ -75,7 +75,8 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Route-based music control - ONLY game route (includes topic selector and gameplay)
+// A3) Route allow-list - ONLY /game route (includes category selector + gameplay)
+// Topics selector IS PART OF /game, not a separate route
 const MUSIC_ALLOWED_ROUTES = [/^\/game$/];
 
 function isMusicAllowed(pathname: string): boolean {

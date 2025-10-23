@@ -3,6 +3,7 @@ import backMusic from '@/assets/backmusic.mp3';
 /**
  * Singleton AudioManager - handles global background music
  * Ensures single source of truth for audio state
+ * A1-A5 COMPLIANCE: Runtime detektor + singleton enforcement
  */
 class AudioManager {
   private static _instance: AudioManager | null = null;
@@ -11,6 +12,13 @@ class AudioManager {
   private _volume: number = 0.3;
 
   private constructor() {
+    // A2) Runtime detektor - detects duplicate Audio instances
+    if ((window as any).__AUDIO_INSTANCES__ >= 1) {
+      console.error('❌ DUPLIKÁLT AUDIO PÉLDÁNY! Single audio violation!');
+      throw new Error('AUDIO DUPLICATION DETECTED: Only AudioManager should create Audio instances!');
+    }
+    (window as any).__AUDIO_INSTANCES__ = ((window as any).__AUDIO_INSTANCES__ || 0) + 1;
+
     this.bgm = new Audio(backMusic);
     this.bgm.loop = true;
     this.bgm.volume = this._volume;
@@ -20,7 +28,7 @@ class AudioManager {
       (window as any).__bgm = this.bgm;
     }
 
-    console.log('[AudioManager] Initialized', { volume: this._volume, enabled: this._enabled });
+    console.log('[AudioManager] Initialized', { volume: this._volume, enabled: this._enabled, instances: (window as any).__AUDIO_INSTANCES__ });
   }
 
   static getInstance(): AudioManager {
