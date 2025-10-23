@@ -662,7 +662,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           scrollBehavior: 'smooth',
           padding: '12px',
           paddingTop: 'var(--appbar-h)',
-          paddingBottom: `calc(var(--composer-h) + var(--bottom-nav-h) + env(safe-area-inset-bottom) + 12px)`,
+          paddingBottom: `calc(var(--composer-h) + var(--bottom-nav-h) + 12px)`,
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'contain',
           position: 'relative'
@@ -747,7 +747,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         className="composer"
         style={{
           position: 'fixed',
-          bottom: `calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 8px)`,
+          bottom: `var(--bottom-nav-h)`,
           left: 0,
           right: 0,
           display: 'flex',
