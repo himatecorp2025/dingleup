@@ -305,11 +305,7 @@ const GamePreview = () => {
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
 
-    const g = (window as any).__bgm as HTMLAudioElement | undefined;
-    if (g) {
-      g.volume = 0.1;
-      try { await g.play(); } catch {}
-    }
+    // Audio is managed by AudioManager singleton - no manual play() needed
     
     try {
       await supabase.rpc('reset_game_helps');

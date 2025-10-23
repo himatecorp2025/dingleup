@@ -44,20 +44,6 @@ const BottomNav = () => {
     }
   };
 
-  // Stop background music when navigating
-  const stopBackgroundMusic = () => {
-    try {
-      const w = window as any;
-      const audio: HTMLAudioElement | undefined = w.__bgm;
-      if (audio) {
-        audio.pause();
-        audio.currentTime = 0;
-      }
-    } catch (err) {
-      console.error('Error stopping music:', err);
-    }
-  };
-
   const handleNavigation = (path: string) => {
     // Check if user is authenticated when on landing page
     if (location.pathname === '/' && !isAuthenticated) {
@@ -66,7 +52,7 @@ const BottomNav = () => {
       return;
     }
     
-    stopBackgroundMusic();
+    // AudioManager handles music policy automatically via route changes
     navigate(path);
   };
 
@@ -76,10 +62,7 @@ const BottomNav = () => {
     { icon: User, label: 'Profil', path: '/profile' },
     { icon: ShoppingBag, label: 'Bolt', path: '/shop' },
     { icon: Building2, label: 'Rólunk', path: '/about' },
-    { icon: LogOut, label: 'Kilépés', action: () => {
-      stopBackgroundMusic();
-      handleLogout();
-    }}
+    { icon: LogOut, label: 'Kilépés', action: handleLogout }
   ];
 
   // Don't render on desktop/laptop

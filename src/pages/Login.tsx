@@ -55,20 +55,7 @@ const Login = () => {
           description: "Átirányítunk...",
         });
         
-        // Music setup
-        try {
-          localStorage.setItem('musicEnabled', 'true');
-          const w = window as any;
-          const audio: HTMLAudioElement | undefined = w.__bgm;
-          if (audio) {
-            audio.muted = true;
-            audio.currentTime = 0;
-            audio.play().catch(() => {});
-            setTimeout(() => {
-              audio.muted = false;
-            }, 0);
-          }
-        } catch {}
+        // AudioManager handles music automatically based on user settings
         
         navigate("/intro?next=/dashboard");
       }
