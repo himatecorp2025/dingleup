@@ -58,38 +58,62 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     }
   };
 
-  const claimDailyGift = async () => {
-    if (!userId || !canClaim) return;
+  const claimDailyGift = async (refetchWallet?: () => Promise<void>) => {
+    if (!userId || !canClaim) return false;
 
     try {
       const { data, error } = await supabase.rpc('claim_daily_gift');
       
       if (error) throw error;
       
-      const result = data as { success: boolean; coins: number; streak: number; is_genius?: boolean; error?: string };
+      const result = data as { 
+        success: boolean; 
+        isSubscriber?: boolean;
+        baseCoins?: number;
+        grantedCoins?: number;
+        walletBalance?: number;
+        streak: number; 
+        error?: string 
+      };
+      
       if (result.success) {
+        // Server-authoritative message
+        const isGenius = result.isSubscriber || false;
+        const baseAmount = result.baseCoins || 0;
+        const grantedAmount = result.grantedCoins || 0;
+        
         toast({
           title: '🎁 Napi ajándék',
-          description: `+${result.coins} aranyérme a ${result.streak}. belépésért!${result.is_genius ? ' (Genius 2x)' : ''}`,
+          description: isGenius 
+            ? `Jutalmad: ${baseAmount} → ${grantedAmount} érme (Genius dupla!)` 
+            : `Jutalmad: +${grantedAmount} érme`,
         });
 
         setCanClaim(false);
         setWeeklyEntryCount(result.streak);
         const nextBase = DAILY_GIFT_REWARDS[result.streak % 7];
-        const genius = (result.is_genius ?? isPremium) === true;
-        setNextReward(genius ? nextBase * 2 : nextBase);
+        setNextReward(isGenius ? nextBase * 2 : nextBase);
+        
         // Mark as seen today
         const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
         localStorage.setItem(todayKey, 'true');
 
+        // Refetch wallet to update balance
+        if (refetchWallet) {
+          await refetchWallet();
+        }
+
         // Track claim
         trackEvent('popup_cta_click', 'daily', 'claim');
+        
+        return true;
       } else {
         toast({
           title: 'Hiba',
           description: result.error || 'Nem sikerült az ajándék átvétele',
           variant: 'destructive'
         });
+        return false;
       }
     } catch (error) {
       if (import.meta.env.DEV) {
@@ -100,6 +124,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         description: 'Nem sikerült az ajándék átvétele',
         variant: 'destructive'
       });
+      return false;
     }
   };
 
@@ -125,7 +150,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     nextReward,
     claimDailyGift,
     checkDailyGift,
-    handleLater
+    handleLater,
+    setCanClaim
   };
 };
 

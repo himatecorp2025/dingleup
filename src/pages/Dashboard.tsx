@@ -218,9 +218,13 @@ const Dashboard = () => {
   }, [userId]);
 
   const handleClaimDailyGift = async () => {
-    await claimDailyGift();
-    await checkDailyGift();
-    setShowDailyGift(false);
+    const success = await claimDailyGift(refetchWallet);
+    if (success) {
+      await checkDailyGift();
+      await refreshProfile();
+      setShowDailyGift(false);
+      setDailyGiftJustClaimed(true);
+    }
   };
 
   const handleClaimWelcomeBonus = async () => {

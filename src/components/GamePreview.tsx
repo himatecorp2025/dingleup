@@ -841,7 +841,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
               <span className="font-bold text-sm md:text-base">{profile.coins}</span>
             </div>
             {canClaim && (
-              <Button size="sm" onClick={claimDailyGift} className="mt-2 text-xs md:text-sm">
+              <Button size="sm" onClick={() => claimDailyGift().then(refreshProfile)} className="mt-2 text-xs md:text-sm">
                 <Gift className="w-3 h-3 md:w-4 md:h-4 mr-2" />
                 Napi ajándék
               </Button>

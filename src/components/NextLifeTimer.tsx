@@ -46,9 +46,9 @@ export const NextLifeTimer = ({
     return null;
   }
 
-  const totalSeconds = Math.floor(remainingMs / 1000);
-  const minutes = Math.max(0, Math.floor(totalSeconds / 60));
-  const seconds = Math.max(0, totalSeconds % 60);
+  const totalSeconds = Math.max(0, Math.floor(remainingMs / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
 
   const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface WalletData {
+  isSubscriber: boolean;
   livesCurrent: number;
   livesMax: number;
   coinsCurrent: number;
   nextLifeAt: string | null;
   regenIntervalSec: number;
+  regenMinutes: number;
   ledger: any[];
 }
 

@@ -72,9 +72,9 @@ export const useLifeRegeneration = ({
       const seconds = Math.floor((remaining % 60000) / 1000);
 
       if (remaining <= 0) {
-        setTimeUntilNext('0:00');
+        setTimeUntilNext('00:00');
       } else {
-        setTimeUntilNext(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+        setTimeUntilNext(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
       }
     };
 

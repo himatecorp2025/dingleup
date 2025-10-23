@@ -39,10 +39,10 @@ serve(async (req) => {
 
     console.log('[GetWallet] Fetching wallet for user:', user.id);
 
-    // Get current balances and next life time
+    // Get current balances with subscriber status and booster info
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate')
+      .select('coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate, is_subscriber, speed_booster_active, speed_booster_multiplier')
       .eq('id', user.id)
       .single();
 
@@ -51,12 +51,47 @@ serve(async (req) => {
       throw profileError;
     }
 
+    // Determine effective max lives and regen rate based on subscription and booster
+    let effectiveMaxLives = 15; // Default for non-subscribers
+    let effectiveRegenMinutes = 12; // Default for non-subscribers
+    
+    // Genius subscription gives base bonuses
+    if (profile.is_subscriber) {
+      effectiveMaxLives = 30;
+      effectiveRegenMinutes = 6;
+    }
+    
+    // Active speed booster overrides (adds to base max_lives)
+    if (profile.speed_booster_active && profile.speed_booster_multiplier) {
+      const multiplier = profile.speed_booster_multiplier;
+      effectiveRegenMinutes = Math.floor(12 / multiplier);
+      
+      // Booster adds extra lives on top of base
+      const baseMax = profile.is_subscriber ? 30 : 15;
+      switch (multiplier) {
+        case 2:
+          effectiveMaxLives = baseMax + 10;
+          break;
+        case 4:
+          effectiveMaxLives = baseMax + 20;
+          break;
+        case 12:
+          effectiveMaxLives = baseMax + 60;
+          break;
+        case 24:
+          effectiveMaxLives = baseMax + 120;
+          break;
+        default:
+          effectiveMaxLives = baseMax;
+      }
+    }
+
     // Calculate next life time
     let nextLifeAt = null;
-    if (profile.lives < profile.max_lives) {
+    if (profile.lives < effectiveMaxLives) {
       const lastRegen = new Date(profile.last_life_regeneration);
-      const regenRateMinutes = profile.lives_regeneration_rate;
-      nextLifeAt = new Date(lastRegen.getTime() + regenRateMinutes * 60 * 1000).toISOString();
+      const regenIntervalMs = effectiveRegenMinutes * 60 * 1000;
+      nextLifeAt = new Date(lastRegen.getTime() + regenIntervalMs).toISOString();
     }
 
     // Get recent ledger entries (last 20)
@@ -74,11 +109,13 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
+        isSubscriber: profile.is_subscriber || false,
         livesCurrent: profile.lives,
-        livesMax: profile.max_lives,
+        livesMax: effectiveMaxLives,
         coinsCurrent: profile.coins,
         nextLifeAt,
-        regenIntervalSec: profile.lives_regeneration_rate * 60,
+        regenIntervalSec: effectiveRegenMinutes * 60,
+        regenMinutes: effectiveRegenMinutes,
         ledger: ledger || []
       }),
       {
