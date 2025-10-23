@@ -4,6 +4,7 @@ import AudioManager from '@/lib/audioManager';
 interface AudioState {
   musicEnabled: boolean;
   volume: number;
+  loaded: boolean;
   setMusicEnabled: (enabled: boolean) => void;
   setVolume: (vol: number) => void;
   loadSettings: () => void;
@@ -12,6 +13,7 @@ interface AudioState {
 export const useAudioStore = create<AudioState>((set, get) => ({
   musicEnabled: true,
   volume: 0.3,
+  loaded: false,
   
   setMusicEnabled: (enabled) => {
     console.log('[AudioStore] Setting music enabled:', enabled);
@@ -51,6 +53,7 @@ export const useAudioStore = create<AudioState>((set, get) => ({
     set({
       musicEnabled: newEnabled,
       volume: newVolume,
+      loaded: true,
     });
     
     // Apply via singleton AudioManager

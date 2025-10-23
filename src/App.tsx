@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
 import { useAudioStore } from "@/stores/audioStore";
 import AudioManager from "@/lib/audioManager";
+import { usePlatformDetection } from "@/hooks/usePlatformDetection";
 import Index from "./pages/Index";
 import Game from "./pages/Game";
 import Dashboard from "./pages/Dashboard";
@@ -74,6 +75,94 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// Route-based music control
+const MUSIC_ALLOWED_ROUTES = [/^\/game$/];
+
+function isMusicAllowed(pathname: string): boolean {
+  return MUSIC_ALLOWED_ROUTES.some(pattern => pattern.test(pathname));
+}
+
+// Audio policy manager component
+const AudioPolicyManager = () => {
+  const location = useLocation();
+  const isHandheld = usePlatformDetection();
+
+  useEffect(() => {
+    const applyAudioPolicy = () => {
+      const { musicEnabled, volume, loaded } = useAudioStore.getState();
+      if (!loaded) return;
+
+      const allowed = isHandheld && isMusicAllowed(location.pathname);
+      const audioManager = AudioManager.getInstance();
+
+      console.log('[AudioPolicy]', { 
+        pathname: location.pathname, 
+        allowed, 
+        isHandheld,
+        musicEnabled, 
+        volume 
+      });
+
+      if (allowed && musicEnabled) {
+        audioManager.apply(true, volume);
+      } else {
+        audioManager.apply(false, volume);
+      }
+    };
+
+    applyAudioPolicy();
+  }, [location.pathname, isHandheld]);
+
+  // Visibility and focus guards
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      const audioManager = AudioManager.getInstance();
+      const { musicEnabled, volume, loaded } = useAudioStore.getState();
+      if (!loaded) return;
+
+      if (document.visibilityState !== 'visible') {
+        audioManager.apply(false, volume);
+      } else {
+        const allowed = isHandheld && isMusicAllowed(location.pathname);
+        if (allowed && musicEnabled) {
+          audioManager.apply(true, volume);
+        }
+      }
+    };
+
+    const handleBlur = () => {
+      AudioManager.getInstance().apply(false, useAudioStore.getState().volume);
+    };
+
+    const handleFocus = () => {
+      const { musicEnabled, volume, loaded } = useAudioStore.getState();
+      if (!loaded) return;
+      const allowed = isHandheld && isMusicAllowed(location.pathname);
+      if (allowed && musicEnabled) {
+        AudioManager.getInstance().apply(true, volume);
+      }
+    };
+
+    const handlePageHide = () => {
+      AudioManager.getInstance().apply(false, useAudioStore.getState().volume);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('pagehide', handlePageHide);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('pagehide', handlePageHide);
+    };
+  }, [location.pathname, isHandheld]);
+
+  return null;
+};
+
 const App = () => {
   // Initialize AudioManager singleton and subscribe to store
   useEffect(() => {
@@ -85,7 +174,17 @@ const App = () => {
     
     // Subscribe to store changes
     const unsubscribe = useAudioStore.subscribe((state) => {
-      audioManager.apply(state.musicEnabled, state.volume);
+      if (!state.loaded) return;
+      
+      // Only apply if on allowed route and handheld device
+      const isHandheld = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 1024;
+      const allowed = isHandheld && isMusicAllowed(window.location.pathname);
+      
+      if (allowed && state.musicEnabled) {
+        audioManager.apply(true, state.volume);
+      } else {
+        audioManager.apply(false, state.volume);
+      }
     });
     
     return () => {
@@ -99,6 +198,7 @@ const App = () => {
       <Sonner />
       <BrowserRouter>
         <ScrollBehaviorManager />
+        <AudioPolicyManager />
         <AppRouteGuard>
           <Routes>
             <Route path="/" element={<Index />} />

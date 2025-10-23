@@ -29,7 +29,7 @@ const QUESTION_BANKS: Record<GameCategory, Question[]> = {
   finance: financeQuestions as Question[]
 };
 
-const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement> }) => {
+const GamePreview = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading: profileLoading, updateProfile, spendLife, refreshProfile } = useGameProfile(userId);
@@ -77,18 +77,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const [errorBannerMessage, setErrorBannerMessage] = useState('');
   const [questionVisible, setQuestionVisible] = useState(true);
 
-  const stopMusic = () => {
-    try {
-      const g = (window as any).__bgm as HTMLAudioElement | undefined;
-      if (g) {
-        g.pause();
-        g.currentTime = 0;
-        (window as any).__bgm = undefined;
-      }
-    } catch (error) {
-      console.error('Error stopping music:', error);
-    }
-  };
 
   // Auth check
   useEffect(() => {
@@ -1012,7 +1000,6 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
             
             <button 
               onClick={() => {
-                stopMusic();
                 navigate('/dashboard');
               }}
               className="text-white text-sm hover:underline"
