@@ -642,7 +642,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
     
-    const cost = doubleAnswerUsageCount === 0 ? 0 : 1; // First free, second costs 1 coin
+    const cost = doubleAnswerUsageCount === 0 ? 0 : 20; // First free, second costs 20 coins
     
     // First usage - free
     if (doubleAnswerUsageCount === 0 && profile?.help_2x_answer_active) {
@@ -661,7 +661,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     // Second usage - costs 1 coin
     if (doubleAnswerUsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error('Nincs elég aranyérme! 1 🪙 szükséges.');
+        toast.error('Nincs elég aranyérme! 20 🪙 szükséges.');
         setInsufficientType('coins');
         setRequiredAmount(cost);
         setShowInsufficientDialog(true);
@@ -675,7 +675,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
         setDoubleAnswerUsageCount(2);
         setFirstAttempt(null);
         setSecondAttempt(null);
-        toast.success('2× válasz aktiválva - 1 aranyérme levonva!');
+        toast.success('2× válasz aktiválva - 20 aranyérme levonva!');
       }
     }
   };
