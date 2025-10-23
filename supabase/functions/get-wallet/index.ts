@@ -70,8 +70,9 @@ serve(async (req) => {
     // Active speed booster overrides (adds to base max_lives)
     if (profile.speed_booster_active && profile.speed_booster_multiplier) {
       const multiplier = profile.speed_booster_multiplier;
+      const baseRegenMinutes = isSubscriberEffective ? 6 : 12;
       // Avoid 0 minutes, align with background job logic (min 0.5 min)
-      effectiveRegenMinutes = Math.max(0.5, 12 / multiplier);
+      effectiveRegenMinutes = Math.max(0.5, baseRegenMinutes / multiplier);
       
       // Booster adds extra lives on top of base
       const baseMax = isSubscriberEffective ? 30 : 15;
