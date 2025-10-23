@@ -69,27 +69,32 @@ export const useAttachments = () => {
         } 
       });
 
-      // Upload to storage
-      const uploadResponse = await fetch(uploadData.uploadUrl, {
-        method: 'PUT',
-        body: attachment.file,
-        headers: {
-          'Content-Type': attachment.file.type,
-          'x-upsert': 'true'
-        }
-      });
+      // Upload to storage with timeout
+      const uploadResponse = await Promise.race([
+        fetch(uploadData.uploadUrl, {
+          method: 'PUT',
+          body: attachment.file,
+          headers: {
+            'Content-Type': attachment.file.type,
+            'x-upsert': 'true'
+          }
+        }),
+        new Promise<Response>((_, reject) => 
+          setTimeout(() => reject(new Error('Upload timeout')), 30000)
+        )
+      ]);
 
       if (!uploadResponse.ok) {
         throw new Error('Upload failed');
       }
 
-      // Upload successful - return path for storage, signed URL will be generated on fetch
+      // Upload successful
       updateAttachmentStatus(localId, 'uploaded', {
         w,
         h,
         remote: {
           key: uploadData.path,
-          url: uploadData.path, // Store path, not URL (signed URL generated on fetch)
+          url: uploadData.path,
           mime: attachment.file.type
         }
       });
@@ -97,7 +102,7 @@ export const useAttachments = () => {
       return {
         kind: attachment.kind,
         key: uploadData.path,
-        url: uploadData.path, // This will be the storage path
+        url: uploadData.path,
         mime: attachment.file.type,
         name: attachment.file.name,
         w,

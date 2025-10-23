@@ -367,8 +367,8 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         duration: att.duration
       }));
 
-      // Upload all attachments if any
-      let uploadedAttachments: any[] = [];
+      // Upload all attachments if any - DON'T WAIT FOR COMPLETION
+      let uploadPromise: Promise<any[]> | null = null;
       if (attachments.length > 0) {
         // Get thread ID first
         const normalizedIds = [userId, friendId].sort();
@@ -380,7 +380,8 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
           .single();
 
         if (thread) {
-          uploadedAttachments = await uploadAllAttachments(thread.id);
+          // Start upload but don't await - let it run in background
+          uploadPromise = uploadAllAttachments(thread.id);
         }
       }
 
@@ -420,7 +421,10 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         requestAnimationFrame(() => scrollToBottom('smooth', 'send-optimistic'));
       }
 
-      // Send to server
+      // Wait for uploads to complete before sending (but show optimistic UI immediately)
+      const uploadedAttachments = uploadPromise ? await uploadPromise : [];
+
+      // Send to server with uploaded attachments
       const { data: response, error } = await supabase.functions.invoke('send-dm', {
         body: { 
           recipientId: friendId, 
