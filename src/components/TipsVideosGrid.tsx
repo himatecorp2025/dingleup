@@ -24,9 +24,7 @@ export const TipsVideosGrid = ({ isGenius, onSubscribeClick }: TipsVideosGridPro
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
   useEffect(() => {
-    if (isGenius) {
-      fetchVideos();
-    }
+    fetchVideos();
   }, [isGenius]);
 
   const fetchVideos = async () => {
@@ -66,9 +64,6 @@ export const TipsVideosGrid = ({ isGenius, onSubscribeClick }: TipsVideosGridPro
     }
   };
 
-  if (!isGenius) {
-    return null;
-  }
 
   if (loading) {
     return (
@@ -78,10 +73,29 @@ export const TipsVideosGrid = ({ isGenius, onSubscribeClick }: TipsVideosGridPro
     );
   }
 
-  if (videos.length === 0) {
+  if (videos.length === 0 && isGenius) {
     return (
       <div className="text-center py-8">
         <p className="text-white/60">Még nincsenek feltöltött videók</p>
+      </div>
+    );
+  }
+
+  // Show teaser for non-Genius users
+  if (!isGenius) {
+    return (
+      <div className="p-6 bg-gradient-to-br from-yellow-500/20 to-red-500/20 border-2 border-yellow-500/50 rounded-xl text-center">
+        <Crown className="w-12 h-12 text-yellow-400 mx-auto mb-3 animate-bounce" />
+        <h3 className="text-xl font-black text-white mb-2">Genius Exkluzív Tartalom</h3>
+        <p className="text-white/80 mb-4">
+          Exkluzív videók csak Genius tagoknak!
+        </p>
+        <button
+          onClick={onSubscribeClick}
+          className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-black px-6 py-3 rounded-lg transition-all shadow-lg"
+        >
+          Előfizetek most!
+        </button>
       </div>
     );
   }
@@ -153,22 +167,6 @@ export const TipsVideosGrid = ({ isGenius, onSubscribeClick }: TipsVideosGridPro
         />
       )}
 
-      {/* Non-Genius Overlay */}
-      {!isGenius && videos.length > 0 && (
-        <div className="mt-4 p-6 bg-gradient-to-br from-yellow-500/20 to-red-500/20 border-2 border-yellow-500/50 rounded-xl text-center">
-          <Crown className="w-12 h-12 text-yellow-400 mx-auto mb-3 animate-bounce" />
-          <h3 className="text-xl font-black text-white mb-2">Genius Exkluzív Tartalom</h3>
-          <p className="text-white/80 mb-4">
-            A Tippek & Trükkök videók csak Genius tagoknak érhetők el
-          </p>
-          <button
-            onClick={onSubscribeClick}
-            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-black px-6 py-3 rounded-lg transition-all shadow-lg"
-          >
-            Előfizetek most!
-          </button>
-        </div>
-      )}
     </>
   );
 };
