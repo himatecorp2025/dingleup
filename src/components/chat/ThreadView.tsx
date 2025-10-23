@@ -451,7 +451,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
 
           {messageText.trim() ? (
             <button
-              onClick={sendMessage}
+              onClick={() => sendMessage()}
               className="p-2.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all duration-200 flex-shrink-0 mb-1 shadow-lg shadow-[#138F5E]/30"
               aria-label="Küldés"
             >

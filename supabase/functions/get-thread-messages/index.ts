@@ -89,10 +89,17 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Get messages with pagination
+    // Get messages with pagination and media
     let query = supabase
       .from('dm_messages')
-      .select('*')
+      .select(`
+        *,
+        message_media (
+          media_url,
+          media_type,
+          thumbnail_url
+        )
+      `)
       .eq('thread_id', thread.id)
       .eq('is_deleted', false)
       .order('created_at', { ascending: false })
@@ -120,9 +127,15 @@ Deno.serve(async (req) => {
 
     console.log(`[GetThreadMessages] Returning ${messages?.length || 0} messages`);
 
+    // Transform messages to include media array
+    const transformedMessages = (messages || []).map((msg: any) => ({
+      ...msg,
+      media: msg.message_media || []
+    }));
+
     return new Response(
       JSON.stringify({ 
-        messages: (messages || []).reverse(), // Return in chronological order
+        messages: transformedMessages.reverse(), // Return in chronological order
         threadId: thread.id 
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

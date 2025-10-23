@@ -33,12 +33,12 @@ Deno.serve(async (req) => {
     // Service role client for DB ops
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { recipientId, body } = await req.json();
+    const { recipientId, body, mediaUrl, mediaPath } = await req.json();
 
     // Validate input
-    if (!recipientId || !body) {
+    if (!recipientId || (!body && !mediaUrl)) {
       return new Response(
-        JSON.stringify({ error: 'Missing recipientId or body' }),
+        JSON.stringify({ error: 'Missing recipientId or message content' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -52,28 +52,30 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (body.length > 2000) {
-      return new Response(
-        JSON.stringify({ error: 'Üzenet túl hosszú (max 2000 karakter)' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    // Validate body if present
+    if (body) {
+      if (body.length > 2000) {
+        return new Response(
+          JSON.stringify({ error: 'Üzenet túl hosszú (max 2000 karakter)' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (body.trim().length === 0) {
+        return new Response(
+          JSON.stringify({ error: 'Üzenet nem lehet üres' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
-    if (body.trim().length === 0) {
-      return new Response(
-        JSON.stringify({ error: 'Üzenet nem lehet üres' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // SECURITY: Sanitize message content to prevent XSS
-    // Remove HTML tags and script content
-    const sanitizedBody = body
+    // SECURITY: Sanitize message content to prevent XSS if body exists
+    const sanitizedBody = body ? body
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
       .replace(/<[^>]+>/g, '')
-      .trim();
+      .trim() : '';
 
-    if (sanitizedBody.length === 0) {
+    if (body && sanitizedBody.length === 0) {
       return new Response(
         JSON.stringify({ error: 'Message body cannot be empty after sanitization' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -136,7 +138,7 @@ Deno.serve(async (req) => {
       .insert({
         thread_id: threadId,
         sender_id: user.id,
-        body: sanitizedBody
+        body: sanitizedBody || ''
       })
       .select()
       .single();
@@ -144,6 +146,22 @@ Deno.serve(async (req) => {
     if (messageError) {
       console.error('[SendDM] Error inserting message:', messageError);
       throw messageError;
+    }
+
+    // If media, insert media record
+    if (mediaUrl && mediaPath) {
+      const { error: mediaError } = await supabase
+        .from('message_media')
+        .insert({
+          message_id: message.id,
+          media_type: 'image',
+          media_url: mediaUrl,
+          file_name: mediaPath.split('/').pop() || 'image'
+        });
+
+      if (mediaError) {
+        console.error('[SendDM] Error inserting media:', mediaError);
+      }
     }
 
     console.log('[SendDM] Message sent successfully');
