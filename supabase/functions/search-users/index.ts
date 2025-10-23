@@ -42,16 +42,15 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Search users by username or email (accent-insensitive)
-    // Normalize query for better matching
-    const normalizedQuery = query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const lowerQuery = query.toLowerCase();
     
-    const { data: users, error: searchError } = await supabaseClient
-      .from('public_profiles')
-      .select('id, username, avatar_url, email')
-      .or(`username.ilike.%${query}%,email.ilike.%${query}%`)
-      .neq('id', user.id)
-      .limit(20);
+    // Use trigram-based search with prefix and similarity fallback
+    // This provides fast, accent-tolerant, case-insensitive search
+    const { data: users, error: searchError } = await supabaseClient.rpc('search_users_by_name', {
+      search_query: lowerQuery,
+      current_user_id: user.id,
+      result_limit: 20
+    });
 
     if (searchError) throw searchError;
 

@@ -1213,6 +1213,8 @@ export type Database = {
       regenerate_lives: { Args: never; Returns: undefined }
       regenerate_lives_background: { Args: never; Returns: undefined }
       reset_game_helps: { Args: never; Returns: undefined }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       spend_coins: { Args: { amount: number }; Returns: boolean }
       start_speed_booster: {
         Args: { p_duration_minutes?: number; p_multiplier: number }
