@@ -23,7 +23,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminTipsVideos from "./pages/AdminTipsVideos";
 import GeniusMembers from "./pages/GeniusMembers";
-import Chat from "./pages/Chat";
+import ChatEnhanced from "./pages/ChatEnhanced";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
@@ -204,7 +204,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/desktop" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat" element={<ChatEnhanced />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/leaderboard" element={<Leaderboard />} />

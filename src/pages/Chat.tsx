@@ -31,10 +31,6 @@ export default function Chat() {
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserSearch, setShowUserSearch] = useState(false);
-  const [showReport, setShowReport] = useState(false);
-
-  // Enable presence heartbeat
-  usePresenceHeartbeat(session?.user?.id, true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -54,6 +50,9 @@ export default function Chat() {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Enable presence heartbeat only when session is available
+  usePresenceHeartbeat(session?.user?.id, !!session?.user?.id);
 
   useEffect(() => {
     if (!session?.user?.id) return;
