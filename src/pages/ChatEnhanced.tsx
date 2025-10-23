@@ -59,6 +59,12 @@ const ChatEnhanced = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUserId(session.user.id);
+        // Open thread from URL param if provided on initial load
+        const params = new URLSearchParams(window.location.search);
+        const friend = params.get('friend');
+        if (friend) {
+          setSelectedFriend({ userId: friend, username: '' });
+        }
       } else {
         navigate('/login');
       }
@@ -81,6 +87,16 @@ const ChatEnhanced = () => {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [userId]);
+
+  // React to friend param changes to open thread directly
+  const location = useLocation();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const friend = params.get('friend');
+    if (friend) {
+      setSelectedFriend({ userId: friend, username: '' });
+    }
+  }, [location.search]);
 
   const loadThreads = async () => {
     try {

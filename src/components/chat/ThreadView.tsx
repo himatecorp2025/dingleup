@@ -9,6 +9,7 @@ import { ImageUploader } from './ImageUploader';
 import { FileUploader } from './FileUploader';
 import { EmojiPicker } from './EmojiPicker';
 import { AttachmentMenu } from './AttachmentMenu';
+import { useChatPermissions } from '@/hooks/useChatPermissions';
 
 interface Message {
   id: string;
@@ -51,6 +52,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const { status: friendshipStatus, sendRequest } = useFriendshipStatus(userId, friendId);
   const { handleTyping, stopTyping } = useTypingStatus(threadId, userId);
+  const { canSend, loading: permsLoading } = useChatPermissions(threadId, userId);
 
   useEffect(() => {
     loadFriendProfile();
@@ -463,6 +465,9 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
           boxSizing: 'border-box'
         }}
       >
+        {!permsLoading && !canSend && (
+          <div className="mb-2 text-xs text-white/70">Nem küldhetsz üzenetet, amíg a másik fél nem fogadta el a jelölést.</div>
+        )}
         <div className="flex items-end gap-2 max-w-4xl mx-auto w-full" style={{ maxWidth: '100%' }}>
           {/* Attachment button (Plus icon) */}
           <button
@@ -499,7 +504,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
             <div className="flex-1 bg-[#1a1a1a] rounded-[22px] border border-[#D4AF37]/20 px-4 py-2 flex items-center min-h-[44px]">
               <textarea
                 ref={textareaRef}
-                placeholder="Írj üzenetet…"
+                placeholder={(!permsLoading && !canSend) ? "Nem küldhetsz üzenetet (jóváhagyás szükséges)" : "Írj üzenetet…"}
                 value={messageText}
                 onChange={(e) => {
                   setMessageText(e.target.value);
@@ -508,13 +513,14 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    sendMessage();
+                    if (permsLoading || canSend) sendMessage();
                   }
                 }}
                 onBlur={stopTyping}
                 className="flex-1 bg-transparent border-0 text-white placeholder:text-white/50 focus:outline-none resize-none max-h-[120px] text-[15px] leading-[1.4]"
                 rows={1}
                 maxLength={2000}
+                disabled={!permsLoading && !canSend}
                 style={{ 
                   scrollbarWidth: 'none',
                   msOverflowStyle: 'none'
@@ -526,9 +532,10 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
           {/* Send or Emoji button */}
           {messageText.trim() ? (
             <button
-              onClick={() => sendMessage()}
-              className="p-2.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all duration-200 flex-shrink-0 mb-1 shadow-lg shadow-[#138F5E]/30"
+              onClick={() => { if (permsLoading || canSend) sendMessage(); }}
+              className="p-2.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all duration-200 flex-shrink-0 mb-1 shadow-lg shadow-[#138F5E]/30 disabled:opacity-50"
               aria-label="Küldés"
+              disabled={!permsLoading && !canSend}
             >
               <Send className="w-5 h-5 text-white" fill="currentColor" />
             </button>
