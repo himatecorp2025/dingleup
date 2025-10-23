@@ -101,7 +101,7 @@ serve(async (req) => {
         p_user_id: user.id,
         p_delta_coins: goldAmount,
         p_delta_lives: 0,
-        p_source: 'WEEKLY_LOGIN_REWARD',
+        p_source: 'weekly_reward',
         p_idempotency_key: correlationId,
         p_metadata: {
           week_start: weekStart,
@@ -119,7 +119,7 @@ serve(async (req) => {
         .rpc('credit_lives', {
           p_user_id: user.id,
           p_delta_lives: livesBonus,
-          p_source: 'WEEKLY_LOGIN_REWARD',
+          p_source: 'weekly_reward',
           p_idempotency_key: livesCorrelationId,
           p_metadata: {
             week_start: weekStart,

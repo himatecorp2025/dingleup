@@ -107,7 +107,7 @@ serve(async (req) => {
           p_user_id: user_id,
           p_delta_coins: gold,
           p_delta_lives: 0,
-          p_source: 'WEEKLY_TOP10_REWARD',
+          p_source: 'weekly_reward',
           p_idempotency_key: correlationId,
           p_metadata: {
             week_start: weekStart,
@@ -127,7 +127,7 @@ serve(async (req) => {
         .rpc('credit_lives', {
           p_user_id: user_id,
           p_delta_lives: lives,
-          p_source: 'WEEKLY_TOP10_REWARD',
+          p_source: 'weekly_reward',
           p_idempotency_key: livesCorrelationId,
           p_metadata: {
             week_start: weekStart,

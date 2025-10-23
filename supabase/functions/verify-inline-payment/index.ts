@@ -83,7 +83,7 @@ serve(async (req) => {
       p_user_id: user.id,
       p_delta_coins: coins,
       p_delta_lives: lives,
-      p_source: 'inline_purchase',
+      p_source: 'purchase',
       p_idempotency_key: `pi_${paymentIntentId}`,
       p_metadata: {
         payment_intent_id: paymentIntentId,
