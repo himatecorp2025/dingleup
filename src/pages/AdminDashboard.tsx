@@ -890,7 +890,7 @@ const AdminDashboard = () => {
                     )}
                   </div>
 
-                  {report.status === 'pending' && (
+                  {(report.status === 'pending' || report.status === 'reviewing') && (
                     <div className="flex flex-wrap gap-2 mt-4">
                       <button
                         onClick={() => {
