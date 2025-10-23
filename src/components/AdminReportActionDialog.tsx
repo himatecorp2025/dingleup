@@ -32,7 +32,7 @@ interface AdminReportActionDialogProps {
   onSuccess: () => void;
 }
 
-// Előre definiált problématípusok listája
+// Előre definiált problématípusok listája (megoldva esetén)
 const PROBLEM_TYPES = [
   '🎮 Játék összeomlás / nem indul',
   '❓ Kérdés nem jelenik meg helyesen',
@@ -52,6 +52,35 @@ const PROBLEM_TYPES = [
   '🐛 Egyéb technikai hiba',
   '⚡ Teljesítmény probléma / lassú',
   '🔄 Szinkronizálási hiba'
+];
+
+// Előre definiált elutasítási okok listája
+const DISMISSAL_REASONS = [
+  // Development (bug) elutasítási okok
+  '✅ Nem reprodukálható - nem sikerült újra előidézni',
+  '📱 Eszköz specifikus - csak bizonyos eszközökön fordul elő',
+  '🌐 Böngésző specifikus - használj másik böngészőt',
+  '🔄 Már javítva - a legújabb verzióban megoldva',
+  '⚙️ Helyes működés - ez így van tervezve',
+  '📋 Duplikált bejelentés - már jelentették',
+  '🔧 Felhasználói hiba - nem megfelelő használat',
+  '📶 Internetkapcsolat probléma - nem az app hibája',
+  '💾 Eszköz tárhely probléma - nincs elég hely',
+  '🔋 Alacsony akkumulátor - energiatakarékos mód aktív',
+  '📵 Elavult verzió - frissítsd az appot',
+  '🔐 Engedélyek hiánya - add meg a szükséges jogokat',
+  
+  // Support (user behavior) elutasítási okok
+  '✅ Nem sérti a szabályokat - normális viselkedés',
+  '📝 Nincs elegendő bizonyíték - több részlet szükséges',
+  '🤝 Félreértés - nem rosszhiszemű szándék',
+  '💬 Kontextus hiányában nem értelmezhető',
+  '👤 Védett beszélgetés - nem nyilvános tartalom',
+  '⚖️ Nem tartozik az admin hatáskörbe',
+  '🔄 Automatikus rendszerüzenet - nem felhasználótól',
+  '😊 Viccből írt üzenet - nem komoly szándék',
+  '🗣️ Nyelvi különbség - nem sértés, csak másképp fogalmazott',
+  '🔒 Mindkét fél jóváhagyta - privát megállapodás'
 ];
 
 const actionConfig = {
@@ -87,26 +116,29 @@ export const AdminReportActionDialog = ({
 }: AdminReportActionDialogProps) => {
   const [message, setMessage] = useState(actionConfig[actionType].defaultMessage);
   const [submitting, setSubmitting] = useState(false);
-  const [problemType, setProblemType] = useState<string>('');
-  const [customProblemType, setCustomProblemType] = useState<string>('');
-  const [availableProblemTypes, setAvailableProblemTypes] = useState<string[]>(PROBLEM_TYPES);
+  const [reasonType, setReasonType] = useState<string>('');
+  const [customReasonType, setCustomReasonType] = useState<string>('');
+  const [availableReasonTypes, setAvailableReasonTypes] = useState<string[]>(
+    actionType === 'resolved' ? PROBLEM_TYPES : DISMISSAL_REASONS
+  );
 
   // Reset fields when dialog opens
   useEffect(() => {
     if (open) {
       setMessage(actionConfig[actionType].defaultMessage);
-      setProblemType('');
-      setCustomProblemType('');
+      setReasonType('');
+      setCustomReasonType('');
+      setAvailableReasonTypes(actionType === 'resolved' ? PROBLEM_TYPES : DISMISSAL_REASONS);
     }
   }, [open, actionType]);
 
-  const handleAddCustomProblemType = () => {
-    if (customProblemType.trim() && !availableProblemTypes.includes(customProblemType.trim())) {
-      const newType = customProblemType.trim();
-      setAvailableProblemTypes([...availableProblemTypes, newType]);
-      setProblemType(newType);
-      setCustomProblemType('');
-      toast.success('Új problématípus hozzáadva!');
+  const handleAddCustomReasonType = () => {
+    if (customReasonType.trim() && !availableReasonTypes.includes(customReasonType.trim())) {
+      const newType = customReasonType.trim();
+      setAvailableReasonTypes([...availableReasonTypes, newType]);
+      setReasonType(newType);
+      setCustomReasonType('');
+      toast.success(actionType === 'resolved' ? 'Új problématípus hozzáadva!' : 'Új elutasítási ok hozzáadva!');
     }
   };
 
@@ -126,8 +158,10 @@ export const AdminReportActionDialog = ({
       return;
     }
 
-    if (actionType === 'resolved' && !problemType) {
-      toast.error('Kérlek válaszd ki a megoldott problématípust!');
+    if ((actionType === 'resolved' || actionType === 'dismissed') && !reasonType) {
+      toast.error(actionType === 'resolved' 
+        ? 'Kérlek válaszd ki a megoldott problématípust!' 
+        : 'Kérlek válaszd ki az elutasítás okát!');
       return;
     }
 
@@ -154,7 +188,7 @@ export const AdminReportActionDialog = ({
           message: message.trim(),
           reportId: report.id,
           newStatus: actionType,
-          problemType: problemType || null,
+          reasonType: reasonType || null,
           reportDetails: {
             reportType: report.report_type,
             bugCategory: report.bug_category,
@@ -185,8 +219,8 @@ export const AdminReportActionDialog = ({
       onOpenChange(false);
       onSuccess();
       setMessage(actionConfig[actionType].defaultMessage);
-      setProblemType('');
-      setCustomProblemType('');
+      setReasonType('');
+      setCustomReasonType('');
     } catch (error: any) {
       console.error('[AdminAction] Fatal error:', error);
       const status = error?.status || error?.context?.status;
@@ -244,21 +278,23 @@ export const AdminReportActionDialog = ({
             </p>
           </div>
 
-          {/* Problem Type Selector - Only for resolved status */}
-          {actionType === 'resolved' && (
+          {/* Reason Type Selector - For resolved and dismissed status */}
+          {(actionType === 'resolved' || actionType === 'dismissed') && (
             <div>
               <Label className="text-base text-yellow-400 mb-2 block font-bold">
-                ⚠️ Megoldott probléma típusa (KÖTELEZŐ)
+                ⚠️ {actionType === 'resolved' ? 'Megoldott probléma típusa' : 'Elutasítás oka'} (KÖTELEZŐ)
               </Label>
               <p className="text-xs text-white/70 mb-2">
-                Válaszd ki, milyen típusú problémát oldottál meg, vagy adj hozzá újat.
+                {actionType === 'resolved' 
+                  ? 'Válaszd ki, milyen típusú problémát oldottál meg, vagy adj hozzá újat.'
+                  : 'Válaszd ki az elutasítás okát, vagy adj hozzá újat.'}
               </p>
-              <Select value={problemType} onValueChange={setProblemType}>
+              <Select value={reasonType} onValueChange={setReasonType}>
                 <SelectTrigger className="bg-gray-800 border-2 border-yellow-500/50 text-white focus:border-yellow-500">
-                  <SelectValue placeholder="Válassz problématípust..." />
+                  <SelectValue placeholder={actionType === 'resolved' ? 'Válassz problématípust...' : 'Válassz elutasítási okot...'} />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-yellow-500/50 text-white max-h-[300px] z-[10000]">
-                  {availableProblemTypes.map((type) => (
+                  {availableReasonTypes.map((type) => (
                     <SelectItem key={type} value={type} className="text-white hover:bg-gray-700">
                       {type}
                     </SelectItem>
@@ -266,29 +302,29 @@ export const AdminReportActionDialog = ({
                 </SelectContent>
               </Select>
 
-              {/* Custom Problem Type Input */}
+              {/* Custom Reason Type Input */}
               <div className="mt-3 p-3 bg-gray-900/50 border border-yellow-500/30 rounded-lg">
                 <Label className="text-sm text-white/90 mb-2 block">
-                  ➕ Új problématípus hozzáadása
+                  ➕ {actionType === 'resolved' ? 'Új problématípus hozzáadása' : 'Új elutasítási ok hozzáadása'}
                 </Label>
                 <div className="flex gap-2">
                   <Input
-                    value={customProblemType}
-                    onChange={(e) => setCustomProblemType(e.target.value)}
-                    placeholder="Írd be az új problématípust..."
+                    value={customReasonType}
+                    onChange={(e) => setCustomReasonType(e.target.value)}
+                    placeholder={actionType === 'resolved' ? 'Írd be az új problématípust...' : 'Írd be az új elutasítási okot...'}
                     className="flex-1 bg-gray-800 border-purple-500/50 text-white text-sm"
                     maxLength={100}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
-                        handleAddCustomProblemType();
+                        handleAddCustomReasonType();
                       }
                     }}
                   />
                   <Button
                     type="button"
-                    onClick={handleAddCustomProblemType}
-                    disabled={!customProblemType.trim()}
+                    onClick={handleAddCustomReasonType}
+                    disabled={!customReasonType.trim()}
                     className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap text-sm"
                   >
                     Hozzáad

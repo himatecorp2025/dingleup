@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { reporterId, message, reportId, newStatus, problemType, reportDetails } = await req.json();
+    const { reporterId, message, reportId, newStatus, reasonType, reportDetails } = await req.json();
 
     if (!reporterId || !message || !reportId || !newStatus || !reportDetails) {
       return new Response(
@@ -190,7 +190,7 @@ Deno.serve(async (req) => {
 📋 JELENTÉS RÉSZLETEI
 ━━━━━━━━━━━━━━━━━━━━━━
 ${detailsSection}
-${problemType ? `\n🔧 Megoldott probléma típusa:\n${problemType}\n` : ''}
+${reasonType ? `\n${newStatus === 'resolved' ? '🔧 Megoldott probléma típusa' : '❌ Elutasítás oka'}:\n${reasonType}\n` : ''}
 ━━━━━━━━━━━━━━━━━━━━━━
 💬 ADMIN ÜZENETE
 ━━━━━━━━━━━━━━━━━━━━━━
@@ -227,8 +227,8 @@ Köszönjük türelmedet!
       .from('reports')
       .update({
         status: newStatus,
-        admin_notes: problemType 
-          ? `${statusMap[newStatus]} - ${problemType}: ${sanitizedMessage}`
+        admin_notes: reasonType 
+          ? `${statusMap[newStatus]} - ${reasonType}: ${sanitizedMessage}`
           : `${statusMap[newStatus]}: ${sanitizedMessage}`
       })
       .eq('id', reportId);
