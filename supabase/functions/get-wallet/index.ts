@@ -21,15 +21,14 @@ serve(async (req) => {
       throw new Error('No authorization header');
     }
 
-    // Client for auth verification (with user's token)
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: { Authorization: authHeader },
-      },
-    });
+    // Extract bearer token and verify auth explicitly (server environment has no session)
+    const token = authHeader.replace('Bearer', '').trim();
 
-    // Verify user authentication
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    // Client for auth verification
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
+
+    // Verify user authentication using the token directly
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
     if (authError) {
       console.error('[GetWallet] Auth error:', authError);
       throw new Error('Unauthorized');
