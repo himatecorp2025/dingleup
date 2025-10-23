@@ -241,7 +241,11 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
     return null;
   }
   
-  console.log('[MessageBubble] Rendering message:', message.id, 'with', message.media?.length || 0, 'media items');
+  console.log('[MessageBubble] Rendering message:', message.id, {
+    bodyLength: message.body?.length || 0,
+    mediaCount: message.media?.length || 0,
+    mediaItems: message.media?.map(m => ({ type: m.media_type, url: m.media_url?.substring(0, 50) }))
+  });
 
   const getInitials = (name: string) => {
     return name

@@ -135,6 +135,8 @@ Deno.serve(async (req) => {
 
     // Transform messages to include media array with signed URLs
     const transformedMessages = await Promise.all((messages || []).map(async (msg: any) => {
+      console.log(`[GetThreadMessages] Processing message ${msg.id}, has ${msg.message_media?.length || 0} media items`);
+      
       const mediaWithSignedUrls = await Promise.all((msg.message_media || []).map(async (media: any) => {
         // Generate signed URLs for private storage (valid for 1 hour)
         let signedMediaUrl = media.media_url;
@@ -177,6 +179,8 @@ Deno.serve(async (req) => {
         media: mediaWithSignedUrls
       };
     }));
+
+    console.log(`[GetThreadMessages] Transformed ${transformedMessages.length} messages, first has ${transformedMessages[0]?.media?.length || 0} media`);
 
     return new Response(
       JSON.stringify({ 

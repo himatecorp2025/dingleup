@@ -118,7 +118,9 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
               const fetchedMessage = data?.messages?.find((m: any) => m.id === newMsg.id);
               
               if (fetchedMessage) {
-                console.log('[ThreadView] Received complete message with', fetchedMessage.media?.length || 0, 'media items');
+                console.log('[ThreadView] Received complete message with', fetchedMessage.media?.length || 0, 'media items', {
+                  mediaArray: fetchedMessage.media
+                });
                 
                 setMessages(prev => {
                   const exists = prev.find(m => m.id === newMsg.id);
@@ -187,6 +189,9 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       const data = await response.json();
       console.log('[ThreadView] Loaded messages:', data);
+      if (data.messages && data.messages.length > 0) {
+        console.log('[ThreadView] First message has', data.messages[0].media?.length || 0, 'media items');
+      }
       setMessages(data?.messages || []);
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -434,9 +439,19 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   };
 
   return (
-    <div className="flex flex-col h-full w-full max-w-full overflow-x-hidden bg-[#000000]">
-      {/* Header */}
-      <header className="flex-shrink-0 bg-[#1a1a1a] border-b border-[#D4AF37]/10 px-4 py-3 flex items-center gap-3 w-full">
+    <div className="flex flex-col h-screen w-full overflow-hidden bg-[#000000]">
+      {/* Header - Fixed */}
+      <header 
+        className="flex-shrink-0 bg-[#1a1a1a] border-b border-[#D4AF37]/10 px-4 py-3 flex items-center gap-3 w-full"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10020,
+          maxWidth: '100vw'
+        }}
+      >
         <button
           onClick={onBack}
           className="p-2 hover:bg-white/10 rounded-full transition-all"
@@ -463,8 +478,16 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         </div>
       </header>
 
-      {/* Messages */}
-      <main className="flex-1 overflow-y-auto p-4 space-y-2 w-full max-w-full" style={{ maxWidth: '100vw' }}>
+      {/* Messages - Scrollable Area */}
+      <main 
+        className="flex-1 overflow-y-auto p-4 space-y-2 w-full"
+        style={{ 
+          marginTop: '60px', // Header height
+          marginBottom: '130px', // Composer height (adjusted for chips)
+          maxWidth: '100vw',
+          paddingBottom: 'env(safe-area-inset-bottom)'
+        }}
+      >
         {loading ? (
           <div className="flex justify-center py-8">
             <Loader2 className="w-6 h-6 text-[#D4AF37] animate-spin" />
@@ -494,18 +517,18 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         <div ref={messagesEndRef} />
       </main>
 
-      {/* Composer */}
+      {/* Composer - Fixed Bottom */}
       <div 
         className="chat-composer flex-shrink-0 bg-[#0F1116] border-t border-[#D4AF37]/30 w-full"
         style={{ 
           position: 'fixed', 
-          bottom: '72px', 
+          bottom: '72px', // BottomNav height
           left: 0, 
           right: 0, 
           width: '100%',
           maxWidth: '100vw',
-          zIndex: 10010,
-          paddingBottom: 'calc(8px + env(safe-area-inset-bottom))'
+          zIndex: 10015,
+          paddingBottom: 'env(safe-area-inset-bottom)'
         }}
       >
         {/* Attachment Preview Chips */}
