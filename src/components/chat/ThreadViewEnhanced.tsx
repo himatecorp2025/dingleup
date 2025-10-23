@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
-import { ArrowLeft, Send, Loader2, X, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Brain, Loader2, X, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { MessageBubble } from './MessageBubble';
@@ -55,6 +55,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const [showNewBadge, setShowNewBadge] = useState(false);
   const [composerHeight, setComposerHeight] = useState(68);
+  const [isSendAnimating, setIsSendAnimating] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLDivElement>(null);
@@ -345,6 +346,10 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
     // Don't block if attachments are queued - they will be uploaded during send
     // Only block if actively uploading to prevent duplicate sends
     if (sending) return;
+
+    // Trigger send animation
+    setIsSendAnimating(true);
+    setTimeout(() => setIsSendAnimating(false), 300);
 
     setSending(true);
     const clientMessageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -767,7 +772,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         />
 
         {/* Composer Input Area */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto auto', gap: '8px', alignItems: 'center', padding: '10px 12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '8px', alignItems: 'center', padding: '10px 12px' }}>
 
         {/* Attach Button */}
         <button
@@ -811,31 +816,26 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
           />
         )}
 
-        {/* Send / Emoji Button */}
-        {messageText.trim() || attachments.length > 0 ? (
-          <button
-            onClick={handleSendMessage}
-            disabled={sending}
-            className="send p-2 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all disabled:opacity-50"
-            aria-label="Küldés"
-            style={{ border: 0, cursor: 'pointer', fontWeight: 600 }}
-          >
-            {sending ? (
-              <Loader2 className="w-5 h-5 text-white animate-spin" />
-            ) : (
-              <Send className="w-5 h-5 text-white" />
-            )}
-          </button>
-        ) : (
-          <button
-            onClick={() => setShowEmojiPicker(true)}
-            className="emoji p-2 hover:bg-white/10 rounded-full transition-all"
-            aria-label="Emoji"
-            style={{ background: 'transparent', border: 0, cursor: 'pointer' }}
-          >
-            <span className="text-xl">😊</span>
-          </button>
-        )}
+        {/* Send Button with Brain Icon - Right side */}
+        <button
+          onClick={handleSendMessage}
+          disabled={sending || (!messageText.trim() && attachments.length === 0)}
+          className="send p-2 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Küldés"
+          style={{ 
+            border: 0, 
+            cursor: sending ? 'wait' : 'pointer', 
+            fontWeight: 600,
+            transform: isSendAnimating ? 'scale(1.2)' : 'scale(1)',
+            transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}
+        >
+          {sending ? (
+            <Loader2 className="w-6 h-6 text-white animate-spin" />
+          ) : (
+            <Brain className="w-6 h-6 text-white" />
+          )}
+        </button>
       </div>
       </div>
 
