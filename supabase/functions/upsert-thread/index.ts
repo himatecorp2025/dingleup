@@ -85,13 +85,29 @@ Deno.serve(async (req) => {
       .single();
 
     if (existingThread) {
-      console.log(`Thread already exists: ${existingThread.id}`);
+      // Ensure message read status and permissions exist for both users (idempotent)
+      await supabaseClient
+        .from('message_reads')
+        .upsert([
+          { thread_id: existingThread.id, user_id: user.id, last_read_at: new Date().toISOString() },
+          { thread_id: existingThread.id, user_id: targetUserId, last_read_at: new Date().toISOString() }
+        ], {
+          onConflict: 'thread_id,user_id'
+        });
+
+      await supabaseClient
+        .from('thread_participants')
+        .upsert([
+          { thread_id: existingThread.id, user_id: user.id, can_send: true },
+          { thread_id: existingThread.id, user_id: targetUserId, can_send: true }
+        ], { onConflict: 'thread_id,user_id' });
+
+      console.log(`Thread already exists: ${existingThread.id} (permissions ensured)`);
       return new Response(JSON.stringify({ threadId: existingThread.id }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
     // Create new thread
     const { data: newThread, error: threadError } = await supabaseClient
       .from('dm_threads')
@@ -119,6 +135,14 @@ Deno.serve(async (req) => {
       ], {
         onConflict: 'thread_id,user_id'
       });
+
+    // Ensure both users can send messages immediately
+    await supabaseClient
+      .from('thread_participants')
+      .upsert([
+        { thread_id: newThread.id, user_id: user.id, can_send: true },
+        { thread_id: newThread.id, user_id: targetUserId, can_send: true }
+      ], { onConflict: 'thread_id,user_id' });
 
     console.log(`New thread created: ${newThread.id} between ${user.id} and ${targetUserId}`);
 

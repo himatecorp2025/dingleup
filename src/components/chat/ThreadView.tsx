@@ -95,6 +95,27 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     scrollToBottom();
   }, [messages]);
 
+  // Ensure DM thread and permissions are ready (backfill-safe)
+  useEffect(() => {
+    const ensureThreadAndPermissions = async () => {
+      if (!friendId) return;
+      if (friendshipStatus !== 'active') return;
+      try {
+        const { data, error } = await supabase.functions.invoke('upsert-thread', {
+          body: { userId: friendId }
+        });
+        if (error) throw error;
+        if (data?.threadId) {
+          setThreadId(data.threadId as string);
+        }
+        await refreshPermissions();
+      } catch (e) {
+        console.warn('[ThreadView] ensureThreadAndPermissions failed', e);
+      }
+    };
+    ensureThreadAndPermissions();
+  }, [friendId, friendshipStatus]);
+
   // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
