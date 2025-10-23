@@ -352,7 +352,7 @@ const AdminDashboard = () => {
             }`}
           >
             <AlertTriangle className="w-4 h-4 xl:w-5 xl:h-5" />
-            <span className="font-medium">Jelentések ({reports.filter(r => r.status === 'pending').length})</span>
+            <span className="font-medium">Jelentések ({reports.filter(r => r.status === 'pending' || r.status === 'reviewing').length})</span>
           </button>
           <button
             onClick={() => { setActiveTab('activity'); onItemClick?.(); }}
@@ -770,7 +770,7 @@ const AdminDashboard = () => {
                     : 'text-white/70 hover:bg-white/5'
                 }`}
               >
-                🐛 Development ({reports.filter(r => r.report_type === 'bug').length})
+                🐛 Development ({reports.filter(r => r.report_type === 'bug' && (r.status === 'pending' || r.status === 'reviewing')).length})
               </button>
               <button
                 onClick={() => setReportsSubTab('support')}
@@ -780,11 +780,11 @@ const AdminDashboard = () => {
                     : 'text-white/70 hover:bg-white/5'
                 }`}
               >
-                ⚠️ Support ({reports.filter(r => r.report_type === 'user_behavior').length})
+                ⚠️ Support ({reports.filter(r => r.report_type === 'user_behavior' && (r.status === 'pending' || r.status === 'reviewing')).length})
               </button>
             </div>
             
-            <div className="space-y-4">
+            <div className="max-h-[600px] overflow-y-auto pr-2 space-y-4">
               {reports.filter(r => 
                 reportsSubTab === 'development' ? r.report_type === 'bug' : r.report_type === 'user_behavior'
               ).map((report) => (
