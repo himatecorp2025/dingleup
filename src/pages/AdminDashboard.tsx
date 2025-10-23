@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { UserGrowthChart } from '@/components/UserGrowthChart';
 import { ActivityTab } from '@/components/admin/ActivityTab';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { AdminReportActionDialog } from '@/components/AdminReportActionDialog';
 
 type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports' | 'activity';
 type ReportsSubTab = 'development' | 'support';
@@ -33,6 +34,9 @@ const AdminDashboard = () => {
   const [totalPayouts, setTotalPayouts] = useState('0');
   const [geniusCount, setGeniusCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [actionDialogOpen, setActionDialogOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<{ id: string; reporterId: string } | null>(null);
+  const [actionType, setActionType] = useState<'reviewing' | 'resolved' | 'dismissed'>('reviewing');
 
   // Initial load
   useEffect(() => {
@@ -879,32 +883,36 @@ const AdminDashboard = () => {
                   </div>
 
                   {report.status === 'pending' && (
-                    <div className="flex gap-2 mt-4">
+                    <div className="flex flex-wrap gap-2 mt-4">
                       <button
-                        onClick={async () => {
-                          await supabase
-                            .from('reports')
-                            .update({ status: 'resolved', admin_notes: 'Megoldva' })
-                            .eq('id', report.id);
-                          fetchData();
-                          toast.success('Jelentés megoldva');
+                        onClick={() => {
+                          setSelectedReport({ id: report.id, reporterId: report.reporter_id });
+                          setActionType('reviewing');
+                          setActionDialogOpen(true);
+                        }}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                      >
+                        📋 Folyamatban
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedReport({ id: report.id, reporterId: report.reporter_id });
+                          setActionType('resolved');
+                          setActionDialogOpen(true);
                         }}
                         className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors"
                       >
-                        Megoldva
+                        ✅ Megoldva
                       </button>
                       <button
-                        onClick={async () => {
-                          await supabase
-                            .from('reports')
-                            .update({ status: 'dismissed', admin_notes: 'Elutasítva' })
-                            .eq('id', report.id);
-                          fetchData();
-                          toast.success('Jelentés elutasítva');
+                        onClick={() => {
+                          setSelectedReport({ id: report.id, reporterId: report.reporter_id });
+                          setActionType('dismissed');
+                          setActionDialogOpen(true);
                         }}
                         className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors"
                       >
-                        Elutasítás
+                        ❌ Elutasítás
                       </button>
                     </div>
                   )}
@@ -926,6 +934,21 @@ const AdminDashboard = () => {
           <ActivityTab />
         )}
       </div>
+
+      {/* Action Dialog */}
+      {selectedReport && (
+        <AdminReportActionDialog
+          open={actionDialogOpen}
+          onOpenChange={setActionDialogOpen}
+          reportId={selectedReport.id}
+          reporterId={selectedReport.reporterId}
+          actionType={actionType}
+          onSuccess={() => {
+            fetchData();
+            setSelectedReport(null);
+          }}
+        />
+      )}
     </div>
   );
 };
