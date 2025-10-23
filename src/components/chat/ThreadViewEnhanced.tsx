@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { ArrowLeft, Send, Loader2, X, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -50,8 +50,11 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   const [friendInfo, setFriendInfo] = useState<{ username: string; avatar_url: string | null } | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
+  const [showNewBadge, setShowNewBadge] = useState(false);
+  const [composerHeight, setComposerHeight] = useState(68);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const composerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -79,14 +82,24 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     if (!messagesContainerRef.current) return true;
     const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-    return distanceFromBottom < 150; // within 150px of bottom
+    return distanceFromBottom < 120; // within 120px of bottom
   };
 
   const handleScroll = async () => {
     if (!messagesContainerRef.current || loadingMore || !hasMore) return;
     
     const { scrollTop } = messagesContainerRef.current;
+    const wasNearBottom = isNearBottomRef.current;
     isNearBottomRef.current = checkIfNearBottom();
+    
+    // Show/hide new messages badge
+    if (wasNearBottom && !isNearBottomRef.current) {
+      setShowNewBadge(false);
+    } else if (!isNearBottomRef.current && showNewBadge) {
+      // Keep badge visible
+    } else if (isNearBottomRef.current) {
+      setShowNewBadge(false);
+    }
     
     // Load more when scrolled to top 10%
     if (scrollTop < 100 && hasMore && messages.length > 0) {
@@ -94,10 +107,29 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     }
   };
 
+  // ResizeObserver for composer height
+  useLayoutEffect(() => {
+    if (!composerRef.current) return;
+    
+    const ro = new ResizeObserver(() => {
+      const h = composerRef.current?.offsetHeight ?? 68;
+      setComposerHeight(h);
+      document.documentElement.style.setProperty('--composer-h', `${h}px`);
+    });
+    
+    ro.observe(composerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     // Auto-scroll only if user is near bottom
     if (isNearBottomRef.current) {
       setTimeout(() => scrollToBottom('smooth'), 100);
+    } else {
+      // Show "new messages" badge when not at bottom
+      if (messages.length > 0) {
+        setShowNewBadge(true);
+      }
     }
   }, [messages.length]);
 
@@ -519,19 +551,36 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#000000]">
+    <div className="chat-thread" style={{ position: 'relative', height: '100vh', background: '#0f0f12' }}>
       {/* Header - Fixed at top */}
       <header 
-        className="flex-shrink-0 bg-[#1a1a1a] border-b border-[#D4AF37]/10 px-4 py-3 flex items-center gap-3 w-full z-20"
+        role="banner"
+        className="appbar"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 'var(--appbar-h)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          padding: '0 12px',
+          borderBottom: '1px solid rgba(212, 175, 55, 0.1)',
+          background: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(6px)',
+          zIndex: 30
+        }}
       >
         <button
           onClick={onBack}
-          className="p-2 hover:bg-white/10 rounded-full transition-all"
-          aria-label="Vissza"
+          className="back p-2 hover:bg-white/10 rounded-full transition-all"
+          aria-label="Vissza a beszélgetésekhez"
+          style={{ background: 'transparent', border: 0 }}
         >
           <ArrowLeft className="w-5 h-5 text-[#D4AF37]" />
         </button>
-        <div className="flex-1 flex items-center gap-3 min-w-0">
+        <div className="title flex-1 flex items-center gap-3 min-w-0" aria-live="polite">
           <div className="relative">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#8B0000]/20 flex items-center justify-center border border-[#D4AF37]/30">
               {friendInfo?.avatar_url ? (
@@ -545,21 +594,29 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
             <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#1a1a1a] ${getStatusColor()}`} />
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="font-bold text-white truncate">{friendInfo?.username || 'Betöltés...'}</h2>
+            <h2 className="font-semibold text-white truncate">{friendInfo?.username || 'Betöltés...'}</h2>
             {isOnline && <p className="text-xs text-[#138F5E]">Online</p>}
           </div>
         </div>
+        <div className="actions" />
       </header>
 
       {/* Messages - Scrollable Area */}
       <main 
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-2"
+        role="list"
+        aria-label="Üzenetek"
+        className="messages"
         style={{
-          minHeight: 0,
-          maxHeight: '100%',
-          overflowY: 'scroll',
+          position: 'absolute',
+          top: 'var(--appbar-h)',
+          left: 0,
+          right: 0,
+          bottom: `calc(var(--composer-h) + var(--bottom-nav-h) + env(safe-area-inset-bottom) + 12px)`,
+          overflowY: 'auto',
+          scrollBehavior: 'smooth',
+          padding: '12px',
           WebkitOverflowScrolling: 'touch'
         }}
       >
@@ -587,18 +644,48 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
               const isGrouped = prevMsg && prevMsg.sender_id === msg.sender_id;
               
               return (
-                <MessageBubble
-                  key={msg.id}
-                  message={msg}
-                  isOwn={isOwn}
-                  isGrouped={isGrouped}
-                  partnerAvatar={friendInfo?.avatar_url}
-                  partnerName={friendInfo?.username || ''}
-                  showTime={formatTime(msg.created_at)}
-                  onRetry={msg.delivery_status === 'failed' ? () => handleRetryMessage(msg.id) : undefined}
-                />
+                <div key={msg.id} role="listitem">
+                  <MessageBubble
+                    message={msg}
+                    isOwn={isOwn}
+                    isGrouped={isGrouped}
+                    partnerAvatar={friendInfo?.avatar_url}
+                    partnerName={friendInfo?.username || ''}
+                    showTime={formatTime(msg.created_at)}
+                    onRetry={msg.delivery_status === 'failed' ? () => handleRetryMessage(msg.id) : undefined}
+                  />
+                </div>
               );
             })}
+            {showNewBadge && (
+              <button 
+                className="new-badge"
+                onClick={() => {
+                  scrollToBottom('smooth');
+                  setShowNewBadge(false);
+                }}
+                style={{
+                  position: 'sticky',
+                  bottom: '12px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  display: 'block',
+                  padding: '6px 12px',
+                  borderRadius: '999px',
+                  border: 0,
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                  zIndex: 10
+                }}
+              >
+                Új üzenetek ↓
+              </button>
+            )}
             <div ref={messagesEndRef} />
           </>
         )}
@@ -606,7 +693,23 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       {/* Composer - Fixed at bottom */}
       <div 
-        className="flex-shrink-0 bg-[#0F1116] border-t border-[#D4AF37]/30 w-full z-10"
+        ref={composerRef}
+        role="form"
+        aria-label="Üzenet írása"
+        className="composer"
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: `calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))`,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0,
+          background: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(6px)',
+          borderTop: '1px solid rgba(212, 175, 55, 0.1)',
+          zIndex: 30
+        }}
       >
         {/* Attachment Preview Chips */}
         <AttachmentPreviewChips 
@@ -615,15 +718,16 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         />
 
         {/* Composer Input Area */}
-        <div className="p-3 flex items-end gap-2">
+        <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto auto', gap: '8px', alignItems: 'center', padding: '10px 12px' }}>
 
         {/* Attach Button */}
         <button
           onClick={() => setShowAttachmentMenu(true)}
-          className="p-2 hover:bg-white/10 rounded-full transition-all flex-shrink-0"
-          aria-label="Csatolmány"
+          className="attach p-2 hover:bg-white/10 rounded-full transition-all"
+          aria-label="Csatolás"
+          style={{ background: 'transparent', border: 0, cursor: 'pointer' }}
         >
-          <span className="text-[#D4AF37] text-2xl">+</span>
+          <span className="text-[#D4AF37] text-2xl font-bold">＋</span>
         </button>
 
         {/* Text Input */}
@@ -638,10 +742,20 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
                 handleSendMessage();
               }
             }}
-            placeholder="Üzenet..."
-            className="flex-1 bg-transparent border-none text-white placeholder:text-white/50 resize-none outline-none py-2 px-3 min-h-[40px] max-h-[120px] overflow-y-auto scrollbar-hide"
+            placeholder="Írj üzenetet..."
+            className="input"
             rows={1}
             style={{ 
+              width: '100%',
+              padding: '12px 14px',
+              borderRadius: '22px',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'rgba(255, 255, 255, 0.06)',
+              color: '#fff',
+              outline: 'none',
+              resize: 'none',
+              minHeight: '40px',
+              maxHeight: '120px',
               scrollbarWidth: 'none',
               msOverflowStyle: 'none'
             }}
@@ -653,8 +767,9 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           <button
             onClick={handleSendMessage}
             disabled={sending || (hasUploading && attachments.length > 0)}
-            className="p-2 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all flex-shrink-0 disabled:opacity-50"
+            className="send p-2 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all disabled:opacity-50"
             aria-label="Küldés"
+            style={{ border: 0, cursor: 'pointer', fontWeight: 600 }}
           >
             {sending || hasUploading ? (
               <Loader2 className="w-5 h-5 text-white animate-spin" />
@@ -665,10 +780,11 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         ) : (
           <button
             onClick={() => setShowEmojiPicker(true)}
-            className="p-2 hover:bg-white/10 rounded-full transition-all flex-shrink-0"
+            className="emoji p-2 hover:bg-white/10 rounded-full transition-all"
             aria-label="Emoji"
+            style={{ background: 'transparent', border: 0, cursor: 'pointer' }}
           >
-            <span className="text-[#D4AF37] text-xl">😊</span>
+            <span className="text-xl">😊</span>
           </button>
         )}
       </div>

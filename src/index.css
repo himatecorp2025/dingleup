@@ -2,8 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Bottom nav height variable for consistent padding */
+/* Chat layout variables */
 :root {
+  --appbar-h: 56px;
+  --composer-h: 68px;
   --bottom-nav-h: 64px;
 }
 
