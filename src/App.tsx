@@ -77,9 +77,15 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
 
 // A3) Route allow-list - ONLY /game route (includes category selector + gameplay)
 // Topics selector IS PART OF /game, not a separate route
+// Admin routes are EXPLICITLY excluded
 const MUSIC_ALLOWED_ROUTES = [/^\/game$/];
+const MUSIC_BLOCKED_ROUTES = [/^\/admin/];
 
 function isMusicAllowed(pathname: string): boolean {
+  // Explicit block for admin routes
+  if (MUSIC_BLOCKED_ROUTES.some(pattern => pattern.test(pathname))) {
+    return false;
+  }
   return MUSIC_ALLOWED_ROUTES.some(pattern => pattern.test(pathname));
 }
 
@@ -93,11 +99,14 @@ const AudioPolicyManager = () => {
       const { musicEnabled, volume, loaded } = useAudioStore.getState();
       if (!loaded) return;
 
-      const allowed = isHandheld && isMusicAllowed(location.pathname);
+      // Explicit check: admin routes NEVER play music regardless of settings
+      const isAdminRoute = location.pathname.startsWith('/admin');
+      const allowed = !isAdminRoute && isHandheld && isMusicAllowed(location.pathname);
       const audioManager = AudioManager.getInstance();
 
       console.log('[AudioPolicy]', { 
         pathname: location.pathname, 
+        isAdminRoute,
         allowed, 
         isHandheld,
         musicEnabled, 
@@ -124,7 +133,8 @@ const AudioPolicyManager = () => {
       if (document.visibilityState !== 'visible') {
         audioManager.apply(false, volume);
       } else {
-        const allowed = isHandheld && isMusicAllowed(location.pathname);
+        const isAdminRoute = location.pathname.startsWith('/admin');
+        const allowed = !isAdminRoute && isHandheld && isMusicAllowed(location.pathname);
         if (allowed && musicEnabled) {
           audioManager.apply(true, volume);
         }
@@ -138,7 +148,8 @@ const AudioPolicyManager = () => {
     const handleFocus = () => {
       const { musicEnabled, volume, loaded } = useAudioStore.getState();
       if (!loaded) return;
-      const allowed = isHandheld && isMusicAllowed(location.pathname);
+      const isAdminRoute = location.pathname.startsWith('/admin');
+      const allowed = !isAdminRoute && isHandheld && isMusicAllowed(location.pathname);
       if (allowed && musicEnabled) {
         AudioManager.getInstance().apply(true, volume);
       }
