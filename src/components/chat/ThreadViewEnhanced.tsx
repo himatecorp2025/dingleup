@@ -247,7 +247,11 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       const data = await response.json();
       console.log('[ThreadView] Loaded messages:', data);
-      setMessages(data?.messages || []);
+      // Sort messages by created_at to ensure chronological order (oldest first)
+      const sortedMessages = (data?.messages || []).sort((a: Message, b: Message) => 
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+      setMessages(sortedMessages);
       setHasMore(data?.messages?.length === 50);
       
       if (initial) {
@@ -292,7 +296,18 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       const olderMessages = data?.messages || [];
       
       if (olderMessages.length > 0) {
-        setMessages(prev => [...olderMessages, ...prev]);
+        // Sort older messages
+        const sortedOlder = olderMessages.sort((a: Message, b: Message) => 
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+        setMessages(prev => {
+          const combined = [...sortedOlder, ...prev];
+          // Remove duplicates based on id
+          const unique = combined.filter((msg, index, self) =>
+            index === self.findIndex(m => m.id === msg.id)
+          );
+          return unique.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        });
         setHasMore(olderMessages.length === 50);
         
         // Maintain scroll position
@@ -378,7 +393,14 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           mime_type: 'image/jpeg'
         }))
       };
-      setMessages(prev => [...prev, optimisticMessage]);
+      setMessages(prev => {
+        const updated = [...prev, optimisticMessage];
+        // Sort to ensure chronological order
+        return updated.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      });
+      
+      // Auto-scroll to bottom after adding message
+      requestAnimationFrame(() => scrollToBottom('smooth'));
 
       // Send to server
       const { data: response, error } = await supabase.functions.invoke('send-dm', {
@@ -410,9 +432,14 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
             }
             return m;
           });
-          console.log('[ThreadView] Updated messages, total:', updated.length);
-          return updated;
+          // Sort to maintain chronological order
+          const sorted = updated.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+          console.log('[ThreadView] Updated messages, total:', sorted.length);
+          return sorted;
         });
+        
+        // Auto-scroll after message is confirmed
+        requestAnimationFrame(() => scrollToBottom('smooth'));
       }
 
       // Clear state on success
@@ -551,13 +578,13 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   };
 
   return (
-    <div className="chat-thread" style={{ position: 'relative', height: '100vh', background: '#0f0f12' }}>
+    <div className="chat-thread" style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', background: '#0f0f12', overflow: 'hidden' }}>
       {/* Header - Fixed at top */}
       <header 
         role="banner"
         className="appbar"
         style={{
-          position: 'fixed',
+          position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
@@ -609,15 +636,15 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         aria-label="Üzenetek"
         className="messages"
         style={{
-          position: 'absolute',
-          top: 'var(--appbar-h)',
-          left: 0,
-          right: 0,
-          bottom: `calc(var(--composer-h) + var(--bottom-nav-h) + env(safe-area-inset-bottom) + 12px)`,
+          flex: 1,
           overflowY: 'auto',
+          overflowX: 'hidden',
           scrollBehavior: 'smooth',
           padding: '12px',
-          WebkitOverflowScrolling: 'touch'
+          paddingTop: 'var(--appbar-h)',
+          paddingBottom: `calc(var(--composer-h) + 12px)`,
+          WebkitOverflowScrolling: 'touch',
+          position: 'relative'
         }}
       >
         {loading ? (
@@ -698,10 +725,10 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         aria-label="Üzenet írása"
         className="composer"
         style={{
-          position: 'fixed',
+          position: 'absolute',
+          bottom: 0,
           left: 0,
           right: 0,
-          bottom: `calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))`,
           display: 'flex',
           flexDirection: 'column',
           gap: 0,
