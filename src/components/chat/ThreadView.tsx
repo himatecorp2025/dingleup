@@ -220,8 +220,8 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const sendMessage = async (mediaUrl?: string, mediaPath?: string) => {
-    if (!messageText.trim() && !mediaUrl) return;
+  const sendMessage = async (mediaUrl?: string, mediaPath?: string, attachmentMetas?: any[]) => {
+    if (!messageText.trim() && !mediaUrl && (!attachmentMetas || attachmentMetas.length === 0)) return;
     
     const textToSend = messageText.trim();
     setMessageText('');
@@ -232,7 +232,8 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
       sender_id: userId,
       body: textToSend,
       created_at: new Date().toISOString(),
-      media: mediaUrl ? [{ media_url: mediaUrl, media_type: 'image' }] : undefined
+      media: mediaUrl ? [{ media_url: mediaUrl, media_type: 'image' }] : 
+             attachmentMetas ? attachmentMetas.map(a => ({ media_url: a.url, media_type: a.kind })) : undefined
     };
     
     setMessages(prev => [...prev, tempMsg]);
@@ -244,7 +245,8 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
           recipientId: friendId, 
           body: textToSend,
           mediaUrl,
-          mediaPath
+          mediaPath,
+          attachments: attachmentMetas
         }
       });
       if (error) throw error;
@@ -266,8 +268,19 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     setSelectedImage(null);
     
     try {
-      // Send message with image
-      await sendMessage(url, path);
+      // Send message with image using new attachments format
+      const attachments = [{
+        kind: 'image' as const,
+        url,
+        key: path,
+        name: path.split('/').pop() || 'image',
+        bytes: size,
+        mime: 'image/jpeg',
+        w: width,
+        h: height
+      }];
+      await sendMessage('', '', attachments);
+      toast.success('Kép sikeresen elküldve');
     } catch (error) {
       console.error('Error sending image:', error);
       toast.error('Hiba a kép küldésekor');
@@ -284,8 +297,17 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     setSelectedFile(null);
     
     try {
-      // Send message with file
-      await sendMessage(url, path);
+      // Send message with file using new attachments format
+      const attachments = [{
+        kind: 'file' as const,
+        url,
+        key: path,
+        name: fileName,
+        bytes: fileSize,
+        mime: mimeType
+      }];
+      await sendMessage('', '', attachments);
+      toast.success('Fájl sikeresen elküldve');
     } catch (error) {
       console.error('Error sending file:', error);
       toast.error('Hiba a fájl küldésekor');
