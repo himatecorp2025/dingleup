@@ -4,13 +4,16 @@ import { supabase } from '@/integrations/supabase/client';
 import { LogOut, Coins, Heart } from 'lucide-react';
 import Shop from '@/components/Shop';
 import { useGameProfile } from '@/hooks/useGameProfile';
+import { useWallet } from '@/hooks/useWallet';
 import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
+import { TipsVideosGrid } from '@/components/TipsVideosGrid';
 
 const ShopPage = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading } = useGameProfile(userId);
+  const { walletData } = useWallet(userId);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -66,6 +69,38 @@ const ShopPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Wallet Balance Box */}
+        <div className="mb-4 bg-gradient-to-r from-purple-900/30 to-pink-900/30 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30">
+          <h3 className="text-xl font-bold text-yellow-400 mb-2">💰 Aranyérme egyenleg</h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Coins className="w-6 h-6 text-yellow-500" />
+              <span className="text-2xl font-bold text-white">{profile.coins}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Tips & Tricks - Only for Genius subscribers */}
+        {walletData?.isSubscriber && (
+          <div className="mb-4">
+            <TipsVideosGrid 
+              isGenius={true} 
+              onSubscribeClick={() => {}} 
+            />
+            {walletData.subscriberRenewAt && (
+              <div className="mt-2 text-center text-xs text-yellow-400/80">
+                Következő megújítás: {new Intl.DateTimeFormat('hu-HU', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                }).format(new Date(walletData.subscriberRenewAt))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Shop Component */}
         <div data-tutorial="coins-section">

@@ -10,6 +10,7 @@ interface WalletData {
   regenIntervalSec: number;
   regenMinutes: number;
   ledger: any[];
+  subscriberRenewAt?: string | null;
 }
 
 export const useWallet = (userId: string | undefined) => {

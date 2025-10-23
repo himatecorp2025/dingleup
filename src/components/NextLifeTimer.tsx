@@ -5,7 +5,7 @@ interface NextLifeTimerProps {
   livesCurrent: number;
   livesMax: number;
   serverDriftMs?: number;
-  speedBoosterActive?: boolean;
+  onExpired?: () => void;
 }
 
 export const NextLifeTimer = ({ 
@@ -13,12 +13,11 @@ export const NextLifeTimer = ({
   livesCurrent, 
   livesMax,
   serverDriftMs = 0,
-  speedBoosterActive = false
+  onExpired
 }: NextLifeTimerProps) => {
   const [remainingMs, setRemainingMs] = useState(0);
 
   useEffect(() => {
-    // Always show timer if lives are below max
     if (!nextLifeAt || livesCurrent >= livesMax) {
       setRemainingMs(0);
       return;
@@ -30,18 +29,19 @@ export const NextLifeTimer = ({
       const now = Date.now() + serverDriftMs;
       const diff = Math.max(0, targetTime - now);
       setRemainingMs(diff);
+      
+      // When timer reaches 00:00, trigger refresh
+      if (diff <= 0 && onExpired) {
+        onExpired();
+      }
     };
 
-    // Initial update
     updateRemaining();
-
-    // Update every second
     const intervalId = setInterval(updateRemaining, 1000);
 
     return () => clearInterval(intervalId);
-  }, [nextLifeAt, livesCurrent, livesMax, serverDriftMs, speedBoosterActive]);
+  }, [nextLifeAt, livesCurrent, livesMax, serverDriftMs, onExpired]);
 
-  // Show timer whenever lives are below max, even at 00:00 while next cycle starts
   if (livesCurrent >= livesMax) {
     return null;
   }

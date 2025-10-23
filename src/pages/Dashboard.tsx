@@ -6,7 +6,6 @@ import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { useBoosterTimer } from '@/hooks/useBoosterTimer';
-import { useLifeRegenerationTimer } from '@/hooks/useLifeRegenerationTimer';
 import { useGeniusPromo } from '@/hooks/useGeniusPromo';
 import { usePromoScheduler } from '@/hooks/usePromoScheduler';
 import { useScrollBehavior } from '@/hooks/useScrollBehavior';
@@ -21,7 +20,6 @@ import { GeniusPromoDialog } from '@/components/GeniusPromoDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
-import { LifeRegenerationTimer } from '@/components/LifeRegenerationTimer';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
 import { FallingCoins } from '@/components/FallingCoins';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
@@ -68,33 +66,6 @@ const Dashboard = () => {
   const hasActiveBooster = profile?.speed_booster_active || false;
   const availableBoosters = boosters.filter(b => !b.activated);
   const timeRemaining = useBoosterTimer(profile?.speed_booster_expires_at || null);
-  
-  // Calculate life regeneration rate based on booster
-  const lifeRegenRate = hasActiveBooster 
-    ? Math.floor(12 / (profile?.speed_booster_multiplier || 1))
-    : 12;
-    
-  const { timeUntilNextLife } = useLifeRegenerationTimer(
-    profile?.lives || 0,
-    profile?.max_lives || 15,
-    profile?.last_life_regeneration || null,
-    lifeRegenRate
-  );
-
-  useEffect(() => {
-    if (profile && walletData && profile.lives < profile.max_lives && walletData.nextLifeAt) {
-      const nextLifeTime = new Date(walletData.nextLifeAt).getTime();
-      const now = Date.now() + serverDriftMs;
-      
-      if (now >= nextLifeTime) {
-        // Time for next life, trigger regeneration
-        regenerateLives().then(() => {
-          refreshProfile();
-          refetchWallet();
-        });
-      }
-    }
-  }, [walletData, profile, serverDriftMs]);
 
   // Helper function
   const getInitials = (name: string) => {
@@ -312,22 +283,17 @@ return (
                   <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
                   <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.lives}</span>
                 </div>
-                {/* Life Regeneration Timer - right side with 10% overlap */}
-                {profile.lives < profile.max_lives && (
-                  <div className="absolute -bottom-1 -right-2">
-                    <LifeRegenerationTimer
-                      currentLives={profile.lives}
-                      maxLives={profile.max_lives}
-                      lastRegeneration={profile.last_life_regeneration}
-                      boosterActive={profile.speed_booster_active}
-                      boosterType={profile.speed_booster_multiplier === 2 ? 'DoubleSpeed' :
-                                  profile.speed_booster_multiplier === 4 ? 'MegaSpeed' :
-                                  profile.speed_booster_multiplier === 12 ? 'GigaSpeed' :
-                                  profile.speed_booster_multiplier === 24 ? 'DingleSpeed' : null}
-                      boosterExpiresAt={profile.speed_booster_expires_at}
-                    />
-                  </div>
-                )}
+                {/* Life Regeneration Timer - server authoritative */}
+                <NextLifeTimer
+                  nextLifeAt={walletData?.nextLifeAt || null}
+                  livesCurrent={profile.lives}
+                  livesMax={profile.max_lives}
+                  serverDriftMs={serverDriftMs}
+                  onExpired={() => {
+                    refetchWallet();
+                    refreshProfile();
+                  }}
+                />
               </div>
 
               {/* Avatar Hexagon */}

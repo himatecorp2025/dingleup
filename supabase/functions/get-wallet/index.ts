@@ -94,6 +94,21 @@ serve(async (req) => {
       nextLifeAt = new Date(lastRegen.getTime() + regenIntervalMs).toISOString();
     }
 
+    // Get subscription renewal date if subscriber
+    let subscriberRenewAt = null;
+    if (profile.is_subscriber) {
+      const { data: subscription } = await supabase
+        .from('subscriptions')
+        .select('current_period_end')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single();
+      
+      if (subscription?.current_period_end) {
+        subscriberRenewAt = subscription.current_period_end;
+      }
+    }
+
     // Get recent ledger entries (last 20)
     const { data: ledger, error: ledgerError } = await supabase
       .from('wallet_ledger')
@@ -116,6 +131,7 @@ serve(async (req) => {
         nextLifeAt,
         regenIntervalSec: effectiveRegenMinutes * 60,
         regenMinutes: effectiveRegenMinutes,
+        subscriberRenewAt,
         ledger: ledger || []
       }),
       {
