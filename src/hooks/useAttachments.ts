@@ -69,24 +69,15 @@ export const useAttachments = () => {
         } 
       });
 
-      // Upload to storage with timeout
-      const uploadResponse = await Promise.race([
-        fetch(uploadData.uploadUrl, {
-          method: 'PUT',
-          body: attachment.file,
-          headers: {
-            'Content-Type': attachment.file.type,
-            'x-upsert': 'true'
-          }
-        }),
-        new Promise<Response>((_, reject) => 
-          setTimeout(() => reject(new Error('Upload timeout')), 30000)
-        )
-      ]);
+      // Upload via Supabase helper for signed URL (handles method + headers)
+      const { data: _uploaded, error: uploadErr } = await supabase.storage
+        .from('chat-media')
+        .uploadToSignedUrl(uploadData.path, uploadData.token, attachment.file);
 
-      if (!uploadResponse.ok) {
-        throw new Error('Upload failed');
+      if (uploadErr) {
+        throw new Error(uploadErr.message || 'Upload failed');
       }
+
 
       // Upload successful
       updateAttachmentStatus(localId, 'uploaded', {

@@ -442,9 +442,6 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
 
       console.log('[ThreadView] Server response:', response);
 
-      // Clear form AFTER successful send
-      setMessageText('');
-      clearAttachments();
 
       // Replace optimistic message with server response containing media
       if (response?.message) {
@@ -485,6 +482,9 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
       ));
     } finally {
       setSending(false);
+      // Always reset composer even if sending fails
+      setMessageText('');
+      clearAttachments();
     }
   };
 
