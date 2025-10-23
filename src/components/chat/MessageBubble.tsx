@@ -238,7 +238,7 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
   const hasContent = message.body?.trim() || (message.media && message.media.length > 0);
   
   if (!hasContent) {
-    console.warn('[MessageBubble] Message has no content:', message.id);
+    // Silently skip messages without content instead of logging warnings
     return null;
   }
   

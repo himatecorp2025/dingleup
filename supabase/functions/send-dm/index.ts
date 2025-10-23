@@ -49,12 +49,24 @@ Deno.serve(async (req) => {
     }
 
     // Must have either text body or attachments
-    if ((!body || body.trim() === '') && (!attachments || attachments.length === 0) && !mediaUrl) {
+    const hasBody = body && body.trim() !== '';
+    const hasAttachments = attachments && Array.isArray(attachments) && attachments.length > 0;
+    const hasMedia = mediaUrl && mediaPath;
+    
+    if (!hasBody && !hasAttachments && !hasMedia) {
+      console.log('[SendDM] Rejected: No content provided');
       return new Response(
         JSON.stringify({ error: 'Message must have text or attachments' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    console.log('[SendDM] Message content check:', { 
+      hasBody, 
+      hasAttachments, 
+      attachmentsCount: attachments?.length || 0,
+      hasMedia 
+    });
 
     // Check idempotency
     const checkKey = idempotencyKey || clientMessageId;
@@ -242,6 +254,13 @@ Deno.serve(async (req) => {
 
       const mediaRecords = attachments.map((att: any) => {
         const path = toStoragePath(att.url, att.key);
+        console.log('[SendDM] Processing attachment:', {
+          kind: att.kind,
+          name: att.name,
+          size: att.bytes,
+          path,
+          mime: att.mime
+        });
         return {
           message_id: message.id,
           media_type: att.kind || 'file',
@@ -256,12 +275,17 @@ Deno.serve(async (req) => {
         };
       });
 
+      console.log('[SendDM] Inserting', mediaRecords.length, 'media records');
+
       const { error: mediaError } = await supabase
         .from('message_media')
         .insert(mediaRecords);
 
       if (mediaError) {
         console.error('[SendDM] Error inserting attachments:', mediaError);
+        // Don't throw - message is already created
+      } else {
+        console.log('[SendDM] Media records inserted successfully');
       }
     }
 

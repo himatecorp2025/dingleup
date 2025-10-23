@@ -37,6 +37,8 @@ export const useAttachments = () => {
     try {
       updateAttachmentStatus(localId, 'presigned');
 
+      console.log('[Upload] Starting upload for', attachment.kind, attachment.file.name, 'size:', attachment.file.size);
+
       // Get dimensions for images
       let w: number | undefined;
       let h: number | undefined;
@@ -48,7 +50,20 @@ export const useAttachments = () => {
         h = img.height;
       }
 
-      // Get presigned URL
+      // Get duration for videos
+      let duration: number | undefined;
+      if (attachment.kind === 'video') {
+        const video = document.createElement('video');
+        video.src = attachment.previewUrl;
+        await new Promise((resolve) => {
+          video.onloadedmetadata = () => {
+            duration = Math.floor(video.duration * 1000); // milliseconds
+            resolve(null);
+          };
+        });
+      }
+
+      // Get presigned URL with longer timeout for large files
       const { data: uploadData, error: uploadError } = await supabase.functions.invoke(
         'upload-chat-image',
         {
@@ -60,7 +75,12 @@ export const useAttachments = () => {
         }
       );
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('[Upload] Failed to get presigned URL:', uploadError);
+        throw uploadError;
+      }
+
+      console.log('[Upload] Got presigned URL, starting file upload...');
 
       updateAttachmentStatus(localId, 'uploading', { 
         remote: { 
@@ -72,17 +92,23 @@ export const useAttachments = () => {
       // Upload via Supabase helper for signed URL (handles method + headers)
       const { data: _uploaded, error: uploadErr } = await supabase.storage
         .from('chat-media')
-        .uploadToSignedUrl(uploadData.path, uploadData.token, attachment.file);
+        .uploadToSignedUrl(uploadData.path, uploadData.token, attachment.file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
       if (uploadErr) {
+        console.error('[Upload] Storage upload failed:', uploadErr);
         throw new Error(uploadErr.message || 'Upload failed');
       }
 
+      console.log('[Upload] File uploaded successfully:', uploadData.path);
 
       // Upload successful
       updateAttachmentStatus(localId, 'uploaded', {
         w,
         h,
+        duration,
         remote: {
           key: uploadData.path,
           url: uploadData.path,
@@ -98,14 +124,16 @@ export const useAttachments = () => {
         name: attachment.file.name,
         w,
         h,
+        duration,
         bytes: attachment.file.size
       } as AttachmentMeta;
 
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('[Upload] Upload error:', error);
       updateAttachmentStatus(localId, 'failed', { 
         error: error instanceof Error ? error.message : 'Upload failed' 
       });
+      toast.error(`Feltöltés sikertelen: ${attachment.file.name}`);
       return null;
     }
   }, [attachments, updateAttachmentStatus]);
