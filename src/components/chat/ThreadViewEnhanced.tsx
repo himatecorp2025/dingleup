@@ -60,6 +60,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isNearBottomRef = useRef(true);
   
@@ -523,11 +524,25 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
     }
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>, fileType: 'image' | 'all') => {
+  const handleImageSelect = () => {
+    if (imageInputRef.current) {
+      imageInputRef.current.click();
+    }
+    setShowAttachmentMenu(false);
+  };
+
+  const handleFileSelect = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+    setShowAttachmentMenu(false);
+  };
+
+  const processFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    console.log('[FileSelect] Selected file:', file.name, 'Type:', file.type, 'Size:', file.size);
+    console.log('[FileUpload] Selected file:', file.name, 'Type:', file.type, 'Size:', file.size);
     
     // Determine file kind based on MIME type
     let kind: 'image' | 'video' | 'audio' | 'document' | 'file' = 'file';
@@ -549,7 +564,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
       kind = 'document';
     }
     
-    console.log('[FileSelect] Detected kind:', kind);
+    console.log('[FileUpload] Detected kind:', kind);
     
     // Size limits based on file type
     let maxSize = 50; // Default 50 MB
@@ -565,12 +580,11 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
     
     const preview = URL.createObjectURL(file);
     addAttachment(file, kind, preview);
-    setShowAttachmentMenu(false);
     
-    console.log('[FileSelect] Attachment added successfully');
+    console.log('[FileUpload] Attachment added successfully');
     
     // Reset input
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    e.target.value = '';
   };
 
   const handleEmojiSelect = (emoji: string) => {
@@ -854,28 +868,25 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
       
       {showAttachmentMenu && (
         <AttachmentMenu
-          onImageSelect={() => {
-            if (fileInputRef.current) {
-              fileInputRef.current.setAttribute('accept', 'image/jpeg,image/png,image/webp,image/gif,image/heic');
-              fileInputRef.current.click();
-            }
-          }}
-          onFileSelect={() => {
-            if (fileInputRef.current) {
-              fileInputRef.current.setAttribute('accept', '*/*');
-              fileInputRef.current.click();
-            }
-          }}
+          onImageSelect={handleImageSelect}
+          onFileSelect={handleFileSelect}
           onClose={() => setShowAttachmentMenu(false)}
         />
       )}
       
-      {/* Hidden file input - universal for all file types */}
+      {/* Hidden file inputs */}
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/heic"
+        onChange={processFileUpload}
+        className="hidden"
+      />
       <input
         ref={fileInputRef}
         type="file"
-        accept="*/*"
-        onChange={(e) => handleFileSelect(e, 'all')}
+        accept="video/mp4,video/quicktime,video/webm,audio/mpeg,audio/mp4,audio/wav,audio/flac,audio/ogg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.*,text/plain,text/csv,application/zip,application/x-rar-compressed"
+        onChange={processFileUpload}
         className="hidden"
       />
     </div>
