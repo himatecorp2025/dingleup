@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useMessageReactions } from '@/hooks/useMessageReactions';
 import { ImageViewer } from './ImageViewer';
 import { FileText, Download, Play, Music, FileArchive } from 'lucide-react';
+import { DeliveryStatus } from './DeliveryStatus';
 
 interface MessageMedia {
   media_url: string;
@@ -32,12 +33,14 @@ interface MessageBubbleProps {
     body: string;
     created_at: string;
     media?: MessageMedia[];
+    delivery_status?: 'sending' | 'sent' | 'delivered' | 'seen' | 'failed';
   };
   isOwn: boolean;
   isGrouped?: boolean;
   partnerAvatar?: string | null;
   partnerName: string;
   showTime: string;
+  onRetry?: () => void;
 }
 
 const formatFileSize = (bytes?: number) => {
@@ -225,7 +228,7 @@ const MediaPreview = ({ media, onImageClick }: { media: MessageMedia; onImageCli
 
 const reactionEmojis = ['👍', '❤️', '😂', '😮', '😢', '😡'];
 
-export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar, partnerName, showTime }: MessageBubbleProps) => {
+export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar, partnerName, showTime, onRetry }: MessageBubbleProps) => {
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const { reactions, addReaction } = useMessageReactions(message.id);
@@ -337,7 +340,16 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
         )}
 
         {!isGrouped && (
-          <span className="text-[11px] text-white/40 mt-1 px-1">{showTime}</span>
+          <div className="flex items-center gap-2 mt-1 px-1">
+            <span className="text-[11px] text-white/40">{showTime}</span>
+            {isOwn && message.delivery_status && (
+              <DeliveryStatus 
+                status={message.delivery_status} 
+                showRetry={message.delivery_status === 'failed'}
+                onRetry={onRetry}
+              />
+            )}
+          </div>
         )}
       </div>
     </div>

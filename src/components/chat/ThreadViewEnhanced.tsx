@@ -10,6 +10,7 @@ import { FileUploader } from './FileUploader';
 import { EmojiPicker } from './EmojiPicker';
 import { AttachmentMenu } from './AttachmentMenu';
 import { useAttachments } from '@/hooks/useAttachments';
+import { AttachmentPreviewChips } from './AttachmentPreviewChips';
 
 interface Message {
   id: string;
@@ -18,6 +19,8 @@ interface Message {
   body: string;
   created_at: string;
   is_deleted: boolean;
+  delivery_status?: 'sending' | 'sent' | 'delivered' | 'seen' | 'failed';
+  client_temp_id?: string;
   media?: Array<{
     media_url: string;
     media_type: string;
@@ -244,8 +247,10 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         body: textToSend,
         created_at: new Date().toISOString(),
         is_deleted: false,
+        delivery_status: 'sending',
+        client_temp_id: clientMessageId,
         media: attachmentPreviews.map(att => ({
-          media_url: att.previewUrl, // Temporary blob URL for immediate preview
+          media_url: att.previewUrl,
           media_type: att.kind,
           thumbnail_url: att.kind === 'image' ? att.previewUrl : undefined,
           file_name: att.name,
@@ -253,7 +258,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           width: att.w,
           height: att.h,
           duration_ms: att.duration,
-          mime_type: 'image/jpeg' // Temporary
+          mime_type: 'image/jpeg'
         }))
       };
       setMessages(prev => [...prev, optimisticMessage]);
@@ -278,9 +283,11 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         console.log('[ThreadView] Server returned message with', response.message.media?.length || 0, 'media items');
         setMessages(prev => {
           const updated = prev.map(m => {
-            if (m.id === clientMessageId) {
+            if (m.id === clientMessageId || m.client_temp_id === clientMessageId) {
               return {
                 ...response.message,
+                delivery_status: 'sent',
+                client_temp_id: clientMessageId,
                 media: response.message.media || []
               };
             }
@@ -298,10 +305,51 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       console.error('Send error:', error);
       toast.error('Hiba az üzenet küldésekor');
       
-      // Remove optimistic message on error
-      setMessages(prev => prev.filter(m => m.id !== clientMessageId));
+      // Mark message as failed instead of removing
+      setMessages(prev => prev.map(m => 
+        m.id === clientMessageId ? { ...m, delivery_status: 'failed' } : m
+      ));
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleRetryMessage = async (messageId: string) => {
+    const failedMessage = messages.find(m => m.id === messageId);
+    if (!failedMessage) return;
+
+    // Update status to sending
+    setMessages(prev => prev.map(m => 
+      m.id === messageId ? { ...m, delivery_status: 'sending' } : m
+    ));
+
+    try {
+      const { data: response, error } = await supabase.functions.invoke('send-dm', {
+        body: { 
+          recipientId: friendId, 
+          body: failedMessage.body,
+          attachments: [],
+          clientMessageId: messageId
+        },
+        headers: {
+          'Idempotency-Key': messageId
+        }
+      });
+
+      if (error) throw error;
+
+      if (response?.message) {
+        setMessages(prev => prev.map(m => 
+          m.id === messageId ? { ...response.message, delivery_status: 'sent' } : m
+        ));
+        toast.success('Üzenet újraküldve');
+      }
+    } catch (error: any) {
+      console.error('Retry error:', error);
+      toast.error('Újraküldés sikertelen');
+      setMessages(prev => prev.map(m => 
+        m.id === messageId ? { ...m, delivery_status: 'failed' } : m
+      ));
     }
   };
 
@@ -438,6 +486,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
                 partnerAvatar={friendInfo?.avatar_url}
                 partnerName={friendInfo?.username || ''}
                 showTime={formatTime(msg.created_at)}
+                onRetry={msg.delivery_status === 'failed' ? () => handleRetryMessage(msg.id) : undefined}
               />
             );
           })
@@ -447,7 +496,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       {/* Composer */}
       <div 
-        className="chat-composer flex-shrink-0 bg-[#0F1116] border-t border-[#D4AF37]/30 p-3 flex items-end gap-2 w-full"
+        className="chat-composer flex-shrink-0 bg-[#0F1116] border-t border-[#D4AF37]/30 w-full"
         style={{ 
           position: 'fixed', 
           bottom: '72px', 
@@ -459,43 +508,14 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           paddingBottom: 'calc(8px + env(safe-area-inset-bottom))'
         }}
       >
-        {/* Attachment Previews */}
-        {attachments.length > 0 && (
-          <div className="absolute bottom-full left-0 right-0 bg-[#1a1a1a] border-t border-[#D4AF37]/20 p-2 flex gap-2 overflow-x-auto scrollbar-hide">
-            {attachments.map((att) => (
-              <div key={att.localId} className="relative flex-shrink-0">
-                <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#0F1116] border border-[#D4AF37]/20">
-                  {att.kind === 'image' ? (
-                    <img src={att.previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-[#D4AF37] text-xs">
-                      📄
-                    </div>
-                  )}
-                </div>
-                {att.status === 'uploading' && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <Loader2 className="w-4 h-4 text-white animate-spin" />
-                  </div>
-                )}
-                {att.status === 'failed' && (
-                  <div className="absolute inset-0 bg-red-500/50 flex items-center justify-center">
-                    <button onClick={retryFailedUploads} className="text-white">
-                      <RefreshCw className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-                <button
-                  onClick={() => removeAttachment(att.localId)}
-                  className="absolute -top-1 -right-1 p-1 bg-[#8B0000] rounded-full hover:bg-[#8B0000]/80"
-                  aria-label="Törlés"
-                >
-                  <X className="w-3 h-3 text-white" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* Attachment Preview Chips */}
+        <AttachmentPreviewChips 
+          attachments={attachments} 
+          onRemove={removeAttachment}
+        />
+
+        {/* Composer Input Area */}
+        <div className="p-3 flex items-end gap-2">
 
         {/* Attach Button */}
         <button
@@ -551,6 +571,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
             <span className="text-[#D4AF37] text-xl">😊</span>
           </button>
         )}
+      </div>
       </div>
 
       {/* Modals */}
