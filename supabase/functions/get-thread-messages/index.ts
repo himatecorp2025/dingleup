@@ -136,6 +136,12 @@ Deno.serve(async (req) => {
     // Transform messages to include media array with signed URLs
     const transformedMessages = await Promise.all((messages || []).map(async (msg: any) => {
       const mediaWithSignedUrls = await Promise.all((msg.message_media || []).map(async (media: any) => {
+        console.log('[GetThreadMessages] Processing media:', { 
+          media_url: media.media_url, 
+          thumbnail_url: media.thumbnail_url,
+          mime_type: media.mime_type 
+        });
+
         // Generate signed URLs for private storage (valid for 1 hour)
         let signedMediaUrl = media.media_url;
         let signedThumbnailUrl = media.thumbnail_url;
@@ -148,8 +154,12 @@ Deno.serve(async (req) => {
           
           if (!mediaError && mediaData?.signedUrl) {
             signedMediaUrl = mediaData.signedUrl;
+            console.log('[GetThreadMessages] Generated signed URL for media:', signedMediaUrl.substring(0, 100));
           } else {
-            console.error('[GetThreadMessages] Error creating signed URL for media:', mediaError);
+            console.error('[GetThreadMessages] Error creating signed URL for media:', {
+              error: mediaError,
+              path: media.media_url
+            });
           }
         }
         
@@ -160,8 +170,12 @@ Deno.serve(async (req) => {
           
           if (!thumbError && thumbData?.signedUrl) {
             signedThumbnailUrl = thumbData.signedUrl;
+            console.log('[GetThreadMessages] Generated signed URL for thumbnail');
           } else {
-            console.error('[GetThreadMessages] Error creating signed URL for thumbnail:', thumbError);
+            console.error('[GetThreadMessages] Error creating signed URL for thumbnail:', {
+              error: thumbError,
+              path: media.thumbnail_url
+            });
           }
         }
         

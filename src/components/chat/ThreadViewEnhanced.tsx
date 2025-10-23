@@ -104,10 +104,27 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   const loadMessages = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke(
-        `get-thread-messages?otherUserId=${friendId}`
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No session');
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-thread-messages?otherUserId=${friendId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
       );
-      if (error) throw error;
+
+      if (!response.ok) {
+        throw new Error('Failed to load messages');
+      }
+
+      const data = await response.json();
+      console.log('[ThreadView] Loaded messages:', data);
       setMessages(data?.messages || []);
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -201,8 +218,8 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       setMessageText('');
       clearAttachments();
       
-      // Reload to get server message
-      setTimeout(() => loadMessages(), 500);
+      // Reload to get server message with media
+      setTimeout(() => loadMessages(), 1000);
     } catch (error: any) {
       console.error('Send error:', error);
       toast.error('Hiba az üzenet küldésekor');

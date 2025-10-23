@@ -81,7 +81,12 @@ const MediaPreview = ({ media, onImageClick }: { media: MessageMedia; onImageCli
           className="w-full h-auto object-cover"
           loading="lazy"
           onError={(e) => {
-            console.error('Image failed to load:', imageUrl);
+            console.error('[MessageBubble] Image failed to load:', {
+              url: imageUrl,
+              fileName: media.file_name,
+              mediaUrl: media.media_url,
+              thumbnailUrl: media.thumbnail_url
+            });
             e.currentTarget.style.display = 'none';
           }}
         />
