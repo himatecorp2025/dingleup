@@ -136,17 +136,39 @@ Deno.serve(async (req) => {
     // Transform messages to include media array with signed URLs
     const transformedMessages = await Promise.all((messages || []).map(async (msg: any) => {
       const mediaWithSignedUrls = await Promise.all((msg.message_media || []).map(async (media: any) => {
-        // Generate signed URL for private storage (valid for 1 hour)
-        const { data: signedData } = await supabase.storage
-          .from('chat-media')
-          .createSignedUrl(media.media_url, 3600); // 1 hour expiry
+        // Generate signed URLs for private storage (valid for 1 hour)
+        let signedMediaUrl = media.media_url;
+        let signedThumbnailUrl = media.thumbnail_url;
+        
+        // Only generate signed URL if the path doesn't look like a full URL already
+        if (media.media_url && !media.media_url.startsWith('http')) {
+          const { data: mediaData, error: mediaError } = await supabase.storage
+            .from('chat-media')
+            .createSignedUrl(media.media_url, 3600);
+          
+          if (!mediaError && mediaData?.signedUrl) {
+            signedMediaUrl = mediaData.signedUrl;
+          } else {
+            console.error('[GetThreadMessages] Error creating signed URL for media:', mediaError);
+          }
+        }
+        
+        if (media.thumbnail_url && !media.thumbnail_url.startsWith('http')) {
+          const { data: thumbData, error: thumbError } = await supabase.storage
+            .from('chat-media')
+            .createSignedUrl(media.thumbnail_url, 3600);
+          
+          if (!thumbError && thumbData?.signedUrl) {
+            signedThumbnailUrl = thumbData.signedUrl;
+          } else {
+            console.error('[GetThreadMessages] Error creating signed URL for thumbnail:', thumbError);
+          }
+        }
         
         return {
           ...media,
-          media_url: signedData?.signedUrl || media.media_url,
-          thumbnail_url: media.thumbnail_url 
-            ? (await supabase.storage.from('chat-media').createSignedUrl(media.thumbnail_url, 3600)).data?.signedUrl || media.thumbnail_url
-            : undefined
+          media_url: signedMediaUrl,
+          thumbnail_url: signedThumbnailUrl
         };
       }));
 

@@ -19,6 +19,9 @@ html, body {
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
   box-sizing: border-box;
+  /* Fix mobile keyboard white background issue */
+  background: linear-gradient(to br, #0a0a2e, #16213e, #0f0f3d);
+  background-attachment: fixed;
 }
 
 *, *::before, *::after {

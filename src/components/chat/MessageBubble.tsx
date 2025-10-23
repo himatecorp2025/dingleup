@@ -69,16 +69,21 @@ const MediaPreview = ({ media, onImageClick }: { media: MessageMedia; onImageCli
 
   // Kép
   if (isImage) {
+    const imageUrl = media.thumbnail_url || media.media_url;
     return (
       <div
         onClick={() => onImageClick?.(media.media_url)}
         className="relative rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity max-w-xs"
       >
         <img
-          src={media.thumbnail_url || media.media_url}
+          src={imageUrl}
           alt={media.file_name || 'Kép'}
           className="w-full h-auto object-cover"
           loading="lazy"
+          onError={(e) => {
+            console.error('Image failed to load:', imageUrl);
+            e.currentTarget.style.display = 'none';
+          }}
         />
       </div>
     );

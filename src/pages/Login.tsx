@@ -85,10 +85,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-[100svh] flex justify-center items-start sm:items-center px-4 pt-3 pb-4 sm:py-12 relative overflow-hidden">
-      {/* Modern 2025 dark blue gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"></div>
-      <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10"></div>
+    <div className="min-h-screen fixed inset-0 flex justify-center items-start sm:items-center px-4 pt-3 pb-4 sm:py-12 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+      {/* Overlay gradients */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10 pointer-events-none"></div>
 
       {/* Floating elements - hidden on mobile */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
