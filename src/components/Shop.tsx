@@ -94,7 +94,7 @@ const Shop = ({ userId }: ShopProps) => {
           if (error) throw error;
 
           if (data.success) {
-            toast.success(`${productType} booster sikeres vásárlás! +${data.livesBonus} élet hozzáadva!`);
+            toast.success(`${productType} booster megszerzése sikeres! +${data.livesBonus} élet hozzáadva!`);
             await fetchProfile();
           }
         } catch (error: any) {
@@ -167,14 +167,14 @@ const Shop = ({ userId }: ShopProps) => {
       
       const result = data as { success: boolean; error?: string };
       if (result.success) {
-        toast.success('1 élet vásárolva!');
+        toast.success('1 élet megszerzése sikeres!');
         await fetchProfile();
       } else {
         toast.error(result.error || 'Hiba történt');
       }
     } catch (error: any) {
       if (import.meta.env.DEV) console.error('Error purchasing life:', error);
-      toast.error('Hiba történt a vásárlás során');
+      toast.error('Hiba történt a megszerzés során');
     }
     setLoading(null);
   };
@@ -293,14 +293,14 @@ const Shop = ({ userId }: ShopProps) => {
       const result = data as { success: boolean; error?: string };
       if (result.success) {
         await purchaseBooster(boosterType);
-        toast.success(`${booster.name} booster vásárolva! +${booster.lives_gained} élet és ${booster.multiplier}x gyorsítás!`);
+        toast.success(`${booster.name} booster megszerzése sikeres! +${booster.lives_gained} élet és ${booster.multiplier}x gyorsítás!`);
         await fetchProfile();
       } else {
         toast.error(result.error || 'Hiba történt');
       }
     } catch (error: any) {
       if (import.meta.env.DEV) console.error('Error purchasing booster:', error);
-      toast.error('Hiba történt a vásárlás során');
+      toast.error('Hiba történt a megszerzés során');
     }
     setLoading(null);
   };
@@ -418,7 +418,7 @@ const Shop = ({ userId }: ShopProps) => {
               <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">Genius Előfizetés</h3>
             </div>
             <p className="text-white/90 text-sm mb-3 font-semibold">
-              🌟 Dupla napi jutalmak, 50% kedvezmény speed boosterekre, 25% kedvezmény valódi pénzes vásárlásoknál, és exkluzív Tippek & Trükkök videók!
+              🌟 Dupla napi jutalmak, 50% kedvezmény speed boosterekre, 25% kedvezmény valódi pénzes megszerzéseknél, és exkluzív Tippek & Trükkök videók!
             </p>
             <button 
               onClick={() => setShowGeniusDialog(true)}
@@ -436,7 +436,7 @@ const Shop = ({ userId }: ShopProps) => {
             <h2 className="text-2xl font-bold text-white">Boosterek</h2>
           </div>
           <p className="text-white/80 mb-4">
-            Vásárolj boostereket aranyérméért – aktiváld őket a játék előtt!
+            Szerezz meg boostereket aranyérméért – aktiváld őket a játék előtt!
           </p>
           
           {/* Responsive grid: 2-3 cols mobile, 3-4 tablet */}
@@ -494,7 +494,7 @@ const Shop = ({ userId }: ShopProps) => {
                     disabled={loading === item.id || profile.coins < item.price}
                     className="w-full bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading === item.id ? 'Betöltés...' : 'Vásárlás'}
+                    {loading === item.id ? 'Betöltés...' : 'MEGSZERZEM'}
                   </button>
 
                   {/* Stripe USD purchase option */}
@@ -529,7 +529,7 @@ const Shop = ({ userId }: ShopProps) => {
                         {loading === `stripe-${item.id}` ? 'Betöltés...' : (
                           <>
                             <CreditCard className="w-3 h-3" />
-                            Vásárlás USD
+                            MEGSZERZEM USD
                           </>
                         )}
                       </button>
@@ -549,7 +549,7 @@ const Shop = ({ userId }: ShopProps) => {
             <h2 className="text-2xl font-bold text-white">Bolt</h2>
           </div>
           <p className="text-white/80 mb-4">
-            Vásárolj extra életeket és segítségeket aranyérméért
+            Szerezz meg extra életeket és segítségeket aranyérméért
           </p>
           
           {/* Responsive grid: 2-3 cols mobile, 3-4 tablet */}
@@ -590,7 +590,7 @@ const Shop = ({ userId }: ShopProps) => {
                     disabled={loading === item.id || profile.coins < item.price || item.disabled}
                     className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading === item.id ? 'Betöltés...' : 'Újraaktivál'}
+                    {loading === item.id ? 'Betöltés...' : 'AKAROM'}
                   </button>
                   
                   {item.disabled && (
