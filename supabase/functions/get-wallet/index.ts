@@ -93,22 +93,31 @@ serve(async (req) => {
       }
     }
 
-    // Calculate next life time with proper regeneration tracking
+    // Calculate next life time with proper regeneration tracking + future timestamp guard
     let nextLifeAt = null;
     if (profile.lives < effectiveMaxLives) {
-      const now = Date.now();
-      const lastRegen = new Date(profile.last_life_regeneration).getTime();
+      const nowMs = Date.now();
+      let lastRegenMs = new Date(profile.last_life_regeneration).getTime();
       const regenIntervalMs = effectiveRegenMinutes * 60 * 1000;
-      const timeSinceLastRegen = now - lastRegen;
-      
+
+      // Guard: if last_life_regeneration is in the future, normalize it to now
+      if (lastRegenMs > nowMs + 1000) {
+        lastRegenMs = nowMs;
+        await supabase
+          .from('profiles')
+          .update({ last_life_regeneration: new Date(lastRegenMs).toISOString() })
+          .eq('id', user.id);
+      }
+
+      const timeSinceLastRegen = nowMs - lastRegenMs;
+
       // Calculate how many lives should have been regenerated
       const livesShouldBeAdded = Math.floor(timeSinceLastRegen / regenIntervalMs);
-      
-      // If lives should have been added, update the last_life_regeneration
+
       if (livesShouldBeAdded > 0) {
-        const newLastRegen = lastRegen + (livesShouldBeAdded * regenIntervalMs);
+        const newLastRegen = lastRegenMs + (livesShouldBeAdded * regenIntervalMs);
         const newLives = Math.min(profile.lives + livesShouldBeAdded, effectiveMaxLives);
-        
+
         // Update profile with new values
         await supabase
           .from('profiles')
@@ -117,14 +126,13 @@ serve(async (req) => {
             last_life_regeneration: new Date(newLastRegen).toISOString()
           })
           .eq('id', user.id);
-        
-        // Recalculate nextLifeAt based on new last_life_regeneration
+
         if (newLives < effectiveMaxLives) {
           nextLifeAt = new Date(newLastRegen + regenIntervalMs).toISOString();
         }
       } else {
         // No lives added yet, calculate when next life will come
-        nextLifeAt = new Date(lastRegen + regenIntervalMs).toISOString();
+        nextLifeAt = new Date(lastRegenMs + regenIntervalMs).toISOString();
       }
     }
 
