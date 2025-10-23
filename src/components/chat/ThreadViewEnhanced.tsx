@@ -60,7 +60,6 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isNearBottomRef = useRef(true);
   
@@ -524,40 +523,41 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
     }
   };
 
-  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>, fileType: 'image' | 'all') => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // Validate
-    if (!file.type.startsWith('image/')) {
-      toast.error('Csak képfájlok engedélyezettek');
-      return;
+    console.log('[FileSelect] Selected file:', file.name, 'Type:', file.type, 'Size:', file.size);
+    
+    // Determine file kind based on MIME type
+    let kind: 'image' | 'video' | 'audio' | 'document' | 'file' = 'file';
+    if (file.type.startsWith('image/')) {
+      kind = 'image';
+    } else if (file.type.startsWith('video/')) {
+      kind = 'video';
+    } else if (file.type.startsWith('audio/')) {
+      kind = 'audio';
+    } else if (
+      file.type.includes('pdf') || 
+      file.type.includes('document') || 
+      file.type.includes('sheet') || 
+      file.type.includes('presentation') || 
+      file.type.includes('text') ||
+      file.type.includes('msword') ||
+      file.type.includes('officedocument')
+    ) {
+      kind = 'document';
     }
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('Kép maximum 10 MB lehet');
-      return;
-    }
     
-    const preview = URL.createObjectURL(file);
-    addAttachment(file, 'image', preview);
-    setShowAttachmentMenu(false);
+    console.log('[FileSelect] Detected kind:', kind);
     
-    // Reset input
-    if (imageInputRef.current) imageInputRef.current.value = '';
-  };
-
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    // Size limits based on file type
+    let maxSize = 50; // Default 50 MB
+    if (kind === 'video') maxSize = 200;
+    if (kind === 'audio') maxSize = 50;
+    if (kind === 'image') maxSize = 10;
+    if (kind === 'document') maxSize = 50;
     
-    // Determine file kind
-    let kind: 'video' | 'audio' | 'document' | 'file' = 'file';
-    if (file.type.startsWith('video/')) kind = 'video';
-    else if (file.type.startsWith('audio/')) kind = 'audio';
-    else if (file.type.includes('pdf') || file.type.includes('document') || file.type.includes('sheet') || file.type.includes('presentation') || file.type.includes('text')) kind = 'document';
-    
-    // Size limits
-    const maxSize = kind === 'video' ? 200 : kind === 'audio' ? 50 : 50;
     if (file.size > maxSize * 1024 * 1024) {
       toast.error(`Fájl maximum ${maxSize} MB lehet`);
       return;
@@ -567,6 +567,9 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
     addAttachment(file, kind, preview);
     setShowAttachmentMenu(false);
     
+    console.log('[FileSelect] Attachment added successfully');
+    
+    // Reset input
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -851,25 +854,28 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
       
       {showAttachmentMenu && (
         <AttachmentMenu
-          onImageSelect={() => imageInputRef.current?.click()}
-          onFileSelect={() => fileInputRef.current?.click()}
+          onImageSelect={() => {
+            if (fileInputRef.current) {
+              fileInputRef.current.setAttribute('accept', 'image/jpeg,image/png,image/webp,image/gif,image/heic');
+              fileInputRef.current.click();
+            }
+          }}
+          onFileSelect={() => {
+            if (fileInputRef.current) {
+              fileInputRef.current.setAttribute('accept', '*/*');
+              fileInputRef.current.click();
+            }
+          }}
           onClose={() => setShowAttachmentMenu(false)}
         />
       )}
       
-      {/* Hidden file inputs */}
-      <input
-        ref={imageInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif,image/heic"
-        onChange={handleImageSelect}
-        className="hidden"
-      />
+      {/* Hidden file input - universal for all file types */}
       <input
         ref={fileInputRef}
         type="file"
-        accept="video/mp4,video/quicktime,video/webm,audio/mpeg,audio/mp4,audio/wav,audio/flac,audio/ogg,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.*,text/plain,text/csv,application/zip,application/x-rar-compressed"
-        onChange={handleFileSelect}
+        accept="*/*"
+        onChange={(e) => handleFileSelect(e, 'all')}
         className="hidden"
       />
     </div>
