@@ -390,6 +390,24 @@ const Shop = ({ userId }: ShopProps) => {
           <p className="text-yellow-900 mt-2">Jelenlegi egyenleged</p>
         </div>
 
+        {/* Tips & Tricks Section - only for Genius or show teaser */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <Crown className="w-8 h-8 text-yellow-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+            <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
+              Tippek & Trükkök
+            </h2>
+          </div>
+          <p className="text-white/80 mb-4">
+            {isGenius ? 'Exkluzív videók csak Genius tagoknak!' : 'Exkluzív videók - Genius előfizetéssel!'}
+          </p>
+          
+          <TipsVideosGrid 
+            isGenius={isGenius} 
+            onSubscribeClick={() => setShowGeniusDialog(true)} 
+          />
+        </div>
+
         {/* Subscription Info Box - only show if NOT Genius */}
         {!isGenius && (
           <div className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/50 rounded-xl p-4 backdrop-blur-sm animate-pulse" data-tutorial="genius-section" style={{ animationDuration: '3s' }}>
@@ -523,23 +541,6 @@ const Shop = ({ userId }: ShopProps) => {
           </div>
         </div>
 
-        {/* Tips & Tricks Section - only for Genius or show teaser */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 mb-4">
-            <Crown className="w-8 h-8 text-yellow-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-            <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
-              Tippek & Trükkök
-            </h2>
-          </div>
-          <p className="text-white/80 mb-4">
-            {isGenius ? 'Exkluzív videók csak Genius tagoknak!' : 'Exkluzív videók - Genius előfizetéssel!'}
-          </p>
-          
-          <TipsVideosGrid 
-            isGenius={isGenius} 
-            onSubscribeClick={() => setShowGeniusDialog(true)} 
-          />
-        </div>
 
         {/* Shop Items Section */}
         <div className="space-y-4">

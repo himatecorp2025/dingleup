@@ -70,26 +70,6 @@ const ShopPage = () => {
           </div>
         </div>
 
-        {/* Tips & Tricks - Only for Genius subscribers */}
-        {profile.is_subscribed && walletData?.isSubscriber && (
-          <div className="mb-4">
-            <TipsVideosGrid 
-              isGenius={true} 
-              onSubscribeClick={() => {}} 
-            />
-            {walletData.subscriberRenewAt && (
-              <div className="mt-2 text-center text-xs text-yellow-400/80">
-                Következő megújítás: {new Intl.DateTimeFormat('hu-HU', {
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                }).format(new Date(walletData.subscriberRenewAt))}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Shop Component */}
         <div data-tutorial="coins-section">
