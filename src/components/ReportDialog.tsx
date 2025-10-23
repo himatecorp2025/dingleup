@@ -130,24 +130,24 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-purple-900 to-purple-950 border-2 border-yellow-500/50 text-white z-[9999] max-h-[70vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-black text-yellow-400">
+      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-purple-900 to-purple-950 border-2 border-yellow-500/50 text-white z-[9999] p-4">
+        <DialogHeader className="space-y-1">
+          <DialogTitle className="text-xl font-black text-yellow-400">
             Jelentés beküldése
           </DialogTitle>
-          <DialogDescription className="text-white/80">
+          <DialogDescription className="text-white/80 text-sm">
             Segíts nekünk javítani az alkalmazást vagy jelents vissza sértő viselkedést!
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 pb-safe">
+        <div className="space-y-3">
           <div>
-            <Label>Jelentés típusa</Label>
+            <Label className="text-sm">Jelentés típusa</Label>
             <Select value={reportType} onValueChange={(v) => setReportType(v as 'bug' | 'user_behavior')}>
-              <SelectTrigger className="bg-gray-800 border-purple-500/50">
+              <SelectTrigger className="bg-gray-800 border-purple-500/50 h-9">
                 <SelectValue placeholder="Válassz típust" />
               </SelectTrigger>
-              <SelectContent className="z-[1000] bg-gray-900 border border-yellow-500/40 text-white">
+              <SelectContent className="z-[10001] bg-gray-900 border border-yellow-500/40 text-white">
                 <SelectItem value="bug">🐛 Fejlesztői jelentés (Bug, hiba)</SelectItem>
                 <SelectItem value="user_behavior">⚠️ Felhasználói jelentés (Visszaélés)</SelectItem>
               </SelectContent>
@@ -155,14 +155,14 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
           </div>
 
           {reportType === 'bug' ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div>
-                <Label>Hiba kategória</Label>
+                <Label className="text-sm">Hiba kategória</Label>
                 <Select value={bugCategory} onValueChange={setBugCategory}>
-                  <SelectTrigger className="bg-gray-800 border-purple-500/50">
+                  <SelectTrigger className="bg-gray-800 border-purple-500/50 h-9">
                     <SelectValue placeholder="Válassz kategóriát" />
                   </SelectTrigger>
-                  <SelectContent className="z-[1000] bg-gray-900 border border-yellow-500/40 text-white">
+                  <SelectContent className="z-[10001] bg-gray-900 border border-yellow-500/40 text-white">
                     {DEV_CATEGORIES.map((cat) => (
                       <SelectItem key={cat.value} value={cat.value}>
                         {cat.label}
@@ -172,24 +172,24 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                 </Select>
               </div>
               <div>
-                <Label>Hiba leírása</Label>
+                <Label className="text-sm">Hiba leírása</Label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Írd le részletesen, mit tapasztaltál..."
-                  className="min-h-[120px] bg-gray-800 border-purple-500/50 text-white"
+                  className="min-h-[80px] bg-gray-800 border-purple-500/50 text-white text-sm"
                 />
               </div>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div>
-                <Label>Visszaélés típusa</Label>
+                <Label className="text-sm">Visszaélés típusa</Label>
                 <Select value={violationType} onValueChange={setViolationType}>
-                  <SelectTrigger className="bg-gray-800 border-purple-500/50">
+                  <SelectTrigger className="bg-gray-800 border-purple-500/50 h-9">
                     <SelectValue placeholder="Válassz típust" />
                   </SelectTrigger>
-                  <SelectContent className="z-[1000] bg-gray-900 border border-yellow-500/40 text-white">
+                  <SelectContent className="z-[10001] bg-gray-900 border border-yellow-500/40 text-white">
                     {SUPPORT_CATEGORIES.map((cat) => (
                       <SelectItem key={cat.value} value={cat.value}>
                         {cat.label}
@@ -199,12 +199,12 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                 </Select>
               </div>
               <div>
-                <Label>Részletek</Label>
+                <Label className="text-sm">Részletek</Label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Írd le, mi történt..."
-                  className="min-h-[120px] bg-gray-800 border-purple-500/50 text-white"
+                  className="min-h-[80px] bg-gray-800 border-purple-500/50 text-white text-sm"
                 />
               </div>
             </div>
@@ -213,7 +213,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
           <Button
             onClick={handleSubmit}
             disabled={submitting}
-            className="w-full bg-gradient-to-r from-yellow-600 to-yellow-800 text-black font-bold"
+            className="w-full bg-gradient-to-r from-yellow-600 to-yellow-800 text-black font-bold h-9 text-sm"
           >
             {submitting ? 'Küldés...' : 'Jelentés beküldése'}
           </Button>
