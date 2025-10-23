@@ -72,8 +72,9 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    // Auto-scroll to bottom when new messages arrive
+    setTimeout(() => scrollToBottom(), 100);
+  }, [messages.length]);
 
   useEffect(() => {
     loadFriendInfo();
@@ -439,10 +440,10 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#000000] relative">
+    <div className="flex flex-col h-full bg-[#000000]">
       {/* Header - Fixed at top */}
       <header 
-        className="flex-shrink-0 bg-[#1a1a1a] border-b border-[#D4AF37]/10 px-4 py-3 flex items-center gap-3 w-full sticky top-0 z-20"
+        className="flex-shrink-0 bg-[#1a1a1a] border-b border-[#D4AF37]/10 px-4 py-3 flex items-center gap-3 w-full z-20"
       >
         <button
           onClick={onBack}
@@ -473,9 +474,10 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       {/* Messages - Scrollable Area */}
       <main 
-        className="flex-1 overflow-y-auto p-4 space-y-2 w-full"
+        className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-2"
         style={{
           minHeight: 0,
+          maxHeight: '100%'
         }}
       >
         {loading ? (
@@ -485,30 +487,33 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         ) : messages.length === 0 ? (
           <p className="text-center text-white/50 py-8">Nincs még üzenet</p>
         ) : (
-          messages.map((msg, idx) => {
-            const isOwn = msg.sender_id === userId;
-            const prevMsg = idx > 0 ? messages[idx - 1] : null;
-            const isGrouped = prevMsg && prevMsg.sender_id === msg.sender_id;
-            
-            return (
-              <MessageBubble
-                key={msg.id}
-                message={msg}
-                isOwn={isOwn}
-                isGrouped={isGrouped}
-                partnerAvatar={friendInfo?.avatar_url}
-                partnerName={friendInfo?.username || ''}
-                showTime={formatTime(msg.created_at)}
-                onRetry={msg.delivery_status === 'failed' ? () => handleRetryMessage(msg.id) : undefined}
-              />
-            );
-          })
+          <>
+            {messages.map((msg, idx) => {
+              const isOwn = msg.sender_id === userId;
+              const prevMsg = idx > 0 ? messages[idx - 1] : null;
+              const isGrouped = prevMsg && prevMsg.sender_id === msg.sender_id;
+              
+              return (
+                <MessageBubble
+                  key={msg.id}
+                  message={msg}
+                  isOwn={isOwn}
+                  isGrouped={isGrouped}
+                  partnerAvatar={friendInfo?.avatar_url}
+                  partnerName={friendInfo?.username || ''}
+                  showTime={formatTime(msg.created_at)}
+                  onRetry={msg.delivery_status === 'failed' ? () => handleRetryMessage(msg.id) : undefined}
+                />
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </>
         )}
       </main>
 
       {/* Composer - Fixed at bottom */}
       <div 
-        className="flex-shrink-0 bg-[#0F1116] border-t border-[#D4AF37]/30 w-full sticky bottom-0 z-10"
+        className="flex-shrink-0 bg-[#0F1116] border-t border-[#D4AF37]/30 w-full z-10"
       >
         {/* Attachment Preview Chips */}
         <AttachmentPreviewChips 

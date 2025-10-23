@@ -48,22 +48,47 @@ export const useMessageReactions = (messageId: string) => {
 
   const addReaction = async (reaction: string) => {
     try {
-      const { error } = await supabase
-        .from('message_reactions')
-        .insert({
-          message_id: messageId,
-          user_id: (await supabase.auth.getUser()).data.user?.id,
-          reaction
-        });
+      const userId = (await supabase.auth.getUser()).data.user?.id;
+      if (!userId) return;
 
-      if (error) throw error;
-    } catch (error: any) {
-      if (error.code === '23505') {
-        // Already reacted, remove it
-        await removeReaction();
+      // Check if user already has a reaction on this message
+      const { data: existingReaction } = await supabase
+        .from('message_reactions')
+        .select('reaction')
+        .eq('message_id', messageId)
+        .eq('user_id', userId)
+        .single();
+
+      if (existingReaction) {
+        // If same reaction, remove it (toggle off)
+        if (existingReaction.reaction === reaction) {
+          await removeReaction();
+          return;
+        }
+        
+        // Different reaction, update it
+        const { error } = await supabase
+          .from('message_reactions')
+          .update({ reaction })
+          .eq('message_id', messageId)
+          .eq('user_id', userId);
+        
+        if (error) throw error;
       } else {
-        toast.error('Hiba a reakció hozzáadásakor');
+        // No existing reaction, add new one
+        const { error } = await supabase
+          .from('message_reactions')
+          .insert({
+            message_id: messageId,
+            user_id: userId,
+            reaction
+          });
+
+        if (error) throw error;
       }
+    } catch (error: any) {
+      console.error('Error adding reaction:', error);
+      toast.error('Hiba a reakció hozzáadásakor');
     }
   };
 

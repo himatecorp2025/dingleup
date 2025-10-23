@@ -283,6 +283,8 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
             className="relative group"
             onMouseEnter={() => setShowReactionPicker(true)}
             onMouseLeave={() => setShowReactionPicker(false)}
+            onTouchStart={() => setShowReactionPicker(true)}
+            onTouchEnd={() => setTimeout(() => setShowReactionPicker(false), 2000)}
           >
             {/* Media if present - Use AttachmentGrid */}
             {message.media && message.media.length > 0 && (
@@ -312,7 +314,11 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
               {reactionEmojis.map(emoji => (
                 <button
                   key={emoji}
-                  onClick={() => addReaction(emoji)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addReaction(emoji);
+                    setShowReactionPicker(false);
+                  }}
                   className="hover:scale-125 active:scale-110 transition-transform text-xl p-1.5 rounded-lg hover:bg-white/10"
                   aria-label={`React with ${emoji}`}
                 >
@@ -323,20 +329,24 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
           )}
         </div>
 
-        {/* Reactions Display */}
-        {Object.keys(groupedReactions).length > 0 && (
-          <div className="flex gap-1 mt-1 flex-wrap">
-            {Object.entries(groupedReactions).map(([emoji, count]) => (
-              <span 
-                key={emoji}
-                className="bg-[#1a1a1a]/90 border border-[#D4AF37]/30 rounded-full px-2 py-0.5 text-xs flex items-center gap-1 shadow-sm"
-              >
-                <span className="text-sm">{emoji}</span>
-                <span className="text-[#D4AF37] font-medium">{count}</span>
-              </span>
-            ))}
-          </div>
-        )}
+          {/* Reactions Display */}
+          {Object.keys(groupedReactions).length > 0 && (
+            <div className="flex gap-1 mt-1 flex-wrap">
+              {Object.entries(groupedReactions).map(([emoji, count]) => (
+                <button
+                  key={emoji}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addReaction(emoji);
+                  }}
+                  className="bg-[#1a1a1a]/90 border border-[#D4AF37]/30 rounded-full px-2 py-0.5 text-xs flex items-center gap-1 shadow-sm hover:bg-[#D4AF37]/20 transition-colors active:scale-95"
+                >
+                  <span className="text-sm">{emoji}</span>
+                  <span className="text-[#D4AF37] font-medium">{count}</span>
+                </button>
+              ))}
+            </div>
+          )}
 
         {!isGrouped && (
           <div className="flex items-center gap-2 mt-1 px-1">
