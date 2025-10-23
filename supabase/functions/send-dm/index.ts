@@ -12,6 +12,8 @@ Deno.serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization');
+    const idempotencyKey = req.headers.get('Idempotency-Key');
+    
     if (!authHeader) {
       throw new Error('Missing authorization header');
     }
@@ -33,14 +35,38 @@ Deno.serve(async (req) => {
     // Service role client for DB ops
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { recipientId, body, mediaUrl, mediaPath } = await req.json();
+    const { recipientId, body, mediaUrl, mediaPath, attachments, clientMessageId } = await req.json();
 
     // Validate input
-    if (!recipientId || (!body && !mediaUrl)) {
+    if (!recipientId || (!body && !mediaUrl && (!attachments || attachments.length === 0))) {
       return new Response(
         JSON.stringify({ error: 'Missing recipientId or message content' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Check idempotency
+    const checkKey = idempotencyKey || clientMessageId;
+    if (checkKey) {
+      const { data: existing } = await supabase
+        .from('dm_messages')
+        .select('id, body')
+        .eq('sender_id', user.id)
+        .eq('thread_id', 'placeholder') // Will be updated after we get threadId
+        .gte('created_at', new Date(Date.now() - 15 * 60 * 1000).toISOString())
+        .limit(5);
+      
+      if (existing && existing.length > 0) {
+        const bodyToCheck = body || '';
+        const match = existing.find(m => m.body === bodyToCheck);
+        if (match) {
+          console.log('[SendDM] Duplicate message detected via idempotency check');
+          return new Response(
+            JSON.stringify({ success: true, message: match, duplicate: true }),
+            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
     }
 
     // SECURITY: Validate UUID format
@@ -148,7 +174,7 @@ Deno.serve(async (req) => {
       throw messageError;
     }
 
-    // If media, insert media record
+    // If media, insert media records (backwards compatible)
     if (mediaUrl && mediaPath) {
       const { error: mediaError } = await supabase
         .from('message_media')
@@ -161,6 +187,24 @@ Deno.serve(async (req) => {
 
       if (mediaError) {
         console.error('[SendDM] Error inserting media:', mediaError);
+      }
+    }
+
+    // If attachments array, insert all media records
+    if (attachments && Array.isArray(attachments) && attachments.length > 0) {
+      const mediaRecords = attachments.map((att: any) => ({
+        message_id: message.id,
+        media_type: att.kind === 'image' ? 'image' : 'file',
+        media_url: att.url,
+        file_name: att.name || att.key?.split('/').pop() || 'file'
+      }));
+
+      const { error: mediaError } = await supabase
+        .from('message_media')
+        .insert(mediaRecords);
+
+      if (mediaError) {
+        console.error('[SendDM] Error inserting attachments:', mediaError);
       }
     }
 

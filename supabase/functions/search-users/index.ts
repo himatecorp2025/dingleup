@@ -42,10 +42,13 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Search users by username or email
+    // Search users by username or email (accent-insensitive)
+    // Normalize query for better matching
+    const normalizedQuery = query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
     const { data: users, error: searchError } = await supabaseClient
       .from('public_profiles')
-      .select('id, username, avatar_url')
+      .select('id, username, avatar_url, email')
       .or(`username.ilike.%${query}%,email.ilike.%${query}%`)
       .neq('id', user.id)
       .limit(20);

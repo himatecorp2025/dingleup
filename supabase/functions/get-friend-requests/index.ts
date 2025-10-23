@@ -39,13 +39,20 @@ Deno.serve(async (req) => {
     // Service role client for DB ops
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get pending requests where user is the receiver (not the requester)
-    const { data: receivedRequests, error: receivedError } = await supabaseClient
+    // Get URL params for filtering
+    const url = new URL(req.url);
+    const statusFilter = url.searchParams.get('status') || 'pending'; // 'pending' | 'all'
+    const scope = url.searchParams.get('scope') || 'all'; // 'incoming' | 'outgoing' | 'all'
+
+    // Build query for received requests (where user is NOT the requester)
+    let receivedQuery = supabaseClient
       .from('friendships')
       .select(`
         id,
         requested_by,
+        status,
         created_at,
+        updated_at,
         requester:profiles!friendships_requested_by_fkey(
           id,
           username,
@@ -53,8 +60,15 @@ Deno.serve(async (req) => {
         )
       `)
       .or(`user_id_a.eq.${user.id},user_id_b.eq.${user.id}`)
-      .eq('status', 'pending')
       .neq('requested_by', user.id);
+
+    if (statusFilter !== 'all') {
+      receivedQuery = receivedQuery.eq('status', statusFilter);
+    }
+
+    const { data: receivedRequests, error: receivedError } = await receivedQuery
+      .order('created_at', { ascending: false })
+      .limit(50);
 
     if (receivedError) {
       console.error('Error fetching received requests:', receivedError);
@@ -64,18 +78,27 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Get pending requests sent by user
-    const { data: sentRequests, error: sentError } = await supabaseClient
+    // Get requests sent by user
+    let sentQuery = supabaseClient
       .from('friendships')
       .select(`
         id,
         user_id_a,
         user_id_b,
-        created_at
+        status,
+        created_at,
+        updated_at
       `)
       .or(`user_id_a.eq.${user.id},user_id_b.eq.${user.id}`)
-      .eq('status', 'pending')
       .eq('requested_by', user.id);
+
+    if (statusFilter !== 'all') {
+      sentQuery = sentQuery.eq('status', statusFilter);
+    }
+
+    const { data: sentRequests, error: sentError } = await sentQuery
+      .order('created_at', { ascending: false })
+      .limit(50);
 
     if (sentError) {
       console.error('Error fetching sent requests:', sentError);
@@ -95,7 +118,9 @@ Deno.serve(async (req) => {
         return {
           id: req.id,
           target_user: profile,
-          created_at: req.created_at
+          status: req.status,
+          created_at: req.created_at,
+          updated_at: req.updated_at
         };
       })
     );

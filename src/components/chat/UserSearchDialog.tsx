@@ -18,7 +18,9 @@ interface FriendRequest {
     username: string;
     avatar_url: string | null;
   };
+  status: 'pending' | 'active' | 'declined' | 'blocked';
   created_at: string;
+  updated_at?: string;
 }
 
 interface UserSearchDialogProps {
@@ -32,7 +34,9 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
+  const [allRequests, setAllRequests] = useState<FriendRequest[]>([]);
   const [isLoadingRequests, setIsLoadingRequests] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'active' | 'declined'>('all');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,13 +57,13 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId]);
+  }, [userId, statusFilter]);
 
   useEffect(() => {
     if (searchQuery.length >= 2) {
       const timer = setTimeout(() => {
         searchUsers();
-      }, 300);
+      }, 200); // 200ms debounce for instant feel
       return () => clearTimeout(timer);
     } else {
       setSearchResults([]);
@@ -85,9 +89,15 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
   const loadPendingRequests = async () => {
     setIsLoadingRequests(true);
     try {
-      const { data, error } = await supabase.functions.invoke('get-friend-requests');
+      // Load all history with status filter
+      const { data, error } = await supabase.functions.invoke(
+        `get-friend-requests?status=${statusFilter}&scope=incoming`
+      );
       if (error) throw error;
-      setPendingRequests(data?.received || []);
+      
+      const requests = data?.received || [];
+      setAllRequests(requests);
+      setPendingRequests(requests.filter((r: FriendRequest) => r.status === 'pending'));
     } catch (error) {
       console.error('Error loading requests:', error);
     } finally {
@@ -294,48 +304,107 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
 
           {activeTab === 'requests' && (
             <div className="p-4">
+              {/* Filter Pills */}
+              <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-hide pb-2">
+                {(['all', 'pending', 'active', 'declined'] as const).map((filter) => (
+                  <button
+                    key={filter}
+                    onClick={() => setStatusFilter(filter)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                      statusFilter === filter
+                        ? 'bg-[#D4AF37] text-black'
+                        : 'bg-[#1a1a1a] text-white/60 hover:text-white border border-[#D4AF37]/20'
+                    }`}
+                  >
+                    {filter === 'all' ? 'Mind' : filter === 'pending' ? 'Függőben' : filter === 'active' ? 'Elfogadva' : 'Elutasítva'}
+                  </button>
+                ))}
+              </div>
+
               {isLoadingRequests ? (
                 <div className="flex justify-center py-8">
                   <Loader2 className="w-6 h-6 text-[#D4AF37] animate-spin" />
                 </div>
-              ) : pendingRequests.length === 0 ? (
-                <p className="text-center text-white/50 py-8">Nincs függőben lévő jelölés</p>
+              ) : allRequests.length === 0 ? (
+                <p className="text-center text-white/50 py-8">Nincs jelölés</p>
               ) : (
                 <div className="space-y-2">
-                  {pendingRequests.map((request) => (
-                    <div
-                      key={request.id}
-                      className="flex items-center gap-3 p-3 bg-[#1a1a1a] border border-[#D4AF37]/10 rounded-lg"
-                    >
-                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-[#D4AF37]/20 to-[#8B0000]/20 flex items-center justify-center border border-[#D4AF37]/30">
-                        {request.requester.avatar_url ? (
-                          <img src={request.requester.avatar_url} alt={request.requester.username} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-[#D4AF37] font-bold">{getInitials(request.requester.username)}</span>
+                  {allRequests.map((request) => {
+                    const getStatusBadge = () => {
+                      switch (request.status) {
+                        case 'pending':
+                          return <span className="px-2 py-1 bg-[#D4AF37]/20 border border-[#D4AF37]/50 rounded text-xs text-[#D4AF37]">Függőben</span>;
+                        case 'active':
+                          return <span className="px-2 py-1 bg-[#138F5E]/20 border border-[#138F5E]/50 rounded text-xs text-[#138F5E]">Elfogadva</span>;
+                        case 'declined':
+                          return <span className="px-2 py-1 bg-[#8B0000]/20 border border-[#8B0000]/50 rounded text-xs text-[#8B0000]">Elutasítva</span>;
+                        default:
+                          return null;
+                      }
+                    };
+
+                    const getTimeAgo = (date: string) => {
+                      const now = new Date();
+                      const past = new Date(date);
+                      const diffMs = now.getTime() - past.getTime();
+                      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                      const diffMins = Math.floor(diffMs / (1000 * 60));
+                      
+                      if (diffDays > 0) return `${diffDays} napja`;
+                      if (diffHours > 0) return `${diffHours} órája`;
+                      if (diffMins > 0) return `${diffMins} perce`;
+                      return 'most';
+                    };
+
+                    return (
+                      <div
+                        key={request.id}
+                        className="flex items-center gap-3 p-3 bg-[#1a1a1a] border border-[#D4AF37]/10 rounded-lg"
+                      >
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-[#D4AF37]/20 to-[#8B0000]/20 flex items-center justify-center border border-[#D4AF37]/30">
+                          {request.requester.avatar_url ? (
+                            <img src={request.requester.avatar_url} alt={request.requester.username} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-[#D4AF37] font-bold">{getInitials(request.requester.username)}</span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-white truncate">{request.requester.username}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            {getStatusBadge()}
+                            <span className="text-xs text-white/40">{getTimeAgo(request.created_at)}</span>
+                          </div>
+                        </div>
+                        {request.status === 'pending' && (
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => acceptRequest(request.requester_id)}
+                              className="p-2 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-lg transition-all"
+                              aria-label="Elfogadom"
+                            >
+                              <Check className="w-4 h-4 text-white" />
+                            </button>
+                            <button
+                              onClick={() => declineRequest(request.requester_id)}
+                              className="p-2 bg-[#8B0000] hover:bg-[#8B0000]/90 rounded-lg transition-all"
+                              aria-label="Elutasítom"
+                            >
+                              <XCircle className="w-4 h-4 text-white" />
+                            </button>
+                          </div>
+                        )}
+                        {request.status === 'active' && (
+                          <button
+                            onClick={() => openThread(request.requester_id)}
+                            className="px-3 py-1.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-lg text-white text-sm font-medium transition-all"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
                         )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-white truncate">{request.requester.username}</p>
-                        <p className="text-xs text-white/50">Jelölés érkezett</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => acceptRequest(request.requester_id)}
-                          className="p-2 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-lg transition-all"
-                          aria-label="Elfogadom"
-                        >
-                          <Check className="w-4 h-4 text-white" />
-                        </button>
-                        <button
-                          onClick={() => declineRequest(request.requester_id)}
-                          className="p-2 bg-[#8B0000] hover:bg-[#8B0000]/90 rounded-lg transition-all"
-                          aria-label="Elutasítom"
-                        >
-                          <XCircle className="w-4 h-4 text-white" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
