@@ -90,3 +90,11 @@ function = "process-speed-ticks"
 schedule = "0 2 * * *"
 function = "aggregate-daily-activity"
 
+# Cron job for weekly winners processing every Monday at 00:00 Budapest time (23:00 UTC Sunday)
+[[edge_runtime.cron]]
+schedule = "0 23 * * 0"
+function = "process-weekly-winners"
+
+[functions.process-weekly-winners]
+verify_jwt = false
+
