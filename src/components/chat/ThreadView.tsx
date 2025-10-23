@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Info, Send, UserPlus, ImagePlus } from 'lucide-react';
+import { ArrowLeft, Info, Send, UserPlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFriendshipStatus } from '@/hooks/useFriendshipStatus';
 import { toast } from 'sonner';
 import { useTypingStatus } from '@/hooks/useTypingStatus';
 import { MessageBubble } from './MessageBubble';
+import { ImageUploader } from './ImageUploader';
 
 interface Message {
   id: string;
@@ -41,6 +42,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   const PAGE_SIZE = 50;
   const [partnerTyping, setPartnerTyping] = useState(false);
   const [threadId, setThreadId] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<{ file: File; preview: string } | null>(null);
   const { status: friendshipStatus, sendRequest } = useFriendshipStatus(userId, friendId);
   const { handleTyping, stopTyping } = useTypingStatus(threadId, userId);
 
@@ -187,8 +189,8 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const sendMessage = async () => {
-    if (!messageText.trim()) return;
+  const sendMessage = async (mediaUrl?: string, mediaPath?: string) => {
+    if (!messageText.trim() && !mediaUrl) return;
     
     const textToSend = messageText.trim();
     setMessageText('');
@@ -198,7 +200,8 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
       id: `temp-${Date.now()}`,
       sender_id: userId,
       body: textToSend,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      media: mediaUrl ? [{ media_url: mediaUrl, media_type: 'image' }] : undefined
     };
     
     setMessages(prev => [...prev, tempMsg]);
@@ -206,7 +209,12 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
 
     try {
       const { error } = await supabase.functions.invoke('send-dm', {
-        body: { recipientId: friendId, body: textToSend }
+        body: { 
+          recipientId: friendId, 
+          body: textToSend,
+          mediaUrl,
+          mediaPath
+        }
       });
       if (error) throw error;
     } catch (error) {
@@ -214,6 +222,24 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
       setMessages(prev => prev.filter(m => m.id !== tempMsg.id));
       setMessageText(textToSend);
       toast.error('Üzenet küldése sikertelen');
+    }
+  };
+
+  const handleImageUploadComplete = async (
+    url: string, 
+    path: string, 
+    width: number, 
+    height: number, 
+    size: number
+  ) => {
+    setSelectedImage(null);
+    
+    try {
+      // Send message with image
+      await sendMessage(url, path);
+    } catch (error) {
+      console.error('Error sending image:', error);
+      toast.error('Hiba a kép küldésekor');
     }
   };
 
@@ -387,12 +413,15 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         }}
       >
         <div className="flex items-end gap-2 max-w-4xl mx-auto">
-          <button 
-            className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 flex-shrink-0 mb-1"
-            aria-label="Melléklet"
-          >
-            <ImagePlus className="w-5 h-5 text-[#D4AF37]" />
-          </button>
+          {threadId && (
+            <ImageUploader
+              threadId={threadId}
+              onImageSelected={(file, preview) => setSelectedImage({ file, preview })}
+              onUploadComplete={handleImageUploadComplete}
+              onCancel={() => setSelectedImage(null)}
+              selectedImage={selectedImage}
+            />
+          )}
           
           <div className="flex-1 bg-[#1a1a1a] rounded-[22px] border border-[#D4AF37]/20 px-4 py-2 flex items-center min-h-[44px]">
             <textarea

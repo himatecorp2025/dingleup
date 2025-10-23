@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useMessageReactions } from '@/hooks/useMessageReactions';
+import { ImageViewer } from './ImageViewer';
 
 interface Message {
   id: string;
@@ -17,6 +18,11 @@ interface MessageBubbleProps {
     sender_id: string;
     body: string;
     created_at: string;
+    media?: Array<{
+      media_url: string;
+      media_type: string;
+      thumbnail_url?: string;
+    }>;
   };
   isOwn: boolean;
   isGrouped?: boolean;
@@ -29,6 +35,7 @@ const reactionEmojis = ['👍', '❤️', '😂', '😮', '😢', '😡'];
 
 export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar, partnerName, showTime }: MessageBubbleProps) => {
   const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const { reactions, addReaction } = useMessageReactions(message.id);
 
   const getInitials = (name: string) => {
@@ -46,35 +53,63 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
   }, {} as Record<string, number>);
 
   return (
-    <div className={`flex gap-2 ${isGrouped ? 'mb-1' : 'mb-3'} ${isOwn ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-      {!isOwn && !isGrouped && (
-        <Avatar className="w-8 h-8 flex-shrink-0">
-          {partnerAvatar ? (
-            <AvatarImage src={partnerAvatar} />
-          ) : (
-            <AvatarFallback className="bg-[#D4AF37]/20 text-[#D4AF37] text-xs">
-              {getInitials(partnerName)}
-            </AvatarFallback>
-          )}
-        </Avatar>
-      )}
-      {!isOwn && isGrouped && <div className="w-8 flex-shrink-0" />}
-      
-      <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'} max-w-[80%] md:max-w-[70%]`}>
-        <div 
-          className="relative group"
-          onMouseEnter={() => setShowReactionPicker(true)}
-          onMouseLeave={() => setShowReactionPicker(false)}
-        >
+    <>
+      <div className={`flex gap-2 ${isGrouped ? 'mb-1' : 'mb-3'} ${isOwn ? 'justify-end' : 'justify-start'} animate-fade-in`}>
+        {!isOwn && !isGrouped && (
+          <Avatar className="w-8 h-8 flex-shrink-0">
+            {partnerAvatar ? (
+              <AvatarImage src={partnerAvatar} />
+            ) : (
+              <AvatarFallback className="bg-[#D4AF37]/20 text-[#D4AF37] text-xs">
+                {getInitials(partnerName)}
+              </AvatarFallback>
+            )}
+          </Avatar>
+        )}
+        {!isOwn && isGrouped && <div className="w-8 flex-shrink-0" />}
+        
+        <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'} max-w-[80%] md:max-w-[70%]`}>
           <div 
-            className={`px-4 py-2.5 shadow-sm transition-all duration-200 ${
-              isOwn 
-                ? `bg-[#138F5E] text-white ${isGrouped ? 'rounded-[18px]' : 'rounded-[18px] rounded-br-md'}` 
-                : `bg-[#1a1a1a] text-white border border-[#D4AF37]/20 ${isGrouped ? 'rounded-[18px]' : 'rounded-[18px] rounded-bl-md'}`
-            }`}
+            className="relative group"
+            onMouseEnter={() => setShowReactionPicker(true)}
+            onMouseLeave={() => setShowReactionPicker(false)}
           >
-            <p className="text-[15px] leading-[1.4] break-words">{message.body}</p>
-          </div>
+            {/* Image(s) if present */}
+            {message.media && message.media.length > 0 && (
+              <div className={`mb-1 ${message.media.length > 1 ? 'flex gap-1 overflow-x-auto scrollbar-hide' : ''}`}>
+                {message.media.map((media, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => setSelectedImage(media.media_url)}
+                    className="relative rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                    style={{ 
+                      minWidth: message.media!.length > 1 ? '200px' : 'auto',
+                      maxWidth: '300px'
+                    }}
+                  >
+                    <img
+                      src={media.thumbnail_url || media.media_url}
+                      alt="Kép"
+                      className="w-full h-auto object-cover rounded-lg"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Text message */}
+            {message.body && (
+              <div 
+                className={`px-4 py-2.5 shadow-sm transition-all duration-200 ${
+                  isOwn 
+                    ? `bg-[#138F5E] text-white ${isGrouped ? 'rounded-[18px]' : 'rounded-[18px] rounded-br-md'}` 
+                    : `bg-[#1a1a1a] text-white border border-[#D4AF37]/20 ${isGrouped ? 'rounded-[18px]' : 'rounded-[18px] rounded-bl-md'}`
+                }`}
+              >
+                <p className="text-[15px] leading-[1.4] break-words">{message.body}</p>
+              </div>
+            )}
 
           {/* Reaction Picker - Desktop hover */}
           {showReactionPicker && (
@@ -115,5 +150,14 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
         )}
       </div>
     </div>
+
+    {/* Image Viewer */}
+    {selectedImage && (
+      <ImageViewer 
+        imageUrl={selectedImage} 
+        onClose={() => setSelectedImage(null)} 
+      />
+    )}
+    </>
   );
 };
