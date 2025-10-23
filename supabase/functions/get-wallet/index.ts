@@ -30,7 +30,12 @@ serve(async (req) => {
 
     // Verify user authentication
     const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-    if (authError || !user) {
+    if (authError) {
+      console.error('[GetWallet] Auth error:', authError);
+      throw new Error('Unauthorized');
+    }
+    if (!user) {
+      console.error('[GetWallet] No user found');
       throw new Error('Unauthorized');
     }
 
