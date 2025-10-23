@@ -279,8 +279,8 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
               </div>
             )}
 
-            {/* Text message */}
-            {message.body && (
+            {/* Text message - show even if empty when media exists */}
+            {(message.body || (!message.body && message.media && message.media.length === 0)) && (
               <div 
                 className={`px-4 py-2.5 shadow-sm transition-all duration-200 ${
                   isOwn 

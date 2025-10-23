@@ -82,9 +82,43 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
         event: 'INSERT', 
         schema: 'public', 
         table: 'dm_messages' 
-      }, (payload) => {
-        if (payload.new.sender_id === friendId || payload.new.sender_id === userId) {
-          loadMessages();
+      }, async (payload) => {
+        const newMsg = payload.new;
+        if (newMsg.sender_id === friendId || newMsg.sender_id === userId) {
+          // Fetch complete message with media immediately
+          try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) return;
+
+            const response = await fetch(
+              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-thread-messages?otherUserId=${friendId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${session.access_token}`,
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+
+            if (response.ok) {
+              const data = await response.json();
+              const latestMessage = data?.messages?.[data.messages.length - 1];
+              if (latestMessage && latestMessage.id === newMsg.id) {
+                // Replace optimistic message or add new one
+                setMessages(prev => {
+                  const exists = prev.find(m => m.id === newMsg.id);
+                  if (exists) {
+                    return prev.map(m => m.id === newMsg.id ? latestMessage : m);
+                  }
+                  return [...prev, latestMessage];
+                });
+              }
+            }
+          } catch (err) {
+            console.error('[ThreadView] Error fetching new message:', err);
+            // Fallback: reload all
+            loadMessages();
+          }
         }
       })
       .subscribe();
@@ -200,7 +234,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       setMessages(prev => [...prev, optimisticMessage]);
 
       // Send to server
-      const { error } = await supabase.functions.invoke('send-dm', {
+      const { data: response, error } = await supabase.functions.invoke('send-dm', {
         body: { 
           recipientId: friendId, 
           body: textToSend,
@@ -214,12 +248,19 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       if (error) throw error;
 
+      // Replace optimistic message with server response containing media
+      if (response?.message) {
+        setMessages(prev => 
+          prev.map(m => m.id === clientMessageId ? {
+            ...response.message,
+            media: response.message.media || []
+          } : m)
+        );
+      }
+
       // Clear state on success
       setMessageText('');
       clearAttachments();
-      
-      // Reload to get server message with media
-      setTimeout(() => loadMessages(), 1000);
     } catch (error: any) {
       console.error('Send error:', error);
       toast.error('Hiba az üzenet küldésekor');

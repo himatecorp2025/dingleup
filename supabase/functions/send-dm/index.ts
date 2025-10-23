@@ -240,10 +240,81 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log('[SendDM] Message sent successfully');
+    // Fetch complete message with media
+    const { data: completeMessage, error: fetchError } = await supabase
+      .from('dm_messages')
+      .select(`
+        id,
+        thread_id,
+        sender_id,
+        body,
+        created_at,
+        is_deleted,
+        message_media (
+          media_url,
+          media_type,
+          thumbnail_url,
+          file_name,
+          file_size,
+          width,
+          height,
+          duration_ms,
+          mime_type
+        )
+      `)
+      .eq('id', message.id)
+      .single();
+
+    if (fetchError) {
+      console.error('[SendDM] Error fetching complete message:', fetchError);
+    }
+
+    // Generate signed URLs for media
+    let mediaWithSignedUrls = [];
+    if (completeMessage?.message_media && Array.isArray(completeMessage.message_media)) {
+      mediaWithSignedUrls = await Promise.all(completeMessage.message_media.map(async (media: any) => {
+        let signedMediaUrl = media.media_url;
+        let signedThumbnailUrl = media.thumbnail_url;
+
+        // Generate signed URL for media_url if it's a storage path
+        if (media.media_url && !media.media_url.startsWith('http')) {
+          const { data: mediaData, error: mediaError } = await supabase.storage
+            .from('chat-media')
+            .createSignedUrl(media.media_url, 3600);
+          
+          if (!mediaError && mediaData?.signedUrl) {
+            signedMediaUrl = mediaData.signedUrl;
+          }
+        }
+
+        // Generate signed URL for thumbnail if it's a storage path
+        if (media.thumbnail_url && !media.thumbnail_url.startsWith('http')) {
+          const { data: thumbData, error: thumbError } = await supabase.storage
+            .from('chat-media')
+            .createSignedUrl(media.thumbnail_url, 3600);
+          
+          if (!thumbError && thumbData?.signedUrl) {
+            signedThumbnailUrl = thumbData.signedUrl;
+          }
+        }
+
+        return {
+          ...media,
+          media_url: signedMediaUrl,
+          thumbnail_url: signedThumbnailUrl
+        };
+      }));
+    }
+
+    const messageResponse = {
+      ...message,
+      media: mediaWithSignedUrls
+    };
+
+    console.log('[SendDM] Message sent successfully with', mediaWithSignedUrls.length, 'media items');
 
     return new Response(
-      JSON.stringify({ success: true, message }),
+      JSON.stringify({ success: true, message: messageResponse }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
