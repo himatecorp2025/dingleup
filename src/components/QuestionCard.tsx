@@ -13,9 +13,12 @@ interface QuestionCardProps {
   firstAttempt: string | null;
   removedAnswer: string | null;
   audienceVotes: Record<string, number>;
-  usedHelp5050: boolean;
+  help5050UsageCount: number;
+  help2xAnswerUsageCount: number;
+  helpAudienceUsageCount: number;
+  isHelp5050ActiveThisQuestion: boolean;
   isDoubleAnswerActiveThisQuestion: boolean;
-  usedHelpAudience: boolean;
+  isAudienceActiveThisQuestion: boolean;
   usedQuestionSwap: boolean;
   lives: number;
   maxLives: number;
@@ -38,9 +41,12 @@ export const QuestionCard = ({
   firstAttempt,
   removedAnswer,
   audienceVotes,
-  usedHelp5050,
+  help5050UsageCount,
+  help2xAnswerUsageCount,
+  helpAudienceUsageCount,
+  isHelp5050ActiveThisQuestion,
   isDoubleAnswerActiveThisQuestion,
-  usedHelpAudience,
+  isAudienceActiveThisQuestion,
   usedQuestionSwap,
   lives,
   maxLives,
@@ -94,10 +100,12 @@ export const QuestionCard = ({
         <div className="space-y-1.5">{question.answers.map((answer) => {
             const isRemoved = removedAnswer === answer.key;
             const isSelected = selectedAnswer === answer.key;
-            const isCorrect = isSelected && answer.key === correctAnswerKey;
-            const isWrong = isSelected && answer.key !== correctAnswerKey;
+            const isCorrect = answer.key === correctAnswerKey;
+            const isSelectedCorrect = isSelected && isCorrect;
+            const isSelectedWrong = isSelected && !isCorrect;
             const isFirstAttempt = firstAttempt === answer.key;
             const isDoubleChoiceActive = isDoubleAnswerActiveThisQuestion && isFirstAttempt && !selectedAnswer;
+            const showCorrectPulse = selectedAnswer && !isSelected && isCorrect; // Show green pulse on correct when user selected wrong
 
             return (
               <div key={answer.key} className="relative">
@@ -105,17 +113,18 @@ export const QuestionCard = ({
                   letter={answer.key as 'A' | 'B' | 'C'}
                   onClick={() => !disabled && onAnswerSelect(answer.key)}
                   isSelected={isSelected}
-                  isCorrect={isCorrect}
-                  isWrong={isWrong}
+                  isCorrect={isSelectedCorrect}
+                  isWrong={isSelectedWrong}
                   disabled={disabled || isRemoved}
                   isRemoved={isRemoved}
                   isDoubleChoiceActive={isDoubleChoiceActive}
+                  showCorrectPulse={showCorrectPulse}
                 >
                   {answer.text}
                 </MillionaireAnswer>
                 
                 {/* Audience percentage */}
-                {usedHelpAudience && audienceVotes[answer.key] && (
+                {isAudienceActiveThisQuestion && audienceVotes[answer.key] && (
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-purple-600/90 px-3 py-1 rounded-full">
                     <Users className="w-4 h-4 text-white" />
                     <span className="text-white font-bold text-sm">
@@ -133,26 +142,44 @@ export const QuestionCard = ({
       <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mt-2 mb-2">
         <button
           onClick={onUseHelp5050}
-          disabled={disabled || usedHelp5050}
-          className={`clip-hexagon-tall bg-gradient-to-br from-blue-600 to-blue-900 border-2 border-blue-400 shadow-lg shadow-blue-500/50 hover:scale-105 transition-all casino-card text-white font-bold text-xs sm:text-sm ${usedHelp5050 ? 'opacity-50' : ''}`}
+          disabled={disabled || help5050UsageCount >= 2}
+          className={`clip-hexagon-tall bg-gradient-to-br from-blue-600 to-blue-900 border-2 border-blue-400 shadow-lg shadow-blue-500/50 hover:scale-105 transition-all casino-card text-white font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 ${help5050UsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          1/3
+          <span>1/3</span>
+          {help5050UsageCount === 1 && (
+            <span className="text-[10px] flex items-center gap-0.5">
+              <Coins className="w-2.5 h-2.5" />
+              15
+            </span>
+          )}
         </button>
         
         <button
           onClick={onUseHelp2xAnswer}
-          disabled={disabled || isDoubleAnswerActiveThisQuestion}
-          className={`clip-hexagon-tall bg-gradient-to-br from-green-600 to-green-900 border-2 border-green-400 shadow-lg shadow-green-500/50 hover:scale-105 transition-all casino-card text-white font-bold text-xs sm:text-sm ${isDoubleAnswerActiveThisQuestion ? 'opacity-50' : ''}`}
+          disabled={disabled || help2xAnswerUsageCount >= 2}
+          className={`clip-hexagon-tall bg-gradient-to-br from-green-600 to-green-900 border-2 border-green-400 shadow-lg shadow-green-500/50 hover:scale-105 transition-all casino-card text-white font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 ${help2xAnswerUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          2x
+          <span>2x</span>
+          {help2xAnswerUsageCount === 1 && (
+            <span className="text-[10px] flex items-center gap-0.5">
+              <Coins className="w-2.5 h-2.5" />
+              20
+            </span>
+          )}
         </button>
         
         <button
           onClick={onUseHelpAudience}
-          disabled={disabled || usedHelpAudience}
-          className={`clip-hexagon-tall bg-gradient-to-br from-purple-600 to-purple-900 border-2 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-all casino-card text-white ${usedHelpAudience ? 'opacity-50' : ''}`}
+          disabled={disabled || helpAudienceUsageCount >= 2}
+          className={`clip-hexagon-tall bg-gradient-to-br from-purple-600 to-purple-900 border-2 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-all casino-card text-white flex flex-col items-center justify-center gap-0.5 ${helpAudienceUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+          {helpAudienceUsageCount === 1 && (
+            <span className="text-[10px] flex items-center gap-0.5">
+              <Coins className="w-2.5 h-2.5" />
+              30
+            </span>
+          )}
         </button>
         
         <button

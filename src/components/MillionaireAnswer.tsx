@@ -10,6 +10,7 @@ interface MillionaireAnswerProps {
   disabled?: boolean;
   isRemoved?: boolean;
   isDoubleChoiceActive?: boolean;
+  showCorrectPulse?: boolean;
 }
 
 export const MillionaireAnswer = ({ 
@@ -21,7 +22,8 @@ export const MillionaireAnswer = ({
   isWrong,
   disabled,
   isRemoved,
-  isDoubleChoiceActive
+  isDoubleChoiceActive,
+  showCorrectPulse
 }: MillionaireAnswerProps) => {
   if (isRemoved) {
     return (
@@ -52,6 +54,16 @@ export const MillionaireAnswer = ({
   let letterBg = 'bg-yellow-500';
   let letterBorder = 'border-yellow-400';
   let letterText = 'text-gray-100';
+  
+  // Green pulsing animation for correct answer when user selected wrong
+  if (showCorrectPulse) {
+    bgColor = 'bg-green-600 animate-pulse';
+    borderColor = 'border-green-400';
+    textColor = 'text-white';
+    letterBg = 'bg-green-300';
+    letterBorder = 'border-green-200';
+    letterText = 'text-gray-900';
+  }
   
   // Double choice active state (orange background)
   if (isDoubleChoiceActive) {

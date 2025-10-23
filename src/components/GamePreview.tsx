@@ -47,19 +47,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
 
-  // Lifelines
-  const [usedHelp5050, setUsedHelp5050] = useState(false);
-  const [usedHelp2xAnswer, setUsedHelp2xAnswer] = useState(false);
-  const [usedHelpAudience, setUsedHelpAudience] = useState(false);
-  const [usedQuestionSwap, setUsedQuestionSwap] = useState(false);
-  const [reactivatedHelp5050, setReactivatedHelp5050] = useState(false);
-  const [reactivatedHelp2xAnswer, setReactivatedHelp2xAnswer] = useState(false);
-  const [reactivatedHelpAudience, setReactivatedHelpAudience] = useState(false);
-  const [help5050ReactivationCount, setHelp5050ReactivationCount] = useState(0);
-  const [help2xReactivationCount, setHelp2xReactivationCount] = useState(0);
-  const [helpAudienceReactivationCount, setHelpAudienceReactivationCount] = useState(0);
-  const [doubleAnswerUsageCount, setDoubleAnswerUsageCount] = useState(0);
+  // Lifelines - GAME-LEVEL usage counters (not per-question)
+  const [help5050UsageCount, setHelp5050UsageCount] = useState(0); // 0=first free, 1=second paid, 2=disabled
+  const [help2xAnswerUsageCount, setHelp2xAnswerUsageCount] = useState(0);
+  const [helpAudienceUsageCount, setHelpAudienceUsageCount] = useState(0);
+  const [isHelp5050ActiveThisQuestion, setIsHelp5050ActiveThisQuestion] = useState(false);
   const [isDoubleAnswerActiveThisQuestion, setIsDoubleAnswerActiveThisQuestion] = useState(false);
+  const [isAudienceActiveThisQuestion, setIsAudienceActiveThisQuestion] = useState(false);
+  const [usedQuestionSwap, setUsedQuestionSwap] = useState(false);
   const [firstAttempt, setFirstAttempt] = useState<string | null>(null);
   const [secondAttempt, setSecondAttempt] = useState<string | null>(null);
   const [removedAnswer, setRemovedAnswer] = useState<string | null>(null);
@@ -356,18 +351,14 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     setCorrectAnswers(0);
     setResponseTimes([]);
     setSelectedAnswer(null);
-    setUsedHelp5050(false);
-    setUsedHelp2xAnswer(false);
-    setUsedHelpAudience(false);
-    setUsedQuestionSwap(false);
-    setReactivatedHelp5050(false);
-    setReactivatedHelp2xAnswer(false);
-    setReactivatedHelpAudience(false);
-    setHelp5050ReactivationCount(0);
-    setHelp2xReactivationCount(0);
-    setHelpAudienceReactivationCount(0);
-    setDoubleAnswerUsageCount(0);
+    // Reset ALL game-level usage counters on new game
+    setHelp5050UsageCount(0);
+    setHelp2xAnswerUsageCount(0);
+    setHelpAudienceUsageCount(0);
+    setIsHelp5050ActiveThisQuestion(false);
     setIsDoubleAnswerActiveThisQuestion(false);
+    setIsAudienceActiveThisQuestion(false);
+    setUsedQuestionSwap(false);
     setFirstAttempt(null);
     setSecondAttempt(null);
     setRemovedAnswer(null);
@@ -482,7 +473,11 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       setSecondAttempt(null);
       setRemovedAnswer(null);
       setAudienceVotes({});
-      setIsDoubleAnswerActiveThisQuestion(false); // Reset for next question
+      // Reset per-question activation states (not usage counts!)
+      setIsHelp5050ActiveThisQuestion(false);
+      setIsDoubleAnswerActiveThisQuestion(false);
+      setIsAudienceActiveThisQuestion(false);
+      setUsedQuestionSwap(false);
       setQuestionStartTime(Date.now());
       
       // End animation and show question content
@@ -591,45 +586,55 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     }
   };
 
-  // UseHelp functions
+  // UseHelp functions - NEW LOGIC
   const useHelp5050 = async () => {
-    if (selectedAnswer) return;
+    if (selectedAnswer || isHelp5050ActiveThisQuestion) return;
     
-    if (!usedHelp5050 && profile?.help_50_50_active) {
+    // Check usage count
+    if (help5050UsageCount >= 2) {
+      toast.error('A harmadoló segítséget már kétszer használtad ebben a játékban!');
+      return;
+    }
+    
+    const cost = help5050UsageCount === 0 ? 0 : 15; // First free, second costs 15 coins
+    
+    // First usage - free
+    if (help5050UsageCount === 0 && profile?.help_50_50_active) {
       const currentQuestion = questions[currentQuestionIndex];
       const thirdAnswerKey = currentQuestion.third;
       
       setRemovedAnswer(thirdAnswerKey);
-      setUsedHelp5050(true);
+      setIsHelp5050ActiveThisQuestion(true);
+      setHelp5050UsageCount(1);
       
       await supabase.rpc('use_help', { p_help_type: '50_50' });
       await refreshProfile();
       
-      toast.info('Harmadoló segítség használva');
+      toast.info('Harmadoló segítség aktiválva - első használat ingyenes!');
       return;
     }
     
-    if (usedHelp5050 && !reactivatedHelp5050 && help5050ReactivationCount < 1) {
-      if (!profile || profile.coins < 15) {
+    // Second usage - costs 15 coins
+    if (help5050UsageCount === 1) {
+      if (!profile || profile.coins < cost) {
         toast.error('Nincs elég aranyérme! 15 🪙 szükséges.');
         setInsufficientType('coins');
-        setRequiredAmount(15);
+        setRequiredAmount(cost);
         setShowInsufficientDialog(true);
         return;
       }
       
-      const { data: success } = await supabase.rpc('spend_coins', { amount: 15 });
+      const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
       if (success) {
         await refreshProfile();
-        setReactivatedHelp5050(true);
-        setHelp5050ReactivationCount(prev => prev + 1);
         const currentQuestion = questions[currentQuestionIndex];
         const thirdAnswerKey = currentQuestion.third;
+        
         setRemovedAnswer(thirdAnswerKey);
-        toast.success('Harmadoló újraaktiválva!');
+        setIsHelp5050ActiveThisQuestion(true);
+        setHelp5050UsageCount(2);
+        toast.success('Harmadoló segítség aktiválva - 15 aranyérme levonva!');
       }
-    } else if (help5050ReactivationCount >= 1) {
-      toast.error('Ezt a segítséget már kétszer használtad!');
     }
   };
 
@@ -637,17 +642,17 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
     if (selectedAnswer || isDoubleAnswerActiveThisQuestion) return;
     
     // Check usage count
-    if (doubleAnswerUsageCount >= 2) {
+    if (help2xAnswerUsageCount >= 2) {
       toast.error('A dupla válasz segítséget már kétszer használtad ebben a játékban!');
       return;
     }
     
-    const cost = doubleAnswerUsageCount === 0 ? 0 : 20; // First free, second costs 20 coins
+    const cost = help2xAnswerUsageCount === 0 ? 0 : 20; // First free, second costs 20 coins
     
     // First usage - free
-    if (doubleAnswerUsageCount === 0 && profile?.help_2x_answer_active) {
+    if (help2xAnswerUsageCount === 0 && profile?.help_2x_answer_active) {
       setIsDoubleAnswerActiveThisQuestion(true);
-      setDoubleAnswerUsageCount(1);
+      setHelp2xAnswerUsageCount(1);
       setFirstAttempt(null);
       setSecondAttempt(null);
       
@@ -658,8 +663,8 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       return;
     }
     
-    // Second usage - costs 1 coin
-    if (doubleAnswerUsageCount === 1) {
+    // Second usage - costs 20 coins
+    if (help2xAnswerUsageCount === 1) {
       if (!profile || profile.coins < cost) {
         toast.error('Nincs elég aranyérme! 20 🪙 szükséges.');
         setInsufficientType('coins');
@@ -672,7 +677,7 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
       if (success) {
         await refreshProfile();
         setIsDoubleAnswerActiveThisQuestion(true);
-        setDoubleAnswerUsageCount(2);
+        setHelp2xAnswerUsageCount(2);
         setFirstAttempt(null);
         setSecondAttempt(null);
         toast.success('2× válasz aktiválva - 20 aranyérme levonva!');
@@ -681,43 +686,67 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
   };
 
   const useHelpAudience = async () => {
-    if (selectedAnswer) return;
+    if (selectedAnswer || isAudienceActiveThisQuestion) return;
     
-    if (!usedHelpAudience && profile?.help_audience_active) {
-      const currentQuestion = questions[currentQuestionIndex];
-      const votes = currentQuestion.audience;
-      
+    // Check usage count
+    if (helpAudienceUsageCount >= 2) {
+      toast.error('A közönség segítséget már kétszer használtad ebben a játékban!');
+      return;
+    }
+    
+    const cost = helpAudienceUsageCount === 0 ? 0 : 30; // First free, second costs 30 coins
+    
+    // Generate audience votes with correct answer >= 65% and highest
+    const currentQuestion = questions[currentQuestionIndex];
+    const correctKey = currentQuestion.answers.find(a => a.correct)?.key || 'A';
+    
+    // Generate votes ensuring correct answer has >= 65% and is highest
+    const correctVote = 65 + Math.floor(Math.random() * 20); // 65-84%
+    const remaining = 100 - correctVote;
+    
+    // Distribute remaining votes between wrong answers
+    const wrongKeys = currentQuestion.answers.filter(a => !a.correct).map(a => a.key);
+    const votes: Record<string, number> = {};
+    
+    if (wrongKeys.length === 2) {
+      const first = Math.floor(Math.random() * (remaining - 1)) + 1;
+      const second = remaining - first;
+      votes[wrongKeys[0]] = Math.min(first, second);
+      votes[wrongKeys[1]] = Math.max(first, second);
+    }
+    votes[correctKey] = correctVote;
+    
+    // First usage - free
+    if (helpAudienceUsageCount === 0 && profile?.help_audience_active) {
       setAudienceVotes(votes);
-      setUsedHelpAudience(true);
+      setIsAudienceActiveThisQuestion(true);
+      setHelpAudienceUsageCount(1);
       
       await supabase.rpc('use_help', { p_help_type: 'audience' });
       await refreshProfile();
       
-      toast.info('Közönség segítség használva');
+      toast.info('Közönség segítség aktiválva - első használat ingyenes!');
       return;
     }
     
-    if (usedHelpAudience && !reactivatedHelpAudience && helpAudienceReactivationCount < 1) {
-      if (!profile || profile.coins < 30) {
+    // Second usage - costs 30 coins
+    if (helpAudienceUsageCount === 1) {
+      if (!profile || profile.coins < cost) {
         toast.error('Nincs elég aranyérme! 30 🪙 szükséges.');
         setInsufficientType('coins');
-        setRequiredAmount(30);
+        setRequiredAmount(cost);
         setShowInsufficientDialog(true);
         return;
       }
       
-      const { data: success } = await supabase.rpc('spend_coins', { amount: 30 });
+      const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
       if (success) {
         await refreshProfile();
-        setReactivatedHelpAudience(true);
-        setHelpAudienceReactivationCount(prev => prev + 1);
-        const currentQuestion = questions[currentQuestionIndex];
-        const votes = currentQuestion.audience;
         setAudienceVotes(votes);
-        toast.success('Közönség segítség újraaktiválva!');
+        setIsAudienceActiveThisQuestion(true);
+        setHelpAudienceUsageCount(2);
+        toast.success('Közönség segítség aktiválva - 30 aranyérme levonva!');
       }
-    } else if (helpAudienceReactivationCount >= 1) {
-      toast.error('Ezt a segítséget már kétszer használtad!');
     }
   };
 
@@ -888,9 +917,12 @@ const GamePreview = ({ audioRef }: { audioRef: React.RefObject<HTMLAudioElement>
                 firstAttempt={firstAttempt}
                 removedAnswer={removedAnswer}
                 audienceVotes={audienceVotes}
-          usedHelp5050={usedHelp5050}
-          isDoubleAnswerActiveThisQuestion={isDoubleAnswerActiveThisQuestion}
-          usedHelpAudience={usedHelpAudience}
+                help5050UsageCount={help5050UsageCount}
+                help2xAnswerUsageCount={help2xAnswerUsageCount}
+                helpAudienceUsageCount={helpAudienceUsageCount}
+                isHelp5050ActiveThisQuestion={isHelp5050ActiveThisQuestion}
+                isDoubleAnswerActiveThisQuestion={isDoubleAnswerActiveThisQuestion}
+                isAudienceActiveThisQuestion={isAudienceActiveThisQuestion}
                 usedQuestionSwap={usedQuestionSwap}
                 lives={profile.lives}
                 maxLives={profile.max_lives}
