@@ -1,12 +1,9 @@
-import { Search, MoreVertical, Trash2, MessageCircle, Users, Mail } from 'lucide-react';
+import { Search, MoreVertical, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { FriendRequestsList } from './FriendRequestsList';
-import { FriendProfileCard } from './FriendProfileCard';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 interface Thread {
   id: string;
@@ -17,31 +14,6 @@ interface Thread {
   last_message_preview: string | null;
   last_message_at: string | null;
   unread_count: number;
-}
-
-interface UnifiedSearchResults {
-  friends: Array<{
-    id: string;
-    name: string;
-    avatarUrl: string | null;
-    online: boolean;
-  }>;
-  threads: Array<{
-    threadId: string;
-    partnerId: string;
-    partnerName: string;
-    partnerAvatar: string | null;
-    lastMessageSnippet: string;
-    lastAt: string | null;
-  }>;
-  messages: Array<{
-    threadId: string;
-    messageId: string;
-    excerpt: string;
-    at: string;
-    partnerName: string;
-    isSentByMe: boolean;
-  }>;
 }
 
 interface ThreadsListProps {
@@ -63,73 +35,6 @@ export const ThreadsList = ({
 }: ThreadsListProps) => {
   const [threadToDelete, setThreadToDelete] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-  const [searchResults, setSearchResults] = useState<UnifiedSearchResults | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState<any>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-
-  useEffect(() => {
-    if (searchQuery.trim().length >= 2) {
-      const timer = setTimeout(() => {
-        performUnifiedSearch(searchQuery.trim());
-      }, 200);
-      
-      return () => {
-        clearTimeout(timer);
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-        }
-      };
-    } else {
-      setSearchResults(null);
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    }
-  }, [searchQuery]);
-
-  const performUnifiedSearch = async (query: string) => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    abortControllerRef.current = new AbortController();
-    setIsSearching(true);
-
-    try {
-      const { data, error } = await supabase.functions.invoke(
-        `unified-search?q=${encodeURIComponent(query)}&limit=10`,
-        { 
-          headers: { 
-            'Cache-Control': 'no-store, no-cache', 
-            'Pragma': 'no-cache' 
-          }
-        }
-      );
-      
-      if (error) throw error;
-      
-      if (!abortControllerRef.current.signal.aborted) {
-        setSearchResults(data);
-      }
-    } catch (error: any) {
-      if (!abortControllerRef.current?.signal.aborted && error.name !== 'AbortError') {
-        console.error('Unified search error:', error);
-        toast.error('Keresési hiba, próbáld újra');
-      }
-    } finally {
-      if (!abortControllerRef.current?.signal.aborted) {
-        setIsSearching(false);
-      }
-    }
-  };
-
-  const handleThreadFromSearch = (threadId: string) => {
-    const thread = threads.find(t => t.id === threadId);
-    if (thread) {
-      onThreadSelect(thread);
-    }
-  };
 
   const getInitials = (name: string) => {
     return name?.charAt(0)?.toUpperCase() || '?';
@@ -157,7 +62,7 @@ export const ThreadsList = ({
     return text.length > 60 ? text.substring(0, 60) + '...' : text;
   };
 
-  const filteredThreads = searchResults ? [] : threads.filter(thread => 
+  const filteredThreads = threads.filter(thread => 
     !searchQuery || thread.other_user_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -171,7 +76,7 @@ export const ThreadsList = ({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
           <Input
             type="text"
-            placeholder="Keresés ismerősök, beszélgetések, üzenetek között..."
+            placeholder="Keresés..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10 bg-[#1a1a1a] border-[#D4AF37]/20 text-white placeholder:text-white/40 focus:border-[#D4AF37]/50 rounded-lg"
@@ -179,118 +84,9 @@ export const ThreadsList = ({
         </div>
       </div>
 
-      {/* Search Results or Threads List */}
+      {/* Threads List */}
       <div className="flex-1 overflow-y-auto">
-        {searchQuery.trim().length >= 2 && searchResults ? (
-          <div className="p-4 space-y-6">
-            {/* Friends Section */}
-            {searchResults.friends.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-3 text-[#D4AF37] text-sm font-bold">
-                  <Users className="w-4 h-4" />
-                  ISMERŐSÖK ({searchResults.friends.length})
-                </div>
-                <div className="space-y-2">
-                  {searchResults.friends.map((friend) => (
-                    <button
-                      key={friend.id}
-                      onClick={() => setSelectedFriend(friend)}
-                      className="w-full flex items-center gap-3 p-3 bg-[#1a1a1a] hover:bg-[#1a1a1a]/80 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 rounded-lg transition-all"
-                    >
-                      <div className="relative">
-                        <Avatar className="w-12 h-12 border-2 border-[#D4AF37]/30">
-                          <AvatarImage src={friend.avatarUrl || undefined} />
-                          <AvatarFallback className="bg-gradient-to-br from-purple-600 to-purple-800 text-white font-bold">
-                            {getInitials(friend.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        {friend.online && (
-                          <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#1a1a1a] rounded-full" />
-                        )}
-                      </div>
-                      <div className="flex-1 text-left">
-                        <p className="font-semibold text-white">{friend.name}</p>
-                        <p className="text-xs text-[#D4AF37]/60">{friend.online ? 'Online' : 'Offline'}</p>
-                      </div>
-                      <MessageCircle className="w-5 h-5 text-[#138F5E]" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Threads Section */}
-            {searchResults.threads.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-3 text-[#D4AF37] text-sm font-bold">
-                  <MessageCircle className="w-4 h-4" />
-                  BESZÉLGETÉSEK ({searchResults.threads.length})
-                </div>
-                <div className="space-y-2">
-                  {searchResults.threads.map((thread) => (
-                    <button
-                      key={thread.threadId}
-                      onClick={() => handleThreadFromSearch(thread.threadId)}
-                      className="w-full flex items-center gap-3 p-3 bg-[#1a1a1a] hover:bg-[#1a1a1a]/80 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 rounded-lg transition-all"
-                    >
-                      <Avatar className="w-12 h-12 border-2 border-[#D4AF37]/30">
-                        <AvatarImage src={thread.partnerAvatar || undefined} />
-                        <AvatarFallback className="bg-gradient-to-br from-purple-600 to-purple-800 text-white font-bold">
-                          {getInitials(thread.partnerName)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 text-left min-w-0">
-                        <p className="font-semibold text-white truncate">{thread.partnerName}</p>
-                        <p className="text-sm text-white/60 truncate">{thread.lastMessageSnippet}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Messages Section */}
-            {searchResults.messages.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-3 text-[#D4AF37] text-sm font-bold">
-                  <Mail className="w-4 h-4" />
-                  ÜZENETEK ({searchResults.messages.length})
-                </div>
-                <div className="space-y-2">
-                  {searchResults.messages.map((msg) => (
-                    <button
-                      key={msg.messageId}
-                      onClick={() => handleThreadFromSearch(msg.threadId)}
-                      className="w-full flex flex-col gap-2 p-3 bg-[#1a1a1a] hover:bg-[#1a1a1a]/80 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 rounded-lg transition-all text-left"
-                    >
-                      <div className="flex items-center gap-2">
-                        <p className="text-xs font-semibold text-[#D4AF37]">{msg.partnerName}</p>
-                        <span className="text-xs text-white/40">•</span>
-                        <p className="text-xs text-white/40">{msg.isSentByMe ? 'Te' : msg.partnerName}</p>
-                      </div>
-                      <p className="text-sm text-white/80">{msg.excerpt}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* No Results */}
-            {searchResults.friends.length === 0 && 
-             searchResults.threads.length === 0 && 
-             searchResults.messages.length === 0 && (
-              <div className="text-center py-12">
-                <Search className="w-12 h-12 text-white/20 mx-auto mb-3" />
-                <p className="text-white/50">Nincs találat</p>
-              </div>
-            )}
-          </div>
-        ) : searchQuery.trim().length > 0 && searchQuery.trim().length < 2 ? (
-          <div className="text-center py-12">
-            <p className="text-white/50">Írj be legalább 2 karaktert</p>
-          </div>
-        ) : (
-          filteredThreads.length === 0 ? (
+        {filteredThreads.length === 0 ? (
             <div className="text-center py-12 px-4">
               <p className="text-white/60">
                 {searchQuery ? 'Nincs találat' : 'Nincs még beszélgetésed'}
@@ -376,22 +172,8 @@ export const ThreadsList = ({
               })}
             </div>
           )
-        )}
+        }
       </div>
-
-      {/* Friend Profile Card */}
-      {selectedFriend && (
-        <FriendProfileCard
-          friend={selectedFriend}
-          onClose={() => setSelectedFriend(null)}
-          onMessageSent={(threadId) => {
-            const thread = threads.find(t => t.id === threadId);
-            if (thread) {
-              onThreadSelect(thread);
-            }
-          }}
-        />
-      )}
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!threadToDelete} onOpenChange={() => setThreadToDelete(null)}>
