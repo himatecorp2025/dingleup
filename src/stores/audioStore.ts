@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import AudioManager from '@/lib/audioManager';
 
 interface AudioState {
   musicEnabled: boolean;
@@ -8,7 +9,7 @@ interface AudioState {
   loadSettings: () => void;
 }
 
-export const useAudioStore = create<AudioState>((set) => ({
+export const useAudioStore = create<AudioState>((set, get) => ({
   musicEnabled: true,
   volume: 0.3,
   
@@ -17,15 +18,9 @@ export const useAudioStore = create<AudioState>((set) => ({
     set({ musicEnabled: enabled });
     localStorage.setItem('musicEnabled', JSON.stringify(enabled));
     
-    // Update global audio element
-    const globalBgm = (window as any).__bgm as HTMLAudioElement | undefined;
-    if (globalBgm) {
-      if (enabled && globalBgm.paused) {
-        globalBgm.play().catch(() => {});
-      } else if (!enabled && !globalBgm.paused) {
-        globalBgm.pause();
-      }
-    }
+    // Apply via singleton AudioManager
+    const { volume } = get();
+    AudioManager.getInstance().apply(enabled, volume);
   },
   
   setVolume: (vol) => {
@@ -34,11 +29,9 @@ export const useAudioStore = create<AudioState>((set) => ({
     set({ volume: v });
     localStorage.setItem('musicVolume', v.toString());
     
-    // Update global audio element
-    const globalBgm = (window as any).__bgm as HTMLAudioElement | undefined;
-    if (globalBgm) {
-      globalBgm.volume = v;
-    }
+    // Apply via singleton AudioManager
+    const { musicEnabled } = get();
+    AudioManager.getInstance().apply(musicEnabled, v);
   },
   
   loadSettings: () => {
@@ -60,15 +53,7 @@ export const useAudioStore = create<AudioState>((set) => ({
       volume: newVolume,
     });
     
-    // Update global audio element immediately
-    const globalBgm = (window as any).__bgm as HTMLAudioElement | undefined;
-    if (globalBgm) {
-      globalBgm.volume = newVolume;
-      if (newEnabled && newVolume > 0 && globalBgm.paused) {
-        globalBgm.play().catch(() => {});
-      } else if (!newEnabled && !globalBgm.paused) {
-        globalBgm.pause();
-      }
-    }
+    // Apply via singleton AudioManager
+    AudioManager.getInstance().apply(newEnabled, newVolume);
   },
 }));

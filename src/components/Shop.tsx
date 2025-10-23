@@ -421,84 +421,102 @@ const Shop = ({ userId }: ShopProps) => {
             Vásárolj boostereket aranyérméért – aktiváld őket a játék előtt!
           </p>
           
-          <div className="grid gap-4">
+          {/* Responsive grid: 2-3 cols mobile, 3-4 tablet */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-full overflow-x-hidden">
             {boosterItems.map((item) => (
               <div 
                 key={item.id} 
-                className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] rounded-xl p-6 border-2 border-purple-500/30 hover:border-purple-500/60 transition-all"
+                className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] rounded-xl p-3 border-2 border-purple-500/30 hover:border-purple-500/60 transition-all flex flex-col min-h-[200px] md:min-h-[220px]"
               >
-                <div className="flex items-start gap-4">
+                {/* Genius Badge */}
+                {isGenius && item.baseCoinPrice && item.baseCoinPrice !== item.price && (
+                  <div className="flex justify-end mb-1">
+                    <span className="inline-flex items-center gap-1 text-[10px] bg-yellow-500 text-black font-black px-2 py-0.5 rounded-full">
+                      <Crown className="w-3 h-3" />
+                      -50%
+                    </span>
+                  </div>
+                )}
+                
+                {/* Icon */}
+                <div className="w-full aspect-video flex items-center justify-center mb-2">
                   <div className="p-3 bg-yellow-500/10 rounded-xl border-2 border-yellow-500/30">
                     <item.icon className="w-8 h-8 text-yellow-500" />
                   </div>
-                  
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-1">{item.name}</h3>
-                    <p className="text-white/70 text-sm mb-3">{item.description}</p>
-                    
-                    <div className="flex flex-col gap-3">
-                      {/* Coins purchase option */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Coins className="w-5 h-5 text-yellow-500" />
-                          {isGenius && item.baseCoinPrice && item.baseCoinPrice !== item.price ? (
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg font-bold text-yellow-600/50 line-through">{item.baseCoinPrice}</span>
-                              <span className="text-2xl font-bold text-yellow-400 animate-pulse">{item.price}</span>
-                              <span className="text-xs bg-yellow-500 text-black font-black px-2 py-1 rounded-full">-50%</span>
-                            </div>
-                          ) : (
-                            <span className="text-2xl font-bold text-yellow-500">{item.price}</span>
-                          )}
+                </div>
+                
+                {/* Title */}
+                <h3 className="text-sm md:text-base font-bold text-white mb-1 line-clamp-2 break-words">
+                  {item.name}
+                </h3>
+                
+                {/* Description */}
+                <p className="text-xs text-white/70 mb-2 line-clamp-2 flex-1">
+                  {item.description}
+                </p>
+                
+                {/* Price - Coins */}
+                <div className="space-y-2 mt-auto">
+                  <div className="flex items-center justify-between flex-wrap gap-1">
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <Coins className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                      {isGenius && item.baseCoinPrice && item.baseCoinPrice !== item.price ? (
+                        <div className="flex items-center gap-1 flex-wrap">
+                          <span className="text-xs font-bold text-yellow-600/50 line-through">{item.baseCoinPrice}</span>
+                          <span className="text-base md:text-lg font-bold text-yellow-400">{item.price}</span>
                         </div>
-                        
-                        <button
-                          onClick={() => item.action()}
-                          disabled={loading === item.id || profile.coins < item.price}
-                          className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white font-bold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {loading === item.id ? 'Betöltés...' : 'Vásárlás Coins-ért'}
-                        </button>
-                      </div>
-
-                      {/* Stripe USD purchase option */}
-                      {item.priceUsd && (
-                        <div className="flex items-center justify-between border-t border-white/10 pt-3">
-                          <div className="flex items-center gap-2">
-                            <CreditCard className="w-5 h-5 text-green-500" />
-                            {isGenius && item.baseUsdPrice && item.baseUsdPrice !== item.priceUsd ? (
-                              <div className="flex items-center gap-2">
-                                <span className="text-lg font-bold text-green-600/50 line-through">
-                                  ${item.baseUsdPrice.toFixed(2)}
-                                </span>
-                                <span className="text-2xl font-bold text-green-400 animate-pulse">
-                                  ${item.priceUsd.toFixed(2)}
-                                </span>
-                                <span className="text-xs bg-green-500 text-black font-black px-2 py-1 rounded-full">-25%</span>
-                              </div>
-                            ) : (
-                              <span className="text-2xl font-bold text-green-500">
-                                ${item.priceUsd.toFixed(2)}
-                              </span>
-                            )}
-                          </div>
-                          
-                          <button
-                            onClick={() => buyWithStripe(item.id as any)}
-                            disabled={loading === `stripe-${item.id}`}
-                            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                          >
-                            {loading === `stripe-${item.id}` ? 'Betöltés...' : (
-                              <>
-                                <CreditCard className="w-4 h-4" />
-                                Vásárlás USD-ért
-                              </>
-                            )}
-                          </button>
-                        </div>
+                      ) : (
+                        <span className="text-base md:text-lg font-bold text-yellow-500">{item.price}</span>
                       )}
                     </div>
                   </div>
+                  
+                  <button
+                    onClick={() => item.action()}
+                    disabled={loading === item.id || profile.coins < item.price}
+                    className="w-full bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading === item.id ? 'Betöltés...' : 'Vásárlás'}
+                  </button>
+
+                  {/* Stripe USD purchase option */}
+                  {item.priceUsd && (
+                    <>
+                      <div className="border-t border-white/10 my-1"></div>
+                      <div className="flex items-center justify-between flex-wrap gap-1">
+                        <div className="flex items-center gap-1 flex-wrap">
+                          <CreditCard className="w-4 h-4 text-green-500 flex-shrink-0" />
+                          {isGenius && item.baseUsdPrice && item.baseUsdPrice !== item.priceUsd ? (
+                            <div className="flex items-center gap-1 flex-wrap">
+                              <span className="text-xs font-bold text-green-600/50 line-through">
+                                ${item.baseUsdPrice.toFixed(2)}
+                              </span>
+                              <span className="text-base md:text-lg font-bold text-green-400">
+                                ${item.priceUsd.toFixed(2)}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-base md:text-lg font-bold text-green-500">
+                              ${item.priceUsd.toFixed(2)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <button
+                        onClick={() => buyWithStripe(item.id as any)}
+                        disabled={loading === `stripe-${item.id}`}
+                        className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
+                      >
+                        {loading === `stripe-${item.id}` ? 'Betöltés...' : (
+                          <>
+                            <CreditCard className="w-3 h-3" />
+                            Vásárlás USD
+                          </>
+                        )}
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             ))}
@@ -533,42 +551,52 @@ const Shop = ({ userId }: ShopProps) => {
             Vásárolj extra életeket és segítségeket aranyérméért
           </p>
           
-          <div className="grid gap-4">
+          {/* Responsive grid: 2-3 cols mobile, 3-4 tablet */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-full overflow-x-hidden">
             {shopItems.map((item) => (
               <div 
                 key={item.id} 
-                className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] rounded-xl p-6 border-2 border-purple-500/30 hover:border-purple-500/60 transition-all"
+                className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] rounded-xl p-3 border-2 border-purple-500/30 hover:border-purple-500/60 transition-all flex flex-col min-h-[180px]"
               >
-                <div className="flex items-start gap-4">
+                {/* Icon */}
+                <div className="w-full aspect-video flex items-center justify-center mb-2">
                   <div className="p-3 bg-purple-500/10 rounded-xl border-2 border-purple-500/30">
                     <item.icon className="w-8 h-8 text-purple-400" />
                   </div>
-                  
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-1">{item.name}</h3>
-                    <p className="text-white/70 text-sm mb-3">{item.description}</p>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Coins className="w-5 h-5 text-yellow-500" />
-                        <span className="text-2xl font-bold text-yellow-500">{item.price}</span>
-                      </div>
-                      
-                      <button
-                        onClick={() => item.action()}
-                        disabled={loading === item.id || profile.coins < item.price || item.disabled}
-                        className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {loading === item.id ? 'Betöltés...' : 'Újraaktivál'}
-                      </button>
+                </div>
+                
+                {/* Title */}
+                <h3 className="text-sm md:text-base font-bold text-white mb-1 line-clamp-2 break-words">
+                  {item.name}
+                </h3>
+                
+                {/* Description */}
+                <p className="text-xs text-white/70 mb-2 line-clamp-2 flex-1">
+                  {item.description}
+                </p>
+                
+                {/* Price and Button */}
+                <div className="space-y-2 mt-auto">
+                  <div className="flex items-center justify-between flex-wrap gap-1">
+                    <div className="flex items-center gap-1">
+                      <Coins className="w-4 h-4 text-yellow-500" />
+                      <span className="text-base md:text-lg font-bold text-yellow-500">{item.price}</span>
                     </div>
-                    
-                    {item.disabled && (
-                      <p className="text-xs text-white/50 mt-2">
-                        Már aktív vagy maximális szinten
-                      </p>
-                    )}
                   </div>
+                  
+                  <button
+                    onClick={() => item.action()}
+                    disabled={loading === item.id || profile.coins < item.price || item.disabled}
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading === item.id ? 'Betöltés...' : 'Újraaktivál'}
+                  </button>
+                  
+                  {item.disabled && (
+                    <p className="text-[10px] text-white/50 mt-1 text-center">
+                      Már aktív
+                    </p>
+                  )}
                 </div>
               </div>
             ))}

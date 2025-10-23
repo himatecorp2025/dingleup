@@ -1,14 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-const INACTIVITY_TIMEOUT = 10 * 60 * 1000; // 10 minutes in milliseconds
+const INACTIVITY_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+const WARNING_TIMEOUT = 9 * 60 * 1000; // 9 minutes (60 seconds before logout)
 
 export const useAutoLogout = () => {
   const navigate = useNavigate();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const warningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isHandheldRef = useRef(false);
+  const [showWarning, setShowWarning] = useState(false);
+  const [remainingSeconds, setRemainingSeconds] = useState(60);
 
   const checkIfHandheld = () => {
     // Check if device is mobile/tablet (not desktop/laptop)
@@ -26,19 +31,60 @@ export const useAutoLogout = () => {
     }
   };
 
+  const startCountdown = () => {
+    setRemainingSeconds(60);
+    setShowWarning(true);
+    
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+    }
+    
+    countdownIntervalRef.current = setInterval(() => {
+      setRemainingSeconds(prev => {
+        if (prev <= 1) {
+          if (countdownIntervalRef.current) {
+            clearInterval(countdownIntervalRef.current);
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
   const resetTimer = () => {
     // Only apply auto-logout on handheld devices
     if (!checkIfHandheld()) {
       return;
     }
 
+    // Clear all timers
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
+    if (warningTimeoutRef.current) {
+      clearTimeout(warningTimeoutRef.current);
+    }
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+    }
 
+    // Hide warning if showing
+    setShowWarning(false);
+
+    // Set warning timer (9 minutes)
+    warningTimeoutRef.current = setTimeout(() => {
+      startCountdown();
+    }, WARNING_TIMEOUT);
+
+    // Set logout timer (10 minutes)
     timeoutRef.current = setTimeout(() => {
       logout();
     }, INACTIVITY_TIMEOUT);
+  };
+
+  const handleStayActive = () => {
+    resetTimer();
   };
 
   useEffect(() => {
@@ -95,6 +141,12 @@ export const useAutoLogout = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      if (warningTimeoutRef.current) {
+        clearTimeout(warningTimeoutRef.current);
+      }
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+      }
       events.forEach((event) => {
         document.removeEventListener(event, resetTimer, true);
       });
@@ -102,4 +154,10 @@ export const useAutoLogout = () => {
       pointerMedia.removeEventListener('change', handleMediaChange);
     };
   }, [navigate]);
+
+  return {
+    showWarning,
+    remainingSeconds,
+    handleStayActive
+  };
 };

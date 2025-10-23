@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
+import { useAudioStore } from "@/stores/audioStore";
+import AudioManager from "@/lib/audioManager";
 import Index from "./pages/Index";
 import Game from "./pages/Game";
 import Dashboard from "./pages/Dashboard";
@@ -73,6 +75,24 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
 };
 
 const App = () => {
+  // Initialize AudioManager singleton and subscribe to store
+  useEffect(() => {
+    console.log('[App] Initializing AudioManager');
+    const audioManager = AudioManager.getInstance();
+    
+    // Load settings from localStorage
+    useAudioStore.getState().loadSettings();
+    
+    // Subscribe to store changes
+    const unsubscribe = useAudioStore.subscribe((state) => {
+      audioManager.apply(state.musicEnabled, state.volume);
+    });
+    
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />

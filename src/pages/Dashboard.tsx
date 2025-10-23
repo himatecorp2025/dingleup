@@ -27,6 +27,8 @@ import { FallingCoins } from '@/components/FallingCoins';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { GeniusCrownBadge } from '@/components/GeniusCrownBadge';
+import { IdleWarning } from '@/components/IdleWarning';
+import { LoginPromoManager } from '@/components/LoginPromoManager';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
@@ -42,8 +44,8 @@ const Dashboard = () => {
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { walletData, serverDriftMs, refetchWallet } = useWallet(userId);
   
-  // Auto logout on inactivity
-  useAutoLogout();
+  // Auto logout on inactivity with warning
+  const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
   const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
@@ -259,6 +261,19 @@ return (
     paddingTop: 'env(safe-area-inset-top)',
     paddingBottom: 'env(safe-area-inset-bottom)'
   }}>
+    {/* Idle warning (60s countdown before logout) */}
+    <IdleWarning 
+      show={showWarning} 
+      remainingSeconds={remainingSeconds} 
+      onStayActive={handleStayActive} 
+    />
+    
+    {/* Login promo - first modal for normal users */}
+    <LoginPromoManager 
+      isGenius={profile.is_subscribed || false} 
+      userId={userId || null} 
+    />
+    
     {/* Falling coins background */}
     <FallingCoins />
       
