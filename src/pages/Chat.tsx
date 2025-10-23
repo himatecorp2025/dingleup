@@ -164,7 +164,7 @@ export default function Chat() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Threads List */}
-        <div className="w-full md:w-96 flex flex-col border-r border-border overflow-hidden">
+        <div className="w-full md:w-96 flex flex-col border-r border-border">
           {/* Search Bar */}
           <div className="p-4 border-b border-border/40">
             <div className="relative">
