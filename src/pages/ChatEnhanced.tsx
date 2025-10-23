@@ -12,6 +12,7 @@ import { ThreadViewEnhanced } from '@/components/chat/ThreadViewEnhanced';
 import { ScrollInspector } from '@/components/ScrollInspector';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { FriendsHexagonBar } from '@/components/chat/FriendsHexagonBar';
+import { useUserPresence } from '@/hooks/useUserPresence';
 
 interface Thread {
   id: string;
@@ -37,6 +38,17 @@ const ChatEnhanced = () => {
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
   const prevPendingCountRef = useRef(0);
 
+  // Active thread details for header
+  const activeThread = selectedFriend ? threads.find(t => t.other_user_id === selectedFriend.userId) : null;
+  const { isOnline } = useUserPresence(selectedFriend?.userId);
+
+  // When opening from URL, backfill username from threads when available
+  useEffect(() => {
+    if (selectedFriend && !selectedFriend.username) {
+      const t = threads.find(t => t.other_user_id === selectedFriend.userId);
+      if (t) setSelectedFriend({ userId: selectedFriend.userId, username: t.other_user_name });
+    }
+  }, [threads, selectedFriend]);
   useEffect(() => {
     if (!userId) return;
     const setPresence = async () => {
@@ -172,9 +184,47 @@ const ChatEnhanced = () => {
 
   return (
     <div className="bg-[#000000] flex flex-col overflow-hidden" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
-      <div className="sticky top-0 z-[10000] bg-[#1a1a1a] border-b border-[#D4AF37]/10 p-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-black text-white">💬 Chats</h1>
+      <div className="sticky top-0 z-[10000] bg-[#1a1a1a] border-b border-[#D4AF37]/10" style={{ height: 'var(--appbar-h)' }}>
+        <div className="flex items-center justify-between h-full px-3">
+          {/* Left: Chat icon (acts as back to list when a beszélgetés van nyitva) */}
+          <button
+            onClick={() => selectedFriend ? setSelectedFriend(null) : null}
+            className="p-2 rounded-lg hover:bg-white/5 transition"
+            aria-label="Chats"
+            title="Chats"
+          >
+            <span className="text-xl">💬</span>
+          </button>
+
+          {/* Middle: aktuális partner neve + státusz, ha beszélgetés nyitva */}
+          <div className="flex-1 flex items-center justify-center min-w-0">
+            {selectedFriend ? (
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative w-9 h-9 rounded-full border border-[#D4AF37]/30 bg-gradient-to-br from-[#D4AF37]/20 to-[#8B0000]/20 overflow-hidden flex items-center justify-center">
+                  {activeThread?.other_user_avatar ? (
+                    <img src={activeThread.other_user_avatar} alt={selectedFriend.username || 'Profil'} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[#D4AF37] font-bold">
+                      {(selectedFriend.username?.charAt(0) || '?').toUpperCase()}
+                    </span>
+                  )}
+                  <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#1a1a1a] ${isOnline ? 'bg-[#138F5E]' : 'bg-white/30'}`} />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-white font-semibold truncate max-w-[180px]">
+                    {selectedFriend.username || 'Betöltés...'}
+                  </div>
+                  <div className="text-xs truncate" style={{ color: isOnline ? '#138F5E' : 'rgba(255,255,255,0.5)' }}>
+                    {isOnline ? 'Aktív most' : 'Offline'}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <h1 className="text-lg font-black text-white">Chats</h1>
+            )}
+          </div>
+
+          {/* Right: új felhasználók + jelentés */}
           <div className="flex gap-2">
             <button
               data-tutorial="search-friends"
@@ -200,13 +250,14 @@ const ChatEnhanced = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex bg-[#000000]">
-        <div className="flex-1 flex flex-col" data-tutorial="threads-list">
+      <div className="flex-1 flex bg-[#000000] min-h-0">
+        <div className="flex-1 flex flex-col min-h-0" data-tutorial="threads-list">
           {selectedFriend ? (
             <ThreadViewEnhanced
               friendId={selectedFriend.userId}
               userId={userId || ''}
               onBack={() => setSelectedFriend(null)}
+              hideHeader={true}
             />
           ) : (
             <>

@@ -40,9 +40,10 @@ interface ThreadViewEnhancedProps {
   friendId: string;
   userId: string;
   onBack: () => void;
+  hideHeader?: boolean;
 }
 
-export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhancedProps) => {
+export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = false }: ThreadViewEnhancedProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -598,54 +599,56 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
   return (
     <div className="chat-thread" style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', background: '#0f0f12', overflow: 'hidden' }}>
-      {/* Header - Fixed at top */}
-      <header 
-        role="banner"
-        className="appbar"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 'var(--appbar-h)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          padding: '0 12px',
-          borderBottom: '1px solid rgba(212, 175, 55, 0.1)',
-          background: 'rgba(0, 0, 0, 0.85)',
-          backdropFilter: 'blur(6px)',
-          zIndex: 30
-        }}
-      >
-        <button
-          onClick={onBack}
-          className="back p-2 hover:bg-white/10 rounded-full transition-all"
-          aria-label="Vissza a beszélgetésekhez"
-          style={{ background: 'transparent', border: 0 }}
+      {/* Header - Fixed at top (optional) */}
+      { !hideHeader && (
+        <header 
+          role="banner"
+          className="appbar"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 'var(--appbar-h)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '0 12px',
+            borderBottom: '1px solid rgba(212, 175, 55, 0.1)',
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(6px)',
+            zIndex: 30
+          }}
         >
-          <ArrowLeft className="w-5 h-5 text-[#D4AF37]" />
-        </button>
-        <div className="title flex-1 flex items-center gap-3 min-w-0" aria-live="polite">
-          <div className="relative">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#8B0000]/20 flex items-center justify-center border border-[#D4AF37]/30">
-              {friendInfo?.avatar_url ? (
-                <img src={friendInfo.avatar_url} alt={friendInfo.username} className="w-full h-full rounded-full object-cover" />
-              ) : (
-                <span className="text-[#D4AF37] font-bold">
-                  {friendInfo?.username?.charAt(0)?.toUpperCase() || '?'}
-                </span>
-              )}
+          <button
+            onClick={onBack}
+            className="back p-2 hover:bg-white/10 rounded-full transition-all"
+            aria-label="Vissza a beszélgetésekhez"
+            style={{ background: 'transparent', border: 0 }}
+          >
+            <ArrowLeft className="w-5 h-5 text-[#D4AF37]" />
+          </button>
+          <div className="title flex-1 flex items-center gap-3 min-w-0" aria-live="polite">
+            <div className="relative">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#8B0000]/20 flex items-center justify-center border border-[#D4AF37]/30">
+                {friendInfo?.avatar_url ? (
+                  <img src={friendInfo.avatar_url} alt={friendInfo.username} className="w-full h-full rounded-full object-cover" />
+                ) : (
+                  <span className="text-[#D4AF37] font-bold">
+                    {friendInfo?.username?.charAt(0)?.toUpperCase() || '?'}
+                  </span>
+                )}
+              </div>
+              <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#1a1a1a] ${getStatusColor()}`} />
             </div>
-            <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#1a1a1a] ${getStatusColor()}`} />
+            <div className="flex-1 min-w-0">
+              <h2 className="font-semibold text-white truncate">{friendInfo?.username || 'Betöltés...'}</h2>
+              {isOnline && <p className="text-xs text-[#138F5E]">Online</p>}
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="font-semibold text-white truncate">{friendInfo?.username || 'Betöltés...'}</h2>
-            {isOnline && <p className="text-xs text-[#138F5E]">Online</p>}
-          </div>
-        </div>
-        <div className="actions" />
-      </header>
+          <div className="actions" />
+        </header>
+      )}
 
       {/* Messages - Scrollable Area */}
       <main 
