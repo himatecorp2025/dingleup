@@ -52,8 +52,12 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
   return (
     <Dialog open={open} onOpenChange={handleLater}>
       <DialogContent 
-        className="w-[95vw] max-w-md max-h-[80dvh] bg-[#0F1116] border border-[hsl(var(--dup-gold-600))] shadow-[0_12px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(212,175,55,0.15)] overflow-y-auto rounded-[20px]"
+        className="flex flex-col bg-[#0F1116] border border-[hsl(var(--dup-gold-600))] shadow-[0_12px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(212,175,55,0.15)] overflow-hidden rounded-[20px]"
         style={{ 
+          width: '95vw',
+          maxWidth: '95vw',
+          height: 'calc(var(--vh, 1vh) * 70)',
+          maxHeight: 'calc(var(--vh, 1vh) * 70)',
           paddingTop: 'max(env(safe-area-inset-top), 1rem)',
           paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)' 
         }}

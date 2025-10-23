@@ -22,7 +22,16 @@ export const BoosterActivationDialog = ({ open, onClose, availableBoosters, hasA
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50">
+      <DialogContent 
+        className="flex flex-col bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50"
+        style={{
+          width: '95vw',
+          maxWidth: '95vw',
+          height: 'calc(var(--vh, 1vh) * 70)',
+          maxHeight: 'calc(var(--vh, 1vh) * 70)',
+          overflow: 'hidden'
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl text-white">
             <Zap className="w-6 h-6 text-yellow-500" />

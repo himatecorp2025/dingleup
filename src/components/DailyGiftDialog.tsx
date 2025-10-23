@@ -41,8 +41,12 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="w-[95vw] max-w-md max-h-[85vh] flex flex-col bg-[#0F1116] border border-[hsl(var(--dup-gold-600))] shadow-[0_12px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(212,175,55,0.15)] overflow-hidden rounded-[20px] p-0"
+        className="flex flex-col bg-[#0F1116] border border-[hsl(var(--dup-gold-600))] shadow-[0_12px_40px_rgba(0,0,0,0.45),0_0_0_1px_rgba(212,175,55,0.15)] overflow-hidden rounded-[20px] p-0"
         style={{ 
+          width: '95vw',
+          maxWidth: '95vw',
+          height: 'calc(var(--vh, 1vh) * 70)',
+          maxHeight: 'calc(var(--vh, 1vh) * 70)',
           paddingTop: 'max(env(safe-area-inset-top), 0.75rem)',
           paddingBottom: 'max(env(safe-area-inset-bottom), 0.75rem)' 
         }}

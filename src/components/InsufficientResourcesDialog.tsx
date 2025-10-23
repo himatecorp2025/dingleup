@@ -196,7 +196,16 @@ export const InsufficientResourcesDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] dialog-enter-slow">
+      <DialogContent 
+        className="flex flex-col bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] dialog-enter-slow"
+        style={{
+          width: '95vw',
+          maxWidth: '95vw',
+          height: 'calc(var(--vh, 1vh) * 70)',
+          maxHeight: 'calc(var(--vh, 1vh) * 70)',
+          overflow: 'hidden'
+        }}
+      >
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-black text-center justify-center">
             {title}

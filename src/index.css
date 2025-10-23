@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Bottom nav height variable for consistent padding */
+:root {
+  --bottom-nav-h: 64px;
+}
+
 /* Mobile & touch optimizations */
 html, body {
   height: 100%;
