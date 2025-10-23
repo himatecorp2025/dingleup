@@ -130,7 +130,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-purple-900 to-purple-950 border-2 border-yellow-500/50 text-white z-[9999]">
+      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-purple-900 to-purple-950 border-2 border-yellow-500/50 text-white z-[9999] max-h-[70vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-black text-yellow-400">
             Jelentés beküldése
@@ -140,7 +140,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-4 pb-safe">
           <div>
             <Label>Jelentés típusa</Label>
             <Select value={reportType} onValueChange={(v) => setReportType(v as 'bug' | 'user_behavior')}>
