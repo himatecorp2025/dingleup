@@ -20,9 +20,8 @@ export const useAudioStore = create<AudioState>((set, get) => ({
     set({ musicEnabled: enabled });
     localStorage.setItem('musicEnabled', JSON.stringify(enabled));
     
-    // Apply via singleton AudioManager
-    const { volume } = get();
-    AudioManager.getInstance().apply(enabled, volume);
+    // DO NOT apply directly - let AudioPolicyManager handle this
+    // AudioManager.getInstance().apply(enabled, volume);
   },
   
   setVolume: (vol) => {
@@ -31,9 +30,8 @@ export const useAudioStore = create<AudioState>((set, get) => ({
     set({ volume: v });
     localStorage.setItem('musicVolume', v.toString());
     
-    // Apply via singleton AudioManager
-    const { musicEnabled } = get();
-    AudioManager.getInstance().apply(musicEnabled, v);
+    // DO NOT apply directly - let AudioPolicyManager handle this
+    // AudioManager.getInstance().apply(musicEnabled, v);
   },
   
   loadSettings: () => {
@@ -56,7 +54,7 @@ export const useAudioStore = create<AudioState>((set, get) => ({
       loaded: true,
     });
     
-    // Apply via singleton AudioManager
-    AudioManager.getInstance().apply(newEnabled, newVolume);
+    // DO NOT apply directly - let AudioPolicyManager handle this based on route/platform
+    // AudioManager.getInstance().apply(newEnabled, newVolume);
   },
 }));

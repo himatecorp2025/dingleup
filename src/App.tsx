@@ -184,18 +184,31 @@ const App = () => {
     // Load settings from localStorage
     useAudioStore.getState().loadSettings();
     
-    // Subscribe to store changes
-    const unsubscribe = useAudioStore.subscribe((state) => {
+    // Subscribe to store changes and apply audio policy with route checking
+    const unsubscribe = useAudioStore.subscribe((state, prevState) => {
       if (!state.loaded) return;
       
-      // Only apply if on allowed route and handheld device
-      const isHandheld = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 1024;
-      const allowed = isHandheld && isMusicAllowed(window.location.pathname);
-      
-      if (allowed && state.musicEnabled) {
-        audioManager.apply(true, state.volume);
-      } else {
-        audioManager.apply(false, state.volume);
+      // Only apply when store values actually change
+      if (state.musicEnabled !== prevState?.musicEnabled || 
+          state.volume !== prevState?.volume) {
+        
+        const isAdminRoute = window.location.pathname.startsWith('/admin');
+        const isHandheld = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 1024;
+        const allowed = !isAdminRoute && isHandheld && isMusicAllowed(window.location.pathname);
+        
+        console.log('[App] Store changed, applying policy:', { 
+          musicEnabled: state.musicEnabled, 
+          volume: state.volume,
+          isAdminRoute,
+          allowed,
+          pathname: window.location.pathname
+        });
+        
+        if (allowed && state.musicEnabled) {
+          audioManager.apply(true, state.volume);
+        } else {
+          audioManager.apply(false, state.volume);
+        }
       }
     });
     
