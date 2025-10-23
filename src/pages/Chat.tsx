@@ -2,15 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import BottomNav from '@/components/BottomNav';
-import { FriendsList } from '@/components/FriendsList';
 import { ThreadsList } from '@/components/chat/ThreadsList';
 import { ThreadView } from '@/components/chat/ThreadView';
 import { FriendsAvatarBar } from '@/components/chat/FriendsAvatarBar';
 import { UserSearchDialog } from '@/components/chat/UserSearchDialog';
-import { ReportDialog } from '@/components/ReportDialog';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { usePresenceHeartbeat } from '@/hooks/usePresenceHeartbeat';
 
 interface ChatThread {
@@ -228,8 +225,6 @@ export default function Chat() {
           userId={session.user.id}
         />
       )}
-
-      <TutorialManager route="chat" />
     </div>
   );
 }
