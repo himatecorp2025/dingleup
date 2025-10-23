@@ -287,60 +287,66 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#000000]">
-      {/* Header - Fixed */}
-      <div className="flex-none flex items-center gap-2.5 px-2 py-2 bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-[#D4AF37]/10">
+    <div className="h-full flex flex-col bg-[#0F1116] chat-thread-container">
+      {/* Header - Messenger style */}
+      <header className="chat-header flex-none flex items-center gap-3 px-4 py-3 bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-[#D4AF37]/20">
         <button
           onClick={onBack}
-          className="p-2 hover:bg-white/10 rounded-full transition-colors relative"
+          className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 flex-shrink-0"
+          aria-label="Vissza"
         >
-          <ArrowLeft className="w-5 h-5 text-[#0a7cff]" />
-          {/* Unread badge */}
-          <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-[#0a7cff] rounded-full flex items-center justify-center px-1">
-            <span className="text-white text-[11px] font-bold leading-none">2</span>
-          </div>
+          <ArrowLeft className="w-5 h-5 text-[#D4AF37]" />
         </button>
         
         <div className="relative flex-shrink-0">
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-[#D4AF37]/20 to-[#8B0000]/20 flex items-center justify-center border border-[#D4AF37]/30">
             {friendProfile.avatar_url ? (
               <img src={friendProfile.avatar_url} alt={friendProfile.username} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-white font-bold text-sm">{getInitials(friendProfile.username)}</span>
+              <span className="text-[#D4AF37] font-bold text-sm">{getInitials(friendProfile.username)}</span>
             )}
           </div>
+          {friendProfile.online_status === 'online' && (
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#00FF66] rounded-full border-2 border-[#1a1a1a]" />
+          )}
         </div>
 
         <div className="flex-1 min-w-0">
-          <h2 className="font-semibold text-white text-[15px] leading-tight">{friendProfile.username}</h2>
+          <h2 className="font-semibold text-white text-[15px] leading-tight truncate">{friendProfile.username}</h2>
           {partnerTyping ? (
-            <p className="text-[12px] text-[#D4AF37] leading-tight">💬 éppen ír...</p>
+            <div className="flex items-center gap-1 text-[12px] text-[#D4AF37] leading-tight">
+              <span className="typing-dots">éppen ír</span>
+            </div>
           ) : (
-            <p className="text-[12px] text-white/60 leading-tight">
-              {friendProfile.online_status === 'online' ? 'Online' : 'Legutóbb elérhető: 1 órája'}
+            <p className="text-[12px] text-white/60 leading-tight truncate">
+              {friendProfile.online_status === 'online' ? 'Online' : 'Offline'}
             </p>
           )}
         </div>
 
         {getFriendshipButton()}
 
-        <button className="p-2 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
-          <svg className="w-6 h-6 text-[#0a7cff]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M20 15.5c-1.2 0-2.5-.2-3.7-.6-.3-.1-.7 0-1 .2l-2.2 2.2c-2.8-1.4-5.1-3.7-6.5-6.5l2.2-2.2c.3-.3.4-.7.2-1C8.7 6.5 8.5 5.2 8.5 4c0-.6-.4-1-1-1H4c-.6 0-1 .4-1 1 0 9.4 7.6 17 17 17 .6 0 1-.4 1-1v-3.5c0-.6-.4-1-1-1z"/>
-          </svg>
+        <button 
+          className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 flex-shrink-0"
+          aria-label="Info"
+        >
+          <Info className="w-5 h-5 text-[#D4AF37]" />
         </button>
+      </header>
 
-        <button className="p-2 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
-          <svg className="w-6 h-6 text-[#0a7cff]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* Messages - Scrollable */}
-      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
+      {/* Messages - Scrollable area with proper padding for fixed composer */}
+      <main 
+        ref={messagesContainerRef} 
+        className="chat-thread flex-1 overflow-y-auto px-4 py-4"
+        style={{
+          paddingBottom: 'calc(72px + var(--bottom-nav-h, 72px) + env(safe-area-inset-bottom))',
+          height: '100dvh'
+        }}
+      >
         {isLoadingMore && (
-          <div className="text-center py-2 text-white/50 text-sm">Régebbi üzenetek betöltése...</div>
+          <div className="text-center py-3 text-white/50 text-sm animate-fade-in">
+            Régebbi üzenetek betöltése...
+          </div>
         )}
         {isLoading ? (
           <div className="text-center py-12">
@@ -348,82 +354,88 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
           </div>
         ) : messages.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-white/60">Még nincsenek üzenetek</p>
+            <p className="text-white/60 text-base">Még nincsenek üzenetek</p>
             <p className="text-white/40 text-sm mt-2">Kezdj egy új beszélgetést!</p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <MessageBubble
-              key={msg.id}
-              message={msg}
-              isOwn={msg.sender_id === userId}
-              partnerAvatar={friendProfile.avatar_url}
-              partnerName={friendProfile.username}
-              showTime={formatTime(msg.created_at)}
-            />
-          ))
+          messages.map((msg, index) => {
+            const prevMsg = index > 0 ? messages[index - 1] : null;
+            const isGrouped = prevMsg && prevMsg.sender_id === msg.sender_id;
+            
+            return (
+              <MessageBubble
+                key={msg.id}
+                message={msg}
+                isOwn={msg.sender_id === userId}
+                isGrouped={isGrouped}
+                partnerAvatar={friendProfile.avatar_url}
+                partnerName={friendProfile.username}
+                showTime={formatTime(msg.created_at)}
+              />
+            );
+          })
         )}
         <div ref={messagesEndRef} />
-      </div>
+      </main>
 
-      {/* Message Input - Fixed at bottom with z-index */}
-      <div className="flex-none px-2 py-2 bg-[#000000] pb-safe border-t border-[#D4AF37]/10 relative z-50">
-        <div className="flex items-center gap-1.5">
-          <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
-            <ImagePlus className="w-6 h-6 text-[#0a7cff]" />
-          </button>
-
-          <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
-            <svg className="w-6 h-6 text-[#0a7cff]" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 6c1.93 0 3.5 1.57 3.5 3.5S13.93 15 12 15s-3.5-1.57-3.5-3.5S10.07 8 12 8zm0 12c-2.03 0-4.43-.82-6.14-2.88 1.93-1.34 4.27-2.12 6.14-2.12 1.87 0 4.21.78 6.14 2.12C16.43 19.18 14.03 20 12 20z"/>
-            </svg>
-          </button>
-
-          <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
-            <svg className="w-6 h-6 text-[#0a7cff]" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-            </svg>
-          </button>
-
-          <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
-            <svg className="w-6 h-6 text-[#0a7cff]" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.94-.49-7-3.85-7-7.93h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.08-3.05 7.44-7 7.93V19h4v2H8v-2h4v-3.07z"/>
-            </svg>
+      {/* Composer - Fixed above bottom nav, Messenger style */}
+      <div 
+        className="chat-composer fixed left-0 right-0 bg-[#0F1116]/98 backdrop-blur-sm border-t border-[#D4AF37]/20 px-3 py-2 z-[10010]"
+        style={{
+          bottom: 'calc(var(--bottom-nav-h, 72px))',
+          paddingBottom: 'calc(8px + env(safe-area-inset-bottom))'
+        }}
+      >
+        <div className="flex items-end gap-2 max-w-4xl mx-auto">
+          <button 
+            className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 flex-shrink-0 mb-1"
+            aria-label="Melléklet"
+          >
+            <ImagePlus className="w-5 h-5 text-[#D4AF37]" />
           </button>
           
-          <div className="flex-1 bg-[#3a3a3c] rounded-full px-4 py-1.5 flex items-center">
+          <div className="flex-1 bg-[#1a1a1a] rounded-[22px] border border-[#D4AF37]/20 px-4 py-2 flex items-center min-h-[44px]">
             <textarea
               ref={textareaRef}
-              placeholder="Üzenet..."
+              placeholder="Írj üzenetet…"
               value={messageText}
               onChange={(e) => {
                 setMessageText(e.target.value);
                 handleTyping();
               }}
-              onKeyPress={(e) => {
+              onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   sendMessage();
                 }
               }}
               onBlur={stopTyping}
-              className="flex-1 bg-transparent border-0 text-white placeholder:text-white/60 focus:outline-none resize-none min-h-[24px] max-h-[100px] text-[15px] leading-snug"
+              className="flex-1 bg-transparent border-0 text-white placeholder:text-white/50 focus:outline-none resize-none max-h-[120px] text-[15px] leading-[1.4]"
               rows={1}
               maxLength={2000}
+              style={{ 
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
             />
-            <button className="p-1 hover:bg-white/10 rounded-full transition-colors flex-shrink-0 ml-2">
-              <svg className="w-5 h-5 text-[#0a7cff]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-              </svg>
-            </button>
           </div>
 
-          {messageText.trim() && (
+          {messageText.trim() ? (
             <button
               onClick={sendMessage}
-              className="p-2.5 hover:bg-[#0a7cff]/20 rounded-full transition-colors flex-shrink-0"
+              className="p-2.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all duration-200 flex-shrink-0 mb-1 shadow-lg shadow-[#138F5E]/30"
+              aria-label="Küldés"
             >
-              <Send className="w-6 h-6 text-[#0a7cff]" fill="currentColor" />
+              <Send className="w-5 h-5 text-white" fill="currentColor" />
+            </button>
+          ) : (
+            <button 
+              className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 flex-shrink-0 mb-1"
+              aria-label="Emoji"
+            >
+              <svg className="w-5 h-5 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </button>
           )}
         </div>
