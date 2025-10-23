@@ -14,7 +14,7 @@ interface QuestionCardProps {
   removedAnswer: string | null;
   audienceVotes: Record<string, number>;
   usedHelp5050: boolean;
-  usedHelp2xAnswer: boolean;
+  isDoubleAnswerActiveThisQuestion: boolean;
   usedHelpAudience: boolean;
   usedQuestionSwap: boolean;
   lives: number;
@@ -39,7 +39,7 @@ export const QuestionCard = ({
   removedAnswer,
   audienceVotes,
   usedHelp5050,
-  usedHelp2xAnswer,
+  isDoubleAnswerActiveThisQuestion,
   usedHelpAudience,
   usedQuestionSwap,
   lives,
@@ -96,7 +96,8 @@ export const QuestionCard = ({
             const isSelected = selectedAnswer === answer.key;
             const isCorrect = isSelected && answer.key === correctAnswerKey;
             const isWrong = isSelected && answer.key !== correctAnswerKey;
-            const isSecondAttemptOrange = firstAttempt && firstAttempt === answer.key && !isSelected;
+            const isFirstAttempt = firstAttempt === answer.key;
+            const isDoubleChoiceActive = isDoubleAnswerActiveThisQuestion && isFirstAttempt && !selectedAnswer;
 
             return (
               <div key={answer.key} className="relative">
@@ -108,6 +109,7 @@ export const QuestionCard = ({
                   isWrong={isWrong}
                   disabled={disabled || isRemoved}
                   isRemoved={isRemoved}
+                  isDoubleChoiceActive={isDoubleChoiceActive}
                 >
                   {answer.text}
                 </MillionaireAnswer>
@@ -120,13 +122,6 @@ export const QuestionCard = ({
                       {audienceVotes[answer.key]}%
                     </span>
                   </div>
-                )}
-
-                {/* Orange highlight for first wrong attempt */}
-                {isSecondAttemptOrange && (
-                  <div className="absolute inset-0 border-4 border-orange-500 rounded pointer-events-none animate-pulse" 
-                       style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} 
-                  />
                 )}
               </div>
             );
@@ -146,8 +141,8 @@ export const QuestionCard = ({
         
         <button
           onClick={onUseHelp2xAnswer}
-          disabled={disabled || usedHelp2xAnswer}
-          className={`clip-hexagon-tall bg-gradient-to-br from-green-600 to-green-900 border-2 border-green-400 shadow-lg shadow-green-500/50 hover:scale-105 transition-all casino-card text-white font-bold text-xs sm:text-sm ${usedHelp2xAnswer ? 'opacity-50' : ''}`}
+          disabled={disabled || isDoubleAnswerActiveThisQuestion}
+          className={`clip-hexagon-tall bg-gradient-to-br from-green-600 to-green-900 border-2 border-green-400 shadow-lg shadow-green-500/50 hover:scale-105 transition-all casino-card text-white font-bold text-xs sm:text-sm ${isDoubleAnswerActiveThisQuestion ? 'opacity-50' : ''}`}
         >
           2x
         </button>

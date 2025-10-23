@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Smartphone } from "lucide-react";
 import backmusic from "@/assets/backmusic.mp3";
 import gameBackground from "@/assets/game-background.jpg";
+import { useAudioStore } from "@/stores/audioStore";
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
@@ -22,70 +23,67 @@ const Game = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Global music control - play when page loads (user just clicked Play button)
+  // Global music control - singleton instance
   useEffect(() => {
-    // Get volume from localStorage
-    const savedVolume = localStorage.getItem('music_volume');
-    const savedMuted = localStorage.getItem('music_muted');
-    const volumeValue = savedVolume ? parseInt(savedVolume, 10) / 100 : 0.3;
-    const isMuted = savedMuted === 'true';
+    const { loadSettings, volume, musicEnabled } = useAudioStore.getState();
+    loadSettings();
     
-    const globalBgm = (window as any).__bgm as HTMLAudioElement | undefined;
-    if (globalBgm) {
-      try {
-        globalBgm.loop = true;
-        globalBgm.volume = isMuted ? 0 : volumeValue;
-        if (!isMuted && volumeValue > 0) {
-          globalBgm.play().catch(() => {});
-        }
-      } catch {}
+    // Check if global audio already exists
+    const existingBgm = (window as any).__bgm as HTMLAudioElement | undefined;
+    if (existingBgm) {
+      existingBgm.volume = volume;
+      if (musicEnabled && volume > 0) {
+        existingBgm.play().catch(() => {});
+      }
       return;
     }
     
+    // Create singleton audio instance
+    if (!audioRef.current) return;
+    
+    const audio = audioRef.current;
+    audio.loop = true;
+    audio.volume = volume;
+    (window as any).__bgm = audio;
+    
     const setupAudioGraph = async () => {
-      if (!audioRef.current) return;
       const Ctx: typeof AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
       if (!audioCtxRef.current) audioCtxRef.current = new Ctx();
       try { await audioCtxRef.current.resume(); } catch {}
       if (!sourceRef.current) {
-        sourceRef.current = audioCtxRef.current.createMediaElementSource(audioRef.current);
+        sourceRef.current = audioCtxRef.current.createMediaElementSource(audio);
         gainNodeRef.current = audioCtxRef.current.createGain();
-        gainNodeRef.current.gain.value = isMuted ? 0 : volumeValue;
+        gainNodeRef.current.gain.value = volume;
         sourceRef.current.connect(gainNodeRef.current);
         gainNodeRef.current.connect(audioCtxRef.current.destination);
-      } else if (gainNodeRef.current) {
-        gainNodeRef.current.gain.value = isMuted ? 0 : volumeValue;
       }
     };
 
     const tryPlay = async () => {
-      if (!audioRef.current) return;
       await setupAudioGraph();
-      const el = audioRef.current;
-      el.volume = isMuted ? 0 : volumeValue;
-      el.loop = true;
-      if (!isMuted && volumeValue > 0) {
+      if (musicEnabled && volume > 0) {
         try { 
-          await el.play(); 
-          console.log('Music started playing');
+          await audio.play(); 
+          console.log('[Game] Music started');
         } catch (e) {
-          console.log('Autoplay blocked, will retry on interaction:', e);
+          console.log('[Game] Autoplay blocked:', e);
         }
       }
     };
 
-    const handleVolumeChange = (e: Event) => {
-      const { volume: newVolume } = (e as CustomEvent).detail;
+    // Subscribe to store changes
+    const unsubscribe = useAudioStore.subscribe((state) => {
       if (gainNodeRef.current) {
-        gainNodeRef.current.gain.value = newVolume;
+        gainNodeRef.current.gain.value = state.volume;
       }
-      if (audioRef.current) {
-        audioRef.current.volume = newVolume;
+      audio.volume = state.volume;
+      
+      if (state.musicEnabled && state.volume > 0 && audio.paused) {
+        audio.play().catch(() => {});
+      } else if (!state.musicEnabled && !audio.paused) {
+        audio.pause();
       }
-    };
-
-    // Listen for volume changes from controls
-    window.addEventListener('musicVolumeChange', handleVolumeChange);
+    });
 
     tryPlay();
 
@@ -94,21 +92,12 @@ const Game = () => {
       tryPlay();
     };
 
-    window.addEventListener('pageshow', onUserInteract);
     document.addEventListener('pointerdown', onUserInteract, { once: true });
 
     return () => {
-      window.removeEventListener('musicVolumeChange', handleVolumeChange);
-      window.removeEventListener('pageshow', onUserInteract);
+      unsubscribe();
       document.removeEventListener('pointerdown', onUserInteract);
-      try { audioCtxRef.current?.close(); } catch {}
-      sourceRef.current = null;
-      gainNodeRef.current = null;
-      audioCtxRef.current = null;
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
+      // Don't clean up audio - it's a singleton
     };
   }, []);
 

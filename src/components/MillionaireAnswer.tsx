@@ -9,6 +9,7 @@ interface MillionaireAnswerProps {
   isWrong?: boolean;
   disabled?: boolean;
   isRemoved?: boolean;
+  isDoubleChoiceActive?: boolean;
 }
 
 export const MillionaireAnswer = ({ 
@@ -19,7 +20,8 @@ export const MillionaireAnswer = ({
   isCorrect,
   isWrong,
   disabled,
-  isRemoved
+  isRemoved,
+  isDoubleChoiceActive
 }: MillionaireAnswerProps) => {
   if (isRemoved) {
     return (
@@ -51,7 +53,17 @@ export const MillionaireAnswer = ({
   let letterBorder = 'border-yellow-400';
   let letterText = 'text-gray-100';
   
-  if (isSelected) {
+  // Double choice active state (orange background)
+  if (isDoubleChoiceActive) {
+    bgColor = 'bg-orange-600';
+    borderColor = 'border-orange-400';
+    textColor = 'text-white';
+    letterBg = 'bg-orange-300';
+    letterBorder = 'border-orange-200';
+    letterText = 'text-gray-900';
+  }
+  
+  if (isSelected && !isCorrect && !isWrong) {
     bgColor = 'bg-orange-600';
     borderColor = 'border-orange-400';
     letterBg = 'bg-orange-300';
