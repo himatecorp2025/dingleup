@@ -85,7 +85,7 @@ export const ThreadsList = ({
       </div>
 
       {/* Threads List */}
-      <div className="flex-1 overflow-y-auto pb-24">
+      <div className="flex-1 overflow-y-auto" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
         {filteredThreads.length === 0 ? (
             <div className="text-center py-12 px-4">
               <p className="text-white/60">

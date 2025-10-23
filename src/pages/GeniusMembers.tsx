@@ -97,7 +97,7 @@ const GeniusMembers = () => {
       paddingTop: 'env(safe-area-inset-top)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
-      <div className="h-full w-full overflow-y-auto overflow-x-hidden pb-24 relative z-10">
+      <div className="h-full w-full overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
         <div className="max-w-4xl mx-auto px-4 py-4">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#0a1f14] via-[#0e4d2e] to-[#0a1f14] border-b-2 border-[#d4af37] p-4">

@@ -256,7 +256,7 @@ return (
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4 pb-24 max-w-screen-lg mx-auto relative z-10">
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4 max-w-screen-lg mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3">
           {/* First Row: Username and Stats */}
