@@ -173,6 +173,7 @@ export const ThreadsList = ({
             </div>
           )
         }
+        <div aria-hidden="true" style={{ height: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }} />
       </div>
 
       {/* Delete Confirmation Dialog */}
