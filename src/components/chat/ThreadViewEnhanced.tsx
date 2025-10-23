@@ -99,7 +99,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke(
-        `get-thread-messages?friendId=${friendId}`
+        `get-thread-messages?otherUserId=${friendId}`
       );
       if (error) throw error;
       setMessages(data?.messages || []);
