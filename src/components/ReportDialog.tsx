@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ImagePlus, X } from 'lucide-react';
 
 interface ReportDialogProps {
   open: boolean;
@@ -48,6 +49,46 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
   const [violationType, setViolationType] = useState<string>('');
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [screenshots, setScreenshots] = useState<File[]>([]);
+  const [screenshotPreviews, setScreenshotPreviews] = useState<string[]>([]);
+
+  const handleScreenshotSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    
+    // Validate file types
+    const validFiles = files.filter(file => {
+      if (!file.type.startsWith('image/')) {
+        toast.error(`${file.name} nem kép fájl!`);
+        return false;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`${file.name} túl nagy (max 5MB)!`);
+        return false;
+      }
+      return true;
+    });
+
+    if (screenshots.length + validFiles.length > 3) {
+      toast.error('Maximum 3 képet tölthetsz fel!');
+      return;
+    }
+
+    setScreenshots(prev => [...prev, ...validFiles]);
+    
+    // Create previews
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setScreenshotPreviews(prev => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeScreenshot = (index: number) => {
+    setScreenshots(prev => prev.filter((_, i) => i !== index));
+    setScreenshotPreviews(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async () => {
     if (!description.trim()) {
@@ -96,9 +137,41 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
         .replace(/<[^>]+>/g, '')
         .trim();
 
+      // Upload screenshots if any
+      const screenshotUrls: string[] = [];
+      if (screenshots.length > 0) {
+        toast.info('Képek feltöltése...');
+        
+        for (let i = 0; i < screenshots.length; i++) {
+          const file = screenshots[i];
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${session.user.id}/${Date.now()}_${i}.${fileExt}`;
+          
+          const { error: uploadError, data } = await supabase.storage
+            .from('report-screenshots')
+            .upload(fileName, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
+          if (uploadError) {
+            console.error('Screenshot upload error:', uploadError);
+            toast.error(`Kép feltöltési hiba: ${file.name}`);
+            continue;
+          }
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('report-screenshots')
+            .getPublicUrl(fileName);
+          
+          screenshotUrls.push(publicUrl);
+        }
+      }
+
       const reportData: any = {
         reporter_id: session.user.id,
         report_type: reportType,
+        screenshot_urls: screenshotUrls,
       };
 
       if (reportType === 'bug') {
@@ -120,6 +193,8 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
       setDescription('');
       setBugCategory('');
       setViolationType('');
+      setScreenshots([]);
+      setScreenshotPreviews([]);
     } catch (error) {
       console.error('Report error:', error);
       toast.error('Hiba történt a jelentés küldésekor');
@@ -209,6 +284,46 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
               </div>
             </div>
           )}
+
+          {/* Screenshot Upload Section */}
+          <div>
+            <Label className="text-sm">Képernyőképek (opcionális, max 3 kép)</Label>
+            <div className="space-y-2 mt-1">
+              {screenshotPreviews.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {screenshotPreviews.map((preview, index) => (
+                    <div key={index} className="relative group">
+                      <img 
+                        src={preview} 
+                        alt={`Screenshot ${index + 1}`}
+                        className="w-full h-20 object-cover rounded border border-purple-500/30"
+                      />
+                      <button
+                        onClick={() => removeScreenshot(index)}
+                        className="absolute top-1 right-1 bg-red-600 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3 h-3 text-white" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {screenshots.length < 3 && (
+                <label className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-800 border border-purple-500/50 rounded cursor-pointer hover:bg-gray-700 transition-colors">
+                  <ImagePlus className="w-4 h-4 text-purple-400" />
+                  <span className="text-sm text-white">Kép hozzáadása</span>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    multiple 
+                    onChange={handleScreenshotSelect}
+                    className="hidden"
+                  />
+                </label>
+              )}
+            </div>
+          </div>
 
           <Button
             onClick={handleSubmit}

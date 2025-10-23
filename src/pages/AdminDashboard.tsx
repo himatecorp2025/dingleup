@@ -838,6 +838,30 @@ const AdminDashboard = () => {
                       </>
                     )}
 
+                    {/* Screenshots Section */}
+                    {report.screenshot_urls && report.screenshot_urls.length > 0 && (
+                      <div className="mt-3">
+                        <strong className="text-white text-sm block mb-2">Csatolt képek:</strong>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {report.screenshot_urls.map((url: string, idx: number) => (
+                            <a 
+                              key={idx} 
+                              href={url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="block"
+                            >
+                              <img 
+                                src={url} 
+                                alt={`Screenshot ${idx + 1}`}
+                                className="w-full h-32 object-cover rounded border border-purple-500/30 hover:border-purple-500 transition-all cursor-pointer"
+                              />
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {report.admin_notes && (
                       <p className="text-sm text-purple-300 mt-2">
                         <strong>Admin megjegyzés:</strong> {report.admin_notes}

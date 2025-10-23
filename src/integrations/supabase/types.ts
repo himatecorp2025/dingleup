@@ -759,6 +759,7 @@ export type Database = {
           reported_message_id: string | null
           reported_user_id: string | null
           reporter_id: string
+          screenshot_urls: string[] | null
           status: string
           updated_at: string
           violation_description: string | null
@@ -774,6 +775,7 @@ export type Database = {
           reported_message_id?: string | null
           reported_user_id?: string | null
           reporter_id: string
+          screenshot_urls?: string[] | null
           status?: string
           updated_at?: string
           violation_description?: string | null
@@ -789,6 +791,7 @@ export type Database = {
           reported_message_id?: string | null
           reported_user_id?: string | null
           reporter_id?: string
+          screenshot_urls?: string[] | null
           status?: string
           updated_at?: string
           violation_description?: string | null
