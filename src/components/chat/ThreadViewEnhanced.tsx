@@ -44,14 +44,18 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [sending, setSending] = useState(false);
   const [friendInfo, setFriendInfo] = useState<{ username: string; avatar_url: string | null } | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isNearBottomRef = useRef(true);
   
   const { handleTyping } = useTypingStatus(friendId, userId);
   const { isOnline } = useUserPresence(friendId);
@@ -67,13 +71,34 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     hasFailed
   } = useAttachments();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
+  };
+
+  const checkIfNearBottom = () => {
+    if (!messagesContainerRef.current) return true;
+    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    return distanceFromBottom < 150; // within 150px of bottom
+  };
+
+  const handleScroll = async () => {
+    if (!messagesContainerRef.current || loadingMore || !hasMore) return;
+    
+    const { scrollTop } = messagesContainerRef.current;
+    isNearBottomRef.current = checkIfNearBottom();
+    
+    // Load more when scrolled to top 10%
+    if (scrollTop < 100 && hasMore && messages.length > 0) {
+      await loadMoreMessages();
+    }
   };
 
   useEffect(() => {
-    // Auto-scroll to bottom when new messages arrive
-    setTimeout(() => scrollToBottom(), 100);
+    // Auto-scroll only if user is near bottom
+    if (isNearBottomRef.current) {
+      setTimeout(() => scrollToBottom('smooth'), 100);
+    }
   }, [messages.length]);
 
   useEffect(() => {
@@ -166,8 +191,8 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     if (data) setFriendInfo(data);
   };
 
-  const loadMessages = async () => {
-    setLoading(true);
+  const loadMessages = async (initial = true) => {
+    if (initial) setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -175,7 +200,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-thread-messages?otherUserId=${friendId}`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-thread-messages?otherUserId=${friendId}&limit=50`,
         {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -190,15 +215,69 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       const data = await response.json();
       console.log('[ThreadView] Loaded messages:', data);
-      if (data.messages && data.messages.length > 0) {
-        console.log('[ThreadView] First message has', data.messages[0].media?.length || 0, 'media items');
-      }
       setMessages(data?.messages || []);
+      setHasMore(data?.messages?.length === 50);
+      
+      if (initial) {
+        // Scroll to bottom on initial load
+        setTimeout(() => {
+          scrollToBottom('auto');
+          isNearBottomRef.current = true;
+        }, 100);
+      }
     } catch (error) {
       console.error('Error loading messages:', error);
       toast.error('Hiba az üzenetek betöltésekor');
     } finally {
-      setLoading(false);
+      if (initial) setLoading(false);
+    }
+  };
+
+  const loadMoreMessages = async () => {
+    if (loadingMore || !hasMore || messages.length === 0) return;
+    
+    setLoadingMore(true);
+    const oldestMessageTimestamp = messages[0]?.created_at;
+    const previousScrollHeight = messagesContainerRef.current?.scrollHeight || 0;
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-thread-messages?otherUserId=${friendId}&before=${oldestMessageTimestamp}&limit=50`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to load more messages');
+
+      const data = await response.json();
+      const olderMessages = data?.messages || [];
+      
+      if (olderMessages.length > 0) {
+        setMessages(prev => [...olderMessages, ...prev]);
+        setHasMore(olderMessages.length === 50);
+        
+        // Maintain scroll position
+        setTimeout(() => {
+          if (messagesContainerRef.current) {
+            const newScrollHeight = messagesContainerRef.current.scrollHeight;
+            messagesContainerRef.current.scrollTop = newScrollHeight - previousScrollHeight;
+          }
+        }, 0);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error loading more messages:', error);
+      toast.error('Hiba a korábbi üzenetek betöltésekor');
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -474,10 +553,14 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       {/* Messages - Scrollable Area */}
       <main 
+        ref={messagesContainerRef}
+        onScroll={handleScroll}
         className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-2"
         style={{
           minHeight: 0,
-          maxHeight: '100%'
+          maxHeight: '100%',
+          overflowY: 'scroll',
+          WebkitOverflowScrolling: 'touch'
         }}
       >
         {loading ? (
@@ -488,6 +571,16 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
           <p className="text-center text-white/50 py-8">Nincs még üzenet</p>
         ) : (
           <>
+            {loadingMore && (
+              <div className="flex justify-center py-2">
+                <Loader2 className="w-5 h-5 text-[#D4AF37] animate-spin" />
+              </div>
+            )}
+            {!hasMore && messages.length > 20 && (
+              <p className="text-center text-white/30 text-xs py-2">
+                Beszélgetés kezdete
+              </p>
+            )}
             {messages.map((msg, idx) => {
               const isOwn = msg.sender_id === userId;
               const prevMsg = idx > 0 ? messages[idx - 1] : null;
