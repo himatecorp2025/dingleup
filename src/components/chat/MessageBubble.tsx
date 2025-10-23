@@ -230,6 +230,16 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const { reactions, addReaction } = useMessageReactions(message.id);
 
+  // Render message even if body is empty but has media
+  const hasContent = message.body?.trim() || (message.media && message.media.length > 0);
+  
+  if (!hasContent) {
+    console.warn('[MessageBubble] Message has no content:', message.id);
+    return null;
+  }
+  
+  console.log('[MessageBubble] Rendering message:', message.id, 'with', message.media?.length || 0, 'media items');
+
   const getInitials = (name: string) => {
     return name
       .split(' ')

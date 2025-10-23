@@ -76,20 +76,29 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
     loadFriendInfo();
     loadMessages();
 
+    // Subscribe to messages in this thread - both sender and receiver will get updates
     const channel = supabase
-      .channel(`thread-${friendId}`)
+      .channel(`dm-thread-${friendId}-${userId}`)
       .on('postgres_changes', { 
         event: 'INSERT', 
         schema: 'public', 
-        table: 'dm_messages' 
+        table: 'dm_messages',
+        filter: `thread_id=eq.${null}` // Will be updated after first message
       }, async (payload) => {
-        const newMsg = payload.new;
+        const newMsg = payload.new as any;
+        console.log('[ThreadView] New message INSERT event:', newMsg.id, 'from:', newMsg.sender_id);
+        
+        // Check if this message belongs to current thread (both users)
         if (newMsg.sender_id === friendId || newMsg.sender_id === userId) {
-          // Fetch complete message with media immediately
           try {
+            // Fetch single complete message with media
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) return;
+            if (!session) {
+              console.warn('[ThreadView] No session for fetching new message');
+              return;
+            }
 
+            console.log('[ThreadView] Fetching complete message:', newMsg.id);
             const response = await fetch(
               `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-thread-messages?otherUserId=${friendId}`,
               {
@@ -102,26 +111,42 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
             if (response.ok) {
               const data = await response.json();
-              const latestMessage = data?.messages?.[data.messages.length - 1];
-              if (latestMessage && latestMessage.id === newMsg.id) {
-                // Replace optimistic message or add new one
+              // Find the specific new message (not just the last one)
+              const fetchedMessage = data?.messages?.find((m: any) => m.id === newMsg.id);
+              
+              if (fetchedMessage) {
+                console.log('[ThreadView] Received complete message with', fetchedMessage.media?.length || 0, 'media items');
+                
                 setMessages(prev => {
                   const exists = prev.find(m => m.id === newMsg.id);
                   if (exists) {
-                    return prev.map(m => m.id === newMsg.id ? latestMessage : m);
+                    // Replace optimistic or update existing
+                    console.log('[ThreadView] Updating existing message');
+                    return prev.map(m => m.id === newMsg.id ? fetchedMessage : m);
                   }
-                  return [...prev, latestMessage];
+                  // Add new message (receiver side)
+                  console.log('[ThreadView] Adding new message to list');
+                  return [...prev, fetchedMessage];
                 });
+              } else {
+                console.warn('[ThreadView] Message not found in response, reloading all');
+                loadMessages();
               }
+            } else {
+              console.error('[ThreadView] Failed to fetch message, status:', response.status);
+              loadMessages();
             }
           } catch (err) {
             console.error('[ThreadView] Error fetching new message:', err);
-            // Fallback: reload all
             loadMessages();
           }
+        } else {
+          console.log('[ThreadView] Message from different thread, ignoring');
         }
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log('[ThreadView] Realtime subscription status:', status);
+      });
 
     return () => { supabase.removeChannel(channel); };
   }, [friendId, userId]);
@@ -250,12 +275,20 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack }: ThreadViewEnhan
 
       // Replace optimistic message with server response containing media
       if (response?.message) {
-        setMessages(prev => 
-          prev.map(m => m.id === clientMessageId ? {
-            ...response.message,
-            media: response.message.media || []
-          } : m)
-        );
+        console.log('[ThreadView] Server returned message with', response.message.media?.length || 0, 'media items');
+        setMessages(prev => {
+          const updated = prev.map(m => {
+            if (m.id === clientMessageId) {
+              return {
+                ...response.message,
+                media: response.message.media || []
+              };
+            }
+            return m;
+          });
+          console.log('[ThreadView] Updated messages, total:', updated.length);
+          return updated;
+        });
       }
 
       // Clear state on success
