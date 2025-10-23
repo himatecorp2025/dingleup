@@ -73,19 +73,31 @@ export const GeniusSubscriptionDialog = ({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-[600px] max-h-[80dvh] bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] dialog-enter-slow overflow-y-auto">
-        <DialogHeader className="text-center">
-          <DialogTitle className="text-2xl font-black text-center justify-center flex items-center gap-2">
-            <Crown className="w-8 h-8 text-yellow-400 animate-bounce" />
-            GENIUS ELŐFIZETÉS
-          </DialogTitle>
-          <DialogDescription className="text-base text-white/90 pt-2 font-bold text-center">
-            🎮 Légy Genius – duplázd meg a napi jutalmad!
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent 
+        className="bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] dialog-enter-slow flex flex-col"
+        style={{
+          width: 'min(95vw, 600px)',
+          height: 'calc(var(--vh, 1vh) * 70)',
+          maxHeight: 'calc(var(--vh, 1vh) * 70)',
+          overflow: 'hidden'
+        }}
+      >
+        <div className="flex-shrink-0 px-2">
+          <DialogHeader className="text-center">
+            <DialogTitle className="text-xl sm:text-2xl font-black text-center justify-center flex items-center gap-2">
+              <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 animate-bounce" />
+              GENIUS ELŐFIZETÉS
+            </DialogTitle>
+            <DialogDescription className="text-sm sm:text-base text-white/90 pt-2 font-bold text-center">
+              🎮 Légy Genius – duplázd meg a napi jutalmad!
+            </DialogDescription>
+          </DialogHeader>
+        </div>
         
-        {/* Price Box - Casino Style */}
-        <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-6 my-3 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)]">
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-2">
+          {/* Price Box - Casino Style */}
+          <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-4 sm:p-6 my-3 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)]">
           {/* Animated sparkles */}
           <div className="absolute inset-0 opacity-30">
             <Sparkles className="absolute top-2 right-2 w-6 h-6 text-yellow-200 animate-pulse" />
@@ -94,15 +106,15 @@ export const GeniusSubscriptionDialog = ({
           </div>
           
           <div className="relative z-10 text-center space-y-3">
-            <p className="text-yellow-200 text-sm font-bold">Genius Ár</p>
-            <div className="flex items-center justify-center gap-3 flex-wrap">
-              <span className="text-2xl font-bold text-yellow-200/70 line-through">${basePrice.toFixed(2)}</span>
-              <span className="px-3 py-1 bg-purple-600 text-white text-sm font-black rounded-full">-25%</span>
+            <p className="text-yellow-200 text-xs sm:text-sm font-bold">Genius Ár</p>
+            <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+              <span className="text-lg sm:text-2xl font-bold text-yellow-200/70 line-through">${basePrice.toFixed(2)}</span>
+              <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-purple-600 text-white text-xs sm:text-sm font-black rounded-full">-25%</span>
             </div>
-            <p className="text-5xl font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]">
+            <p className="text-3xl sm:text-5xl font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]">
               ${discountedPrice.toFixed(2)}
             </p>
-            <p className="text-yellow-200 text-base font-semibold">/ hónap</p>
+            <p className="text-yellow-200 text-sm sm:text-base font-semibold">/ hónap</p>
             <div className="flex items-center justify-center gap-2 pt-2">
               <Zap className="w-4 h-4 text-yellow-300" />
               <p className="text-sm text-yellow-100 font-bold">Bármikor lemondható</p>
@@ -111,79 +123,82 @@ export const GeniusSubscriptionDialog = ({
           </div>
         </div>
 
-        {/* Benefits */}
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-3 p-3 bg-yellow-400/10 rounded-lg border border-yellow-400/30">
-            <div className="w-6 h-6 rounded-full bg-yellow-400/30 flex items-center justify-center flex-shrink-0">
-              <Check className="w-4 h-4 text-yellow-300" />
+          {/* Benefits */}
+          <div className="space-y-2 mb-4">
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-yellow-400/10 rounded-lg border border-yellow-400/30">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-yellow-400/30 flex items-center justify-center flex-shrink-0">
+                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-300" />
+              </div>
+              <p className="text-white font-bold text-xs sm:text-sm">Dupla napi jutalom (2x arany)</p>
             </div>
-            <p className="text-white font-bold text-sm">Dupla napi jutalom (2x arany)</p>
+
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-green-400/10 rounded-lg border border-green-400/30">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-green-400/30 flex items-center justify-center flex-shrink-0">
+                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-300" />
+              </div>
+              <p className="text-white font-bold text-xs sm:text-sm">Élet regeneráció 2x gyorsabb (6 perc)</p>
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-red-400/10 rounded-lg border border-red-400/30">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-red-400/30 flex items-center justify-center flex-shrink-0">
+                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-red-300" />
+              </div>
+              <p className="text-white font-bold text-xs sm:text-sm">–50% coin kedvezmény boosterekre</p>
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-purple-400/10 rounded-lg border border-purple-400/30">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-purple-400/30 flex items-center justify-center flex-shrink-0">
+                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-purple-300" />
+              </div>
+              <p className="text-white font-bold text-xs sm:text-sm">–25% USD kedvezmény boosterekre</p>
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-blue-400/10 rounded-lg border border-blue-400/30">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-400/30 flex items-center justify-center flex-shrink-0">
+                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-blue-300" />
+              </div>
+              <p className="text-white font-bold text-xs sm:text-sm">Exkluzív Tippek & Trükkök videók</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 p-3 bg-green-400/10 rounded-lg border border-green-400/30">
-            <div className="w-6 h-6 rounded-full bg-green-400/30 flex items-center justify-center flex-shrink-0">
-              <Check className="w-4 h-4 text-green-300" />
-            </div>
-            <p className="text-white font-bold text-sm">Élet regeneráció 2x gyorsabb (6 perc)</p>
+          {/* Payment info */}
+          <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-2 sm:p-3 mb-2">
+            <p className="text-center text-white font-bold text-[10px] sm:text-xs flex items-center justify-center gap-2">
+              <CreditCard className="w-3 h-3 sm:w-4 sm:h-4" />
+              Biztonságos fizetés • Stripe
+            </p>
           </div>
-
-          <div className="flex items-center gap-3 p-3 bg-red-400/10 rounded-lg border border-red-400/30">
-            <div className="w-6 h-6 rounded-full bg-red-400/30 flex items-center justify-center flex-shrink-0">
-              <Check className="w-4 h-4 text-red-300" />
-            </div>
-            <p className="text-white font-bold text-sm">–50% coin kedvezmény boosterekre</p>
-          </div>
-
-          <div className="flex items-center gap-3 p-3 bg-purple-400/10 rounded-lg border border-purple-400/30">
-            <div className="w-6 h-6 rounded-full bg-purple-400/30 flex items-center justify-center flex-shrink-0">
-              <Check className="w-4 h-4 text-purple-300" />
-            </div>
-            <p className="text-white font-bold text-sm">–25% USD kedvezmény boosterekre</p>
-          </div>
-
-          <div className="flex items-center gap-3 p-3 bg-blue-400/10 rounded-lg border border-blue-400/30">
-            <div className="w-6 h-6 rounded-full bg-blue-400/30 flex items-center justify-center flex-shrink-0">
-              <Check className="w-4 h-4 text-blue-300" />
-            </div>
-            <p className="text-white font-bold text-sm">Exkluzív Tippek & Trükkök videók</p>
-          </div>
-        </div>
-
-        {/* Payment info */}
-        <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-3 mb-2">
-          <p className="text-center text-white font-bold text-xs flex items-center justify-center gap-2">
-            <CreditCard className="w-4 h-4" />
-            Biztonságos fizetés • Stripe
-          </p>
         </div>
         
-        <DialogFooter className="flex flex-col gap-3 sm:gap-3">
-          <Button 
-            onClick={handleSubscribe}
-            disabled={isLoading}
-            className="w-full bg-gradient-to-r from-green-500 via-green-600 to-green-500 hover:from-green-600 hover:via-green-700 hover:to-green-600 text-black font-black text-xl gap-3 py-6 shadow-[0_0_25px_rgba(34,197,94,0.6)] hover:shadow-[0_0_35px_rgba(34,197,94,0.8)] transition-all duration-300 animate-pulse hover:animate-none border-4 border-yellow-400"
-          >
-            {isLoading ? (
-              <>
-                <div className="w-6 h-6 border-3 border-black border-t-transparent rounded-full animate-spin" />
-                Átirányítás...
-              </>
-            ) : (
-              <>
-                <Crown className="w-6 h-6" />
-                ELŐFIZETEK ${discountedPrice.toFixed(2)}/HÓ 🎰
-              </>
-            )}
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            onClick={() => onOpenChange(false)}
-            className="text-white/60 hover:text-white/80 hover:bg-transparent text-sm"
-          >
-            Később
-          </Button>
-        </DialogFooter>
+        <div className="flex-shrink-0 px-2 pb-2">
+          <div className="flex flex-col gap-2 sm:gap-3">
+            <Button
+              onClick={handleSubscribe}
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-green-500 via-green-600 to-green-500 hover:from-green-600 hover:via-green-700 hover:to-green-600 text-black font-black text-base sm:text-xl gap-2 sm:gap-3 py-4 sm:py-6 shadow-[0_0_25px_rgba(34,197,94,0.6)] hover:shadow-[0_0_35px_rgba(34,197,94,0.8)] transition-all duration-300 animate-pulse hover:animate-none border-2 sm:border-4 border-yellow-400 min-h-[44px]"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 border-3 border-black border-t-transparent rounded-full animate-spin" />
+                  Átirányítás...
+                </>
+              ) : (
+                <>
+                  <Crown className="w-5 h-5 sm:w-6 sm:h-6" />
+                  ELŐFIZETEK ${discountedPrice.toFixed(2)}/HÓ 🎰
+                </>
+              )}
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              onClick={() => onOpenChange(false)}
+              className="text-white/60 hover:text-white/80 hover:bg-transparent text-xs sm:text-sm min-h-[44px]"
+            >
+              Később
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

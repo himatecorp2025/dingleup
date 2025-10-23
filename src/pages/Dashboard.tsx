@@ -27,6 +27,8 @@ import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { GeniusCrownBadge } from '@/components/GeniusCrownBadge';
 import { IdleWarning } from '@/components/IdleWarning';
 import { LoginPromoManager } from '@/components/LoginPromoManager';
+import { WeeklyWinnerPopup } from '@/components/WeeklyWinnerPopup';
+import { useWeeklyLogin } from '@/hooks/useWeeklyLogin';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
@@ -40,6 +42,7 @@ const Dashboard = () => {
   const { markActive } = useActivityTracker('route_view');
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { walletData, serverDriftMs, refetchWallet } = useWallet(userId);
+  const { loginState } = useWeeklyLogin(userId);
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
@@ -243,6 +246,9 @@ return (
       isGenius={profile.is_subscribed || false} 
       userId={userId || null} 
     />
+    
+    {/* Weekly winner popup */}
+    <WeeklyWinnerPopup userId={userId} />
     
     {/* Falling coins background */}
     <FallingCoins />
