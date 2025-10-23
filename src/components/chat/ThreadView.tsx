@@ -319,6 +319,33 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     }
   };
 
+  const handleAcceptRequest = async () => {
+    try {
+      const { error } = await supabase.functions.invoke('accept-friend-request', {
+        body: { userId: friendId }
+      });
+      if (error) throw error;
+      toast.success('Jelölés elfogadva. Most már üzenhetsz!');
+      await loadMessages();
+    } catch (e) {
+      console.error(e);
+      toast.error('Elfogadás sikertelen');
+    }
+  };
+
+  const handleDeclineRequest = async () => {
+    try {
+      const { error } = await supabase.functions.invoke('decline-friend-request', {
+        body: { userId: friendId }
+      });
+      if (error) throw error;
+      toast.success('Jelölés elutasítva');
+    } catch (e) {
+      console.error(e);
+      toast.error('Elutasítás sikertelen');
+    }
+  };
+
   const getFriendshipButton = () => {
     switch (friendshipStatus) {
       case 'none':
@@ -339,8 +366,15 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         );
       case 'pending_received':
         return (
-          <div className="px-3 py-1.5 bg-[#D4AF37]/20 border border-[#D4AF37]/50 rounded-lg text-sm">
-            <span className="text-[#D4AF37]">Várakozik jóváhagyásra</span>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={handleAcceptRequest}
+              className="px-3 py-1.5 bg-[#138F5E] hover:bg-[#138F5E]/90 text-white rounded-lg text-sm"
+            >Elfogadom</button>
+            <button 
+              onClick={handleDeclineRequest}
+              className="px-3 py-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-lg text-sm"
+            >Elutasít</button>
           </div>
         );
       case 'blocked':
@@ -364,8 +398,8 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
 
   return (
     <div className="h-full w-full flex flex-col bg-[#0F1116] chat-thread-container overflow-x-hidden">
-      {/* Header - Messenger style */}
-      <header className="chat-header flex-none flex items-center gap-3 px-4 py-3 bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-[#D4AF37]/20 w-full">
+      {/* Header - Messenger style (sticky) */}
+      <header className="chat-header sticky top-0 z-[10005] flex items-center gap-3 px-4 py-3 bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-[#D4AF37]/20 w-full">
         <button
           onClick={onBack}
           className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 flex-shrink-0"
@@ -415,8 +449,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         ref={messagesContainerRef} 
         className="chat-thread flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 w-full"
         style={{
-          paddingBottom: 'calc(72px + var(--bottom-nav-h, 72px) + env(safe-area-inset-bottom))',
-          height: '100dvh',
+          paddingBottom: 'calc(84px + var(--bottom-nav-h, 72px) + env(safe-area-inset-bottom))',
           maxWidth: '100%'
         }}
       >
@@ -460,7 +493,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         className="chat-composer fixed left-0 right-0 w-full bg-[#0F1116]/98 backdrop-blur-sm border-t border-[#D4AF37]/20 px-3 py-2 z-[10010]"
         style={{
           bottom: 'var(--bottom-nav-h, 72px)',
-          paddingBottom: 'calc(8px + env(safe-area-inset-bottom))',
+          paddingBottom: 'calc(10px + env(safe-area-inset-bottom))',
           maxWidth: '100vw',
           boxSizing: 'border-box'
         }}

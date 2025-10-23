@@ -44,29 +44,13 @@ Deno.serve(async (req) => {
     const statusFilter = url.searchParams.get('status') || 'pending'; // 'pending' | 'all'
     const scope = url.searchParams.get('scope') || 'all'; // 'incoming' | 'outgoing' | 'all'
 
-    // Build query for received requests (where user is NOT the requester)
-    let receivedQuery = supabaseClient
+    // Build query for received requests (where current user is NOT the requester)
+    const { data: rawReceived, error: receivedError } = await supabaseClient
       .from('friendships')
-      .select(`
-        id,
-        requested_by,
-        status,
-        created_at,
-        updated_at,
-        requester:profiles!friendships_requested_by_fkey(
-          id,
-          username,
-          avatar_url
-        )
-      `)
+      .select('id, requested_by, status, created_at, updated_at, user_id_a, user_id_b')
       .or(`user_id_a.eq.${user.id},user_id_b.eq.${user.id}`)
-      .neq('requested_by', user.id);
-
-    if (statusFilter !== 'all') {
-      receivedQuery = receivedQuery.eq('status', statusFilter);
-    }
-
-    const { data: receivedRequests, error: receivedError } = await receivedQuery
+      .neq('requested_by', user.id)
+      .eq('status', statusFilter === 'all' ? 'pending' : statusFilter)
       .order('created_at', { ascending: false })
       .limit(50);
 
@@ -78,16 +62,25 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Map received requests to include requester_id
-    const mappedReceivedRequests = (receivedRequests || []).map((req: any) => ({
-      id: req.id,
-      requester_id: req.requested_by,
-      requester: req.requester,
-      status: req.status,
-      created_at: req.created_at,
-      updated_at: req.updated_at
-    }));
-
+    // Fetch requester profiles for each received request safely (no FK embedding)
+    const mappedReceivedRequests = await Promise.all(
+      (rawReceived || []).map(async (req: any) => {
+        const requesterId = req.requested_by;
+        const { data: requester } = await supabaseClient
+          .from('public_profiles')
+          .select('id, username, avatar_url')
+          .eq('id', requesterId)
+          .maybeSingle();
+        return {
+          id: req.id,
+          requested_by: requesterId,
+          status: req.status,
+          created_at: req.created_at,
+          updated_at: req.updated_at,
+          requester: requester || { id: requesterId, username: 'Ismeretlen', avatar_url: null }
+        };
+      })
+    );
     // Get requests sent by user
     let sentQuery = supabaseClient
       .from('friendships')

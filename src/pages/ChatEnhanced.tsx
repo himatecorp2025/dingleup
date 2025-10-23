@@ -151,7 +151,7 @@ const ChatEnhanced = () => {
 
   return (
     <div className="h-screen bg-[#000000] flex flex-col">
-      <div className="flex-none bg-[#1a1a1a] border-b border-[#D4AF37]/10 p-4">
+      <div className="sticky top-0 z-[10000] bg-[#1a1a1a] border-b border-[#D4AF37]/10 p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-black text-white">💬 Chats</h1>
           <div className="flex gap-2">
