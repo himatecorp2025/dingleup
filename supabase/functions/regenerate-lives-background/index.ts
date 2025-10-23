@@ -12,15 +12,8 @@ serve(async (req) => {
   }
 
   try {
-    // Security: Verify this is a legitimate cron request using secret
-    const cronSecret = req.headers.get('x-supabase-cron-secret');
-    if (cronSecret !== Deno.env.get('SUPABASE_CRON_SECRET')) {
-      console.warn('[SECURITY] Unauthorized access attempt to cron endpoint');
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
-      );
-    }
+    // Cron jobs are trusted, no auth needed when called by Supabase's scheduler
+    console.log('[CRON] Regenerate lives background job started');
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
