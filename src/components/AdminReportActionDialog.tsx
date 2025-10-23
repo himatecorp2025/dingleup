@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
@@ -11,6 +11,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 
 interface AdminReportActionDialogProps {
   open: boolean;
@@ -29,6 +31,28 @@ interface AdminReportActionDialogProps {
   actionType: 'reviewing' | 'resolved' | 'dismissed';
   onSuccess: () => void;
 }
+
+// Előre definiált problématípusok listája
+const PROBLEM_TYPES = [
+  '🎮 Játék összeomlás / nem indul',
+  '❓ Kérdés nem jelenik meg helyesen',
+  '✅ Helyes válasz helytelennek jelölve',
+  '❌ Helytelen válasz helyesnek jelölve',
+  '⏱️ Időzítő hiba / nem működik',
+  '💰 Érme/élet nem lett jóváírva',
+  '🚀 Booster nem aktiválódott',
+  '🎁 Ajándék/jutalom nem érkezett meg',
+  '💬 Chat üzenet nem küldhető',
+  '📸 Kép/média feltöltési hiba',
+  '👥 Barát hozzáadási probléma',
+  '🏆 Ranglista nem frissül',
+  '💳 Fizetési hiba',
+  '🔐 Bejelentkezési probléma',
+  '📱 Mobil megjelenítési hiba',
+  '🐛 Egyéb technikai hiba',
+  '⚡ Teljesítmény probléma / lassú',
+  '🔄 Szinkronizálási hiba'
+];
 
 const actionConfig = {
   reviewing: {
@@ -63,6 +87,28 @@ export const AdminReportActionDialog = ({
 }: AdminReportActionDialogProps) => {
   const [message, setMessage] = useState(actionConfig[actionType].defaultMessage);
   const [submitting, setSubmitting] = useState(false);
+  const [problemType, setProblemType] = useState<string>('');
+  const [customProblemType, setCustomProblemType] = useState<string>('');
+  const [availableProblemTypes, setAvailableProblemTypes] = useState<string[]>(PROBLEM_TYPES);
+
+  // Reset fields when dialog opens
+  useEffect(() => {
+    if (open) {
+      setMessage(actionConfig[actionType].defaultMessage);
+      setProblemType('');
+      setCustomProblemType('');
+    }
+  }, [open, actionType]);
+
+  const handleAddCustomProblemType = () => {
+    if (customProblemType.trim() && !availableProblemTypes.includes(customProblemType.trim())) {
+      const newType = customProblemType.trim();
+      setAvailableProblemTypes([...availableProblemTypes, newType]);
+      setProblemType(newType);
+      setCustomProblemType('');
+      toast.success('Új problématípus hozzáadva!');
+    }
+  };
 
   const handleSubmit = async () => {
     if (!message.trim()) {
@@ -77,6 +123,11 @@ export const AdminReportActionDialog = ({
 
     if (message.length > 2000) {
       toast.error('Az üzenet túl hosszú (maximum 2000 karakter)!');
+      return;
+    }
+
+    if (actionType === 'resolved' && !problemType) {
+      toast.error('Kérlek válaszd ki a megoldott problématípust!');
       return;
     }
 
@@ -103,6 +154,7 @@ export const AdminReportActionDialog = ({
           message: message.trim(),
           reportId: report.id,
           newStatus: actionType,
+          problemType: problemType || null,
           reportDetails: {
             reportType: report.report_type,
             bugCategory: report.bug_category,
@@ -133,6 +185,8 @@ export const AdminReportActionDialog = ({
       onOpenChange(false);
       onSuccess();
       setMessage(actionConfig[actionType].defaultMessage);
+      setProblemType('');
+      setCustomProblemType('');
     } catch (error: any) {
       console.error('[AdminAction] Fatal error:', error);
       const status = error?.status || error?.context?.status;
@@ -189,6 +243,60 @@ export const AdminReportActionDialog = ({
               {message.length} / 2000 karakter {message.length < 10 && message.length > 0 ? '(túl rövid, minimum 10 karakter)' : ''}
             </p>
           </div>
+
+          {/* Problem Type Selector - Only for resolved status */}
+          {actionType === 'resolved' && (
+            <div>
+              <Label className="text-base text-yellow-400 mb-2 block font-bold">
+                ⚠️ Megoldott probléma típusa (KÖTELEZŐ)
+              </Label>
+              <p className="text-xs text-white/70 mb-2">
+                Válaszd ki, milyen típusú problémát oldottál meg, vagy adj hozzá újat.
+              </p>
+              <Select value={problemType} onValueChange={setProblemType}>
+                <SelectTrigger className="bg-gray-800 border-2 border-yellow-500/50 text-white focus:border-yellow-500">
+                  <SelectValue placeholder="Válassz problématípust..." />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-yellow-500/50 text-white max-h-[300px] z-[10000]">
+                  {availableProblemTypes.map((type) => (
+                    <SelectItem key={type} value={type} className="text-white hover:bg-gray-700">
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Custom Problem Type Input */}
+              <div className="mt-3 p-3 bg-gray-900/50 border border-yellow-500/30 rounded-lg">
+                <Label className="text-sm text-white/90 mb-2 block">
+                  ➕ Új problématípus hozzáadása
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={customProblemType}
+                    onChange={(e) => setCustomProblemType(e.target.value)}
+                    placeholder="Írd be az új problématípust..."
+                    className="flex-1 bg-gray-800 border-purple-500/50 text-white text-sm"
+                    maxLength={100}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddCustomProblemType();
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleAddCustomProblemType}
+                    disabled={!customProblemType.trim()}
+                    className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap text-sm"
+                  >
+                    Hozzáad
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-2">
             <Button
