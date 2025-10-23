@@ -640,12 +640,12 @@ const AdminDashboard = () => {
 
         {activeTab === 'invitations' && (
           <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 mb-4 lg:mb-6">
+            <div className="flex items-start justify-between gap-3 mb-4 lg:mb-6">
               <h2 className="text-xl lg:text-2xl font-bold text-white">
                 Meghívások ({invitations.length})
               </h2>
-              <div className="flex gap-2 items-center">
-                <span className="text-white/50 text-xs">
+              <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                <span className="text-white/50 text-xs whitespace-nowrap">
                   {isRefreshing ? '🔄 Frissítés...' : '✓ Automatikus szinkronizálás aktív (5mp)'}
                 </span>
                 <Button
@@ -660,7 +660,7 @@ const AdminDashboard = () => {
                       toast.error('Hiba: ' + (err.message || 'Ismeretlen hiba'));
                     }
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs lg:text-sm"
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs lg:text-sm whitespace-nowrap"
                 >
                   🔄 Barátságok manuális szinkronizálása
                 </Button>
@@ -743,9 +743,14 @@ const AdminDashboard = () => {
 
         {activeTab === 'reports' && (
           <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">
-              Jelentések ({reports.length})
-            </h2>
+            <div className="flex items-start justify-between gap-3 mb-4 lg:mb-6">
+              <h2 className="text-xl lg:text-2xl font-bold text-white">
+                Jelentések ({reports.length})
+              </h2>
+              <span className="text-white/50 text-xs whitespace-nowrap flex-shrink-0">
+                {isRefreshing ? '🔄 Frissítés...' : '✓ Automatikus szinkronizálás aktív (5mp)'}
+              </span>
+            </div>
             
             {/* Sub-tabs for Development and Support */}
             <div className="flex gap-2 mb-6 border-b border-purple-500/30 pb-2">
