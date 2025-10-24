@@ -56,7 +56,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
       </div>
 
       {/* SVG POINTY-TOP Hexagon Layers - 150° felső/alsó szögek */}
-      <svg viewBox="0 0 420 80" className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid meet">
+      <svg viewBox="144 0 132 80" className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid meet">
         <defs>
           {/* Gold Metal Gradients */}
           <linearGradient id="hex-gold-outer" x1="0" y1="0" x2="1" y2="1">
