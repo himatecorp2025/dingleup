@@ -108,14 +108,14 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none"
+        className="overflow-auto p-0 border-0 bg-transparent w-screen h-screen max-w-none"
         style={{ 
           margin: 0,
           maxHeight: '100vh'
         }}
       >
         <div 
-          className="fixed inset-0 flex flex-col items-center justify-center"
+          className="fixed inset-0 flex flex-col items-center justify-center py-4 overflow-y-auto"
         >
           {/* Background layer - 75% transparent (25% opacity) */}
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 opacity-25"></div>
@@ -153,7 +153,7 @@ const DailyGiftDialog = ({
                 // Continuous floating parameters - faster and smoother
                 const floatX = Math.random() * 40 - 20; // vw
                 const floatY = Math.random() * 40 - 20; // vh
-                const floatDuration = Math.random() * 2 + 1.5; // 1.5-3.5s - faster
+                const floatDuration = Math.random() * 1 + 1; // 1-2s - much faster
                 const finalOpacity = Math.random() * 0.4 + 0.5; // 0.5-0.9
 
                 return (
@@ -182,8 +182,11 @@ const DailyGiftDialog = ({
                         100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(1); opacity: ${finalOpacity}; }
                       }
                       @keyframes starFloat${i % 40} {
-                        0%, 100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
+                        0% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
+                        25% { transform: translate(calc(-50% + ${endX + floatX * 0.5}vw), calc(-50% + ${endY + floatY * 0.5}vh)); }
                         50% { transform: translate(calc(-50% + ${endX + floatX}vw), calc(-50% + ${endY + floatY}vh)); }
+                        75% { transform: translate(calc(-50% + ${endX + floatX * 0.5}vw), calc(-50% + ${endY - floatY * 0.5}vh)); }
+                        100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
                       }
                     `}</style>
                   </div>
@@ -194,11 +197,11 @@ const DailyGiftDialog = ({
 
           {/* Central content container - STAGGERED ZOOM IN ANIMATION */}
           <div className="relative z-10 flex flex-col items-center">
-            {/* Gift boxes at top - 3D style - DELAY 0ms */}
-            <div className={`flex gap-[3vw] mb-[2vh] transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
-              <div className="transform -rotate-12 drop-shadow-2xl" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>🎁</div>
-              <div className="transform rotate-6 drop-shadow-2xl" style={{ fontSize: 'clamp(3rem, 12vw, 5.5rem)' }}>🎁</div>
-              <div className="transform -rotate-6 drop-shadow-2xl" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>🎁</div>
+            {/* Gift boxes at top - 3D style - DELAY 0ms - 15% bigger and closer to banner */}
+            <div className={`flex gap-[3vw] mb-[0.5vh] transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
+              <div className="transform -rotate-12 drop-shadow-2xl" style={{ fontSize: 'clamp(2.875rem, 11.5vw, 5.175rem)' }}>🎁</div>
+              <div className="transform rotate-6 drop-shadow-2xl" style={{ fontSize: 'clamp(3.45rem, 13.8vw, 6.325rem)' }}>🎁</div>
+              <div className="transform -rotate-6 drop-shadow-2xl" style={{ fontSize: 'clamp(2.875rem, 11.5vw, 5.175rem)' }}>🎁</div>
             </div>
 
             {/* DAILY GIFT banner with 3D ribbon - DELAY 150ms */}
