@@ -35,31 +35,41 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
       }}
       {...props}
     >
-      {/* SVG Hexagon Layers */}
+      {/* SVG POINTY-TOP Hexagon Layers - 150° felső/alsó szögek */}
       <svg viewBox="0 0 380 72" className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
         <defs>
-          {/* Green Gradients */}
-          <linearGradient id="greenOuter" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="hsl(142 70% 55%)" />
-            <stop offset="50%" stopColor="hsl(142 70% 45%)" />
-            <stop offset="100%" stopColor="hsl(142 70% 35%)" />
+          {/* Gold Metal Gradients */}
+          <linearGradient id="hex-gold-outer" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--dup-gold-700))" />
+            <stop offset="50%" stopColor="hsl(var(--dup-gold-600))" />
+            <stop offset="100%" stopColor="hsl(var(--dup-gold-800))" />
           </linearGradient>
           
-          <radialGradient id="greenCrystal" cx="50%" cy="-10%">
-            <stop offset="0%" stopColor="hsl(142 70% 70%)" stopOpacity="0.95" />
-            <stop offset="40%" stopColor="hsl(142 70% 55%)" />
-            <stop offset="100%" stopColor="hsl(142 70% 38%)" />
+          <linearGradient id="hex-gold-inner" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--dup-gold-400))" />
+            <stop offset="40%" stopColor="hsl(var(--dup-gold-500))" />
+            <stop offset="100%" stopColor="hsl(var(--dup-gold-700))" />
+          </linearGradient>
+          
+          {/* Green Crystal Panel - radial + vertical */}
+          <radialGradient id="hex-green-crystal" cx="50%" cy="-10%">
+            <stop offset="0%" stopColor="hsl(142 80% 75%)" stopOpacity="0.95" />
+            <stop offset="30%" stopColor="hsl(142 75% 60%)" />
+            <stop offset="60%" stopColor="hsl(142 70% 48%)" />
+            <stop offset="100%" stopColor="hsl(142 65% 35%)" />
           </radialGradient>
           
-          <radialGradient id="greenSpecular" cx="30%" cy="20%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.8)" />
-            <stop offset="50%" stopColor="rgba(255,255,255,0)" />
+          {/* Specular Highlight (conic, top-left) */}
+          <radialGradient id="hex-green-specular" cx="25%" cy="15%">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.85)" />
+            <stop offset="40%" stopColor="rgba(255,255,255,0.3)" />
+            <stop offset="70%" stopColor="rgba(255,255,255,0)" />
           </radialGradient>
 
-          {/* Depth Shadow */}
-          <filter id="hex-shadow">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
-            <feOffset dx="2" dy="3" result="offsetblur"/>
+          {/* 3D Shadow Filter */}
+          <filter id="hex-btn-shadow">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="3" dy="4" result="offsetblur"/>
             <feComponentTransfer>
               <feFuncA type="linear" slope="0.5"/>
             </feComponentTransfer>
@@ -70,55 +80,87 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           </filter>
         </defs>
 
-        {/* Shadow Base */}
+        {/* 3D Shadow Base - 150° felső/alsó csúcs */}
         <path
-          d="M 190 2 L 370 2 L 370 70 L 190 70 L 10 70 L 10 2 Z"
-          fill="rgba(0,0,0,0.3)"
-          transform="translate(2, 3)"
+          d="M 190 0 L 360 10 L 360 62 L 190 72 L 20 62 L 20 10 Z"
+          fill="rgba(0,0,0,0.4)"
+          transform="translate(4, 5)"
         />
 
-        {/* Outer Gold Frame */}
+        {/* Outer Gold Frame - 150° csúcsok */}
         <path
-          d="M 190 1 L 376 1 L 376 71 L 190 71 L 4 71 L 4 1 Z"
-          fill="url(#goldOuter)"
+          d="M 190 0 L 376 9 L 376 63 L 190 72 L 4 63 L 4 9 Z"
+          fill="url(#hex-gold-outer)"
           stroke="hsl(var(--dup-gold-800))"
-          strokeWidth="1.5"
-          filter="url(#hex-shadow)"
+          strokeWidth="2"
+          filter="url(#hex-btn-shadow)"
         />
 
-        {/* Inner Green Crystal */}
+        {/* Middle Gold Frame (inset) */}
         <path
-          d="M 190 4 L 372 4 L 372 68 L 190 68 L 8 68 L 8 4 Z"
-          fill="url(#greenCrystal)"
+          d="M 190 3 L 368 11 L 368 61 L 190 69 L 12 61 L 12 11 Z"
+          fill="url(#hex-gold-inner)"
+          stroke="hsl(var(--dup-gold-400))"
+          strokeWidth="2.5"
         />
 
-        {/* Specular Highlight */}
+        {/* Inner Green Crystal Panel - 150° csúcsok */}
         <path
-          d="M 190 4 L 372 4 L 372 68 L 190 68 L 8 68 L 8 4 Z"
-          fill="url(#greenSpecular)"
-          opacity="0.5"
+          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          fill="url(#hex-green-crystal)"
         />
 
-        {/* Diagonal Streaks */}
-        <defs>
-          <pattern id="greenStripes" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="rotate(45)">
-            <rect x="0" y="0" width="8" height="40" fill="rgba(255,255,255,0.08)" />
-            <rect x="16" y="0" width="5" height="40" fill="rgba(255,255,255,0.05)" />
-          </pattern>
-        </defs>
+        {/* Specular Highlight Overlay - erős kristály hatás */}
         <path
-          d="M 190 4 L 372 4 L 372 68 L 190 68 L 8 68 L 8 4 Z"
-          fill="url(#greenStripes)"
+          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          fill="url(#hex-green-specular)"
           opacity="0.6"
         />
 
-        {/* Gold Accent Stroke */}
+        {/* Diagonal Light Streaks - kristály fények */}
+        <defs>
+          <pattern id="hex-green-stripes" patternUnits="userSpaceOnUse" width="50" height="50" patternTransform="rotate(45)">
+            <rect x="0" y="0" width="10" height="50" fill="rgba(255,255,255,0.12)" />
+            <rect x="20" y="0" width="7" height="50" fill="rgba(255,255,255,0.08)" />
+            <rect x="40" y="0" width="5" height="50" fill="rgba(255,255,255,0.06)" />
+          </pattern>
+        </defs>
         <path
-          d="M 190 4 L 372 4 L 372 68 L 190 68 L 8 68 L 8 4 Z"
+          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          fill="url(#hex-green-stripes)"
+          opacity="0.75"
+        />
+
+        {/* Inner Glow (bottom shadow for 3D depth) */}
+        <path
+          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
           fill="none"
-          stroke="hsl(var(--dup-gold-500))"
+          stroke="rgba(0,0,0,0.3)"
+          strokeWidth="6"
+          style={{ filter: 'blur(5px)' }}
+        />
+
+        {/* Gold Inner Stroke (accent) */}
+        <path
+          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          fill="none"
+          stroke="url(#hex-gold-inner)"
           strokeWidth="2"
-          opacity="0.7"
+          opacity="0.85"
+        />
+
+        {/* Additional crystal facet highlights */}
+        <defs>
+          <linearGradient id="facet-1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+            <stop offset="50%" stopColor="rgba(255,255,255,0.18)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          fill="url(#facet-1)"
+          opacity="0.5"
         />
       </svg>
 
