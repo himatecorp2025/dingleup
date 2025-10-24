@@ -50,9 +50,9 @@ const DailyGiftDialog = ({
   }, [open]);
 
   useEffect(() => {
-    if (!open || !contentVisible) return;
-    
-    const timer = setTimeout(() => {
+    if (!open) return;
+    if (!contentVisible) return;
+    requestAnimationFrame(() => {
       const el = flagRef.current;
       if (el) {
         const rect = el.getBoundingClientRect();
@@ -62,9 +62,7 @@ const DailyGiftDialog = ({
         setBurstKey((k) => k + 1);
         setBurstActive(true);
       }
-    }, 100);
-
-    return () => clearTimeout(timer);
+    });
   }, [contentVisible, open]);
 
   useEffect(() => {
