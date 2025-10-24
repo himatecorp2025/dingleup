@@ -65,6 +65,21 @@ const DailyGiftDialog = ({
     };
   }, [contentVisible, open]);
 
+  // Diagnostics: log measured widths
+  useEffect(() => {
+    if (!contentVisible) return;
+    const logSizes = () => {
+      const badgeW = badgeRef.current?.getBoundingClientRect().width;
+      const wrapperW = buttonWrapperRef.current?.getBoundingClientRect().width;
+      const btnEl = buttonWrapperRef.current?.querySelector('button') as HTMLElement | null;
+      const btnW = btnEl?.getBoundingClientRect().width;
+      console.debug('[DailyGift][sizes] badge=', badgeW, 'wrapper=', wrapperW, 'button=', btnW);
+    };
+    const t = setTimeout(logSizes, 100);
+    window.addEventListener('resize', logSizes);
+    return () => { clearTimeout(t); window.removeEventListener('resize', logSizes); };
+  }, [contentVisible]);
+
   useEffect(() => {
     if (open) {
       const t = setTimeout(() => setContentVisible(true), 10);
