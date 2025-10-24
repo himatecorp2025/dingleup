@@ -59,44 +59,44 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </filter>
         </defs>
 
-        {/* 3D Shadow Base (bottom-right offset) - Tompított csúcs */}
+        {/* 3D Shadow Base (bottom-right offset) - Nagyobb belső szög ~120-130° */}
         <path
-          d="M 160 18 L 200 18 L 350 136 L 350 464 L 200 582 L 160 582 L 10 464 L 10 136 Z"
+          d="M 130 22 L 230 22 L 350 136 L 350 464 L 230 578 L 130 578 L 10 464 L 10 136 Z"
           fill="rgba(0,0,0,0.35)"
           transform="translate(6, 8)"
         />
 
-        {/* Outer Gold Frame (darker) - Tompított csúcs */}
+        {/* Outer Gold Frame (darker) - Nagyobb belső szög ~120-130° */}
         <path
-          d="M 156 12 L 204 12 L 354 132 L 354 468 L 204 588 L 156 588 L 6 468 L 6 132 Z"
+          d="M 126 16 L 234 16 L 354 132 L 354 468 L 234 584 L 126 584 L 6 468 L 6 132 Z"
           fill="url(#goldOuter)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
           filter="url(#depth-shadow)"
         />
 
-        {/* Middle Gold Frame (lighter highlight) - Tompított csúcs */}
+        {/* Middle Gold Frame (lighter highlight) - Nagyobb belső szög ~120-130° */}
         <path
-          d="M 168 28 L 192 28 L 338 144 L 338 456 L 192 572 L 168 572 L 22 456 L 22 144 Z"
+          d="M 138 32 L 222 32 L 338 144 L 338 456 L 222 568 L 138 568 L 22 456 L 22 144 Z"
           fill="url(#goldInner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="3"
         />
 
-        {/* Inner Crystal Panel - Tompított csúcs */}
+        {/* Inner Crystal Panel - Nagyobb belső szög ~120-130° */}
         <path
-          d="M 176 42 L 184 42 L 322 156 L 322 444 L 184 558 L 176 558 L 38 444 L 38 156 Z"
+          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
           fill="url(#crystalRadial)"
         />
 
-        {/* Specular Highlight Overlay - Tompított csúcs */}
+        {/* Specular Highlight Overlay - Nagyobb belső szög ~120-130° */}
         <path
-          d="M 176 42 L 184 42 L 322 156 L 322 444 L 184 558 L 176 558 L 38 444 L 38 156 Z"
+          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
           fill="url(#specular)"
           opacity="0.4"
         />
 
-        {/* Diagonal Light Streaks (stripes) - Tompított csúcs */}
+        {/* Diagonal Light Streaks (stripes) - Nagyobb belső szög ~120-130° */}
         <defs>
           <pattern id="diagonalStripes" patternUnits="userSpaceOnUse" width="60" height="60" patternTransform="rotate(45)">
             <rect x="0" y="0" width="12" height="60" fill="rgba(255,255,255,0.08)" />
@@ -105,23 +105,23 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </pattern>
         </defs>
         <path
-          d="M 176 42 L 184 42 L 322 156 L 322 444 L 184 558 L 176 558 L 38 444 L 38 156 Z"
+          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
           fill="url(#diagonalStripes)"
           opacity="0.7"
         />
 
-        {/* Inner Glow (bottom shadow for 3D) - Tompított csúcs */}
+        {/* Inner Glow (bottom shadow for 3D) - Nagyobb belső szög ~120-130° */}
         <path
-          d="M 176 42 L 184 42 L 322 156 L 322 444 L 184 558 L 176 558 L 38 444 L 38 156 Z"
+          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
           fill="none"
           stroke="rgba(0,0,0,0.25)"
           strokeWidth="8"
           style={{ filter: 'blur(6px)' }}
         />
 
-        {/* Gold Inner Stroke (accent) - Tompított csúcs */}
+        {/* Gold Inner Stroke (accent) - Nagyobb belső szög ~120-130° */}
         <path
-          d="M 176 42 L 184 42 L 322 156 L 322 444 L 184 558 L 176 558 L 38 444 L 38 156 Z"
+          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
           fill="none"
           stroke="url(#goldInner)"
           strokeWidth="2"
