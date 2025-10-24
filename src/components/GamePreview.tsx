@@ -48,6 +48,22 @@ const GamePreview = () => {
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
 
   // Lifelines - GAME-LEVEL usage counters (not per-question)
+  
+  // Helper function to log help usage
+  const logHelpUsage = async (helpType: 'third' | 'skip' | 'audience' | '2x_answer') => {
+    if (!userId || !selectedCategory) return;
+    
+    try {
+      await supabase.from('game_help_usage').insert({
+        user_id: userId,
+        category: selectedCategory,
+        help_type: helpType,
+        question_index: currentQuestionIndex
+      });
+    } catch (error) {
+      console.error('Error logging help usage:', error);
+    }
+  };
   const [help5050UsageCount, setHelp5050UsageCount] = useState(0); // 0=first free, 1=second paid, 2=disabled
   const [help2xAnswerUsageCount, setHelp2xAnswerUsageCount] = useState(0);
   const [helpAudienceUsageCount, setHelpAudienceUsageCount] = useState(0);
@@ -490,6 +506,7 @@ const GamePreview = () => {
     const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
     if (success) {
       await refreshProfile();
+      await logHelpUsage('skip');
       toast.success(`Kérdés átugorva ${cost} aranyért`);
       await handleNextQuestion();
     }
@@ -593,6 +610,7 @@ const GamePreview = () => {
       
       await supabase.rpc('use_help', { p_help_type: 'third' });
       await refreshProfile();
+      await logHelpUsage('third');
       
       toast.info('1/3 segítség aktiválva - első használat ingyenes!');
       return;
@@ -617,6 +635,7 @@ const GamePreview = () => {
         setRemovedAnswer(thirdAnswerKey);
         setIsHelp5050ActiveThisQuestion(true);
         setHelp5050UsageCount(2);
+        await logHelpUsage('third');
         toast.success('1/3 segítség aktiválva - 15 aranyérme levonva!');
       }
     }
@@ -642,6 +661,7 @@ const GamePreview = () => {
       
       await supabase.rpc('use_help', { p_help_type: '2x_answer' });
       await refreshProfile();
+      await logHelpUsage('2x_answer');
       
       toast.info('2× válasz aktiválva - első használat ingyenes!');
       return;
@@ -664,6 +684,7 @@ const GamePreview = () => {
         setHelp2xAnswerUsageCount(2);
         setFirstAttempt(null);
         setSecondAttempt(null);
+        await logHelpUsage('2x_answer');
         toast.success('2× válasz aktiválva - 20 aranyérme levonva!');
       }
     }
@@ -708,6 +729,7 @@ const GamePreview = () => {
       
       await supabase.rpc('use_help', { p_help_type: 'audience' });
       await refreshProfile();
+      await logHelpUsage('audience');
       
       toast.info('Közönség segítség aktiválva - első használat ingyenes!');
       return;
@@ -729,6 +751,7 @@ const GamePreview = () => {
         setAudienceVotes(votes);
         setIsAudienceActiveThisQuestion(true);
         setHelpAudienceUsageCount(2);
+        await logHelpUsage('audience');
         toast.success('Közönség segítség aktiválva - 30 aranyérme levonva!');
       }
     }

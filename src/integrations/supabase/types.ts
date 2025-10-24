@@ -195,6 +195,47 @@ export type Database = {
         }
         Relationships: []
       }
+      game_help_usage: {
+        Row: {
+          category: string
+          created_at: string
+          game_result_id: string | null
+          help_type: string
+          id: string
+          question_index: number
+          used_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          game_result_id?: string | null
+          help_type: string
+          id?: string
+          question_index: number
+          used_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          game_result_id?: string | null
+          help_type?: string
+          id?: string
+          question_index?: number
+          used_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_help_usage_game_result_id_fkey"
+            columns: ["game_result_id"]
+            isOneToOne: false
+            referencedRelation: "game_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       game_results: {
         Row: {
           average_response_time: number | null
