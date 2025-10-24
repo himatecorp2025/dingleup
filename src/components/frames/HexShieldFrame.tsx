@@ -17,11 +17,11 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
            height: 'clamp(540px, 88vh, 680px)'
          }}>
       
-      {/* Casino shine effect - csak a belső crystal panel területén */}
+      {/* Casino shine effect - csak a belső crystal panel területén, PONTOSAN 150° */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          clipPath: 'polygon(50% 11.3%, 86.7% 17.3%, 86.7% 82.7%, 50% 88.7%, 13.3% 82.7%, 13.3% 17.3%)',
+          clipPath: 'polygon(50% 17.83%, 83.3% 26.33%, 83.3% 73.67%, 50% 82.17%, 16.7% 73.67%, 16.7% 26.33%)',
           overflow: 'hidden'
         }}
       >
@@ -76,39 +76,39 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </filter>
         </defs>
 
-        {/* 3D Shadow Base - Felső 150°, Alsó 150°, oldalsó szögek 105° */}
+        {/* 3D Shadow Base - PONTOSAN 150° felső/alsó csúcs */}
         <path
-          d="M 30 90 L 330 90 L 330 510 L 30 510 L 30 510 L 30 90 Z"
+          d="M 186 97 L 318 157 L 318 457 L 186 517 L 54 457 L 54 157 Z"
           fill="rgba(0,0,0,0.35)"
-          transform="translate(6, 8)"
+          filter="blur(4px)"
         />
 
-        {/* Outer Gold Frame - 150° felső/alsó csúcs */}
+        {/* Outer Gold Frame - PONTOSAN 150° felső/alsó csúcs */}
         <path
-          d="M 180 44 L 336 84 L 336 516 L 180 556 L 24 516 L 24 84 Z"
+          d="M 180 91 L 312 150 L 312 450 L 180 509 L 48 450 L 48 150 Z"
           fill="url(#goldOuter)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
           filter="url(#depth-shadow)"
         />
 
-        {/* Middle Gold Frame - 150° felső/alsó csúcs (inset) */}
+        {/* Middle Gold Frame - PONTOSAN 150° felső/alsó csúcs (inset) */}
         <path
-          d="M 180 56 L 324 94 L 324 506 L 180 544 L 36 506 L 36 94 Z"
+          d="M 180 99 L 306 154 L 306 446 L 180 501 L 54 446 L 54 154 Z"
           fill="url(#goldInner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="3"
         />
 
-        {/* Inner Crystal Panel - 150° felső/alsó csúcs (inset) */}
+        {/* Inner Crystal Panel - PONTOSAN 150° felső/alsó csúcs (inset) */}
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 107 L 300 158 L 300 442 L 180 493 L 60 442 L 60 158 Z"
           fill="url(#crystalRadial)"
         />
 
         {/* Specular Highlight Overlay */}
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 107 L 300 158 L 300 442 L 180 493 L 60 442 L 60 158 Z"
           fill="url(#specular)"
           opacity="0.4"
         />
@@ -122,14 +122,14 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </pattern>
         </defs>
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 107 L 300 158 L 300 442 L 180 493 L 60 442 L 60 158 Z"
           fill="url(#diagonalStripes)"
           opacity="0.7"
         />
 
         {/* Inner Glow (bottom shadow for 3D) */}
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 107 L 300 158 L 300 442 L 180 493 L 60 442 L 60 158 Z"
           fill="none"
           stroke="rgba(0,0,0,0.25)"
           strokeWidth="8"
@@ -138,7 +138,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* Gold Inner Stroke (accent) */}
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 107 L 300 158 L 300 442 L 180 493 L 60 442 L 60 158 Z"
           fill="none"
           stroke="url(#goldInner)"
           strokeWidth="2"
