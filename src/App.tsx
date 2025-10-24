@@ -26,6 +26,11 @@ import AdminTipsVideos from "./pages/AdminTipsVideos";
 import GeniusMembers from "./pages/GeniusMembers";
 import GeniusMembersEnhanced from "./pages/GeniusMembersEnhanced";
 import NormalUsersAnalytics from "./pages/NormalUsersAnalytics";
+import RetentionDashboard from "./pages/RetentionDashboard";
+import MonetizationDashboard from "./pages/MonetizationDashboard";
+import PerformanceDashboard from "./pages/PerformanceDashboard";
+import EngagementDashboard from "./pages/EngagementDashboard";
+import UserJourneyDashboard from "./pages/UserJourneyDashboard";
 import ChatEnhanced from "./pages/ChatEnhanced";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
@@ -257,6 +262,11 @@ const App = () => {
             <Route path="/admin/genius" element={<GeniusMembersEnhanced />} />
             <Route path="/admin/normal-users" element={<NormalUsersAnalytics />} />
             <Route path="/admin/tips" element={<AdminTipsVideos />} />
+            <Route path="/admin/retention" element={<RetentionDashboard />} />
+            <Route path="/admin/monetization" element={<MonetizationDashboard />} />
+            <Route path="/admin/performance" element={<PerformanceDashboard />} />
+            <Route path="/admin/engagement" element={<EngagementDashboard />} />
+            <Route path="/admin/user-journey" element={<UserJourneyDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppRouteGuard>
