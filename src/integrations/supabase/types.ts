@@ -271,6 +271,111 @@ export type Database = {
         }
         Relationships: []
       }
+      device_geo_analytics: {
+        Row: {
+          browser: string | null
+          browser_version: string | null
+          city: string | null
+          connection_type: string | null
+          country_code: string | null
+          country_name: string | null
+          created_at: string
+          device_model: string | null
+          device_type: string | null
+          device_vendor: string | null
+          downlink_mbps: number | null
+          effective_connection_type: string | null
+          id: string
+          is_genius_user: boolean | null
+          is_touch_device: boolean | null
+          os: string | null
+          os_version: string | null
+          pixel_ratio: number | null
+          region: string | null
+          rtt_ms: number | null
+          screen_height: number | null
+          screen_width: number | null
+          session_id: string
+          timezone: string | null
+          user_id: string
+          viewport_height: number | null
+          viewport_width: number | null
+        }
+        Insert: {
+          browser?: string | null
+          browser_version?: string | null
+          city?: string | null
+          connection_type?: string | null
+          country_code?: string | null
+          country_name?: string | null
+          created_at?: string
+          device_model?: string | null
+          device_type?: string | null
+          device_vendor?: string | null
+          downlink_mbps?: number | null
+          effective_connection_type?: string | null
+          id?: string
+          is_genius_user?: boolean | null
+          is_touch_device?: boolean | null
+          os?: string | null
+          os_version?: string | null
+          pixel_ratio?: number | null
+          region?: string | null
+          rtt_ms?: number | null
+          screen_height?: number | null
+          screen_width?: number | null
+          session_id: string
+          timezone?: string | null
+          user_id: string
+          viewport_height?: number | null
+          viewport_width?: number | null
+        }
+        Update: {
+          browser?: string | null
+          browser_version?: string | null
+          city?: string | null
+          connection_type?: string | null
+          country_code?: string | null
+          country_name?: string | null
+          created_at?: string
+          device_model?: string | null
+          device_type?: string | null
+          device_vendor?: string | null
+          downlink_mbps?: number | null
+          effective_connection_type?: string | null
+          id?: string
+          is_genius_user?: boolean | null
+          is_touch_device?: boolean | null
+          os?: string | null
+          os_version?: string | null
+          pixel_ratio?: number | null
+          region?: string | null
+          rtt_ms?: number | null
+          screen_height?: number | null
+          screen_width?: number | null
+          session_id?: string
+          timezone?: string | null
+          user_id?: string
+          viewport_height?: number | null
+          viewport_width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_geo_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "device_geo_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dm_messages: {
         Row: {
           body: string
@@ -341,6 +446,78 @@ export type Database = {
           user_id_b?: string
         }
         Relationships: []
+      }
+      error_logs: {
+        Row: {
+          browser: string | null
+          created_at: string
+          device_type: string | null
+          error_component: string | null
+          error_message: string
+          error_stack: string | null
+          error_type: string
+          id: string
+          is_fatal: boolean | null
+          is_genius_user: boolean | null
+          metadata: Json | null
+          page_route: string
+          session_id: string
+          severity: string
+          user_action: string | null
+          user_id: string | null
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          error_component?: string | null
+          error_message: string
+          error_stack?: string | null
+          error_type: string
+          id?: string
+          is_fatal?: boolean | null
+          is_genius_user?: boolean | null
+          metadata?: Json | null
+          page_route: string
+          session_id: string
+          severity?: string
+          user_action?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          error_component?: string | null
+          error_message?: string
+          error_stack?: string | null
+          error_type?: string
+          id?: string
+          is_fatal?: boolean | null
+          is_genius_user?: boolean | null
+          metadata?: Json | null
+          page_route?: string
+          session_id?: string
+          severity?: string
+          user_action?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "error_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "error_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       feature_usage_events: {
         Row: {
@@ -1008,6 +1185,75 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      performance_metrics: {
+        Row: {
+          browser: string | null
+          cls: number | null
+          connection_type: string | null
+          created_at: string
+          device_type: string | null
+          fcp_ms: number | null
+          fid_ms: number | null
+          id: string
+          lcp_ms: number | null
+          load_time_ms: number
+          page_route: string
+          session_id: string
+          ttfb_ms: number | null
+          tti_ms: number | null
+          user_id: string | null
+        }
+        Insert: {
+          browser?: string | null
+          cls?: number | null
+          connection_type?: string | null
+          created_at?: string
+          device_type?: string | null
+          fcp_ms?: number | null
+          fid_ms?: number | null
+          id?: string
+          lcp_ms?: number | null
+          load_time_ms: number
+          page_route: string
+          session_id: string
+          ttfb_ms?: number | null
+          tti_ms?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          browser?: string | null
+          cls?: number | null
+          connection_type?: string | null
+          created_at?: string
+          device_type?: string | null
+          fcp_ms?: number | null
+          fid_ms?: number | null
+          id?: string
+          lcp_ms?: number | null
+          load_time_ms?: number
+          page_route?: string
+          session_id?: string
+          ttfb_ms?: number | null
+          tti_ms?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_metrics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_metrics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -2067,6 +2313,30 @@ export type Database = {
       }
     }
     Views: {
+      error_rate_by_page: {
+        Row: {
+          affected_users: number | null
+          error_count: number | null
+          error_type: string | null
+          last_occurrence: string | null
+          page_route: string | null
+        }
+        Relationships: []
+      }
+      performance_by_page: {
+        Row: {
+          avg_lcp_ms: number | null
+          avg_load_time_ms: number | null
+          avg_ttfb_ms: number | null
+          browser: string | null
+          device_type: string | null
+          median_load_time_ms: number | null
+          p95_load_time_ms: number | null
+          page_route: string | null
+          sample_count: number | null
+        }
+        Relationships: []
+      }
       public_profiles: {
         Row: {
           avatar_url: string | null
