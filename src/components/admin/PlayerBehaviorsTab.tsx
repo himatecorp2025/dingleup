@@ -173,7 +173,7 @@ export default function PlayerBehaviorsTab() {
             if (!catStats) return null;
 
             return (
-              <Card key={cat.id} className="bg-gradient-to-br from-white/5 to-white/10 border-white/10 p-6">
+              <Card key={cat.id} className="bg-slate-900/95 border-white/10 p-6 backdrop-blur">
                 <div className={`bg-gradient-to-r ${cat.color} rounded-lg p-4 mb-4`}>
                   <h3 className="text-xl font-bold text-white">{cat.name}</h3>
                 </div>
@@ -181,19 +181,19 @@ export default function PlayerBehaviorsTab() {
                 <div className="space-y-4">
                   {/* Main Stats - Nagyobb számok, világosabb címkék */}
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-white/10 rounded-lg p-4 text-center">
+                    <div className="bg-slate-800/80 rounded-lg p-4 text-center border border-white/5">
                       <Users className="w-6 h-6 text-blue-400 mx-auto mb-2" />
                       <div className="text-sm text-white/60 mb-1">Játékosok száma</div>
                       <div className="text-3xl font-bold text-white">{catStats.uniquePlayers}</div>
                     </div>
 
-                    <div className="bg-white/10 rounded-lg p-4 text-center">
+                    <div className="bg-slate-800/80 rounded-lg p-4 text-center border border-white/5">
                       <Target className="w-6 h-6 text-green-400 mx-auto mb-2" />
                       <div className="text-sm text-white/60 mb-1">Átlag helyes</div>
                       <div className="text-3xl font-bold text-white">{catStats.avgCorrectAnswers}</div>
                     </div>
 
-                    <div className="bg-white/10 rounded-lg p-4 text-center">
+                    <div className="bg-slate-800/80 rounded-lg p-4 text-center border border-white/5">
                       <TrendingUp className="w-6 h-6 text-purple-400 mx-auto mb-2" />
                       <div className="text-sm text-white/60 mb-1">Összes játék</div>
                       <div className="text-3xl font-bold text-white">{catStats.totalGames}</div>
@@ -201,14 +201,14 @@ export default function PlayerBehaviorsTab() {
                   </div>
 
                   {/* Help Usage - Nagyobb számok */}
-                  <div className="bg-white/10 rounded-lg p-4">
+                  <div className="bg-slate-800/80 rounded-lg p-4 border border-white/5">
                     <div className="flex items-center gap-2 mb-4">
                       <HelpCircle className="w-5 h-5 text-yellow-400" />
                       <span className="text-lg font-bold text-white">Segítséghasználat részletesen</span>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {HELP_TYPES.map(help => (
-                        <div key={help.id} className="bg-white/10 rounded-lg p-3">
+                        <div key={help.id} className="bg-slate-700/50 rounded-lg p-3 border border-white/5">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-xl">{help.icon}</span>
                             <span className="text-sm text-white/70">{help.name}</span>
