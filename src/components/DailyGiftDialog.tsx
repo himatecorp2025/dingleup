@@ -199,7 +199,7 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central HEXAGON container - DELAY 300ms */}
+          {/* Central HEXAGON container with 3D effect - DELAY 300ms */}
           <div className={`relative z-10 transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
                style={{ transitionDelay: '300ms' }}>
             
@@ -215,170 +215,205 @@ const DailyGiftDialog = ({
                    animation: 'pulse 3s ease-in-out infinite'
                  }}></div>
 
-            {/* Outer hexagon - light pink/purple thick border */}
             <div className="relative"
                  style={{
-                   width: 'clamp(300px, 70vw, 480px)',
-                   height: 'clamp(400px, 90vh, 650px)',
-                   clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-                   background: 'linear-gradient(135deg, #f0c1ff 0%, #e0b3ff 50%, #d1a5ff 100%)',
-                   padding: '12px',
-                   filter: 'drop-shadow(0 0 30px rgba(147,51,234,0.6))'
+                   width: 'clamp(320px, 75vw, 500px)',
+                   height: 'clamp(420px, 85vh, 600px)',
                  }}>
               
-              {/* Middle hexagon - gold border */}
-              <div className="absolute inset-[12px]"
+              {/* 3D LEFT SIDE FACE - lighter pink/purple */}
+              <div className="absolute left-0 top-0"
                    style={{
-                     clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-                     background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)',
-                     padding: '6px'
+                     width: '5%',
+                     height: '100%',
+                     background: 'linear-gradient(90deg, #e8d5f5 0%, #f0c1ff 100%)',
+                     clipPath: 'polygon(0% 15%, 100% 18%, 100% 82%, 0% 85%)',
+                     filter: 'brightness(1.1)'
+                   }}></div>
+
+              {/* 3D RIGHT SIDE FACE - lighter pink/purple */}
+              <div className="absolute right-0 top-0"
+                   style={{
+                     width: '5%',
+                     height: '100%',
+                     background: 'linear-gradient(270deg, #e8d5f5 0%, #f0c1ff 100%)',
+                     clipPath: 'polygon(0% 18%, 100% 15%, 100% 85%, 0% 82%)',
+                     filter: 'brightness(1.1)'
+                   }}></div>
+
+              {/* 3D BOTTOM FACE - darker purple with shadow */}
+              <div className="absolute bottom-0 left-0"
+                   style={{
+                     width: '100%',
+                     height: '8%',
+                     background: 'linear-gradient(180deg, #8b5cf6 0%, #6b21a8 100%)',
+                     clipPath: 'polygon(18% 0%, 82% 0%, 95% 100%, 5% 100%)',
+                     filter: 'brightness(0.6)'
+                   }}></div>
+
+              {/* MAIN HEXAGON - outer light pink border */}
+              <div className="absolute inset-0"
+                   style={{
+                     clipPath: 'polygon(50% 0%, 88% 12%, 88% 88%, 50% 100%, 12% 88%, 12% 12%)',
+                     background: 'linear-gradient(135deg, #f0c1ff 0%, #e0b3ff 50%, #d1a5ff 100%)',
+                     padding: '12px'
                    }}>
                 
-                {/* Inner hexagon - purple gradient background */}
-                <div ref={flagRef} className="absolute inset-[6px] flex flex-col"
+                {/* Middle hexagon - gold border */}
+                <div className="absolute inset-[12px]"
                      style={{
-                       clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-                       background: 'linear-gradient(180deg, #a855f7 0%, #9333ea 50%, #7e22ce 100%)'
+                       clipPath: 'polygon(50% 0%, 88% 12%, 88% 88%, 50% 100%, 12% 88%, 12% 12%)',
+                       background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)',
+                       padding: '6px'
                      }}>
                   
-                  {/* Inner glow */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-yellow-400/20 via-transparent to-purple-900/30 pointer-events-none"
+                  {/* Inner hexagon - purple gradient background */}
+                  <div ref={flagRef} className="absolute inset-[6px] flex flex-col"
                        style={{
-                         clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
-                       }}></div>
-
-                  {/* Hexagon header banner */}
-                  <div className="relative mt-[5%] mx-auto z-10"
-                       style={{ width: '80%' }}>
-                    <div className="relative bg-gradient-to-b from-purple-700 via-purple-800 to-purple-900 px-[8vw] py-[2vh] border-4 border-yellow-400 shadow-[0_0_25px_rgba(234,179,8,0.8)]"
+                         clipPath: 'polygon(50% 0%, 88% 12%, 88% 88%, 50% 100%, 12% 88%, 12% 12%)',
+                         background: 'linear-gradient(180deg, #c084fc 0%, #a855f7 30%, #9333ea 70%, #7e22ce 100%)'
+                       }}>
+                    
+                    {/* Inner glow and lighting effects */}
+                    <div className="absolute inset-0 pointer-events-none"
                          style={{
-                           clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)'
-                         }}>
-                      <div className="absolute inset-[4px] bg-gradient-to-b from-yellow-400/20 to-transparent"
+                           clipPath: 'polygon(50% 0%, 88% 12%, 88% 88%, 50% 100%, 12% 88%, 12% 12%)',
+                           background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.2) 100%)'
+                         }}></div>
+
+                    {/* Hexagon header banner */}
+                    <div className="relative mt-[3%] mx-auto z-10"
+                         style={{ width: '75%' }}>
+                      <div className="relative bg-gradient-to-b from-purple-700 via-purple-800 to-purple-900 px-[6vw] py-[1.5vh] border-4 border-yellow-400 shadow-[0_0_20px_rgba(234,179,8,0.8)]"
                            style={{
-                             clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)'
-                           }}></div>
-                      <h1 className="font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-orange-400 text-center drop-shadow-[0_2px_10px_rgba(0,0,0,1)] relative z-10"
-                          style={{ 
-                            fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
-                            WebkitTextStroke: '1.5px rgba(255,165,0,0.4)',
-                            letterSpacing: '0.05em'
-                          }}>
-                        DAILY GIFT
-                      </h1>
-                    </div>
-                  </div>
-
-                  {/* Content area */}
-                  <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[6%] pb-[8%]">
-                    {/* 3 Stars */}
-                    <div className="flex gap-[3vw] my-[2vh]">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} style={{ fontSize: 'clamp(2.5rem, 10vw, 4rem)' }}>
-                          ⭐
-                        </div>
-                      ))}
+                             clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
+                           }}>
+                        <div className="absolute inset-[3px] bg-gradient-to-b from-yellow-400/15 to-transparent"
+                             style={{
+                               clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
+                             }}></div>
+                        <h1 className="font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-orange-400 text-center drop-shadow-[0_2px_8px_rgba(0,0,0,1)] relative z-10"
+                            style={{ 
+                              fontSize: 'clamp(1.25rem, 5vw, 2rem)',
+                              WebkitTextStroke: '1px rgba(255,165,0,0.3)',
+                              letterSpacing: '0.03em'
+                            }}>
+                          DAILY GIFT
+                        </h1>
+                      </div>
                     </div>
 
-                    {/* Day counter */}
-                    <p className="font-black text-white text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] mb-[1vh]" 
-                       style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)', letterSpacing: '0.05em' }}>
-                      DAY {weeklyEntryCount + 1}
-                    </p>
-
-                    {/* 7 mini stars progress */}
-                    <div className="flex gap-[1.5vw] justify-center mb-[2vh]">
-                      {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-                        <div
-                          key={day}
-                          className={`transition-all duration-500 ${day <= weeklyEntryCount + 1 ? 'scale-100 opacity-100' : 'scale-75 opacity-30'}`}
-                          style={{ 
-                            fontSize: 'clamp(1rem, 4vw, 1.5rem)',
-                            filter: day <= weeklyEntryCount + 1 ? 'drop-shadow(0 0 6px gold)' : 'grayscale(1)'
-                          }}
-                        >
-                          {day <= weeklyEntryCount + 1 ? '⭐' : '☆'}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Streak text */}
-                    <p className="text-white font-bold text-center drop-shadow-lg mb-[2vh]" 
-                       style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}>
-                      {weeklyEntryCount + 1}. napi belépés 🔥
-                    </p>
-
-                    {/* Reward box - gold border, purple background */}
-                    <div className="bg-gradient-to-b from-purple-600 to-purple-800 border-4 border-yellow-400 rounded-xl px-[6vw] py-[2vh] shadow-[0_4px_15px_rgba(0,0,0,0.5)] mb-[3vh]">
-                      {isPremium ? (
-                        <div className="flex flex-col items-center gap-[0.5vh]">
-                          <div className="flex items-center gap-[2vw]">
-                            <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(255,215,0,0.8)]" 
-                                 style={{ width: 'clamp(1.5rem, 6vw, 2.25rem)', height: 'clamp(1.5rem, 6vw, 2.25rem)', border: '2px solid #FFD700' }}></div>
-                            <span className="font-black text-yellow-300/50 line-through" 
-                                  style={{ fontSize: 'clamp(1rem, 4.5vw, 1.5rem)' }}>
-                              +{nextReward / 2}
-                            </span>
+                    {/* Content area */}
+                    <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[5%] pb-[5%]">
+                      {/* 3 Big Stars */}
+                      <div className="flex gap-[2.5vw] my-[1.5vh]">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} style={{ fontSize: 'clamp(2.25rem, 9vw, 3.5rem)' }}>
+                            ⭐
                           </div>
+                        ))}
+                      </div>
+
+                      {/* Day counter */}
+                      <p className="font-black text-white text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] mb-[1vh]" 
+                         style={{ fontSize: 'clamp(1.5rem, 6vw, 2.5rem)', letterSpacing: '0.05em' }}>
+                        DAY {weeklyEntryCount + 1}
+                      </p>
+
+                      {/* 7 mini stars progress */}
+                      <div className="flex gap-[1.5vw] justify-center mb-[1.5vh]">
+                        {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+                          <div
+                            key={day}
+                            className={`transition-all duration-500 ${day <= weeklyEntryCount + 1 ? 'scale-100 opacity-100' : 'scale-75 opacity-30'}`}
+                            style={{ 
+                              fontSize: 'clamp(0.875rem, 3.5vw, 1.25rem)',
+                              filter: day <= weeklyEntryCount + 1 ? 'drop-shadow(0 0 5px gold)' : 'grayscale(1)'
+                            }}
+                          >
+                            {day <= weeklyEntryCount + 1 ? '⭐' : '☆'}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Streak text */}
+                      <p className="text-white font-bold text-center drop-shadow-lg mb-[2vh]" 
+                         style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}>
+                        {weeklyEntryCount + 1}. napi belépés 🔥
+                      </p>
+
+                      {/* Reward box - gold border, purple background */}
+                      <div className="bg-gradient-to-b from-purple-600 to-purple-800 border-4 border-yellow-400 rounded-xl px-[5vw] py-[1.5vh] shadow-[0_3px_12px_rgba(0,0,0,0.4)] mb-[2.5vh]">
+                        {isPremium ? (
+                          <div className="flex flex-col items-center gap-[0.5vh]">
+                            <div className="flex items-center gap-[2vw]">
+                              <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_12px_rgba(255,215,0,0.8)]" 
+                                   style={{ width: 'clamp(1.25rem, 5vw, 2rem)', height: 'clamp(1.25rem, 5vw, 2rem)', border: '2px solid #FFD700' }}></div>
+                              <span className="font-black text-yellow-300/50 line-through" 
+                                    style={{ fontSize: 'clamp(0.875rem, 4vw, 1.25rem)' }}>
+                                +{nextReward / 2}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-[2vw]">
+                              <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(255,215,0,0.9)]" 
+                                   style={{ width: 'clamp(1.75rem, 7vw, 2.5rem)', height: 'clamp(1.75rem, 7vw, 2.5rem)', border: '3px solid #FFD700' }}></div>
+                              <span className="font-black text-yellow-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" 
+                                    style={{ fontSize: 'clamp(1.5rem, 6vw, 2.25rem)' }}>
+                                +{nextReward}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
                           <div className="flex items-center gap-[2vw]">
-                            <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_20px_rgba(255,215,0,0.9)]" 
-                                 style={{ width: 'clamp(2rem, 8vw, 3rem)', height: 'clamp(2rem, 8vw, 3rem)', border: '3px solid #FFD700' }}></div>
-                            <span className="font-black text-yellow-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]" 
-                                  style={{ fontSize: 'clamp(1.75rem, 7vw, 2.75rem)' }}>
+                            <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(255,215,0,0.9)]" 
+                                 style={{ width: 'clamp(1.75rem, 7vw, 2.75rem)', height: 'clamp(1.75rem, 7vw, 2.75rem)', border: '3px solid #FFD700' }}></div>
+                            <span className="font-black text-yellow-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" 
+                                  style={{ fontSize: 'clamp(1.5rem, 6vw, 2.25rem)' }}>
                               +{nextReward}
                             </span>
                           </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-[2vw]">
-                          <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_20px_rgba(255,215,0,0.9)]" 
-                               style={{ width: 'clamp(2rem, 8vw, 3.25rem)', height: 'clamp(2rem, 8vw, 3.25rem)', border: '3px solid #FFD700' }}></div>
-                          <span className="font-black text-yellow-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]" 
-                                style={{ fontSize: 'clamp(1.75rem, 7vw, 2.75rem)' }}>
-                            +{nextReward}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                        )}
+                      </div>
 
-                    {/* 3 Round buttons - pink gradient with hexagon icons */}
-                    <div className="flex gap-[3vw] justify-center">
-                      {/* List button */}
-                      <button className="w-[14vw] h-[14vw] max-w-[70px] max-h-[70px] rounded-full bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 border-4 border-pink-300 shadow-[0_4px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center">
-                        <span style={{ fontSize: 'clamp(1.5rem, 6vw, 2.5rem)' }}>☰</span>
-                      </button>
-                      
-                      {/* OK/COLLECT button */}
-                      {canClaim ? (
-                        <button
-                          onClick={handleClaim}
-                          className="w-[14vw] h-[14vw] max-w-[70px] max-h-[70px] rounded-full bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 hover:from-pink-500 hover:to-pink-700 border-4 border-pink-300 shadow-[0_4px_0_rgba(0,0,0,0.3)] hover:shadow-[0_6px_0_rgba(0,0,0,0.4)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center"
-                        >
-                          <span className="text-white font-black" style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)' }}>OK</span>
+                      {/* 3 Round buttons - pink gradient */}
+                      <div className="flex gap-[3vw] justify-center mt-auto">
+                        {/* List button */}
+                        <button className="w-[13vw] h-[13vw] max-w-[65px] max-h-[65px] rounded-full bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 border-4 border-pink-300 shadow-[0_3px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center">
+                          <span className="text-white font-black" style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)' }}>☰</span>
                         </button>
-                      ) : (
-                        <button className="w-[14vw] h-[14vw] max-w-[70px] max-h-[70px] rounded-full bg-gradient-to-b from-green-400 to-green-600 border-4 border-green-300 shadow-[0_4px_0_rgba(0,0,0,0.3)] flex items-center justify-center">
-                          <span style={{ fontSize: 'clamp(1.5rem, 6vw, 2.5rem)' }}>✓</span>
+                        
+                        {/* OK/COLLECT button */}
+                        {canClaim ? (
+                          <button
+                            onClick={handleClaim}
+                            className="w-[13vw] h-[13vw] max-w-[65px] max-h-[65px] rounded-full bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 hover:from-pink-500 hover:to-pink-700 border-4 border-pink-300 shadow-[0_3px_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_rgba(0,0,0,0.4)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center"
+                          >
+                            <span className="text-white font-black" style={{ fontSize: 'clamp(1rem, 4.5vw, 1.75rem)' }}>OK</span>
+                          </button>
+                        ) : (
+                          <button className="w-[13vw] h-[13vw] max-w-[65px] max-h-[65px] rounded-full bg-gradient-to-b from-green-400 to-green-600 border-4 border-green-300 shadow-[0_3px_0_rgba(0,0,0,0.3)] flex items-center justify-center">
+                            <span className="text-white font-black" style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)' }}>✓</span>
+                          </button>
+                        )}
+                        
+                        {/* Replay button */}
+                        <button className="w-[13vw] h-[13vw] max-w-[65px] max-h-[65px] rounded-full bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 border-4 border-pink-300 shadow-[0_3px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center">
+                          <span className="text-white font-black" style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)' }}>↻</span>
                         </button>
-                      )}
-                      
-                      {/* Replay button */}
-                      <button className="w-[14vw] h-[14vw] max-w-[70px] max-h-[70px] rounded-full bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 border-4 border-pink-300 shadow-[0_4px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center">
-                        <span style={{ fontSize: 'clamp(1.5rem, 6vw, 2.5rem)' }}>↻</span>
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Lives bonus - green circle badge */}
-            {isPremium && (
-              <div className="absolute -right-[8vw] top-[40%] bg-gradient-to-b from-green-400 to-green-600 border-4 border-white rounded-full w-[16vw] h-[16vw] max-w-[80px] max-h-[80px] flex flex-col items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.5)] z-20 animate-bounce">
-                <span className="text-white font-black drop-shadow-lg" style={{ fontSize: 'clamp(1.125rem, 5vw, 1.75rem)' }}>+3</span>
-                <span style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.25rem)' }}>❤️</span>
-              </div>
-            )}
+              {/* Lives bonus - green circle badge */}
+              {isPremium && (
+                <div className="absolute -right-[6vw] top-[35%] bg-gradient-to-b from-green-400 to-green-600 border-4 border-white rounded-full w-[14vw] h-[14vw] max-w-[70px] max-h-[70px] flex flex-col items-center justify-center shadow-[0_5px_15px_rgba(0,0,0,0.4)] z-20 animate-bounce">
+                  <span className="text-white font-black drop-shadow-lg" style={{ fontSize: 'clamp(1rem, 4.5vw, 1.5rem)' }}>+3</span>
+                  <span style={{ fontSize: 'clamp(0.75rem, 3vw, 1rem)' }}>❤️</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Close X button - top right - DELAY 600ms */}
