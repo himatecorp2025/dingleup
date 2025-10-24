@@ -7,12 +7,11 @@ import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserGrowthChart } from '@/components/UserGrowthChart';
-import { ActivityTab } from '@/components/admin/ActivityTab';
 import PlayerBehaviorsTab from '@/components/admin/PlayerBehaviorsTab';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { AdminReportActionDialog } from '@/components/AdminReportActionDialog';
 
-type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports' | 'activity' | 'player-behaviors';
+type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports' | 'player-behaviors';
 type ReportsSubTab = 'development' | 'support';
 
 const AdminDashboard = () => {
@@ -374,15 +373,11 @@ const AdminDashboard = () => {
             <span className="font-medium">Jelentések ({reports.filter(r => r.status === 'pending' || r.status === 'reviewing').length})</span>
           </button>
           <button
-            onClick={() => { setActiveTab('activity'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-              activeTab === 'activity'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
-            }`}
+            onClick={() => { navigate('/admin/analytics'); onItemClick?.(); }}
+            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
           >
-            <Activity className="w-4 h-4 xl:w-5 xl:h-5" />
-            <span className="font-medium">Aktivitás</span>
+            <Activity className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
+            <span className="font-medium">Fejlett Analitika</span>
           </button>
         </nav>
       </div>
@@ -974,9 +969,6 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {activeTab === 'activity' && (
-          <ActivityTab />
-        )}
 
         {activeTab === 'player-behaviors' && (
           <PlayerBehaviorsTab />
