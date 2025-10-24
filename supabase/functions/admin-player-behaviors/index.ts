@@ -74,18 +74,27 @@ Deno.serve(async (req) => {
       
       console.log(`[admin-player-behaviors] ${cat}: fetched ${results?.length || 0} game results from DB`);
 
-      const totalGames = results?.length || 0;
-      const completedGames = results?.filter(r => r.completed === true).length || 0;
-      const uniquePlayers = new Set((results || []).map(r => r.user_id)).size;
+      // Filter out "instant quit" games (no answer AND no timeout)
+      const validGames = (results || []).filter(r => 
+        (r.correct_answers != null && r.correct_answers > 0) || 
+        (r.average_response_time != null && r.average_response_time > 0)
+      );
+      
+      console.log(`[admin-player-behaviors] ${cat}: ${validGames.length} valid games (filtered out instant quits)`);
 
-      const completedResults = (results || []).filter(r => r.completed);
-      const avgCorrectAnswers = completedGames > 0
-        ? (completedResults.reduce((s, r) => s + (r.correct_answers || 0), 0) / completedGames)
+      const totalGames = validGames.length;
+      const completedGames = validGames.filter(r => r.completed === true).length;
+      const uniquePlayers = new Set(validGames.map(r => r.user_id)).size;
+
+      // Average correct answers across ALL valid games (not just completed)
+      const avgCorrectAnswers = totalGames > 0
+        ? (validGames.reduce((s, r) => s + (r.correct_answers || 0), 0) / totalGames)
         : 0;
 
-      const resultsWithTime = completedResults.filter(r => r.average_response_time != null);
-      const avgResponseTime = resultsWithTime.length > 0
-        ? (resultsWithTime.reduce((s, r) => s + Number(r.average_response_time), 0) / resultsWithTime.length)
+      // Average response time across ALL valid games that have response time
+      const gamesWithTime = validGames.filter(r => r.average_response_time != null && r.average_response_time > 0);
+      const avgResponseTime = gamesWithTime.length > 0
+        ? (gamesWithTime.reduce((s, r) => s + Number(r.average_response_time), 0) / gamesWithTime.length)
         : 0;
 
       // help usage aggregation with service role (bypasses RLS)
