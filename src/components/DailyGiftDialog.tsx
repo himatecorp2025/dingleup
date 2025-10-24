@@ -119,8 +119,8 @@ const DailyGiftDialog = ({
         <div 
           className="fixed inset-0 flex flex-col items-center justify-center py-4 overflow-y-auto"
         >
-          {/* Background layer - 75% transparent (25% opacity) */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 opacity-25"></div>
+          {/* Background layer - lila háttér */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 opacity-75"></div>
           {/* Animated radial glow from center - FULL OPACITY */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div 

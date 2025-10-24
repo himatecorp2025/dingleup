@@ -30,7 +30,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         ${className}
       `}
       style={{
-        width: 'min(88vw, 420px)',
+        width: 'min(94vw, 520px)',
         height: 'clamp(68px, 16vh, 84px)',
         padding: '6px 0'
       }}
@@ -109,16 +109,27 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         <path
           d="M 210 9 L 264 23 L 264 57 L 210 71 L 156 57 L 156 23 Z"
           fill="url(#hex-green-crystal)"
-          className="animate-[shine_3s_ease-in-out_infinite]"
-        />
+        >
+          <animate
+            attributeName="opacity"
+            values="1;0.85;1"
+            dur="3s"
+            repeatCount="indefinite"
+          />
+        </path>
 
         {/* Casino Shine Animation Layer */}
         <path
           d="M 210 9 L 264 23 L 264 57 L 210 71 L 156 57 L 156 23 Z"
           fill="url(#shine-sweep)"
-          opacity="0"
-          className="animate-[flash_4s_ease-in-out_infinite]"
-        />
+        >
+          <animate
+            attributeName="opacity"
+            values="0;0.6;0"
+            dur="4s"
+            repeatCount="indefinite"
+          />
+        </path>
         
         <defs>
           <linearGradient id="shine-sweep" x1="0%" y1="0%" x2="100%" y2="0%">
