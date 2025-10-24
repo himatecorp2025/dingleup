@@ -29,6 +29,19 @@ const DailyGiftDialog = ({
 }: DailyGiftDialogProps) => {
   const [userId, setUserId] = useState<string | null>(null);
   const isHandheld = usePlatformDetection();
+  const [contentVisible, setContentVisible] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      const t = setTimeout(() => setContentVisible(true), 10);
+      return () => {
+        clearTimeout(t);
+        setContentVisible(false);
+      };
+    } else {
+      setContentVisible(false);
+    }
+  }, [open]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -118,8 +131,7 @@ const DailyGiftDialog = ({
           </div>
 
           {/* Central content container - ZOOM IN ANIMATION */}
-          <div className="relative z-10 flex flex-col items-center opacity-0 animate-[scale-in_0.5s_ease-out_forwards]"
-               style={{ animationDelay: '0.1s' }}>
+          <div className={`relative z-10 flex flex-col items-center transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
             {/* Gift boxes at top - 3D style */}
             <div className="flex gap-[3vw] mb-[2vh]">
               <div className="transform -rotate-12 drop-shadow-2xl" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>🎁</div>
@@ -277,8 +289,8 @@ const DailyGiftDialog = ({
           {/* Close X button - top right - ZOOM IN ANIMATION */}
           <button
             onClick={onLater}
-            className="absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all opacity-0 animate-[scale-in_0.5s_ease-out_forwards]"
-            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', animationDelay: '0.3s' }}
+            className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '150ms' }}
           >
             ×
           </button>
