@@ -586,8 +586,8 @@ export type Database = {
           daily_gift_streak: number | null
           email: string
           help_2x_answer_active: boolean | null
-          help_50_50_active: boolean | null
           help_audience_active: boolean | null
+          help_third_active: boolean | null
           id: string
           invitation_code: string | null
           invitation_rewards_reset_at: string | null
@@ -624,8 +624,8 @@ export type Database = {
           daily_gift_streak?: number | null
           email: string
           help_2x_answer_active?: boolean | null
-          help_50_50_active?: boolean | null
           help_audience_active?: boolean | null
+          help_third_active?: boolean | null
           id: string
           invitation_code?: string | null
           invitation_rewards_reset_at?: string | null
@@ -662,8 +662,8 @@ export type Database = {
           daily_gift_streak?: number | null
           email?: string
           help_2x_answer_active?: boolean | null
-          help_50_50_active?: boolean | null
           help_audience_active?: boolean | null
+          help_third_active?: boolean | null
           id?: string
           invitation_code?: string | null
           invitation_rewards_reset_at?: string | null

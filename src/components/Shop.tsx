@@ -209,7 +209,7 @@ const Shop = ({ userId }: ShopProps) => {
     setLoading('help5050');
     try {
       const { data, error } = await supabase.rpc('reactivate_help', {
-        p_help_type: '50_50',
+        p_help_type: 'third',
         p_cost: 15
       });
       
@@ -217,7 +217,7 @@ const Shop = ({ userId }: ShopProps) => {
       
       const result = data as { success: boolean; error?: string };
       if (result.success) {
-        toast.success('Harmadoló segítség újraaktiválva!');
+        toast.success('1/3 segítség újraaktiválva!');
         await fetchProfile();
       } else {
         toast.error(result.error || 'Hiba történt');
@@ -317,12 +317,12 @@ const Shop = ({ userId }: ShopProps) => {
     },
     {
       id: 'help5050',
-      name: 'Harmadoló Segítség',
+      name: '1/3 Segítség',
       description: 'Újraaktiválás a következő játékhoz',
       price: 15,
       icon: HelpCircle,
       action: reactivateHelp5050,
-      disabled: profile.help_50_50_active
+      disabled: profile.help_third_active
     },
     {
       id: 'help2x',

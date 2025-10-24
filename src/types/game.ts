@@ -47,7 +47,7 @@ export interface UserProfile {
   speed_booster_active: boolean;
   speed_booster_expires_at: string | null;
   speed_booster_multiplier: number;
-  help_50_50_active: boolean;
+  help_third_active: boolean;
   help_2x_answer_active: boolean;
   help_audience_active: boolean;
   daily_gift_streak: number;
@@ -108,7 +108,7 @@ export const getCoinsForQuestion = (questionIndex: number): number => {
 };
 
 export const HELP_REACTIVATION_COSTS = {
-  '50_50': 15,
+  'third': 15,
   '2x_answer': 20,
   'audience': 30
 };

@@ -114,7 +114,7 @@ export const tutorialSteps = {
     {
       target: '[data-tutorial="helpers"]',
       title: 'Segítségek',
-      description: 'Használd a segítségeket, ha elakadtál! 50-50, időmegállítás és kérdés csere állnak rendelkezésedre.',
+      description: 'Használd a segítségeket, ha elakadtál! 1/3, időmegállítás és kérdés csere állnak rendelkezésedre.',
       position: 'bottom' as const
     },
     {

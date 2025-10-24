@@ -32,7 +32,7 @@ const additionalFeatures = [
   {
     icon: Zap,
     title: "Segítségek",
-    description: "Harmadoló, 2× válasz, és közönség segítség minden játékban",
+    description: "1/3, 2× válasz, és közönség segítség minden játékban",
     color: "text-yellow-500"
   },
   {

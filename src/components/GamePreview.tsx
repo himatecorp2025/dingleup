@@ -576,14 +576,14 @@ const GamePreview = () => {
     
     // Check usage count
     if (help5050UsageCount >= 2) {
-      toast.error('A harmadoló segítséget már kétszer használtad ebben a játékban!');
+      toast.error('Az 1/3 segítséget már kétszer használtad ebben a játékban!');
       return;
     }
     
     const cost = help5050UsageCount === 0 ? 0 : 15; // First free, second costs 15 coins
     
     // First usage - free
-    if (help5050UsageCount === 0 && profile?.help_50_50_active) {
+    if (help5050UsageCount === 0 && profile?.help_third_active) {
       const currentQuestion = questions[currentQuestionIndex];
       const thirdAnswerKey = currentQuestion.third;
       
@@ -591,10 +591,10 @@ const GamePreview = () => {
       setIsHelp5050ActiveThisQuestion(true);
       setHelp5050UsageCount(1);
       
-      await supabase.rpc('use_help', { p_help_type: '50_50' });
+      await supabase.rpc('use_help', { p_help_type: 'third' });
       await refreshProfile();
       
-      toast.info('Harmadoló segítség aktiválva - első használat ingyenes!');
+      toast.info('1/3 segítség aktiválva - első használat ingyenes!');
       return;
     }
     
@@ -617,7 +617,7 @@ const GamePreview = () => {
         setRemovedAnswer(thirdAnswerKey);
         setIsHelp5050ActiveThisQuestion(true);
         setHelp5050UsageCount(2);
-        toast.success('Harmadoló segítség aktiválva - 15 aranyérme levonva!');
+        toast.success('1/3 segítség aktiválva - 15 aranyérme levonva!');
       }
     }
   };
