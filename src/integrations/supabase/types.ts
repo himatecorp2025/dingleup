@@ -521,6 +521,76 @@ export type Database = {
           },
         ]
       }
+      game_question_analytics: {
+        Row: {
+          category: string
+          created_at: string
+          difficulty_level: string | null
+          game_result_id: string | null
+          help_used: string | null
+          id: string
+          is_genius_user: boolean | null
+          question_id: string | null
+          question_index: number
+          response_time_seconds: number
+          session_id: string
+          user_id: string
+          was_correct: boolean
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          difficulty_level?: string | null
+          game_result_id?: string | null
+          help_used?: string | null
+          id?: string
+          is_genius_user?: boolean | null
+          question_id?: string | null
+          question_index: number
+          response_time_seconds: number
+          session_id: string
+          user_id: string
+          was_correct: boolean
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          difficulty_level?: string | null
+          game_result_id?: string | null
+          help_used?: string | null
+          id?: string
+          is_genius_user?: boolean | null
+          question_id?: string | null
+          question_index?: number
+          response_time_seconds?: number
+          session_id?: string
+          user_id?: string
+          was_correct?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_question_analytics_game_result_id_fkey"
+            columns: ["game_result_id"]
+            isOneToOne: false
+            referencedRelation: "game_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_question_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_question_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       game_results: {
         Row: {
           average_response_time: number | null
@@ -1573,6 +1643,147 @@ export type Database = {
             foreignKeyName: "user_boosters_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_cohorts: {
+        Row: {
+          became_genius_day: number | null
+          churn_risk_score: number | null
+          cohort_month: string
+          cohort_week: string
+          created_at: string
+          first_purchase_day: number | null
+          is_retained_d1: boolean | null
+          is_retained_d14: boolean | null
+          is_retained_d30: boolean | null
+          is_retained_d7: boolean | null
+          last_active_date: string | null
+          registration_date: string
+          total_games: number | null
+          total_purchases: number | null
+          total_sessions: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          became_genius_day?: number | null
+          churn_risk_score?: number | null
+          cohort_month: string
+          cohort_week: string
+          created_at?: string
+          first_purchase_day?: number | null
+          is_retained_d1?: boolean | null
+          is_retained_d14?: boolean | null
+          is_retained_d30?: boolean | null
+          is_retained_d7?: boolean | null
+          last_active_date?: string | null
+          registration_date: string
+          total_games?: number | null
+          total_purchases?: number | null
+          total_sessions?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          became_genius_day?: number | null
+          churn_risk_score?: number | null
+          cohort_month?: string
+          cohort_week?: string
+          created_at?: string
+          first_purchase_day?: number | null
+          is_retained_d1?: boolean | null
+          is_retained_d14?: boolean | null
+          is_retained_d30?: boolean | null
+          is_retained_d7?: boolean | null
+          last_active_date?: string | null
+          registration_date?: string
+          total_games?: number | null
+          total_purchases?: number | null
+          total_sessions?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_cohorts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_cohorts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_engagement_scores: {
+        Row: {
+          created_at: string
+          factors: Json
+          game_score: number | null
+          last_calculated: string
+          previous_score: number | null
+          purchase_score: number | null
+          retention_score: number | null
+          score: number
+          score_tier: string
+          score_trend: string | null
+          session_score: number | null
+          social_score: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          factors?: Json
+          game_score?: number | null
+          last_calculated?: string
+          previous_score?: number | null
+          purchase_score?: number | null
+          retention_score?: number | null
+          score: number
+          score_tier: string
+          score_trend?: string | null
+          session_score?: number | null
+          social_score?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          factors?: Json
+          game_score?: number | null
+          last_calculated?: string
+          previous_score?: number | null
+          purchase_score?: number | null
+          retention_score?: number | null
+          score?: number
+          score_tier?: string
+          score_trend?: string | null
+          session_score?: number | null
+          social_score?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_engagement_scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_engagement_scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
             referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
