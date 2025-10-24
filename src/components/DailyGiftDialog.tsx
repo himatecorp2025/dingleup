@@ -44,11 +44,16 @@ const DailyGiftDialog = ({
     if (!badgeRef.current || !buttonWrapperRef.current) return;
 
     const INNER_TO_OUTER_RATIO = 132 / 108; // outerHexWidth / innerGreenWidth
+    const WIDTH_SCALE = 1.36; // extra horizontal widening as requested
 
     const syncWidth = () => {
       const badgeWidth = badgeRef.current?.getBoundingClientRect().width;
+      const containerWidth = buttonWrapperRef.current?.parentElement?.getBoundingClientRect().width || 0;
       if (badgeWidth && buttonWrapperRef.current) {
-        const targetButtonWidth = Math.round(badgeWidth * INNER_TO_OUTER_RATIO);
+        const targetButtonWidth = Math.min(
+          Math.round(badgeWidth * INNER_TO_OUTER_RATIO * WIDTH_SCALE),
+          Math.round(containerWidth * 0.94)
+        );
         buttonWrapperRef.current.style.setProperty('--sync-width', `${targetButtonWidth}px`);
       }
     };
