@@ -14,6 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_session_events: {
+        Row: {
+          created_at: string
+          device_info: Json | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          session_duration_seconds: number | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_info?: Json | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          session_duration_seconds?: number | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_info?: Json | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          session_duration_seconds?: number | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      bonus_claim_events: {
+        Row: {
+          bonus_type: string
+          coins_amount: number | null
+          created_at: string
+          event_type: string
+          id: string
+          is_subscriber: boolean | null
+          lives_amount: number | null
+          metadata: Json | null
+          session_id: string
+          streak_day: number | null
+          user_id: string
+        }
+        Insert: {
+          bonus_type: string
+          coins_amount?: number | null
+          created_at?: string
+          event_type: string
+          id?: string
+          is_subscriber?: boolean | null
+          lives_amount?: number | null
+          metadata?: Json | null
+          session_id: string
+          streak_day?: number | null
+          user_id: string
+        }
+        Update: {
+          bonus_type?: string
+          coins_amount?: number | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          is_subscriber?: boolean | null
+          lives_amount?: number | null
+          metadata?: Json | null
+          session_id?: string
+          streak_day?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chat_interaction_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          session_id: string
+          target_user_id: string | null
+          thread_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          session_id: string
+          target_user_id?: string | null
+          thread_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          session_id?: string
+          target_user_id?: string | null
+          thread_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       conversation_members: {
         Row: {
           conversation_id: string
@@ -144,6 +252,39 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_usage_events: {
+        Row: {
+          action: string | null
+          created_at: string
+          event_type: string
+          feature_name: string
+          id: string
+          metadata: Json | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          action?: string | null
+          created_at?: string
+          event_type: string
+          feature_name: string
+          id?: string
+          metadata?: Json | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string | null
+          created_at?: string
+          event_type?: string
+          feature_name?: string
+          id?: string
+          metadata?: Json | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       friend_request_rate_limit: {
         Row: {
           last_request_at: string
@@ -192,6 +333,51 @@ export type Database = {
           updated_at?: string
           user_id_a?: string
           user_id_b?: string
+        }
+        Relationships: []
+      }
+      game_exit_events: {
+        Row: {
+          category: string
+          correct_answers: number | null
+          created_at: string
+          event_type: string
+          exit_reason: string | null
+          id: string
+          metadata: Json | null
+          question_index: number
+          session_id: string
+          time_played_seconds: number | null
+          total_questions: number | null
+          user_id: string
+        }
+        Insert: {
+          category: string
+          correct_answers?: number | null
+          created_at?: string
+          event_type: string
+          exit_reason?: string | null
+          id?: string
+          metadata?: Json | null
+          question_index: number
+          session_id: string
+          time_played_seconds?: number | null
+          total_questions?: number | null
+          user_id: string
+        }
+        Update: {
+          category?: string
+          correct_answers?: number | null
+          created_at?: string
+          event_type?: string
+          exit_reason?: string | null
+          id?: string
+          metadata?: Json | null
+          question_index?: number
+          session_id?: string
+          time_played_seconds?: number | null
+          total_questions?: number | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -618,6 +804,42 @@ export type Database = {
           },
         ]
       }
+      navigation_events: {
+        Row: {
+          created_at: string
+          device_info: Json | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          page_route: string
+          previous_route: string | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_info?: Json | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          page_route: string
+          previous_route?: string | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_info?: Json | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          page_route?: string
+          previous_route?: string | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -848,6 +1070,48 @@ export type Database = {
           },
         ]
       }
+      shop_interactions: {
+        Row: {
+          created_at: string
+          currency: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          price_amount: number | null
+          product_id: string | null
+          product_name: string | null
+          product_type: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          price_amount?: number | null
+          product_id?: string | null
+          product_name?: string | null
+          product_type: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          price_amount?: number | null
+          product_id?: string | null
+          product_name?: string | null
+          product_type?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           created_at: string
@@ -863,6 +1127,45 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+        }
+        Relationships: []
+      }
+      subscription_promo_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          promo_trigger: string | null
+          promo_type: string
+          session_id: string
+          time_since_last_shown_seconds: number | null
+          times_shown_before: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          promo_trigger?: string | null
+          promo_type: string
+          session_id: string
+          time_since_last_shown_seconds?: number | null
+          times_shown_before?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          promo_trigger?: string | null
+          promo_type?: string
+          session_id?: string
+          time_since_last_shown_seconds?: number | null
+          times_shown_before?: number | null
+          user_id?: string
         }
         Relationships: []
       }
