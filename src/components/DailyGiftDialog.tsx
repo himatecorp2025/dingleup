@@ -183,9 +183,13 @@ const DailyGiftDialog = ({
                       }
                       @keyframes starFloat${i % 40} {
                         0% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
+                        12.5% { transform: translate(calc(-50% + ${endX + floatX * 0.25}vw), calc(-50% + ${endY + floatY * 0.25}vh)); }
                         25% { transform: translate(calc(-50% + ${endX + floatX * 0.5}vw), calc(-50% + ${endY + floatY * 0.5}vh)); }
+                        37.5% { transform: translate(calc(-50% + ${endX + floatX * 0.75}vw), calc(-50% + ${endY + floatY * 0.75}vh)); }
                         50% { transform: translate(calc(-50% + ${endX + floatX}vw), calc(-50% + ${endY + floatY}vh)); }
+                        62.5% { transform: translate(calc(-50% + ${endX + floatX * 0.75}vw), calc(-50% + ${endY - floatY * 0.25}vh)); }
                         75% { transform: translate(calc(-50% + ${endX + floatX * 0.5}vw), calc(-50% + ${endY - floatY * 0.5}vh)); }
+                        87.5% { transform: translate(calc(-50% + ${endX + floatX * 0.25}vw), calc(-50% + ${endY - floatY * 0.25}vh)); }
                         100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
                       }
                     `}</style>
@@ -293,14 +297,16 @@ const DailyGiftDialog = ({
                     {isPremium ? (
                       <div className="flex flex-col items-center gap-[0.5vh]">
                         <div className="flex items-center gap-[2vw]">
-                          <span style={{ fontSize: 'clamp(1.5rem, 6vw, 2.25rem)' }}>🪙</span>
+                          <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(255,215,0,0.8)]" 
+                               style={{ width: 'clamp(1.5rem, 6vw, 2.25rem)', height: 'clamp(1.5rem, 6vw, 2.25rem)', border: '2px solid #FFD700' }}></div>
                           <span className="font-black text-yellow-300/50 line-through" 
                                 style={{ fontSize: 'clamp(1rem, 4.5vw, 1.5rem)' }}>
                             +{nextReward / 2}
                           </span>
                         </div>
                         <div className="flex items-center gap-[2vw]">
-                          <span style={{ fontSize: 'clamp(2rem, 8vw, 3rem)' }}>🪙</span>
+                          <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_20px_rgba(255,215,0,0.9)]" 
+                               style={{ width: 'clamp(2rem, 8vw, 3rem)', height: 'clamp(2rem, 8vw, 3rem)', border: '3px solid #FFD700' }}></div>
                           <span className="font-black text-yellow-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]" 
                                 style={{ fontSize: 'clamp(1.75rem, 7vw, 2.75rem)' }}>
                             +{nextReward}
@@ -309,7 +315,8 @@ const DailyGiftDialog = ({
                       </div>
                     ) : (
                       <div className="flex items-center gap-[2vw]">
-                        <span style={{ fontSize: 'clamp(2rem, 8vw, 3.25rem)' }}>🪙</span>
+                        <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_20px_rgba(255,215,0,0.9)]" 
+                             style={{ width: 'clamp(2rem, 8vw, 3.25rem)', height: 'clamp(2rem, 8vw, 3.25rem)', border: '3px solid #FFD700' }}></div>
                         <span className="font-black text-yellow-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]" 
                               style={{ fontSize: 'clamp(1.75rem, 7vw, 2.75rem)' }}>
                           +{nextReward}
