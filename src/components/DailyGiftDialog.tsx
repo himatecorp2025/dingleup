@@ -137,17 +137,17 @@ const DailyGiftDialog = ({
                    filter: 'blur(20px)'
                  }}></div>
 
-            {/* Shield/badge shape */}
+            {/* Flag/Banner shape */}
             <div className="relative bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 border-8 border-yellow-500 shadow-[0_0_60px_rgba(234,179,8,0.8)] p-[5vw] w-[70vw] max-w-[400px]"
                  style={{
-                   clipPath: 'polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0% 80%, 0% 20%)',
+                   clipPath: 'polygon(0% 0%, 100% 0%, 100% 75%, 95% 80%, 90% 85%, 85% 88%, 80% 90%, 75% 91%, 70% 92%, 65% 92%, 60% 92%, 55% 91%, 50% 90%, 45% 91%, 40% 92%, 35% 92%, 30% 92%, 25% 91%, 20% 90%, 15% 88%, 10% 85%, 5% 80%, 0% 75%)',
                    aspectRatio: '0.85'
                  }}>
               
               {/* Inner glow */}
               <div className="absolute inset-[12px] bg-gradient-to-b from-yellow-400/20 via-transparent to-transparent rounded-xl pointer-events-none"
                    style={{
-                     clipPath: 'polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0% 80%, 0% 20%)'
+                     clipPath: 'polygon(0% 0%, 100% 0%, 100% 75%, 95% 80%, 90% 85%, 85% 88%, 80% 90%, 75% 91%, 70% 92%, 65% 92%, 60% 92%, 55% 91%, 50% 90%, 45% 91%, 40% 92%, 35% 92%, 30% 92%, 25% 91%, 20% 90%, 15% 88%, 10% 85%, 5% 80%, 0% 75%)'
                    }}></div>
 
               {/* Content */}
@@ -158,11 +158,11 @@ const DailyGiftDialog = ({
                   DAY {weeklyEntryCount + 1}
                 </p>
 
-                {/* Stars */}
+                {/* Stars - 3 active ones */}
                 <div className="flex gap-[3vw] justify-center">
                   {[1, 2, 3].map((i) => (
                     <div key={i} style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)' }}>
-                      {i <= Math.min(weeklyEntryCount + 1, 3) ? '⭐' : '☆'}
+                      {i <= Math.min(weeklyEntryCount + 1, 3) ? '⭐' : '⭐'}
                     </div>
                   ))}
                 </div>
@@ -213,6 +213,19 @@ const DailyGiftDialog = ({
               <span style={{ fontSize: 'clamp(1rem, 4vw, 1.5rem)' }}>❤️</span>
             </div>
           )}
+
+          {/* 7 stars at bottom - day progress */}
+          <div className="flex gap-[2vw] mt-[4vh] justify-center z-10">
+            {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+              <div
+                key={day}
+                className={`transition-all ${day <= weeklyEntryCount + 1 ? 'opacity-100 scale-110' : 'opacity-40'}`}
+                style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)' }}
+              >
+                {day <= weeklyEntryCount + 1 ? '⭐' : '⭐'}
+              </div>
+            ))}
+          </div>
 
           {/* COLLECT button */}
           {canClaim ? (
