@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { CalendarIcon, TrendingUp, Users, Target, HelpCircle } from 'lucide-react';
-import { format } from 'date-fns';
-import { hu } from 'date-fns/locale';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { TrendingUp, Users, Target, HelpCircle } from 'lucide-react';
+import { format, subDays, subMonths } from 'date-fns';
 
 interface CategoryStats {
   category: string;
@@ -39,9 +36,10 @@ const HELP_TYPES = [
   { id: '2x_answer', name: 'Dupla válasz', icon: '✌️' }
 ];
 
+type DateRangeOption = 'all' | '3d' | '7d' | '15d' | '30d' | '6m' | '12m';
+
 export default function PlayerBehaviorsTab() {
-  const [startDate, setStartDate] = useState<Date | undefined>();
-  const [endDate, setEndDate] = useState<Date | undefined>();
+  const [dateRange, setDateRange] = useState<DateRangeOption>('all');
   const [stats, setStats] = useState<CategoryStats[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,7 +50,7 @@ export default function PlayerBehaviorsTab() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [startDate, endDate]);
+  }, [dateRange]);
 
   // Realtime subscription for instant updates
   useEffect(() => {
@@ -84,16 +82,37 @@ export default function PlayerBehaviorsTab() {
       supabase.removeChannel(gameResultsChannel);
       supabase.removeChannel(helpUsageChannel);
     };
-  }, [startDate, endDate]);
+  }, [dateRange]);
 
   useEffect(() => {
     fetchStats();
-  }, [startDate, endDate]);
+  }, [dateRange]);
+
+  const getDateRange = () => {
+    const now = new Date();
+    switch (dateRange) {
+      case '3d':
+        return { start: subDays(now, 3), end: now };
+      case '7d':
+        return { start: subDays(now, 7), end: now };
+      case '15d':
+        return { start: subDays(now, 15), end: now };
+      case '30d':
+        return { start: subDays(now, 30), end: now };
+      case '6m':
+        return { start: subMonths(now, 6), end: now };
+      case '12m':
+        return { start: subMonths(now, 12), end: now };
+      default:
+        return { start: null, end: null };
+    }
+  };
 
   const fetchStats = async () => {
     try {
-      const startDateStr = startDate ? format(startDate, 'yyyy-MM-dd') : null;
-      const endDateStr = endDate ? format(endDate, 'yyyy-MM-dd 23:59:59') : null;
+      const { start, end } = getDateRange();
+      const startDateStr = start ? format(start, 'yyyy-MM-dd') : null;
+      const endDateStr = end ? format(end, 'yyyy-MM-dd 23:59:59') : null;
 
       const categoryStats: CategoryStats[] = [];
 
@@ -188,41 +207,20 @@ export default function PlayerBehaviorsTab() {
           <p className="text-white/70">Kategóriánkénti statisztikák és segítséghasználat</p>
         </div>
         
-        <div className="flex gap-2">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-[140px] justify-start text-left">
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {startDate ? format(startDate, 'P', { locale: hu }) : 'Összes adat'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={startDate}
-                onSelect={setStartDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-[140px] justify-start text-left">
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {endDate ? format(endDate, 'P', { locale: hu }) : 'Mai napig'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={endDate}
-                onSelect={setEndDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
+        <Select value={dateRange} onValueChange={(value: DateRangeOption) => setDateRange(value)}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Időszak kiválasztása" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Összes adat</SelectItem>
+            <SelectItem value="3d">Elmúlt 3 nap</SelectItem>
+            <SelectItem value="7d">Elmúlt 7 nap</SelectItem>
+            <SelectItem value="15d">Elmúlt 15 nap</SelectItem>
+            <SelectItem value="30d">Elmúlt 30 nap</SelectItem>
+            <SelectItem value="6m">Elmúlt 6 hónap</SelectItem>
+            <SelectItem value="12m">Elmúlt 12 hónap</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {loading ? (
