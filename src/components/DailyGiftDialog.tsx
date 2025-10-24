@@ -199,164 +199,184 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central content container - STAGGERED ZOOM IN ANIMATION */}
-          <div className="relative z-10 flex flex-col items-center">
-            {/* Gift boxes at top - 3D style - DELAY 0ms - 15% bigger and closer to banner */}
-            <div className={`flex gap-[3vw] mb-[0.5vh] transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
-              <div className="transform -rotate-12 drop-shadow-2xl" style={{ fontSize: 'clamp(2.875rem, 11.5vw, 5.175rem)' }}>🎁</div>
-              <div className="transform rotate-6 drop-shadow-2xl" style={{ fontSize: 'clamp(3.45rem, 13.8vw, 6.325rem)' }}>🎁</div>
-              <div className="transform -rotate-6 drop-shadow-2xl" style={{ fontSize: 'clamp(2.875rem, 11.5vw, 5.175rem)' }}>🎁</div>
-            </div>
+          {/* Central HEXAGON container - DELAY 300ms */}
+          <div className={`relative z-10 transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+               style={{ transitionDelay: '300ms' }}>
+            
+            {/* Purple radial glow effect behind hexagon */}
+            <div className="absolute inset-0 -z-10"
+                 style={{
+                   background: 'radial-gradient(ellipse, rgba(147,51,234,0.8) 0%, rgba(126,34,206,0.6) 25%, rgba(107,33,168,0.4) 40%, rgba(88,28,135,0.2) 55%, transparent 70%)',
+                   width: '180%',
+                   height: '180%',
+                   left: '-40%',
+                   top: '-40%',
+                   filter: 'blur(30px)',
+                   animation: 'pulse 3s ease-in-out infinite'
+                 }}></div>
 
-            {/* DAILY GIFT banner with 3D ribbon - DELAY 150ms */}
-            <div className={`relative mb-[3vh] transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-                 style={{ transitionDelay: '150ms' }}>
-              <div className="relative bg-gradient-to-b from-red-500 via-red-600 to-red-700 px-[12vw] py-[2.5vh] shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+            {/* Outer hexagon - light pink/purple thick border */}
+            <div className="relative"
+                 style={{
+                   width: 'clamp(300px, 70vw, 480px)',
+                   height: 'clamp(400px, 90vh, 650px)',
+                   clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                   background: 'linear-gradient(135deg, #f0c1ff 0%, #e0b3ff 50%, #d1a5ff 100%)',
+                   padding: '12px',
+                   filter: 'drop-shadow(0 0 30px rgba(147,51,234,0.6))'
+                 }}>
+              
+              {/* Middle hexagon - gold border */}
+              <div className="absolute inset-[12px]"
                    style={{
-                     clipPath: 'polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 85% 95%, 50% 100%, 15% 95%, 5% 100%, 0% 50%)'
-                   }}>
-                {/* 3D effect layers */}
-                <div className="absolute inset-0 bg-gradient-to-b from-red-400/30 to-transparent"
-                     style={{
-                       clipPath: 'polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 85% 95%, 50% 100%, 15% 95%, 5% 100%, 0% 50%)'
-                     }}></div>
-                
-                <h1 className="font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-orange-400 text-center drop-shadow-[0_4px_15px_rgba(0,0,0,1)] relative z-10"
-                    style={{ 
-                      fontSize: 'clamp(2rem, 8vw, 3.5rem)',
-                      WebkitTextStroke: '2px rgba(255,165,0,0.5)',
-                      letterSpacing: '0.08em'
-                    }}>
-                  DAILY GIFT
-                </h1>
-              </div>
-            </div>
-
-            {/* Central flag/banner - with purple radial glow - DELAY 300ms */}
-            <div className={`relative transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-                 style={{ transitionDelay: '300ms' }}>
-              {/* Purple radial glow effect behind flag */}
-              <div className="absolute inset-0 -z-10"
-                   style={{
-                     background: 'radial-gradient(ellipse, rgba(147,51,234,0.8) 0%, rgba(126,34,206,0.6) 25%, rgba(107,33,168,0.4) 40%, rgba(88,28,135,0.2) 55%, transparent 70%)',
-                     width: '180%',
-                     height: '180%',
-                     left: '-40%',
-                     top: '-40%',
-                     filter: 'blur(30px)',
-                     animation: 'pulse 3s ease-in-out infinite'
-                   }}></div>
-
-              {/* Flag/Banner shape */}
-              <div ref={flagRef} className="relative bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 border-8 border-yellow-500 shadow-[0_0_80px_rgba(234,179,8,0.9)] p-[6vw]"
-                   style={{
-                     clipPath: 'polygon(0% 0%, 100% 0%, 100% 75%, 95% 80%, 90% 85%, 85% 88%, 80% 90%, 75% 91%, 70% 92%, 65% 92%, 60% 92%, 55% 91%, 50% 90%, 45% 91%, 40% 92%, 35% 92%, 30% 92%, 25% 91%, 20% 90%, 15% 88%, 10% 85%, 5% 80%, 0% 75%)',
-                     width: 'clamp(280px, 55vw, 450px)',
-                     minHeight: '50vh',
-                     maxHeight: '55vh'
+                     clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                     background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)',
+                     padding: '6px'
                    }}>
                 
-                {/* Inner golden glow */}
-                <div className="absolute inset-[12px] bg-gradient-to-b from-yellow-400/25 via-yellow-500/10 to-transparent pointer-events-none"
+                {/* Inner hexagon - purple gradient background */}
+                <div ref={flagRef} className="absolute inset-[6px] flex flex-col"
                      style={{
-                       clipPath: 'polygon(0% 0%, 100% 0%, 100% 75%, 95% 80%, 90% 85%, 85% 88%, 80% 90%, 75% 91%, 70% 92%, 65% 92%, 60% 92%, 55% 91%, 50% 90%, 45% 91%, 40% 92%, 35% 92%, 30% 92%, 25% 91%, 20% 90%, 15% 88%, 10% 85%, 5% 80%, 0% 75%)'
-                     }}></div>
-                
-                {/* Wavy bottom edge gradient effect */}
-                <div className="absolute bottom-0 left-0 right-0 h-[15%] bg-gradient-to-b from-transparent via-yellow-500/30 to-pink-500/40 pointer-events-none"
-                     style={{
-                       clipPath: 'polygon(0% 25%, 5% 30%, 10% 35%, 15% 38%, 20% 40%, 25% 41%, 30% 42%, 35% 42%, 40% 42%, 45% 41%, 50% 40%, 55% 41%, 60% 42%, 65% 42%, 70% 42%, 75% 41%, 80% 40%, 85% 38%, 90% 35%, 95% 30%, 100% 25%, 100% 100%, 0% 100%)'
-                     }}></div>
+                       clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                       background: 'linear-gradient(180deg, #a855f7 0%, #9333ea 50%, #7e22ce 100%)'
+                     }}>
+                  
+                  {/* Inner glow */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-yellow-400/20 via-transparent to-purple-900/30 pointer-events-none"
+                       style={{
+                         clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+                       }}></div>
 
-                {/* Content */}
-                <div className="relative z-10 flex flex-col items-center justify-center h-full space-y-[2.5vh]">
-                  {/* DAY X */}
-                  <p className="font-black text-white text-center drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]" 
-                     style={{ fontSize: 'clamp(1.5rem, 6vw, 2.25rem)', letterSpacing: '0.1em' }}>
-                    DAY {weeklyEntryCount + 1}
-                  </p>
-
-                  {/* 7 Stars - day progress */}
-                  <div className="flex gap-[2vw] justify-center py-[1vh]">
-                    {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-                      <div
-                        key={day}
-                        className={`transition-all duration-500 ${day <= weeklyEntryCount + 1 ? 'scale-100 opacity-100' : 'scale-75 opacity-30'}`}
-                        style={{ 
-                          fontSize: 'clamp(1.25rem, 5vw, 2rem)',
-                          filter: day <= weeklyEntryCount + 1 ? 'drop-shadow(0 0 8px gold)' : 'grayscale(1)'
-                        }}
-                      >
-                        {day <= weeklyEntryCount + 1 ? '⭐' : '☆'}
-                      </div>
-                    ))}
+                  {/* Hexagon header banner */}
+                  <div className="relative mt-[5%] mx-auto z-10"
+                       style={{ width: '80%' }}>
+                    <div className="relative bg-gradient-to-b from-purple-700 via-purple-800 to-purple-900 px-[8vw] py-[2vh] border-4 border-yellow-400 shadow-[0_0_25px_rgba(234,179,8,0.8)]"
+                         style={{
+                           clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)'
+                         }}>
+                      <div className="absolute inset-[4px] bg-gradient-to-b from-yellow-400/20 to-transparent"
+                           style={{
+                             clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)'
+                           }}></div>
+                      <h1 className="font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-orange-400 text-center drop-shadow-[0_2px_10px_rgba(0,0,0,1)] relative z-10"
+                          style={{ 
+                            fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
+                            WebkitTextStroke: '1.5px rgba(255,165,0,0.4)',
+                            letterSpacing: '0.05em'
+                          }}>
+                        DAILY GIFT
+                      </h1>
+                    </div>
                   </div>
 
-                  {/* Coin reward in oval */}
-                  <div className="bg-gradient-to-b from-purple-500 to-purple-700 border-4 border-yellow-400 rounded-full px-[7vw] py-[2vh] shadow-[0_8px_25px_rgba(0,0,0,0.5)]">
-                    {isPremium ? (
-                      <div className="flex flex-col items-center gap-[0.5vh]">
-                        <div className="flex items-center gap-[2vw]">
-                          <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(255,215,0,0.8)]" 
-                               style={{ width: 'clamp(1.5rem, 6vw, 2.25rem)', height: 'clamp(1.5rem, 6vw, 2.25rem)', border: '2px solid #FFD700' }}></div>
-                          <span className="font-black text-yellow-300/50 line-through" 
-                                style={{ fontSize: 'clamp(1rem, 4.5vw, 1.5rem)' }}>
-                            +{nextReward / 2}
-                          </span>
+                  {/* Content area */}
+                  <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[6%] pb-[8%]">
+                    {/* 3 Stars */}
+                    <div className="flex gap-[3vw] my-[2vh]">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} style={{ fontSize: 'clamp(2.5rem, 10vw, 4rem)' }}>
+                          ⭐
                         </div>
+                      ))}
+                    </div>
+
+                    {/* Day counter */}
+                    <p className="font-black text-white text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] mb-[1vh]" 
+                       style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)', letterSpacing: '0.05em' }}>
+                      DAY {weeklyEntryCount + 1}
+                    </p>
+
+                    {/* 7 mini stars progress */}
+                    <div className="flex gap-[1.5vw] justify-center mb-[2vh]">
+                      {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+                        <div
+                          key={day}
+                          className={`transition-all duration-500 ${day <= weeklyEntryCount + 1 ? 'scale-100 opacity-100' : 'scale-75 opacity-30'}`}
+                          style={{ 
+                            fontSize: 'clamp(1rem, 4vw, 1.5rem)',
+                            filter: day <= weeklyEntryCount + 1 ? 'drop-shadow(0 0 6px gold)' : 'grayscale(1)'
+                          }}
+                        >
+                          {day <= weeklyEntryCount + 1 ? '⭐' : '☆'}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Streak text */}
+                    <p className="text-white font-bold text-center drop-shadow-lg mb-[2vh]" 
+                       style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}>
+                      {weeklyEntryCount + 1}. napi belépés 🔥
+                    </p>
+
+                    {/* Reward box - gold border, purple background */}
+                    <div className="bg-gradient-to-b from-purple-600 to-purple-800 border-4 border-yellow-400 rounded-xl px-[6vw] py-[2vh] shadow-[0_4px_15px_rgba(0,0,0,0.5)] mb-[3vh]">
+                      {isPremium ? (
+                        <div className="flex flex-col items-center gap-[0.5vh]">
+                          <div className="flex items-center gap-[2vw]">
+                            <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(255,215,0,0.8)]" 
+                                 style={{ width: 'clamp(1.5rem, 6vw, 2.25rem)', height: 'clamp(1.5rem, 6vw, 2.25rem)', border: '2px solid #FFD700' }}></div>
+                            <span className="font-black text-yellow-300/50 line-through" 
+                                  style={{ fontSize: 'clamp(1rem, 4.5vw, 1.5rem)' }}>
+                              +{nextReward / 2}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-[2vw]">
+                            <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_20px_rgba(255,215,0,0.9)]" 
+                                 style={{ width: 'clamp(2rem, 8vw, 3rem)', height: 'clamp(2rem, 8vw, 3rem)', border: '3px solid #FFD700' }}></div>
+                            <span className="font-black text-yellow-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]" 
+                                  style={{ fontSize: 'clamp(1.75rem, 7vw, 2.75rem)' }}>
+                              +{nextReward}
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
                         <div className="flex items-center gap-[2vw]">
                           <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_20px_rgba(255,215,0,0.9)]" 
-                               style={{ width: 'clamp(2rem, 8vw, 3rem)', height: 'clamp(2rem, 8vw, 3rem)', border: '3px solid #FFD700' }}></div>
+                               style={{ width: 'clamp(2rem, 8vw, 3.25rem)', height: 'clamp(2rem, 8vw, 3.25rem)', border: '3px solid #FFD700' }}></div>
                           <span className="font-black text-yellow-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]" 
                                 style={{ fontSize: 'clamp(1.75rem, 7vw, 2.75rem)' }}>
                             +{nextReward}
                           </span>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-[2vw]">
-                        <div className="rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 shadow-[0_0_20px_rgba(255,215,0,0.9)]" 
-                             style={{ width: 'clamp(2rem, 8vw, 3.25rem)', height: 'clamp(2rem, 8vw, 3.25rem)', border: '3px solid #FFD700' }}></div>
-                        <span className="font-black text-yellow-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]" 
-                              style={{ fontSize: 'clamp(1.75rem, 7vw, 2.75rem)' }}>
-                          +{nextReward}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
 
-                  {/* Streak text */}
-                  <p className="text-white font-bold text-center drop-shadow-lg" 
-                     style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}>
-                    {weeklyEntryCount + 1}. napi belépés 🔥
-                  </p>
+                    {/* 3 Round buttons - pink gradient with hexagon icons */}
+                    <div className="flex gap-[3vw] justify-center">
+                      {/* List button */}
+                      <button className="w-[14vw] h-[14vw] max-w-[70px] max-h-[70px] rounded-full bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 border-4 border-pink-300 shadow-[0_4px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center">
+                        <span style={{ fontSize: 'clamp(1.5rem, 6vw, 2.5rem)' }}>☰</span>
+                      </button>
+                      
+                      {/* OK/COLLECT button */}
+                      {canClaim ? (
+                        <button
+                          onClick={handleClaim}
+                          className="w-[14vw] h-[14vw] max-w-[70px] max-h-[70px] rounded-full bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 hover:from-pink-500 hover:to-pink-700 border-4 border-pink-300 shadow-[0_4px_0_rgba(0,0,0,0.3)] hover:shadow-[0_6px_0_rgba(0,0,0,0.4)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center"
+                        >
+                          <span className="text-white font-black" style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)' }}>OK</span>
+                        </button>
+                      ) : (
+                        <button className="w-[14vw] h-[14vw] max-w-[70px] max-h-[70px] rounded-full bg-gradient-to-b from-green-400 to-green-600 border-4 border-green-300 shadow-[0_4px_0_rgba(0,0,0,0.3)] flex items-center justify-center">
+                          <span style={{ fontSize: 'clamp(1.5rem, 6vw, 2.5rem)' }}>✓</span>
+                        </button>
+                      )}
+                      
+                      {/* Replay button */}
+                      <button className="w-[14vw] h-[14vw] max-w-[70px] max-h-[70px] rounded-full bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 border-4 border-pink-300 shadow-[0_4px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center">
+                        <span style={{ fontSize: 'clamp(1.5rem, 6vw, 2.5rem)' }}>↻</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Lives bonus - green circle on the right side of flag */}
+            {/* Lives bonus - green circle badge */}
             {isPremium && (
-              <div className="absolute -right-[12vw] top-[45%] bg-gradient-to-b from-green-400 to-green-600 border-4 border-white rounded-full w-[18vw] h-[18vw] max-w-[90px] max-h-[90px] flex flex-col items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.6)] z-20 animate-bounce">
-                <span className="text-white font-black drop-shadow-lg" style={{ fontSize: 'clamp(1.25rem, 6vw, 2rem)' }}>+3</span>
-                <span style={{ fontSize: 'clamp(1rem, 4vw, 1.5rem)' }}>❤️</span>
-              </div>
-            )}
-
-            {/* COLLECT button - DELAY 450ms */}
-            {canClaim ? (
-              <button
-                onClick={handleClaim}
-                className={`bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 hover:from-pink-500 hover:to-pink-700 text-white font-black rounded-full px-[14vw] py-[3vh] shadow-[0_10px_35px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.6)] active:shadow-none active:translate-y-1 transition-all border-4 border-pink-300 mt-[3vh] transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-                style={{ fontSize: 'clamp(1.25rem, 5.5vw, 2rem)', transitionDelay: '450ms' }}
-              >
-                COLLECT
-              </button>
-            ) : (
-              <div className={`text-center mt-[3vh] transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-                   style={{ transitionDelay: '450ms' }}>
-                <p className="text-white font-black drop-shadow-[0_4px_15px_rgba(0,0,0,0.8)]" style={{ fontSize: 'clamp(1rem, 5vw, 1.75rem)' }}>
-                  ✅ MAI JUTALOM ÁTVÉVE
-                </p>
+              <div className="absolute -right-[8vw] top-[40%] bg-gradient-to-b from-green-400 to-green-600 border-4 border-white rounded-full w-[16vw] h-[16vw] max-w-[80px] max-h-[80px] flex flex-col items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.5)] z-20 animate-bounce">
+                <span className="text-white font-black drop-shadow-lg" style={{ fontSize: 'clamp(1.125rem, 5vw, 1.75rem)' }}>+3</span>
+                <span style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.25rem)' }}>❤️</span>
               </div>
             )}
           </div>
