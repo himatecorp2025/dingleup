@@ -11,11 +11,28 @@ import React, { PropsWithChildren } from 'react';
  */
 const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ children, className = '' }) => {
   return (
-    <div className={`relative ${className}`}
+    <div className={`relative overflow-hidden ${className}`}
          style={{ 
            width: 'min(92vw, 500px)', 
            height: 'clamp(540px, 88vh, 680px)'
          }}>
+      
+      {/* Casino shine effect - csak hexagonon belül */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          clipPath: 'polygon(50% 8%, 93% 16%, 93% 84%, 50% 92%, 7% 84%, 7% 16%)',
+          overflow: 'hidden'
+        }}
+      >
+        <div 
+          className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%]"
+          style={{
+            background: 'linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.3), transparent)',
+            animation: 'slot-shine 3s linear infinite'
+          }}
+        />
+      </div>
       
       {/* SVG POINTY-TOP Hexagon/Trapezoid Layers */}
       <svg viewBox="0 0 360 600" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet" aria-hidden>

@@ -110,7 +110,7 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="overflow-auto p-0 border-0 bg-transparent w-screen h-screen max-w-none"
+        className="overflow-auto p-0 border-0 bg-transparent w-screen h-screen max-w-none [&>button[data-dialog-close]]:hidden"
         style={{ 
           margin: 0,
           maxHeight: '100vh'
@@ -119,26 +119,8 @@ const DailyGiftDialog = ({
         <div 
           className="fixed inset-0 flex flex-col items-center justify-center py-4 overflow-y-auto"
         >
-          {/* Background layer - lila háttér */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 opacity-75"></div>
-          {/* Animated radial glow from center - FULL OPACITY */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div 
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] animate-spin"
-              style={{
-                background: 'conic-gradient(from 0deg, transparent 0%, rgba(147,51,234,0.3) 10%, transparent 20%, rgba(147,51,234,0.3) 30%, transparent 40%, rgba(147,51,234,0.3) 50%, transparent 60%, rgba(147,51,234,0.3) 70%, transparent 80%, rgba(147,51,234,0.3) 90%, transparent 100%)',
-                animationDuration: '20s'
-              }}
-            ></div>
-            <div 
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] animate-spin"
-              style={{
-                background: 'radial-gradient(circle, rgba(168,85,247,0.4) 0%, rgba(147,51,234,0.2) 30%, transparent 70%)',
-                animationDuration: '15s',
-                animationDirection: 'reverse'
-              }}
-            ></div>
-          </div>
+          {/* Background layer - statikus 75% áttetsző lila */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950" style={{ opacity: 0.75 }}></div>
 
           {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
           {contentVisible && burstActive && (
@@ -214,9 +196,9 @@ const DailyGiftDialog = ({
                    animation: 'pulse 3s ease-in-out infinite'
                  }} />
 
-            <HexShieldFrame className="animate-shine">
-              {/* Top Hex Badge - "DAILY GIFT" + animáció */}
-              <div className="relative -mt-8 mb-3 mx-auto z-20 animate-shine" style={{ width: '78%' }}>
+            <HexShieldFrame className="gold-glow">
+              {/* Top Hex Badge - "DAILY GIFT" */}
+              <div className="relative -mt-8 mb-3 mx-auto z-20" style={{ width: '78%' }}>
                 <div className="relative px-[5vw] py-[1.2vh] shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
@@ -243,10 +225,10 @@ const DailyGiftDialog = ({
               {/* Content Area */}
               <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-[3%]">
                 
-                {/* 3 Big Golden Stars (metallic) + flash animáció */}
+                {/* 3 Big Golden Stars (metallic) */}
                 <div className="flex gap-[2.5vw] my-[1.2vh]">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="relative animate-flash" style={{ fontSize: 'clamp(2.25rem, 9vw, 3.5rem)', animationDelay: `${i * 0.3}s` }}>
+                    <div key={i} className="relative" style={{ fontSize: 'clamp(2.25rem, 9vw, 3.5rem)' }}>
                       <span className="relative" style={{
                         filter: `drop-shadow(4px 6px 8px rgba(0,0,0,0.35)) 
                                  drop-shadow(0 0 12px hsl(var(--dup-gold-400)))`
@@ -265,19 +247,18 @@ const DailyGiftDialog = ({
                   DAY {weeklyEntryCount + 1}
                 </p>
 
-                {/* 7 Mini Stars Progress (horizontal row) + flash animáció */}
+                {/* 7 Mini Stars Progress (horizontal row) */}
                 <div className="flex gap-[1.8vw] justify-center mb-[1.2vh]">
                   {[1, 2, 3, 4, 5, 6, 7].map((day) => {
                     const isActive = day <= weeklyEntryCount + 1;
                     return (
                       <div key={day}
-                           className={`transition-all duration-500 ${isActive ? 'scale-100 opacity-100 animate-flash' : 'scale-75 opacity-35'}`}
+                           className={`transition-all duration-500 ${isActive ? 'scale-100 opacity-100' : 'scale-75 opacity-35'}`}
                            style={{ 
                              fontSize: 'clamp(0.875rem, 3.6vw, 1.3rem)',
                              filter: isActive 
                                ? `drop-shadow(0 0 6px hsl(var(--dup-gold-500)))` 
-                               : 'grayscale(1)',
-                             animationDelay: `${day * 0.2}s`
+                               : 'grayscale(1)'
                            }}>
                         {isActive ? '⭐' : '☆'}
                       </div>
@@ -291,8 +272,8 @@ const DailyGiftDialog = ({
                   {weeklyEntryCount + 1}. napi belépés 🔥
                 </p>
 
-                {/* Reward Card (gem-style, floating) + shine animáció */}
-                <div className="rounded-xl px-[5vw] py-[1.6vh] mb-[2.5vh] relative animate-shine"
+                {/* Reward Card (gem-style, floating) */}
+                <div className="rounded-xl px-[5vw] py-[1.6vh] mb-[2.5vh] relative"
                      style={{
                        background: 'radial-gradient(ellipse at 40% 30%, hsl(var(--dup-purple-400)), hsl(var(--dup-purple-600)) 60%, hsl(var(--dup-purple-800)))',
                        border: '4px solid hsl(var(--dup-gold-500))',
