@@ -74,8 +74,10 @@ const DailyGiftDialog = ({
         }}
       >
         <div 
-          className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 opacity-50"
+          className="fixed inset-0 flex flex-col items-center justify-center"
         >
+          {/* Background layer - 50% transparent */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 opacity-50"></div>
           {/* Animated radial glow from center */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-50">
             <div 
@@ -116,7 +118,8 @@ const DailyGiftDialog = ({
           </div>
 
           {/* Central content container - ZOOM IN ANIMATION */}
-          <div className="relative z-10 flex flex-col items-center animate-scale-in">
+          <div className="relative z-10 flex flex-col items-center opacity-0 animate-[scale-in_0.5s_ease-out_forwards]"
+               style={{ animationDelay: '0.1s' }}>
             {/* Gift boxes at top - 3D style */}
             <div className="flex gap-[3vw] mb-[2vh]">
               <div className="transform -rotate-12 drop-shadow-2xl" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>🎁</div>
@@ -274,8 +277,8 @@ const DailyGiftDialog = ({
           {/* Close X button - top right - ZOOM IN ANIMATION */}
           <button
             onClick={onLater}
-            className="absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all animate-scale-in"
-            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', animationDelay: '0.2s' }}
+            className="absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all opacity-0 animate-[scale-in_0.5s_ease-out_forwards]"
+            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', animationDelay: '0.3s' }}
           >
             ×
           </button>
