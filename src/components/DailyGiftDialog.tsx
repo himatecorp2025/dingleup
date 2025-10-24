@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from './ui/dialog';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { trackBonusEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
+import HexShieldFrame from './frames/HexShieldFrame';
 
 interface DailyGiftDialogProps {
   open: boolean;
