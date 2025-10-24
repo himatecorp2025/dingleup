@@ -1,9 +1,9 @@
 import React, { PropsWithChildren } from 'react';
 
 /**
- * HexShieldFrame - Flat-top hexagon pajzs, 3D specular fém keret + kristály panel
- * Referencia: You Win! popup - arany fém + lila kristály
- * - Flat-top geometria (széles, nem hegyes)
+ * HexShieldFrame - POINTY-TOP hexagon pajzs (trapéz), 3D specular fém keret + kristály panel
+ * Referencia: Daily Gift popup - arany fém + lila kristály
+ * - POINTY-TOP geometria: bal/jobb élek EGYENES vertikális, felső/alsó élek TÖRTEK
  * - Kétlépcsős arany keret (külső sötét, belső világos highlight)
  * - Lila kristály belső panel diagonális fénycsíkokkal
  * - Specular conic highlight a tetején
@@ -17,7 +17,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
            height: 'clamp(540px, 88vh, 680px)'
          }}>
       
-      {/* SVG Flat-Top Hexagon Layers */}
+      {/* SVG POINTY-TOP Hexagon/Trapezoid Layers */}
       <svg viewBox="0 0 360 600" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet" aria-hidden>
         <defs>
           {/* Gold Metal Gradients */}
@@ -59,44 +59,44 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </filter>
         </defs>
 
-        {/* 3D Shadow Base (bottom-right offset) */}
+        {/* 3D Shadow Base (bottom-right offset) - POINTY-TOP */}
         <path
-          d="M 58 16 L 302 16 L 356 244 L 302 584 L 58 584 L 4 244 Z"
+          d="M 180 10 L 350 136 L 350 464 L 180 590 L 10 464 L 10 136 Z"
           fill="rgba(0,0,0,0.35)"
           transform="translate(6, 8)"
         />
 
-        {/* Outer Gold Frame (darker) */}
+        {/* Outer Gold Frame (darker) - POINTY-TOP */}
         <path
-          d="M 54 8 L 306 8 L 360 240 L 306 580 L 54 580 L 0 240 Z"
+          d="M 180 4 L 354 132 L 354 468 L 180 596 L 6 468 L 6 132 Z"
           fill="url(#goldOuter)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
           filter="url(#depth-shadow)"
         />
 
-        {/* Middle Gold Frame (lighter highlight) */}
+        {/* Middle Gold Frame (lighter highlight) - POINTY-TOP */}
         <path
-          d="M 66 24 L 294 24 L 344 240 L 294 568 L 66 568 L 16 240 Z"
+          d="M 180 20 L 338 144 L 338 456 L 180 580 L 22 456 L 22 144 Z"
           fill="url(#goldInner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="3"
         />
 
-        {/* Inner Crystal Panel */}
+        {/* Inner Crystal Panel - POINTY-TOP */}
         <path
-          d="M 78 38 L 282 38 L 328 240 L 282 554 L 78 554 L 32 240 Z"
+          d="M 180 34 L 322 156 L 322 444 L 180 566 L 38 444 L 38 156 Z"
           fill="url(#crystalRadial)"
         />
 
-        {/* Specular Highlight Overlay */}
+        {/* Specular Highlight Overlay - POINTY-TOP */}
         <path
-          d="M 78 38 L 282 38 L 328 240 L 282 554 L 78 554 L 32 240 Z"
+          d="M 180 34 L 322 156 L 322 444 L 180 566 L 38 444 L 38 156 Z"
           fill="url(#specular)"
           opacity="0.4"
         />
 
-        {/* Diagonal Light Streaks (stripes) */}
+        {/* Diagonal Light Streaks (stripes) - POINTY-TOP */}
         <defs>
           <pattern id="diagonalStripes" patternUnits="userSpaceOnUse" width="60" height="60" patternTransform="rotate(45)">
             <rect x="0" y="0" width="12" height="60" fill="rgba(255,255,255,0.08)" />
@@ -105,23 +105,23 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </pattern>
         </defs>
         <path
-          d="M 78 38 L 282 38 L 328 240 L 282 554 L 78 554 L 32 240 Z"
+          d="M 180 34 L 322 156 L 322 444 L 180 566 L 38 444 L 38 156 Z"
           fill="url(#diagonalStripes)"
           opacity="0.7"
         />
 
-        {/* Inner Glow (bottom shadow for 3D) */}
+        {/* Inner Glow (bottom shadow for 3D) - POINTY-TOP */}
         <path
-          d="M 78 38 L 282 38 L 328 240 L 282 554 L 78 554 L 32 240 Z"
+          d="M 180 34 L 322 156 L 322 444 L 180 566 L 38 444 L 38 156 Z"
           fill="none"
           stroke="rgba(0,0,0,0.25)"
           strokeWidth="8"
           style={{ filter: 'blur(6px)' }}
         />
 
-        {/* Gold Inner Stroke (accent) */}
+        {/* Gold Inner Stroke (accent) - POINTY-TOP */}
         <path
-          d="M 78 38 L 282 38 L 328 240 L 282 554 L 78 554 L 32 240 Z"
+          d="M 180 34 L 322 156 L 322 444 L 180 566 L 38 444 L 38 156 Z"
           fill="none"
           stroke="url(#goldInner)"
           strokeWidth="2"
