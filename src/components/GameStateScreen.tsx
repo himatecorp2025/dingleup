@@ -1,5 +1,4 @@
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
-import gameResultBg from '@/assets/popup-game-result.jpeg';
 
 interface GameStateScreenProps {
   type: 'timeout' | 'lose' | 'out-of-lives' | 'win';
@@ -79,16 +78,30 @@ export const GameStateScreen = ({
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
       <div 
-        className="relative w-full h-full flex items-center justify-center p-[4vw] bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundImage: `url(${gameResultBg})`,
-        }}
+        className="relative w-full h-full flex items-center justify-center p-[4vw]"
       >
+        {/* Animated background particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(30)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-white/20 animate-pulse"
+              style={{
+                width: `${Math.random() * 4 + 2}px`,
+                height: `${Math.random() * 4 + 2}px`,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${i * 0.1}s`,
+                animationDuration: `${Math.random() * 3 + 2}s`
+              }}
+            />
+          ))}
+        </div>
         {/* Main hexagon card */}
         <div 
-          className={`relative bg-gradient-to-b ${bgColor} rounded-3xl border-8 ${borderColor} shadow-2xl p-[5vw] w-[85vw] max-w-[500px]`}
+          className={`relative bg-gradient-to-b ${bgColor} rounded-3xl border-8 ${borderColor} shadow-2xl p-[5vw] w-[85vw] max-w-[500px] z-10`}
           style={{
             clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
             aspectRatio: '0.85'

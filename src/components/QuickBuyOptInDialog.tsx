@@ -1,6 +1,5 @@
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
-import shopOfferBg from '@/assets/popup-shop-offer.png';
 
 interface QuickBuyOptInDialogProps {
   open: boolean;
@@ -23,27 +22,43 @@ export function QuickBuyOptInDialog({ open, onAccept, onDecline }: QuickBuyOptIn
         }}
       >
         <div 
-          className="relative w-full flex flex-col items-center justify-center p-[4vw] bg-cover bg-center bg-no-repeat rounded-3xl"
+          className="relative w-full flex flex-col items-center justify-center p-[4vw] bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-400 rounded-3xl"
           style={{ 
-            backgroundImage: `url(${shopOfferBg})`,
             minHeight: '70vh',
             aspectRatio: '1'
           }}
         >
+          {/* Animated stars */}
+          <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
+            {[...Array(15)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute animate-pulse"
+                style={{
+                  fontSize: `${Math.random() * 20 + 10}px`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${i * 0.15}s`
+                }}
+              >
+                ⭐
+              </div>
+            ))}
+          </div>
           {/* Lightning icon top left */}
-          <div className="absolute top-[4vh] left-[4vw] bg-yellow-500 rounded-full w-[12vw] h-[12vw] max-w-[50px] max-h-[50px] flex items-center justify-center border-4 border-yellow-600 shadow-lg animate-pulse">
+          <div className="absolute top-[4vh] left-[4vw] bg-yellow-500 rounded-full w-[12vw] h-[12vw] max-w-[50px] max-h-[50px] flex items-center justify-center border-4 border-yellow-600 shadow-lg animate-bounce z-10">
             <span style={{ fontSize: 'clamp(1.5rem, 6vw, 2rem)' }}>⚡</span>
           </div>
 
           {/* Banner */}
-          <div className="absolute top-[8vh] left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-500 via-orange-500 to-yellow-500 px-[6vw] py-[1.5vh] rounded-full shadow-lg border-4 border-white/50">
+          <div className="absolute top-[8vh] left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-500 via-orange-500 to-yellow-500 px-[6vw] py-[1.5vh] rounded-full shadow-lg border-4 border-white/50 z-10">
             <p className="font-black text-white text-center drop-shadow-lg" style={{ fontSize: 'clamp(0.875rem, 4vw, 1.5rem)' }}>
               Quick Buy Feature
             </p>
           </div>
 
           {/* Main shop area */}
-          <div className="mt-[15vh] bg-gradient-to-b from-amber-800/90 to-amber-900/90 rounded-3xl border-8 border-amber-700 p-[5vw] backdrop-blur-sm shadow-2xl w-[85vw] max-w-[500px]">
+          <div className="mt-[15vh] bg-gradient-to-b from-amber-800/90 to-amber-900/90 rounded-3xl border-8 border-amber-700 p-[5vw] backdrop-blur-sm shadow-2xl w-[85vw] max-w-[500px] z-10">
             {/* Top decorative lights */}
             <div className="flex justify-around mb-[2vh]">
               {[1, 2, 3, 4].map((i) => (
