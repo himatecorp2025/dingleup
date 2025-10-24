@@ -16,49 +16,31 @@ export type Database = {
     Tables: {
       app_session_events: {
         Row: {
-          browser: string | null
-          city: string | null
-          country_code: string | null
           created_at: string
           device_info: Json | null
-          device_type: string | null
           event_type: string
           id: string
           metadata: Json | null
-          os_version: string | null
-          screen_size: string | null
           session_duration_seconds: number | null
           session_id: string
           user_id: string
         }
         Insert: {
-          browser?: string | null
-          city?: string | null
-          country_code?: string | null
           created_at?: string
           device_info?: Json | null
-          device_type?: string | null
           event_type: string
           id?: string
           metadata?: Json | null
-          os_version?: string | null
-          screen_size?: string | null
           session_duration_seconds?: number | null
           session_id: string
           user_id: string
         }
         Update: {
-          browser?: string | null
-          city?: string | null
-          country_code?: string | null
           created_at?: string
           device_info?: Json | null
-          device_type?: string | null
           event_type?: string
           id?: string
           metadata?: Json | null
-          os_version?: string | null
-          screen_size?: string | null
           session_duration_seconds?: number | null
           session_id?: string
           user_id?: string
@@ -199,54 +181,6 @@ export type Database = {
         }
         Relationships: []
       }
-      conversion_events: {
-        Row: {
-          created_at: string
-          event_type: string
-          id: string
-          metadata: Json | null
-          product_id: string | null
-          product_type: string | null
-          session_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          event_type: string
-          id?: string
-          metadata?: Json | null
-          product_id?: string | null
-          product_type?: string | null
-          session_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          event_type?: string
-          id?: string
-          metadata?: Json | null
-          product_id?: string | null
-          product_type?: string | null
-          session_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "conversion_events_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversion_events_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       data_collection_metadata: {
         Row: {
           collection_start_date: string
@@ -270,111 +204,6 @@ export type Database = {
           id?: string
         }
         Relationships: []
-      }
-      device_geo_analytics: {
-        Row: {
-          browser: string | null
-          browser_version: string | null
-          city: string | null
-          connection_type: string | null
-          country_code: string | null
-          country_name: string | null
-          created_at: string
-          device_model: string | null
-          device_type: string | null
-          device_vendor: string | null
-          downlink_mbps: number | null
-          effective_connection_type: string | null
-          id: string
-          is_genius_user: boolean | null
-          is_touch_device: boolean | null
-          os: string | null
-          os_version: string | null
-          pixel_ratio: number | null
-          region: string | null
-          rtt_ms: number | null
-          screen_height: number | null
-          screen_width: number | null
-          session_id: string
-          timezone: string | null
-          user_id: string
-          viewport_height: number | null
-          viewport_width: number | null
-        }
-        Insert: {
-          browser?: string | null
-          browser_version?: string | null
-          city?: string | null
-          connection_type?: string | null
-          country_code?: string | null
-          country_name?: string | null
-          created_at?: string
-          device_model?: string | null
-          device_type?: string | null
-          device_vendor?: string | null
-          downlink_mbps?: number | null
-          effective_connection_type?: string | null
-          id?: string
-          is_genius_user?: boolean | null
-          is_touch_device?: boolean | null
-          os?: string | null
-          os_version?: string | null
-          pixel_ratio?: number | null
-          region?: string | null
-          rtt_ms?: number | null
-          screen_height?: number | null
-          screen_width?: number | null
-          session_id: string
-          timezone?: string | null
-          user_id: string
-          viewport_height?: number | null
-          viewport_width?: number | null
-        }
-        Update: {
-          browser?: string | null
-          browser_version?: string | null
-          city?: string | null
-          connection_type?: string | null
-          country_code?: string | null
-          country_name?: string | null
-          created_at?: string
-          device_model?: string | null
-          device_type?: string | null
-          device_vendor?: string | null
-          downlink_mbps?: number | null
-          effective_connection_type?: string | null
-          id?: string
-          is_genius_user?: boolean | null
-          is_touch_device?: boolean | null
-          os?: string | null
-          os_version?: string | null
-          pixel_ratio?: number | null
-          region?: string | null
-          rtt_ms?: number | null
-          screen_height?: number | null
-          screen_width?: number | null
-          session_id?: string
-          timezone?: string | null
-          user_id?: string
-          viewport_height?: number | null
-          viewport_width?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "device_geo_analytics_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "device_geo_analytics_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       dm_messages: {
         Row: {
@@ -447,116 +276,35 @@ export type Database = {
         }
         Relationships: []
       }
-      error_logs: {
-        Row: {
-          browser: string | null
-          created_at: string
-          device_type: string | null
-          error_component: string | null
-          error_message: string
-          error_stack: string | null
-          error_type: string
-          id: string
-          is_fatal: boolean | null
-          is_genius_user: boolean | null
-          metadata: Json | null
-          page_route: string
-          session_id: string
-          severity: string
-          user_action: string | null
-          user_id: string | null
-        }
-        Insert: {
-          browser?: string | null
-          created_at?: string
-          device_type?: string | null
-          error_component?: string | null
-          error_message: string
-          error_stack?: string | null
-          error_type: string
-          id?: string
-          is_fatal?: boolean | null
-          is_genius_user?: boolean | null
-          metadata?: Json | null
-          page_route: string
-          session_id: string
-          severity?: string
-          user_action?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          browser?: string | null
-          created_at?: string
-          device_type?: string | null
-          error_component?: string | null
-          error_message?: string
-          error_stack?: string | null
-          error_type?: string
-          id?: string
-          is_fatal?: boolean | null
-          is_genius_user?: boolean | null
-          metadata?: Json | null
-          page_route?: string
-          session_id?: string
-          severity?: string
-          user_action?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "error_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "error_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       feature_usage_events: {
         Row: {
           action: string | null
           created_at: string
-          duration_ms: number | null
-          error_message: string | null
           event_type: string
           feature_name: string
           id: string
           metadata: Json | null
           session_id: string
-          success: boolean | null
           user_id: string
         }
         Insert: {
           action?: string | null
           created_at?: string
-          duration_ms?: number | null
-          error_message?: string | null
           event_type: string
           feature_name: string
           id?: string
           metadata?: Json | null
           session_id: string
-          success?: boolean | null
           user_id: string
         }
         Update: {
           action?: string | null
           created_at?: string
-          duration_ms?: number | null
-          error_message?: string | null
           event_type?: string
           feature_name?: string
           id?: string
           metadata?: Json | null
           session_id?: string
-          success?: boolean | null
           user_id?: string
         }
         Relationships: []
@@ -694,76 +442,6 @@ export type Database = {
             columns: ["game_result_id"]
             isOneToOne: false
             referencedRelation: "game_results"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      game_question_analytics: {
-        Row: {
-          category: string
-          created_at: string
-          difficulty_level: string | null
-          game_result_id: string | null
-          help_used: string | null
-          id: string
-          is_genius_user: boolean | null
-          question_id: string | null
-          question_index: number
-          response_time_seconds: number
-          session_id: string
-          user_id: string
-          was_correct: boolean
-        }
-        Insert: {
-          category: string
-          created_at?: string
-          difficulty_level?: string | null
-          game_result_id?: string | null
-          help_used?: string | null
-          id?: string
-          is_genius_user?: boolean | null
-          question_id?: string | null
-          question_index: number
-          response_time_seconds: number
-          session_id: string
-          user_id: string
-          was_correct: boolean
-        }
-        Update: {
-          category?: string
-          created_at?: string
-          difficulty_level?: string | null
-          game_result_id?: string | null
-          help_used?: string | null
-          id?: string
-          is_genius_user?: boolean | null
-          question_id?: string | null
-          question_index?: number
-          response_time_seconds?: number
-          session_id?: string
-          user_id?: string
-          was_correct?: boolean
-        }
-        Relationships: [
-          {
-            foreignKeyName: "game_question_analytics_game_result_id_fkey"
-            columns: ["game_result_id"]
-            isOneToOne: false
-            referencedRelation: "game_results"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "game_question_analytics_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "game_question_analytics_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1186,75 +864,6 @@ export type Database = {
         }
         Relationships: []
       }
-      performance_metrics: {
-        Row: {
-          browser: string | null
-          cls: number | null
-          connection_type: string | null
-          created_at: string
-          device_type: string | null
-          fcp_ms: number | null
-          fid_ms: number | null
-          id: string
-          lcp_ms: number | null
-          load_time_ms: number
-          page_route: string
-          session_id: string
-          ttfb_ms: number | null
-          tti_ms: number | null
-          user_id: string | null
-        }
-        Insert: {
-          browser?: string | null
-          cls?: number | null
-          connection_type?: string | null
-          created_at?: string
-          device_type?: string | null
-          fcp_ms?: number | null
-          fid_ms?: number | null
-          id?: string
-          lcp_ms?: number | null
-          load_time_ms: number
-          page_route: string
-          session_id: string
-          ttfb_ms?: number | null
-          tti_ms?: number | null
-          user_id?: string | null
-        }
-        Update: {
-          browser?: string | null
-          cls?: number | null
-          connection_type?: string | null
-          created_at?: string
-          device_type?: string | null
-          fcp_ms?: number | null
-          fid_ms?: number | null
-          id?: string
-          lcp_ms?: number | null
-          load_time_ms?: number
-          page_route?: string
-          session_id?: string
-          ttfb_ms?: number | null
-          tti_ms?: number | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "performance_metrics_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "performance_metrics_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1481,81 +1090,6 @@ export type Database = {
             columns: ["reported_message_id"]
             isOneToOne: false
             referencedRelation: "messages"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      session_details: {
-        Row: {
-          browser: string | null
-          country_code: string | null
-          created_at: string
-          device_type: string | null
-          duration_seconds: number | null
-          games_played: number | null
-          id: string
-          is_genius: boolean | null
-          messages_sent: number | null
-          os_version: string | null
-          pages_visited: number | null
-          purchases_made: number | null
-          screen_size: string | null
-          session_end: string | null
-          session_id: string
-          session_start: string
-          user_id: string
-        }
-        Insert: {
-          browser?: string | null
-          country_code?: string | null
-          created_at?: string
-          device_type?: string | null
-          duration_seconds?: number | null
-          games_played?: number | null
-          id?: string
-          is_genius?: boolean | null
-          messages_sent?: number | null
-          os_version?: string | null
-          pages_visited?: number | null
-          purchases_made?: number | null
-          screen_size?: string | null
-          session_end?: string | null
-          session_id: string
-          session_start?: string
-          user_id: string
-        }
-        Update: {
-          browser?: string | null
-          country_code?: string | null
-          created_at?: string
-          device_type?: string | null
-          duration_seconds?: number | null
-          games_played?: number | null
-          id?: string
-          is_genius?: boolean | null
-          messages_sent?: number | null
-          os_version?: string | null
-          pages_visited?: number | null
-          purchases_made?: number | null
-          screen_size?: string | null
-          session_end?: string | null
-          session_id?: string
-          session_start?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "session_details_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "session_details_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1894,147 +1428,6 @@ export type Database = {
           },
         ]
       }
-      user_cohorts: {
-        Row: {
-          became_genius_day: number | null
-          churn_risk_score: number | null
-          cohort_month: string
-          cohort_week: string
-          created_at: string
-          first_purchase_day: number | null
-          is_retained_d1: boolean | null
-          is_retained_d14: boolean | null
-          is_retained_d30: boolean | null
-          is_retained_d7: boolean | null
-          last_active_date: string | null
-          registration_date: string
-          total_games: number | null
-          total_purchases: number | null
-          total_sessions: number | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          became_genius_day?: number | null
-          churn_risk_score?: number | null
-          cohort_month: string
-          cohort_week: string
-          created_at?: string
-          first_purchase_day?: number | null
-          is_retained_d1?: boolean | null
-          is_retained_d14?: boolean | null
-          is_retained_d30?: boolean | null
-          is_retained_d7?: boolean | null
-          last_active_date?: string | null
-          registration_date: string
-          total_games?: number | null
-          total_purchases?: number | null
-          total_sessions?: number | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          became_genius_day?: number | null
-          churn_risk_score?: number | null
-          cohort_month?: string
-          cohort_week?: string
-          created_at?: string
-          first_purchase_day?: number | null
-          is_retained_d1?: boolean | null
-          is_retained_d14?: boolean | null
-          is_retained_d30?: boolean | null
-          is_retained_d7?: boolean | null
-          last_active_date?: string | null
-          registration_date?: string
-          total_games?: number | null
-          total_purchases?: number | null
-          total_sessions?: number | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_cohorts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_cohorts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_engagement_scores: {
-        Row: {
-          created_at: string
-          factors: Json
-          game_score: number | null
-          last_calculated: string
-          previous_score: number | null
-          purchase_score: number | null
-          retention_score: number | null
-          score: number
-          score_tier: string
-          score_trend: string | null
-          session_score: number | null
-          social_score: number | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          factors?: Json
-          game_score?: number | null
-          last_calculated?: string
-          previous_score?: number | null
-          purchase_score?: number | null
-          retention_score?: number | null
-          score: number
-          score_tier: string
-          score_trend?: string | null
-          session_score?: number | null
-          social_score?: number | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          factors?: Json
-          game_score?: number | null
-          last_calculated?: string
-          previous_score?: number | null
-          purchase_score?: number | null
-          retention_score?: number | null
-          score?: number
-          score_tier?: string
-          score_trend?: string | null
-          session_score?: number | null
-          social_score?: number | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_engagement_scores_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_engagement_scores_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_presence: {
         Row: {
           is_online: boolean
@@ -2313,30 +1706,6 @@ export type Database = {
       }
     }
     Views: {
-      error_rate_by_page: {
-        Row: {
-          affected_users: number | null
-          error_count: number | null
-          error_type: string | null
-          last_occurrence: string | null
-          page_route: string | null
-        }
-        Relationships: []
-      }
-      performance_by_page: {
-        Row: {
-          avg_lcp_ms: number | null
-          avg_load_time_ms: number | null
-          avg_ttfb_ms: number | null
-          browser: string | null
-          device_type: string | null
-          median_load_time_ms: number | null
-          p95_load_time_ms: number | null
-          page_route: string | null
-          sample_count: number | null
-        }
-        Relationships: []
-      }
       public_profiles: {
         Row: {
           avatar_url: string | null
