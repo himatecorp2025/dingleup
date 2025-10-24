@@ -31,12 +31,13 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
       `}
       style={{
         width: 'min(82vw, 380px)',
-        height: 'clamp(56px, 14vh, 72px)'
+        height: 'clamp(68px, 16vh, 84px)',
+        padding: '4px 0'
       }}
       {...props}
     >
       {/* SVG POINTY-TOP Hexagon Layers - 150° felső/alsó szögek */}
-      <svg viewBox="0 0 380 72" className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
+      <svg viewBox="0 0 380 80" className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid meet">
         <defs>
           {/* Gold Metal Gradients */}
           <linearGradient id="hex-gold-outer" x1="0" y1="0" x2="1" y2="1">
@@ -82,14 +83,14 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
         {/* 3D Shadow Base - 150° felső/alsó csúcs */}
         <path
-          d="M 190 0 L 360 10 L 360 62 L 190 72 L 20 62 L 20 10 Z"
+          d="M 190 2 L 366 14 L 366 66 L 190 78 L 14 66 L 14 14 Z"
           fill="rgba(0,0,0,0.4)"
           transform="translate(4, 5)"
         />
 
         {/* Outer Gold Frame - 150° csúcsok */}
         <path
-          d="M 190 0 L 376 9 L 376 63 L 190 72 L 4 63 L 4 9 Z"
+          d="M 190 0 L 376 13 L 376 67 L 190 80 L 4 67 L 4 13 Z"
           fill="url(#hex-gold-outer)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
@@ -98,7 +99,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
         {/* Middle Gold Frame (inset) */}
         <path
-          d="M 190 3 L 368 11 L 368 61 L 190 69 L 12 61 L 12 11 Z"
+          d="M 190 4 L 368 16 L 368 64 L 190 76 L 12 64 L 12 16 Z"
           fill="url(#hex-gold-inner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="2.5"
@@ -106,13 +107,13 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
         {/* Inner Green Crystal Panel - 150° csúcsok */}
         <path
-          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          d="M 190 8 L 360 19 L 360 61 L 190 72 L 20 61 L 20 19 Z"
           fill="url(#hex-green-crystal)"
         />
 
         {/* Specular Highlight Overlay - erős kristály hatás */}
         <path
-          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          d="M 190 8 L 360 19 L 360 61 L 190 72 L 20 61 L 20 19 Z"
           fill="url(#hex-green-specular)"
           opacity="0.6"
         />
@@ -126,14 +127,14 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           </pattern>
         </defs>
         <path
-          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          d="M 190 8 L 360 19 L 360 61 L 190 72 L 20 61 L 20 19 Z"
           fill="url(#hex-green-stripes)"
           opacity="0.75"
         />
 
         {/* Inner Glow (bottom shadow for 3D depth) */}
         <path
-          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          d="M 190 8 L 360 19 L 360 61 L 190 72 L 20 61 L 20 19 Z"
           fill="none"
           stroke="rgba(0,0,0,0.3)"
           strokeWidth="6"
@@ -142,7 +143,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
         {/* Gold Inner Stroke (accent) */}
         <path
-          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          d="M 190 8 L 360 19 L 360 61 L 190 72 L 20 61 L 20 19 Z"
           fill="none"
           stroke="url(#hex-gold-inner)"
           strokeWidth="2"
@@ -158,7 +159,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           </linearGradient>
         </defs>
         <path
-          d="M 190 6 L 360 13 L 360 59 L 190 66 L 20 59 L 20 13 Z"
+          d="M 190 8 L 360 19 L 360 61 L 190 72 L 20 61 L 20 19 Z"
           fill="url(#facet-1)"
           opacity="0.5"
         />
