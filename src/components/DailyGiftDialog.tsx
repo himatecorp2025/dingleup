@@ -89,10 +89,10 @@ const DailyGiftDialog = ({
         <div 
           className="fixed inset-0 flex flex-col items-center justify-center"
         >
-          {/* Background layer - 50% transparent */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 opacity-50"></div>
-          {/* Animated radial glow from center */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-50">
+          {/* Background layer - 75% transparent (25% opacity) */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 opacity-25"></div>
+          {/* Animated radial glow from center - FULL OPACITY */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div 
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] animate-spin"
               style={{
@@ -110,8 +110,8 @@ const DailyGiftDialog = ({
             ></div>
           </div>
 
-          {/* Floating sparkle particles */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-50">
+          {/* Floating sparkle particles - FULL OPACITY */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {[...Array(50)].map((_, i) => (
               <div
                 key={i}
@@ -130,17 +130,18 @@ const DailyGiftDialog = ({
             ))}
           </div>
 
-          {/* Central content container - ZOOM IN ANIMATION */}
-          <div className={`relative z-10 flex flex-col items-center transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-            {/* Gift boxes at top - 3D style */}
-            <div className="flex gap-[3vw] mb-[2vh]">
+          {/* Central content container - STAGGERED ZOOM IN ANIMATION */}
+          <div className="relative z-10 flex flex-col items-center">
+            {/* Gift boxes at top - 3D style - DELAY 0ms */}
+            <div className={`flex gap-[3vw] mb-[2vh] transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
               <div className="transform -rotate-12 drop-shadow-2xl" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>🎁</div>
               <div className="transform rotate-6 drop-shadow-2xl" style={{ fontSize: 'clamp(3rem, 12vw, 5.5rem)' }}>🎁</div>
               <div className="transform -rotate-6 drop-shadow-2xl" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>🎁</div>
             </div>
 
-            {/* DAILY GIFT banner with 3D ribbon */}
-            <div className="relative mb-[3vh]">
+            {/* DAILY GIFT banner with 3D ribbon - DELAY 150ms */}
+            <div className={`relative mb-[3vh] transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                 style={{ transitionDelay: '150ms' }}>
               <div className="relative bg-gradient-to-b from-red-500 via-red-600 to-red-700 px-[12vw] py-[2.5vh] shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
                    style={{
                      clipPath: 'polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 85% 95%, 50% 100%, 15% 95%, 5% 100%, 0% 50%)'
@@ -162,8 +163,9 @@ const DailyGiftDialog = ({
               </div>
             </div>
 
-            {/* Central flag/banner - with purple radial glow */}
-            <div className="relative">
+            {/* Central flag/banner - with purple radial glow - DELAY 300ms */}
+            <div className={`relative transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                 style={{ transitionDelay: '300ms' }}>
               {/* Purple radial glow effect behind flag */}
               <div className="absolute inset-0 -z-10"
                    style={{
@@ -268,17 +270,18 @@ const DailyGiftDialog = ({
               </div>
             )}
 
-            {/* COLLECT button */}
+            {/* COLLECT button - DELAY 450ms */}
             {canClaim ? (
               <button
                 onClick={handleClaim}
-                className="bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 hover:from-pink-500 hover:to-pink-700 text-white font-black rounded-full px-[14vw] py-[3vh] shadow-[0_10px_35px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.6)] active:shadow-none active:translate-y-1 transition-all border-4 border-pink-300 mt-[3vh]"
-                style={{ fontSize: 'clamp(1.25rem, 5.5vw, 2rem)' }}
+                className={`bg-gradient-to-b from-pink-400 via-pink-500 to-pink-600 hover:from-pink-500 hover:to-pink-700 text-white font-black rounded-full px-[14vw] py-[3vh] shadow-[0_10px_35px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.6)] active:shadow-none active:translate-y-1 transition-all border-4 border-pink-300 mt-[3vh] transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                style={{ fontSize: 'clamp(1.25rem, 5.5vw, 2rem)', transitionDelay: '450ms' }}
               >
                 COLLECT
               </button>
             ) : (
-              <div className="text-center mt-[3vh]">
+              <div className={`text-center mt-[3vh] transform transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                   style={{ transitionDelay: '450ms' }}>
                 <p className="text-white font-black drop-shadow-[0_4px_15px_rgba(0,0,0,0.8)]" style={{ fontSize: 'clamp(1rem, 5vw, 1.75rem)' }}>
                   ✅ MAI JUTALOM ÁTVÉVE
                 </p>
@@ -286,11 +289,11 @@ const DailyGiftDialog = ({
             )}
           </div>
 
-          {/* Close X button - top right - ZOOM IN ANIMATION */}
+          {/* Close X button - top right - DELAY 600ms */}
           <button
             onClick={onLater}
-            className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '150ms' }}
+            className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '600ms' }}
           >
             ×
           </button>
