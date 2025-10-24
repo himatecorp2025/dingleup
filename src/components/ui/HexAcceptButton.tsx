@@ -33,27 +33,30 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
       style={{
         width: '100%',
         height: 'clamp(68px, 16vh, 84px)',
-        padding: '6px 0',
-        animation: 'casino-pulse 3s ease-in-out infinite'
+        padding: '0',
+        animation: 'casino-pulse 3s ease-in-out infinite',
+        flex: '0 0 auto',
+        boxSizing: 'border-box'
       }}
       {...props}
     >
-      {/* Casino shine effect - csak hexagonon belül */}
+      {/* Casino shine effect - SAME clip-path as button hexagon (pointy-top) */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          clipPath: 'path("M 50% 11.25% L 62.86% 28.75% L 62.86% 71.25% L 50% 88.75% L 37.14% 71.25% L 37.14% 28.75% Z")',
+          clipPath: 'polygon(50% 11.25%, 62.86% 28.75%, 62.86% 71.25%, 50% 88.75%, 37.14% 71.25%, 37.14% 28.75%)',
           overflow: 'hidden'
         }}
       >
         <div 
           className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%]"
           style={{
-            background: 'linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.28), transparent)',
+            background: 'linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.3), transparent)',
             animation: 'slot-shine 3s linear infinite'
           }}
         />
       </div>
+
       {/* SVG POINTY-TOP Hexagon Layers - 150° felső/alsó szögek */}
       <svg viewBox="0 0 420 80" className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid meet">
         <defs>

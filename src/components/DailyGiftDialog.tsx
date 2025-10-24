@@ -33,9 +33,33 @@ const DailyGiftDialog = ({
   const isHandheld = usePlatformDetection();
   const [contentVisible, setContentVisible] = useState(false);
   const flagRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const buttonWrapperRef = useRef<HTMLDivElement>(null);
   const [origin, setOrigin] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
   const [burstActive, setBurstActive] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
+
+  // Sync badge width to button
+  useEffect(() => {
+    if (!badgeRef.current || !buttonWrapperRef.current) return;
+
+    const syncWidth = () => {
+      const badgeWidth = badgeRef.current?.getBoundingClientRect().width;
+      if (badgeWidth && buttonWrapperRef.current) {
+        buttonWrapperRef.current.style.setProperty('--sync-width', `${badgeWidth}px`);
+      }
+    };
+
+    syncWidth();
+    const observer = new ResizeObserver(syncWidth);
+    observer.observe(badgeRef.current);
+    window.addEventListener('resize', syncWidth);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', syncWidth);
+    };
+  }, [contentVisible, open]);
 
   useEffect(() => {
     if (open) {
@@ -198,7 +222,11 @@ const DailyGiftDialog = ({
 
             <HexShieldFrame>
               {/* Top Hex Badge - "DAILY GIFT" */}
-              <div className="relative -mt-8 mb-3 mx-auto z-20" style={{ width: '78%' }}>
+              <div 
+                ref={badgeRef}
+                className="relative -mt-8 mb-3 mx-auto z-20" 
+                style={{ width: 'max-content' }}
+              >
                 <div className="relative px-[5vw] py-[1.2vh] shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
@@ -331,8 +359,15 @@ const DailyGiftDialog = ({
                   )}
                 </div>
 
-                {/* Hex Accept Button - full width inside shield (no padding constraints) */}
-                <div className="absolute left-[6%] right-[6%] bottom-[6%] z-20">
+                {/* Hex Accept Button */}
+                <div 
+                  ref={buttonWrapperRef}
+                  className="flex justify-center mt-auto"
+                  style={{
+                    width: 'var(--sync-width, 100%)',
+                    maxWidth: '100%'
+                  }}
+                >
                   {canClaim ? (
                     <HexAcceptButton onClick={handleClaim} />
                   ) : (
