@@ -52,17 +52,23 @@ const DailyGiftDialog = ({
   useEffect(() => {
     if (!open) return;
     if (!contentVisible) return;
-    requestAnimationFrame(() => {
-      const el = flagRef.current;
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const x = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
-        const y = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
-        setOrigin({ x, y });
-        setBurstKey((k) => k + 1);
-        setBurstActive(true);
-      }
-    });
+    
+    // 200ms delay after shield appears (shield has 300ms delay, so total 500ms)
+    const timer = setTimeout(() => {
+      requestAnimationFrame(() => {
+        const el = flagRef.current;
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const x = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
+          const y = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
+          setOrigin({ x, y });
+          setBurstKey((k) => k + 1);
+          setBurstActive(true);
+        }
+      });
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, [contentVisible, open]);
 
   useEffect(() => {
@@ -144,10 +150,10 @@ const DailyGiftDialog = ({
                 const endX = Math.cos(angle) * speed;
                 const endY = Math.sin(angle) * speed;
 
-                // Continuous floating parameters
-                const floatX = Math.random() * 30 - 15; // vw
-                const floatY = Math.random() * 30 - 15; // vh
-                const floatDuration = Math.random() * 3 + 2; // 2-5s
+                // Continuous floating parameters - faster and smoother
+                const floatX = Math.random() * 40 - 20; // vw
+                const floatY = Math.random() * 40 - 20; // vh
+                const floatDuration = Math.random() * 2 + 1.5; // 1.5-3.5s - faster
                 const finalOpacity = Math.random() * 0.4 + 0.5; // 0.5-0.9
 
                 return (
@@ -164,7 +170,7 @@ const DailyGiftDialog = ({
                         '0 0 20px 4px #FFD700, 0 0 35px 10px #FFA500, 0 0 60px 12px rgba(255, 215, 0, 0.85)',
                       filter: 'saturate(1.2) brightness(1.2)',
                       transform: 'translate(-50%, -50%)',
-                      animation: `starBurst${i % 40} ${burstDuration}s cubic-bezier(0.2,0.8,0.2,1) forwards, starFloat${i % 40} ${floatDuration}s ease-in-out ${burstDuration}s infinite`,
+                      animation: `starBurst${i % 40} ${burstDuration}s cubic-bezier(0.2,0.8,0.2,1) forwards, starFloat${i % 40} ${floatDuration}s linear ${burstDuration}s infinite`,
                       animationDelay: `${i * 0.003}s`,
                       zIndex: 5
                     }}
