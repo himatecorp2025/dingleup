@@ -513,51 +513,18 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-              <h3 className="text-lg lg:text-xl font-bold text-white mb-3 lg:mb-4">Fejlett Analitika</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
-                <button
-                  onClick={() => navigate('/admin/retention')}
-                  className="bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 rounded-lg p-3 lg:p-4 text-left transition-colors"
-                >
-                  <Target className="w-5 h-5 lg:w-6 lg:h-6 text-purple-400 mb-2" />
-                  <h4 className="text-white font-semibold text-sm lg:text-base">Retention</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">DAU/WAU/MAU, kohorsz analízis</p>
-                </button>
-                <button
-                  onClick={() => navigate('/admin/monetization')}
-                  className="bg-yellow-600/20 hover:bg-yellow-600/30 border border-yellow-500/30 rounded-lg p-3 lg:p-4 text-left transition-colors"
-                >
-                  <PieChart className="w-5 h-5 lg:w-6 lg:h-6 text-yellow-400 mb-2" />
-                  <h4 className="text-white font-semibold text-sm lg:text-base">Monetizáció</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Bevétel, ARPU, LTV analízis</p>
-                </button>
-                <button
-                  onClick={() => navigate('/admin/performance')}
-                  className="bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 rounded-lg p-3 lg:p-4 text-left transition-colors"
-                >
-                  <Zap className="w-5 h-5 lg:w-6 lg:h-6 text-red-400 mb-2" />
-                  <h4 className="text-white font-semibold text-sm lg:text-base">Teljesítmény</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Betöltési idők, Core Web Vitals</p>
-                </button>
-                <button
-                  onClick={() => navigate('/admin/engagement')}
-                  className="bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/30 rounded-lg p-3 lg:p-4 text-left transition-colors"
-                >
-                  <Activity className="w-5 h-5 lg:w-6 lg:h-6 text-cyan-400 mb-2" />
-                  <h4 className="text-white font-semibold text-sm lg:text-base">Engagement</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Session hossz, funkció használat</p>
-                </button>
-                <button
-                  onClick={() => navigate('/admin/user-journey')}
-                  className="bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/30 rounded-lg p-3 lg:p-4 text-left transition-colors"
-                >
-                  <MapIcon className="w-5 h-5 lg:w-6 lg:h-6 text-pink-400 mb-2" />
-                  <h4 className="text-white font-semibold text-sm lg:text-base">User Journey</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Tölcsérek, útvonalak, kilépési pontok</p>
-                </button>
+            <button
+              onClick={() => navigate('/admin/analytics')}
+              className="bg-[#1a1a3e]/50 hover:bg-[#1a1a3e]/70 border border-purple-500/30 rounded-xl lg:rounded-2xl p-6 lg:p-8 text-left transition-all hover:scale-[1.02]"
+            >
+              <div className="flex items-center gap-4">
+                <Activity className="w-10 h-10 lg:w-12 lg:h-12 text-purple-400" />
+                <div>
+                  <h3 className="text-xl lg:text-2xl font-bold text-white mb-2">Fejlett Analitika</h3>
+                  <p className="text-white/60 text-sm lg:text-base">Részletes analitikai dashboardok (Retention, Monetizáció, Teljesítmény, Engagement, User Journey)</p>
+                </div>
               </div>
-            </div>
+            </button>
           </div>
         )}
 

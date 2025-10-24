@@ -26,6 +26,7 @@ import AdminTipsVideos from "./pages/AdminTipsVideos";
 import GeniusMembers from "./pages/GeniusMembers";
 import GeniusMembersEnhanced from "./pages/GeniusMembersEnhanced";
 import NormalUsersAnalytics from "./pages/NormalUsersAnalytics";
+import AdvancedAnalytics from "./pages/AdvancedAnalytics";
 import RetentionDashboard from "./pages/RetentionDashboard";
 import MonetizationDashboard from "./pages/MonetizationDashboard";
 import PerformanceDashboard from "./pages/PerformanceDashboard";
@@ -262,6 +263,7 @@ const App = () => {
             <Route path="/admin/genius" element={<GeniusMembersEnhanced />} />
             <Route path="/admin/normal-users" element={<NormalUsersAnalytics />} />
             <Route path="/admin/tips" element={<AdminTipsVideos />} />
+            <Route path="/admin/analytics" element={<AdvancedAnalytics />} />
             <Route path="/admin/retention" element={<RetentionDashboard />} />
             <Route path="/admin/monetization" element={<MonetizationDashboard />} />
             <Route path="/admin/performance" element={<PerformanceDashboard />} />
