@@ -9,9 +9,9 @@ import React, { PropsWithChildren } from 'react';
  * - Specular conic highlight a tetején
  * - 3D árnyékok és vastagság
  */
-const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ children, className }) => {
+const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ children, className = '' }) => {
   return (
-    <div className={`relative ${className ?? ''}`} 
+    <div className={`relative ${className}`}
          style={{ 
            width: 'min(92vw, 500px)', 
            height: 'clamp(540px, 88vh, 680px)'

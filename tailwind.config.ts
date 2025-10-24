@@ -130,6 +130,21 @@ export default {
         "shimmer": {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(100%)" }
+        },
+        "shine": {
+          "0%, 100%": { 
+            filter: "brightness(1) saturate(1)",
+            transform: "scale(1)"
+          },
+          "50%": { 
+            filter: "brightness(1.15) saturate(1.2)",
+            transform: "scale(1.01)"
+          }
+        },
+        "flash": {
+          "0%, 90%, 100%": { opacity: "0" },
+          "5%, 15%": { opacity: "1" },
+          "10%": { opacity: "0.3" }
         }
       },
       animation: {
@@ -140,7 +155,9 @@ export default {
         "glow": "glow 2s ease-in-out infinite",
         "slide-in-right": "slide-in-right 0.5s ease-out",
         "shimmer": "shimmer 2s infinite",
-        "spin-slow": "spin 3s linear infinite"
+        "spin-slow": "spin 3s linear infinite",
+        "shine": "shine 3s ease-in-out infinite",
+        "flash": "flash 4s ease-in-out infinite"
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
