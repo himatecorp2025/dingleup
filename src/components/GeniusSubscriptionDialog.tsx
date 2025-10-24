@@ -1,16 +1,9 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Crown, Sparkles, Zap, Trophy, CreditCard, Check } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import shopOfferBg from '@/assets/popup-shop-offer.png';
 
 interface GeniusSubscriptionDialogProps {
   open: boolean;
@@ -24,8 +17,8 @@ export const GeniusSubscriptionDialog = ({
   onSubscribeComplete
 }: GeniusSubscriptionDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const isHandheld = usePlatformDetection();
 
-  // Track subscription modal view
   useEffect(() => {
     if (open) {
       const trackView = async () => {
@@ -41,7 +34,6 @@ export const GeniusSubscriptionDialog = ({
   const handleSubscribe = async () => {
     setIsLoading(true);
     
-    // Track subscription start
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -67,137 +59,130 @@ export const GeniusSubscriptionDialog = ({
     setIsLoading(false);
   };
 
-  // Calculate discounted price (-25%)
   const basePrice = 2.99;
   const discountedPrice = Math.round(basePrice * 0.75 * 100) / 100;
+
+  if (!isHandheld) return null;
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] dialog-enter-slow flex flex-col"
-        style={{
-          width: 'min(95vw, 600px)',
-          height: 'calc(var(--vh, 1vh) * 70)',
-          maxHeight: 'calc(var(--vh, 1vh) * 70)',
-          overflow: 'hidden'
+        className="overflow-hidden p-0 border-0 bg-transparent max-w-[95vw] w-[95vw]"
+        style={{ 
+          height: 'auto',
+          maxHeight: '90vh'
         }}
       >
-        <div className="flex-shrink-0 px-2">
-          <DialogHeader className="text-center">
-            <DialogTitle className="text-xl sm:text-2xl font-black text-center justify-center flex items-center gap-2">
-              <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 animate-bounce" />
-              GENIUS ELŐFIZETÉS
-            </DialogTitle>
-            <DialogDescription className="text-sm sm:text-base text-white/90 pt-2 font-bold text-center">
-              🎮 Légy Genius – duplázd meg a napi jutalmad!
-            </DialogDescription>
-          </DialogHeader>
-        </div>
-        
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden px-2">
-          {/* Price Box - Casino Style */}
-          <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-4 sm:p-6 my-3 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)]">
-          {/* Animated sparkles */}
-          <div className="absolute inset-0 opacity-30">
-            <Sparkles className="absolute top-2 right-2 w-6 h-6 text-yellow-200 animate-pulse" />
-            <Sparkles className="absolute bottom-2 left-2 w-5 h-5 text-yellow-200 animate-pulse" style={{ animationDelay: '0.5s' }} />
-            <Crown className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 text-yellow-300/10" />
-          </div>
-          
-          <div className="relative z-10 text-center space-y-3">
-            <p className="text-yellow-200 text-xs sm:text-sm font-bold">Genius Ár</p>
-            <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
-              <span className="text-lg sm:text-2xl font-bold text-yellow-200/70 line-through">${basePrice.toFixed(2)}</span>
-              <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-purple-600 text-white text-xs sm:text-sm font-black rounded-full">-25%</span>
-            </div>
-            <p className="text-3xl sm:text-5xl font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]">
-              ${discountedPrice.toFixed(2)}
-            </p>
-            <p className="text-yellow-200 text-sm sm:text-base font-semibold">/ hónap</p>
-            <div className="flex items-center justify-center gap-2 pt-2">
-              <Zap className="w-4 h-4 text-yellow-300" />
-              <p className="text-sm text-yellow-100 font-bold">Bármikor lemondható</p>
-              <Zap className="w-4 h-4 text-yellow-300" />
-            </div>
-          </div>
-        </div>
-
-          {/* Benefits */}
-          <div className="space-y-2 mb-4">
-            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-yellow-400/10 rounded-lg border border-yellow-400/30">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-yellow-400/30 flex items-center justify-center flex-shrink-0">
-                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-300" />
-              </div>
-              <p className="text-white font-bold text-xs sm:text-sm">Dupla napi jutalom (2x arany)</p>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-green-400/10 rounded-lg border border-green-400/30">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-green-400/30 flex items-center justify-center flex-shrink-0">
-                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-300" />
-              </div>
-              <p className="text-white font-bold text-xs sm:text-sm">Élet regeneráció 2x gyorsabb (6 perc)</p>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-red-400/10 rounded-lg border border-red-400/30">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-red-400/30 flex items-center justify-center flex-shrink-0">
-                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-red-300" />
-              </div>
-              <p className="text-white font-bold text-xs sm:text-sm">–50% coin kedvezmény boosterekre</p>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-purple-400/10 rounded-lg border border-purple-400/30">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-purple-400/30 flex items-center justify-center flex-shrink-0">
-                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-purple-300" />
-              </div>
-              <p className="text-white font-bold text-xs sm:text-sm">–25% USD kedvezmény boosterekre</p>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-blue-400/10 rounded-lg border border-blue-400/30">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-400/30 flex items-center justify-center flex-shrink-0">
-                <Check className="w-3 h-3 sm:w-4 sm:h-4 text-blue-300" />
-              </div>
-              <p className="text-white font-bold text-xs sm:text-sm">Exkluzív Tippek & Trükkök videók</p>
-            </div>
+        <div 
+          className="relative w-full flex flex-col items-center justify-center p-[4vw] bg-cover bg-center bg-no-repeat rounded-3xl"
+          style={{ 
+            backgroundImage: `url(${shopOfferBg})`,
+            minHeight: '70vh',
+            aspectRatio: '1'
+          }}
+        >
+          {/* Crown icon top left */}
+          <div className="absolute top-[4vh] left-[4vw] bg-yellow-500 rounded-full w-[12vw] h-[12vw] max-w-[50px] max-h-[50px] flex items-center justify-center border-4 border-yellow-600 shadow-lg">
+            <span style={{ fontSize: 'clamp(1.5rem, 6vw, 2rem)' }}>👑</span>
           </div>
 
-          {/* Payment info */}
-          <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-2 sm:p-3 mb-2">
-            <p className="text-center text-white font-bold text-[10px] sm:text-xs flex items-center justify-center gap-2">
-              <CreditCard className="w-3 h-3 sm:w-4 sm:h-4" />
-              Biztonságos fizetés • Stripe
+          {/* Banner */}
+          <div className="absolute top-[8vh] left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 px-[6vw] py-[1.5vh] rounded-full shadow-lg border-4 border-white/50">
+            <p className="font-black text-white text-center drop-shadow-lg" style={{ fontSize: 'clamp(0.875rem, 4vw, 1.5rem)' }}>
+              One Time Sale Offer
             </p>
           </div>
-        </div>
-        
-        <div className="flex-shrink-0 px-2 pb-2">
-          <div className="flex flex-col gap-2 sm:gap-3">
-            <Button
+
+          {/* Main shop area */}
+          <div className="mt-[15vh] bg-gradient-to-b from-amber-800/90 to-amber-900/90 rounded-3xl border-8 border-amber-700 p-[4vw] backdrop-blur-sm shadow-2xl w-[85vw] max-w-[500px]">
+            {/* Top decorative lights */}
+            <div className="flex justify-around mb-[2vh]">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="w-[3vw] h-[3vw] max-w-[15px] max-h-[15px] bg-red-500 rounded-full border-2 border-red-700 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+              ))}
+            </div>
+
+            {/* Price tag on left */}
+            <div className="absolute left-[8vw] top-[35vh] bg-gradient-to-b from-pink-500 to-purple-600 rounded-xl px-[4vw] py-[2vh] border-4 border-yellow-400 shadow-xl -rotate-12">
+              <div className="text-center">
+                <p className="text-yellow-300 font-black line-through" style={{ fontSize: 'clamp(0.875rem, 4vw, 1.25rem)' }}>
+                  ${basePrice}
+                </p>
+                <p className="font-black text-white drop-shadow-lg" style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)' }}>
+                  ${discountedPrice}
+                </p>
+              </div>
+            </div>
+
+            {/* Discount badge */}
+            <div className="absolute left-[4vw] top-[30vh] bg-yellow-400 rounded-full px-[3vw] py-[1vh] border-3 border-yellow-600 shadow-lg rotate-12">
+              <p className="font-black text-red-600" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1.25rem)' }}>
+                25% OFF
+              </p>
+            </div>
+
+            {/* Gems/Coins visual */}
+            <div className="flex justify-center mb-[2vh]">
+              <div className="bg-gradient-to-b from-yellow-300 to-yellow-600 rounded-full p-[3vw] border-4 border-yellow-700 shadow-inner">
+                <span style={{ fontSize: 'clamp(2rem, 10vw, 4rem)' }}>💎</span>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="space-y-[1vh] mb-[2vh]">
+              <div className="flex items-center gap-[2vw]">
+                <span style={{ fontSize: 'clamp(1rem, 5vw, 1.5rem)' }}>✨</span>
+                <p className="text-white font-bold" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1rem)' }}>
+                  Dupla napi jutalom
+                </p>
+              </div>
+              <div className="flex items-center gap-[2vw]">
+                <span style={{ fontSize: 'clamp(1rem, 5vw, 1.5rem)' }}>⚡</span>
+                <p className="text-white font-bold" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1rem)' }}>
+                  2x gyorsabb élet regeneráció
+                </p>
+              </div>
+              <div className="flex items-center gap-[2vw]">
+                <span style={{ fontSize: 'clamp(1rem, 5vw, 1.5rem)' }}>💰</span>
+                <p className="text-white font-bold" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1rem)' }}>
+                  50% coin kedvezmény
+                </p>
+              </div>
+            </div>
+
+            {/* Buy Now button */}
+            <button
               onClick={handleSubscribe}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-green-500 via-green-600 to-green-500 hover:from-green-600 hover:via-green-700 hover:to-green-600 text-black font-black text-base sm:text-xl gap-2 sm:gap-3 py-4 sm:py-6 shadow-[0_0_25px_rgba(34,197,94,0.6)] hover:shadow-[0_0_35px_rgba(34,197,94,0.8)] transition-all duration-300 animate-pulse hover:animate-none border-2 sm:border-4 border-yellow-400 min-h-[44px]"
+              className="w-full bg-gradient-to-b from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 disabled:from-green-300 disabled:to-green-500 text-white font-black rounded-full py-[2.5vh] shadow-[0_6px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all border-4 border-green-800 disabled:cursor-not-allowed"
+              style={{ fontSize: 'clamp(1rem, 4.5vw, 1.75rem)' }}
             >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 border-3 border-black border-t-transparent rounded-full animate-spin" />
-                  Átirányítás...
-                </>
-              ) : (
-                <>
-                  <Crown className="w-5 h-5 sm:w-6 sm:h-6" />
-                  ELŐFIZETEK ${discountedPrice.toFixed(2)}/HÓ 🎰
-                </>
-              )}
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              onClick={() => onOpenChange(false)}
-              className="text-white/60 hover:text-white/80 hover:bg-transparent text-xs sm:text-sm min-h-[44px]"
-            >
-              Később
-            </Button>
+              {isLoading ? 'Feldolgozás...' : 'Buy Now'}
+            </button>
           </div>
+
+          {/* Right side emoji icons */}
+          <div className="absolute right-[4vw] top-[32vh] space-y-[2vh]">
+            <div className="bg-yellow-400 rounded-full p-[2vw] border-3 border-yellow-600 shadow-lg">
+              <span style={{ fontSize: 'clamp(1.25rem, 6vw, 2rem)' }}>🎁</span>
+            </div>
+            <div className="bg-red-400 rounded-full p-[2vw] border-3 border-red-600 shadow-lg">
+              <span style={{ fontSize: 'clamp(1.25rem, 6vw, 2rem)' }}>❤️</span>
+            </div>
+            <div className="bg-blue-400 rounded-full p-[2vw] border-3 border-blue-600 shadow-lg">
+              <span style={{ fontSize: 'clamp(1.25rem, 6vw, 2rem)' }}>💎</span>
+            </div>
+          </div>
+
+          {/* Close/Later button */}
+          <button
+            onClick={() => onOpenChange(false)}
+            disabled={isLoading}
+            className="mt-[2vh] text-white/70 hover:text-white font-bold disabled:cursor-not-allowed"
+            style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1.125rem)' }}
+          >
+            Később
+          </button>
         </div>
       </DialogContent>
     </Dialog>

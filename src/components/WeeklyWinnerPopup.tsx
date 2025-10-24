@@ -1,7 +1,8 @@
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Trophy, Coins, Heart, Crown, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import weeklyWinnerBg from '@/assets/popup-weekly-winner.png';
 
 interface WeeklyWinnerPopupProps {
   userId: string | undefined;
@@ -15,24 +16,21 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
     lives: number;
     weekStart: string;
   } | null>(null);
+  const isHandheld = usePlatformDetection();
 
   useEffect(() => {
     if (!userId) return;
 
     const checkWinnerStatus = async () => {
       try {
-        // Get current week start
         const { data: weekData } = await supabase.rpc('get_current_week_start');
         if (!weekData) return;
 
         const currentWeekStart = weekData as string;
-
-        // Calculate last week start
         const lastWeekDate = new Date(currentWeekStart);
         lastWeekDate.setDate(lastWeekDate.getDate() - 7);
         const lastWeekStart = lastWeekDate.toISOString().split('T')[0];
 
-        // Check if user won last week
         const { data: awardData, error: awardError } = await supabase
           .from('weekly_winner_awarded')
           .select('*')
@@ -42,7 +40,6 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
 
         if (awardError || !awardData) return;
 
-        // Check if popup already shown
         const { data: popupData } = await supabase
           .from('weekly_winner_popup_shown')
           .select('*')
@@ -50,9 +47,8 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
           .eq('week_start', lastWeekStart)
           .single();
 
-        if (popupData) return; // Already shown
+        if (popupData) return;
 
-        // Get prize amount
         const { data: prizeData } = await supabase
           .from('weekly_prize_table')
           .select('*')
@@ -74,7 +70,6 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
       }
     };
 
-    // Check after a short delay
     const timeout = setTimeout(checkWinnerStatus, 2000);
     return () => clearTimeout(timeout);
   }, [userId]);
@@ -83,7 +78,6 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
     if (!userId || !winnerData) return;
 
     try {
-      // Mark popup as shown
       await supabase
         .from('weekly_winner_popup_shown')
         .insert({
@@ -98,7 +92,7 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
     }
   };
 
-  if (!winnerData) return null;
+  if (!winnerData || !isHandheld) return null;
 
   const getRankDisplay = (rank: number) => {
     if (rank === 1) return '🥇 1. HELYEZETT';
@@ -107,7 +101,7 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
     return `🏆 ${rank}. HELYEZETT`;
   };
 
-  const getRankColor = (rank: number) => {
+  const getRankBadgeColor = (rank: number) => {
     if (rank === 1) return 'from-yellow-400 to-yellow-600';
     if (rank === 2) return 'from-gray-300 to-gray-500';
     if (rank === 3) return 'from-orange-400 to-orange-600';
@@ -117,66 +111,118 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent 
-        className="w-[70dvw] h-[70dvh] bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] overflow-hidden"
-        style={{
-          maxWidth: '95vw',
-          maxHeight: '70dvh'
+        className="overflow-hidden p-0 border-0 bg-transparent max-w-[95vw] w-[95vw]"
+        style={{ 
+          height: 'auto',
+          maxHeight: '90vh'
         }}
       >
-        {/* Animated background */}
-        <div className="absolute inset-0 opacity-20">
-          <Star className="absolute top-4 left-4 w-8 h-8 text-yellow-400 animate-pulse" />
-          <Star className="absolute top-8 right-8 w-6 h-6 text-yellow-300 animate-pulse" style={{ animationDelay: '0.5s' }} />
-          <Crown className="absolute bottom-8 left-8 w-12 h-12 text-yellow-400 animate-pulse" style={{ animationDelay: '1s' }} />
-          <Trophy className="absolute bottom-4 right-4 w-10 h-10 text-yellow-300 animate-pulse" style={{ animationDelay: '1.5s' }} />
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 sm:p-6 space-y-4 sm:space-y-6">
-          {/* Trophy icon */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/40 via-orange-400/40 to-yellow-400/40 blur-3xl rounded-full animate-pulse"></div>
-            <Trophy className="relative w-16 h-16 sm:w-24 sm:h-24 text-yellow-300 drop-shadow-[0_0_30px_rgba(253,224,71,1)]" />
+        <div 
+          className="relative w-full flex flex-col items-center justify-center p-[4vw] bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: `url(${weeklyWinnerBg})`,
+            minHeight: '80vh',
+            aspectRatio: '0.65'
+          }}
+        >
+          {/* Top ornament with lights */}
+          <div className="absolute top-[5vh] left-1/2 -translate-x-1/2 w-[60vw] max-w-[400px]">
+            <div className="relative">
+              {/* Left and right light beams */}
+              <div className="absolute -left-[15vw] top-1/2 -translate-y-1/2 w-[10vw] h-[1px] bg-gradient-to-r from-transparent to-yellow-400"></div>
+              <div className="absolute -right-[15vw] top-1/2 -translate-y-1/2 w-[10vw] h-[1px] bg-gradient-to-l from-transparent to-yellow-400"></div>
+            </div>
           </div>
 
-          {/* Title */}
-          <h2 className="text-2xl sm:text-4xl font-black text-center bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 drop-shadow-lg animate-pulse">
-            🎉 GRATULÁLUNK! 🎉
-          </h2>
+          {/* PATCH UPDATE badge */}
+          <div className="mt-[8vh] mb-[4vh]">
+            <div className="relative">
+              {/* Glowing effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent blur-xl opacity-50 animate-pulse"></div>
+              
+              {/* Main badge */}
+              <div className="relative bg-gradient-to-b from-purple-700 via-purple-800 to-purple-900 px-[10vw] py-[3vh] rounded-2xl border-8 border-yellow-400 shadow-[0_0_40px_rgba(234,179,8,0.8)]"
+                   style={{
+                     clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)'
+                   }}>
+                <div className="text-center space-y-[1vh]">
+                  <h1 className="font-black bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                      style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)' }}>
+                    HETI GYŐZELEM
+                  </h1>
+                  <p className="text-white font-bold drop-shadow-lg" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1.25rem)' }}>
+                    TOP 10 HELYEZÉS
+                  </p>
+                </div>
+              </div>
 
-          {/* Rank display */}
-          <div className={`px-4 sm:px-8 py-2 sm:py-4 bg-gradient-to-r ${getRankColor(winnerData.rank)} rounded-xl border-2 border-yellow-400 shadow-[0_0_30px_rgba(234,179,8,0.6)]`}>
-            <p className="text-xl sm:text-3xl font-black text-white drop-shadow-lg text-center">
-              {getRankDisplay(winnerData.rank)}
+              {/* Side ornaments */}
+              <div className="absolute -left-[8vw] top-1/2 -translate-y-1/2 w-[6vw] h-[6vw] bg-yellow-400 rounded-full border-4 border-yellow-600 animate-pulse shadow-lg"></div>
+              <div className="absolute -right-[8vw] top-1/2 -translate-y-1/2 w-[6vw] h-[6vw] bg-yellow-400 rounded-full border-4 border-yellow-600 animate-pulse shadow-lg"></div>
+            </div>
+          </div>
+
+          {/* Central hexagon platform */}
+          <div className="relative my-[4vh]">
+            {/* Lightning effects */}
+            <div className="absolute -left-[20vw] top-1/2 w-[15vw] h-[2px]">
+              <div className="w-full h-full bg-gradient-to-r from-transparent via-yellow-400 to-transparent animate-pulse"></div>
+            </div>
+            <div className="absolute -right-[20vw] top-1/2 w-[15vw] h-[2px]">
+              <div className="w-full h-full bg-gradient-to-l from-transparent via-yellow-400 to-transparent animate-pulse"></div>
+            </div>
+
+            {/* Hexagon base */}
+            <div className="w-[70vw] max-w-[400px] aspect-[1.5/1] bg-gradient-to-b from-amber-600 via-amber-700 to-amber-900 border-8 border-yellow-500 shadow-2xl relative"
+                 style={{
+                   clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
+                 }}>
+              {/* Inner glow */}
+              <div className="absolute inset-[10px] bg-gradient-to-b from-purple-600/40 to-transparent"
+                   style={{
+                     clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
+                   }}></div>
+
+              {/* Content overlay */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-10 space-y-[2vh]">
+                {/* Rank badge */}
+                <div className={`bg-gradient-to-b ${getRankBadgeColor(winnerData.rank)} px-[6vw] py-[2vh] rounded-xl border-4 border-yellow-400 shadow-xl`}>
+                  <p className="font-black text-white text-center drop-shadow-lg" style={{ fontSize: 'clamp(1rem, 5vw, 1.75rem)' }}>
+                    {getRankDisplay(winnerData.rank)}
+                  </p>
+                </div>
+
+                {/* Rewards */}
+                <div className="space-y-[1vh]">
+                  <div className="flex items-center justify-center gap-[2vw]">
+                    <span style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)' }}>🪙</span>
+                    <span className="font-black text-yellow-300 drop-shadow-lg" style={{ fontSize: 'clamp(1.25rem, 6vw, 2rem)' }}>
+                      +{winnerData.gold}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-[2vw]">
+                    <span style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)' }}>❤️</span>
+                    <span className="font-black text-red-300 drop-shadow-lg" style={{ fontSize: 'clamp(1.25rem, 6vw, 2rem)' }}>
+                      +{winnerData.lives}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom text */}
+          <div className="bg-black/70 backdrop-blur-sm rounded-2xl border-4 border-purple-600 px-[6vw] py-[2vh] mt-[3vh] max-w-[85vw]">
+            <p className="text-white text-center font-bold leading-relaxed drop-shadow-lg" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1rem)' }}>
+              A múlt heti teljesítményed alapján bekerültél a TOP 10-be! Gratulálunk! 🎉
             </p>
           </div>
 
-          {/* Rewards */}
-          <div className="w-full max-w-md space-y-3">
-            <div className="bg-gradient-to-br from-yellow-600/30 to-yellow-800/30 border-2 border-yellow-400/50 rounded-xl p-4 flex items-center justify-center gap-3">
-              <Coins className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-300 animate-spin" style={{ animationDuration: '3s' }} />
-              <p className="text-2xl sm:text-3xl font-black text-yellow-300">
-                +{winnerData.gold}
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-red-600/30 to-red-800/30 border-2 border-red-400/50 rounded-xl p-4 flex items-center justify-center gap-3">
-              <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-red-300 animate-pulse" />
-              <p className="text-2xl sm:text-3xl font-black text-red-300">
-                +{winnerData.lives}
-              </p>
-            </div>
-          </div>
-
-          {/* Message */}
-          <p className="text-base sm:text-lg text-center text-white/90 font-bold max-w-md">
-            A múlt heti teljesítményed alapján bekerültél a TOP 10-be!
-          </p>
-
-          {/* Close button */}
+          {/* OK button */}
           <button
             onClick={handleClose}
-            className="w-full max-w-xs py-3 sm:py-4 bg-gradient-to-r from-green-500 via-green-600 to-green-500 hover:from-green-600 hover:via-green-700 hover:to-green-600 text-white font-black text-lg sm:text-xl rounded-xl border-2 border-yellow-400 shadow-[0_0_25px_rgba(34,197,94,0.6)] hover:shadow-[0_0_35px_rgba(34,197,94,0.8)] transition-all duration-300"
+            className="mt-[3vh] bg-gradient-to-b from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white font-black rounded-full px-[10vw] py-[2.5vh] shadow-[0_6px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all border-4 border-yellow-400"
+            style={{ fontSize: 'clamp(1rem, 4.5vw, 1.75rem)' }}
           >
             RENDBEN
           </button>
