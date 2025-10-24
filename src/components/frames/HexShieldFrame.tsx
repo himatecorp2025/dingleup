@@ -59,44 +59,44 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </filter>
         </defs>
 
-        {/* 3D Shadow Base (bottom-right offset) - Nagyobb belső szög ~120-130° */}
+        {/* 3D Shadow Base - HEGYES csúcs, széles alap */}
         <path
-          d="M 130 22 L 230 22 L 350 136 L 350 464 L 230 578 L 130 578 L 10 464 L 10 136 Z"
+          d="M 180 10 L 285 50 L 350 140 L 350 460 L 285 550 L 180 590 L 75 550 L 10 460 L 10 140 L 75 50 Z"
           fill="rgba(0,0,0,0.35)"
           transform="translate(6, 8)"
         />
 
-        {/* Outer Gold Frame (darker) - Nagyobb belső szög ~120-130° */}
+        {/* Outer Gold Frame - HEGYES csúcs, széles alap */}
         <path
-          d="M 126 16 L 234 16 L 354 132 L 354 468 L 234 584 L 126 584 L 6 468 L 6 132 Z"
+          d="M 180 4 L 290 46 L 354 136 L 354 464 L 290 554 L 180 596 L 70 554 L 6 464 L 6 136 L 70 46 Z"
           fill="url(#goldOuter)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
           filter="url(#depth-shadow)"
         />
 
-        {/* Middle Gold Frame (lighter highlight) - Nagyobb belső szög ~120-130° */}
+        {/* Middle Gold Frame - HEGYES csúcs, széles alap */}
         <path
-          d="M 138 32 L 222 32 L 338 144 L 338 456 L 222 568 L 138 568 L 22 456 L 22 144 Z"
+          d="M 180 20 L 278 60 L 338 148 L 338 452 L 278 540 L 180 580 L 82 540 L 22 452 L 22 148 L 82 60 Z"
           fill="url(#goldInner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="3"
         />
 
-        {/* Inner Crystal Panel - Nagyobb belső szög ~120-130° */}
+        {/* Inner Crystal Panel - HEGYES csúcs, széles alap */}
         <path
-          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
+          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
           fill="url(#crystalRadial)"
         />
 
-        {/* Specular Highlight Overlay - Nagyobb belső szög ~120-130° */}
+        {/* Specular Highlight Overlay - HEGYES csúcs, széles alap */}
         <path
-          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
+          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
           fill="url(#specular)"
           opacity="0.4"
         />
 
-        {/* Diagonal Light Streaks (stripes) - Nagyobb belső szög ~120-130° */}
+        {/* Diagonal Light Streaks - HEGYES csúcs, széles alap */}
         <defs>
           <pattern id="diagonalStripes" patternUnits="userSpaceOnUse" width="60" height="60" patternTransform="rotate(45)">
             <rect x="0" y="0" width="12" height="60" fill="rgba(255,255,255,0.08)" />
@@ -105,23 +105,23 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </pattern>
         </defs>
         <path
-          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
+          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
           fill="url(#diagonalStripes)"
           opacity="0.7"
         />
 
-        {/* Inner Glow (bottom shadow for 3D) - Nagyobb belső szög ~120-130° */}
+        {/* Inner Glow (bottom shadow for 3D) - HEGYES csúcs, széles alap */}
         <path
-          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
+          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
           fill="none"
           stroke="rgba(0,0,0,0.25)"
           strokeWidth="8"
           style={{ filter: 'blur(6px)' }}
         />
 
-        {/* Gold Inner Stroke (accent) - Nagyobb belső szög ~120-130° */}
+        {/* Gold Inner Stroke (accent) - HEGYES csúcs, széles alap */}
         <path
-          d="M 150 46 L 210 46 L 322 156 L 322 444 L 210 554 L 150 554 L 38 444 L 38 156 Z"
+          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
           fill="none"
           stroke="url(#goldInner)"
           strokeWidth="2"
