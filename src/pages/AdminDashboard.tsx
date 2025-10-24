@@ -309,6 +309,17 @@ const AdminDashboard = () => {
             <span className="font-medium">Összes felhasználó</span>
           </button>
           <button
+            onClick={() => { setActiveTab('player-behaviors'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+              activeTab === 'player-behaviors'
+                ? 'bg-blue-600/20 text-blue-400'
+                : 'text-white/70 hover:bg-white/5'
+            }`}
+          >
+            <TrendingUp className="w-4 h-4 xl:w-5 xl:h-5" />
+            <span className="font-medium">Játékos viselkedések</span>
+          </button>
+          <button
             onClick={() => { navigate('/admin/genius'); onItemClick?.(); }}
             className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
           >
@@ -365,17 +376,6 @@ const AdminDashboard = () => {
           >
             <Activity className="w-4 h-4 xl:w-5 xl:h-5" />
             <span className="font-medium">Aktivitás</span>
-          </button>
-          <button
-            onClick={() => { setActiveTab('player-behaviors'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-              activeTab === 'player-behaviors'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4 xl:w-5 xl:h-5" />
-            <span className="font-medium">Játékos viselkedések</span>
           </button>
         </nav>
       </div>

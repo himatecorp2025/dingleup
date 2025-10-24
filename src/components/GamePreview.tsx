@@ -792,6 +792,9 @@ const GamePreview = () => {
     updatedQuestions[currentQuestionIndex] = newQuestion;
     setQuestions(updatedQuestions);
     
+    // Log skip usage
+    await logHelpUsage('skip');
+    
     setTimeLeft(10);
     setRemovedAnswer(null);
     setAudienceVotes({});
