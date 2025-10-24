@@ -111,87 +111,20 @@ export default function PlayerBehaviorsTab() {
   const fetchStats = async () => {
     try {
       const { start, end } = getDateRange();
-      const startDateStr = start ? format(start, 'yyyy-MM-dd') : null;
-      const endDateStr = end ? format(end, 'yyyy-MM-dd 23:59:59') : null;
+      const startISO = start ? start.toISOString() : null;
+      const endISO = end ? end.toISOString() : null;
 
-      const categoryStats: CategoryStats[] = [];
+      const { data, error } = await supabase.functions.invoke('admin-player-behaviors', {
+        body: { startDate: startISO, endDate: endISO }
+      });
 
-      for (const cat of CATEGORIES) {
-        // Get ALL game data (completed and abandoned)
-        let allGamesQuery = supabase
-          .from('game_results')
-          .select('user_id, correct_answers, completed, average_response_time, created_at, completed_at');
-
-        if (startDateStr) allGamesQuery = allGamesQuery.gte('created_at', startDateStr);
-        if (endDateStr) allGamesQuery = allGamesQuery.lte('created_at', endDateStr);
-        
-        const { data: allGames, error: gamesError } = await allGamesQuery.eq('category', cat.id);
-        
-        if (gamesError) {
-          console.error(`Error fetching games for ${cat.id}:`, gamesError);
-        }
-
-        // Get started sessions (including abandoned)
-        let sessionsQuery = supabase
-          .from('game_sessions')
-          .select('user_id, completed_at, created_at');
-
-        if (startDateStr) sessionsQuery = sessionsQuery.gte('created_at', startDateStr);
-        if (endDateStr) sessionsQuery = sessionsQuery.lte('created_at', endDateStr);
-
-        const { data: sessions } = await sessionsQuery.eq('category', cat.id);
-
-        // Calculate statistics
-        const uniquePlayers = new Set(allGames?.map(g => g.user_id) || []).size;
-        const totalGames = allGames?.length || 0;
-        const completedGames = allGames?.filter(g => g.completed === true).length || 0;
-        const abandonedGames = totalGames - completedGames;
-        const completionRate = totalGames > 0 ? Math.round((completedGames / totalGames) * 100) : 0;
-        
-        const avgCorrect = completedGames > 0 
-          ? (allGames?.filter(g => g.completed).reduce((sum, g) => sum + (g.correct_answers || 0), 0) || 0) / completedGames 
-          : 0;
-
-        const avgResponseTime = completedGames > 0
-          ? (allGames?.filter(g => g.completed && g.average_response_time).reduce((sum, g) => sum + (g.average_response_time || 0), 0) || 0) / completedGames
-          : 0;
-
-        // Get help usage stats
-        let helpQuery = supabase
-          .from('game_help_usage')
-          .select('help_type');
-
-        if (startDateStr) helpQuery = helpQuery.gte('used_at', startDateStr);
-        if (endDateStr) helpQuery = helpQuery.lte('used_at', endDateStr);
-
-        const { data: helps, error: helpsError } = await helpQuery.eq('category', cat.id);
-        
-        if (helpsError) {
-          console.error(`Error fetching helps for ${cat.id}:`, helpsError);
-        }
-
-        const helpUsage = {
-          third: helps?.filter(h => h.help_type === 'third').length || 0,
-          skip: helps?.filter(h => h.help_type === 'skip').length || 0,
-          audience: helps?.filter(h => h.help_type === 'audience').length || 0,
-          '2x_answer': helps?.filter(h => h.help_type === '2x_answer').length || 0
-        };
-
-        categoryStats.push({
-          category: cat.id,
-          uniquePlayers,
-          totalGames,
-          completedGames,
-          abandonedGames,
-          completionRate,
-          avgCorrectAnswers: Math.round(avgCorrect * 10) / 10,
-          avgResponseTime: Math.round(avgResponseTime * 10) / 10,
-          helpUsage
-        });
+      if (error) {
+        console.error('[PlayerBehaviors] Admin function error:', error);
+        return;
       }
 
-      console.log('[PlayerBehaviors] Category stats:', categoryStats);
-      setStats(categoryStats);
+      const incoming = (data?.stats || []) as CategoryStats[];
+      setStats(incoming);
     } catch (error) {
       console.error('Error fetching player behaviors:', error);
     } finally {
