@@ -176,10 +176,13 @@ const AudioPolicyManager = () => {
   return null;
 };
 
-const App = () => {
-  // Initialize analytics tracking
+// Wrapper component that uses analytics (must be inside Router)
+const AppWithAnalytics = () => {
   useAnalytics();
+  return null;
+};
 
+const App = () => {
   // Initialize AudioManager singleton and subscribe to store
   useEffect(() => {
     console.log('[App] Initializing AudioManager');
@@ -226,6 +229,7 @@ const App = () => {
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AppWithAnalytics />
         <ScrollBehaviorManager />
         <AudioPolicyManager />
         <AppRouteGuard>
