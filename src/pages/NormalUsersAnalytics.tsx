@@ -4,9 +4,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { Users, ArrowLeft, Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import BottomNav from '@/components/BottomNav';
+import { useNormalUsersAnalytics } from '@/hooks/useNormalUsersAnalytics';
+import { NormalUsersOverviewTab } from '@/components/normalusers/NormalUsersOverviewTab';
+import { NormalUsersPurchasesTab } from '@/components/normalusers/NormalUsersPurchasesTab';
+import { NormalUsersGameStatsTab } from '@/components/normalusers/NormalUsersGameStatsTab';
+import { NormalUsersActivityTab } from '@/components/normalusers/NormalUsersActivityTab';
+import { NormalUsersInvitationsTab } from '@/components/normalusers/NormalUsersInvitationsTab';
+import { NormalUsersChatTab } from '@/components/normalusers/NormalUsersChatTab';
 
 const NormalUsersAnalytics = () => {
   const navigate = useNavigate();
+  const { analytics, loading, error } = useNormalUsersAnalytics();
 
   useEffect(() => {
     checkAuth();
@@ -37,6 +45,25 @@ const NormalUsersAnalytics = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-[#3b82f6] animate-spin" />
+          <p className="text-lg text-white">Adatok betöltése...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !analytics) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+        <p className="text-lg text-red-400">Hiba: {error || 'Nem sikerült betölteni az adatokat'}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
       paddingTop: 'env(safe-area-inset-top)',
@@ -64,60 +91,49 @@ const NormalUsersAnalytics = () => {
         {/* Content */}
         <div className="max-w-7xl mx-auto p-4 md:p-6">
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="bg-[#0a1f14] border border-blue-500/30 p-1">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+            <TabsList className="bg-[#0a1f14] border border-[#3b82f6]/30 p-1">
+              <TabsTrigger value="overview" className="data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
                 Áttekintés
               </TabsTrigger>
-              <TabsTrigger value="registration" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
-                Regisztrációk
-              </TabsTrigger>
-              <TabsTrigger value="purchases" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              <TabsTrigger value="purchases" className="data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
                 Vásárlások
               </TabsTrigger>
-              <TabsTrigger value="games" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              <TabsTrigger value="games" className="data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
                 Játékstatisztikák
               </TabsTrigger>
-              <TabsTrigger value="activity" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              <TabsTrigger value="activity" className="data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
                 Aktivitás
               </TabsTrigger>
-              <TabsTrigger value="invitations" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              <TabsTrigger value="invitations" className="data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
                 Meghívások
               </TabsTrigger>
-              <TabsTrigger value="chat" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              <TabsTrigger value="chat" className="data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white">
                 Chat/Közösség
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">
-              <div className="text-white text-center py-20">
-                <Users className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-2">Normál Felhasználók Áttekintés</h2>
-                <p className="text-white/70">Fejlesztés alatt...</p>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="registration">
-              <div className="text-white">Regisztrációk tab (fejlesztés alatt)</div>
+              <NormalUsersOverviewTab analytics={analytics} />
             </TabsContent>
 
             <TabsContent value="purchases">
-              <div className="text-white">Vásárlások tab (fejlesztés alatt)</div>
+              <NormalUsersPurchasesTab members={analytics.members} />
             </TabsContent>
 
             <TabsContent value="games">
-              <div className="text-white">Játékstatisztikák tab (fejlesztés alatt)</div>
+              <NormalUsersGameStatsTab members={analytics.members} />
             </TabsContent>
 
             <TabsContent value="activity">
-              <div className="text-white">Aktivitás tab (fejlesztés alatt)</div>
+              <NormalUsersActivityTab members={analytics.members} />
             </TabsContent>
 
             <TabsContent value="invitations">
-              <div className="text-white">Meghívások tab (fejlesztés alatt)</div>
+              <NormalUsersInvitationsTab members={analytics.members} />
             </TabsContent>
 
             <TabsContent value="chat">
-              <div className="text-white">Chat/Közösség tab (fejlesztés alatt)</div>
+              <NormalUsersChatTab members={analytics.members} />
             </TabsContent>
           </Tabs>
         </div>
