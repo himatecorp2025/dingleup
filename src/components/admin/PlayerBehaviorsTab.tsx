@@ -22,7 +22,7 @@ interface CategoryStats {
 }
 
 const CATEGORIES = [
-  { id: 'health', name: 'Egészség', color: 'from-green-500 to-emerald-500' },
+  { id: 'health', name: 'Egészség', color: 'from-purple-500 to-violet-500' },
   { id: 'history', name: 'Történelem', color: 'from-blue-500 to-indigo-500' },
   { id: 'culture', name: 'Kultúra', color: 'from-purple-500 to-pink-500' },
   { id: 'finance', name: 'Pénzügyek', color: 'from-orange-500 to-red-500' }
@@ -62,7 +62,11 @@ export default function PlayerBehaviorsTab() {
         if (startDateStr) gameQuery = gameQuery.gte('created_at', startDateStr);
         if (endDateStr) gameQuery = gameQuery.lte('created_at', endDateStr);
         
-        const { data: games } = await gameQuery.eq('category', cat.id);
+        const { data: games, error: gamesError } = await gameQuery.eq('category', cat.id);
+        
+        if (gamesError) {
+          console.error(`Error fetching games for ${cat.id}:`, gamesError);
+        }
 
         const uniquePlayers = new Set(games?.map(g => g.user_id) || []).size;
         const totalGames = games?.length || 0;
@@ -78,7 +82,11 @@ export default function PlayerBehaviorsTab() {
         if (startDateStr) helpQuery = helpQuery.gte('used_at', startDateStr);
         if (endDateStr) helpQuery = helpQuery.lte('used_at', endDateStr);
 
-        const { data: helps } = await helpQuery.eq('category', cat.id);
+        const { data: helps, error: helpsError } = await helpQuery.eq('category', cat.id);
+        
+        if (helpsError) {
+          console.error(`Error fetching helps for ${cat.id}:`, helpsError);
+        }
 
         const helpUsage = {
           third: helps?.filter(h => h.help_type === 'third').length || 0,
@@ -86,6 +94,13 @@ export default function PlayerBehaviorsTab() {
           audience: helps?.filter(h => h.help_type === 'audience').length || 0,
           '2x_answer': helps?.filter(h => h.help_type === '2x_answer').length || 0
         };
+
+        console.log(`Stats for ${cat.name}:`, {
+          uniquePlayers,
+          totalGames,
+          avgCorrect,
+          helpUsage
+        });
 
         categoryStats.push({
           category: cat.id,
@@ -164,48 +179,43 @@ export default function PlayerBehaviorsTab() {
                 </div>
 
                 <div className="space-y-4">
-                  {/* Main Stats */}
+                  {/* Main Stats - Nagyobb számok, világosabb címkék */}
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-white/5 rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Users className="w-4 h-4 text-blue-400" />
-                        <span className="text-xs text-white/70">Játékosok</span>
-                      </div>
-                      <div className="text-2xl font-bold text-white">{catStats.uniquePlayers}</div>
+                    <div className="bg-white/10 rounded-lg p-4 text-center">
+                      <Users className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+                      <div className="text-sm text-white/60 mb-1">Játékosok száma</div>
+                      <div className="text-3xl font-bold text-white">{catStats.uniquePlayers}</div>
                     </div>
 
-                    <div className="bg-white/5 rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Target className="w-4 h-4 text-green-400" />
-                        <span className="text-xs text-white/70">Átlag helyes</span>
-                      </div>
-                      <div className="text-2xl font-bold text-white">{catStats.avgCorrectAnswers}</div>
+                    <div className="bg-white/10 rounded-lg p-4 text-center">
+                      <Target className="w-6 h-6 text-green-400 mx-auto mb-2" />
+                      <div className="text-sm text-white/60 mb-1">Átlag helyes</div>
+                      <div className="text-3xl font-bold text-white">{catStats.avgCorrectAnswers}</div>
                     </div>
 
-                    <div className="bg-white/5 rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <TrendingUp className="w-4 h-4 text-purple-400" />
-                        <span className="text-xs text-white/70">Játékok</span>
-                      </div>
-                      <div className="text-2xl font-bold text-white">{catStats.totalGames}</div>
+                    <div className="bg-white/10 rounded-lg p-4 text-center">
+                      <TrendingUp className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+                      <div className="text-sm text-white/60 mb-1">Összes játék</div>
+                      <div className="text-3xl font-bold text-white">{catStats.totalGames}</div>
                     </div>
                   </div>
 
-                  {/* Help Usage */}
-                  <div className="bg-white/5 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <HelpCircle className="w-4 h-4 text-yellow-400" />
-                      <span className="text-sm font-semibold text-white">Segítséghasználat</span>
+                  {/* Help Usage - Nagyobb számok */}
+                  <div className="bg-white/10 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <HelpCircle className="w-5 h-5 text-yellow-400" />
+                      <span className="text-lg font-bold text-white">Segítséghasználat részletesen</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-3">
                       {HELP_TYPES.map(help => (
-                        <div key={help.id} className="flex items-center justify-between bg-white/5 rounded px-3 py-2">
-                          <span className="text-xs text-white/70">
-                            {help.icon} {help.name}
-                          </span>
-                          <span className="text-sm font-bold text-white">
-                            {catStats.helpUsage[help.id as keyof typeof catStats.helpUsage]}×
-                          </span>
+                        <div key={help.id} className="bg-white/10 rounded-lg p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-xl">{help.icon}</span>
+                            <span className="text-sm text-white/70">{help.name}</span>
+                          </div>
+                          <div className="text-2xl font-bold text-white">
+                            {catStats.helpUsage[help.id as keyof typeof catStats.helpUsage]} használat
+                          </div>
                         </div>
                       ))}
                     </div>
