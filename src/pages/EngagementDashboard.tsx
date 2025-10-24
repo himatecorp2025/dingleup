@@ -44,11 +44,19 @@ const EngagementDashboard = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="overview">Áttekintés</TabsTrigger>
-            <TabsTrigger value="features">Funkciók</TabsTrigger>
-            <TabsTrigger value="users">Felhasználók</TabsTrigger>
-            <TabsTrigger value="game">Játék Engagement</TabsTrigger>
+          <TabsList className="bg-[#1a1a3e]/50 border border-purple-500/30 p-1 flex-wrap h-auto gap-1">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Áttekintés
+            </TabsTrigger>
+            <TabsTrigger value="features" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Funkciók
+            </TabsTrigger>
+            <TabsTrigger value="users" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Felhasználók
+            </TabsTrigger>
+            <TabsTrigger value="game" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Játék Engagement
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -91,7 +99,7 @@ const EngagementDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="hour" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Line type="monotone" dataKey="sessions" stroke="hsl(var(--primary))" name="Sessionök" />
                   </LineChart>
                 </ResponsiveContainer>
@@ -110,7 +118,7 @@ const EngagementDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="feature_name" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="usage_count" fill="hsl(var(--primary))" name="Használatok száma" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -172,7 +180,7 @@ const EngagementDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="category" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="count" fill="hsl(var(--primary))" name="Játékok száma" />
                   </BarChart>
                 </ResponsiveContainer>

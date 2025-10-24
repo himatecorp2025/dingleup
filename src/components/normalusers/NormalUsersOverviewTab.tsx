@@ -20,15 +20,15 @@ export const NormalUsersOverviewTab = ({ analytics }: NormalUsersOverviewTabProp
       title: 'Összes Bevétel',
       value: `$${analytics.totalRevenue.toFixed(2)}`,
       icon: DollarSign,
-      color: 'text-green-400',
-      bgColor: 'bg-green-500/20'
+      color: 'text-purple-400',
+      bgColor: 'bg-purple-500/20'
     },
     {
       title: 'Átlagos Vásárlás',
       value: `$${analytics.averagePurchase.toFixed(2)}`,
       icon: TrendingUp,
-      color: 'text-yellow-400',
-      bgColor: 'bg-yellow-500/20'
+      color: 'text-blue-400',
+      bgColor: 'bg-blue-500/20'
     },
     {
       title: 'Összes Vásárlás',
@@ -71,11 +71,11 @@ export const NormalUsersOverviewTab = ({ analytics }: NormalUsersOverviewTabProp
         {kpiData.map((kpi, index) => {
           const Icon = kpi.icon;
           return (
-            <Card key={index} className="bg-[#0a1f14] border-[#d4af37]/30">
+            <Card key={index} className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400">{kpi.title}</p>
+                    <p className="text-sm text-white/70">{kpi.title}</p>
                     <p className={`text-2xl font-bold ${kpi.color}`}>{kpi.value}</p>
                   </div>
                   <div className={`p-3 rounded-lg ${kpi.bgColor}`}>
@@ -89,50 +89,50 @@ export const NormalUsersOverviewTab = ({ analytics }: NormalUsersOverviewTabProp
       </div>
 
       {/* Growth Chart */}
-      <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+      <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
         <CardHeader>
-          <CardTitle className="text-[#d4af37]">Normál Felhasználók Növekedése</CardTitle>
+          <CardTitle className="text-white">Normál Felhasználók Növekedése</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={growthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#d4af37" opacity={0.1} />
-              <XAxis dataKey="date" stroke="#d4af37" />
-              <YAxis stroke="#d4af37" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="date" stroke="#fff" />
+              <YAxis stroke="#fff" />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#0a1f14', 
-                  border: '1px solid #d4af37',
+                  backgroundColor: '#1a1a3e', 
+                  border: '1px solid #6b7280',
                   borderRadius: '8px',
                   color: '#fff'
                 }}
               />
-              <Line type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} />
+              <Line type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
       {/* Top Spenders */}
-      <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+      <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
         <CardHeader>
-          <CardTitle className="text-[#d4af37]">Top 5 Költő</CardTitle>
+          <CardTitle className="text-white">Top 5 Költő</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={topSpenders}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#d4af37" opacity={0.1} />
-              <XAxis dataKey="name" stroke="#d4af37" />
-              <YAxis stroke="#d4af37" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="name" stroke="#fff" />
+              <YAxis stroke="#fff" />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#0a1f14', 
-                  border: '1px solid #d4af37',
+                  backgroundColor: '#1a1a3e', 
+                  border: '1px solid #6b7280',
                   borderRadius: '8px',
                   color: '#fff'
                 }}
               />
-              <Bar dataKey="spent" fill="#10b981" />
+              <Bar dataKey="spent" fill="hsl(var(--primary))" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>

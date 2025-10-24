@@ -53,11 +53,11 @@ export const NormalUsersPurchasesTab = ({ members }: NormalUsersPurchasesTabProp
     <div className="space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+        <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Összes Vásárlás</p>
+                <p className="text-sm text-white/70">Összes Vásárlás</p>
                 <p className="text-2xl font-bold text-blue-400">{totalPurchases}</p>
               </div>
               <div className="p-3 rounded-lg bg-blue-500/20">
@@ -67,39 +67,39 @@ export const NormalUsersPurchasesTab = ({ members }: NormalUsersPurchasesTabProp
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+        <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Összes Bevétel</p>
-                <p className="text-2xl font-bold text-green-400">${totalRevenue.toFixed(2)}</p>
+                <p className="text-sm text-white/70">Összes Bevétel</p>
+                <p className="text-2xl font-bold text-purple-400">${totalRevenue.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-green-500/20">
-                <DollarSign className="w-6 h-6 text-green-400" />
+              <div className="p-3 rounded-lg bg-purple-500/20">
+                <DollarSign className="w-6 h-6 text-purple-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+        <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Átlag Vásárlás</p>
-                <p className="text-2xl font-bold text-yellow-400">${avgPurchaseValue.toFixed(2)}</p>
+                <p className="text-sm text-white/70">Átlag Vásárlás</p>
+                <p className="text-2xl font-bold text-blue-400">${avgPurchaseValue.toFixed(2)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-yellow-500/20">
-                <TrendingUp className="w-6 h-6 text-yellow-400" />
+              <div className="p-3 rounded-lg bg-blue-500/20">
+                <TrendingUp className="w-6 h-6 text-blue-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+        <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Vásárlók Száma</p>
+                <p className="text-sm text-white/70">Vásárlók Száma</p>
                 <p className="text-2xl font-bold text-purple-400">{membersWithPurchases}</p>
               </div>
               <div className="p-3 rounded-lg bg-purple-500/20">
@@ -111,44 +111,44 @@ export const NormalUsersPurchasesTab = ({ members }: NormalUsersPurchasesTabProp
       </div>
 
       {/* Top Purchasers Chart */}
-      <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+      <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
         <CardHeader>
-          <CardTitle className="text-[#d4af37]">Top 5 Vásárló</CardTitle>
+          <CardTitle className="text-white">Top 5 Vásárló</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={topPurchasers}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#d4af37" opacity={0.1} />
-              <XAxis dataKey="name" stroke="#d4af37" />
-              <YAxis stroke="#d4af37" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="name" stroke="#fff" />
+              <YAxis stroke="#fff" />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#0a1f14', 
-                  border: '1px solid #d4af37',
+                  backgroundColor: '#1a1a3e', 
+                  border: '1px solid #6b7280',
                   borderRadius: '8px',
                   color: '#fff'
                 }}
               />
-              <Bar dataKey="purchases" fill="#3b82f6" name="Vásárlások" />
-              <Bar dataKey="spent" fill="#10b981" name="Költés ($)" />
+              <Bar dataKey="purchases" fill="hsl(var(--primary))" name="Vásárlások" />
+              <Bar dataKey="spent" fill="hsl(var(--secondary))" name="Költés ($)" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
       {/* Table */}
-      <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+      <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-[#d4af37]">Vásárlási Részletek</CardTitle>
-            <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CardTitle className="text-white">Vásárlási Részletek</CardTitle>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Input
                 placeholder="Keresés..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-64 bg-[#0a1f14] border-[#d4af37]/30 text-white"
+                className="w-full sm:w-64 bg-[#0a0a2e] border-purple-500/30 text-white"
               />
-              <Button onClick={handleExport} className="bg-[#d4af37] hover:bg-[#d4af37]/80 text-black">
+              <Button onClick={handleExport} className="bg-[#6b46c1] hover:bg-[#6b46c1]/80 text-white w-full sm:w-auto">
                 <Download className="w-4 h-4 mr-2" />
                 CSV Export
               </Button>
@@ -159,18 +159,18 @@ export const NormalUsersPurchasesTab = ({ members }: NormalUsersPurchasesTabProp
           <ScrollArea className="h-[500px]">
             <Table>
               <TableHeader>
-                <TableRow className="border-[#d4af37]/30">
-                  <TableHead className="text-[#d4af37]">Felhasználónév</TableHead>
-                  <TableHead className="text-[#d4af37]">Email</TableHead>
-                  <TableHead className="text-[#d4af37]">Vásárlások</TableHead>
-                  <TableHead className="text-[#d4af37]">Össz. Költés</TableHead>
-                  <TableHead className="text-[#d4af37]">Átlag/Vásárlás</TableHead>
-                  <TableHead className="text-[#d4af37]">Regisztráció</TableHead>
+                <TableRow className="border-purple-500/30">
+                  <TableHead className="text-white">Felhasználónév</TableHead>
+                  <TableHead className="text-white">Email</TableHead>
+                  <TableHead className="text-white">Vásárlások</TableHead>
+                  <TableHead className="text-white">Össz. Költés</TableHead>
+                  <TableHead className="text-white">Átlag/Vásárlás</TableHead>
+                  <TableHead className="text-white">Regisztráció</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredMembers.map((member) => (
-                  <TableRow key={member.id} className="border-[#d4af37]/30">
+                  <TableRow key={member.id} className="border-purple-500/30">
                     <TableCell className="text-white">{member.username}</TableCell>
                     <TableCell className="text-white">{member.email}</TableCell>
                     <TableCell className="text-white">{member.total_purchases}</TableCell>

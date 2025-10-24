@@ -46,12 +46,22 @@ const UserJourneyDashboard = () => {
         </div>
 
         <Tabs defaultValue="onboarding" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="onboarding">Onboarding Tölcsér</TabsTrigger>
-            <TabsTrigger value="purchase">Vásárlási Tölcsér</TabsTrigger>
-            <TabsTrigger value="game">Játék Tölcsér</TabsTrigger>
-            <TabsTrigger value="paths">Gyakori Útvonalak</TabsTrigger>
-            <TabsTrigger value="exits">Kilépési Pontok</TabsTrigger>
+          <TabsList className="bg-[#1a1a3e]/50 border border-purple-500/30 p-1 flex-wrap h-auto gap-1">
+            <TabsTrigger value="onboarding" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Onboarding Tölcsér
+            </TabsTrigger>
+            <TabsTrigger value="purchase" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Vásárlási Tölcsér
+            </TabsTrigger>
+            <TabsTrigger value="game" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Játék Tölcsér
+            </TabsTrigger>
+            <TabsTrigger value="paths" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Gyakori Útvonalak
+            </TabsTrigger>
+            <TabsTrigger value="exits" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Kilépési Pontok
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="onboarding" className="space-y-6">
@@ -65,7 +75,7 @@ const UserJourneyDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis type="number" stroke="#fff" />
                     <YAxis dataKey="step" type="category" width={150} stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="users" name="Felhasználók">
                       {analytics.onboardingFunnel.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -103,7 +113,7 @@ const UserJourneyDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis type="number" stroke="#fff" />
                     <YAxis dataKey="step" type="category" width={150} stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="users" name="Felhasználók">
                       {analytics.purchaseFunnel.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -141,7 +151,7 @@ const UserJourneyDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis type="number" stroke="#fff" />
                     <YAxis dataKey="step" type="category" width={150} stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="users" name="Felhasználók">
                       {analytics.gameFunnel.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -197,7 +207,7 @@ const UserJourneyDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="page" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="exits" fill="hsl(var(--destructive))" name="Kilépések" />
                   </BarChart>
                 </ResponsiveContainer>

@@ -52,11 +52,11 @@ export const NormalUsersActivityTab = ({ members }: NormalUsersActivityTabProps)
     <div className="space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+        <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Összes Munkamenet</p>
+                <p className="text-sm text-white/70">Összes Munkamenet</p>
                 <p className="text-2xl font-bold text-blue-400">{totalSessions}</p>
               </div>
               <div className="p-3 rounded-lg bg-blue-500/20">
@@ -66,39 +66,39 @@ export const NormalUsersActivityTab = ({ members }: NormalUsersActivityTabProps)
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+        <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Átlag Időtartam</p>
-                <p className="text-2xl font-bold text-green-400">{(avgSessionDuration / 60).toFixed(1)}m</p>
+                <p className="text-sm text-white/70">Átlag Időtartam</p>
+                <p className="text-2xl font-bold text-purple-400">{(avgSessionDuration / 60).toFixed(1)}m</p>
               </div>
-              <div className="p-3 rounded-lg bg-green-500/20">
-                <Clock className="w-6 h-6 text-green-400" />
+              <div className="p-3 rounded-lg bg-purple-500/20">
+                <Clock className="w-6 h-6 text-purple-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+        <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Aktív Felhasználók (7 nap)</p>
-                <p className="text-2xl font-bold text-yellow-400">{activeUsers}</p>
+                <p className="text-sm text-white/70">Aktív Felhasználók (7 nap)</p>
+                <p className="text-2xl font-bold text-blue-400">{activeUsers}</p>
               </div>
-              <div className="p-3 rounded-lg bg-yellow-500/20">
-                <Users className="w-6 h-6 text-yellow-400" />
+              <div className="p-3 rounded-lg bg-blue-500/20">
+                <Users className="w-6 h-6 text-blue-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+        <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Aktivitási Arány</p>
+                <p className="text-sm text-white/70">Aktivitási Arány</p>
                 <p className="text-2xl font-bold text-purple-400">
                   {members.length > 0 ? ((activeUsers / members.length) * 100).toFixed(1) : 0}%
                 </p>
@@ -112,43 +112,43 @@ export const NormalUsersActivityTab = ({ members }: NormalUsersActivityTabProps)
       </div>
 
       {/* Most Active Users Chart */}
-      <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+      <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
         <CardHeader>
-          <CardTitle className="text-[#d4af37]">Top 5 Legaktívabb Felhasználó</CardTitle>
+          <CardTitle className="text-white">Top 5 Legaktívabb Felhasználó</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={mostActiveUsers}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#d4af37" opacity={0.1} />
-              <XAxis dataKey="name" stroke="#d4af37" />
-              <YAxis stroke="#d4af37" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="name" stroke="#fff" />
+              <YAxis stroke="#fff" />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#0a1f14', 
-                  border: '1px solid #d4af37',
+                  backgroundColor: '#1a1a3e', 
+                  border: '1px solid #6b7280',
                   borderRadius: '8px',
                   color: '#fff'
                 }}
               />
-              <Bar dataKey="sessions" fill="#3b82f6" name="Munkamenetek" />
+              <Bar dataKey="sessions" fill="hsl(var(--primary))" name="Munkamenetek" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
       {/* Table */}
-      <Card className="bg-[#0a1f14] border-[#d4af37]/30">
+      <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-[#d4af37]">Aktivitás Részletek</CardTitle>
-            <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CardTitle className="text-white">Aktivitás Részletek</CardTitle>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Input
                 placeholder="Keresés..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-64 bg-[#0a1f14] border-[#d4af37]/30 text-white"
+                className="w-full sm:w-64 bg-[#0a0a2e] border-purple-500/30 text-white"
               />
-              <Button onClick={handleExport} className="bg-[#d4af37] hover:bg-[#d4af37]/80 text-black">
+              <Button onClick={handleExport} className="bg-[#6b46c1] hover:bg-[#6b46c1]/80 text-white w-full sm:w-auto">
                 <Download className="w-4 h-4 mr-2" />
                 CSV Export
               </Button>
@@ -159,18 +159,18 @@ export const NormalUsersActivityTab = ({ members }: NormalUsersActivityTabProps)
           <ScrollArea className="h-[500px]">
             <Table>
               <TableHeader>
-                <TableRow className="border-[#d4af37]/30">
-                  <TableHead className="text-[#d4af37]">Felhasználónév</TableHead>
-                  <TableHead className="text-[#d4af37]">Email</TableHead>
-                  <TableHead className="text-[#d4af37]">Munkamenetek</TableHead>
-                  <TableHead className="text-[#d4af37]">Átlag Időtartam</TableHead>
-                  <TableHead className="text-[#d4af37]">Utolsó Bejelentkezés</TableHead>
-                  <TableHead className="text-[#d4af37]">Regisztráció</TableHead>
+                <TableRow className="border-purple-500/30">
+                  <TableHead className="text-white">Felhasználónév</TableHead>
+                  <TableHead className="text-white">Email</TableHead>
+                  <TableHead className="text-white">Munkamenetek</TableHead>
+                  <TableHead className="text-white">Átlag Időtartam</TableHead>
+                  <TableHead className="text-white">Utolsó Bejelentkezés</TableHead>
+                  <TableHead className="text-white">Regisztráció</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredMembers.map((member) => (
-                  <TableRow key={member.id} className="border-[#d4af37]/30">
+                  <TableRow key={member.id} className="border-purple-500/30">
                     <TableCell className="text-white">{member.username}</TableCell>
                     <TableCell className="text-white">{member.email}</TableCell>
                     <TableCell className="text-white">{member.total_sessions}</TableCell>

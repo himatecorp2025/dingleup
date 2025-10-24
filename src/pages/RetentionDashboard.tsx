@@ -44,10 +44,16 @@ const RetentionDashboard = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="overview">Áttekintés</TabsTrigger>
-            <TabsTrigger value="cohorts">Kohorszok</TabsTrigger>
-            <TabsTrigger value="churn">Lemorzsolódás</TabsTrigger>
+          <TabsList className="bg-[#1a1a3e]/50 border border-purple-500/30 p-1 flex-wrap h-auto gap-1">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Áttekintés
+            </TabsTrigger>
+            <TabsTrigger value="cohorts" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Kohorszok
+            </TabsTrigger>
+            <TabsTrigger value="churn" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Lemorzsolódás
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -94,7 +100,7 @@ const RetentionDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="name" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="rate" fill="hsl(var(--primary))" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -113,7 +119,7 @@ const RetentionDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="cohort" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Legend />
                     <Line type="monotone" dataKey="day1" stroke="hsl(var(--primary))" name="1. Nap" />
                     <Line type="monotone" dataKey="day7" stroke="hsl(var(--secondary))" name="7. Nap" />

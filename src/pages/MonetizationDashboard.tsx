@@ -46,11 +46,19 @@ const MonetizationDashboard = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="overview">Áttekintés</TabsTrigger>
-            <TabsTrigger value="products">Termékek</TabsTrigger>
-            <TabsTrigger value="spenders">Top Vásárlók</TabsTrigger>
-            <TabsTrigger value="ltv">LTV Analízis</TabsTrigger>
+          <TabsList className="bg-[#1a1a3e]/50 border border-purple-500/30 p-1 flex-wrap h-auto gap-1">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Áttekintés
+            </TabsTrigger>
+            <TabsTrigger value="products" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Termékek
+            </TabsTrigger>
+            <TabsTrigger value="spenders" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Top Vásárlók
+            </TabsTrigger>
+            <TabsTrigger value="ltv" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              LTV Analízis
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -102,7 +110,7 @@ const MonetizationDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="date" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Legend />
                     <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" name="Bevétel ($)" />
                     <Line type="monotone" dataKey="transactions" stroke="hsl(var(--secondary))" name="Tranzakciók" />
@@ -152,7 +160,7 @@ const MonetizationDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="username" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="total_spent" fill="hsl(var(--primary))" name="Összesen költött ($)" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -171,7 +179,7 @@ const MonetizationDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="cohort" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="ltv" fill="hsl(var(--primary))" name="LTV ($)" />
                   </BarChart>
                 </ResponsiveContainer>

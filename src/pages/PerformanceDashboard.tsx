@@ -44,11 +44,19 @@ const PerformanceDashboard = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="overview">Áttekintés</TabsTrigger>
-            <TabsTrigger value="pages">Oldalak</TabsTrigger>
-            <TabsTrigger value="devices">Eszközök</TabsTrigger>
-            <TabsTrigger value="errors">Hibák</TabsTrigger>
+          <TabsList className="bg-[#1a1a3e]/50 border border-purple-500/30 p-1 flex-wrap h-auto gap-1">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Áttekintés
+            </TabsTrigger>
+            <TabsTrigger value="pages" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Oldalak
+            </TabsTrigger>
+            <TabsTrigger value="devices" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Eszközök
+            </TabsTrigger>
+            <TabsTrigger value="errors" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+              Hibák
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -102,7 +110,7 @@ const PerformanceDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="page_route" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="avg_load_time_ms" fill="hsl(var(--primary))" name="Átlagos betöltési idő (ms)" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -122,7 +130,7 @@ const PerformanceDashboard = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="device_type" stroke="#fff" />
                       <YAxis stroke="#fff" />
-                      <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                      <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                       <Bar dataKey="avg_load_time" fill="hsl(var(--primary))" name="Átlagos betöltési idő (ms)" />
                     </BarChart>
                   </ResponsiveContainer>
@@ -139,7 +147,7 @@ const PerformanceDashboard = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="browser" stroke="#fff" />
                       <YAxis stroke="#fff" />
-                      <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
+                      <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                       <Bar dataKey="avg_load_time" fill="hsl(var(--secondary))" name="Átlagos betöltési idő (ms)" />
                     </BarChart>
                   </ResponsiveContainer>
