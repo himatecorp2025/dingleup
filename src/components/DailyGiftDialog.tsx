@@ -110,24 +110,53 @@ const DailyGiftDialog = ({
             ></div>
           </div>
 
-          {/* Floating sparkle particles - FULL OPACITY */}
+          {/* Floating sparkle particles - FULL OPACITY - FAST MOVING */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(80)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full animate-pulse"
-                style={{
-                  width: `${Math.random() * 6 + 3}px`,
-                  height: `${Math.random() * 6 + 3}px`,
-                  background: ['#FFD700', '#FFC700', '#FFB700', '#FFAA00', '#FFE55C'][Math.floor(Math.random() * 5)],
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  animationDelay: `${i * 0.05}s`,
-                  animationDuration: `${Math.random() * 1.5 + 0.5}s`,
-                  boxShadow: '0 0 15px #FFD700, 0 0 25px #FFD700'
-                }}
-              />
-            ))}
+            {[...Array(100)].map((_, i) => {
+              const startX = Math.random() * 100;
+              const startY = Math.random() * 100;
+              const endX = Math.random() * 100;
+              const endY = Math.random() * 100;
+              const duration = Math.random() * 1.5 + 0.5; // 0.5-2s
+              
+              return (
+                <div
+                  key={i}
+                  className="absolute rounded-full"
+                  style={{
+                    width: `${Math.random() * 3 + 1}px`,
+                    height: `${Math.random() * 3 + 1}px`,
+                    background: '#FFD700',
+                    left: `${startX}%`,
+                    top: `${startY}%`,
+                    boxShadow: '0 0 20px 4px #FFD700, 0 0 30px 6px #FFA500, 0 0 40px 8px rgba(255, 215, 0, 0.5)',
+                    animation: `floatStar${i % 10} ${duration}s linear infinite`,
+                    animationDelay: `${i * 0.02}s`
+                  }}
+                >
+                  <style>{`
+                    @keyframes floatStar${i % 10} {
+                      0% {
+                        transform: translate(0, 0) scale(0.5);
+                        opacity: 0;
+                      }
+                      10% {
+                        opacity: 1;
+                        transform: translate(${(endX - startX) * 0.1}vw, ${(endY - startY) * 0.1}vh) scale(1);
+                      }
+                      90% {
+                        opacity: 1;
+                        transform: translate(${(endX - startX) * 0.9}vw, ${(endY - startY) * 0.9}vh) scale(1);
+                      }
+                      100% {
+                        transform: translate(${endX - startX}vw, ${endY - startY}vh) scale(0.5);
+                        opacity: 0;
+                      }
+                    }
+                  `}</style>
+                </div>
+              );
+            })}
           </div>
 
           {/* Central content container - STAGGERED ZOOM IN ANIMATION */}
