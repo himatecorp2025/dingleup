@@ -41,6 +41,47 @@ export default function PlayerBehaviorsTab() {
   const [stats, setStats] = useState<CategoryStats[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Auto-refresh every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchStats();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [startDate, endDate]);
+
+  // Realtime subscription for instant updates
+  useEffect(() => {
+    const gameResultsChannel = supabase
+      .channel('player-behaviors-game-results')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_results'
+      }, () => {
+        console.log('[PlayerBehaviors] Game results changed, refreshing...');
+        fetchStats();
+      })
+      .subscribe();
+
+    const helpUsageChannel = supabase
+      .channel('player-behaviors-help-usage')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_help_usage'
+      }, () => {
+        console.log('[PlayerBehaviors] Help usage changed, refreshing...');
+        fetchStats();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(gameResultsChannel);
+      supabase.removeChannel(helpUsageChannel);
+    };
+  }, [startDate, endDate]);
+
   useEffect(() => {
     fetchStats();
   }, [startDate, endDate]);
@@ -179,43 +220,44 @@ export default function PlayerBehaviorsTab() {
                 </div>
 
                 <div className="space-y-4">
-                  {/* Main Stats - Nagyobb számok, világosabb címkék */}
+                  {/* Main Stats - Reszponzív betűméretek */}
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-slate-800/80 rounded-lg p-4 text-center border border-white/5">
-                      <Users className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-                      <div className="text-sm text-white/60 mb-1">Játékosok száma</div>
-                      <div className="text-3xl font-bold text-white">{catStats.uniquePlayers}</div>
+                    <div className="bg-slate-800/80 rounded-lg p-3 sm:p-4 text-center border border-white/5">
+                      <Users className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400 mx-auto mb-1 sm:mb-2" />
+                      <div className="text-xs sm:text-sm text-white/60 mb-1">Játékosok száma</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-white">{catStats.uniquePlayers}</div>
                     </div>
 
-                    <div className="bg-slate-800/80 rounded-lg p-4 text-center border border-white/5">
-                      <Target className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                      <div className="text-sm text-white/60 mb-1">Átlag helyes</div>
-                      <div className="text-3xl font-bold text-white">{catStats.avgCorrectAnswers}</div>
+                    <div className="bg-slate-800/80 rounded-lg p-3 sm:p-4 text-center border border-white/5">
+                      <Target className="w-5 h-5 sm:w-6 sm:h-6 text-green-400 mx-auto mb-1 sm:mb-2" />
+                      <div className="text-xs sm:text-sm text-white/60 mb-1">Átlag helyes</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-white">{catStats.avgCorrectAnswers}</div>
                     </div>
 
-                    <div className="bg-slate-800/80 rounded-lg p-4 text-center border border-white/5">
-                      <TrendingUp className="w-6 h-6 text-purple-400 mx-auto mb-2" />
-                      <div className="text-sm text-white/60 mb-1">Összes játék</div>
-                      <div className="text-3xl font-bold text-white">{catStats.totalGames}</div>
+                    <div className="bg-slate-800/80 rounded-lg p-3 sm:p-4 text-center border border-white/5">
+                      <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400 mx-auto mb-1 sm:mb-2" />
+                      <div className="text-xs sm:text-sm text-white/60 mb-1">Összes játék</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-white">{catStats.totalGames}</div>
                     </div>
                   </div>
 
-                  {/* Help Usage - Nagyobb számok */}
-                  <div className="bg-slate-800/80 rounded-lg p-4 border border-white/5">
-                    <div className="flex items-center gap-2 mb-4">
-                      <HelpCircle className="w-5 h-5 text-yellow-400" />
-                      <span className="text-lg font-bold text-white">Segítséghasználat részletesen</span>
+                  {/* Help Usage - Reszponzív betűméretek */}
+                  <div className="bg-slate-800/80 rounded-lg p-3 sm:p-4 border border-white/5">
+                    <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                      <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+                      <span className="text-base sm:text-lg font-bold text-white">Segítséghasználat részletesen</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       {HELP_TYPES.map(help => (
-                        <div key={help.id} className="bg-slate-700/50 rounded-lg p-3 border border-white/5">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xl">{help.icon}</span>
-                            <span className="text-sm text-white/70">{help.name}</span>
+                        <div key={help.id} className="bg-slate-700/50 rounded-lg p-2 sm:p-3 border border-white/5">
+                          <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+                            <span className="text-base sm:text-xl">{help.icon}</span>
+                            <span className="text-xs sm:text-sm text-white/70">{help.name}</span>
                           </div>
-                          <div className="text-2xl font-bold text-white">
-                            {catStats.helpUsage[help.id as keyof typeof catStats.helpUsage]} használat
+                          <div className="text-lg sm:text-xl font-bold text-white leading-tight">
+                            {catStats.helpUsage[help.id as keyof typeof catStats.helpUsage]}
                           </div>
+                          <div className="text-xs text-white/50">használat</div>
                         </div>
                       ))}
                     </div>
