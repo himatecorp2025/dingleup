@@ -4,7 +4,7 @@ import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { trackBonusEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
-import GemButton from './ui/GemButton';
+import HexAcceptButton from './ui/HexAcceptButton';
 
 interface DailyGiftDialogProps {
   open: boolean;
@@ -349,28 +349,17 @@ const DailyGiftDialog = ({
                   )}
                 </div>
 
-                {/* 3 Gem Buttons (bottom row) */}
-                <div className="flex gap-[3.2vw] justify-center mt-auto">
-                  {/* Menu Button */}
-                  <GemButton variant="purple">
-                    ☰
-                  </GemButton>
-
-                  {/* OK / Claim Button */}
+                {/* Hex Accept Button */}
+                <div className="flex justify-center mt-auto">
                   {canClaim ? (
-                    <GemButton variant="purple" onClick={handleClaim}>
-                      OK
-                    </GemButton>
+                    <HexAcceptButton onClick={handleClaim}>
+                      Elfogadom a napi jutalmat!
+                    </HexAcceptButton>
                   ) : (
-                    <GemButton variant="green" disabled>
-                      ✓
-                    </GemButton>
+                    <HexAcceptButton disabled>
+                      Már elutaltad a napi jutalmat! ✓
+                    </HexAcceptButton>
                   )}
-
-                  {/* Replay Button */}
-                  <GemButton variant="purple">
-                    ↻
-                  </GemButton>
                 </div>
               </div>
 
