@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
     const stats: any[] = [];
 
     for (const cat of CATEGORIES) {
-      // game_results aggregation
+      // game_results aggregation with service role (bypasses RLS)
       let resultsQuery = service.from('game_results')
         .select('user_id, completed, correct_answers, average_response_time, created_at')
         .eq('category', cat);
@@ -67,28 +67,41 @@ Deno.serve(async (req) => {
       if (endISO) resultsQuery = resultsQuery.lte('created_at', endISO);
 
       const { data: results, error: resultsError } = await resultsQuery;
-      if (resultsError) console.error('[admin-player-behaviors] resultsError', resultsError);
+      
+      if (resultsError) {
+        console.error(`[admin-player-behaviors] Error fetching ${cat} results:`, resultsError);
+      }
+      
+      console.log(`[admin-player-behaviors] ${cat}: fetched ${results?.length || 0} game results from DB`);
 
       const totalGames = results?.length || 0;
       const completedGames = results?.filter(r => r.completed === true).length || 0;
       const uniquePlayers = new Set((results || []).map(r => r.user_id)).size;
 
+      const completedResults = (results || []).filter(r => r.completed);
       const avgCorrectAnswers = completedGames > 0
-        ? ((results || []).filter(r => r.completed).reduce((s, r) => s + (r.correct_answers || 0), 0) / completedGames)
+        ? (completedResults.reduce((s, r) => s + (r.correct_answers || 0), 0) / completedGames)
         : 0;
 
-      const avgResponseTime = completedGames > 0
-        ? ((results || []).filter(r => r.completed && r.average_response_time != null).reduce((s, r) => s + Number(r.average_response_time), 0) / completedGames)
+      const resultsWithTime = completedResults.filter(r => r.average_response_time != null);
+      const avgResponseTime = resultsWithTime.length > 0
+        ? (resultsWithTime.reduce((s, r) => s + Number(r.average_response_time), 0) / resultsWithTime.length)
         : 0;
 
-      // help usage aggregation
+      // help usage aggregation with service role (bypasses RLS)
       let helpQuery = service.from('game_help_usage')
         .select('help_type')
         .eq('category', cat);
       if (startISO) helpQuery = helpQuery.gte('used_at', startISO);
       if (endISO) helpQuery = helpQuery.lte('used_at', endISO);
+      
       const { data: helps, error: helpsError } = await helpQuery;
-      if (helpsError) console.error('[admin-player-behaviors] helpsError', helpsError);
+      
+      if (helpsError) {
+        console.error(`[admin-player-behaviors] Error fetching ${cat} help usage:`, helpsError);
+      }
+      
+      console.log(`[admin-player-behaviors] ${cat}: fetched ${helps?.length || 0} help usage records from DB`);
 
       const helpUsage = {
         third: (helps || []).filter(h => h.help_type === 'third').length,
@@ -97,7 +110,7 @@ Deno.serve(async (req) => {
         '2x_answer': (helps || []).filter(h => h.help_type === '2x_answer').length,
       } as const;
 
-      stats.push({
+      const categoryStats = {
         category: cat,
         uniquePlayers,
         totalGames,
@@ -107,8 +120,13 @@ Deno.serve(async (req) => {
         avgCorrectAnswers: Math.round(avgCorrectAnswers * 10) / 10,
         avgResponseTime: Math.round(avgResponseTime * 10) / 10,
         helpUsage,
-      });
+      };
+      
+      console.log(`[admin-player-behaviors] ${cat} stats:`, categoryStats);
+      stats.push(categoryStats);
     }
+    
+    console.log('[admin-player-behaviors] Returning all stats:', stats);
 
     return new Response(JSON.stringify({ stats }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
