@@ -110,54 +110,69 @@ const DailyGiftDialog = ({
             ></div>
           </div>
 
-          {/* Floating sparkle particles - FULL OPACITY - FAST MOVING */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(100)].map((_, i) => {
-              const startX = Math.random() * 100;
-              const startY = Math.random() * 100;
-              const endX = Math.random() * 100;
-              const endY = Math.random() * 100;
-              const duration = Math.random() * 1.5 + 0.5; // 0.5-2s
-              
-              return (
-                <div
-                  key={i}
-                  className="absolute rounded-full"
-                  style={{
-                    width: `${Math.random() * 3 + 1}px`,
-                    height: `${Math.random() * 3 + 1}px`,
-                    background: '#FFD700',
-                    left: `${startX}%`,
-                    top: `${startY}%`,
-                    boxShadow: '0 0 20px 4px #FFD700, 0 0 30px 6px #FFA500, 0 0 40px 8px rgba(255, 215, 0, 0.5)',
-                    animation: `floatStar${i % 10} ${duration}s linear infinite`,
-                    animationDelay: `${i * 0.02}s`
-                  }}
-                >
-                  <style>{`
-                    @keyframes floatStar${i % 10} {
-                      0% {
-                        transform: translate(0, 0) scale(0.5);
-                        opacity: 0;
+          {/* Floating sparkle particles - EXPLOSIVE BURST FROM CENTER */}
+          {contentVisible && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(120)].map((_, i) => {
+                // Radiális szög számítása (360 fokot elosztva a csillagok között)
+                const angle = (i / 120) * Math.PI * 2;
+                const distance = Math.random() * 80 + 40; // 40-120vw távolság
+                const burstDuration = Math.random() * 0.3 + 0.3; // 0.3-0.6s robbanás
+                const floatDuration = Math.random() * 2 + 1.5; // 1.5-3.5s lebegés
+                
+                // X és Y irány a szögből
+                const endX = Math.cos(angle) * distance;
+                const endY = Math.sin(angle) * distance;
+                
+                return (
+                  <div
+                    key={i}
+                    className="absolute rounded-full"
+                    style={{
+                      width: `${Math.random() * 4 + 2}px`,
+                      height: `${Math.random() * 4 + 2}px`,
+                      background: '#FFD700',
+                      left: '50%',
+                      top: '50%',
+                      boxShadow: '0 0 25px 5px #FFD700, 0 0 35px 8px #FFA500, 0 0 45px 10px rgba(255, 215, 0, 0.6)',
+                      animation: `starBurst${i % 20} ${burstDuration}s ease-out forwards, starFloat${i % 20} ${floatDuration}s ease-in-out ${burstDuration}s infinite`,
+                      animationDelay: `${i * 0.003}s` // Szinte egyidejű robbanás
+                    }}
+                  >
+                    <style>{`
+                      @keyframes starBurst${i % 20} {
+                        0% {
+                          transform: translate(-50%, -50%) scale(0);
+                          opacity: 0;
+                        }
+                        20% {
+                          opacity: 1;
+                        }
+                        100% {
+                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(1);
+                          opacity: 1;
+                        }
                       }
-                      10% {
-                        opacity: 1;
-                        transform: translate(${(endX - startX) * 0.1}vw, ${(endY - startY) * 0.1}vh) scale(1);
+                      @keyframes starFloat${i % 20} {
+                        0%, 100% {
+                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateY(0) scale(1);
+                        }
+                        25% {
+                          transform: translate(calc(-50% + ${endX + Math.random() * 10 - 5}vw), calc(-50% + ${endY + Math.random() * 10 - 5}vh)) translateY(-10px) scale(1.1);
+                        }
+                        50% {
+                          transform: translate(calc(-50% + ${endX + Math.random() * 10 - 5}vw), calc(-50% + ${endY + Math.random() * 10 - 5}vh)) translateY(0) scale(0.9);
+                        }
+                        75% {
+                          transform: translate(calc(-50% + ${endX + Math.random() * 10 - 5}vw), calc(-50% + ${endY + Math.random() * 10 - 5}vh)) translateY(10px) scale(1.05);
+                        }
                       }
-                      90% {
-                        opacity: 1;
-                        transform: translate(${(endX - startX) * 0.9}vw, ${(endY - startY) * 0.9}vh) scale(1);
-                      }
-                      100% {
-                        transform: translate(${endX - startX}vw, ${endY - startY}vh) scale(0.5);
-                        opacity: 0;
-                      }
-                    }
-                  `}</style>
-                </div>
-              );
-            })}
-          </div>
+                    `}</style>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Central content container - STAGGERED ZOOM IN ANIMATION */}
           <div className="relative z-10 flex flex-col items-center">
