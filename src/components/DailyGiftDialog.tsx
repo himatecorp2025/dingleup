@@ -110,61 +110,69 @@ const DailyGiftDialog = ({
             ></div>
           </div>
 
-          {/* Floating sparkle particles - EXPLOSIVE BURST FROM CENTER */}
+          {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER */}
           {contentVisible && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(120)].map((_, i) => {
+              {[...Array(150)].map((_, i) => {
                 // Radiális szög számítása (360 fokot elosztva a csillagok között)
-                const angle = (i / 120) * Math.PI * 2;
-                const distance = Math.random() * 80 + 40; // 40-120vw távolság
-                const burstDuration = Math.random() * 0.3 + 0.3; // 0.3-0.6s robbanás
-                const floatDuration = Math.random() * 2 + 1.5; // 1.5-3.5s lebegés
+                const angle = (i / 150) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+                const distance = Math.random() * 120 + 60; // 60-180vw távolság - TELJES KÉPERNYŐ
+                const burstDuration = Math.random() * 0.4 + 0.4; // 0.4-0.8s robbanás
+                const floatDuration = Math.random() * 3 + 2; // 2-5s lebegés
                 
-                // X és Y irány a szögből
+                // X és Y irány a szögből - SUGÁRIRÁNYBAN MINDEN IRÁNYBA
                 const endX = Math.cos(angle) * distance;
                 const endY = Math.sin(angle) * distance;
+                
+                // Random lebegési irányok
+                const floatX1 = Math.random() * 20 - 10;
+                const floatY1 = Math.random() * 20 - 10;
+                const floatX2 = Math.random() * 20 - 10;
+                const floatY2 = Math.random() * 20 - 10;
                 
                 return (
                   <div
                     key={i}
                     className="absolute rounded-full"
                     style={{
-                      width: `${Math.random() * 4 + 2}px`,
-                      height: `${Math.random() * 4 + 2}px`,
+                      width: `${Math.random() * 5 + 2}px`,
+                      height: `${Math.random() * 5 + 2}px`,
                       background: '#FFD700',
                       left: '50%',
-                      top: '50%',
-                      boxShadow: '0 0 25px 5px #FFD700, 0 0 35px 8px #FFA500, 0 0 45px 10px rgba(255, 215, 0, 0.6)',
-                      animation: `starBurst${i % 20} ${burstDuration}s ease-out forwards, starFloat${i % 20} ${floatDuration}s ease-in-out ${burstDuration}s infinite`,
-                      animationDelay: `${i * 0.003}s` // Szinte egyidejű robbanás
+                      top: '45%', // Kicsit feljebb, ahol a pajzs van
+                      boxShadow: '0 0 30px 6px #FFD700, 0 0 40px 10px #FFA500, 0 0 50px 12px rgba(255, 215, 0, 0.7)',
+                      animation: `starBurst${i % 30} ${burstDuration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, starFloat${i % 30} ${floatDuration}s ease-in-out ${burstDuration}s infinite`,
+                      animationDelay: `${i * 0.002}s`, // Gyors, szinte egyidejű robbanás
+                      zIndex: 5
                     }}
                   >
                     <style>{`
-                      @keyframes starBurst${i % 20} {
+                      @keyframes starBurst${i % 30} {
                         0% {
                           transform: translate(-50%, -50%) scale(0);
                           opacity: 0;
                         }
-                        20% {
+                        15% {
                           opacity: 1;
+                          transform: translate(-50%, -50%) scale(1.2);
                         }
                         100% {
                           transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(1);
                           opacity: 1;
                         }
                       }
-                      @keyframes starFloat${i % 20} {
+                      @keyframes starFloat${i % 30} {
                         0%, 100% {
-                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateY(0) scale(1);
+                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateX(0) translateY(0) scale(1);
                         }
                         25% {
-                          transform: translate(calc(-50% + ${endX + Math.random() * 10 - 5}vw), calc(-50% + ${endY + Math.random() * 10 - 5}vh)) translateY(-10px) scale(1.1);
+                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateX(${floatX1}vw) translateY(${floatY1}vh) scale(1.2);
                         }
                         50% {
-                          transform: translate(calc(-50% + ${endX + Math.random() * 10 - 5}vw), calc(-50% + ${endY + Math.random() * 10 - 5}vh)) translateY(0) scale(0.9);
+                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateX(${floatX2}vw) translateY(${floatY2}vh) scale(0.8);
                         }
                         75% {
-                          transform: translate(calc(-50% + ${endX + Math.random() * 10 - 5}vw), calc(-50% + ${endY + Math.random() * 10 - 5}vh)) translateY(10px) scale(1.05);
+                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateX(${-floatX1}vw) translateY(${-floatY1}vh) scale(1.1);
                         }
                       }
                     `}</style>
