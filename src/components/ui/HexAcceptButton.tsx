@@ -22,8 +22,6 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         relative
         overflow-hidden
         transition-all duration-200
-        hover:-translate-y-1
-        hover:scale-[1.02]
         active:translate-y-0
         active:scale-100
         disabled:opacity-50
@@ -153,7 +151,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         </path>
         
         <defs>
-          <linearGradient id="shine-sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id="shine-sweep" x1="0%" y1="100%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="rgba(255,255,255,0)" />
             <stop offset="50%" stopColor="rgba(255,255,255,0.7)" />
             <stop offset="100%" stopColor="rgba(255,255,255,0)" />

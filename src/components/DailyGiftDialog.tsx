@@ -39,14 +39,17 @@ const DailyGiftDialog = ({
   const [burstActive, setBurstActive] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
 
-  // Sync badge width to button
+  // Sync badge width to button (account for inner hexagon vs. outer frame ratio)
   useEffect(() => {
     if (!badgeRef.current || !buttonWrapperRef.current) return;
+
+    const INNER_TO_OUTER_RATIO = 132 / 108; // outerHexWidth / innerGreenWidth
 
     const syncWidth = () => {
       const badgeWidth = badgeRef.current?.getBoundingClientRect().width;
       if (badgeWidth && buttonWrapperRef.current) {
-        buttonWrapperRef.current.style.setProperty('--sync-width', `${badgeWidth}px`);
+        const targetButtonWidth = Math.round(badgeWidth * INNER_TO_OUTER_RATIO);
+        buttonWrapperRef.current.style.setProperty('--sync-width', `${targetButtonWidth}px`);
       }
     };
 
