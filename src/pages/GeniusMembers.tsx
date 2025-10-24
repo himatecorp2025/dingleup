@@ -102,7 +102,7 @@ const GeniusMembers = () => {
       {/* Header */}
       <div className="bg-gradient-to-r from-[#0a1f14] via-[#0e4d2e] to-[#0a1f14] border-b-2 border-[#d4af37] p-4">
         <div className="max-w-4xl mx-auto flex items-center gap-4">
-          <button
+           <button
             onClick={() => navigate('/admin')}
             className="p-2 rounded-lg bg-[#d4af37]/20 hover:bg-[#d4af37]/30 transition-colors"
           >

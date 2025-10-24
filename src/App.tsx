@@ -24,6 +24,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminTipsVideos from "./pages/AdminTipsVideos";
 import GeniusMembers from "./pages/GeniusMembers";
+import GeniusMembersEnhanced from "./pages/GeniusMembersEnhanced";
+import NormalUsersAnalytics from "./pages/NormalUsersAnalytics";
 import ChatEnhanced from "./pages/ChatEnhanced";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
@@ -251,7 +253,9 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/genius" element={<GeniusMembers />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/genius" element={<GeniusMembersEnhanced />} />
+            <Route path="/admin/normal-users" element={<NormalUsersAnalytics />} />
             <Route path="/admin/tips" element={<AdminTipsVideos />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
