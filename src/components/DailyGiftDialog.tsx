@@ -44,17 +44,13 @@ const DailyGiftDialog = ({
     if (!badgeRef.current || !buttonWrapperRef.current) return;
 
     const INNER_TO_OUTER_RATIO = 132 / 108; // outerHexWidth / innerGreenWidth
-    const WIDTH_SCALE = 1.36; // extra horizontal widening as requested
 
     const syncWidth = () => {
       const badgeWidth = badgeRef.current?.getBoundingClientRect().width;
-      const containerWidth = buttonWrapperRef.current?.parentElement?.getBoundingClientRect().width || 0;
       if (badgeWidth && buttonWrapperRef.current) {
-        const targetButtonWidth = Math.min(
-          Math.round(badgeWidth * INNER_TO_OUTER_RATIO * WIDTH_SCALE),
-          Math.round(containerWidth * 0.94)
-        );
+        const targetButtonWidth = Math.round(badgeWidth * INNER_TO_OUTER_RATIO);
         buttonWrapperRef.current.style.setProperty('--sync-width', `${targetButtonWidth}px`);
+        console.debug('[DailyGift] badgeWidth=', badgeWidth, 'targetButtonWidth=', targetButtonWidth);
       }
     };
 
@@ -233,7 +229,7 @@ const DailyGiftDialog = ({
               <div 
                 ref={badgeRef}
                 className="relative -mt-8 mb-3 mx-auto z-20" 
-                style={{ width: 'max-content' }}
+                style={{ width: '78%' }}
               >
                 <div className="relative px-[5vw] py-[1.2vh] shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
                      style={{
@@ -377,9 +373,9 @@ const DailyGiftDialog = ({
                   }}
                 >
                   {canClaim ? (
-                    <HexAcceptButton onClick={handleClaim} />
+                    <HexAcceptButton onClick={handleClaim} style={{ width: 'var(--sync-width)' }} />
                   ) : (
-                    <HexAcceptButton disabled />
+                    <HexAcceptButton disabled style={{ width: 'var(--sync-width)' }} />
                   )}
                 </div>
               </div>

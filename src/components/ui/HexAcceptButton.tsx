@@ -34,7 +34,9 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         padding: '0',
         animation: 'casino-pulse 3s ease-in-out infinite',
         flex: '0 0 auto',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        outline: 'none',
+        border: '0'
       }}
       {...props}
     >
