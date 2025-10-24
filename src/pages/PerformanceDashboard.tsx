@@ -1,5 +1,5 @@
 import { ArrowLeft, RefreshCw } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,6 +7,7 @@ import { usePerformanceAnalytics } from "@/hooks/usePerformanceAnalytics";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const PerformanceDashboard = () => {
+  const navigate = useNavigate();
   const { analytics, loading, error, refetch } = usePerformanceAnalytics();
 
   if (loading) {
@@ -30,11 +31,9 @@ const PerformanceDashboard = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4">
-            <Link to="/admin">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
+            <Button onClick={() => navigate('/admin')} variant="ghost" size="icon" className="text-white hover:bg-white/10">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Teljesítmény Dashboard</h1>
           </div>
           <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading} className="text-white border-white/30 hover:bg-white/10 w-full sm:w-auto">
@@ -44,7 +43,7 @@ const PerformanceDashboard = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="bg-[#1a1a3e]/50 border border-purple-500/30 p-1 flex-wrap h-auto gap-1">
+          <TabsList className="bg-[#1a1a3e]/50 p-1 flex-wrap h-auto gap-1">
             <TabsTrigger value="overview" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
               Áttekintés
             </TabsTrigger>

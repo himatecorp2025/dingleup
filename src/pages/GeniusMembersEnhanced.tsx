@@ -93,26 +93,26 @@ const GeniusMembersEnhanced = () => {
         {/* Content */}
         <div className="max-w-7xl mx-auto p-4 md:p-6">
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="bg-[#0a1f14] border border-[#d4af37]/30 p-1">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black">
+            <TabsList className="bg-[#0a1f14] border border-[#d4af37]/30 p-1 flex-wrap h-auto gap-1">
+              <TabsTrigger value="overview" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black text-white/70">
                 Áttekintés
               </TabsTrigger>
-              <TabsTrigger value="subscriptions" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black">
+              <TabsTrigger value="subscriptions" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black text-white/70">
                 Előfizetések
               </TabsTrigger>
-              <TabsTrigger value="purchases" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black">
+              <TabsTrigger value="purchases" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black text-white/70">
                 Vásárlások
               </TabsTrigger>
-              <TabsTrigger value="games" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black">
+              <TabsTrigger value="games" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black text-white/70">
                 Játékstatisztikák
               </TabsTrigger>
-              <TabsTrigger value="activity" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black">
+              <TabsTrigger value="activity" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black text-white/70">
                 Aktivitás
               </TabsTrigger>
-              <TabsTrigger value="invitations" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black">
+              <TabsTrigger value="invitations" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black text-white/70">
                 Meghívások
               </TabsTrigger>
-              <TabsTrigger value="chat" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black">
+              <TabsTrigger value="chat" className="data-[state=active]:bg-[#d4af37] data-[state=active]:text-black text-white/70">
                 Chat/Közösség
               </TabsTrigger>
             </TabsList>

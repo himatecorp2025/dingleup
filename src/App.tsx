@@ -8,33 +8,49 @@ import { useAudioStore } from "@/stores/audioStore";
 import AudioManager from "@/lib/audioManager";
 import { usePlatformDetection } from "@/hooks/usePlatformDetection";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { lazy, Suspense } from "react";
+
+// Eager load critical pages
 import Index from "./pages/Index";
-import Game from "./pages/Game";
 import Dashboard from "./pages/Dashboard";
-import Profile from "./pages/Profile";
-import ShopPage from "./pages/ShopPage";
-import Leaderboard from "./pages/Leaderboard";
-import Register from "./pages/Register";
 import Login from "./pages/Login";
-import RegistrationSuccess from "./pages/RegistrationSuccess";
-import InstallApp from "./pages/InstallApp";
-import Invitation from "./pages/Invitation";
-import IntroVideo from "./pages/IntroVideo";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminTipsVideos from "./pages/AdminTipsVideos";
-import GeniusMembers from "./pages/GeniusMembers";
-import GeniusMembersEnhanced from "./pages/GeniusMembersEnhanced";
-import NormalUsersAnalytics from "./pages/NormalUsersAnalytics";
-import AdvancedAnalytics from "./pages/AdvancedAnalytics";
-import RetentionDashboard from "./pages/RetentionDashboard";
-import MonetizationDashboard from "./pages/MonetizationDashboard";
-import PerformanceDashboard from "./pages/PerformanceDashboard";
-import EngagementDashboard from "./pages/EngagementDashboard";
-import UserJourneyDashboard from "./pages/UserJourneyDashboard";
-import ChatEnhanced from "./pages/ChatEnhanced";
-import About from "./pages/About";
-import NotFound from "./pages/NotFound";
+import Register from "./pages/Register";
+
+// Lazy load secondary pages
+const Game = lazy(() => import("./pages/Game"));
+const Profile = lazy(() => import("./pages/Profile"));
+const ShopPage = lazy(() => import("./pages/ShopPage"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
+const RegistrationSuccess = lazy(() => import("./pages/RegistrationSuccess"));
+const InstallApp = lazy(() => import("./pages/InstallApp"));
+const Invitation = lazy(() => import("./pages/Invitation"));
+const IntroVideo = lazy(() => import("./pages/IntroVideo"));
+const ChatEnhanced = lazy(() => import("./pages/ChatEnhanced"));
+const About = lazy(() => import("./pages/About"));
+
+// Lazy load admin pages
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminTipsVideos = lazy(() => import("./pages/AdminTipsVideos"));
+const GeniusMembersEnhanced = lazy(() => import("./pages/GeniusMembersEnhanced"));
+const NormalUsersAnalytics = lazy(() => import("./pages/NormalUsersAnalytics"));
+const AdvancedAnalytics = lazy(() => import("./pages/AdvancedAnalytics"));
+const RetentionDashboard = lazy(() => import("./pages/RetentionDashboard"));
+const MonetizationDashboard = lazy(() => import("./pages/MonetizationDashboard"));
+const PerformanceDashboard = lazy(() => import("./pages/PerformanceDashboard"));
+const EngagementDashboard = lazy(() => import("./pages/EngagementDashboard"));
+const UserJourneyDashboard = lazy(() => import("./pages/UserJourneyDashboard"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-lg text-white/70">Betöltés...</p>
+    </div>
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -241,36 +257,38 @@ const App = () => {
         <ScrollBehaviorManager />
         <AudioPolicyManager />
         <AppRouteGuard>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/desktop" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/chat" element={<ChatEnhanced />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/shop" element={<ShopPage />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/registration-success" element={<RegistrationSuccess />} />
-            <Route path="/install" element={<InstallApp />} />
-            <Route path="/invitation" element={<Invitation />} />
-            <Route path="/intro" element={<IntroVideo />} />
-            <Route path="/game" element={<Game />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/genius" element={<GeniusMembersEnhanced />} />
-            <Route path="/admin/normal-users" element={<NormalUsersAnalytics />} />
-            <Route path="/admin/tips" element={<AdminTipsVideos />} />
-            <Route path="/admin/analytics" element={<AdvancedAnalytics />} />
-            <Route path="/admin/retention" element={<RetentionDashboard />} />
-            <Route path="/admin/monetization" element={<MonetizationDashboard />} />
-            <Route path="/admin/performance" element={<PerformanceDashboard />} />
-            <Route path="/admin/engagement" element={<EngagementDashboard />} />
-            <Route path="/admin/user-journey" element={<UserJourneyDashboard />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/desktop" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/chat" element={<ChatEnhanced />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/shop" element={<ShopPage />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/registration-success" element={<RegistrationSuccess />} />
+              <Route path="/install" element={<InstallApp />} />
+              <Route path="/invitation" element={<Invitation />} />
+              <Route path="/intro" element={<IntroVideo />} />
+              <Route path="/game" element={<Game />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/genius" element={<GeniusMembersEnhanced />} />
+              <Route path="/admin/normal-users" element={<NormalUsersAnalytics />} />
+              <Route path="/admin/tips" element={<AdminTipsVideos />} />
+              <Route path="/admin/analytics" element={<AdvancedAnalytics />} />
+              <Route path="/admin/retention" element={<RetentionDashboard />} />
+              <Route path="/admin/monetization" element={<MonetizationDashboard />} />
+              <Route path="/admin/performance" element={<PerformanceDashboard />} />
+              <Route path="/admin/engagement" element={<EngagementDashboard />} />
+              <Route path="/admin/user-journey" element={<UserJourneyDashboard />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </AppRouteGuard>
       </BrowserRouter>
     </QueryClientProvider>
