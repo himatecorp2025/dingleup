@@ -7,6 +7,11 @@ import BottomNav from '@/components/BottomNav';
 import { useGeniusAnalytics } from '@/hooks/useGeniusAnalytics';
 import { GeniusOverviewTab } from '@/components/genius/GeniusOverviewTab';
 import { GeniusSubscriptionsTab } from '@/components/genius/GeniusSubscriptionsTab';
+import { GeniusPurchasesTab } from '@/components/genius/GeniusPurchasesTab';
+import { GeniusGameStatsTab } from '@/components/genius/GeniusGameStatsTab';
+import { GeniusActivityTab } from '@/components/genius/GeniusActivityTab';
+import { GeniusInvitationsTab } from '@/components/genius/GeniusInvitationsTab';
+import { GeniusChatTab } from '@/components/genius/GeniusChatTab';
 
 const GeniusMembersEnhanced = () => {
   const navigate = useNavigate();
@@ -121,23 +126,23 @@ const GeniusMembersEnhanced = () => {
             </TabsContent>
 
             <TabsContent value="purchases">
-              <div className="text-white">Vásárlások tab (fejlesztés alatt)</div>
+              <GeniusPurchasesTab members={analytics.members} />
             </TabsContent>
 
             <TabsContent value="games">
-              <div className="text-white">Játékstatisztikák tab (fejlesztés alatt)</div>
+              <GeniusGameStatsTab members={analytics.members} />
             </TabsContent>
 
             <TabsContent value="activity">
-              <div className="text-white">Aktivitás tab (fejlesztés alatt)</div>
+              <GeniusActivityTab members={analytics.members} />
             </TabsContent>
 
             <TabsContent value="invitations">
-              <div className="text-white">Meghívások tab (fejlesztés alatt)</div>
+              <GeniusInvitationsTab members={analytics.members} />
             </TabsContent>
 
             <TabsContent value="chat">
-              <div className="text-white">Chat/Közösség tab (fejlesztés alatt)</div>
+              <GeniusChatTab members={analytics.members} />
             </TabsContent>
           </Tabs>
         </div>
