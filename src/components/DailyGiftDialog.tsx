@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react';
 import { HexagonButton } from './HexagonButton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { Gift, Coins, Sun, Sparkles, Star, Zap } from 'lucide-react';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { trackBonusEvent } from '@/lib/analytics';
+import { supabase } from '@/integrations/supabase/client';
 
 interface DailyGiftDialogProps {
   open: boolean;
@@ -26,14 +29,44 @@ const DailyGiftDialog = ({
   canClaim,
   isPremium = false 
 }: DailyGiftDialogProps) => {
+  const [userId, setUserId] = useState<string | null>(null);
+  const isHandheld = usePlatformDetection();
+
+  // Get user ID
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUserId(session?.user?.id || null);
+    });
+  }, []);
+
+  // Track when dialog opens
+  useEffect(() => {
+    if (open && userId) {
+      trackBonusEvent(userId, 'daily_shown', 'daily', {
+        coins_amount: nextReward,
+        streak_day: weeklyEntryCount + 1,
+        is_subscriber: isPremium
+      });
+    }
+  }, [open, userId, nextReward, weeklyEntryCount, isPremium]);
+
   const handleClaim = () => {
     onClaim();
+    
+    // Track claim
+    if (userId) {
+      trackBonusEvent(userId, 'daily_claimed', 'daily', {
+        coins_amount: nextReward,
+        streak_day: weeklyEntryCount + 1,
+        is_subscriber: isPremium
+      });
+    }
+
     // Signal that claim was successful - trigger genius promo
     if (onClaimSuccess) {
       setTimeout(() => onClaimSuccess(), 500);
     }
   };
-  const isHandheld = usePlatformDetection();
 
   // Don't render on desktop/laptop
   if (!isHandheld || !open) return null;

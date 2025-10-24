@@ -13,6 +13,7 @@ import { ScrollInspector } from '@/components/ScrollInspector';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { FriendsHexagonBar } from '@/components/chat/FriendsHexagonBar';
 import { useUserPresence } from '@/hooks/useUserPresence';
+import { trackChatInteraction } from '@/lib/analytics';
 
 interface Thread {
   id: string;
@@ -73,6 +74,10 @@ const ChatEnhanced = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUserId(session.user.id);
+        
+        // Track chat opened
+        trackChatInteraction(session.user.id, 'chat_opened');
+        
         // Open thread from URL param if provided on initial load
         const params = new URLSearchParams(window.location.search);
         const friend = params.get('friend');
@@ -163,6 +168,14 @@ const ChatEnhanced = () => {
 
   const handleSelectThread = (thread: Thread) => {
     setSelectedFriend({ userId: thread.other_user_id, username: thread.other_user_name });
+    
+    // Track thread opened
+    if (userId) {
+      trackChatInteraction(userId, 'thread_opened', {
+        target_user_id: thread.other_user_id,
+        thread_id: thread.id
+      });
+    }
   };
 
 

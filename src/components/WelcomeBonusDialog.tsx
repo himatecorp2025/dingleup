@@ -3,6 +3,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { HexagonButton } from './HexagonButton';
 import { Gift, Coins, Heart, Sparkles, Star } from 'lucide-react';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { trackBonusEvent } from '@/lib/analytics';
+import { supabase } from '@/integrations/supabase/client';
 
 interface WelcomeBonusDialogProps {
   open: boolean;
@@ -14,12 +16,28 @@ interface WelcomeBonusDialogProps {
 export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: WelcomeBonusDialogProps) => {
   const [showAnimation, setShowAnimation] = useState(false);
   const [animationPhase, setAnimationPhase] = useState<'gift' | 'coins'>('gift');
+  const [userId, setUserId] = useState<string | null>(null);
   const isHandheld = usePlatformDetection();
+
+  // Get user ID
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUserId(session?.user?.id || null);
+    });
+  }, []);
 
   useEffect(() => {
     if (open) {
       setShowAnimation(true);
       setAnimationPhase('gift');
+      
+      // Track welcome bonus shown
+      if (userId) {
+        trackBonusEvent(userId, 'welcome_shown', 'welcome', {
+          coins_amount: 2500,
+          lives_amount: 50
+        });
+      }
       
       const timer = setTimeout(() => {
         setAnimationPhase('coins');
@@ -29,12 +47,16 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
     } else {
       setShowAnimation(false);
     }
-  }, [open]);
+  }, [open, userId]);
 
   const handleClaim = async () => {
     const success = await onClaim();
-    if (success) {
-      // Dialog will close automatically
+    if (success && userId) {
+      // Track welcome bonus claimed
+      trackBonusEvent(userId, 'welcome_claimed', 'welcome', {
+        coins_amount: 2500,
+        lives_amount: 50
+      });
     }
   };
 

@@ -7,6 +7,7 @@ import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
 import { useAudioStore } from "@/stores/audioStore";
 import AudioManager from "@/lib/audioManager";
 import { usePlatformDetection } from "@/hooks/usePlatformDetection";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import Index from "./pages/Index";
 import Game from "./pages/Game";
 import Dashboard from "./pages/Dashboard";
@@ -176,6 +177,9 @@ const AudioPolicyManager = () => {
 };
 
 const App = () => {
+  // Initialize analytics tracking
+  useAnalytics();
+
   // Initialize AudioManager singleton and subscribe to store
   useEffect(() => {
     console.log('[App] Initializing AudioManager');

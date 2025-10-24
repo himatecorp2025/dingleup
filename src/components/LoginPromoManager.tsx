@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { GeniusPromoDialog } from './GeniusPromoDialog';
+import { trackPromoEvent } from '@/lib/analytics';
 
 interface LoginPromoManagerProps {
   isGenius: boolean;
@@ -27,6 +28,12 @@ export const LoginPromoManager = ({ isGenius, userId }: LoginPromoManagerProps) 
       const timer = setTimeout(() => {
         setShowPromo(true);
         sessionStorage.setItem(SESSION_KEY, now.toString());
+        
+        // Track promo shown
+        trackPromoEvent(userId, 'shown', 'login_promo', {
+          trigger: 'login',
+          times_shown_before: 0
+        });
       }, 500);
       
       return () => clearTimeout(timer);
@@ -36,13 +43,24 @@ export const LoginPromoManager = ({ isGenius, userId }: LoginPromoManagerProps) 
   return (
     <GeniusPromoDialog
       open={showPromo}
-      onClose={() => setShowPromo(false)}
+      onClose={() => {
+        setShowPromo(false);
+        if (userId) {
+          trackPromoEvent(userId, 'closed', 'login_promo');
+        }
+      }}
       onSubscribe={() => {
         console.log('[LoginPromo] Subscribe clicked');
+        if (userId) {
+          trackPromoEvent(userId, 'accepted', 'login_promo');
+        }
       }}
       onLater={() => {
         console.log('[LoginPromo] Later clicked');
         setShowPromo(false);
+        if (userId) {
+          trackPromoEvent(userId, 'dismissed', 'login_promo');
+        }
       }}
     />
   );

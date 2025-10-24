@@ -11,6 +11,7 @@ import { QuickBuyOptInDialog } from './QuickBuyOptInDialog';
 import { GeniusSubscriptionDialog } from './GeniusSubscriptionDialog';
 import { TipsVideosGrid } from './TipsVideosGrid';
 import { calculateUsdPrice, calculateCoinCost } from '@/lib/geniusPricing';
+import { trackShopInteraction } from '@/lib/analytics';
 
 interface ShopProps {
   userId: string;
@@ -130,6 +131,18 @@ const Shop = ({ userId }: ShopProps) => {
   const buyWithStripe = async (boosterType: 'DoubleSpeed' | 'MegaSpeed' | 'GigaSpeed' | 'DingleSpeed') => {
     const executeStripePayment = async () => {
       setLoading(`stripe-${boosterType}`);
+      
+      const booster = SPEED_BOOSTERS.find(b => b.name === boosterType);
+      if (!booster) return;
+      
+      // Track purchase initiated
+      trackShopInteraction(userId, 'purchase_initiated', 'booster_stripe', {
+        product_id: boosterType,
+        product_name: booster.name,
+        price_amount: booster.priceUsd,
+        currency: 'USD'
+      });
+      
       try {
         const { data, error } = await supabase.functions.invoke('create-payment', {
           body: { productType: boosterType }
@@ -144,6 +157,7 @@ const Shop = ({ userId }: ShopProps) => {
       } catch (error: any) {
         console.error('Error creating payment:', error);
         toast.error('Hiba történt a fizetés indításakor');
+        trackShopInteraction(userId, 'purchase_cancelled', 'booster_stripe');
       }
       setLoading(null);
     };
@@ -160,6 +174,15 @@ const Shop = ({ userId }: ShopProps) => {
 
   const buyLife = async () => {
     setLoading('life');
+    
+    // Track purchase initiated
+    trackShopInteraction(userId, 'purchase_initiated', 'life', {
+      product_id: 'life',
+      product_name: '1 Élet',
+      price_amount: 25,
+      currency: 'coins'
+    });
+    
     try {
       const { data, error } = await supabase.rpc('purchase_life');
       
@@ -169,12 +192,22 @@ const Shop = ({ userId }: ShopProps) => {
       if (result.success) {
         toast.success('1 élet megszerzése sikeres!');
         await fetchProfile();
+        
+        // Track purchase completed
+        trackShopInteraction(userId, 'purchase_completed', 'life', {
+          product_id: 'life',
+          product_name: '1 Élet',
+          price_amount: 25,
+          currency: 'coins'
+        });
       } else {
         toast.error(result.error || 'Hiba történt');
+        trackShopInteraction(userId, 'purchase_cancelled', 'life');
       }
     } catch (error: any) {
       if (import.meta.env.DEV) console.error('Error purchasing life:', error);
       toast.error('Hiba történt a megszerzés során');
+      trackShopInteraction(userId, 'purchase_cancelled', 'life');
     }
     setLoading(null);
   };
@@ -282,6 +315,14 @@ const Shop = ({ userId }: ShopProps) => {
     const booster = SPEED_BOOSTERS.find(b => b.name === boosterType);
     if (!booster) return;
     
+    // Track purchase initiated
+    trackShopInteraction(userId, 'purchase_initiated', 'booster', {
+      product_id: boosterType,
+      product_name: booster.name,
+      price_amount: booster.price,
+      currency: 'coins'
+    });
+    
     try {
       const { data, error } = await supabase.rpc('activate_booster', {
         p_booster_type: 'max_lives',
@@ -295,12 +336,22 @@ const Shop = ({ userId }: ShopProps) => {
         await purchaseBooster(boosterType);
         toast.success(`${booster.name} booster megszerzése sikeres! +${booster.lives_gained} élet és ${booster.multiplier}x gyorsítás!`);
         await fetchProfile();
+        
+        // Track purchase completed
+        trackShopInteraction(userId, 'purchase_completed', 'booster', {
+          product_id: boosterType,
+          product_name: booster.name,
+          price_amount: booster.price,
+          currency: 'coins'
+        });
       } else {
         toast.error(result.error || 'Hiba történt');
+        trackShopInteraction(userId, 'purchase_cancelled', 'booster');
       }
     } catch (error: any) {
       if (import.meta.env.DEV) console.error('Error purchasing booster:', error);
       toast.error('Hiba történt a megszerzés során');
+      trackShopInteraction(userId, 'purchase_cancelled', 'booster');
     }
     setLoading(null);
   };

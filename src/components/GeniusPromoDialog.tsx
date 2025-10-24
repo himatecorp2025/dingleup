@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Crown, Check, Sparkles, Zap, Star, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { trackPromoEvent } from '@/lib/analytics';
 
 interface GeniusPromoDialogProps {
   open: boolean;
@@ -14,7 +15,15 @@ interface GeniusPromoDialogProps {
 
 export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: GeniusPromoDialogProps) => {
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const isHandheld = usePlatformDetection();
+
+  // Get user ID
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUserId(session?.user?.id || null);
+    });
+  }, []);
 
   const handleSubscribe = async () => {
     if (onSubscribe) onSubscribe();
@@ -41,6 +50,15 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
     if (onLater) onLater();
     onClose();
   };
+
+  // Track when dialog opens
+  useEffect(() => {
+    if (open && userId) {
+      trackPromoEvent(userId, 'shown', 'genius_promo', {
+        trigger: 'manual'
+      });
+    }
+  }, [open, userId]);
 
   // Calculate discounted price (-25%)
   const basePrice = 2.99;
