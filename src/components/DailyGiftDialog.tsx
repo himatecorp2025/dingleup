@@ -196,7 +196,7 @@ const DailyGiftDialog = ({
                    animation: 'pulse 3s ease-in-out infinite'
                  }} />
 
-            <HexShieldFrame className="gold-glow">
+            <HexShieldFrame>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div className="relative -mt-8 mb-3 mx-auto z-20" style={{ width: '78%' }}>
                 <div className="relative px-[5vw] py-[1.2vh] shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
@@ -332,7 +332,7 @@ const DailyGiftDialog = ({
                 </div>
 
                 {/* Hex Accept Button */}
-                <div className="flex justify-center mt-auto">
+                <div className="flex justify-center mt-auto w-full px-[4%]">
                   {canClaim ? (
                     <HexAcceptButton onClick={handleClaim}>
                       Elfogadom a napi jutalmat!

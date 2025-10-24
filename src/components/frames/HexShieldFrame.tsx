@@ -17,11 +17,11 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
            height: 'clamp(540px, 88vh, 680px)'
          }}>
       
-      {/* Casino shine effect - csak hexagonon belül */}
+      {/* Casino shine effect - csak a belső crystal panel területén */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          clipPath: 'polygon(50% 8%, 93% 16%, 93% 84%, 50% 92%, 7% 84%, 7% 16%)',
+          clipPath: 'polygon(50% 11.3%, 86.7% 17.3%, 86.7% 82.7%, 50% 88.7%, 13.3% 82.7%, 13.3% 17.3%)',
           overflow: 'hidden'
         }}
       >

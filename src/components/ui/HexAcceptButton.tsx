@@ -21,7 +21,6 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
       className={`
         relative
         overflow-hidden
-        neon-border
         transition-all duration-200
         hover:-translate-y-1
         hover:scale-[1.02]
@@ -32,10 +31,12 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         ${className}
       `}
       style={{
-        width: 'min(88vw, 560px)',
+        width: '100%',
+        maxWidth: '92%',
         height: 'clamp(68px, 16vh, 84px)',
         padding: '6px 0',
-        animation: 'casino-pulse 3s ease-in-out infinite'
+        animation: 'casino-pulse 3s ease-in-out infinite',
+        margin: '0 auto'
       }}
       {...props}
     >
@@ -43,7 +44,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           overflow: 'hidden'
         }}
       >
