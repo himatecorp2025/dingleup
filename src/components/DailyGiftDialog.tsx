@@ -112,19 +112,19 @@ const DailyGiftDialog = ({
 
           {/* Floating sparkle particles - FULL OPACITY */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(50)].map((_, i) => (
+            {[...Array(80)].map((_, i) => (
               <div
                 key={i}
                 className="absolute rounded-full animate-pulse"
                 style={{
-                  width: `${Math.random() * 4 + 2}px`,
-                  height: `${Math.random() * 4 + 2}px`,
-                  background: ['#FF69B4', '#DA70D6', '#BA55D3', '#9370DB', '#DDA0DD'][Math.floor(Math.random() * 5)],
+                  width: `${Math.random() * 6 + 3}px`,
+                  height: `${Math.random() * 6 + 3}px`,
+                  background: ['#FFD700', '#FFC700', '#FFB700', '#FFAA00', '#FFE55C'][Math.floor(Math.random() * 5)],
                   top: `${Math.random() * 100}%`,
                   left: `${Math.random() * 100}%`,
-                  animationDelay: `${i * 0.1}s`,
-                  animationDuration: `${Math.random() * 3 + 2}s`,
-                  boxShadow: '0 0 10px currentColor'
+                  animationDelay: `${i * 0.05}s`,
+                  animationDuration: `${Math.random() * 1.5 + 0.5}s`,
+                  boxShadow: '0 0 15px #FFD700, 0 0 25px #FFD700'
                 }}
               />
             ))}
