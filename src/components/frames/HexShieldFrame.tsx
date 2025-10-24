@@ -59,44 +59,44 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </filter>
         </defs>
 
-        {/* 3D Shadow Base - HEGYES csúcs, széles alap */}
+        {/* 3D Shadow Base - VALÓDI 6 SZÖGLET (hexagon), hegyes top/bottom, egyenes oldalak */}
         <path
-          d="M 180 10 L 285 50 L 350 140 L 350 460 L 285 550 L 180 590 L 75 550 L 10 460 L 10 140 L 75 50 Z"
+          d="M 180 10 L 320 120 L 320 480 L 180 590 L 40 480 L 40 120 Z"
           fill="rgba(0,0,0,0.35)"
           transform="translate(6, 8)"
         />
 
-        {/* Outer Gold Frame - HEGYES csúcs, széles alap */}
+        {/* Outer Gold Frame - 6 pont (hexagon) */}
         <path
-          d="M 180 4 L 290 46 L 354 136 L 354 464 L 290 554 L 180 596 L 70 554 L 6 464 L 6 136 L 70 46 Z"
+          d="M 180 4 L 326 116 L 326 484 L 180 596 L 34 484 L 34 116 Z"
           fill="url(#goldOuter)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
           filter="url(#depth-shadow)"
         />
 
-        {/* Middle Gold Frame - HEGYES csúcs, széles alap */}
+        {/* Middle Gold Frame - 6 pont (hexagon) */}
         <path
-          d="M 180 20 L 278 60 L 338 148 L 338 452 L 278 540 L 180 580 L 82 540 L 22 452 L 22 148 L 82 60 Z"
+          d="M 180 20 L 312 126 L 312 474 L 180 580 L 48 474 L 48 126 Z"
           fill="url(#goldInner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="3"
         />
 
-        {/* Inner Crystal Panel - HEGYES csúcs, széles alap */}
+        {/* Inner Crystal Panel - 6 pont (hexagon) */}
         <path
-          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
+          d="M 180 36 L 300 136 L 300 464 L 180 564 L 60 464 L 60 136 Z"
           fill="url(#crystalRadial)"
         />
 
-        {/* Specular Highlight Overlay - HEGYES csúcs, széles alap */}
+        {/* Specular Highlight Overlay */}
         <path
-          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
+          d="M 180 36 L 300 136 L 300 464 L 180 564 L 60 464 L 60 136 Z"
           fill="url(#specular)"
           opacity="0.4"
         />
 
-        {/* Diagonal Light Streaks - HEGYES csúcs, széles alap */}
+        {/* Diagonal Light Streaks */}
         <defs>
           <pattern id="diagonalStripes" patternUnits="userSpaceOnUse" width="60" height="60" patternTransform="rotate(45)">
             <rect x="0" y="0" width="12" height="60" fill="rgba(255,255,255,0.08)" />
@@ -105,23 +105,23 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </pattern>
         </defs>
         <path
-          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
+          d="M 180 36 L 300 136 L 300 464 L 180 564 L 60 464 L 60 136 Z"
           fill="url(#diagonalStripes)"
           opacity="0.7"
         />
 
-        {/* Inner Glow (bottom shadow for 3D) - HEGYES csúcs, széles alap */}
+        {/* Inner Glow (bottom shadow for 3D) */}
         <path
-          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
+          d="M 180 36 L 300 136 L 300 464 L 180 564 L 60 464 L 60 136 Z"
           fill="none"
           stroke="rgba(0,0,0,0.25)"
           strokeWidth="8"
           style={{ filter: 'blur(6px)' }}
         />
 
-        {/* Gold Inner Stroke (accent) - HEGYES csúcs, széles alap */}
+        {/* Gold Inner Stroke (accent) */}
         <path
-          d="M 180 34 L 266 72 L 322 158 L 322 442 L 266 528 L 180 566 L 94 528 L 38 442 L 38 158 L 94 72 Z"
+          d="M 180 36 L 300 136 L 300 464 L 180 564 L 60 464 L 60 136 Z"
           fill="none"
           stroke="url(#goldInner)"
           strokeWidth="2"
