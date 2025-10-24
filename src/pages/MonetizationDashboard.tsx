@@ -33,7 +33,7 @@ const MonetizationDashboard = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4">
-            <Button onClick={() => navigate('/admin')} variant="ghost" size="icon" className="text-white hover:bg-white/10">
+            <Button onClick={() => navigate('/admin/analytics')} variant="ghost" size="icon" className="text-white hover:bg-white/10">
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Monetizációs Dashboard</h1>
