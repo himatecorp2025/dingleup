@@ -59,39 +59,39 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </filter>
         </defs>
 
-        {/* 3D Shadow Base - Téglalap-szerű hexagon (felső/alsó 150°, oldalsó 105°) */}
+        {/* 3D Shadow Base - 50%-kal szélesebb téglalap hexagon */}
         <path
-          d="M 180 50 L 280 130 L 280 470 L 180 550 L 80 470 L 80 130 Z"
+          d="M 180 50 L 330 130 L 330 470 L 180 550 L 30 470 L 30 130 Z"
           fill="rgba(0,0,0,0.35)"
           transform="translate(6, 8)"
         />
 
-        {/* Outer Gold Frame - Téglalap hexagon */}
+        {/* Outer Gold Frame - szélesebb */}
         <path
-          d="M 180 44 L 286 126 L 286 474 L 180 556 L 74 474 L 74 126 Z"
+          d="M 180 44 L 336 126 L 336 474 L 180 556 L 24 474 L 24 126 Z"
           fill="url(#goldOuter)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
           filter="url(#depth-shadow)"
         />
 
-        {/* Middle Gold Frame - Téglalap hexagon (inset) */}
+        {/* Middle Gold Frame - szélesebb (inset) */}
         <path
-          d="M 180 56 L 274 136 L 274 464 L 180 544 L 86 464 L 86 136 Z"
+          d="M 180 56 L 324 136 L 324 464 L 180 544 L 36 464 L 36 136 Z"
           fill="url(#goldInner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="3"
         />
 
-        {/* Inner Crystal Panel - Téglalap hexagon (inset) */}
+        {/* Inner Crystal Panel - szélesebb (inset) */}
         <path
-          d="M 180 68 L 262 146 L 262 454 L 180 532 L 98 454 L 98 146 Z"
+          d="M 180 68 L 312 146 L 312 454 L 180 532 L 48 454 L 48 146 Z"
           fill="url(#crystalRadial)"
         />
 
         {/* Specular Highlight Overlay */}
         <path
-          d="M 180 68 L 262 146 L 262 454 L 180 532 L 98 454 L 98 146 Z"
+          d="M 180 68 L 312 146 L 312 454 L 180 532 L 48 454 L 48 146 Z"
           fill="url(#specular)"
           opacity="0.4"
         />
@@ -105,14 +105,14 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </pattern>
         </defs>
         <path
-          d="M 180 68 L 262 146 L 262 454 L 180 532 L 98 454 L 98 146 Z"
+          d="M 180 68 L 312 146 L 312 454 L 180 532 L 48 454 L 48 146 Z"
           fill="url(#diagonalStripes)"
           opacity="0.7"
         />
 
         {/* Inner Glow (bottom shadow for 3D) */}
         <path
-          d="M 180 68 L 262 146 L 262 454 L 180 532 L 98 454 L 98 146 Z"
+          d="M 180 68 L 312 146 L 312 454 L 180 532 L 48 454 L 48 146 Z"
           fill="none"
           stroke="rgba(0,0,0,0.25)"
           strokeWidth="8"
@@ -121,7 +121,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* Gold Inner Stroke (accent) */}
         <path
-          d="M 180 68 L 262 146 L 262 454 L 180 532 L 98 454 L 98 146 Z"
+          d="M 180 68 L 312 146 L 312 454 L 180 532 L 48 454 L 48 146 Z"
           fill="none"
           stroke="url(#goldInner)"
           strokeWidth="2"
