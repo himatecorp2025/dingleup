@@ -36,8 +36,8 @@ const HELP_TYPES = [
 ];
 
 export default function PlayerBehaviorsTab() {
-  const [startDate, setStartDate] = useState<Date | undefined>(new Date(new Date().setDate(new Date().getDate() - 30)));
-  const [endDate, setEndDate] = useState<Date | undefined>(new Date());
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
   const [stats, setStats] = useState<CategoryStats[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -87,7 +87,6 @@ export default function PlayerBehaviorsTab() {
   }, [startDate, endDate]);
 
   const fetchStats = async () => {
-    setLoading(true);
     try {
       const startDateStr = startDate ? format(startDate, 'yyyy-MM-dd') : null;
       const endDateStr = endDate ? format(endDate, 'yyyy-MM-dd 23:59:59') : null;
@@ -136,13 +135,6 @@ export default function PlayerBehaviorsTab() {
           '2x_answer': helps?.filter(h => h.help_type === '2x_answer').length || 0
         };
 
-        console.log(`Stats for ${cat.name}:`, {
-          uniquePlayers,
-          totalGames,
-          avgCorrect,
-          helpUsage
-        });
-
         categoryStats.push({
           category: cat.id,
           uniquePlayers,
@@ -173,7 +165,7 @@ export default function PlayerBehaviorsTab() {
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-[140px] justify-start text-left">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {startDate ? format(startDate, 'P', { locale: hu }) : 'Kezdő dátum'}
+                {startDate ? format(startDate, 'P', { locale: hu }) : 'Összes adat'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -190,7 +182,7 @@ export default function PlayerBehaviorsTab() {
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-[140px] justify-start text-left">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {endDate ? format(endDate, 'P', { locale: hu }) : 'Vég dátum'}
+                {endDate ? format(endDate, 'P', { locale: hu }) : 'Mai napig'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
