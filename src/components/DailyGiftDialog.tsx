@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Dialog, DialogContent } from './ui/dialog';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { trackBonusEvent } from '@/lib/analytics';
@@ -30,6 +30,10 @@ const DailyGiftDialog = ({
   const [userId, setUserId] = useState<string | null>(null);
   const isHandheld = usePlatformDetection();
   const [contentVisible, setContentVisible] = useState(false);
+  const flagRef = useRef<HTMLDivElement>(null);
+  const [origin, setOrigin] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
+  const [burstActive, setBurstActive] = useState(false);
+  const [burstKey, setBurstKey] = useState(0);
 
   useEffect(() => {
     if (open) {
@@ -37,11 +41,29 @@ const DailyGiftDialog = ({
       return () => {
         clearTimeout(t);
         setContentVisible(false);
+        setBurstActive(false);
       };
     } else {
       setContentVisible(false);
+      setBurstActive(false);
     }
   }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!contentVisible) return;
+    requestAnimationFrame(() => {
+      const el = flagRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const x = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
+        const y = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
+        setOrigin({ x, y });
+        setBurstKey((k) => k + 1);
+        setBurstActive(true);
+      }
+    });
+  }, [contentVisible, open]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -110,70 +132,47 @@ const DailyGiftDialog = ({
             ></div>
           </div>
 
-          {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER */}
-          {contentVisible && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(150)].map((_, i) => {
-                // Radiális szög számítása (360 fokot elosztva a csillagok között)
-                const angle = (i / 150) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
-                const distance = Math.random() * 120 + 60; // 60-180vw távolság - TELJES KÉPERNYŐ
-                const burstDuration = Math.random() * 0.4 + 0.4; // 0.4-0.8s robbanás
-                const floatDuration = Math.random() * 3 + 2; // 2-5s lebegés
-                
-                // X és Y irány a szögből - SUGÁRIRÁNYBAN MINDEN IRÁNYBA
-                const endX = Math.cos(angle) * distance;
-                const endY = Math.sin(angle) * distance;
-                
-                // Random lebegési irányok
-                const floatX1 = Math.random() * 20 - 10;
-                const floatY1 = Math.random() * 20 - 10;
-                const floatX2 = Math.random() * 20 - 10;
-                const floatY2 = Math.random() * 20 - 10;
-                
+          {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER (one-shot then drift+fade) */}
+          {contentVisible && burstActive && (
+            <div key={burstKey} className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(180)].map((_, i) => {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 60 + 40; // vw
+                const driftX = Math.random() * 40 - 20; // vw
+                const driftY = Math.random() * 40 - 20; // vh
+                const size = Math.random() * 2 + 1.2;
+                const burstDuration = Math.random() * 0.25 + 0.3; // 0.3-0.55s
+                const driftDuration = Math.random() * 2.5 + 2.5; // 2.5-5s
+
+                const endX = Math.cos(angle) * speed;
+                const endY = Math.sin(angle) * speed;
+                const pivotPct = Math.round((burstDuration / (burstDuration + driftDuration)) * 100);
+
                 return (
                   <div
                     key={i}
                     className="absolute rounded-full"
                     style={{
-                      width: `${Math.random() * 5 + 2}px`,
-                      height: `${Math.random() * 5 + 2}px`,
+                      width: `${size}px`,
+                      height: `${size}px`,
                       background: '#FFD700',
-                      left: '50%',
-                      top: '45%', // Kicsit feljebb, ahol a pajzs van
-                      boxShadow: '0 0 30px 6px #FFD700, 0 0 40px 10px #FFA500, 0 0 50px 12px rgba(255, 215, 0, 0.7)',
-                      animation: `starBurst${i % 30} ${burstDuration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, starFloat${i % 30} ${floatDuration}s ease-in-out ${burstDuration}s infinite`,
-                      animationDelay: `${i * 0.002}s`, // Gyors, szinte egyidejű robbanás
+                      left: `${origin.x}%`,
+                      top: `${origin.y}%`,
+                      boxShadow:
+                        '0 0 20px 4px #FFD700, 0 0 35px 10px #FFA500, 0 0 60px 12px rgba(255, 215, 0, 0.85)',
+                      filter: 'saturate(1.2) brightness(1.2)',
+                      transform: 'translate(-50%, -50%)',
+                      animation: `starBD${i % 40} ${burstDuration + driftDuration}s cubic-bezier(0.2,0.8,0.2,1) forwards`,
+                      animationDelay: `${i * 0.003}s`,
                       zIndex: 5
                     }}
                   >
                     <style>{`
-                      @keyframes starBurst${i % 30} {
-                        0% {
-                          transform: translate(-50%, -50%) scale(0);
-                          opacity: 0;
-                        }
-                        15% {
-                          opacity: 1;
-                          transform: translate(-50%, -50%) scale(1.2);
-                        }
-                        100% {
-                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(1);
-                          opacity: 1;
-                        }
-                      }
-                      @keyframes starFloat${i % 30} {
-                        0%, 100% {
-                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateX(0) translateY(0) scale(1);
-                        }
-                        25% {
-                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateX(${floatX1}vw) translateY(${floatY1}vh) scale(1.2);
-                        }
-                        50% {
-                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateX(${floatX2}vw) translateY(${floatY2}vh) scale(0.8);
-                        }
-                        75% {
-                          transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) translateX(${-floatX1}vw) translateY(${-floatY1}vh) scale(1.1);
-                        }
+                      @keyframes starBD${i % 40} {
+                        0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                        10% { opacity: 1; }
+                        ${pivotPct}% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(1); opacity: 1; }
+                        100% { transform: translate(calc(-50% + ${endX + driftX}vw), calc(-50% + ${endY + driftY}vh)) scale(0.9); opacity: 0; }
                       }
                     `}</style>
                   </div>
@@ -231,7 +230,7 @@ const DailyGiftDialog = ({
                    }}></div>
 
               {/* Flag/Banner shape */}
-              <div className="relative bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 border-8 border-yellow-500 shadow-[0_0_80px_rgba(234,179,8,0.9)] p-[6vw]"
+              <div ref={flagRef} className="relative bg-gradient-to-b from-purple-600 via-purple-700 to-purple-800 border-8 border-yellow-500 shadow-[0_0_80px_rgba(234,179,8,0.9)] p-[6vw]"
                    style={{
                      clipPath: 'polygon(0% 0%, 100% 0%, 100% 75%, 95% 80%, 90% 85%, 85% 88%, 80% 90%, 75% 91%, 70% 92%, 65% 92%, 60% 92%, 55% 91%, 50% 90%, 45% 91%, 40% 92%, 35% 92%, 30% 92%, 25% 91%, 20% 90%, 15% 88%, 10% 85%, 5% 80%, 0% 75%)',
                      width: 'clamp(280px, 55vw, 450px)',
