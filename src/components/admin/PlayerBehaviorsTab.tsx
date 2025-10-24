@@ -54,31 +54,38 @@ export default function PlayerBehaviorsTab() {
 
   // Realtime subscription for instant updates
   useEffect(() => {
+    console.log('[PlayerBehaviors] Setting up realtime subscriptions...');
+    
     const gameResultsChannel = supabase
-      .channel('player-behaviors-game-results')
+      .channel('player-behaviors-game-results-' + Date.now())
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'game_results'
-      }, () => {
-        console.log('[PlayerBehaviors] Game results changed, refreshing...');
+      }, (payload) => {
+        console.log('[PlayerBehaviors] Game results changed:', payload);
         fetchStats();
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log('[PlayerBehaviors] Game results channel status:', status);
+      });
 
     const helpUsageChannel = supabase
-      .channel('player-behaviors-help-usage')
+      .channel('player-behaviors-help-usage-' + Date.now())
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'game_help_usage'
-      }, () => {
-        console.log('[PlayerBehaviors] Help usage changed, refreshing...');
+      }, (payload) => {
+        console.log('[PlayerBehaviors] Help usage changed:', payload);
         fetchStats();
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log('[PlayerBehaviors] Help usage channel status:', status);
+      });
 
     return () => {
+      console.log('[PlayerBehaviors] Cleaning up realtime subscriptions');
       supabase.removeChannel(gameResultsChannel);
       supabase.removeChannel(helpUsageChannel);
     };
@@ -114,8 +121,14 @@ export default function PlayerBehaviorsTab() {
       const startISO = start ? start.toISOString() : null;
       const endISO = end ? end.toISOString() : null;
 
+      console.log('[PlayerBehaviors] Fetching stats with range:', { startISO, endISO });
+
       const { data, error } = await supabase.functions.invoke('admin-player-behaviors', {
-        body: { startDate: startISO, endDate: endISO }
+        body: { 
+          startDate: startISO, 
+          endDate: endISO,
+          timestamp: Date.now() // Force cache bust
+        }
       });
 
       if (error) {
@@ -124,7 +137,10 @@ export default function PlayerBehaviorsTab() {
       }
 
       const incoming = (data?.stats || []) as CategoryStats[];
-      setStats(incoming);
+      console.log('[PlayerBehaviors] Received stats:', incoming);
+      
+      // Force state update by creating new array reference
+      setStats([...incoming]);
     } catch (error) {
       console.error('Error fetching player behaviors:', error);
     } finally {
