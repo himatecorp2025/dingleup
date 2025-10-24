@@ -28,16 +28,16 @@ const RetentionDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link to="/admin">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-4xl font-bold">Retenciós Dashboard</h1>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Retenciós Dashboard</h1>
           </div>
-          <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading}>
+          <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading} className="text-white border-white/30 hover:bg-white/10 w-full sm:w-auto">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Frissítés
           </Button>
@@ -51,38 +51,38 @@ const RetentionDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Napi Aktív Felhasználók</CardTitle>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Napi Aktív Felhasználók</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">{analytics.dailyActiveUsers}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.dailyActiveUsers}</p>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Heti Aktív Felhasználók</CardTitle>
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Heti Aktív Felhasználók</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">{analytics.weeklyActiveUsers}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.weeklyActiveUsers}</p>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Havi Aktív Felhasználók</CardTitle>
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Havi Aktív Felhasználók</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">{analytics.monthlyActiveUsers}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.monthlyActiveUsers}</p>
                 </CardContent>
               </Card>
             </div>
 
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Retenciós Ráták</CardTitle>
+                <CardTitle className="text-white">Retenciós Ráták</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -91,10 +91,10 @@ const RetentionDashboard = () => {
                     { name: '7. Nap', rate: analytics.retentionRates.day7 },
                     { name: '30. Nap', rate: analytics.retentionRates.day30 },
                   ]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="name" stroke="#fff" />
+                    <YAxis stroke="#fff" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
                     <Bar dataKey="rate" fill="hsl(var(--primary))" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -110,10 +110,10 @@ const RetentionDashboard = () => {
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
                   <LineChart data={analytics.cohortData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="cohort" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="cohort" stroke="#fff" />
+                    <YAxis stroke="#fff" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
                     <Legend />
                     <Line type="monotone" dataKey="day1" stroke="hsl(var(--primary))" name="1. Nap" />
                     <Line type="monotone" dataKey="day7" stroke="hsl(var(--secondary))" name="7. Nap" />
@@ -125,16 +125,16 @@ const RetentionDashboard = () => {
           </TabsContent>
 
           <TabsContent value="churn" className="space-y-6">
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Inaktív Felhasználók (Lemorzsolódási Kockázat)</CardTitle>
+                <CardTitle className="text-white">Inaktív Felhasználók (Lemorzsolódási Kockázat)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   {analytics.churningUsers.slice(0, 10).map(user => (
-                    <div key={user.user_id} className="flex justify-between items-center p-3 border rounded">
-                      <span className="font-medium">{user.username}</span>
-                      <span className="text-sm text-muted-foreground">
+                    <div key={user.user_id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
+                      <span className="font-medium text-white">{user.username}</span>
+                      <span className="text-sm text-white/70">
                         {user.days_inactive} napja inaktív
                       </span>
                     </div>

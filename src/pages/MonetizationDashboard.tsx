@@ -30,16 +30,16 @@ const MonetizationDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link to="/admin">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-4xl font-bold">Monetizációs Dashboard</h1>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Monetizációs Dashboard</h1>
           </div>
-          <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading}>
+          <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading} className="text-white border-white/30 hover:bg-white/10 w-full sm:w-auto">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Frissítés
           </Button>
@@ -54,40 +54,40 @@ const MonetizationDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
-                <CardHeader>
-                  <CardTitle className="text-white">Teljes Bevétel</CardTitle>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Teljes Bevétel</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold text-white">${analytics.totalRevenue.toFixed(2)}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">${analytics.totalRevenue.toFixed(2)}</p>
                 </CardContent>
               </Card>
 
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
-                <CardHeader>
-                  <CardTitle className="text-white">ARPU</CardTitle>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">ARPU</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold text-white">${analytics.averageRevenuePerUser.toFixed(2)}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">${analytics.averageRevenuePerUser.toFixed(2)}</p>
                 </CardContent>
               </Card>
 
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
-                <CardHeader>
-                  <CardTitle className="text-white">Fizető Felhasználók</CardTitle>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Fizető Felhasználók</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold text-white">{analytics.payingUsers}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.payingUsers}</p>
                 </CardContent>
               </Card>
 
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
-                <CardHeader>
-                  <CardTitle className="text-white">Konverziós Ráta</CardTitle>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Konverziós Ráta</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold text-white">{analytics.conversionRate.toFixed(1)}%</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.conversionRate.toFixed(1)}%</p>
                 </CardContent>
               </Card>
             </div>
@@ -99,10 +99,10 @@ const MonetizationDashboard = () => {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={analytics.revenueOverTime}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="date" stroke="#fff" />
+                    <YAxis stroke="#fff" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
                     <Legend />
                     <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" name="Bevétel ($)" />
                     <Line type="monotone" dataKey="transactions" stroke="hsl(var(--secondary))" name="Tranzakciók" />
@@ -142,17 +142,17 @@ const MonetizationDashboard = () => {
           </TabsContent>
 
           <TabsContent value="spenders" className="space-y-6">
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Top 10 Vásárló</CardTitle>
+                <CardTitle className="text-white">Top 10 Vásárló</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
                   <BarChart data={analytics.topSpenders}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="username" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="username" stroke="#fff" />
+                    <YAxis stroke="#fff" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
                     <Bar dataKey="total_spent" fill="hsl(var(--primary))" name="Összesen költött ($)" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -161,17 +161,17 @@ const MonetizationDashboard = () => {
           </TabsContent>
 
           <TabsContent value="ltv" className="space-y-6">
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Lifetime Value Kohorszonként</CardTitle>
+                <CardTitle className="text-white">Lifetime Value Kohorszonként</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
                   <BarChart data={analytics.lifetimeValue}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="cohort" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="cohort" stroke="#fff" />
+                    <YAxis stroke="#fff" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
                     <Bar dataKey="ltv" fill="hsl(var(--primary))" name="LTV ($)" />
                   </BarChart>
                 </ResponsiveContainer>

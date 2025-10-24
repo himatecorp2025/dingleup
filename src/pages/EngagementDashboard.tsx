@@ -28,16 +28,16 @@ const EngagementDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link to="/admin">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-4xl font-bold">Engagement Dashboard</h1>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Engagement Dashboard</h1>
           </div>
-          <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading}>
+          <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading} className="text-white border-white/30 hover:bg-white/10 w-full sm:w-auto">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Frissítés
           </Button>
@@ -52,46 +52,46 @@ const EngagementDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
-                <CardHeader>
-                  <CardTitle className="text-white">Átlagos Session Hossz</CardTitle>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Átlagos Session Hossz</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold text-white">{analytics.avgSessionDuration}s</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.avgSessionDuration}s</p>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Átlagos Session / Felhasználó</CardTitle>
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Átlagos Session / Felhasználó</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">{analytics.avgSessionsPerUser}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.avgSessionsPerUser}</p>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Összes Session</CardTitle>
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Összes Session</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">{analytics.totalSessions}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.totalSessions}</p>
                 </CardContent>
               </Card>
             </div>
 
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Engagement Időszakonként (óránkénti bontás)</CardTitle>
+                <CardTitle className="text-white">Engagement Időszakonként (óránkénti bontás)</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={analytics.engagementByTime}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="hour" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="hour" stroke="#fff" />
+                    <YAxis stroke="#fff" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
                     <Line type="monotone" dataKey="sessions" stroke="hsl(var(--primary))" name="Sessionök" />
                   </LineChart>
                 </ResponsiveContainer>
@@ -100,17 +100,17 @@ const EngagementDashboard = () => {
           </TabsContent>
 
           <TabsContent value="features" className="space-y-6">
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Funkció Használat</CardTitle>
+                <CardTitle className="text-white">Funkció Használat</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
                   <BarChart data={analytics.featureUsage}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="feature_name" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="feature_name" stroke="#fff" />
+                    <YAxis stroke="#fff" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
                     <Bar dataKey="usage_count" fill="hsl(var(--primary))" name="Használatok száma" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -119,18 +119,18 @@ const EngagementDashboard = () => {
           </TabsContent>
 
           <TabsContent value="users" className="space-y-6">
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Legaktívabb Felhasználók</CardTitle>
+                <CardTitle className="text-white">Legaktívabb Felhasználók</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   {analytics.mostActiveUsers.map(user => (
-                    <div key={user.user_id} className="flex justify-between items-center p-3 border rounded">
-                      <span className="font-medium">{user.username}</span>
+                    <div key={user.user_id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
+                      <span className="font-medium text-white">{user.username}</span>
                       <div className="text-right">
-                        <p className="text-sm font-bold">{user.session_count} session</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm font-bold text-white">{user.session_count} session</p>
+                        <p className="text-xs text-white/70">
                           {Math.round(user.total_duration / 60)}p összesen
                         </p>
                       </div>
@@ -142,37 +142,37 @@ const EngagementDashboard = () => {
           </TabsContent>
 
           <TabsContent value="game" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Átlagos Játék / Felhasználó</CardTitle>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Átlagos Játék / Felhasználó</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">{analytics.gameEngagement.avgGamesPerUser}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.gameEngagement.avgGamesPerUser}</p>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Átlagos Helyes Válaszok</CardTitle>
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-white text-base sm:text-lg">Átlagos Helyes Válaszok</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">{analytics.gameEngagement.avgCorrectAnswers}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.gameEngagement.avgCorrectAnswers}</p>
                 </CardContent>
               </Card>
             </div>
 
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Legnépszerűbb Kategóriák</CardTitle>
+                <CardTitle className="text-white">Legnépszerűbb Kategóriák</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={analytics.gameEngagement.mostPlayedCategories}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="category" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="category" stroke="#fff" />
+                    <YAxis stroke="#fff" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }} />
                     <Bar dataKey="count" fill="hsl(var(--primary))" name="Játékok száma" />
                   </BarChart>
                 </ResponsiveContainer>
