@@ -447,6 +447,48 @@ export type Database = {
         }
         Relationships: []
       }
+      engagement_analytics: {
+        Row: {
+          avg_session_duration: number | null
+          avg_sessions_per_user: number | null
+          created_at: string | null
+          date: string
+          engagement_by_time: Json | null
+          feature_usage: Json | null
+          game_engagement: Json | null
+          id: string
+          most_active_users: Json | null
+          total_sessions: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_session_duration?: number | null
+          avg_sessions_per_user?: number | null
+          created_at?: string | null
+          date: string
+          engagement_by_time?: Json | null
+          feature_usage?: Json | null
+          game_engagement?: Json | null
+          id?: string
+          most_active_users?: Json | null
+          total_sessions?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_session_duration?: number | null
+          avg_sessions_per_user?: number | null
+          created_at?: string | null
+          date?: string
+          engagement_by_time?: Json | null
+          feature_usage?: Json | null
+          game_engagement?: Json | null
+          id?: string
+          most_active_users?: Json | null
+          total_sessions?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       error_logs: {
         Row: {
           browser: string | null
@@ -1150,6 +1192,48 @@ export type Database = {
           },
         ]
       }
+      monetization_analytics: {
+        Row: {
+          arpu: number | null
+          conversion_rate: number | null
+          created_at: string | null
+          date: string
+          id: string
+          paying_users: number | null
+          revenue_by_product: Json | null
+          top_spenders: Json | null
+          total_revenue: number | null
+          total_users: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          arpu?: number | null
+          conversion_rate?: number | null
+          created_at?: string | null
+          date: string
+          id?: string
+          paying_users?: number | null
+          revenue_by_product?: Json | null
+          top_spenders?: Json | null
+          total_revenue?: number | null
+          total_users?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          arpu?: number | null
+          conversion_rate?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          paying_users?: number | null
+          revenue_by_product?: Json | null
+          top_spenders?: Json | null
+          total_revenue?: number | null
+          total_users?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       navigation_events: {
         Row: {
           created_at: string
@@ -1254,6 +1338,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      performance_summary: {
+        Row: {
+          avg_cls: number | null
+          avg_lcp: number | null
+          avg_load_time: number | null
+          avg_ttfb: number | null
+          created_at: string | null
+          date: string
+          error_count: number | null
+          errors_by_page: Json | null
+          id: string
+          performance_by_browser: Json | null
+          performance_by_device: Json | null
+          performance_by_page: Json | null
+          top_errors: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_cls?: number | null
+          avg_lcp?: number | null
+          avg_load_time?: number | null
+          avg_ttfb?: number | null
+          created_at?: string | null
+          date: string
+          error_count?: number | null
+          errors_by_page?: Json | null
+          id?: string
+          performance_by_browser?: Json | null
+          performance_by_device?: Json | null
+          performance_by_page?: Json | null
+          top_errors?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_cls?: number | null
+          avg_lcp?: number | null
+          avg_load_time?: number | null
+          avg_ttfb?: number | null
+          created_at?: string | null
+          date?: string
+          error_count?: number | null
+          errors_by_page?: Json | null
+          id?: string
+          performance_by_browser?: Json | null
+          performance_by_device?: Json | null
+          performance_by_page?: Json | null
+          top_errors?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -1484,6 +1619,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      retention_analytics: {
+        Row: {
+          churn_rate: number | null
+          created_at: string | null
+          date: string
+          dau: number | null
+          id: string
+          mau: number | null
+          new_users: number | null
+          returning_users: number | null
+          updated_at: string | null
+          wau: number | null
+        }
+        Insert: {
+          churn_rate?: number | null
+          created_at?: string | null
+          date: string
+          dau?: number | null
+          id?: string
+          mau?: number | null
+          new_users?: number | null
+          returning_users?: number | null
+          updated_at?: string | null
+          wau?: number | null
+        }
+        Update: {
+          churn_rate?: number | null
+          created_at?: string | null
+          date?: string
+          dau?: number | null
+          id?: string
+          mau?: number | null
+          new_users?: number | null
+          returning_users?: number | null
+          updated_at?: string | null
+          wau?: number | null
+        }
+        Relationships: []
       }
       session_details: {
         Row: {
@@ -2034,6 +2208,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_journey_analytics: {
+        Row: {
+          common_paths: Json | null
+          created_at: string | null
+          date: string
+          exit_points: Json | null
+          game_funnel: Json | null
+          id: string
+          onboarding_funnel: Json | null
+          purchase_funnel: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          common_paths?: Json | null
+          created_at?: string | null
+          date: string
+          exit_points?: Json | null
+          game_funnel?: Json | null
+          id?: string
+          onboarding_funnel?: Json | null
+          purchase_funnel?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          common_paths?: Json | null
+          created_at?: string | null
+          date?: string
+          exit_points?: Json | null
+          game_funnel?: Json | null
+          id?: string
+          onboarding_funnel?: Json | null
+          purchase_funnel?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       user_presence: {
         Row: {

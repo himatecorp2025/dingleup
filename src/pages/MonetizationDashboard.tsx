@@ -13,22 +13,22 @@ const MonetizationDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted p-8">
-        <p className="text-lg text-muted-foreground">Betöltés...</p>
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center p-8">
+        <p className="text-lg text-white/70">Betöltés...</p>
       </div>
     );
   }
 
   if (error || !analytics) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted p-8">
-        <p className="text-lg text-destructive">{error || 'Hiba történt az adatok betöltése során'}</p>
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center p-8">
+        <p className="text-lg text-red-400">{error || 'Hiba történt az adatok betöltése során'}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -55,46 +55,46 @@ const MonetizationDashboard = () => {
 
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card>
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader>
-                  <CardTitle>Teljes Bevétel</CardTitle>
+                  <CardTitle className="text-white">Teljes Bevétel</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">${analytics.totalRevenue.toFixed(2)}</p>
+                  <p className="text-4xl font-bold text-white">${analytics.totalRevenue.toFixed(2)}</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader>
-                  <CardTitle>ARPU</CardTitle>
+                  <CardTitle className="text-white">ARPU</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">${analytics.averageRevenuePerUser.toFixed(2)}</p>
+                  <p className="text-4xl font-bold text-white">${analytics.averageRevenuePerUser.toFixed(2)}</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader>
-                  <CardTitle>Fizető Felhasználók</CardTitle>
+                  <CardTitle className="text-white">Fizető Felhasználók</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">{analytics.payingUsers}</p>
+                  <p className="text-4xl font-bold text-white">{analytics.payingUsers}</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader>
-                  <CardTitle>Konverziós Ráta</CardTitle>
+                  <CardTitle className="text-white">Konverziós Ráta</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold">{analytics.conversionRate.toFixed(1)}%</p>
+                  <p className="text-4xl font-bold text-white">{analytics.conversionRate.toFixed(1)}%</p>
                 </CardContent>
               </Card>
             </div>
 
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Bevétel Időbeli Alakulása</CardTitle>
+                <CardTitle className="text-white">Bevétel Időbeli Alakulása</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -113,9 +113,9 @@ const MonetizationDashboard = () => {
           </TabsContent>
 
           <TabsContent value="products" className="space-y-6">
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Bevétel Termékek Szerint</CardTitle>
+                <CardTitle className="text-white">Bevétel Termékek Szerint</CardTitle>
               </CardHeader>
               <CardContent className="flex justify-center">
                 <ResponsiveContainer width="100%" height={400}>

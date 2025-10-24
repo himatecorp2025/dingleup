@@ -11,22 +11,22 @@ const RetentionDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted p-8">
-        <p className="text-lg text-muted-foreground">Betöltés...</p>
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center p-8">
+        <p className="text-lg text-white/70">Betöltés...</p>
       </div>
     );
   }
 
   if (error || !analytics) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted p-8">
-        <p className="text-lg text-destructive">{error || 'Hiba történt az adatok betöltése során'}</p>
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center p-8">
+        <p className="text-lg text-red-400">{error || 'Hiba történt az adatok betöltése során'}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -103,9 +103,9 @@ const RetentionDashboard = () => {
           </TabsContent>
 
           <TabsContent value="cohorts" className="space-y-6">
-            <Card>
+            <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle>Kohorsz Analízis</CardTitle>
+                <CardTitle className="text-white">Kohorsz Analízis</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
