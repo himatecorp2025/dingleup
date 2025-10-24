@@ -21,7 +21,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          clipPath: 'polygon(50% 11.3%, 86.7% 25%, 86.7% 75%, 50% 88.7%, 13.3% 75%, 13.3% 25%)',
+          clipPath: 'polygon(50% 11.3%, 86.7% 17.3%, 86.7% 82.7%, 50% 88.7%, 13.3% 82.7%, 13.3% 17.3%)',
           overflow: 'hidden'
         }}
       >
@@ -78,14 +78,14 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* 3D Shadow Base - Felső 150°, Alsó 150°, oldalsó szögek 105° */}
         <path
-          d="M 180 44 L 336 150 L 336 450 L 180 556 L 24 450 L 24 150 Z"
+          d="M 180 44 L 336 84 L 336 516 L 180 556 L 24 516 L 24 84 Z"
           fill="rgba(0,0,0,0.35)"
           transform="translate(6, 8)"
         />
 
         {/* Outer Gold Frame - 150° felső/alsó csúcs */}
         <path
-          d="M 180 44 L 336 150 L 336 450 L 180 556 L 24 450 L 24 150 Z"
+          d="M 180 44 L 336 84 L 336 516 L 180 556 L 24 516 L 24 84 Z"
           fill="url(#goldOuter)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
@@ -94,7 +94,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* Middle Gold Frame - 150° felső/alsó csúcs (inset) */}
         <path
-          d="M 180 56 L 324 158 L 324 442 L 180 544 L 36 442 L 36 158 Z"
+          d="M 180 56 L 324 94 L 324 506 L 180 544 L 36 506 L 36 94 Z"
           fill="url(#goldInner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="3"
@@ -102,13 +102,13 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* Inner Crystal Panel - 150° felső/alsó csúcs (inset) */}
         <path
-          d="M 180 68 L 312 166 L 312 434 L 180 532 L 48 434 L 48 166 Z"
+          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
           fill="url(#crystalRadial)"
         />
 
         {/* Specular Highlight Overlay */}
         <path
-          d="M 180 68 L 312 166 L 312 434 L 180 532 L 48 434 L 48 166 Z"
+          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
           fill="url(#specular)"
           opacity="0.4"
         />
@@ -122,14 +122,14 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </pattern>
         </defs>
         <path
-          d="M 180 68 L 312 166 L 312 434 L 180 532 L 48 434 L 48 166 Z"
+          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
           fill="url(#diagonalStripes)"
           opacity="0.7"
         />
 
         {/* Inner Glow (bottom shadow for 3D) */}
         <path
-          d="M 180 68 L 312 166 L 312 434 L 180 532 L 48 434 L 48 166 Z"
+          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
           fill="none"
           stroke="rgba(0,0,0,0.25)"
           strokeWidth="8"
@@ -138,7 +138,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* Gold Inner Stroke (accent) */}
         <path
-          d="M 180 68 L 312 166 L 312 434 L 180 532 L 48 434 L 48 166 Z"
+          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
           fill="none"
           stroke="url(#goldInner)"
           strokeWidth="2"
