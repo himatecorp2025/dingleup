@@ -154,6 +154,9 @@ export default function PlayerBehaviorsTab() {
         <div>
           <h2 className="text-2xl font-bold text-white mb-2">Játékos viselkedések</h2>
           <p className="text-white/70">Kategóriánkénti statisztikák és segítséghasználat</p>
+          <p className="text-xs text-yellow-400/80 mt-1">
+            ℹ️ Segítséghasználat adatok csak 2025-10-24-től érhetők el
+          </p>
         </div>
         
         <Select value={dateRange} onValueChange={(value: DateRangeOption) => setDateRange(value)}>

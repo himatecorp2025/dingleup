@@ -181,6 +181,30 @@ export type Database = {
         }
         Relationships: []
       }
+      data_collection_metadata: {
+        Row: {
+          collection_start_date: string
+          created_at: string
+          description: string
+          feature_name: string
+          id: string
+        }
+        Insert: {
+          collection_start_date: string
+          created_at?: string
+          description: string
+          feature_name: string
+          id?: string
+        }
+        Update: {
+          collection_start_date?: string
+          created_at?: string
+          description?: string
+          feature_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
       dm_messages: {
         Row: {
           body: string
