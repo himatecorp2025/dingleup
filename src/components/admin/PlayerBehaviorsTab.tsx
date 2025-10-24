@@ -12,7 +12,11 @@ interface CategoryStats {
   category: string;
   uniquePlayers: number;
   totalGames: number;
+  completedGames: number;
+  abandonedGames: number;
+  completionRate: number;
   avgCorrectAnswers: number;
+  avgResponseTime: number;
   helpUsage: {
     third: number;
     skip: number;
@@ -94,24 +98,43 @@ export default function PlayerBehaviorsTab() {
       const categoryStats: CategoryStats[] = [];
 
       for (const cat of CATEGORIES) {
-        // Get unique players and avg correct answers
-        let gameQuery = supabase
+        // Get ALL game data (completed and abandoned)
+        let allGamesQuery = supabase
           .from('game_results')
-          .select('user_id, correct_answers, id');
+          .select('user_id, correct_answers, completed, average_response_time, created_at, completed_at');
 
-        if (startDateStr) gameQuery = gameQuery.gte('created_at', startDateStr);
-        if (endDateStr) gameQuery = gameQuery.lte('created_at', endDateStr);
+        if (startDateStr) allGamesQuery = allGamesQuery.gte('created_at', startDateStr);
+        if (endDateStr) allGamesQuery = allGamesQuery.lte('created_at', endDateStr);
         
-        const { data: games, error: gamesError } = await gameQuery.eq('category', cat.id);
+        const { data: allGames, error: gamesError } = await allGamesQuery.eq('category', cat.id);
         
         if (gamesError) {
           console.error(`Error fetching games for ${cat.id}:`, gamesError);
         }
 
-        const uniquePlayers = new Set(games?.map(g => g.user_id) || []).size;
-        const totalGames = games?.length || 0;
-        const avgCorrect = totalGames > 0 
-          ? (games?.reduce((sum, g) => sum + (g.correct_answers || 0), 0) || 0) / totalGames 
+        // Get started sessions (including abandoned)
+        let sessionsQuery = supabase
+          .from('game_sessions')
+          .select('user_id, completed_at, created_at');
+
+        if (startDateStr) sessionsQuery = sessionsQuery.gte('created_at', startDateStr);
+        if (endDateStr) sessionsQuery = sessionsQuery.lte('created_at', endDateStr);
+
+        const { data: sessions } = await sessionsQuery.eq('category', cat.id);
+
+        // Calculate statistics
+        const uniquePlayers = new Set(allGames?.map(g => g.user_id) || []).size;
+        const totalGames = allGames?.length || 0;
+        const completedGames = allGames?.filter(g => g.completed === true).length || 0;
+        const abandonedGames = totalGames - completedGames;
+        const completionRate = totalGames > 0 ? Math.round((completedGames / totalGames) * 100) : 0;
+        
+        const avgCorrect = completedGames > 0 
+          ? (allGames?.filter(g => g.completed).reduce((sum, g) => sum + (g.correct_answers || 0), 0) || 0) / completedGames 
+          : 0;
+
+        const avgResponseTime = completedGames > 0
+          ? (allGames?.filter(g => g.completed && g.average_response_time).reduce((sum, g) => sum + (g.average_response_time || 0), 0) || 0) / completedGames
           : 0;
 
         // Get help usage stats
@@ -139,11 +162,16 @@ export default function PlayerBehaviorsTab() {
           category: cat.id,
           uniquePlayers,
           totalGames,
+          completedGames,
+          abandonedGames,
+          completionRate,
           avgCorrectAnswers: Math.round(avgCorrect * 10) / 10,
+          avgResponseTime: Math.round(avgResponseTime * 10) / 10,
           helpUsage
         });
       }
 
+      console.log('[PlayerBehaviors] Category stats:', categoryStats);
       setStats(categoryStats);
     } catch (error) {
       console.error('Error fetching player behaviors:', error);
@@ -213,23 +241,42 @@ export default function PlayerBehaviorsTab() {
 
                 <div className="space-y-4">
                   {/* Main Stats - Reszponzív betűméretek */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-slate-800/80 rounded-lg p-3 sm:p-4 text-center border border-white/5">
-                      <Users className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400 mx-auto mb-1 sm:mb-2" />
-                      <div className="text-xs sm:text-sm text-white/60 mb-1">Játékosok száma</div>
-                      <div className="text-2xl sm:text-3xl font-bold text-white">{catStats.uniquePlayers}</div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                    <div className="bg-slate-800/80 rounded-lg p-3 text-center border border-white/5">
+                      <Users className="w-5 h-5 text-blue-400 mx-auto mb-1" />
+                      <div className="text-xs text-white/60 mb-1">Játékosok</div>
+                      <div className="text-2xl font-bold text-white">{catStats.uniquePlayers}</div>
                     </div>
 
-                    <div className="bg-slate-800/80 rounded-lg p-3 sm:p-4 text-center border border-white/5">
-                      <Target className="w-5 h-5 sm:w-6 sm:h-6 text-green-400 mx-auto mb-1 sm:mb-2" />
-                      <div className="text-xs sm:text-sm text-white/60 mb-1">Átlag helyes</div>
-                      <div className="text-2xl sm:text-3xl font-bold text-white">{catStats.avgCorrectAnswers}</div>
+                    <div className="bg-slate-800/80 rounded-lg p-3 text-center border border-white/5">
+                      <TrendingUp className="w-5 h-5 text-purple-400 mx-auto mb-1" />
+                      <div className="text-xs text-white/60 mb-1">Összes játék</div>
+                      <div className="text-2xl font-bold text-white">{catStats.totalGames}</div>
                     </div>
 
-                    <div className="bg-slate-800/80 rounded-lg p-3 sm:p-4 text-center border border-white/5">
-                      <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400 mx-auto mb-1 sm:mb-2" />
-                      <div className="text-xs sm:text-sm text-white/60 mb-1">Összes játék</div>
-                      <div className="text-2xl sm:text-3xl font-bold text-white">{catStats.totalGames}</div>
+                    <div className="bg-slate-800/80 rounded-lg p-3 text-center border border-white/5">
+                      <Target className="w-5 h-5 text-green-400 mx-auto mb-1" />
+                      <div className="text-xs text-white/60 mb-1">Befejezett</div>
+                      <div className="text-2xl font-bold text-white">{catStats.completedGames}</div>
+                    </div>
+
+                    <div className="bg-slate-800/80 rounded-lg p-3 text-center border border-white/5">
+                      <div className="text-xl mb-1">📊</div>
+                      <div className="text-xs text-white/60 mb-1">Befejezési %</div>
+                      <div className="text-2xl font-bold text-white">{catStats.completionRate}%</div>
+                    </div>
+                  </div>
+
+                  {/* Secondary Stats */}
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                    <div className="bg-slate-800/80 rounded-lg p-3 text-center border border-white/5">
+                      <div className="text-xs text-white/60 mb-1">Átlag helyes válasz</div>
+                      <div className="text-xl font-bold text-green-400">{catStats.avgCorrectAnswers}</div>
+                    </div>
+
+                    <div className="bg-slate-800/80 rounded-lg p-3 text-center border border-white/5">
+                      <div className="text-xs text-white/60 mb-1">Átlag válaszidő (mp)</div>
+                      <div className="text-xl font-bold text-blue-400">{catStats.avgResponseTime}</div>
                     </div>
                   </div>
 
