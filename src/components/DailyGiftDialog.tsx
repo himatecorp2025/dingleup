@@ -132,21 +132,23 @@ const DailyGiftDialog = ({
             ></div>
           </div>
 
-          {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER (one-shot then drift+fade) */}
+          {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
           {contentVisible && burstActive && (
             <div key={burstKey} className="absolute inset-0 overflow-hidden pointer-events-none">
               {[...Array(180)].map((_, i) => {
                 const angle = Math.random() * Math.PI * 2;
                 const speed = Math.random() * 60 + 40; // vw
-                const driftX = Math.random() * 40 - 20; // vw
-                const driftY = Math.random() * 40 - 20; // vh
                 const size = Math.random() * 2 + 1.2;
                 const burstDuration = Math.random() * 0.25 + 0.3; // 0.3-0.55s
-                const driftDuration = Math.random() * 2.5 + 2.5; // 2.5-5s
 
                 const endX = Math.cos(angle) * speed;
                 const endY = Math.sin(angle) * speed;
-                const pivotPct = Math.round((burstDuration / (burstDuration + driftDuration)) * 100);
+
+                // Continuous floating parameters
+                const floatX = Math.random() * 30 - 15; // vw
+                const floatY = Math.random() * 30 - 15; // vh
+                const floatDuration = Math.random() * 3 + 2; // 2-5s
+                const finalOpacity = Math.random() * 0.4 + 0.5; // 0.5-0.9
 
                 return (
                   <div
@@ -162,17 +164,20 @@ const DailyGiftDialog = ({
                         '0 0 20px 4px #FFD700, 0 0 35px 10px #FFA500, 0 0 60px 12px rgba(255, 215, 0, 0.85)',
                       filter: 'saturate(1.2) brightness(1.2)',
                       transform: 'translate(-50%, -50%)',
-                      animation: `starBD${i % 40} ${burstDuration + driftDuration}s cubic-bezier(0.2,0.8,0.2,1) forwards`,
+                      animation: `starBurst${i % 40} ${burstDuration}s cubic-bezier(0.2,0.8,0.2,1) forwards, starFloat${i % 40} ${floatDuration}s ease-in-out ${burstDuration}s infinite`,
                       animationDelay: `${i * 0.003}s`,
                       zIndex: 5
                     }}
                   >
                     <style>{`
-                      @keyframes starBD${i % 40} {
+                      @keyframes starBurst${i % 40} {
                         0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
                         10% { opacity: 1; }
-                        ${pivotPct}% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(1); opacity: 1; }
-                        100% { transform: translate(calc(-50% + ${endX + driftX}vw), calc(-50% + ${endY + driftY}vh)) scale(0.9); opacity: 0; }
+                        100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(1); opacity: ${finalOpacity}; }
+                      }
+                      @keyframes starFloat${i % 40} {
+                        0%, 100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
+                        50% { transform: translate(calc(-50% + ${endX + floatX}vw), calc(-50% + ${endY + floatY}vh)); }
                       }
                     `}</style>
                   </div>
