@@ -331,16 +331,12 @@ const DailyGiftDialog = ({
                   )}
                 </div>
 
-                {/* Hex Accept Button */}
-                <div className="flex justify-center mt-auto w-full px-[4%]">
+                {/* Hex Accept Button - full width inside shield (no padding constraints) */}
+                <div className="absolute left-[6%] right-[6%] bottom-[6%] z-20">
                   {canClaim ? (
-                    <HexAcceptButton onClick={handleClaim}>
-                      Elfogadom a napi jutalmat!
-                    </HexAcceptButton>
+                    <HexAcceptButton onClick={handleClaim} />
                   ) : (
-                    <HexAcceptButton disabled>
-                      Már elutaltad a napi jutalmat! ✓
-                    </HexAcceptButton>
+                    <HexAcceptButton disabled />
                   )}
                 </div>
               </div>
