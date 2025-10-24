@@ -159,6 +159,29 @@ export const useMonetizationAnalytics = () => {
 
   useEffect(() => {
     fetchMonetizationAnalytics();
+
+    // Realtime subscription for purchases
+    const purchasesChannel = supabase
+      .channel('admin-monetization-purchases')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'purchases'
+      }, () => {
+        console.log('[Monetization] Purchases changed, refreshing...');
+        fetchMonetizationAnalytics();
+      })
+      .subscribe();
+
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchMonetizationAnalytics();
+    }, 30000);
+
+    return () => {
+      supabase.removeChannel(purchasesChannel);
+      clearInterval(interval);
+    };
   }, []);
 
   return { analytics, loading, error, refetch: fetchMonetizationAnalytics };

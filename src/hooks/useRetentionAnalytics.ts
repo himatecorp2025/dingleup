@@ -191,6 +191,42 @@ export const useRetentionAnalytics = () => {
 
   useEffect(() => {
     fetchRetentionAnalytics();
+
+    // Realtime subscriptions
+    const sessionChannel = supabase
+      .channel('admin-retention-sessions')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'app_session_events'
+      }, () => {
+        console.log('[Retention] Sessions changed, refreshing...');
+        fetchRetentionAnalytics();
+      })
+      .subscribe();
+
+    const profilesChannel = supabase
+      .channel('admin-retention-profiles')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'profiles'
+      }, () => {
+        console.log('[Retention] Profiles changed, refreshing...');
+        fetchRetentionAnalytics();
+      })
+      .subscribe();
+
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchRetentionAnalytics();
+    }, 30000);
+
+    return () => {
+      supabase.removeChannel(sessionChannel);
+      supabase.removeChannel(profilesChannel);
+      clearInterval(interval);
+    };
   }, []);
 
   return { analytics, loading, error, refetch: fetchRetentionAnalytics };

@@ -169,6 +169,42 @@ export const usePerformanceAnalytics = () => {
 
   useEffect(() => {
     fetchPerformanceAnalytics();
+
+    // Realtime subscriptions
+    const metricsChannel = supabase
+      .channel('admin-performance-metrics')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'performance_metrics'
+      }, () => {
+        console.log('[Performance] Metrics changed, refreshing...');
+        fetchPerformanceAnalytics();
+      })
+      .subscribe();
+
+    const errorsChannel = supabase
+      .channel('admin-performance-errors')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'error_logs'
+      }, () => {
+        console.log('[Performance] Errors changed, refreshing...');
+        fetchPerformanceAnalytics();
+      })
+      .subscribe();
+
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchPerformanceAnalytics();
+    }, 30000);
+
+    return () => {
+      supabase.removeChannel(metricsChannel);
+      supabase.removeChannel(errorsChannel);
+      clearInterval(interval);
+    };
   }, []);
 
   return { analytics, loading, error, refetch: fetchPerformanceAnalytics };

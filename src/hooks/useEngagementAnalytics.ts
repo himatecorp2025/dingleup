@@ -165,6 +165,42 @@ export const useEngagementAnalytics = () => {
 
   useEffect(() => {
     fetchEngagementAnalytics();
+
+    // Realtime subscriptions
+    const sessionChannel = supabase
+      .channel('admin-engagement-sessions')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'app_session_events'
+      }, () => {
+        console.log('[Engagement] Sessions changed, refreshing...');
+        fetchEngagementAnalytics();
+      })
+      .subscribe();
+
+    const featureChannel = supabase
+      .channel('admin-engagement-features')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'feature_usage_events'
+      }, () => {
+        console.log('[Engagement] Features changed, refreshing...');
+        fetchEngagementAnalytics();
+      })
+      .subscribe();
+
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchEngagementAnalytics();
+    }, 30000);
+
+    return () => {
+      supabase.removeChannel(sessionChannel);
+      supabase.removeChannel(featureChannel);
+      clearInterval(interval);
+    };
   }, []);
 
   return { analytics, loading, error, refetch: fetchEngagementAnalytics };

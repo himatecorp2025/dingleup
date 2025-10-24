@@ -205,6 +205,55 @@ export const useUserJourneyAnalytics = () => {
 
   useEffect(() => {
     fetchUserJourneyAnalytics();
+
+    // Realtime subscriptions
+    const navChannel = supabase
+      .channel('admin-journey-nav')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'navigation_events'
+      }, () => {
+        console.log('[UserJourney] Navigation changed, refreshing...');
+        fetchUserJourneyAnalytics();
+      })
+      .subscribe();
+
+    const conversionChannel = supabase
+      .channel('admin-journey-conversion')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'conversion_events'
+      }, () => {
+        console.log('[UserJourney] Conversion changed, refreshing...');
+        fetchUserJourneyAnalytics();
+      })
+      .subscribe();
+
+    const exitChannel = supabase
+      .channel('admin-journey-exit')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_exit_events'
+      }, () => {
+        console.log('[UserJourney] Game exits changed, refreshing...');
+        fetchUserJourneyAnalytics();
+      })
+      .subscribe();
+
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchUserJourneyAnalytics();
+    }, 30000);
+
+    return () => {
+      supabase.removeChannel(navChannel);
+      supabase.removeChannel(conversionChannel);
+      supabase.removeChannel(exitChannel);
+      clearInterval(interval);
+    };
   }, []);
 
   return { analytics, loading, error, refetch: fetchUserJourneyAnalytics };
