@@ -39,6 +39,7 @@ import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
 import gameBackground from '@/assets/game-background.jpg';
 import { toast } from 'sonner';
+import { useBroadcastChannel } from '@/hooks/useBroadcastChannel';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -63,6 +64,18 @@ const Dashboard = () => {
   const [showPromo, setShowPromo] = useState(false);
   const [dailyGiftJustClaimed, setDailyGiftJustClaimed] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
+  
+  // Instant wallet sync via broadcast (no 3s delay)
+  useBroadcastChannel({
+    channelName: 'wallet',
+    onMessage: (message) => {
+      if (message?.type === 'wallet:update') {
+        refetchWallet();
+        refreshProfile();
+      }
+    },
+    enabled: true,
+  });
   
   // Promo scheduler with time intelligence
   const canShowPromo = usePromoScheduler(userId);

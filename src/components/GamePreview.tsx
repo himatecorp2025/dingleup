@@ -14,6 +14,7 @@ import { GameStateScreen } from "./GameStateScreen";
 import { QuestionCard } from "./QuestionCard";
 import { InsufficientResourcesDialog } from "./InsufficientResourcesDialog";
 import { ExitGameDialog } from "./ExitGameDialog";
+import { useBroadcastChannel } from "@/hooks/useBroadcastChannel";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -35,6 +36,8 @@ const GamePreview = () => {
   const { profile, loading: profileLoading, updateProfile, spendLife, refreshProfile } = useGameProfile(userId);
   const { canClaim, claimDailyGift } = useDailyGift(userId);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { broadcast } = useBroadcastChannel({ channelName: 'wallet', onMessage: () => {}, enabled: true });
   
   const [gameState, setGameState] = useState<GameState>('category-select');
   const [selectedCategory, setSelectedCategory] = useState<GameCategory | null>(null);
@@ -335,6 +338,9 @@ const GamePreview = () => {
       setGameState('category-select');
       return;
     }
+    
+    // Azonnali wallet frissítés jelzés a Dashboard felé
+    await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
     
     // SECURITY: Removed client-side award_coins - handled by complete-game edge function
     await refreshProfile();
