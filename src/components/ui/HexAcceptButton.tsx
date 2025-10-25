@@ -206,11 +206,9 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         @keyframes accept-button-pulse {
           0%, 100% { 
             transform: scale(1);
-            filter: brightness(1) drop-shadow(0 0 0px rgba(255,215,0,0));
           }
           50% { 
             transform: scale(1.05);
-            filter: brightness(1.15) drop-shadow(0 0 20px rgba(255,215,0,0.8));
           }
         }
         

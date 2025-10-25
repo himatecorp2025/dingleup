@@ -34,7 +34,7 @@ export const useGeniusPromo = (
         }
         promoData.count += 1;
         promoData.lastShown = now;
-        promoData.cooldownUntil = now + (5 * 1000); // 5 seconds for testing
+        promoData.cooldownUntil = now + (2 * 60 * 60 * 1000); // 2 hours
         localStorage.setItem(promoDataKey, JSON.stringify(promoData));
         
         trackEvent('popup_impression', 'daily_first_sub');
@@ -84,7 +84,10 @@ export const useGeniusPromo = (
         }
       }
 
-      // NO LIMIT for testing - removed max 5 per day check
+      // Check if max 5 times per day
+      if (promoData.count >= 5) {
+        return;
+      }
 
       // Check 2 hour cooldown
       if (now < promoData.cooldownUntil) {
@@ -97,7 +100,7 @@ export const useGeniusPromo = (
       // Update data
       promoData.count += 1;
       promoData.lastShown = now;
-      promoData.cooldownUntil = now + (5 * 1000); // 5 seconds for testing
+      promoData.cooldownUntil = now + (2 * 60 * 60 * 1000); // 2 hours
       
       localStorage.setItem(promoDataKey, JSON.stringify(promoData));
 
@@ -105,10 +108,10 @@ export const useGeniusPromo = (
       trackEvent('popup_impression', 'sub_promo');
     };
 
-    // Show immediately for testing
+    // Show after 30-60 minutes delay
     const timer = setTimeout(() => {
       checkAndShow();
-    }, 0);
+    }, 0); // Will be controlled by firstEligibleTime
 
     return () => clearTimeout(timer);
   }, [userId, isPremium, hasOtherDialogs, dailyGiftJustClaimed]);
