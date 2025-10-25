@@ -136,17 +136,16 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="overflow-hidden p-0 border-0 bg-transparent max-w-[95vw] w-[95vw] rounded-3xl [&>button[data-dialog-close]]:hidden"
-        style={{ 
-          height: 'auto',
-          maxHeight: '90vh'
-        }}
+        className="overflow-hidden p-0 border-0 bg-transparent [&>button[data-dialog-close]]:hidden"
 >
           <DialogTitle className="sr-only">Daily Gift</DialogTitle>
           <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
           <div 
-            className="relative w-full h-full flex items-center justify-center overflow-hidden"
-            style={{ minHeight: '60vh', position: 'relative' }}
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
+            style={{ 
+              width: 'min(95vw, 600px)',
+              maxHeight: 'calc(92vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))'
+            }}
           >
           <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
 
