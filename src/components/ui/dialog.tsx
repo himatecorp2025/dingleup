@@ -32,19 +32,25 @@ const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => {
   React.useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    const originalPosition = document.body.style.position;
-    const originalWidth = document.body.style.width;
-    
-    // Lock scroll for iOS Safari
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    
+    const { style } = document.body;
+    const prev = {
+      overflow: style.overflow,
+      position: style.position,
+      width: style.width,
+      top: style.top,
+    };
+    const y = window.scrollY;
+    style.overflow = "hidden";
+    style.position = "fixed";
+    style.top = `-${y}px`;
+    style.width = "100%";
+
     return () => {
-      document.body.style.overflow = originalOverflow;
-      document.body.style.position = originalPosition;
-      document.body.style.width = originalWidth;
+      style.overflow = prev.overflow;
+      style.position = prev.position;
+      style.width = prev.width;
+      style.top = prev.top;
+      window.scrollTo(0, y);
     };
   }, []);
 
@@ -54,16 +60,11 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed left-[50%] top-[50%] z-[10000] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-[15px] max-h-[90vh] overflow-y-auto !transform-gpu",
-          "safe-area-inset",
-          className,
+          "fixed inset-0 z-[10000] grid place-items-center p-0 bg-transparent outline-none",
+          "px-[max(12px,env(safe-area-inset-left))] pr-[max(12px,env(safe-area-inset-right))]",
+          "duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          className
         )}
-        style={{
-          position: 'fixed',
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-        }}
         onEscapeKeyDown={(e) => {
           e.preventDefault();
           const target = e.currentTarget as HTMLElement;
@@ -73,14 +74,6 @@ const DialogContent = React.forwardRef<
         {...props}
       >
         {children}
-        <DialogPrimitive.Close 
-          data-dialog-close
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-50"
-          aria-label="Bezárás"
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Bezárás</span>
-        </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPortal>
   );

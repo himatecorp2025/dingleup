@@ -136,20 +136,38 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="overflow-hidden p-0 border-0 bg-transparent [&>button[data-dialog-close]]:hidden"
+        className="overflow-visible p-0 border-0 bg-transparent [&>button[data-dialog-close]]:hidden"
 >
           <DialogTitle className="sr-only">Daily Gift</DialogTitle>
           <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
-          <div 
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
-            style={{ 
-              width: 'min(95vw, 600px)',
-              maxHeight: 'calc(92vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))'
+          
+          {/* Háttér gradiens */}
+          <div
+            className="absolute inset-0 -z-10 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(120% 80% at 50% 10%, rgba(20,30,60,0.6), rgba(10,14,28,0.95))",
+            }}
+          />
+
+          {/* Bezáró X - jobb felső sarok */}
+          <button
+            onClick={onLater}
+            aria-label="Bezárás"
+            className="fixed z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
+            style={{
+              top: "max(12px, env(safe-area-inset-top))",
+              right: "max(12px, env(safe-area-inset-right))",
+              width: "clamp(36px, 8svw, 48px)",
+              height: "clamp(36px, 8svw, 48px)",
+              fontSize: "clamp(18px, 5svw, 28px)",
+              lineHeight: 1,
             }}
           >
-          <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
+            ×
+          </button>
 
-
+          {/* Pajzs tartalom - relatív pozíció, a grid középre teszi */}
           <div 
             className="relative z-10"
             style={{ 
@@ -358,16 +376,6 @@ const DailyGiftDialog = ({
             </HexShieldFrame>
             </div>
           </div>
-
-          {/* Close X button */}
-          <button
-            onClick={onLater}
-            className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[10vw] h-[10vw] max-w-[50px] max-h-[50px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-            style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)', transitionDelay: '600ms' }}
-          >
-            ×
-          </button>
-        </div>
       </DialogContent>
     </Dialog>
   );
