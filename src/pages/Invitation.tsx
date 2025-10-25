@@ -157,55 +157,109 @@ const Invitation = () => {
         </div>
 
         <div className="space-y-4">
-          {/* Invitation Code */}
-          <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
-            <label className="text-sm font-bold mb-2 block text-white">Meghívó kód</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={invitationCode}
-                readOnly
-                className="flex-1 px-4 py-3 bg-black/40 border-2 border-purple-500/50 rounded-lg font-mono text-lg text-center text-white"
-              />
-              <Button
-                onClick={() => copyToClipboard(invitationCode, 'code')}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 9H11C9.89543 9 9 9.89543 9 11V20C9 21.1046 9.89543 22 11 22H20C21.1046 22 22 21.1046 22 20V11C22 9.89543 21.1046 9 20 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M5 15H4C3.46957 15 2.96086 14.7893 2.58579 14.4142C2.21071 14.0391 2 13.5304 2 13V4C2 3.46957 2.21071 2.96086 2.58579 2.58579C2.96086 2.21071 3.46957 2 4 2H13C13.5304 2 14.0391 2.21071 14.4142 2.58579C14.7893 2.96086 15 3.46957 15 4V5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Button>
+          {/* Invitation Code - 3D Box Style */}
+          <div className="relative rounded-xl p-4 overflow-hidden">
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400/50 shadow-lg" aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-purple-500/40 via-purple-600/40 to-purple-700/40" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
+            
+            {/* DIAGONAL STREAKS */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.06) 10px, rgba(255,255,255,0.06) 14px)', opacity: 0.8 }} aria-hidden />
+            
+            <div className="relative z-10">
+              <label className="text-sm font-bold mb-2 block text-white drop-shadow-lg">Meghívó kód</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={invitationCode}
+                  readOnly
+                  className="flex-1 px-4 py-3 bg-black/40 border-2 border-purple-500/50 rounded-lg font-mono text-lg text-center text-white"
+                />
+                <Button
+                  onClick={() => copyToClipboard(invitationCode, 'code')}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-4"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 9H11C9.89543 9 9 9.89543 9 11V20C9 21.1046 9.89543 22 11 22H20C21.1046 22 22 21.1046 22 20V11C22 9.89543 21.1046 9 20 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M5 15H4C3.46957 15 2.96086 14.7893 2.58579 14.4142C2.21071 14.0391 2 13.5304 2 13V4C2 3.46957 2.21071 2.96086 2.58579 2.58579C2.96086 2.21071 3.46957 2 4 2H13C13.5304 2 14.0391 2.21071 14.4142 2.58579C14.7893 2.96086 15 3.46957 15 4V5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </Button>
+              </div>
             </div>
           </div>
 
-          {/* Invitation Link */}
-          <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
-            <label className="text-sm font-bold mb-2 block text-white">Meghívó link</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={invitationLink}
-                readOnly
-                className="flex-1 px-4 py-3 bg-black/40 border-2 border-purple-500/50 rounded-lg text-sm text-white overflow-hidden text-ellipsis"
-              />
-              <Button
-                onClick={() => copyToClipboard(invitationLink, 'link')}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 9H11C9.89543 9 9 9.89543 9 11V20C9 21.1046 9.89543 22 11 22H20C21.1046 22 22 21.1046 22 20V11C22 9.89543 21.1046 9 20 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M5 15H4C3.46957 15 2.96086 14.7893 2.58579 14.4142C2.21071 14.0391 2 13.5304 2 13V4C2 3.46957 2.21071 2.96086 2.58579 2.58579C2.96086 2.21071 3.46957 2 4 2H13C13.5304 2 14.0391 2.21071 14.4142 2.58579C14.7893 2.96086 15 3.46957 15 4V5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Button>
+          {/* Invitation Link - 3D Box Style */}
+          <div className="relative rounded-xl p-4 overflow-hidden">
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400/50 shadow-lg" aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-purple-500/40 via-purple-600/40 to-purple-700/40" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
+            
+            {/* DIAGONAL STREAKS */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.06) 10px, rgba(255,255,255,0.06) 14px)', opacity: 0.8 }} aria-hidden />
+            
+            <div className="relative z-10">
+              <label className="text-sm font-bold mb-2 block text-white drop-shadow-lg">Meghívó link</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={invitationLink}
+                  readOnly
+                  className="flex-1 px-4 py-3 bg-black/40 border-2 border-purple-500/50 rounded-lg text-sm text-white overflow-hidden text-ellipsis"
+                />
+                <Button
+                  onClick={() => copyToClipboard(invitationLink, 'link')}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-4"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 9H11C9.89543 9 9 9.89543 9 11V20C9 21.1046 9.89543 22 11 22H20C21.1046 22 22 21.1046 22 20V11C22 9.89543 21.1046 9 20 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M5 15H4C3.46957 15 2.96086 14.7893 2.58579 14.4142C2.21071 14.0391 2 13.5304 2 13V4C2 3.46957 2.21071 2.96086 2.58579 2.58579C2.96086 2.21071 3.46957 2 4 2H13C13.5304 2 14.0391 2.21071 14.4142 2.58579C14.7893 2.96086 15 3.46957 15 4V5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </Button>
+              </div>
             </div>
           </div>
 
           {/* Total Rewards Summary - 3D Box Style */}
-          <div className="relative bg-gradient-to-br from-yellow-600/30 to-orange-600/30 rounded-xl p-4 border-2 border-yellow-500/50 mb-4 overflow-hidden">
-            {/* 3D Layers */}
-            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.15) 0%, transparent 60%)' }} aria-hidden />
-            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255,255,255,0.05) 12px, rgba(255,255,255,0.05) 16px)', opacity: 0.5 }} aria-hidden />
+          <div className="relative rounded-xl p-4 mb-4 overflow-hidden">
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-700 via-yellow-600 to-orange-900 border-2 border-yellow-400/50 shadow-lg shadow-yellow-500/20" aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-yellow-600 via-orange-500 to-orange-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-yellow-500/40 via-orange-600/40 to-orange-700/40" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.18) 40%, transparent 70%)' }} aria-hidden />
+            
+            {/* DIAGONAL STREAKS */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.07) 10px, rgba(255,255,255,0.07) 14px)', opacity: 0.8 }} aria-hidden />
             
             <div className="relative z-10">
               <div className="flex items-center justify-center gap-2 mb-3">
@@ -244,10 +298,24 @@ const Invitation = () => {
           </div>
 
           {/* Rewards Section - Tier based - 3D Box Style */}
-          <div className="relative bg-gradient-to-br from-yellow-900/40 to-purple-900/40 rounded-xl p-5 border-2 border-yellow-500/30 overflow-hidden">
-            {/* 3D Layers */}
-            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.1) 0%, transparent 60%)' }} aria-hidden />
-            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255,255,255,0.04) 12px, rgba(255,255,255,0.04) 16px)', opacity: 0.5 }} aria-hidden />
+          <div className="relative rounded-xl p-5 overflow-hidden">
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-700 via-purple-600 to-purple-900 border-2 border-yellow-400/40 shadow-lg" aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-yellow-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-yellow-500/30 via-purple-600/30 to-purple-700/30" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.12), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
+            
+            {/* DIAGONAL STREAKS */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 14px)', opacity: 0.8 }} aria-hidden />
             
             <div className="relative z-10">
               <div className="flex items-center justify-center gap-2 mb-4">
@@ -334,10 +402,24 @@ const Invitation = () => {
           </div>
 
           {/* Invited Friends List - 3D Box Style */}
-          <div className="relative bg-purple-900/30 rounded-xl p-5 border-2 border-purple-500/30 overflow-hidden">
-            {/* 3D Layers */}
-            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(147,51,234,0.1) 0%, transparent 60%)' }} aria-hidden />
-            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(147,51,234,0.04) 12px, rgba(147,51,234,0.04) 16px)', opacity: 0.5 }} aria-hidden />
+          <div className="relative rounded-xl p-5 overflow-hidden">
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400/40 shadow-lg shadow-purple-500/20" aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-purple-500/30 via-purple-600/30 to-purple-700/30" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.12), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
+            
+            {/* DIAGONAL STREAKS */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 14px)', opacity: 0.8 }} aria-hidden />
             
             <div className="relative z-10">
               <h2 className="text-lg font-black text-white mb-4 flex items-center gap-2">

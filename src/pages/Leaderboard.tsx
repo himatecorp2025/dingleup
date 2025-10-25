@@ -156,19 +156,49 @@ const Leaderboard = () => {
             {topPlayers.map((player) => (
               <div
                 key={player.user_id}
-                className={`relative flex items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-2xl border-2 transition-all overflow-hidden ${
-                  player.rank === 1
-                    ? 'bg-gradient-to-r from-yellow-600/20 to-yellow-900/20 border-yellow-500/50'
-                    : player.rank === 2
-                    ? 'bg-gradient-to-r from-gray-600/20 to-gray-900/20 border-gray-500/50'
-                    : player.rank === 3
-                    ? 'bg-gradient-to-r from-orange-600/20 to-orange-900/20 border-orange-500/50'
-                    : 'bg-black/60 border-purple-500/30'
-                }`}
+                className="relative flex items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-2xl transition-all overflow-hidden"
               >
-                {/* 3D Box Effect Layers */}
-                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.08) 0%, transparent 60%)' }} aria-hidden />
-                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255,255,255,0.03) 12px, rgba(255,255,255,0.03) 16px)', opacity: 0.5 }} aria-hidden />
+                {/* BASE SHADOW */}
+                <div className="absolute inset-0 bg-black/40 rounded-2xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(5px)' }} aria-hidden />
+                
+                {/* OUTER FRAME */}
+                <div className={`absolute inset-0 rounded-2xl border-2 shadow-lg ${
+                  player.rank === 1
+                    ? 'bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 border-yellow-400/50 shadow-yellow-500/20'
+                    : player.rank === 2
+                    ? 'bg-gradient-to-br from-gray-600 via-gray-500 to-gray-800 border-gray-400/50 shadow-gray-500/20'
+                    : player.rank === 3
+                    ? 'bg-gradient-to-br from-orange-700 via-orange-600 to-orange-900 border-orange-400/50 shadow-orange-500/20'
+                    : 'bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-purple-400/40 shadow-purple-500/20'
+                }`} aria-hidden />
+                
+                {/* MIDDLE FRAME */}
+                <div className={`absolute inset-[3px] rounded-2xl ${
+                  player.rank === 1
+                    ? 'bg-gradient-to-b from-yellow-600 via-yellow-500 to-yellow-800'
+                    : player.rank === 2
+                    ? 'bg-gradient-to-b from-gray-500 via-gray-400 to-gray-700'
+                    : player.rank === 3
+                    ? 'bg-gradient-to-b from-orange-600 via-orange-500 to-orange-800'
+                    : 'bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800'
+                }`} style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25)' }} aria-hidden />
+                
+                {/* INNER LAYER */}
+                <div className={`absolute inset-[5px] rounded-2xl ${
+                  player.rank === 1
+                    ? 'bg-gradient-to-b from-yellow-500/30 via-yellow-600/30 to-yellow-700/30'
+                    : player.rank === 2
+                    ? 'bg-gradient-to-b from-gray-400/30 via-gray-500/30 to-gray-600/30'
+                    : player.rank === 3
+                    ? 'bg-gradient-to-b from-orange-500/30 via-orange-600/30 to-orange-700/30'
+                    : 'bg-gradient-to-b from-purple-500/30 via-purple-600/30 to-purple-700/30'
+                }`} style={{ boxShadow: 'inset 0 6px 16px rgba(255,255,255,0.12), inset 0 -6px 16px rgba(0,0,0,0.4)' }} aria-hidden />
+                
+                {/* SPECULAR HIGHLIGHT */}
+                <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
+                
+                {/* DIAGONAL STREAKS */}
+                <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 14px)', opacity: 0.8 }} aria-hidden />
 
                 <div className="relative z-10 flex items-center gap-2 sm:gap-4 w-full">
                   {/* Rank */}
