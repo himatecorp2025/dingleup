@@ -322,6 +322,18 @@ const GamePreview = () => {
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
 
+    // Ensure any previous dialogs are closed
+    setShowInsufficientDialog(false);
+
+    // Quick client-side lives check for a smoother UX
+    if (profile.lives < 1) {
+      setInsufficientType('lives');
+      setRequiredAmount(1);
+      setShowInsufficientDialog(true);
+      setGameState('category-select');
+      return;
+    }
+
     // Audio is managed by AudioManager singleton - no manual play() needed
     
     try {
@@ -332,7 +344,7 @@ const GamePreview = () => {
     
     const canPlay = await spendLife();
     if (!canPlay) {
-      // Show insufficient lives dialog
+      // Show insufficient lives dialog (fallback if RPC failed)
       setInsufficientType('lives');
       setRequiredAmount(1);
       setShowInsufficientDialog(true);

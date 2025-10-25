@@ -95,15 +95,15 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
           </p>
 
         {/* 2x2 Grid - Fixed equal sizing */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 max-w-md mx-auto" style={{ gridAutoRows: '1fr' }}>
+        <div className="grid grid-cols-2 grid-rows-2 gap-x-2 gap-y-2 sm:gap-x-3 sm:gap-y-3 max-w-md mx-auto">
           {categories.map((category) => {
             const Icon = category.icon;
             return (
               <button
                 key={category.id}
                 onClick={() => handleCategorySelect(category.id)}
-                className="group relative overflow-hidden rounded-2xl p-3 sm:p-4 bg-black/80 transition-all duration-300 hover:scale-105 text-left touch-manipulation active:scale-95 flex flex-col justify-between"
-                style={{ perspective: '1000px', aspectRatio: '1 / 1', height: 'auto', minHeight: '200px', maxHeight: '250px' }}
+                className="group relative overflow-hidden rounded-2xl p-3 sm:p-4 bg-black/80 transition-all duration-300 hover:brightness-110 text-left touch-manipulation active:translate-y-[1px] flex flex-col justify-between h-full"
+                style={{ perspective: '1000px', aspectRatio: '1 / 1' }}
               >
                 {/* Deep 3D Layers - ENHANCED */}
                 {/* BASE SHADOW - Deeper */}
@@ -134,7 +134,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                 
                 <div className="relative z-10 flex flex-col h-full items-center justify-between" style={{ transform: 'translateZ(50px)' }}>
                   {/* 3D Icon wrapper with enhanced depth */}
-                  <div className="relative mt-2 sm:mt-3" style={{ perspective: '600px' }}>
+                  <div className="relative mt-2 sm:mt-3 mb-2 sm:mb-3" style={{ perspective: '600px' }}>
                     {/* BASE SHADOW for icon */}
                     <div className="absolute inset-0 bg-black/60 rounded-xl translate-y-2 blur-lg" aria-hidden />
                     
@@ -146,7 +146,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                       {/* INNER HIGHLIGHT */}
                       <div className="absolute inset-[3px] rounded-lg pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 20%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
                       
-                      <Icon className="w-[77px] h-[77px] sm:w-[92px] sm:h-[92px] relative z-10" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
+                      <Icon className="w-[70px] h-[70px] sm:w-[82px] sm:h-[82px] relative z-10" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
                     </div>
                   </div>
                   
