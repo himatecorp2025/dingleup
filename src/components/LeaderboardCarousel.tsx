@@ -145,19 +145,6 @@ export const LeaderboardCarousel = () => {
                   aria-hidden
                 />
 
-                {/* DIAGONAL LIGHT STREAKS */}
-                <div
-                  className="absolute clip-hexagon pointer-events-none"
-                  style={{
-                    top: '3px',
-                    left: '3px',
-                    right: '3px',
-                    bottom: '3px',
-                    background: 'repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(255,255,255,0.06) 6px, rgba(255,255,255,0.06) 9px)',
-                    opacity: 0.7,
-                  }}
-                  aria-hidden
-                />
 
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10 transform hover:scale-105 transition-transform">
