@@ -135,21 +135,21 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                 className="group relative overflow-hidden rounded-2xl p-3 sm:p-4 bg-black/80 transition-all duration-300 hover:scale-105 text-left touch-manipulation active:scale-95 aspect-square flex flex-col justify-between"
                 style={{ perspective: '1000px' }}
               >
-                {/* Deep 3D Layers */}
-                {/* BASE SHADOW */}
-                <div className="absolute inset-0 bg-black/60 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+                {/* Deep 3D Layers - ENHANCED */}
+                {/* BASE SHADOW - Deeper */}
+                <div className="absolute inset-0 bg-black/80 rounded-2xl" style={{ transform: 'translate(10px, 10px)', filter: 'blur(16px)' }} aria-hidden />
                 
-                {/* OUTER FRAME - Level 1 */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${category.gradient} opacity-90 border-3 ${category.borderColor} shadow-2xl`} style={{ transform: 'translateZ(0px)' }} aria-hidden />
+                {/* OUTER FRAME - Level 1 - Enhanced depth */}
+                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${category.gradient} opacity-95 border-4 ${category.borderColor} shadow-2xl`} style={{ transform: 'translateZ(0px)', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }} aria-hidden />
                 
-                {/* MIDDLE FRAME - Level 2 */}
-                <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+                {/* MIDDLE FRAME - Level 2 - Deeper inset */}
+                <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.4), inset 0 -4px 8px rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
                 
-                {/* INNER LAYER - Level 3 */}
-                <div className={`absolute inset-[6px] rounded-2xl bg-gradient-to-br ${category.gradient} opacity-30`} style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+                {/* INNER LAYER - Level 3 - More prominent */}
+                <div className={`absolute inset-[8px] rounded-2xl bg-gradient-to-br ${category.gradient} opacity-40`} style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.25), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
                 
-                {/* SPECULAR HIGHLIGHT */}
-                <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+                {/* SPECULAR HIGHLIGHT - Stronger */}
+                <div className="absolute inset-[8px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)', transform: 'translateZ(45px)' }} aria-hidden />
                 
                 {/* Animated Shine Effect */}
                 <div 
@@ -164,14 +164,14 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                 
                 <div className="relative z-10 flex flex-col h-full items-center justify-between" style={{ transform: 'translateZ(50px)' }}>
                   <div className={`p-2 sm:p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-2 sm:mt-3 shadow-2xl`} style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.4)' }}>
-                    <Icon className="w-10 h-10 sm:w-12 sm:h-12" />
+                    <Icon className="w-[50px] sm:w-[60px]" />
                   </div>
                   
                   <div className="text-center pb-3 sm:pb-4">
-                    <h3 className="text-xs sm:text-sm font-bold mb-0.5 sm:mb-1 font-poppins leading-tight text-white drop-shadow-lg">
+                    <h3 className="text-base sm:text-lg font-bold mb-0.5 sm:mb-1 font-poppins leading-tight text-white drop-shadow-lg">
                       {category.name}
                     </h3>
-                    <p className="text-[10px] sm:text-xs text-yellow-200/90 line-clamp-2 drop-shadow">
+                    <p className="text-sm sm:text-base text-yellow-200/90 line-clamp-2 drop-shadow">
                       {category.description}
                     </p>
                   </div>

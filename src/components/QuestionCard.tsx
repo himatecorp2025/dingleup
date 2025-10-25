@@ -218,10 +218,10 @@ export const QuestionCard = ({
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
             
             <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
-              <span className="font-bold text-xs sm:text-sm">1/3</span>
+              <span className="font-bold text-base sm:text-lg">1/3</span>
               {help5050UsageCount === 1 && (
-                <span className="text-[8px] sm:text-[10px] flex items-center gap-0.5 font-bold">
-                  <Coins className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
+                <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
+                  <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
                   15
                 </span>
               )}
@@ -252,10 +252,10 @@ export const QuestionCard = ({
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
             
             <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
-              <span className="font-bold text-xs sm:text-sm">2x</span>
+              <span className="font-bold text-base sm:text-lg">2x</span>
               {help2xAnswerUsageCount === 1 && (
-                <span className="text-[8px] sm:text-[10px] flex items-center gap-0.5 font-bold">
-                  <Coins className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
+                <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
+                  <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
                   20
                 </span>
               )}
@@ -286,10 +286,10 @@ export const QuestionCard = ({
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
             
             <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
-              <Users className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
+              <Users className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
               {helpAudienceUsageCount === 1 && (
-                <span className="text-[8px] sm:text-[10px] flex items-center gap-0.5 font-bold">
-                  <Coins className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
+                <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
+                  <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
                   30
                 </span>
               )}
@@ -320,9 +320,9 @@ export const QuestionCard = ({
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
             
             <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
-              <SkipForward className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-              <span className="text-[8px] sm:text-[10px] md:text-xs font-bold flex items-center gap-0.5 mt-0.5 sm:mt-1">
-                <Coins className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
+              <SkipForward className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
+              <span className="text-xs sm:text-sm md:text-base font-bold flex items-center gap-1 mt-1 sm:mt-2">
+                <Coins className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
                 {skipCost}
               </span>
             </div>
