@@ -373,42 +373,45 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                     <div className="absolute inset-[3px] bg-gradient-to-b from-red-400 via-red-500 to-red-700 rounded-2xl"
                          style={{ boxShadow: 'inset 0 1px 0 #fca5a5' }} />
                     
-                    {/* Left heart overhanging 50% outside of box */}
-                    <svg viewBox="0 0 100 100" className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 drop-shadow-2xl z-10" style={{ animation: 'heartPulse 1.5s ease-in-out infinite' }}>
-                      <defs>
-                        <radialGradient id="heartGradRedLeft">
-                          <stop offset="0%" stopColor="#fca5a5" />
-                          <stop offset="50%" stopColor="#dc2626" />
-                          <stop offset="100%" stopColor="#991b1b" />
-                        </radialGradient>
-                      </defs>
-                      <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
-                            fill="url(#heartGradRedLeft)" stroke="#7f1d1d" strokeWidth="2" />
-                    </svg>
-
-                    {/* Right heart overhanging 50% outside of box */}
-                    <svg viewBox="0 0 100 100" className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-12 h-12 drop-shadow-2xl z-10" style={{ animation: 'heartPulse 1.5s ease-in-out infinite 0.3s' }}>
-                      <defs>
-                        <radialGradient id="heartGradRedRight">
-                          <stop offset="0%" stopColor="#fca5a5" />
-                          <stop offset="50%" stopColor="#dc2626" />
-                          <stop offset="100%" stopColor="#991b1b" />
-                        </radialGradient>
-                      </defs>
-                      <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
-                            fill="url(#heartGradRedRight)" stroke="#7f1d1d" strokeWidth="2" />
-                    </svg>
-                    
-                    <div className="relative bg-gradient-to-br from-red-600/95 via-red-700/95 to-red-900/95 rounded-2xl px-6 py-3"
+                    {/* Hearts inline like coins, overhang 50% via negative margins to match coin placement */}
+                    <div className="relative bg-gradient-to-br from-red-600/95 via-red-700/95 to-red-900/95 rounded-2xl px-6 py-3 overflow-visible"
                          style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)' }}>
                       <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
                            style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)' }} />
                       
-                      <div className="relative flex items-center justify-center">
+                      <div className="relative flex items-center justify-center gap-2">
+                        {/* Left heart - inline, 50% overhang */}
+                        <svg viewBox="0 0 100 100" className="drop-shadow-2xl flex-shrink-0"
+                             style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)', marginLeft: 'calc(clamp(32px, 9cqw, 48px) / -2)', animation: 'heartPulse 1.5s ease-in-out infinite' }}>
+                          <defs>
+                            <radialGradient id="heartGradRedLeft">
+                              <stop offset="0%" stopColor="#fca5a5" />
+                              <stop offset="50%" stopColor="#dc2626" />
+                              <stop offset="100%" stopColor="#991b1b" />
+                            </radialGradient>
+                          </defs>
+                          <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
+                                fill="url(#heartGradRedLeft)" stroke="#7f1d1d" strokeWidth="2" />
+                        </svg>
+                        
                         <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
                               style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
                           +50
                         </span>
+                        
+                        {/* Right heart - inline, 50% overhang */}
+                        <svg viewBox="0 0 100 100" className="drop-shadow-2xl flex-shrink-0"
+                             style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)', marginRight: 'calc(clamp(32px, 9cqw, 48px) / -2)', animation: 'heartPulse 1.5s ease-in-out infinite 0.3s' }}>
+                          <defs>
+                            <radialGradient id="heartGradRedRight">
+                              <stop offset="0%" stopColor="#fca5a5" />
+                              <stop offset="50%" stopColor="#dc2626" />
+                              <stop offset="100%" stopColor="#991b1b" />
+                            </radialGradient>
+                          </defs>
+                          <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
+                                fill="url(#heartGradRedRight)" stroke="#7f1d1d" strokeWidth="2" />
+                        </svg>
                       </div>
                     </div>
                   </div>
