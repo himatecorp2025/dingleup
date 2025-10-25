@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { trackBonusEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
@@ -69,10 +69,8 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      {/* Fully transparent overlay - no darkening */}
-      <DialogOverlay className="bg-transparent backdrop-blur-none" />
-      
       <DialogContent 
+        overlayClassName="bg-transparent backdrop-blur-none"
         className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
         style={{ 
           margin: 0,
@@ -380,9 +378,9 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                       <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
                            style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)' }} />
                       
-                      <div className="relative flex items-center justify-center gap-3">
-                        {/* Left pulsing heart SVG - PIROS */}
-                        <svg viewBox="0 0 100 100" className="w-12 h-12 drop-shadow-2xl flex-shrink-0" style={{ animation: 'heartPulse 1.5s ease-in-out infinite' }}>
+                      <div className="relative flex items-center justify-center">
+                        {/* Left heart overhanging 50% outside */}
+                        <svg viewBox="0 0 100 100" className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 drop-shadow-2xl" style={{ animation: 'heartPulse 1.5s ease-in-out infinite' }}>
                           <defs>
                             <radialGradient id="heartGradRedLeft">
                               <stop offset="0%" stopColor="#fca5a5" />
@@ -393,16 +391,14 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                           <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
                                 fill="url(#heartGradRedLeft)" stroke="#7f1d1d" strokeWidth="2" />
                         </svg>
-                        
-                        <div className="flex items-center gap-2">
-                          <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
-                                style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
-                            +50
-                          </span>
-                        </div>
-                        
-                        {/* Right pulsing heart SVG - PIROS */}
-                        <svg viewBox="0 0 100 100" className="w-12 h-12 drop-shadow-2xl flex-shrink-0" style={{ animation: 'heartPulse 1.5s ease-in-out infinite 0.3s' }}>
+
+                        <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
+                              style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
+                          +50
+                        </span>
+
+                        {/* Right heart overhanging 50% outside */}
+                        <svg viewBox="0 0 100 100" className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-12 h-12 drop-shadow-2xl" style={{ animation: 'heartPulse 1.5s ease-in-out infinite 0.3s' }}>
                           <defs>
                             <radialGradient id="heartGradRedRight">
                               <stop offset="0%" stopColor="#fca5a5" />
