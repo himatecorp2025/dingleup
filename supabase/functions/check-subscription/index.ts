@@ -37,6 +37,31 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
+    // SPECIAL: Eternal Genius for testing email
+    if (user.email === 'himatecorp2025@gmail.com') {
+      logStep("Eternal Genius user detected - bypassing Stripe check");
+      
+      // Set Genius status permanently
+      await supabaseClient
+        .from('profiles')
+        .update({ 
+          is_subscribed: true, 
+          subscription_tier: 'premium',
+          max_lives: 30,
+          lives_regeneration_rate: 6
+        })
+        .eq('id', user.id);
+      
+      return new Response(JSON.stringify({
+        subscribed: true,
+        subscription_end: null, // Eternal
+        eternal_genius: true
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
