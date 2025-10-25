@@ -2757,8 +2757,6 @@ export type Database = {
           username: string
         }[]
       }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
       spend_coins: { Args: { amount: number }; Returns: boolean }
       start_speed_booster: {
         Args: { p_duration_minutes?: number; p_multiplier: number }
