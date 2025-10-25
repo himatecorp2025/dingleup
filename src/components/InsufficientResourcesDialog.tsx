@@ -161,15 +161,14 @@ export const InsufficientResourcesDialog = ({
           borderRadius: 0
         }}
       >
-        {/* Középre igazító konténer - vertikális korrekció */}
+        {/* Középre igazító konténer - horizontális és vertikális középre */}
         <div 
           className="fixed inset-0 flex flex-col items-center overflow-hidden"
           style={{ 
             minHeight: '100vh', 
             minWidth: '100vw',
             justifyContent: 'center',
-            paddingTop: '0',
-            marginTop: '-3vh'  // 3% feljebb, mint a daily giftnél
+            paddingTop: '0'
           }}
         >
           {/* Background layer - Deep gradient */}
