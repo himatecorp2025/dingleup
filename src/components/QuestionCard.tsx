@@ -217,11 +217,11 @@ export const QuestionCard = ({
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            <div className="relative z-10" style={{ transform: 'translateZ(25px)' }}>
-              <span>1/3</span>
+            <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
+              <span className="font-bold">1/3</span>
               {help5050UsageCount === 1 && (
-                <span className="text-[10px] flex items-center gap-0.5">
-                  <Coins className="w-2.5 h-2.5" />
+                <span className="text-[10px] flex items-center gap-0.5 font-bold">
+                  <Coins className="w-2.5 h-2.5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
                   15
                 </span>
               )}
@@ -251,11 +251,11 @@ export const QuestionCard = ({
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            <div className="relative z-10" style={{ transform: 'translateZ(25px)' }}>
-              <span>2x</span>
+            <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
+              <span className="font-bold">2x</span>
               {help2xAnswerUsageCount === 1 && (
-                <span className="text-[10px] flex items-center gap-0.5">
-                  <Coins className="w-2.5 h-2.5" />
+                <span className="text-[10px] flex items-center gap-0.5 font-bold">
+                  <Coins className="w-2.5 h-2.5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
                   20
                 </span>
               )}
@@ -285,11 +285,11 @@ export const QuestionCard = ({
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            <div className="relative z-10" style={{ transform: 'translateZ(25px)' }}>
-              <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
+              <Users className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
               {helpAudienceUsageCount === 1 && (
-                <span className="text-[10px] flex items-center gap-0.5">
-                  <Coins className="w-2.5 h-2.5" />
+                <span className="text-[10px] flex items-center gap-0.5 font-bold">
+                  <Coins className="w-2.5 h-2.5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
                   30
                 </span>
               )}
@@ -319,10 +319,10 @@ export const QuestionCard = ({
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            <div className="relative z-10" style={{ transform: 'translateZ(25px)' }}>
-              <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
+              <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
               <span className="text-[10px] sm:text-xs font-bold flex items-center gap-0.5 mt-1">
-                <Coins className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                <Coins className="w-2.5 h-2.5 sm:w-3 sm:h-3" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
                 {skipCost}
               </span>
             </div>
