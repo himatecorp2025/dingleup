@@ -307,65 +307,6 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
                       
                       {/* MASSIVE -25% OFF badge - OVERFLOWS shield */}
                       <div className="relative -mr-[10%]" style={{ minWidth: 'clamp(100px, 30cqw, 180px)' }}>
-                        {/* PREMIUM DIAMOND/STAR burst SVG - BEHIND, LARGE OVERFLOW */}
-                        <svg 
-                          viewBox="0 0 300 300" 
-                          className="absolute -inset-[120%] pointer-events-none"
-                          style={{ 
-                            animation: 'spinSlow 8s linear infinite, pulseBadge 2s ease-in-out infinite',
-                            filter: 'drop-shadow(0 0 24px rgba(234,179,8,0.9)) drop-shadow(0 0 48px rgba(234,179,8,0.6))',
-                            zIndex: -1
-                          }}
-                        >
-                          <defs>
-                            <radialGradient id="goldBurst">
-                              <stop offset="0%" stopColor="#fbbf24" />
-                              <stop offset="50%" stopColor="#f59e0b" />
-                              <stop offset="100%" stopColor="#d97706" />
-                            </radialGradient>
-                            <linearGradient id="diamondShine" x1="0%" y1="0%" x2="100%" y2="100%">
-                              <stop offset="0%" stopColor="#fef3c7" />
-                              <stop offset="50%" stopColor="#fbbf24" />
-                              <stop offset="100%" stopColor="#f59e0b" />
-                            </linearGradient>
-                          </defs>
-                          {/* Large rotating starburst */}
-                          {[...Array(12)].map((_, i) => {
-                            const angle = (i * 30 * Math.PI) / 180;
-                            const radius = 130;
-                            const cx = 150 + Math.cos(angle) * radius;
-                            const cy = 150 + Math.sin(angle) * radius;
-                            const size = i % 2 === 0 ? 35 : 25;
-                            return (
-                              <g key={i}>
-                                {/* Diamond shape */}
-                                <polygon
-                                  points={`${cx},${cy - size} ${cx + size * 0.6},${cy} ${cx},${cy + size} ${cx - size * 0.6},${cy}`}
-                                  fill="url(#diamondShine)"
-                                  opacity="0.9"
-                                />
-                              </g>
-                            );
-                          })}
-                          {/* Center large diamond */}
-                          <polygon
-                            points="150,80 200,150 150,220 100,150"
-                            fill="url(#goldBurst)"
-                            opacity="0.95"
-                          />
-                        </svg>
-                        
-                        <style>{`
-                          @keyframes spinSlow {
-                            from { transform: rotate(0deg); }
-                            to { transform: rotate(360deg); }
-                          }
-                          @keyframes pulseBadge {
-                            0%, 100% { opacity: 0.9; transform: scale(1); }
-                            50% { opacity: 1; transform: scale(1.05); }
-                          }
-                        `}</style>
-                        
                         {/* Badge shadow */}
                         <div className="absolute inset-0 bg-yellow-900/80 rounded-xl translate-y-2 translate-x-2 blur-lg" />
                         {/* Main MASSIVE badge */}
