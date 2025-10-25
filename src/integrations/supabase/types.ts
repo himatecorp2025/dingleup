@@ -2521,6 +2521,30 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_winners_popup_views: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_shown_week: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_shown_week: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_shown_week?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       error_rate_by_page: {

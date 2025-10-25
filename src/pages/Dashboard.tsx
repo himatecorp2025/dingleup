@@ -14,6 +14,7 @@ import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useWallet } from '@/hooks/useWallet';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
+import { useWeeklyWinnersPopup } from '@/hooks/useWeeklyWinnersPopup';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
@@ -51,6 +52,7 @@ const Dashboard = () => {
   const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
+  const { showPopup: showWeeklyWinnersPopup, closePopup: closeWeeklyWinnersPopup } = useWeeklyWinnersPopup(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
@@ -254,10 +256,10 @@ return (
     {/* Weekly winner popup (old version - will be replaced) */}
     <WeeklyWinnerPopup userId={userId} />
     
-    {/* Weekly Winners Dialog - shows after daily gift */}
+    {/* Weekly Winners Dialog - minden héten egyszer megjelenik */}
     <WeeklyWinnersDialog 
-      open={showWeeklyWinners} 
-      onClose={handleWeeklyWinnersClose} 
+      open={showWeeklyWinnersPopup} 
+      onClose={closeWeeklyWinnersPopup} 
     />
     
     {/* Falling coins background */}
