@@ -14,6 +14,19 @@ interface WelcomeBonusDialogProps {
 export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: WelcomeBonusDialogProps) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [contentVisible, setContentVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const starCount = isMobile ? 12 : 40;
+
+  useEffect(() => {
+    const handleResize = () => {
+      try {
+        setIsMobile(window.innerWidth <= 768);
+      } catch {}
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -82,7 +95,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
           {/* Animated golden stars - more, faster, fade in/out */}
           {contentVisible && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(50)].map((_, i) => {
+              {[...Array(starCount)].map((_, i) => {
                 const delay = Math.random() * 3;
                 const duration = 1.5 + Math.random() * 1;
                 const startX = Math.random() * 100;
@@ -131,8 +144,8 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
               transition: 'transform 1200ms cubic-bezier(0.34, 1.56, 0.64, 1) 1000ms, opacity 1200ms ease-in-out 1000ms',
               transformOrigin: 'center center',
               willChange: contentVisible ? 'transform, opacity' : 'auto',
-              filter: 'drop-shadow(0 0 80px rgba(250,204,21,0.9)) drop-shadow(0 0 140px rgba(234,179,8,0.7)) drop-shadow(0 0 200px rgba(250,204,21,0.5))',
-              animation: 'welcomePulse 2.5s ease-in-out infinite'
+              filter: isMobile ? 'none' : 'drop-shadow(0 0 80px rgba(250,204,21,0.9)) drop-shadow(0 0 140px rgba(234,179,8,0.7)) drop-shadow(0 0 200px rgba(250,204,21,0.5))',
+              animation: isMobile ? 'none' : 'welcomePulse 2.5s ease-in-out infinite'
             }}
           >
             <style>{`

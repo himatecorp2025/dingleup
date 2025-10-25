@@ -26,7 +26,7 @@ import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { GeniusCrownBadge } from '@/components/GeniusCrownBadge';
 import { IdleWarning } from '@/components/IdleWarning';
-import { LoginPromoManager } from '@/components/LoginPromoManager';
+
 import { WeeklyWinnerPopup } from '@/components/WeeklyWinnerPopup';
 import { useWeeklyLogin } from '@/hooks/useWeeklyLogin';
 

@@ -42,7 +42,7 @@ const Index = () => {
       </div>
       <DevelopmentStatus />
       <Newsletter />
-      <LoginPromoManager isGenius={false} userId={userId} />
+      
       <Footer />
       <TutorialManager route="landing" />
     </main>
