@@ -34,7 +34,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
       if (!first) return;
       const rowH = first.offsetHeight;
       const gap = second ? parseFloat(getComputedStyle(second).marginTop || '6') : 6;
-      setListHeight(Math.max(0, Math.round((rowH * 7 + gap * 6) * 1.01) - 8));
+      setListHeight(Math.max(0, Math.round((rowH * 7 + gap * 6) * 1.03) - 8));
     } catch {}
   };
 
