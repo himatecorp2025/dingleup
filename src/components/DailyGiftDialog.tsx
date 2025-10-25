@@ -180,10 +180,9 @@ const DailyGiftDialog = ({
 
           {/* Pajzs tartalom */}
           <div 
-            className="relative z-10 flex items-center justify-center"
+            className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center"
           >
-            <div style={{ containerType: 'inline-size' }}>
-              <HexShieldFrame showShine={false}>
+            <HexShieldFrame showShine={false}>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
                 ref={badgeRef}
@@ -378,9 +377,8 @@ const DailyGiftDialog = ({
                 </div>
               </div>
             </HexShieldFrame>
-              </div>
-            </div>
           </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

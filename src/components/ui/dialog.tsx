@@ -61,8 +61,6 @@ const DialogContent = React.forwardRef<
         ref={ref}
         className={cn(
           "fixed inset-0 z-[10000] grid place-items-center p-0 bg-transparent outline-none",
-          "px-[max(12px,env(safe-area-inset-left))] pr-[max(12px,env(safe-area-inset-right))]",
-          "py-[max(12px,env(safe-area-inset-top))] pb-[max(12px,env(safe-area-inset-bottom))]",
           "duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           className
         )}
