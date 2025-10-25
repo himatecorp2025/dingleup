@@ -15,19 +15,47 @@ export const LeaderboardCarousel = () => {
 
   useEffect(() => {
     refresh();
-    // Ugyanaz a frissítési ritmus, mint a Ranglista oldalon
+    // Frissítés 5 mp-enként – egyezik a Ranglista oldal ritmusával
     const interval = setInterval(refresh, 5000);
     return () => clearInterval(interval);
   }, []);
 
   const refresh = async () => {
-    const primary = await fetchFromGlobalLeaderboard();
-    if (primary.length >= 3) {
-      setTopPlayers(primary.slice(0, 25));
+    // 1) Publikus nézet (RLS gond mentes)
+    const fromPublic = await fetchFromLeaderboardPublic();
+    if (fromPublic.length > 0) {
+      setTopPlayers(fromPublic.slice(0, 25));
       return;
     }
-    const fallback = await fetchFromWeeklyRankings();
-    setTopPlayers(fallback.slice(0, 25));
+    // 2) Global leaderboard (ha a felhasználó jogosult, különben 0-1 rekord)
+    const fromGlobal = await fetchFromGlobalLeaderboard();
+    if (fromGlobal.length > 0) {
+      setTopPlayers(fromGlobal.slice(0, 25));
+      return;
+    }
+    // 3) Heti rang fallback (összesítve profilokkal)
+    const fromWeekly = await fetchFromWeeklyRankings();
+    setTopPlayers(fromWeekly.slice(0, 25));
+  };
+
+  const fetchFromLeaderboardPublic = async (): Promise<LeaderboardEntry[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('leaderboard_public')
+        .select('username, avatar_url, total_correct_answers')
+        .order('total_correct_answers', { ascending: false })
+        .limit(100);
+      if (error) throw error;
+      return (data || []).map((d, i) => ({
+        user_id: `${d.username ?? 'user'}-${i}`, // nincs user_id a publikus nézetben
+        username: (d as any).username ?? 'Player',
+        avatar_url: (d as any).avatar_url ?? null,
+        total_correct_answers: (d as any).total_correct_answers ?? 0,
+      }));
+    } catch (e) {
+      console.error('[LeaderboardCarousel] leaderboard_public error:', e);
+      return [];
+    }
   };
 
   const fetchFromGlobalLeaderboard = async (): Promise<LeaderboardEntry[]> => {
@@ -37,11 +65,10 @@ export const LeaderboardCarousel = () => {
         .select('user_id, username, total_correct_answers, avatar_url')
         .order('total_correct_answers', { ascending: false })
         .limit(100);
-
       if (error) throw error;
       return data || [];
-    } catch (error) {
-      console.error('[LeaderboardCarousel] global_leaderboard error:', error);
+    } catch (e) {
+      console.error('[LeaderboardCarousel] global_leaderboard error:', e);
       return [];
     }
   };
@@ -65,7 +92,6 @@ export const LeaderboardCarousel = () => {
         .eq('week_start', weekStart)
         .order('total_correct_answers', { ascending: false })
         .limit(200);
-
       if (error) throw error;
 
       const map = new Map<string, LeaderboardEntry>();
@@ -75,17 +101,11 @@ export const LeaderboardCarousel = () => {
         const avatar = row.profiles?.avatar_url ?? null;
         const prev = map.get(uid);
         const total = (prev?.total_correct_answers || 0) + (row.total_correct_answers || 0);
-        map.set(uid, {
-          user_id: uid,
-          username: name,
-          avatar_url: avatar,
-          total_correct_answers: total,
-        });
+        map.set(uid, { user_id: uid, username: name, avatar_url: avatar, total_correct_answers: total });
       });
-
       return Array.from(map.values()).sort((a, b) => b.total_correct_answers - a.total_correct_answers);
-    } catch (error) {
-      console.error('[LeaderboardCarousel] weekly_rankings fallback error:', error);
+    } catch (e) {
+      console.error('[LeaderboardCarousel] weekly_rankings error:', e);
       return [];
     }
   };
@@ -93,20 +113,15 @@ export const LeaderboardCarousel = () => {
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || topPlayers.length === 0) return;
-
     let animationFrameId: number;
     let scrollPosition = 0;
     const scrollSpeed = 1.5;
-
     const scroll = () => {
       scrollPosition += scrollSpeed;
-      if (scrollPosition >= container.scrollWidth / 2) {
-        scrollPosition = 0;
-      }
+      if (scrollPosition >= container.scrollWidth / 2) scrollPosition = 0;
       container.scrollLeft = scrollPosition;
       animationFrameId = requestAnimationFrame(scroll);
     };
-
     animationFrameId = requestAnimationFrame(scroll);
     return () => cancelAnimationFrame(animationFrameId);
   }, [topPlayers]);
