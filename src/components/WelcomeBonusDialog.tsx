@@ -15,7 +15,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
   const [userId, setUserId] = useState<string | null>(null);
   const [contentVisible, setContentVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const starCount = isMobile ? 12 : 40;
+  const starCount = isMobile ? 30 : 80; // Több csillag
 
   useEffect(() => {
     const handleResize = () => {
@@ -89,10 +89,10 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             paddingTop: '0'
           }}
         >
-          {/* Deep purple gradient background */}
-          <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-purple-950 via-purple-900 to-indigo-950" style={{ opacity: 0.95, borderRadius: 0 }}></div>
+          {/* Homályos háttér overlay - átlátszó, blur */}
+          <div className="absolute inset-0 w-full h-full min-h-screen bg-black/40 backdrop-blur-md" style={{ borderRadius: 0 }}></div>
 
-          {/* Animated golden stars - more, faster, fade in/out */}
+          {/* Animated golden stars - több csillag */}
           {contentVisible && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               {[...Array(starCount)].map((_, i) => {
@@ -135,7 +135,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             </div>
           )}
 
-          {/* ZOOM WRAPPER with MASSIVE GOLD GLOW */}
+          {/* ZOOM WRAPPER - Pajzs mögött pulzáló arany fénysugár */}
           <div 
             className="relative z-10"
             style={{ 
@@ -144,17 +144,26 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
               transition: 'transform 1200ms cubic-bezier(0.34, 1.56, 0.64, 1) 1000ms, opacity 1200ms ease-in-out 1000ms',
               transformOrigin: 'center center',
               willChange: contentVisible ? 'transform, opacity' : 'auto',
-              filter: isMobile ? 'none' : 'drop-shadow(0 0 80px rgba(250,204,21,0.9)) drop-shadow(0 0 140px rgba(234,179,8,0.7)) drop-shadow(0 0 200px rgba(250,204,21,0.5))',
-              animation: isMobile ? 'none' : 'welcomePulse 2.5s ease-in-out infinite'
             }}
           >
+            {/* Pulzáló arany fénysugár háttér - mint a gombnál */}
+            <div 
+              className="absolute inset-0"
+              style={{
+                filter: 'drop-shadow(0 0 60px rgba(250,204,21,1)) drop-shadow(0 0 100px rgba(234,179,8,0.9)) drop-shadow(0 0 150px rgba(250,204,21,0.7))',
+                animation: 'welcomeShieldPulse 2s ease-in-out infinite',
+                zIndex: -1
+              }}
+            >
+              <div className="w-full h-full bg-gradient-radial from-yellow-400/30 via-yellow-500/20 to-transparent blur-3xl"></div>
+            </div>
             <style>{`
-              @keyframes welcomePulse {
+              @keyframes welcomeShieldPulse {
                 0%, 100% { 
-                  filter: drop-shadow(0 0 80px rgba(250,204,21,0.9)) drop-shadow(0 0 140px rgba(234,179,8,0.7)) drop-shadow(0 0 200px rgba(250,204,21,0.5));
+                  filter: drop-shadow(0 0 60px rgba(250,204,21,1)) drop-shadow(0 0 100px rgba(234,179,8,0.9)) drop-shadow(0 0 150px rgba(250,204,21,0.7));
                 }
                 50% { 
-                  filter: drop-shadow(0 0 100px rgba(250,204,21,1)) drop-shadow(0 0 180px rgba(234,179,8,0.9)) drop-shadow(0 0 240px rgba(250,204,21,0.7));
+                  filter: drop-shadow(0 0 80px rgba(250,204,21,1)) drop-shadow(0 0 140px rgba(234,179,8,1)) drop-shadow(0 0 200px rgba(250,204,21,0.9));
                 }
               }
             `}</style>
