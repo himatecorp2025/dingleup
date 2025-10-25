@@ -19,42 +19,42 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
   const timerColor = getTimerColor();
   
   return (
-    <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center" style={{ perspective: '800px' }}>
-      {/* BASE SHADOW */}
-      <div className="absolute inset-0 bg-black/60 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+    <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
+      {/* BASE SHADOW - Enhanced */}
+      <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(6px, 6px) translateZ(-20px)', filter: 'blur(10px)' }} aria-hidden />
       
-      {/* OUTER DECORATIVE RING - Animated based on time */}
+      {/* OUTER DECORATIVE RING - Animated based on time with enhanced 3D */}
       <div 
-        className={`absolute inset-0 rounded-full border-2 shadow-xl transition-all duration-500 ${shouldBlink ? 'animate-pulse' : ''}`}
+        className={`absolute inset-0 rounded-full border-4 shadow-2xl transition-all duration-500 ${shouldBlink ? 'animate-pulse' : ''}`}
         style={{ 
-          transform: 'translateZ(0px)',
+          transform: 'translateZ(5px)',
           background: timeLeft >= 8 
             ? 'linear-gradient(135deg, #22c55e, #16a34a, #15803d)' // Bright green gradient
             : timeLeft >= 4 
             ? 'linear-gradient(135deg, #fb923c, #f59e0b, #ea580c)' // Bright orange gradient
             : 'linear-gradient(135deg, #f87171, #ef4444, #dc2626)', // Bright red gradient
           borderColor: timeLeft >= 8 
-            ? 'rgba(74, 222, 128, 0.7)' // Bright green border
+            ? 'rgba(74, 222, 128, 0.9)' // Bright green border
             : timeLeft >= 4 
-            ? 'rgba(251, 146, 60, 0.7)' // Bright orange border
-            : 'rgba(248, 113, 113, 0.7)', // Bright red border
+            ? 'rgba(251, 146, 60, 0.9)' // Bright orange border
+            : 'rgba(248, 113, 113, 0.9)', // Bright red border
           boxShadow: timeLeft >= 8
-            ? '0 0 25px rgba(74, 222, 128, 0.8), 0 8px 25px rgba(0,0,0,0.5)' // Bright green glow
+            ? '0 0 35px rgba(74, 222, 128, 1), 0 12px 35px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' // Bright green glow
             : timeLeft >= 4
-            ? '0 0 25px rgba(251, 146, 60, 0.8), 0 8px 25px rgba(0,0,0,0.5)' // Bright orange glow
-            : '0 0 25px rgba(248, 113, 113, 0.8), 0 8px 25px rgba(0,0,0,0.5)' // Bright red glow
+            ? '0 0 35px rgba(251, 146, 60, 1), 0 12px 35px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' // Bright orange glow
+            : '0 0 35px rgba(248, 113, 113, 1), 0 12px 35px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' // Bright red glow
         }} 
         aria-hidden 
       />
       
-      {/* MIDDLE FRAME */}
-      <div className="absolute inset-[4px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+      {/* MIDDLE FRAME - Enhanced depth */}
+      <div className="absolute inset-[4px] rounded-full bg-gradient-to-b from-black/60 via-transparent to-black/80" style={{ boxShadow: 'inset 0 3px 6px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
       
-      {/* INNER LAYER */}
-      <div className="absolute inset-[6px] rounded-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.1), inset 0 -12px 24px rgba(0,0,0,0.5)', transform: 'translateZ(20px)' }} aria-hidden />
+      {/* INNER LAYER - Enhanced 3D */}
+      <div className="absolute inset-[6px] rounded-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.15), inset 0 -16px 32px rgba(0,0,0,0.6)', transform: 'translateZ(25px)' }} aria-hidden />
       
-      {/* SPECULAR HIGHLIGHT */}
-      <div className="absolute inset-[6px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
+      {/* SPECULAR HIGHLIGHT - Enhanced */}
+      <div className="absolute inset-[6px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(35px)' }} aria-hidden />
       
       {/* Timer SVG Rings */}
       <div className="relative" style={{ transform: 'translateZ(40px)' }}>

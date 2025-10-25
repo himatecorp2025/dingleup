@@ -550,7 +550,7 @@ return (
                 <path d="M8 5.14v14l11-7-11-7z"/>
               </svg>
               <span 
-                className="font-black text-sm sm:text-base md:text-lg lg:text-xl" 
+                className="font-black text-base sm:text-xl md:text-2xl lg:text-3xl" 
                 style={{ 
                   textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
                 }}
@@ -613,14 +613,14 @@ return (
                 <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
               </svg>
               {hasActiveBooster ? (
-                <span className="text-sm sm:text-base md:text-lg font-black">AKTÍV BOOSTER ({timeRemaining})</span>
+                <span className="text-base sm:text-xl md:text-2xl font-black">AKTÍV BOOSTER ({timeRemaining})</span>
               ) : availableBoosters.length > 0 ? (
-                <span className="text-sm sm:text-base md:text-lg font-black">
+                <span className="text-base sm:text-xl md:text-2xl font-black">
                   BOOSTER AKTIVÁLÁS
-                  <span className="block text-[10px] sm:text-xs md:text-sm mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
+                  <span className="block text-xs sm:text-sm md:text-base mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
                 </span>
               ) : (
-                <span className="font-black text-sm sm:text-base md:text-lg">BOOSTERS</span>
+                <span className="font-black text-base sm:text-xl md:text-2xl">BOOSTERS</span>
               )}
             </DiamondButton>
           </div>

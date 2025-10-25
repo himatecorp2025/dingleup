@@ -143,7 +143,7 @@ export const QuestionCard = ({
           <TimerCircle timeLeft={timeLeft} />
         </div>
 
-        <div className="-mt-1 sm:-mt-2 md:-mt-3 pb-5 sm:pb-6 md:pb-8">
+        <div className="-mt-1 sm:-mt-2 md:-mt-3 pb-6 sm:pb-8 md:pb-10">
           <MillionaireQuestion questionNumber={questionNumber}>
             {question.question}
           </MillionaireQuestion>

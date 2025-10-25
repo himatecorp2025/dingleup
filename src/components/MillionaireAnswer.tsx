@@ -103,70 +103,74 @@ export const MillionaireAnswer = ({
         onClick={onClick}
         disabled={disabled}
         className="w-[90%] touch-manipulation group relative"
-        style={{ perspective: '1000px' }}
+        style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
       >
-      {/* BASE SHADOW */}
+      {/* BASE SHADOW - Enhanced */}
       <div 
-        className="absolute inset-0 bg-black/70 rounded-2xl" 
+        className="absolute inset-0 bg-black/80 rounded-2xl" 
         style={{ 
-          transform: 'translate(6px, 6px)', 
-          filter: 'blur(8px)',
+          transform: 'translate(8px, 8px) translateZ(-10px)', 
+          filter: 'blur(12px)',
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)' 
         }} 
         aria-hidden 
       />
       
-      {/* OUTER FRAME */}
+      {/* OUTER FRAME - Enhanced */}
       <div 
-        className={`absolute inset-0 bg-gradient-to-br opacity-90 border-4 shadow-2xl transition-all duration-300 ${
-          showCorrectPulse ? 'from-green-400 via-green-500 to-green-600 border-green-300/80 animate-pulse' :
-          isDoubleChoiceActive ? 'from-orange-400 via-orange-500 to-orange-600 border-orange-300/80' :
-          isCorrect ? 'from-green-400 via-green-500 to-green-600 border-green-300/80' :
-          isWrong ? 'from-red-400 via-red-500 to-red-600 border-red-300/80' :
-          'from-yellow-400 via-yellow-500 to-yellow-600 border-yellow-300/80'
+        className={`absolute inset-0 bg-gradient-to-br opacity-95 border-4 shadow-2xl transition-all duration-300 ${
+          showCorrectPulse ? 'from-green-400 via-green-500 to-green-600 border-green-300/90 animate-pulse' :
+          isDoubleChoiceActive ? 'from-orange-400 via-orange-500 to-orange-600 border-orange-300/90' :
+          isCorrect ? 'from-green-400 via-green-500 to-green-600 border-green-300/90' :
+          isWrong ? 'from-red-400 via-red-500 to-red-600 border-red-300/90' :
+          'from-yellow-400 via-yellow-500 to-yellow-600 border-yellow-300/90'
         }`}
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          transform: 'translateZ(0px)'
+          transform: 'translateZ(0px)',
+          boxShadow: showCorrectPulse ? '0 0 30px rgba(74, 222, 128, 0.8), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
+                     isCorrect ? '0 0 30px rgba(74, 222, 128, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
+                     isWrong ? '0 0 30px rgba(248, 113, 113, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
+                     '0 0 20px rgba(250, 204, 21, 0.4), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)'
         }}
         aria-hidden
       />
       
-      {/* MIDDLE FRAME */}
+      {/* MIDDLE FRAME - Enhanced */}
       <div 
-        className="absolute inset-[5px] bg-gradient-to-b from-black/50 via-transparent to-black/70"
+        className="absolute inset-[5px] bg-gradient-to-b from-black/60 via-transparent to-black/80"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)',
-          transform: 'translateZ(10px)'
+          boxShadow: 'inset 0 3px 6px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6)',
+          transform: 'translateZ(15px)'
         }}
         aria-hidden
       />
       
-      {/* INNER LAYER */}
+      {/* INNER LAYER - Enhanced */}
       <div 
         className={`absolute inset-[7px] bg-gradient-to-br transition-all duration-300 ${
-          showCorrectPulse ? 'from-green-500/80 to-green-700/80' :
-          isDoubleChoiceActive ? 'from-orange-500/80 to-orange-700/80' :
-          isCorrect ? 'from-green-500/80 to-green-700/80' :
-          isWrong ? 'from-red-500/80 to-red-700/80' :
-          'from-slate-900/80 to-slate-950/80'
+          showCorrectPulse ? 'from-green-500/90 to-green-700/90' :
+          isDoubleChoiceActive ? 'from-orange-500/90 to-orange-700/90' :
+          isCorrect ? 'from-green-500/90 to-green-700/90' :
+          isWrong ? 'from-red-500/90 to-red-700/90' :
+          'from-slate-900/90 to-slate-950/90'
         }`}
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.15), inset 0 -12px 24px rgba(0,0,0,0.4)',
-          transform: 'translateZ(20px)'
+          boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
+          transform: 'translateZ(25px)'
         }}
         aria-hidden
       />
       
-      {/* SPECULAR HIGHLIGHT */}
+      {/* SPECULAR HIGHLIGHT - Enhanced */}
       <div 
         className="absolute inset-[7px] pointer-events-none"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)',
-          transform: 'translateZ(30px)'
+          background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
+          transform: 'translateZ(35px)'
         }}
         aria-hidden
       />

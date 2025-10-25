@@ -7,49 +7,50 @@ interface MillionaireQuestionProps {
 
 export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
   return (
-    <div className="relative w-full mb-3" style={{ perspective: '1000px' }}>
-      {/* BASE SHADOW */}
-      <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)', clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)' }} aria-hidden />
+    <div className="relative w-full mb-3" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
+      {/* BASE SHADOW - Enhanced */}
+      <div className="absolute inset-0 bg-black/80 rounded-2xl" style={{ transform: 'translate(8px, 8px) translateZ(-10px)', filter: 'blur(12px)', clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)' }} aria-hidden />
       
-      {/* OUTER FRAME */}
+      {/* OUTER FRAME - Enhanced */}
       <div 
-        className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 opacity-90 border-3 border-cyan-300/80 shadow-2xl"
+        className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 opacity-95 border-4 border-cyan-300/90 shadow-2xl"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          transform: 'translateZ(0px)'
+          transform: 'translateZ(0px)',
+          boxShadow: '0 0 30px rgba(34, 211, 238, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)'
         }}
         aria-hidden
       />
       
-      {/* MIDDLE FRAME */}
+      {/* MIDDLE FRAME - Enhanced */}
       <div 
-        className="absolute inset-[4px] bg-gradient-to-b from-black/50 via-transparent to-black/70"
+        className="absolute inset-[4px] bg-gradient-to-b from-black/60 via-transparent to-black/80"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)',
-          transform: 'translateZ(10px)'
+          boxShadow: 'inset 0 3px 6px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6)',
+          transform: 'translateZ(15px)'
         }}
         aria-hidden
       />
       
-      {/* INNER LAYER */}
+      {/* INNER LAYER - Enhanced */}
       <div 
-        className="absolute inset-[6px] bg-gradient-to-br from-slate-900/80 to-slate-950/80"
+        className="absolute inset-[6px] bg-gradient-to-br from-slate-900/90 to-slate-950/90"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.15), inset 0 -12px 24px rgba(0,0,0,0.4)',
-          transform: 'translateZ(20px)'
+          boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
+          transform: 'translateZ(25px)'
         }}
         aria-hidden
       />
       
-      {/* SPECULAR HIGHLIGHT */}
+      {/* SPECULAR HIGHLIGHT - Enhanced */}
       <div 
         className="absolute inset-[6px] pointer-events-none"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)',
-          transform: 'translateZ(30px)'
+          background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
+          transform: 'translateZ(35px)'
         }}
         aria-hidden
       />
