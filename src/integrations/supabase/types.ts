@@ -2611,6 +2611,17 @@ export type Database = {
         }
         Relationships: []
       }
+      leaderboard_public: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          rank: number | null
+          total_correct_answers: number | null
+          updated_at: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
       performance_by_page: {
         Row: {
           avg_lcp_ms: number | null
@@ -2646,6 +2657,33 @@ export type Database = {
           id?: string | null
           invitation_code?: string | null
           username?: string | null
+        }
+        Relationships: []
+      }
+      weekly_rankings_public: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          rank: number | null
+          total_correct_answers: number | null
+          username: string | null
+          week_start: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          rank?: number | null
+          total_correct_answers?: number | null
+          username?: string | null
+          week_start?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          rank?: number | null
+          total_correct_answers?: number | null
+          username?: string | null
+          week_start?: string | null
         }
         Relationships: []
       }
@@ -2706,6 +2744,7 @@ export type Database = {
       }
       distribute_weekly_rewards: { Args: never; Returns: undefined }
       generate_invitation_code: { Args: never; Returns: string }
+      get_current_week_reward: { Args: never; Returns: Json }
       get_current_week_start: { Args: never; Returns: string }
       get_invitation_tier_reward: {
         Args: { accepted_count: number }
