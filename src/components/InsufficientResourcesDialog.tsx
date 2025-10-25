@@ -461,19 +461,21 @@ export const InsufficientResourcesDialog = ({
                     </div>
                   </div>
 
-                  {/* ELFOGADOM button (ZÖLD) - SAME AS DAILY GIFT */}
+                  {/* MEGSZERZEM MOST! button (ZÖLD) - SAME AS DAILY GIFT */}
                   <div 
                     ref={buttonWrapperRef}
                     className="flex justify-center mt-auto mb-[4%]"
                     style={{
                       width: 'var(--sync-width, 100%)',
-                      maxWidth: '100%'
+                      maxWidth: '100%',
+                      transform: 'translateZ(0)', // Force GPU acceleration for better rendering
+                      willChange: 'auto'
                     }}
                   >
                     <HexAcceptButton 
                       onClick={handleStartPayment} 
                       disabled={isLoadingPayment}
-                      style={{ width: 'var(--sync-width)' }} 
+                      style={{ width: 'var(--sync-width)', transform: 'translateZ(0)' }} 
                     >
                       {isLoadingPayment ? 'Betöltés...' : 'MEGSZERZEM MOST!'}
                     </HexAcceptButton>
