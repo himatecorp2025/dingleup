@@ -16,7 +16,7 @@ export const LeaderboardCarousel = () => {
   useEffect(() => {
     fetchTopPlayers();
     
-    // Realtime frissítés - azonnal lássuk az új eredményeket
+    // Realtime frissítés
     const interval = setInterval(fetchTopPlayers, 10000);
     return () => clearInterval(interval);
   }, []);
@@ -30,9 +30,10 @@ export const LeaderboardCarousel = () => {
         .limit(25);
 
       if (error) throw error;
+      console.log('[LeaderboardCarousel] Fetched players:', data?.length);
       setTopPlayers(data || []);
     } catch (error) {
-      console.error('Error fetching top players:', error);
+      console.error('[LeaderboardCarousel] Error fetching top players:', error);
     }
   };
 
@@ -42,12 +43,11 @@ export const LeaderboardCarousel = () => {
 
     let animationFrameId: number;
     let scrollPosition = 0;
-    const scrollSpeed = 1.2; // Folyamatos animáció
+    const scrollSpeed = 1.5;
 
     const scroll = () => {
       scrollPosition += scrollSpeed;
       
-      // Reset pozíció a végén (seamless loop)
       if (scrollPosition >= container.scrollWidth / 2) {
         scrollPosition = 0;
       }
@@ -63,34 +63,47 @@ export const LeaderboardCarousel = () => {
     };
   }, [topPlayers]);
 
-  const getMedalColor = (index: number) => {
+  const getHexagonColor = (index: number) => {
     if (index === 0) return 'from-yellow-400 via-yellow-500 to-yellow-600'; // Arany
     if (index === 1) return 'from-gray-300 via-gray-400 to-gray-500'; // Ezüst
     if (index === 2) return 'from-orange-400 via-orange-500 to-orange-600'; // Bronz
-    return 'from-purple-500 via-purple-600 to-purple-700'; // Lilás
+    return 'from-purple-500 via-purple-600 to-purple-700'; // Lila
   };
 
+  const getCrownColor = (index: number) => {
+    if (index === 0) return 'text-yellow-300'; // Arany korona
+    if (index === 1) return 'text-gray-200'; // Ezüst korona
+    if (index === 2) return 'text-orange-300'; // Bronz korona
+    return '';
+  };
+
+  if (topPlayers.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="w-full">
+    <div className="w-full py-2">
       <h3 className="text-center text-xs sm:text-sm font-black text-white mb-2 drop-shadow-lg">
         🏆 TOP 25 JÁTÉKOS 🏆
       </h3>
       
       <div
         ref={scrollContainerRef}
-        className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20"
+        className="overflow-x-hidden whitespace-nowrap h-20 sm:h-24"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <div className="inline-flex gap-2 sm:gap-3">
           {/* Duplikált tömb a seamless loophoz */}
           {[...topPlayers, ...topPlayers].map((player, index) => {
             const actualIndex = index % topPlayers.length;
+            const showCrown = actualIndex < 3;
+            
             return (
               <div
                 key={`${player.user_id}-${index}`}
                 className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 transform hover:scale-110 transition-transform duration-200"
               >
-                {/* BASE SHADOW (3D mélység) */}
+                {/* BASE SHADOW */}
                 <div
                   className="absolute clip-hexagon"
                   style={{
@@ -104,9 +117,9 @@ export const LeaderboardCarousel = () => {
                   aria-hidden
                 />
 
-                {/* OUTER FRAME - élénk színekkel */}
+                {/* OUTER FRAME */}
                 <div
-                  className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getMedalColor(actualIndex)} border-2 shadow-xl`}
+                  className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(actualIndex)} border-2 shadow-xl`}
                   style={{
                     borderColor: actualIndex === 0 ? '#fbbf24' : 
                                 actualIndex === 1 ? '#d1d5db' : 
@@ -156,19 +169,15 @@ export const LeaderboardCarousel = () => {
                   aria-hidden
                 />
 
-                {/* Content - felhasználónév + pontszám */}
+                {/* Content - korona az első 3 helyezettnél */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-1">
-                  {actualIndex < 3 && (
-                    <Crown className={`${actualIndex === 0 ? 'w-3 h-3 sm:w-4 sm:h-4' : 'w-2.5 h-2.5 sm:w-3 sm:h-3'} mb-0.5 ${
-                      actualIndex === 0 ? 'text-yellow-200' :
-                      actualIndex === 1 ? 'text-gray-200' :
-                      'text-orange-200'
-                    }`} />
+                  {showCrown && (
+                    <Crown className={`w-3 h-3 sm:w-4 sm:h-4 mb-0.5 ${getCrownColor(actualIndex)} drop-shadow-lg`} />
                   )}
-                  <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg">
+                  <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
                     {player.username}
                   </p>
-                  <p className="text-xs sm:text-sm font-black text-white drop-shadow-lg">
+                  <p className="text-xs sm:text-sm font-black text-white drop-shadow-lg" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
                     {player.total_correct_answers}
                   </p>
                 </div>

@@ -535,8 +535,8 @@ return (
           )}
         </DiamondButton>
 
-        {/* Leaderboard Carousel - Top 25 players - Fixált az alsó menüsáv fölé */}
-        <div className="fixed left-0 right-0 z-40" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))' }}>
+        {/* Leaderboard Carousel - Top 25 players - Fixált az alsó menüsáv fölé 5% távolsággal */}
+        <div className="fixed left-0 right-0 z-40" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 5vh)' }}>
           <LeaderboardCarousel />
         </div>
 
