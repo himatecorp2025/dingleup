@@ -117,18 +117,25 @@ export const LeaderboardCarousel = () => {
     }
   };
 
-  // Auto-scroll logika
+  // Auto-scroll logika - VÉGTELEN LOOP
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || topPlayers.length === 0) return;
     let animationFrameId: number;
     let scrollPosition = 0;
     const scrollSpeed = 1.5;
+    
     const scroll = () => {
       if (!autoScrollPausedRef.current) {
         scrollPosition += scrollSpeed;
-        if (scrollPosition >= container.scrollWidth / 2) scrollPosition = 0;
-        container.scrollLeft = scrollPosition;
+        // Ha elérte a lista felét (duplikált tartalom miatt), visszaugrik az elejére
+        const halfWidth = container.scrollWidth / 2;
+        if (scrollPosition >= halfWidth) {
+          scrollPosition = 0;
+          container.scrollLeft = 0;
+        } else {
+          container.scrollLeft = scrollPosition;
+        }
       }
       animationFrameId = requestAnimationFrame(scroll);
     };
@@ -248,11 +255,11 @@ export const LeaderboardCarousel = () => {
                 <div className="absolute inset-[2px] clip-hexagon" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)' }} aria-hidden />
                 {/* INNER LAYER */}
                 <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
-                {/* Content */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-1">
-                  {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 ${getCrownColor(actualIndex)}`} />}
-                  <p className="text-[10px] sm:text-xs font-black text-white drop-shadow-lg">{rank}.</p>
-                  <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
+                {/* Content - MÓDOSÍTOTT ELRENDEZÉS */}
+                <div className="absolute inset-0 flex flex-col items-center justify-start z-10 px-1 pt-1">
+                  {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 -mt-0.5 ${getCrownColor(actualIndex)}`} />}
+                  <p className="text-[9px] sm:text-[10px] font-black text-white drop-shadow-lg mt-0.5">{rank}.</p>
+                  <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg flex-1 flex items-center justify-center">{player.username}</p>
                 </div>
               </div>
             );
