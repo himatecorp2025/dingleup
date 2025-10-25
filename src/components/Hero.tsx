@@ -64,19 +64,72 @@ const Hero = () => {
             </p>
           </div>
 
-          {/* Features Pills */}
+          {/* Features Pills - Deep 3D */}
           <div className="flex flex-wrap justify-center gap-3 mb-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 hover:bg-white/20 transition-all hover:scale-105">
-              <Trophy className="w-5 h-5 text-yellow-400" />
-              <span className="text-white font-semibold">Heti Rangsor</span>
+            <div className="relative" style={{ perspective: '1000px' }}>
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 opacity-90 border-2 border-yellow-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[5px] rounded-full bg-gradient-to-br from-white/20 via-white/10 to-black/20 backdrop-blur-sm" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
+              
+              <div className="relative flex items-center gap-2 px-6 py-3 transition-all hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+                <Trophy className="w-5 h-5 text-yellow-400 drop-shadow-lg" />
+                <span className="text-white font-semibold drop-shadow-lg">Heti Rangsor</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 hover:bg-white/20 transition-all hover:scale-105">
-              <Zap className="w-5 h-5 text-accent" />
-              <span className="text-white font-semibold">4 Kategória</span>
+            
+            <div className="relative" style={{ perspective: '1000px' }}>
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-2 border-purple-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[5px] rounded-full bg-gradient-to-br from-white/20 via-white/10 to-black/20 backdrop-blur-sm" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
+              
+              <div className="relative flex items-center gap-2 px-6 py-3 transition-all hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+                <Zap className="w-5 h-5 text-accent drop-shadow-lg" />
+                <span className="text-white font-semibold drop-shadow-lg">4 Kategória</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 hover:bg-white/20 transition-all hover:scale-105">
-              <Sparkles className="w-5 h-5 text-purple-400" />
-              <span className="text-white font-semibold">Prémium Jutalmak</span>
+            
+            <div className="relative" style={{ perspective: '1000px' }}>
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-700 via-pink-600 to-pink-900 opacity-90 border-2 border-pink-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[5px] rounded-full bg-gradient-to-br from-white/20 via-white/10 to-black/20 backdrop-blur-sm" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
+              
+              <div className="relative flex items-center gap-2 px-6 py-3 transition-all hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+                <Sparkles className="w-5 h-5 text-purple-400 drop-shadow-lg" />
+                <span className="text-white font-semibold drop-shadow-lg">Prémium Jutalmak</span>
+              </div>
             </div>
           </div>
 
@@ -141,19 +194,72 @@ const Hero = () => {
             </button>
           </div>
 
-          {/* Stats */}
+          {/* Stats - Deep 3D */}
           <div className="grid grid-cols-3 gap-4 mt-8 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '0.8s' }}>
-            <div className="text-center p-4 bg-gradient-to-br from-purple-600/30 to-blue-600/30 backdrop-blur-sm rounded-2xl border-2 border-purple-400/50 shadow-lg hover:border-purple-400 transition-all hover:scale-105">
-              <div className="text-3xl font-black text-yellow-400 mb-1 drop-shadow-lg">500+</div>
-              <div className="text-xs text-white font-bold">Kérdés</div>
+            <div className="relative rounded-2xl p-4 text-center transform-gpu" style={{ perspective: '1000px' }}>
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-blue-900 opacity-90 border-3 border-purple-400/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-br from-purple-600/40 to-blue-600/40 backdrop-blur-sm" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.15), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+              
+              <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
+                <div className="text-3xl font-black text-yellow-400 mb-1 drop-shadow-[0_0_12px_rgba(250,204,21,0.8)]">500+</div>
+                <div className="text-xs text-white font-bold drop-shadow-lg">Kérdés</div>
+              </div>
             </div>
-            <div className="text-center p-4 bg-gradient-to-br from-purple-600/30 to-blue-600/30 backdrop-blur-sm rounded-2xl border-2 border-purple-400/50 shadow-lg hover:border-purple-400 transition-all hover:scale-105">
-              <div className="text-3xl font-black text-yellow-400 mb-1 drop-shadow-lg">4</div>
-              <div className="text-xs text-white font-bold">Témakör</div>
+            
+            <div className="relative rounded-2xl p-4 text-center transform-gpu" style={{ perspective: '1000px' }}>
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-blue-900 opacity-90 border-3 border-purple-400/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-br from-purple-600/40 to-blue-600/40 backdrop-blur-sm" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.15), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+              
+              <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
+                <div className="text-3xl font-black text-yellow-400 mb-1 drop-shadow-[0_0_12px_rgba(250,204,21,0.8)]">4</div>
+                <div className="text-xs text-white font-bold drop-shadow-lg">Témakör</div>
+              </div>
             </div>
-            <div className="text-center p-4 bg-gradient-to-br from-purple-600/30 to-blue-600/30 backdrop-blur-sm rounded-2xl border-2 border-purple-400/50 shadow-lg hover:border-purple-400 transition-all hover:scale-105">
-              <div className="text-3xl font-black text-yellow-400 mb-1 drop-shadow-lg">∞</div>
-              <div className="text-xs text-white font-bold">Szórakozás</div>
+            
+            <div className="relative rounded-2xl p-4 text-center transform-gpu" style={{ perspective: '1000px' }}>
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-blue-900 opacity-90 border-3 border-purple-400/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-br from-purple-600/40 to-blue-600/40 backdrop-blur-sm" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.15), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+              
+              <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
+                <div className="text-3xl font-black text-yellow-400 mb-1 drop-shadow-[0_0_12px_rgba(250,204,21,0.8)]">∞</div>
+                <div className="text-xs text-white font-bold drop-shadow-lg">Szórakozás</div>
+              </div>
             </div>
           </div>
         </div>
