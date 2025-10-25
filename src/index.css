@@ -507,12 +507,13 @@ body {
 }
 
 @keyframes diagonal-shine {
-  0% {
-    transform: translate(-100%, -100%);
-  }
-  100% {
-    transform: translate(100%, 100%);
-  }
+  0% { transform: translate(-100%, -100%); }
+  100% { transform: translate(100%, 100%); }
+}
+
+@keyframes shine-120 {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 200%; }
 }
 
 @keyframes gold-spin {

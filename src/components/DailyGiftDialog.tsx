@@ -232,14 +232,7 @@ const DailyGiftDialog = ({
           <div className={`relative z-10 transition-all duration-[220ms] ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.96]'}`}
                style={{ transitionDelay: '300ms' }}>
             
-            {/* Purple radial glow behind shield */}
-            <div className="absolute inset-0 -z-10"
-                 style={{
-                   background: 'radial-gradient(ellipse 120% 80% at 50% 45%, rgba(147,51,234,0.75) 0%, rgba(126,34,206,0.45) 35%, rgba(88,28,135,0.25) 60%, transparent 75%)',
-                   width: '180%', height: '180%', left: '-40%', top: '-40%', 
-                   filter: 'blur(32px)',
-                   animation: 'pulse 3s ease-in-out infinite'
-                 }} />
+            {/* Background glow behind shield - removed to prevent purple pulse */}
 
             <HexShieldFrame>
               {/* Top Hex Badge - "DAILY GIFT" - 3D GOLD FRAME */}
