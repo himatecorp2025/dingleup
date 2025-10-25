@@ -153,17 +153,19 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="overflow-auto p-0 border-0 bg-transparent w-screen h-screen max-w-none [&>button[data-dialog-close]]:hidden"
+        className="overflow-auto p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
         style={{ 
           margin: 0,
-          maxHeight: '100vh'
+          maxHeight: '100vh',
+          borderRadius: 0
         }}
       >
         <div 
           className="fixed inset-0 flex flex-col items-center justify-center py-4 overflow-y-auto"
+          style={{ borderRadius: 0 }}
         >
-          {/* Background layer - NO ROUNDED CORNERS, 75%+ transparent */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-800 via-purple-800 to-blue-800" style={{ opacity: 0.25 }}></div>
+          {/* Background layer - Deep dark blue, 85% transparent */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
 
           {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
           {contentVisible && burstActive && (
@@ -383,7 +385,7 @@ const DailyGiftDialog = ({
                          boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
                        }} />
                   
-                  {/* Inner purple crystal */}
+                  {/* Inner purple crystal - NO SHINE */}
                   <div className="absolute inset-[6px] rounded-xl"
                        style={{
                          background: 'radial-gradient(ellipse at 40% 30%, hsl(var(--dup-purple-400)), hsl(var(--dup-purple-600)) 60%, hsl(var(--dup-purple-800)))',
@@ -393,7 +395,7 @@ const DailyGiftDialog = ({
                          `
                        }} />
                   
-                  {/* Specular highlight */}
+                  {/* Specular highlight only */}
                   <div className="absolute inset-[6px] rounded-xl pointer-events-none"
                        style={{
                          background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'

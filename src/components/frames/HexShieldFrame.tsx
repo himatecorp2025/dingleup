@@ -18,7 +18,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
            height: 'clamp(540px, 88vh, 680px)'
          }}>
       
-      {/* 45° Casino shine - LEFT-origin (0° = left), 45° tilt */}
+      {/* 45° Casino shine - diagonal (bottom-left to top-right) */}
       <div 
         className="absolute pointer-events-none"
         style={{
@@ -32,10 +32,12 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
         }}
       >
         <div 
-          className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%]"
+          className="absolute w-[200%] h-[200%]"
           style={{
-            background: 'linear-gradient(45deg, transparent 46%, rgba(255,215,0,0.7) 50%, transparent 54%)',
-            animation: 'slot-shine 3s linear infinite'
+            top: '-50%',
+            left: '-50%',
+            background: 'linear-gradient(45deg, transparent 48%, rgba(255,215,0,0.75) 50%, transparent 52%)',
+            animation: 'diagonal-shine 3s linear infinite'
           }}
         />
       </div>

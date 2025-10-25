@@ -506,6 +506,15 @@ body {
   }
 }
 
+@keyframes diagonal-shine {
+  0% {
+    transform: translate(-100%, -100%);
+  }
+  100% {
+    transform: translate(100%, 100%);
+  }
+}
+
 @keyframes gold-spin {
   0% {
     filter: hue-rotate(0deg) brightness(1);
