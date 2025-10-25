@@ -487,8 +487,8 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - Fixált a TOP 100 cím alatt */}
-        <div className="fixed left-0 right-0 z-[9001] flex justify-center" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 5.5rem)' }}>
+        {/* Booster Button - Fixált a TOP 100 cím felett, 2.5vh távolságra */}
+        <div className="fixed left-0 right-0 z-[9001] flex justify-center" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh)' }}>
           <DiamondButton
             data-tutorial="booster-button"
             onClick={async () => {
