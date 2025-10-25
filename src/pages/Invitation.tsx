@@ -128,9 +128,6 @@ const Invitation = () => {
           {/* SPECULAR HIGHLIGHT */}
           <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
           
-          {/* DIAGONAL STREAKS */}
-          <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px)', opacity: 0.7 }} aria-hidden />
-          
           {/* Icon */}
           <svg className="w-6 h-6 text-white relative z-10 -scale-x-100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -174,9 +171,6 @@ const Invitation = () => {
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
             
-            {/* DIAGONAL STREAKS */}
-            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.06) 10px, rgba(255,255,255,0.06) 14px)', opacity: 0.8 }} aria-hidden />
-            
             <div className="relative z-10">
               <label className="text-sm font-bold mb-2 block text-white drop-shadow-lg">Meghívó kód</label>
               <div className="flex gap-2">
@@ -215,9 +209,6 @@ const Invitation = () => {
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
-            
-            {/* DIAGONAL STREAKS */}
-            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.06) 10px, rgba(255,255,255,0.06) 14px)', opacity: 0.8 }} aria-hidden />
             
             <div className="relative z-10">
               <label className="text-sm font-bold mb-2 block text-white drop-shadow-lg">Meghívó link</label>
@@ -258,8 +249,6 @@ const Invitation = () => {
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.18) 40%, transparent 70%)' }} aria-hidden />
             
-            {/* DIAGONAL STREAKS */}
-            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.07) 10px, rgba(255,255,255,0.07) 14px)', opacity: 0.8 }} aria-hidden />
             
             <div className="relative z-10">
               <div className="flex items-center justify-center gap-2 mb-3">
@@ -314,8 +303,6 @@ const Invitation = () => {
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
             
-            {/* DIAGONAL STREAKS */}
-            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 14px)', opacity: 0.8 }} aria-hidden />
             
             <div className="relative z-10">
               <div className="flex items-center justify-center gap-2 mb-4">
@@ -418,8 +405,6 @@ const Invitation = () => {
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
             
-            {/* DIAGONAL STREAKS */}
-            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 14px)', opacity: 0.8 }} aria-hidden />
             
             <div className="relative z-10">
               <h2 className="text-lg font-black text-white mb-4 flex items-center gap-2">

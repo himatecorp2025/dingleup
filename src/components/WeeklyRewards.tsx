@@ -54,16 +54,6 @@ const WeeklyRewards = () => {
         }}
         aria-hidden
       />
-
-      {/* DIAGONAL LIGHT STREAKS */}
-      <div
-        className="absolute inset-[6px] rounded-2xl pointer-events-none"
-        style={{
-          background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.08) 10px, rgba(255,255,255,0.08) 14px)',
-          opacity: 0.6,
-        }}
-        aria-hidden
-      />
       
       {/* Belső arany keret - 3D enhanced */}
       <div 
@@ -112,7 +102,6 @@ const WeeklyRewards = () => {
           >
             {/* 3D Box Effect for reward cards */}
             <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.15) 0%, transparent 60%)' }} aria-hidden />
-            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.06) 8px, rgba(255,255,255,0.06) 10px)', opacity: 0.5 }} aria-hidden />
             <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ boxShadow: index < 3 ? 'inset 0 2px 8px rgba(255,255,255,0.2), inset 0 -2px 8px rgba(0,0,0,0.3)' : 'inset 0 1px 4px rgba(255,255,255,0.15), inset 0 -1px 4px rgba(0,0,0,0.2)' }} aria-hidden />
 
             <div className="relative z-10">
