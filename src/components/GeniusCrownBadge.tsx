@@ -45,21 +45,32 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
       {/* Glow effect */}
       <circle cx="12" cy="12" r="11" fill="url(#geniusGold)" opacity="0.3" filter="url(#geniusGlow)" />
 
-      {/* Bold "G" Letter Path */}
+      {/* Bold "G" Letter Path - Larger and bolder */}
       <path 
-        d="M 14.5 4 C 10 4 6 7 6 12 C 6 17 10 20 14.5 20 C 17 20 19 19 20 17.5 L 20 13 L 14.5 13 L 14.5 15 L 17.5 15 L 17.5 16.5 C 16.8 17.3 15.7 18 14.5 18 C 11.2 18 8.5 15.8 8.5 12 C 8.5 8.2 11.2 6 14.5 6 C 16.2 6 17.5 6.7 18.5 7.8 L 20.2 6.2 C 18.7 4.7 16.8 4 14.5 4 Z" 
+        d="M 14.5 2 C 9 2 4 6.5 4 12 C 4 17.5 9 22 14.5 22 C 17.5 22 20 20.8 21.2 18.8 L 21.2 12.5 L 14 12.5 L 14 15.5 L 18 15.5 L 18 17.5 C 17 18.8 15.8 19.5 14.5 19.5 C 10.5 19.5 7 16.5 7 12 C 7 7.5 10.5 4.5 14.5 4.5 C 16.5 4.5 18.2 5.3 19.5 6.8 L 21.5 4.8 C 19.5 2.8 17.2 2 14.5 2 Z" 
         fill="url(#geniusGold)"
         stroke="#92400E"
-        strokeWidth="0.8"
+        strokeWidth="1.2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
 
+      {/* Dark shadow for depth */}
+      <path 
+        d="M 14.5 2 C 9 2 4 6.5 4 12 C 4 17.5 9 22 14.5 22 C 17.5 22 20 20.8 21.2 18.8 L 21.2 12.5 L 14 12.5 L 14 15.5 L 18 15.5 L 18 17.5 C 17 18.8 15.8 19.5 14.5 19.5 C 10.5 19.5 7 16.5 7 12 C 7 7.5 10.5 4.5 14.5 4.5 C 16.5 4.5 18.2 5.3 19.5 6.8 L 21.5 4.8 C 19.5 2.8 17.2 2 14.5 2 Z" 
+        fill="none"
+        stroke="#654321"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.3"
+      />
+
       {/* Shine overlay on G */}
       <path 
-        d="M 14.5 4 C 10 4 6 7 6 12 C 6 17 10 20 14.5 20 C 17 20 19 19 20 17.5 L 20 13 L 14.5 13 L 14.5 15 L 17.5 15 L 17.5 16.5 C 16.8 17.3 15.7 18 14.5 18 C 11.2 18 8.5 15.8 8.5 12 C 8.5 8.2 11.2 6 14.5 6 C 16.2 6 17.5 6.7 18.5 7.8 L 20.2 6.2 C 18.7 4.7 16.8 4 14.5 4 Z" 
+        d="M 14.5 2 C 9 2 4 6.5 4 12 C 4 17.5 9 22 14.5 22 C 17.5 22 20 20.8 21.2 18.8 L 21.2 12.5 L 14 12.5 L 14 15.5 L 18 15.5 L 18 17.5 C 17 18.8 15.8 19.5 14.5 19.5 C 10.5 19.5 7 16.5 7 12 C 7 7.5 10.5 4.5 14.5 4.5 C 16.5 4.5 18.2 5.3 19.5 6.8 L 21.5 4.8 C 19.5 2.8 17.2 2 14.5 2 Z" 
         fill="url(#geniusShine)"
-        opacity="0.4"
+        opacity="0.5"
       />
 
       {/* Sparkle effects */}
@@ -132,9 +143,9 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* "G" Letter SVG centered */}
+              {/* "G" Letter SVG centered - larger to fill hexagon */}
               <div className="absolute inset-0 clip-hexagon flex items-center justify-center z-10">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 animate-pulse" style={{ animationDuration: '2s' }}>
+                <div className="w-10 h-10 sm:w-14 sm:h-14 animate-pulse" style={{ animationDuration: '2s' }}>
                   {geniusSvg}
                 </div>
               </div>

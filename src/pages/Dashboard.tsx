@@ -551,7 +551,15 @@ return (
               <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 5.14v14l11-7-11-7z"/>
               </svg>
-              <span className="font-black" style={{ fontSize: 'calc(0.875rem * 1.25)' }}>PLAY NOW</span>
+              <span 
+                className="font-black" 
+                style={{ 
+                  fontSize: 'calc(0.875rem * 1.25)',
+                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
+                }}
+              >
+                PLAY NOW
+              </span>
             </DiamondButton>
           </div>
         </div>
