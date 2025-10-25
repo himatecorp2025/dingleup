@@ -147,7 +147,7 @@ export const QuestionCard = ({
           {question.question}
         </MillionaireQuestion>
 
-        <div className="space-y-1.5">{question.answers.map((answer) => {
+        <div className="space-y-1.5 mt-8 sm:mt-10">{question.answers.map((answer) => {
             const isRemoved = removedAnswer === answer.key;
             const isSelected = selectedAnswer === answer.key;
             const isCorrect = answer.key === correctAnswerKey;
