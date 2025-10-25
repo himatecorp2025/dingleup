@@ -61,6 +61,7 @@ export interface UserProfile {
   subscriber_type: 'paid' | 'comp' | null;
   subscriber_since: string | null;
   subscriber_renew_at: string | null;
+  country_code: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -197,12 +197,12 @@ const Dashboard = () => {
 
 
 
+  // Realtime rank updates - instant refresh when any player's score changes
   useEffect(() => {
+    if (!userId) return;
+
     const fetchUserRank = async () => {
-      if (!userId) return;
-      
       try {
-        // Call the RPC function to get country-specific rank
         const { data, error } = await supabase
           .rpc('get_user_country_rank', { p_user_id: userId });
         
@@ -219,14 +219,54 @@ const Dashboard = () => {
       }
     };
     
-    // Fetch immediately
+    // Fetch immediately on mount
     fetchUserRank();
     
-    // Then fetch every 10 seconds for immediate updates
-    const interval = setInterval(fetchUserRank, 10000);
+    // Subscribe to realtime changes in profiles
+    const profilesChannel = supabase
+      .channel('rank-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles'
+        },
+        (payload) => {
+          // Check if the updated profile is from same country
+          const updatedProfile = payload.new as any;
+          if (profile?.country_code && updatedProfile.country_code === profile.country_code) {
+            fetchUserRank();
+          } else if (!profile?.country_code) {
+            // If current user has no country_code, still refresh (will show 0)
+            fetchUserRank();
+          }
+        }
+      )
+      .subscribe();
     
-    return () => clearInterval(interval);
-  }, [userId]);
+    // Also subscribe to game_results for immediate updates when games finish
+    const gameResultsChannel = supabase
+      .channel('game-results-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'game_results'
+        },
+        () => {
+          // New game result -> recalculate rank
+          fetchUserRank();
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(profilesChannel);
+      supabase.removeChannel(gameResultsChannel);
+    };
+  }, [userId, profile?.country_code]);
 
   const handleClaimDailyGift = async () => {
     const success = await claimDailyGift(refetchWallet);
