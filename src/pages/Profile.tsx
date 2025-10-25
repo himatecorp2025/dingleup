@@ -105,6 +105,55 @@ const Profile = () => {
     return name.charAt(0).toUpperCase();
   };
 
+  // SVG Icons
+  const HeartIcon = () => (
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(248,113,113,0.8)]" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
+    </svg>
+  );
+
+  const CoinsIcon = () => (
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" fill="#facc15" stroke="#d97706" strokeWidth="2"/>
+      <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
+      <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
+    </svg>
+  );
+
+  const TrophyIcon = () => (
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(74,222,128,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#4ade80" strokeWidth="2"/>
+      <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" stroke="#4ade80" strokeWidth="2" fill="#4ade80" fillOpacity="0.3"/>
+      <path d="M9 21h6M12 16v5" stroke="#4ade80" strokeWidth="2"/>
+    </svg>
+  );
+
+  const CalendarIcon = () => (
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(96,165,250,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="4" width="18" height="18" rx="2" stroke="#60a5fa" strokeWidth="2" fill="#60a5fa" fillOpacity="0.2"/>
+      <path d="M3 10h18M8 2v4M16 2v4" stroke="#60a5fa" strokeWidth="2"/>
+      <circle cx="8" cy="14" r="1" fill="#60a5fa"/>
+      <circle cx="12" cy="14" r="1" fill="#60a5fa"/>
+      <circle cx="16" cy="14" r="1" fill="#60a5fa"/>
+      <circle cx="8" cy="18" r="1" fill="#60a5fa"/>
+      <circle cx="12" cy="18" r="1" fill="#60a5fa"/>
+    </svg>
+  );
+
+  const PurpleTrophyIcon = () => (
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(192,132,252,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#c084fc" strokeWidth="2"/>
+      <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" stroke="#c084fc" strokeWidth="2" fill="#c084fc" fillOpacity="0.3"/>
+      <path d="M9 21h6M12 16v5" stroke="#c084fc" strokeWidth="2"/>
+    </svg>
+  );
+
+  const ZapIcon = () => (
+    <svg className="w-5 h-5 sm:w-6 sm:h-6 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]" viewBox="0 0 24 24" fill="#facc15" xmlns="http://www.w3.org/2000/svg">
+      <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="#d97706" strokeWidth="2" strokeLinejoin="round"/>
+    </svg>
+  );
+
   return (
     <div className="min-h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] fixed inset-0 overflow-y-auto" style={{
       paddingTop: 'env(safe-area-inset-top)',
@@ -281,7 +330,7 @@ const Profile = () => {
             
             {/* Content */}
             <div className="relative z-10">
-              <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-red-400 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(248,113,113,0.8)]" />
+              <HeartIcon />
               <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Életek</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.lives}/{profile.max_lives}</p>
             </div>
@@ -310,7 +359,7 @@ const Profile = () => {
             
             {/* Content */}
             <div className="relative z-10">
-              <Coins className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]" />
+              <CoinsIcon />
               <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Aranyérmék</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.coins}</p>
             </div>
@@ -339,7 +388,7 @@ const Profile = () => {
             
             {/* Content */}
             <div className="relative z-10">
-              <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-green-400 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(74,222,128,0.8)]" />
+              <TrophyIcon />
               <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Helyes válaszok</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.total_correct_answers || 0}</p>
             </div>
@@ -368,7 +417,7 @@ const Profile = () => {
             
             {/* Content */}
             <div className="relative z-10">
-              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(96,165,250,0.8)]" />
+              <CalendarIcon />
               <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Napi sorozat</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.daily_gift_streak} nap</p>
             </div>
@@ -404,7 +453,7 @@ const Profile = () => {
           
           {/* Content */}
           <div className="relative z-10">
-            <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(192,132,252,0.8)]" />
+            <PurpleTrophyIcon />
             <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Meghívó kód (kattints a másoláshoz)</p>
             <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.invitation_code}</p>
           </div>
@@ -430,7 +479,7 @@ const Profile = () => {
           {/* Content */}
           <div className="relative z-10">
             <h2 className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200 mb-3 sm:mb-4 flex items-center gap-2">
-              <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]" />
+              <ZapIcon />
               Booster készletem
             </h2>
             
