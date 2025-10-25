@@ -1659,6 +1659,33 @@ export type Database = {
         }
         Relationships: []
       }
+      rpc_rate_limits: {
+        Row: {
+          call_count: number
+          id: string
+          ip_address: string | null
+          rpc_name: string
+          user_id: string | null
+          window_start: string
+        }
+        Insert: {
+          call_count?: number
+          id?: string
+          ip_address?: string | null
+          rpc_name: string
+          user_id?: string | null
+          window_start?: string
+        }
+        Update: {
+          call_count?: number
+          id?: string
+          ip_address?: string | null
+          rpc_name?: string
+          user_id?: string | null
+          window_start?: string
+        }
+        Relationships: []
+      }
       session_details: {
         Row: {
           browser: string | null
@@ -2541,6 +2568,33 @@ export type Database = {
           id?: string
           last_shown_week?: string
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      welcome_bonus_attempts: {
+        Row: {
+          attempt_count: number
+          id: string
+          ip_address: string | null
+          last_attempt_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          attempt_count?: number
+          id?: string
+          ip_address?: string | null
+          last_attempt_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          attempt_count?: number
+          id?: string
+          ip_address?: string | null
+          last_attempt_at?: string
+          user_agent?: string | null
           user_id?: string
         }
         Relationships: []
