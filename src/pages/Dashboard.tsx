@@ -431,45 +431,47 @@ return (
               </DiamondButton>
               
               <DiamondButton
-                onClick={() => navigate('/shop')}
-                variant="shop"
+                onClick={() => navigate('/leaderboard')}
+                variant="leaderboard"
                 size="sm"
               >
-                {/* Shopping Bag SVG Icon */}
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 2L3 6V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 22 20.0391 21.7893 20.4142 21.4142C20.7893 21.0391 21 20.5304 21 20V6L18 2H6Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                  <path d="M3 6H21M16 10C16 11.0609 15.5786 12.0783 14.8284 12.8284C14.0783 13.5786 13.0609 14 12 14C10.9391 14 9.92172 13.5786 9.17157 12.8284C8.42143 12.0783 8 11.0609 8 10" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+                {/* Trophy SVG Icon */}
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V5C3 4.44772 3.44772 4 4 4H6" stroke="currentColor" strokeWidth="2" fill="none"/>
+                  <path d="M18 9H19.5C20.3284 9 21 8.32843 21 7.5V5C21 4.44772 20.5523 4 20 4H18" stroke="currentColor" strokeWidth="2" fill="none"/>
+                  <path d="M8 4H16V10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10V4Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M12 14V17M8 20H16M10 17H14V20H10V17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-[10px] sm:text-xs">BOLT</span>
+                <span className="text-[10px] sm:text-xs">RANGLISTA</span>
               </DiamondButton>
             </div>
           </div>
         </div>
 
-        {/* Logo */}
+        {/* Logo - 25% nagyobb */}
         <div className="flex justify-center mb-2 sm:mb-3">
-          <div className="relative w-28 h-28 sm:w-36 sm:h-36">
+          <div className="relative w-35 h-35 sm:w-45 sm:h-45">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
         </div>
 
-        {/* Play Button - 3D Diamond */}
+        {/* Play Button - 3D Diamond - 50% magasabb */}
         <DiamondButton
           data-tutorial="play-button"
           onClick={() => navigate('/game')}
           variant="play"
           size="lg"
-          className="mb-2 sm:mb-3"
+          className="mb-2 sm:mb-3 !py-8 sm:!py-10"
           style={{
             animation: 'play-pulse 0.8s ease-in-out infinite'
           }}
         >
           {/* Play SVG Icon */}
-          <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <svg className="inline w-5 h-5 sm:w-6 sm:h-6 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 5.14v14l11-7-11-7z"/>
           </svg>
-          PLAY NOW
+          <span className="text-base sm:text-lg font-black">PLAY NOW</span>
         </DiamondButton>
 
         <style>{`
@@ -485,7 +487,7 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - 3D Diamond */}
+        {/* Booster Button - 3D Diamond - 50% magasabb, jobb olvashatóság */}
         <DiamondButton
           data-tutorial="booster-button"
           onClick={async () => {
@@ -507,7 +509,7 @@ return (
           variant="booster"
           size="lg"
           active={hasActiveBooster}
-          className="mb-2 sm:mb-3"
+          className="mb-2 sm:mb-3 !py-8 sm:!py-10"
           badge={
             hasActiveBooster ? (
               <span className="flex h-3 w-3">
@@ -518,43 +520,25 @@ return (
           }
         >
           {/* Lightning SVG Icon */}
-          <svg className={`inline w-4 h-4 sm:w-5 sm:h-5 mr-2 ${!hasActiveBooster ? 'text-black' : 'text-white'}`} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <svg className={`inline w-5 h-5 sm:w-6 sm:h-6 mr-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]`} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' }}>
             <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
           </svg>
           {hasActiveBooster ? (
-            <span className="text-sm sm:text-base">AKTÍV BOOSTER ({timeRemaining})</span>
+            <span className="text-base sm:text-lg font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>AKTÍV BOOSTER ({timeRemaining})</span>
           ) : availableBoosters.length > 0 ? (
-            <span className="text-sm sm:text-base">
+            <span className="text-base sm:text-lg font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>
               BOOSTER AKTIVÁLÁS
-              <span className="block text-xs mt-0.5">Következő: {availableBoosters[0].booster_type}</span>
+              <span className="block text-sm mt-1 font-bold">Következő: {availableBoosters[0].booster_type}</span>
             </span>
           ) : (
-            <span className="text-sm sm:text-base">BOOSTER VÁSÁRLÁS</span>
+            <span className="text-base sm:text-lg font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>BOOSTER VÁSÁRLÁS</span>
           )}
         </DiamondButton>
 
-        {/* Leaderboard Carousel - Top 25 players */}
-        <div className="my-3">
+        {/* Leaderboard Carousel - Top 25 players - Fixált az alsó menüsáv fölé */}
+        <div className="fixed left-0 right-0 z-40" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))' }}>
           <LeaderboardCarousel />
         </div>
-
-
-        {/* Ranglista Button - 3D Diamond */}
-        <DiamondButton
-          onClick={() => navigate('/leaderboard')}
-          variant="leaderboard"
-          size="lg"
-          className="mb-3"
-        >
-          {/* Trophy SVG Icon */}
-          <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V5C3 4.44772 3.44772 4 4 4H6" stroke="currentColor" strokeWidth="2" fill="none"/>
-            <path d="M18 9H19.5C20.3284 9 21 8.32843 21 7.5V5C21 4.44772 20.5523 4 20 4H18" stroke="currentColor" strokeWidth="2" fill="none"/>
-            <path d="M8 4H16V10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10V4Z" stroke="currentColor" strokeWidth="2"/>
-            <path d="M12 14V17M8 20H16M10 17H14V20H10V17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
-          RANGLISTA
-        </DiamondButton>
 
           {/* Life Regeneration Timer - removed from here, now at hexagon */}
 
