@@ -95,6 +95,9 @@ function = "aggregate-daily-activity"
 schedule = "0 23 * * 0"
 function = "process-weekly-winners"
 
+[functions.set-default-country]
+verify_jwt = false
+
 [functions.process-weekly-winners]
 verify_jwt = false
 

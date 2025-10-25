@@ -366,7 +366,7 @@ return (
               {profile.is_subscribed && <GeniusCrownBadge asHexagon showTooltip />}
               
               {/* Rank Hexagon - 3D Diamond */}
-              <DiamondHexagon type="rank" value={currentRank || '...'} />
+              <DiamondHexagon type="rank" value={currentRank !== null ? currentRank : '...'} />
 
               {/* Coins Hexagon - 3D Diamond - server authoritative */}
               <DiamondHexagon type="coins" value={walletData?.coinsCurrent ?? profile.coins} />
