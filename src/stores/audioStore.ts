@@ -12,7 +12,7 @@ interface AudioState {
 
 export const useAudioStore = create<AudioState>((set, get) => ({
   musicEnabled: true,
-  volume: 0.3,
+  volume: 0.03, // Default 3%
   loaded: false,
   
   setMusicEnabled: (enabled) => {
@@ -39,7 +39,7 @@ export const useAudioStore = create<AudioState>((set, get) => ({
     const savedVolume = localStorage.getItem('musicVolume');
     
     const newEnabled = savedEnabled ? JSON.parse(savedEnabled) : true;
-    const newVolume = savedVolume ? parseFloat(savedVolume) : 0.3;
+    const newVolume = savedVolume ? parseFloat(savedVolume) : 0.03; // Default 3%
     
     console.log('[AudioStore] Loading settings from localStorage:', { 
       savedEnabled, 

@@ -6,6 +6,7 @@ import { useGameProfile } from '@/hooks/useGameProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { TutorialManager } from './tutorial/TutorialManager';
 
 interface CategorySelectorProps {
   onSelect: (category: GameCategory) => void;
@@ -82,7 +83,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
   ];
 
   return (
-    <div className="h-screen w-screen flex flex-col items-start justify-start p-4 pt-12 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
+    <div className="category-selector h-screen w-screen flex flex-col items-start justify-start p-4 pt-12 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
       <div className="absolute inset-0 bg-gradient-to-tr from-yellow-600/10 via-red-600/10 to-purple-600/10 pointer-events-none"></div>
       
       {/* Casino lights animation */}
@@ -195,7 +196,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
         </div>
 
         {/* Music Controls */}
-        <div className="mt-4 max-w-md mx-auto">
+        <div className="music-controls mt-4 max-w-md mx-auto">
           <MusicControls />
         </div>
       </div>
@@ -212,6 +213,8 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
         userId={userId}
         onPurchaseComplete={handlePurchaseComplete}
       />
+      
+      <TutorialManager route="topics" />
     </div>
   );
 };

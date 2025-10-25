@@ -7,7 +7,6 @@ import DevelopmentStatus from "@/components/DevelopmentStatus";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { AlertCircle } from "lucide-react";
-import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { LoginPromoManager } from '@/components/LoginPromoManager';
 
 const Index = () => {
@@ -44,7 +43,6 @@ const Index = () => {
       <Newsletter />
       
       <Footer />
-      <TutorialManager route="landing" />
     </main>
   );
 };

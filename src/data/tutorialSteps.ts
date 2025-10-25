@@ -9,93 +9,219 @@ export const tutorialSteps = {
   dashboard: [
     {
       target: '[data-tutorial="profile-header"]',
-      title: 'Profilod és státuszod',
-      description: 'Itt látod, mennyi életed és aranyérméd van. Az életek 12 percenként újratöltődnek.',
+      title: 'Üdvözlünk a DingleUP-ban! 👋',
+      description: 'Ez a főoldalad, ahol minden fontos információt megtalálsz. Kezdjük a profiloddal: itt látod az életek és aranyérmék számát.',
+      position: 'bottom' as const
+    },
+    {
+      target: '[data-tutorial="profile-header"]',
+      title: 'Életek rendszere ❤️',
+      description: 'Minden játékhoz 1 élet kell. Az életek automatikusan újratöltődnek 12 percenként. Maximum 5 életed lehet egyszerre.',
+      position: 'bottom' as const
+    },
+    {
+      target: '[data-tutorial="profile-header"]',
+      title: 'Aranyérmék 🪙',
+      description: 'Helyes válaszokért aranyérméket kapsz. Ezekkel vásárolhatsz a boltban extra életeket, boostereket és prémium funkciókat.',
       position: 'bottom' as const
     },
     {
       target: '[data-tutorial="daily-gift"]',
-      title: 'Napi jutalom',
-      description: 'Napi belépésedért ajándékot kapsz! Minél több napot gyűjtesz egymás után, annál nagyobb jutalmakat kapsz.',
+      title: 'Napi belépési jutalom 🎁',
+      description: 'Minden nap, amikor bejelentkezel, értékes ajándékokat kapsz! Minél több napot gyűjtesz egymás után, annál nagyobb jutalmak várnak rád.',
       position: 'bottom' as const
     },
     {
       target: '[data-tutorial="play-button"]',
-      title: 'Játék indítása',
-      description: 'Válaszd ki a témakört és kezdj el játszani! Minden helyes válaszért aranyérméket és pontokat kapsz.',
+      title: 'PLAY NOW - Játék indítása 🎮',
+      description: 'Ezzel a gombbal indíthatod el a játékot. Először válassz témakört, majd válaszolj 15 kérdésre. Minden kérdésre 10 másodperced van!',
       position: 'top' as const
     },
     {
       target: '[data-tutorial="booster-button"]',
-      title: 'Speed Booster',
-      description: 'A Speed Boosterek felgyorsítják az életek újratöltését és növelik a maximális életszámot!',
+      title: 'Speed Booster ⚡',
+      description: 'A Speed Boosterek felgyorsítják az életek újratöltését és növelik a maximális életszámodat. Különböző sebességű boosterek közül választhatsz!',
+      position: 'top' as const
+    },
+    {
+      target: '[data-tutorial="booster-button"]',
+      title: 'Booster aktiválás',
+      description: 'A boostereket a boltban vásárolhatod meg. Miután megvetted, ide kattintva aktiválhatod őket. Az aktív booster időtartama alatt gyorsabban töltődnek az életeid.',
+      position: 'top' as const
+    },
+    {
+      target: '.leaderboard-carousel',
+      title: 'Ranglista 🏆',
+      description: 'Itt látod a legjobb játékosokat. Minden helyes válasz pontot ér, és minél több pontot szerzel, annál előrébb kerülsz a ranglistán!',
       position: 'top' as const
     },
     {
       target: '[data-tutorial="bottom-nav"]',
-      title: 'Navigáció',
-      description: 'Innen éred el a boltot, chatet és profilodat. Bármikor visszatérhetsz a főoldalra.',
+      title: 'Navigációs menü',
+      description: 'Az alsó menüsávból érheted el a főbb funkciókat: Főoldal (Dashboard), Bolt, Chat (barátokkal való csevegés), és Profil.',
+      position: 'top' as const
+    },
+    {
+      target: '[data-tutorial="bottom-nav"]',
+      title: 'Készen állsz! 🎉',
+      description: 'Most már tudod, hogyan működik minden! Nyomd meg a PLAY NOW gombot, és kezdd el a játékot. Sok sikert! 🚀',
       position: 'top' as const
     }
   ],
   shop: [
     {
+      target: '.shop-container',
+      title: 'Üdvözöl a Bolt! 🛒',
+      description: 'Itt vásárolhatsz mindenféle hasznos dolgot: életeket, aranyérméket, boostereket és prémium előfizetést. Nézzük meg, mit kínálunk!',
+      position: 'bottom' as const
+    },
+    {
       target: '[data-tutorial="genius-section"]',
-      title: 'Genius előfizetés',
-      description: 'Vásárolj Genius előfizetést – dupla jutalom és extra kedvezmények minden vásárlásra!',
+      title: 'Genius VIP Előfizetés 👑',
+      description: 'A Genius tagok dupla jutalmat kapnak minden játékért, extra életekkel és aranyérmékkel indulnak, valamint kedvezményeket kapnak minden vásárlásra!',
+      position: 'bottom' as const
+    },
+    {
+      target: '[data-tutorial="genius-section"]',
+      title: 'Genius előnyök',
+      description: 'Havi vagy éves előfizetést választhatsz. Az éves előfizetés jóval kedvezőbb! A Genius státusz prémium jelvénnyel és különleges exkluzív funkciókkal jár.',
       position: 'bottom' as const
     },
     {
       target: '[data-tutorial="boosters-section"]',
-      title: 'Speed Boosterek',
-      description: 'Gyorsítsd a játékot boosterekkel! Különböző sebességű csomagok közül választhatsz.',
+      title: 'Speed Boosterek ⚡',
+      description: 'A Speed Boosterek felgyorsítják az életek újratöltését. Különböző sebességű boostereket vásárolhatsz: x1.5, x2, x3 és x5 sebességűeket!',
+      position: 'bottom' as const
+    },
+    {
+      target: '[data-tutorial="boosters-section"]',
+      title: 'Booster időtartamok',
+      description: 'Minden booster bizonyos ideig aktív: 1 óra, 8 óra, 1 nap vagy 7 nap. Minél hosszabb az időtartam, annál kedvezőbb az ár!',
       position: 'bottom' as const
     },
     {
       target: '[data-tutorial="coins-section"]',
-      title: 'Aranyérmék vásárlása',
-      description: 'Ha elfogyott az aranyad, itt pótolhatod. Válaszd ki a számodra megfelelő csomagot!',
+      title: 'Aranyérmék vásárlása 🪙',
+      description: 'Ha elfogyott az aranyérméd, itt tudsz újakat vásárolni. Különböző csomagok közül választhatsz, a nagyobb csomagok kedvezőbb áron!',
       position: 'bottom' as const
+    },
+    {
+      target: '[data-tutorial="coins-section"]',
+      title: 'Fizetési módok 💳',
+      description: 'Biztonságos fizetési módokat kínálunk: bankkártya, Google Pay és Apple Pay. Az összes tranzakció titkosítva van.',
+      position: 'bottom' as const
+    },
+    {
+      target: '.shop-container',
+      title: 'Tippek és videók 📹',
+      description: 'Görgess lejjebb, és találsz hasznos tippeket és videókat, hogy még jobbá válj a játékban! Ezzel készen is vagy! 🎉',
+      position: 'top' as const
     }
   ],
   chat: [
     {
+      target: '.chat-container',
+      title: 'Chat és Barátok 💬',
+      description: 'Itt tudsz csevegni más játékosokkal! Kereshetsz barátokat, küldhetsz üzeneteket, képeket és fájlokat is. Nézzük meg, hogyan működik!',
+      position: 'center' as const
+    },
+    {
       target: '[data-tutorial="friends-menu"]',
-      title: 'Barátok menü',
-      description: 'Innen nyithatod meg az ismerőseid listáját és kezelheted a barátkéréseket.',
-      position: 'right' as const
+      title: 'Barátok hexagon menü',
+      description: 'Felül látod a barátaidat hexagon keretekben. Kattints egy hexagonra, és máris megnyílik a beszélgetés vele!',
+      position: 'bottom' as const
     },
     {
       target: '[data-tutorial="search-friends"]',
-      title: 'Ismerősök keresése',
-      description: 'Keress és jelölj be új barátokat a felhasználónév vagy e-mail cím alapján.',
+      title: 'Új barátok keresése 🔍',
+      description: 'A keresés gombbal új játékosokat találhatsz. Kereshetsz felhasználónév vagy e-mail cím alapján, és elküldhetsz nekik barátkérést.',
+      position: 'bottom' as const
+    },
+    {
+      target: '[data-tutorial="search-friends"]',
+      title: 'Barátkérések kezelése',
+      description: 'Ha valaki küldött neked barátkérést, itt fogadhatod el vagy utasíthatod el. Miután elfogadtad, azonnal írhattok egymásnak!',
       position: 'bottom' as const
     },
     {
       target: '[data-tutorial="threads-list"]',
-      title: 'Beszélgetések',
-      description: 'Itt látod a korábbi üzeneteket és beszélgetéseket. Kattints egy beszélgetésre a megnyitásához.',
+      title: 'Beszélgetések listája',
+      description: 'Itt látod az összes beszélgetésedet. A legfrissebb üzenetek felül jelennek meg. Kattints egy beszélgetésre a megnyitásához.',
       position: 'right' as const
+    },
+    {
+      target: '[data-tutorial="threads-list"]',
+      title: 'Üzenetek küldése 📨',
+      description: 'Egy beszélgetésben írhatsz szöveges üzeneteket, küldhetsz képeket, emoji-kat és fájlokat is. Az üzenetek azonnal megjelennek mindkét félnél!',
+      position: 'right' as const
+    },
+    {
+      target: '[data-tutorial="threads-list"]',
+      title: 'Online státusz 🟢',
+      description: 'Látod, hogy barátaid éppen online vannak-e. A zöld pont azt jelenti, hogy aktív, míg a szürke pont azt, hogy offline.',
+      position: 'right' as const
+    },
+    {
+      target: '.chat-container',
+      title: 'Kész vagy! 🎉',
+      description: 'Most már tudod, hogyan használd a chatet! Keress barátokat, és kezdj el beszélgetni velük. Jó csevegést! 💬',
+      position: 'center' as const
     }
   ],
   profile: [
     {
-      target: '[data-tutorial="profile-pic"]',
-      title: 'Profilkép',
-      description: 'Tölts fel képet magadról, hogy barátaid könnyebben megismerjenek!',
-      position: 'bottom' as const
+      target: '.profile-container',
+      title: 'Profilod 👤',
+      description: 'Ez a profiloldalad, ahol kezelheted a fiókodat, megtekintheted statisztikáidat és beállításokat változtathatsz. Kezdjük!',
+      position: 'center' as const
     },
     {
-      target: '[data-tutorial="settings"]',
-      title: 'Beállítások',
-      description: 'Itt kezelheted a fiókod adatait, hangbeállításokat és egyéb preferenciákat.',
+      target: '[data-tutorial="profile-pic"]',
+      title: 'Profilkép beállítása 📸',
+      description: 'Kattints a profilképedre, és tölts fel egy képet magadról! Ez segít, hogy barátaid könnyebben megismerjenek a játékban.',
       position: 'bottom' as const
     },
     {
       target: '[data-tutorial="stats"]',
-      title: 'Statisztikák',
-      description: 'Nézd meg a játék előrehaladásodat, pontjaidat és ranglistahelyezésedet!',
+      title: 'Játékstatisztikák 📊',
+      description: 'Itt látod a fontosabb statisztikáidat: összes játék száma, helyes válaszok aránya, megszerzett pontok és ranglistahelyezésed.',
+      position: 'bottom' as const
+    },
+    {
+      target: '[data-tutorial="stats"]',
+      title: 'Genius státusz 👑',
+      description: 'Ha Genius tag vagy, itt jelenik meg a státuszod és az előfizetésed részletei. Genius tagként különleges jelvényt is kapsz!',
+      position: 'bottom' as const
+    },
+    {
+      target: '[data-tutorial="booster-section"]',
+      title: 'Aktív boosterek ⚡',
+      description: 'Ebben a blokkban látod az aktív boostereidet. Ha nincs aktív booster, itt tudsz újat vásárolni a boltból.',
+      position: 'bottom' as const
+    },
+    {
+      target: '[data-tutorial="settings"]',
+      title: 'Fiók beállításai ⚙️',
+      description: 'Itt változtathatod meg a felhasználónevedet, e-mail címedet és egyéb fiók információkat. Az adataid biztonságosan vannak tárolva.',
+      position: 'bottom' as const
+    },
+    {
+      target: '.background-music-control',
+      title: 'Háttérzene beállítás 🎵',
+      description: 'Kapcsold ki/be a háttérzenét, és állítsd be a hangerőt a csúszkával. A beállításaid mentésre kerülnek.',
       position: 'top' as const
+    },
+    {
+      target: '[data-tutorial="logout"]',
+      title: 'Kijelentkezés',
+      description: 'Ha kilépnél a fiókodból, használd ezt a gombot. A haladásod és statisztikáid elmentődnek, és újra bejelentkezéskor visszatöltődnek.',
+      position: 'top' as const
+    },
+    {
+      target: '.profile-container',
+      title: 'Készen vagy! 🎉',
+      description: 'Most már ismered a profiloldalad! Bármikor visszatérhetsz ide a beállítások módosításához. Jó játékot! 🚀',
+      position: 'center' as const
     }
   ],
   play: [
@@ -124,32 +250,60 @@ export const tutorialSteps = {
       position: 'center' as const
     }
   ],
-  landing: [
-    {
-      target: '[data-tutorial="hero"]',
-      title: 'Üdvözlünk!',
-      description: 'Ismerj meg minket és tudj meg többet arról, hogyan működik a DingleUP!',
-      position: 'bottom' as const
-    },
-    {
-      target: '[data-tutorial="features"]',
-      title: 'Funkciók',
-      description: 'Fedezd fel a játék összes funkcióját – kvízek, ranglista, jutalmak és még sok más!',
-      position: 'bottom' as const
-    }
-  ],
   topics: [
     {
-      target: '[data-tutorial="volume-slider"]',
-      title: 'Hangerő beállítás',
-      description: 'Itt állíthatod a játék hangerejét. A beállítás megmarad a játék közben is.',
-      position: 'bottom' as const
+      target: '.category-selector',
+      title: 'Játékszabályok 📜',
+      description: 'Üdvözlünk a játékban! Most elmagyarázzuk, hogyan működik minden. Figyelj oda!',
+      position: 'center' as const
     },
     {
-      target: '[data-tutorial="mute-button"]',
-      title: 'Némítás',
-      description: 'Gyors némítás egy kattintással. Használd, ha pillanatnyilag nem szeretnél hangot hallani.',
-      position: 'bottom' as const
+      target: '.category-selector',
+      title: 'Témakörök 🎯',
+      description: 'Először válassz témakört! 4 kategória közül választhatsz: Egészség & Fitnesz, Történelem & Technológia, Kultúra & Lifestyle, vagy Pénzügy & Önismeret.',
+      position: 'center' as const
+    },
+    {
+      target: '.category-selector',
+      title: 'Kérdések száma ❓',
+      description: 'Minden játékban 15 kérdést kapsz. A kérdések véletlenszerűen választódnak ki a választott témakörből.',
+      position: 'center' as const
+    },
+    {
+      target: '.category-selector',
+      title: 'Időkorlát ⏱️',
+      description: 'Minden kérdésre 10 másodperced van válaszolni! Ha lejár az idő, a kérdés helytelennek számít.',
+      position: 'center' as const
+    },
+    {
+      target: '.category-selector',
+      title: 'Pontszámítás 💯',
+      description: 'Helyes válaszért pontokat és aranyérméket kapsz. Minél gyorsabban válaszolsz, annál több pontot szerzel! A maximális pontszám kérdésenként: 100.',
+      position: 'center' as const
+    },
+    {
+      target: '.category-selector',
+      title: 'Életek ❤️',
+      description: 'Minden játék 1 életbe kerül. Ha elfogytak az életeid, várj 12 percet, vagy vásárolj újakat a boltban. A boosterek felgyorsítják az életek újratöltődését!',
+      position: 'center' as const
+    },
+    {
+      target: '.category-selector',
+      title: 'Ranglista 🏆',
+      description: 'Minden pontod számít a ranglistán! A legjobb játékosok a héten extra jutalmakat kapnak. Törekedj a legjobb helyezésre!',
+      position: 'center' as const
+    },
+    {
+      target: '.music-controls',
+      title: 'Zene és hangerő 🎵',
+      description: 'Itt alul kapcsolhatod ki/be a játék zenéjét, és állíthatod a hangerőt. A beállításod mentésre kerül.',
+      position: 'top' as const
+    },
+    {
+      target: '.category-selector',
+      title: 'Készen állsz! 🚀',
+      description: 'Most már ismered a szabályokat! Válassz témakört, és kezdd el a játékot. Sok sikert és jó szórakozást! 🎉',
+      position: 'center' as const
     }
   ]
 };

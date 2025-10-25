@@ -4,12 +4,16 @@ import backMusic from '@/assets/backmusic.mp3';
  * Singleton AudioManager - handles global background music
  * Ensures single source of truth for audio state
  * A1-A5 COMPLIANCE: Runtime detektor + singleton enforcement
+ * Uses Web Audio API for precise volume control
  */
 class AudioManager {
   private static _instance: AudioManager | null = null;
   private bgm: HTMLAudioElement;
+  private audioCtx: AudioContext | null = null;
+  private gainNode: GainNode | null = null;
+  private sourceNode: MediaElementAudioSourceNode | null = null;
   private _enabled: boolean = true;
-  private _volume: number = 0.3;
+  private _volume: number = 0.03; // 3% default
 
   private constructor() {
     // A2) Runtime detektor - detects duplicate Audio instances
@@ -21,14 +25,60 @@ class AudioManager {
 
     this.bgm = new Audio(backMusic);
     this.bgm.loop = true;
-    this.bgm.volume = this._volume;
+    this.bgm.volume = 0; // Start silent, gain controls loudness
+
+    // Initialize Web Audio API
+    this.initWebAudio();
 
     // Store reference globally for debugging
     if (typeof window !== 'undefined') {
       (window as any).__bgm = this.bgm;
     }
 
-    console.log('[AudioManager] Initialized', { volume: this._volume, enabled: this._enabled, instances: (window as any).__AUDIO_INSTANCES__ });
+    console.log('[AudioManager] Initialized with Web Audio API', { 
+      volume: this._volume, 
+      enabled: this._enabled, 
+      instances: (window as any).__AUDIO_INSTANCES__,
+      percentage: `${Math.round(this._volume * 100)}%`
+    });
+  }
+
+  private initWebAudio(): void {
+    try {
+      const AC = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!AC) {
+        console.warn('[AudioManager] Web Audio API not supported');
+        return;
+      }
+
+      this.audioCtx = new AC();
+      this.gainNode = this.audioCtx.createGain();
+      this.gainNode.gain.value = this._volume;
+
+      this.sourceNode = this.audioCtx.createMediaElementSource(this.bgm);
+      this.sourceNode.connect(this.gainNode);
+      this.gainNode.connect(this.audioCtx.destination);
+
+      // Unlock AudioContext on user interaction
+      const unlock = async () => {
+        if (this.audioCtx?.state === 'suspended') {
+          try {
+            await this.audioCtx.resume();
+            console.log('[AudioManager] AudioContext resumed');
+          } catch (e) {
+            console.log('[AudioManager] Failed to resume AudioContext', e);
+          }
+        }
+      };
+
+      document.addEventListener('pointerdown', unlock, { once: true });
+      document.addEventListener('touchstart', unlock, { once: true });
+      document.addEventListener('click', unlock, { once: true });
+
+      console.log('[AudioManager] WebAudio graph initialized');
+    } catch (err) {
+      console.error('[AudioManager] WebAudio init failed', err);
+    }
   }
 
   static getInstance(): AudioManager {
@@ -44,9 +94,25 @@ class AudioManager {
   apply(enabled: boolean, volume: number): void {
     this._enabled = enabled;
     this._volume = Math.max(0, Math.min(1, volume));
-    this.bgm.volume = this._volume;
+    
+    // Update gain node instead of audio element volume
+    if (this.gainNode) {
+      this.gainNode.gain.value = this._volume;
+    }
+    this.bgm.volume = 1; // Keep element at full, gain controls loudness
 
-    console.log('[AudioManager] Apply settings', { enabled, volume: this._volume });
+    console.log('[AudioManager] Apply settings', { 
+      enabled, 
+      volume: this._volume,
+      percentage: `${Math.round(this._volume * 100)}%`
+    });
+
+    // Ensure AudioContext is running
+    if (enabled && this._volume > 0 && this.audioCtx?.state === 'suspended') {
+      this.audioCtx.resume().catch((e) => {
+        console.log('[AudioManager] AudioContext resume blocked', e);
+      });
+    }
 
     if (enabled && this._volume > 0) {
       this.safePlay();
