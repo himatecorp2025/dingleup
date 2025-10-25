@@ -52,7 +52,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
     }
   };
 
-  // TESTING MODE: Show on all devices
+  // Show on all devices (TESTING MODE)
   if (!open) return null;
 
   return (
