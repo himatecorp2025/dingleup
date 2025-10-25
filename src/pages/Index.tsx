@@ -8,10 +8,12 @@ import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { AlertCircle } from "lucide-react";
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
+import { LoginPromoManager } from '@/components/LoginPromoManager';
 
 const Index = () => {
   const navigate = useNavigate();
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     // Check device type
@@ -24,6 +26,12 @@ const Index = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [navigate]);
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUserId(session?.user?.id ?? null);
+    });
+  }, []);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-x-hidden overflow-y-auto relative">
       <div data-tutorial="hero">
@@ -34,6 +42,7 @@ const Index = () => {
       </div>
       <DevelopmentStatus />
       <Newsletter />
+      <LoginPromoManager isGenius={false} userId={userId} />
       <Footer />
       <TutorialManager route="landing" />
     </main>

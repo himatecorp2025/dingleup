@@ -13,32 +13,15 @@ export const LoginPromoManager = ({ isGenius, userId }: LoginPromoManagerProps) 
   const [showPromo, setShowPromo] = useState(false);
 
   useEffect(() => {
-    // Only show for normal (non-Genius) users
-    if (isGenius || !userId) {
-      return;
-    }
-
-    // Check if already shown in this session
-    const lastShown = sessionStorage.getItem(SESSION_KEY);
-    const now = Date.now();
-    
-    // Show once per session (cleared on browser close)
-    if (!lastShown) {
-      // Small delay to ensure other modals (age-gate, etc.) go first
-      const timer = setTimeout(() => {
-        setShowPromo(true);
-        sessionStorage.setItem(SESSION_KEY, now.toString());
-        
-        // Track promo shown
-        trackPromoEvent(userId, 'shown', 'login_promo', {
-          trigger: 'login',
-          times_shown_before: 0
-        });
-      }, 500);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isGenius, userId]);
+    // TEST MODE: Always show immediately on mount/login (no session limit, works for all users)
+    const timer = setTimeout(() => {
+      setShowPromo(true);
+      if (userId) {
+        trackPromoEvent(userId, 'shown', 'login_promo', { trigger: 'login_test' });
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [userId, isGenius]);
 
   return (
     <GeniusPromoDialog
