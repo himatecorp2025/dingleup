@@ -23,27 +23,24 @@ export const useWelcomeBonus = (userId: string | undefined) => {
         return;
       }
 
-      // **SECURITY FIX**: Remove client-side localStorage check
-      // Server will validate if bonus was already claimed
-      // This prevents localStorage manipulation attacks
-
-      // Check if user clicked "later" in this session only
-      const laterKey = `welcome_bonus_later_${userId}`;
-      const clickedLater = sessionStorage.getItem(laterKey);
-      if (clickedLater) {
-        setCanClaim(false);
-        setLoading(false);
-        return;
-      }
-
-      // Check server-side if bonus can be claimed
+      // SECURITY FIX: Check server-side instead of localStorage
+      // Query the database directly instead of trusting client storage
       const { data: profile } = await supabase
         .from('profiles')
         .select('welcome_bonus_claimed')
         .eq('id', userId)
         .single();
 
-      if (profile?.welcome_bonus_claimed) {
+      if (!profile || profile.welcome_bonus_claimed) {
+        setCanClaim(false);
+        setLoading(false);
+        return;
+      }
+
+      // Check if user clicked "later" in this session (keep this for UX)
+      const laterKey = `welcome_bonus_later_${userId}`;
+      const clickedLater = sessionStorage.getItem(laterKey);
+      if (clickedLater) {
         setCanClaim(false);
         setLoading(false);
         return;
@@ -74,17 +71,17 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     try {
       const { data, error } = await supabase.rpc('claim_welcome_bonus');
       
-      if (error) {
-        console.error('[SECURITY] Welcome bonus claim error:', error.message);
-        throw error;
-      }
+      if (error) throw error;
       
       const result = data as { success: boolean; coins: number; error?: string };
       if (result.success) {
         toast.success('🎉 Üdvözlő bónusz felvéve! +2500 arany és +50 élet!');
         setCanClaim(false);
         
-        // Track claim - NO localStorage manipulation for security
+        // SECURITY: No longer using localStorage for claimed status
+        // Server-side database is the source of truth
+        
+        // Track claim
         trackEvent('popup_cta_click', 'welcome', 'claim');
         
         return true;

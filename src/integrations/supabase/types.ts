@@ -2667,6 +2667,14 @@ export type Database = {
       activate_speed_booster: { Args: { booster_id: string }; Returns: boolean }
       archive_thread_for_user: { Args: { p_thread_id: string }; Returns: Json }
       award_coins: { Args: { amount: number }; Returns: undefined }
+      check_rate_limit: {
+        Args: {
+          p_max_calls?: number
+          p_rpc_name: string
+          p_window_minutes?: number
+        }
+        Returns: boolean
+      }
       claim_daily_gift: { Args: never; Returns: Json }
       claim_welcome_bonus: { Args: never; Returns: Json }
       cleanup_expired_game_sessions: { Args: never; Returns: undefined }
