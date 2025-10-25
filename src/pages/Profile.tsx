@@ -10,6 +10,7 @@ import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { GeniusCrownBadge } from '@/components/GeniusCrownBadge';
+import { BackgroundMusicControl } from '@/components/BackgroundMusicControl';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -515,6 +516,9 @@ const Profile = () => {
             </div>
           </div>
         </div>
+
+        {/* Background Music Control */}
+        <BackgroundMusicControl />
 
         {/* Account Info */}
         <div className="relative rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-sm transform-gpu">
