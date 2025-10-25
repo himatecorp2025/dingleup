@@ -143,16 +143,16 @@ const DailyGiftDialog = ({
           minHeight: '100vh',
           borderRadius: 0
         }}
-      >
-        <div 
-          className="fixed inset-0 grid place-items-center overflow-hidden"
-          style={{ minHeight: '100vh', minWidth: '100vw' }}
         >
+          <div 
+            className="fixed inset-0 overflow-hidden"
+            style={{ minHeight: '100vh', minWidth: '100vw', position: 'relative' }}
+          >
           <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
 
 
           <div 
-            className="relative z-10 w-full flex justify-center"
+            className="absolute z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full flex justify-center"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
