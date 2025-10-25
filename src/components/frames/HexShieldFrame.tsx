@@ -12,7 +12,7 @@ import React, { PropsWithChildren } from 'react';
  */
 const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ children, className = '' }) => {
   return (
-    <div className={`relative overflow-hidden ${className}`}
+    <div className={`relative overflow-hidden mx-auto ${className}`}
          style={{ 
            width: 'min(92vw, 500px)', 
            height: 'clamp(540px, 88vh, 680px)'

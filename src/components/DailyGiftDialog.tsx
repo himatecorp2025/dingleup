@@ -208,14 +208,13 @@ const DailyGiftDialog = ({
           )}
 
           <div 
-            className="relative z-10 flex items-center justify-center"
+            className="relative z-10 w-full flex justify-center"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms',
               transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto',
-              width: '100%'
+              willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
           >
             <div style={{ transform: 'scale(1)', containerType: 'inline-size' }}>
