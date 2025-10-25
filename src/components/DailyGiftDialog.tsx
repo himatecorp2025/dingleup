@@ -136,23 +136,26 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
+        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none grid place-items-center [&>button[data-dialog-close]]:hidden"
         style={{ 
           margin: 0,
           maxHeight: '100vh',
           minHeight: '100vh',
-          borderRadius: 0
+          borderRadius: 0,
+          left: 0,
+          top: 0,
+          transform: 'none'
         }}
         >
           <div 
-            className="fixed inset-0 flex items-center justify-center overflow-hidden"
+            className="fixed inset-0 grid place-items-center overflow-hidden"
             style={{ minHeight: '100vh', minWidth: '100vw', position: 'relative' }}
           >
           <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
 
 
           <div 
-            className="relative z-10 w-full flex justify-center"
+            className="relative z-10"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
