@@ -279,7 +279,7 @@ return (
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-4 py-4 max-w-screen-lg mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-3 py-2 max-w-screen-lg mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)' }}>
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3">
           {/* First Row: Username and Stats */}
@@ -448,30 +448,30 @@ return (
           </div>
         </div>
 
-        {/* Logo - 25% nagyobb */}
-        <div className="flex justify-center mb-2 sm:mb-3">
-          <div className="relative w-35 h-35 sm:w-45 sm:h-45">
+        {/* Logo - arányosan méretezve */}
+        <div className="flex justify-center mb-1 sm:mb-2">
+          <div className="relative w-24 h-24 sm:w-32 sm:h-32">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
         </div>
 
-        {/* Play Button - 3D Diamond - 50% magasabb */}
+        {/* Play Button - 3D Diamond - arányosan méretezve */}
         <DiamondButton
           data-tutorial="play-button"
           onClick={() => navigate('/game')}
           variant="play"
           size="lg"
-          className="mb-2 sm:mb-3 !py-8 sm:!py-10"
+          className="mb-1 sm:mb-2 !py-5 sm:!py-6"
           style={{
             animation: 'play-pulse 0.8s ease-in-out infinite'
           }}
         >
           {/* Play SVG Icon */}
-          <svg className="inline w-5 h-5 sm:w-6 sm:h-6 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 5.14v14l11-7-11-7z"/>
           </svg>
-          <span className="text-base sm:text-lg font-black">PLAY NOW</span>
+          <span className="text-sm sm:text-base font-black">PLAY NOW</span>
         </DiamondButton>
 
         <style>{`
@@ -487,7 +487,7 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - 3D Diamond - 50% magasabb, jobb olvashatóság */}
+        {/* Booster Button - 3D Diamond - arányosan méretezve, jobb olvashatóság */}
         <DiamondButton
           data-tutorial="booster-button"
           onClick={async () => {
@@ -509,7 +509,7 @@ return (
           variant="booster"
           size="lg"
           active={hasActiveBooster}
-          className="mb-2 sm:mb-3 !py-8 sm:!py-10"
+          className="mb-1 sm:mb-2 !py-4 sm:!py-5"
           badge={
             hasActiveBooster ? (
               <span className="flex h-3 w-3">
@@ -520,18 +520,18 @@ return (
           }
         >
           {/* Lightning SVG Icon */}
-          <svg className={`inline w-5 h-5 sm:w-6 sm:h-6 mr-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]`} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' }}>
+          <svg className={`inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]`} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' }}>
             <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
           </svg>
           {hasActiveBooster ? (
-            <span className="text-base sm:text-lg font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>AKTÍV BOOSTER ({timeRemaining})</span>
+            <span className="text-xs sm:text-sm font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>AKTÍV BOOSTER ({timeRemaining})</span>
           ) : availableBoosters.length > 0 ? (
-            <span className="text-base sm:text-lg font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>
+            <span className="text-xs sm:text-sm font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>
               BOOSTER AKTIVÁLÁS
-              <span className="block text-sm mt-1 font-bold">Következő: {availableBoosters[0].booster_type}</span>
+              <span className="block text-[10px] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
             </span>
           ) : (
-            <span className="text-base sm:text-lg font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>BOOSTER VÁSÁRLÁS</span>
+            <span className="text-xs sm:text-sm font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>BOOSTER VÁSÁRLÁS</span>
           )}
         </DiamondButton>
 
