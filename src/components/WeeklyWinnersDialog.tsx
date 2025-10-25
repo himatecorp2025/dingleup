@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 
@@ -22,18 +22,19 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
   const confettiCount = isMobile ? 25 : 50;
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const [listMaxHeight, setListMaxHeight] = useState<number>(0);
-  const measureHeights = () => {
+  const [listHeight, setListHeight] = useState<number | undefined>(undefined);
+  const measureList = () => {
     try {
-      const c = containerRef.current;
-      const h = headerRef.current;
-      if (c) {
-        const headerH = h ? h.offsetHeight : 0;
-        const computed = c.clientHeight - headerH - 16; // buffer for paddings
-        setListMaxHeight(Math.max(120, computed));
-      }
+      const list = listRef.current;
+      if (!list) return;
+      const first = list.querySelector('[data-row-index="0"]') as HTMLElement | null;
+      const second = list.querySelector('[data-row-index="1"]') as HTMLElement | null;
+      if (!first) return;
+      const rowH = first.offsetHeight;
+      const gap = second ? parseFloat(getComputedStyle(second).marginTop || '6') : 6;
+      setListHeight(Math.max(0, Math.round(rowH * 7 + gap * 6) - 2));
     } catch {}
   };
 
@@ -41,7 +42,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
     const handleResize = () => {
       try {
         setIsMobile(window.innerWidth <= 768);
-        measureHeights();
+        measureList();
       } catch {}
     };
     handleResize();
@@ -54,7 +55,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
       fetchTopPlayers();
       const t = setTimeout(() => {
         setContentVisible(true);
-        measureHeights();
+        measureList();
       }, 10);
       return () => {
         clearTimeout(t);
@@ -64,6 +65,11 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
       setContentVisible(false);
     }
   }, [open]);
+
+  useEffect(() => {
+    if (!contentVisible) return;
+    measureList();
+  }, [topPlayers, contentVisible]);
 
   const fetchTopPlayers = async () => {
     try {
@@ -112,6 +118,8 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
           borderRadius: 0
         }}
       >
+        <DialogTitle className="sr-only">Weekly Winners</DialogTitle>
+        <DialogDescription className="sr-only">Top 10 weekly winners list</DialogDescription>
         <div 
           className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
           style={{ 
