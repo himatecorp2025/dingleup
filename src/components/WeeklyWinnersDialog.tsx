@@ -263,11 +263,12 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
               </div>
 
               {/* Content - Player List - FULL HEIGHT */}
-              <div className="relative z-10 flex flex-col flex-1 px-[2%] pb-[4%] pt-[1%]">
+              <div className="relative z-10 flex flex-col flex-1 px-[4%] pb-[3%] pt-[1%]">
                 
                 {/* Players List - FULL HEIGHT, 3D BOXES */}
                 <div
-                  className="w-full flex-1 space-y-1.5 overflow-y-auto pr-1"
+                  className="w-full flex-1 space-y-1.5 overflow-y-auto pr-2 pb-2"
+                  style={{ maxHeight: 'calc(100% - 10px)' }}
                 >
                   {topPlayers.map((player, index) => (
                       <div 
@@ -303,56 +304,56 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                            }} />
                       
                       {/* Card Content - ERŐSEBB 3D */}
-                      <div className="relative bg-gradient-to-br from-blue-600/98 via-blue-700/98 to-blue-800/98 rounded-xl px-2.5 py-2.5 flex items-center gap-2.5"
+                      <div className="relative bg-gradient-to-br from-blue-600/98 via-blue-700/98 to-blue-800/98 rounded-xl px-2 py-2 flex items-center gap-2"
                            style={{ 
                              boxShadow: 'inset 0 10px 20px rgba(255,255,255,0.25), inset 0 -10px 20px rgba(0,0,0,0.35)',
-                             margin: '5px'
+                             margin: '4px'
                            }}>
                           
                         {/* Rank Number - Left */}
-                        <div className="flex-shrink-0 w-8 text-center overflow-hidden">
+                        <div className="flex-shrink-0 w-7 text-center overflow-hidden">
                           <span className="font-black text-yellow-300 drop-shadow-lg block" 
                                 style={{ 
-                                  fontSize: 'clamp(0.85rem, 3.5cqw, 1.1rem)',
+                                  fontSize: 'clamp(0.8rem, 3.2cqw, 1rem)',
                                   textShadow: '0 2px 4px rgba(0,0,0,0.8)'
                                 }}>
                             {player.rank}
                           </span>
                         </div>
 
-                        {/* Avatar - Nagyobb */}
+                        {/* Avatar - Kisebb */}
                         <div className="flex-shrink-0">
                           {player.avatar_url ? (
                             <img 
                               src={player.avatar_url} 
                               alt={player.username}
-                              className="w-10 h-10 rounded-full border-2 border-yellow-400 shadow-lg object-cover"
+                              className="w-8 h-8 rounded-full border-2 border-yellow-400 shadow-lg object-cover"
                             />
                           ) : (
-                            <div className="w-10 h-10 rounded-full border-2 border-yellow-400 shadow-lg bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
-                              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <div className="w-8 h-8 rounded-full border-2 border-yellow-400 shadow-lg bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                               </svg>
                             </div>
                           )}
                         </div>
 
-                        {/* Username - Nagyobb */}
+                        {/* Username */}
                         <div className="flex-1 min-w-0">
                           <p className="font-bold text-white truncate drop-shadow-md" 
                              style={{ 
-                               fontSize: 'clamp(0.8rem, 3.3cqw, 1rem)',
+                               fontSize: 'clamp(0.75rem, 3cqw, 0.9rem)',
                                textShadow: '0 2px 4px rgba(0,0,0,0.7)'
                              }}>
                             {player.username}
                           </p>
                         </div>
 
-                        {/* Score - Nagyobb */}
+                        {/* Score */}
                         <div className="flex-shrink-0">
                           <p className="font-black text-yellow-200 drop-shadow-md" 
                              style={{ 
-                               fontSize: 'clamp(0.85rem, 3.5cqw, 1.05rem)',
+                               fontSize: 'clamp(0.8rem, 3.2cqw, 0.95rem)',
                                textShadow: '0 2px 4px rgba(0,0,0,0.8)'
                              }}>
                             {player.total_correct_answers.toLocaleString()}
