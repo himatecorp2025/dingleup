@@ -136,7 +136,7 @@ export const ThreadsList = ({
                           {truncateMessage(thread.last_message_preview)}
                         </p>
                         {hasUnread && (
-                          <div className="flex-shrink-0 min-w-[8px] h-[8px] bg-purple-600 rounded-full shadow-lg shadow-purple-500/50" />
+                          <div className="flex-shrink-0 min-w-[8px] h-[8px] bg-gradient-to-br from-blue-600 to-purple-700 rounded-full shadow-lg shadow-blue-500/50" />
                         )}
                       </div>
                     </div>

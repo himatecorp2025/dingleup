@@ -438,12 +438,9 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         }
       });
 
-      if (error) throw error;
+      console.log('[ThreadView] Server response:', response, 'error:', error);
 
-      console.log('[ThreadView] Server response:', response);
-
-
-      // Replace optimistic message with server response containing media
+      // If we got a valid message response, treat as success even if error is present
       if (response?.message) {
         console.log('[ThreadView] Server returned message with', response.message.media?.length || 0, 'media items');
         setMessages(prev => {
@@ -471,11 +468,14 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         if (isNearBottomRef.current) {
           requestAnimationFrame(() => scrollToBottom('smooth', 'send-confirmed'));
         }
+      } else if (error) {
+        // Only throw error if we didn't get a valid message
+        throw error;
       }
     } catch (error: any) {
       console.error('Send error:', error);
       
-      // Only show error if message was not actually sent (check if it's not in the messages list as 'sent')
+      // Only show error toast if message was not successfully sent
       const messageSent = messages.find(m => 
         (m.id === clientMessageId || m.client_temp_id === clientMessageId) && 
         m.delivery_status === 'sent'
@@ -855,7 +855,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
         <button
           onClick={handleSendMessage}
           disabled={sending || (!messageText.trim() && attachments.length === 0)}
-          className="send p-2 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/30"
+          className="send p-2 bg-gradient-to-br from-blue-700 via-purple-700 to-purple-900 hover:from-blue-600 hover:via-purple-600 hover:to-purple-800 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/30"
           aria-label="Küldés"
           style={{ 
             border: 0, 

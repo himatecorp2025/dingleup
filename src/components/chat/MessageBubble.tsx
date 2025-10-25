@@ -137,8 +137,8 @@ const MediaPreview = ({ media, onImageClick }: { media: MessageMedia; onImageCli
     return (
       <div className="flex flex-col gap-2 p-3 bg-white/5 rounded-lg max-w-xs">
         <div className="flex items-center gap-3">
-          <div className="bg-purple-600/20 p-2 rounded-full flex-shrink-0">
-            <Music className="w-5 h-5 text-purple-400" />
+          <div className="bg-gradient-to-br from-blue-600 to-purple-700 p-2 rounded-full flex-shrink-0">
+            <Music className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-white truncate">
@@ -188,8 +188,8 @@ const MediaPreview = ({ media, onImageClick }: { media: MessageMedia; onImageCli
         download={media.file_name}
         className="flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg max-w-xs transition-colors"
       >
-        <div className="bg-purple-600/20 p-2 rounded-full flex-shrink-0">
-          <FileArchive className="w-5 h-5 text-purple-400" />
+        <div className="bg-gradient-to-br from-blue-600 to-purple-700 p-2 rounded-full flex-shrink-0">
+          <FileArchive className="w-5 h-5 text-white" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-white truncate">
@@ -288,7 +288,7 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
           >
             {/* Media if present - Use AttachmentGrid */}
             {message.media && message.media.length > 0 && (
-              <div className={`mb-1 ${isOwn ? 'bg-gradient-to-br from-purple-600 to-purple-800' : 'bg-[#1a1a1a]'} rounded-2xl p-2`}>
+              <div className={`mb-1 ${isOwn ? 'bg-gradient-to-br from-blue-700 via-purple-700 to-purple-900' : 'bg-[#1a1a1a]'} rounded-2xl p-2`}>
                 <AttachmentGrid media={message.media} />
               </div>
             )}
@@ -298,7 +298,7 @@ export const MessageBubble = ({ message, isOwn, isGrouped = false, partnerAvatar
               <div 
                 className={`px-4 py-2.5 shadow-sm transition-all duration-200 ${
                   isOwn 
-                    ? `bg-gradient-to-br from-purple-600 to-purple-800 text-white shadow-lg shadow-purple-500/20 ${isGrouped ? 'rounded-[18px]' : 'rounded-[18px] rounded-br-md'}` 
+                    ? `bg-gradient-to-br from-blue-700 via-purple-700 to-purple-900 text-white shadow-lg shadow-purple-500/20 ${isGrouped ? 'rounded-[18px]' : 'rounded-[18px] rounded-br-md'}` 
                     : `bg-[#1a1a1a] text-white border border-[#D4AF37]/20 ${isGrouped ? 'rounded-[18px]' : 'rounded-[18px] rounded-bl-md'}`
                 }`}
               >
