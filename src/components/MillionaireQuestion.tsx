@@ -7,7 +7,7 @@ interface MillionaireQuestionProps {
 
 export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
   return (
-    <div className="relative w-full mb-3" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
+    <div className="relative w-full mb-3" style={{ perspective: '1200px', transformStyle: 'preserve-3d', minHeight: '100px' }}>
       {/* BASE SHADOW - Enhanced */}
       <div className="absolute inset-0 bg-black/80 rounded-2xl" style={{ transform: 'translate(8px, 8px) translateZ(-10px)', filter: 'blur(12px)', clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)' }} aria-hidden />
       
@@ -56,7 +56,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       />
       
       <div 
-        className="relative px-3 sm:px-4 md:px-5 py-[24px] sm:py-[30px] md:py-[36px] text-white"
+        className="relative px-3 sm:px-4 md:px-5 py-[32px] sm:py-[40px] md:py-[48px] text-white"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           transform: 'translateZ(40px)'
