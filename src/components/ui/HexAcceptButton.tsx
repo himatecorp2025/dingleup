@@ -16,19 +16,30 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
   ...props
 }) => {
   return (
-    <button
-      className={`relative grid place-items-center select-none disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
-      style={{
-        width: "100%",
-        height: "clamp(56px, 14vh, 80px)",
-        boxSizing: "border-box",
-        outline: "none",
-        border: 0,
-        animation: "accept-button-pulse 2.5s ease-in-out infinite",
-        ...style,
-      }}
-      {...props}
-    >
+    <>
+      {/* Golden GLOW behind button */}
+      <div 
+        className="absolute inset-0 -z-10 pointer-events-none"
+        style={{
+          filter: 'blur(20px)',
+          background: 'radial-gradient(ellipse 110% 60% at 50% 50%, rgba(255,215,0,0.7), transparent 70%)',
+          animation: 'glow-pulse 2s ease-in-out infinite'
+        }}
+      />
+      
+      <button
+        className={`relative grid place-items-center select-none disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+        style={{
+          width: "100%",
+          height: "clamp(56px, 14vh, 80px)",
+          boxSizing: "border-box",
+          outline: "none",
+          border: 0,
+          animation: "accept-button-pulse 1.5s ease-in-out infinite",
+          ...style,
+        }}
+        {...props}
+      >
       {/* BASE SHADOW (3D depth) */}
       <div
         className="absolute"
@@ -177,22 +188,32 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           fontSize: "clamp(1.05rem, 4.6vw, 1.45rem)",
           textShadow:
             "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
-          animation: "text-pulse 2.5s ease-in-out infinite"
+          animation: "text-pulse 1.5s ease-in-out infinite"
         }}
       >
         {typeof children === "string" ? children.toUpperCase() : children}
       </span>
 
-      {/* CSS Animations */}
       <style>{`
+        @keyframes glow-pulse {
+          0%, 100% { 
+            opacity: 0.6;
+            transform: scale(1);
+          }
+          50% { 
+            opacity: 1;
+            transform: scale(1.15);
+          }
+        }
+        
         @keyframes accept-button-pulse {
           0%, 100% { 
             transform: scale(1);
-            filter: brightness(1);
+            filter: brightness(1) drop-shadow(0 0 0px rgba(255,215,0,0));
           }
           50% { 
-            transform: scale(1.02);
-            filter: brightness(1.08);
+            transform: scale(1.05);
+            filter: brightness(1.15) drop-shadow(0 0 20px rgba(255,215,0,0.8));
           }
         }
         
@@ -201,11 +222,12 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
             text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8);
           }
           50% { 
-            text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.6);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8), 0 0 24px rgba(255,255,255,0.9), 0 0 36px rgba(255,215,0,0.7);
           }
         }
       `}</style>
     </button>
+    </>
   );
 };
 

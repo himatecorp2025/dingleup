@@ -162,8 +162,8 @@ const DailyGiftDialog = ({
         <div 
           className="fixed inset-0 flex flex-col items-center justify-center py-4 overflow-y-auto"
         >
-          {/* Background layer - statikus 75% áttetsző lila */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950" style={{ opacity: 0.75 }}></div>
+          {/* Background layer - BRIGHTER purple gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-800 via-purple-800 to-blue-800" style={{ opacity: 0.85 }}></div>
 
           {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
           {contentVisible && burstActive && (
@@ -275,12 +275,20 @@ const DailyGiftDialog = ({
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
                      }}>
-                  {/* Inner RED RUBY crystal panel */}
+                  {/* Inner RED RUBY crystal with diagonal streaks */}
                   <div className="absolute inset-[6px]"
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 90% 82%) 0%, hsl(0 85% 68%) 30%, hsl(0 78% 58%) 60%, hsl(0 70% 45%) 100%)',
+                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 95% 75%) 0%, hsl(0 90% 65%) 30%, hsl(0 85% 55%) 60%, hsl(0 78% 48%) 100%)',
                          boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.25), inset 0 -12px 24px rgba(0,0,0,0.4)'
+                       }} />
+                  
+                  {/* Diagonal light streaks - SAME as ELFOGADOM button */}
+                  <div className="absolute inset-[6px] pointer-events-none"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+                         opacity: 0.7
                        }} />
                   
                   {/* Specular highlight */}
@@ -399,23 +407,23 @@ const DailyGiftDialog = ({
                                width: 'clamp(1.25rem, 5vw, 2rem)', 
                                height: 'clamp(1.25rem, 5vw, 2rem)',
                              }}>
-                          {/* Realistic 3D Coin - small */}
+                          {/* Realistic BRIGHT 3D Coin - small */}
                           <div className="absolute inset-0 rounded-full translate-y-0.5"
-                               style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(2px)' }} />
+                               style={{ background: 'rgba(0,0,0,0.35)', filter: 'blur(2px)' }} />
                           <div className="absolute inset-0 rounded-full"
                                style={{ 
-                                 background: 'linear-gradient(135deg, hsl(var(--dup-gold-800)), hsl(var(--dup-gold-700)) 50%, hsl(var(--dup-gold-900)))',
-                                 boxShadow: 'inset 0 0 0 1px hsl(var(--dup-gold-950)), 0 3px 8px rgba(0,0,0,0.4)'
+                                 background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
+                                 boxShadow: 'inset 0 0 0 1px hsl(45 90% 38%), 0 3px 8px rgba(0,0,0,0.3), 0 0 12px rgba(255,215,0,0.4)'
                                }} />
                           <div className="absolute inset-[2px] rounded-full"
                                style={{ 
-                                 background: 'radial-gradient(circle at 35% 25%, hsl(var(--dup-gold-200)), hsl(var(--dup-gold-400)) 40%, hsl(var(--dup-gold-600)) 70%, hsl(var(--dup-gold-800)))',
-                                 boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.6), inset 0 -2px 6px rgba(0,0,0,0.5)'
+                                 background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 85%), hsl(45 100% 70%) 35%, hsl(45 95% 58%) 65%, hsl(45 90% 45%))',
+                                 boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
                                }} />
                           {/* Edge rim highlight */}
                           <div className="absolute inset-[3px] rounded-full pointer-events-none"
                                style={{
-                                 boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.4)'
+                                 boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.5)'
                                }} />
                         </div>
                         <span className="font-black text-yellow-300/50 line-through" 
@@ -430,23 +438,23 @@ const DailyGiftDialog = ({
                                width: 'clamp(1.75rem, 7vw, 2.5rem)', 
                                height: 'clamp(1.75rem, 7vw, 2.5rem)',
                              }}>
-                          {/* Realistic 3D Coin - large */}
+                          {/* Realistic BRIGHT 3D Coin - large */}
                           <div className="absolute inset-0 rounded-full translate-y-1"
-                               style={{ background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} />
+                               style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(4px)' }} />
                           <div className="absolute inset-0 rounded-full"
                                style={{ 
-                                 background: 'linear-gradient(135deg, hsl(var(--dup-gold-800)), hsl(var(--dup-gold-700)) 50%, hsl(var(--dup-gold-900)))',
-                                 boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-950)), 0 6px 18px rgba(0,0,0,0.5)'
+                                 background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
+                                 boxShadow: 'inset 0 0 0 2px hsl(45 90% 38%), 0 6px 18px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.6)'
                                }} />
                           <div className="absolute inset-[3px] rounded-full"
                                style={{ 
-                                 background: 'radial-gradient(circle at 35% 25%, hsl(var(--dup-gold-200)), hsl(var(--dup-gold-400)) 35%, hsl(var(--dup-gold-600)) 65%, hsl(var(--dup-gold-800)))',
-                                 boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.7), inset 0 -4px 12px rgba(0,0,0,0.6), 0 0 24px rgba(255,215,0,0.5)'
+                                 background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 88%), hsl(45 100% 72%) 30%, hsl(45 95% 60%) 60%, hsl(45 90% 48%))',
+                                 boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.8), inset 0 -4px 12px rgba(0,0,0,0.5), 0 0 24px rgba(255,215,0,0.5)'
                                }} />
                           {/* Edge rim highlight */}
                           <div className="absolute inset-[4px] rounded-full pointer-events-none"
                                style={{
-                                 boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.5)'
+                                 boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.6)'
                                }} />
                         </div>
                         <span className="font-black text-yellow-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
@@ -462,23 +470,23 @@ const DailyGiftDialog = ({
                              width: 'clamp(1.75rem, 7vw, 2.75rem)', 
                              height: 'clamp(1.75rem, 7vw, 2.75rem)',
                            }}>
-                        {/* Realistic 3D Coin */}
+                        {/* Realistic BRIGHT 3D Coin */}
                         <div className="absolute inset-0 rounded-full translate-y-1"
-                             style={{ background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} />
+                             style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(4px)' }} />
                         <div className="absolute inset-0 rounded-full"
                              style={{ 
-                               background: 'linear-gradient(135deg, hsl(var(--dup-gold-800)), hsl(var(--dup-gold-700)) 50%, hsl(var(--dup-gold-900)))',
-                               boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-950)), 0 6px 18px rgba(0,0,0,0.5)'
+                               background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
+                               boxShadow: 'inset 0 0 0 2px hsl(45 90% 38%), 0 6px 18px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.6)'
                              }} />
                         <div className="absolute inset-[3px] rounded-full"
                              style={{ 
-                               background: 'radial-gradient(circle at 35% 25%, hsl(var(--dup-gold-200)), hsl(var(--dup-gold-400)) 35%, hsl(var(--dup-gold-600)) 65%, hsl(var(--dup-gold-800)))',
-                               boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.7), inset 0 -4px 12px rgba(0,0,0,0.6), 0 0 24px rgba(255,215,0,0.5)'
+                               background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 88%), hsl(45 100% 72%) 30%, hsl(45 95% 60%) 60%, hsl(45 90% 48%))',
+                               boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.8), inset 0 -4px 12px rgba(0,0,0,0.5), 0 0 24px rgba(255,215,0,0.5)'
                              }} />
                         {/* Edge rim highlight */}
                         <div className="absolute inset-[4px] rounded-full pointer-events-none"
                              style={{
-                               boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.5)'
+                               boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.6)'
                              }} />
                       </div>
                       <span className="font-black text-yellow-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
