@@ -34,7 +34,7 @@ export const useGeniusPromo = (
         }
         promoData.count += 1;
         promoData.lastShown = now;
-        promoData.cooldownUntil = now + (2 * 60 * 60 * 1000);
+        promoData.cooldownUntil = now + (30 * 1000); // 30 seconds for testing
         localStorage.setItem(promoDataKey, JSON.stringify(promoData));
         
         trackEvent('popup_impression', 'daily_first_sub');
@@ -100,7 +100,7 @@ export const useGeniusPromo = (
       // Update data
       promoData.count += 1;
       promoData.lastShown = now;
-      promoData.cooldownUntil = now + (2 * 60 * 60 * 1000); // +2 hours
+      promoData.cooldownUntil = now + (30 * 1000); // 30 seconds for testing
       
       localStorage.setItem(promoDataKey, JSON.stringify(promoData));
 
