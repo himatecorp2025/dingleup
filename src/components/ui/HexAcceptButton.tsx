@@ -5,7 +5,8 @@ interface HexAcceptButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 // POINTY-TOP hexagon with EXACTLY 165° interior angles at top/bottom vertices
-const HEX_PATH = "polygon(50% 20%, 86.7% 30%, 86.7% 70%, 50% 80%, 13.3% 70%, 13.3% 30%)";
+// Calculated with: s=8%, tan(82.5°)≈7.595754, AR≈1 → y1%≈5.529%
+const HEX_PATH = "polygon(50% 0%, 92% 5.529%, 92% 94.471%, 50% 100%, 8% 94.471%, 8% 5.529%)";
 
 const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
   children = "ELFOGADOM",
