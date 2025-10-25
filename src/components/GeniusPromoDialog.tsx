@@ -201,16 +201,13 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
               @keyframes shieldPulse {
                 0%, 100% { 
                   filter: drop-shadow(0 0 40px rgba(147,51,234,0.6)) drop-shadow(0 0 80px rgba(168,85,247,0.4));
-                  transform: scale(1);
                 }
                 50% { 
                   filter: drop-shadow(0 0 50px rgba(147,51,234,0.8)) drop-shadow(0 0 100px rgba(168,85,247,0.6));
-                  transform: scale(1.02);
                 }
               }
             `}</style>
-            <div style={{ transform: 'scale(1)' }}>
-              <HexShieldFrame showShine={false}>
+            <HexShieldFrame showShine={false}>
                 {/* Top Hex Badge - "GENIUS" */}
                 <div 
                   className="relative -mt-12 mb-3 mx-auto z-20" 
@@ -437,7 +434,6 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
                   </div>
                 </div>
               </HexShieldFrame>
-            </div>
           </div>
 
           {/* Close X button */}
