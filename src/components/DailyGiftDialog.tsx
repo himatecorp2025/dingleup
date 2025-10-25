@@ -230,16 +230,13 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central HEXAGON - ZOOM FROM CENTER (layout-neutral, always scale-100 in DOM) */}
+          {/* Central HEXAGON - CLIP-PATH REVEAL (forces full render from start) */}
           <div 
             className="relative z-10"
             style={{ 
-              opacity: contentVisible ? 1 : 0,
-              visibility: contentVisible ? 'visible' : 'hidden',
-              transform: contentVisible ? 'scale(1)' : 'scale(0)',
-              transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms, visibility 0ms linear 0ms',
-              transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto'
+              clipPath: contentVisible ? 'circle(140% at 50% 50%)' : 'circle(0% at 50% 50%)',
+              transition: 'clip-path 1500ms ease-in-out 300ms',
+              willChange: contentVisible ? 'clip-path' : 'auto'
             }}
           >
             
