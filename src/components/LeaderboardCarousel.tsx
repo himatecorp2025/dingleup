@@ -256,10 +256,18 @@ export const LeaderboardCarousel = () => {
                 {/* INNER LAYER */}
                 <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
                 {/* Content - MÓDOSÍTOTT ELRENDEZÉS */}
-                <div className="absolute inset-0 flex flex-col items-center justify-start z-10 px-1 pt-1">
-                  {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 -mt-0.5 ${getCrownColor(actualIndex)}`} />}
-                  <p className="text-[9px] sm:text-[10px] font-black text-white drop-shadow-lg mt-0.5">{rank}.</p>
-                  <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg flex-1 flex items-center justify-center">{player.username}</p>
+                <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
+                  {/* Felső rész: korona + rang */}
+                  <div className="flex flex-col items-center gap-0">
+                    {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 ${getCrownColor(actualIndex)}`} />}
+                    <p className="text-[9px] sm:text-[10px] font-black text-white drop-shadow-lg leading-none">{rank}.</p>
+                  </div>
+                  
+                  {/* Középső rész: felhasználónév */}
+                  <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
+                  
+                  {/* Alsó rész: helyes válaszok */}
+                  <p className="text-[8px] sm:text-[9px] font-semibold text-white/90 drop-shadow-lg leading-none">{player.total_correct_answers}</p>
                 </div>
               </div>
             );
