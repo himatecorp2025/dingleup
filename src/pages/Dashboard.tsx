@@ -263,8 +263,8 @@ return (
       className="absolute inset-0 bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${gameBackground})` }}
     />
-    {/* Áttetsző kék overlay - 90% opacity */}
-    <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] opacity-90" />
+    {/* Áttetsző kék overlay - 60% opacity */}
+    <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] opacity-60" />
     {/* Idle warning (60s countdown before logout) */}
     <IdleWarning 
       show={showWarning} 
