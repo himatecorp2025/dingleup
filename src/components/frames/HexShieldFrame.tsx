@@ -155,7 +155,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
       </svg>
 
       {/* Content Container (positioned over crystal panel) */}
-      <div className="absolute inset-0 flex flex-col z-10" style={{ padding: '64px 52px 72px 52px' }}>
+      <div className="absolute inset-0 flex flex-col z-10" style={{ padding: '64px 52px 52px 52px' }}>
         {children}
       </div>
     </div>

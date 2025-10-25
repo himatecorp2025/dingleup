@@ -316,7 +316,7 @@ const DailyGiftDialog = ({
               </div>
 
               {/* Content Area */}
-              <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-[4%]">
+              <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0">
                 
                 {/* 3 Big Golden Stars (metallic) */}
                 <div className="flex gap-[2.5vw] my-[1.2vh]">
