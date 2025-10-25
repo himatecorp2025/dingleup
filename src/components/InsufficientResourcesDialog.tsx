@@ -112,7 +112,7 @@ export const InsufficientResourcesDialog = ({
       setTimeLeft((prev) => {
         if (prev <= 1) {
           onOpenChange(false);
-          toast.info('Az ajánlat lejárt');
+          toast.info("Az ajánlat lejárt");
           return 0;
         }
         return prev - 1;
