@@ -18,7 +18,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
            height: 'clamp(540px, 88vh, 680px)'
          }}>
       
-      {/* Shine sweep - 120° (reverse direction), fills shield diagonally */}
+      {/* Shine sweep - 120° sideways motion (original style, 120° angle) */}
       <div 
         className="absolute pointer-events-none"
         style={{
@@ -32,14 +32,12 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
         }}
       >
         <div 
-          className="absolute w-[300%] h-[300%]"
+          className="absolute w-[200%] h-[200%]"
           style={{
-            top: '-100%',
-            left: '-100%',
-            background: 'linear-gradient(120deg, transparent 30%, rgba(255,215,0,0.55) 46%, rgba(255,255,255,0.85) 50%, rgba(255,215,0,0.55) 54%, transparent 70%)',
-            backgroundSize: '300% 300%',
-            backgroundRepeat: 'no-repeat',
-            animation: 'shine-120 3s linear infinite'
+            top: '-50%',
+            left: '-50%',
+            background: 'linear-gradient(120deg, transparent 46%, rgba(255,215,0,0.7) 50%, transparent 54%)',
+            animation: 'shine-sideways 3s linear infinite'
           }}
         />
       </div>
