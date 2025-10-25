@@ -54,10 +54,23 @@ export const NextLifeTimer = ({
 
   return (
     <div 
-      className="absolute -bottom-[7.2px] -right-0.5 bg-yellow-500 border border-yellow-400 rounded px-1 py-0.5 shadow-[0_0_8px_rgba(234,179,8,0.6)] z-50 text-[8px]"
+      className="absolute -bottom-[7.2px] -right-0.5 rounded z-50 text-[8px]"
       title="Következő élet érkezése"
+      style={{ perspective: '500px' }}
     >
-      <span className="font-extrabold text-black drop-shadow leading-none">
+      {/* BASE SHADOW */}
+      <div className="absolute inset-0 bg-black/60 rounded" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+      
+      {/* OUTER FRAME */}
+      <div className="absolute inset-0 rounded bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border border-yellow-400/70 shadow-lg" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+      
+      {/* MIDDLE FRAME */}
+      <div className="absolute inset-[1px] rounded bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.3)', transform: 'translateZ(5px)' }} aria-hidden />
+      
+      {/* SPECULAR HIGHLIGHT */}
+      <div className="absolute inset-[1px] rounded pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(10px)' }} aria-hidden />
+      
+      <span className="relative z-10 font-extrabold text-black drop-shadow leading-none block px-1 py-0.5" style={{ transform: 'translateZ(15px)' }}>
         {formattedTime}
       </span>
     </div>
