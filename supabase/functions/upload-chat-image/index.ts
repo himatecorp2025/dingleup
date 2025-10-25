@@ -92,8 +92,8 @@ Deno.serve(async (req) => {
       throw signedError;
     }
 
-    // SECURITY: Do not log sensitive tokens
-    console.log('Signed upload URL created:', { path: filePath });
+    // SECURITY FIX: Never log tokens or sensitive data
+    console.log('Signed upload URL created for path:', filePath);
 
     return new Response(
       JSON.stringify({
