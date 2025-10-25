@@ -15,7 +15,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
   const [userId, setUserId] = useState<string | null>(null);
   const [contentVisible, setContentVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const starCount = isMobile ? 30 : 80; // Több csillag
+  const starCount = isMobile ? 30 : 80;
 
   useEffect(() => {
     const handleResize = () => {
@@ -65,7 +65,6 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
     }
   };
 
-  // Show on all devices (TESTING MODE)
   if (!open) return null;
 
   return (
@@ -79,7 +78,6 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
           borderRadius: 0
         }}
       >
-        {/* Fullscreen center wrapper */}
         <div 
           className="fixed inset-0 flex flex-col items-center overflow-hidden"
           style={{ 
@@ -89,10 +87,10 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             paddingTop: '0'
           }}
         >
-          {/* Homályos háttér overlay - átlátszó, blur */}
-          <div className="absolute inset-0 w-full h-full min-h-screen bg-black/40 backdrop-blur-md" style={{ borderRadius: 0 }}></div>
+          {/* Átlátszó homályos háttér (blur) */}
+          <div className="absolute inset-0 w-full h-full min-h-screen bg-black/30 backdrop-blur-sm" style={{ borderRadius: 0 }}></div>
 
-          {/* Animated golden stars - több csillag */}
+          {/* Animated golden stars */}
           {contentVisible && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               {[...Array(starCount)].map((_, i) => {
@@ -135,50 +133,53 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             </div>
           )}
 
-          {/* ZOOM WRAPPER - Pajzs mögött pulzáló arany fénysugár */}
+          {/* ZOOM WRAPPER - Pulzáló arany fénysugár háttér a pajzs mögött */}
           <div 
             className="relative z-10"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
-              transition: 'transform 1200ms cubic-bezier(0.34, 1.56, 0.64, 1) 1000ms, opacity 1200ms ease-in-out 1000ms',
+              transition: 'transform 1.125s cubic-bezier(0.34, 1.56, 0.64, 1) 0ms, opacity 1.125s ease-in-out 0ms',
               transformOrigin: 'center center',
               willChange: contentVisible ? 'transform, opacity' : 'auto',
             }}
           >
             {/* Pulzáló arany fénysugár háttér - mint a gombnál */}
             <div 
-              className="absolute inset-0"
+              className="absolute -inset-12"
               style={{
-                filter: 'drop-shadow(0 0 60px rgba(250,204,21,1)) drop-shadow(0 0 100px rgba(234,179,8,0.9)) drop-shadow(0 0 150px rgba(250,204,21,0.7))',
-                animation: 'welcomeShieldPulse 2s ease-in-out infinite',
-                zIndex: -1
+                background: 'radial-gradient(ellipse 100% 100% at 50% 50%, rgba(250,204,21,0.4) 0%, rgba(234,179,8,0.2) 40%, transparent 70%)',
+                filter: 'blur(40px)',
+                animation: 'welcomeShieldGlow 2s ease-in-out infinite',
+                zIndex: -1,
+                pointerEvents: 'none'
               }}
-            >
-              <div className="w-full h-full bg-gradient-radial from-yellow-400/30 via-yellow-500/20 to-transparent blur-3xl"></div>
-            </div>
+            ></div>
             <style>{`
-              @keyframes welcomeShieldPulse {
+              @keyframes welcomeShieldGlow {
                 0%, 100% { 
-                  filter: drop-shadow(0 0 60px rgba(250,204,21,1)) drop-shadow(0 0 100px rgba(234,179,8,0.9)) drop-shadow(0 0 150px rgba(250,204,21,0.7));
+                  filter: blur(40px) brightness(1);
+                  opacity: 0.6;
                 }
                 50% { 
-                  filter: drop-shadow(0 0 80px rgba(250,204,21,1)) drop-shadow(0 0 140px rgba(234,179,8,1)) drop-shadow(0 0 200px rgba(250,204,21,0.9));
+                  filter: blur(50px) brightness(1.3);
+                  opacity: 1;
                 }
               }
             `}</style>
+
             <HexShieldFrame showShine={true}>
-              {/* Premium WELCOME badge */}
+              {/* Premium WELCOME badge - 3D-s hatás */}
               <div 
                 className="relative -mt-12 mb-4 mx-auto z-20" 
                 style={{ width: '80%' }}
               >
-                {/* 3D Shadow */}
-                <div className="absolute inset-0 translate-y-2 translate-x-2"
+                {/* 3D Shadow base */}
+                <div className="absolute inset-0 translate-y-1 translate-x-1"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'rgba(0,0,0,0.5)',
-                       filter: 'blur(6px)',
+                       background: 'rgba(0,0,0,0.4)',
+                       filter: 'blur(4px)',
                        zIndex: -1
                      }} />
                 
@@ -186,41 +187,49 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                 <div className="absolute inset-0"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'linear-gradient(135deg, #fbbf24, #f59e0b 50%, #d97706)',
-                       boxShadow: 'inset 0 0 0 3px #b45309, 0 8px 24px rgba(0,0,0,0.4)'
+                       background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                       boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 6px 16px rgba(0,0,0,0.35)'
                      }} />
                 
-                {/* Inner glow frame */}
-                <div className="absolute inset-[4px]"
+                {/* Middle gold highlight frame */}
+                <div className="absolute inset-[3px]"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'linear-gradient(180deg, #fef3c7, #fbbf24 40%, #f59e0b)',
-                       boxShadow: 'inset 0 2px 0 #fef9c3'
+                       background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                       boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
                      }} />
                 
-                <div className="relative px-[6vw] py-[1.5vh]"
+                <div className="relative px-[5vw] py-[1.2vh]"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
                      }}>
-                  {/* Inner gradient crystal */}
-                  <div className="absolute inset-[7px]"
+                  {/* Inner crystal gradient */}
+                  <div className="absolute inset-[6px]"
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, #fef3c7 0%, #fbbf24 30%, #f59e0b 60%, #ea580c 100%)',
-                         boxShadow: 'inset 0 15px 30px rgba(255,255,255,0.4), inset 0 -15px 30px rgba(0,0,0,0.3)'
+                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(155 90% 82%) 0%, hsl(155 85% 68%) 30%, hsl(155 78% 58%) 60%, hsl(155 70% 45%) 100%)',
+                         boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.25), inset 0 -12px 24px rgba(0,0,0,0.4)'
                        }} />
                   
-                  {/* Shine overlay */}
-                  <div className="absolute inset-[7px] pointer-events-none" style={{
+                  {/* Diagonal light streaks */}
+                  <div className="absolute inset-[6px] pointer-events-none"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+                         opacity: 0.7
+                       }} />
+                  
+                  {/* Specular highlight */}
+                  <div className="absolute inset-[6px] pointer-events-none" style={{
                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                    background: 'radial-gradient(ellipse 100% 70% at 35% 0%, rgba(255,255,255,0.7), transparent 70%)'
+                    background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.6), transparent 60%)'
                   }} />
                   
-                  <h1 className="relative z-10 font-black text-white text-center drop-shadow-[0_0_20px_rgba(255,255,255,0.5),0_3px_10px_rgba(0,0,0,1)]"
+                  <h1 className="relative z-10 font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
                       style={{ 
-                        fontSize: 'clamp(1.4rem, 5.5cqw, 2.3rem)', 
-                        letterSpacing: '0.06em',
-                        textShadow: '0 0 16px rgba(255,255,255,0.4), 0 4px 8px rgba(0,0,0,0.9)'
+                        fontSize: 'clamp(1.25rem, 5.2cqw, 2.1rem)', 
+                        letterSpacing: '0.05em',
+                        textShadow: '0 0 12px rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.9)'
                       }}>
                     WELCOME!
                   </h1>
@@ -239,15 +248,31 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                   Különleges kezdő csomag!
                 </p>
 
-                {/* Rewards display */}
+                {/* Rewards display - 3D-s hatás SVG-kkel */}
                 <div className="w-full max-w-[85%] space-y-3 mb-4">
-                  {/* Coins reward */}
+                  {/* Coins reward - 3D-s keret */}
                   <div className="relative">
-                    {/* Glow background */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-yellow-300/30 to-yellow-400/20 rounded-2xl blur-xl animate-pulse" />
+                    {/* 3D Shadow */}
+                    <div className="absolute inset-0 translate-y-1 translate-x-1 bg-black/40 rounded-2xl blur-sm" />
                     
-                    <div className="relative bg-gradient-to-br from-yellow-500/90 via-yellow-600/90 to-orange-600/90 border-4 border-yellow-300 rounded-2xl px-6 py-3 shadow-2xl backdrop-blur-sm">
-                      <div className="flex items-center justify-center gap-3">
+                    {/* Outer gold frame */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 rounded-2xl" 
+                         style={{ boxShadow: 'inset 0 0 0 2px #b45309, 0 6px 16px rgba(0,0,0,0.35)' }} />
+                    
+                    {/* Middle highlight */}
+                    <div className="absolute inset-[3px] bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 rounded-2xl"
+                         style={{ boxShadow: 'inset 0 1px 0 #fef3c7' }} />
+                    
+                    {/* Inner crystal */}
+                    <div className="relative bg-gradient-to-br from-yellow-500/95 via-yellow-600/95 to-orange-600/95 rounded-2xl px-6 py-3"
+                         style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)' }}>
+                      
+                      {/* Specular highlight */}
+                      <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
+                           style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)' }} />
+                      
+                      <div className="relative flex items-center justify-center gap-3">
+                        {/* SVG Coin */}
                         <svg viewBox="0 0 100 100" className="w-12 h-12 drop-shadow-2xl flex-shrink-0">
                           <defs>
                             <radialGradient id="coinGrad">
@@ -255,25 +280,30 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                               <stop offset="50%" stopColor="#fbbf24" />
                               <stop offset="100%" stopColor="#f59e0b" />
                             </radialGradient>
+                            <filter id="coinShadow">
+                              <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+                              <feOffset dx="2" dy="2" result="offsetblur"/>
+                              <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.5"/>
+                              </feComponentTransfer>
+                              <feMerge>
+                                <feMergeNode/>
+                                <feMergeNode in="SourceGraphic"/>
+                              </feMerge>
+                            </filter>
                           </defs>
-                          <circle cx="50" cy="50" r="48" fill="url(#coinGrad)" stroke="#d97706" strokeWidth="3" />
+                          <circle cx="50" cy="50" r="48" fill="url(#coinGrad)" stroke="#d97706" strokeWidth="3" filter="url(#coinShadow)" />
                           <circle cx="50" cy="50" r="38" fill="none" stroke="#fef3c7" strokeWidth="2" opacity="0.6" />
                           <text x="50" y="65" fontSize="40" fontWeight="bold" fill="#92400e" textAnchor="middle" fontFamily="serif">$</text>
                         </svg>
+                        
                         <div className="flex items-center gap-2">
                           <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
                                 style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
                             +2,500
                           </span>
                           <svg viewBox="0 0 100 100" className="w-10 h-10 drop-shadow-2xl flex-shrink-0">
-                            <defs>
-                              <radialGradient id="coinGrad2">
-                                <stop offset="0%" stopColor="#fef3c7" />
-                                <stop offset="50%" stopColor="#fbbf24" />
-                                <stop offset="100%" stopColor="#f59e0b" />
-                              </radialGradient>
-                            </defs>
-                            <circle cx="50" cy="50" r="48" fill="url(#coinGrad2)" stroke="#d97706" strokeWidth="3" />
+                            <circle cx="50" cy="50" r="48" fill="url(#coinGrad)" stroke="#d97706" strokeWidth="3" />
                             <circle cx="50" cy="50" r="38" fill="none" stroke="#fef3c7" strokeWidth="2" opacity="0.6" />
                             <text x="50" y="65" fontSize="40" fontWeight="bold" fill="#92400e" textAnchor="middle" fontFamily="serif">$</text>
                           </svg>
@@ -282,13 +312,29 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                     </div>
                   </div>
 
-                  {/* Lives reward */}
+                  {/* Lives reward - 3D-s keret */}
                   <div className="relative">
-                    {/* Glow background */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-pink-400/20 via-pink-300/30 to-pink-400/20 rounded-2xl blur-xl animate-pulse" style={{ animationDelay: '0.5s' }} />
+                    {/* 3D Shadow */}
+                    <div className="absolute inset-0 translate-y-1 translate-x-1 bg-black/40 rounded-2xl blur-sm" />
                     
-                    <div className="relative bg-gradient-to-br from-pink-500/90 via-pink-600/90 to-rose-600/90 border-4 border-pink-300 rounded-2xl px-6 py-3 shadow-2xl backdrop-blur-sm">
-                      <div className="flex items-center justify-center gap-3">
+                    {/* Outer frame */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-pink-600 via-pink-500 to-pink-700 rounded-2xl"
+                         style={{ boxShadow: 'inset 0 0 0 2px #9f1239, 0 6px 16px rgba(0,0,0,0.35)' }} />
+                    
+                    {/* Middle highlight */}
+                    <div className="absolute inset-[3px] bg-gradient-to-b from-pink-300 via-pink-400 to-pink-600 rounded-2xl"
+                         style={{ boxShadow: 'inset 0 1px 0 #fecdd3' }} />
+                    
+                    {/* Inner crystal */}
+                    <div className="relative bg-gradient-to-br from-pink-500/95 via-pink-600/95 to-rose-600/95 rounded-2xl px-6 py-3"
+                         style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)' }}>
+                      
+                      {/* Specular highlight */}
+                      <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
+                           style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)' }} />
+                      
+                      <div className="relative flex items-center justify-center gap-3">
+                        {/* SVG Heart */}
                         <svg viewBox="0 0 100 100" className="w-10 h-10 drop-shadow-2xl flex-shrink-0">
                           <defs>
                             <radialGradient id="heartGrad">
@@ -296,25 +342,30 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                               <stop offset="50%" stopColor="#fb7185" />
                               <stop offset="100%" stopColor="#e11d48" />
                             </radialGradient>
+                            <filter id="heartShadow">
+                              <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+                              <feOffset dx="2" dy="2" result="offsetblur"/>
+                              <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.5"/>
+                              </feComponentTransfer>
+                              <feMerge>
+                                <feMergeNode/>
+                                <feMergeNode in="SourceGraphic"/>
+                              </feMerge>
+                            </filter>
                           </defs>
                           <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
-                                fill="url(#heartGrad)" stroke="#9f1239" strokeWidth="2" />
+                                fill="url(#heartGrad)" stroke="#9f1239" strokeWidth="2" filter="url(#heartShadow)" />
                         </svg>
+                        
                         <div className="flex items-center gap-2">
                           <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
                                 style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
                             +50
                           </span>
                           <svg viewBox="0 0 100 100" className="w-8 h-8 drop-shadow-2xl flex-shrink-0">
-                            <defs>
-                              <radialGradient id="heartGrad2">
-                                <stop offset="0%" stopColor="#fecdd3" />
-                                <stop offset="50%" stopColor="#fb7185" />
-                                <stop offset="100%" stopColor="#e11d48" />
-                              </radialGradient>
-                            </defs>
                             <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
-                                  fill="url(#heartGrad2)" stroke="#9f1239" strokeWidth="2" />
+                                  fill="url(#heartGrad)" stroke="#9f1239" strokeWidth="2" />
                           </svg>
                         </div>
                       </div>
@@ -322,7 +373,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                   </div>
                 </div>
 
-                {/* Claim button - using gold hexagon style */}
+                {/* Claim button - 3D hatás mint az Elfogadom */}
                 <div className="flex justify-center w-full px-[4%] mt-3">
                   <button
                     onClick={handleClaim}
@@ -330,68 +381,75 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                     className="relative grid place-items-center select-none disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       width: "100%",
-                      height: "clamp(56px, 14vh, 75px)",
+                      height: "clamp(56px, 14vh, 80px)",
                       boxSizing: "border-box",
                       outline: "none",
                       border: 0,
-                      animation: "claimPulse 1.5s ease-in-out infinite",
+                      animation: "claimPulse 1.125s ease-in-out infinite",
                       containerType: "inline-size",
-                      filter: 'drop-shadow(0 0 20px rgba(250,204,21,0.9)) drop-shadow(0 0 40px rgba(234,179,8,0.6))'
                     }}
                   >
                     <style>{`
                       @keyframes claimPulse {
                         0%, 100% { 
                           transform: scale(1);
-                          filter: drop-shadow(0 0 20px rgba(250,204,21,0.9)) drop-shadow(0 0 40px rgba(234,179,8,0.6));
+                          filter: brightness(1) drop-shadow(0 0 8px rgba(255,215,0,0.4)) drop-shadow(0 0 16px rgba(255,215,0,0.3));
                         }
                         50% { 
                           transform: scale(1.05);
-                          filter: drop-shadow(0 0 30px rgba(250,204,21,1)) drop-shadow(0 0 60px rgba(234,179,8,0.8));
+                          filter: brightness(1.15) drop-shadow(0 0 20px rgba(255,215,0,0.9)) drop-shadow(0 0 40px rgba(255,215,0,0.6));
                         }
                       }
                     `}</style>
                     
-                    {/* Shadow */}
+                    {/* 3D Shadow */}
                     <div className="absolute" style={{
-                      top: "8px", left: "8px", right: "-8px", bottom: "-8px",
+                      top: "6px", left: "6px", right: "-6px", bottom: "-6px",
                       clipPath: 'polygon(50% 0%, 92% 22.114%, 92% 77.886%, 50% 100%, 8% 77.886%, 8% 22.114%)',
-                      background: "rgba(0,0,0,0.4)", filter: "blur(5px)"
+                      background: "rgba(0,0,0,0.35)", filter: "blur(4px)"
                     }} />
                     
                     {/* Outer gold frame */}
                     <div className="absolute inset-0" style={{
                       clipPath: 'polygon(50% 0%, 92% 22.114%, 92% 77.886%, 50% 100%, 8% 77.886%, 8% 22.114%)',
-                      background: 'linear-gradient(135deg, #fbbf24, #f59e0b 50%, #d97706)',
-                      boxShadow: 'inset 0 0 0 3px #92400e, 0 10px 25px rgba(0,0,0,0.4)'
+                      background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                      boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 8px 20px rgba(0,0,0,0.35)'
                     }} />
                     
-                    {/* Inner frame */}
-                    <div className="absolute inset-[4px]" style={{
-                      clipPath: 'polygon(50% 0.6%, 92% 22.114%, 92% 77.886%, 50% 99.4%, 8% 77.886%, 8% 22.114%)',
-                      background: 'linear-gradient(180deg, #fef3c7, #fbbf24 40%, #f59e0b)',
-                      boxShadow: 'inset 0 2px 0 #fef9c3'
+                    {/* Middle gold frame */}
+                    <div className="absolute inset-[3px]" style={{
+                      clipPath: 'polygon(50% 0%, 92% 22.114%, 92% 77.886%, 50% 100%, 8% 77.886%, 8% 22.114%)',
+                      background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                      boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
                     }} />
                     
-                    {/* Inner crystal */}
+                    {/* Inner emerald crystal */}
                     <div className="absolute" style={{
-                      top: "7px", left: "7px", right: "7px", bottom: "7px",
+                      top: "6px", left: "6px", right: "6px", bottom: "6px",
                       clipPath: 'polygon(50% 0.6%, 92% 22.114%, 92% 77.886%, 50% 99.4%, 8% 77.886%, 8% 22.114%)',
-                      background: 'radial-gradient(ellipse 100% 80% at 50% -10%, #10b981 0%, #059669 30%, #047857 60%, #065f46 100%)',
-                      boxShadow: 'inset 0 15px 30px rgba(255,255,255,0.3), inset 0 -15px 30px rgba(0,0,0,0.4)'
+                      background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(155 90% 82%) 0%, hsl(155 85% 68%) 30%, hsl(155 78% 58%) 60%, hsl(155 70% 45%) 100%)',
+                      boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.25), inset 0 -12px 24px rgba(0,0,0,0.4)'
                     }} />
                     
-                    {/* Shine */}
+                    {/* Specular highlight */}
                     <div className="absolute pointer-events-none" style={{
-                      top: "7px", left: "7px", right: "7px", bottom: "7px",
+                      top: "6px", left: "6px", right: "6px", bottom: "6px",
                       clipPath: 'polygon(50% 0.6%, 92% 22.114%, 92% 77.886%, 50% 99.4%, 8% 77.886%, 8% 22.114%)',
-                      background: 'radial-gradient(ellipse 100% 70% at 30% 0%, rgba(255,255,255,0.6), transparent 70%)'
+                      background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.6), transparent 60%)'
                     }} />
                     
-                    <span className="relative z-10 font-black text-white tracking-wider px-4"
+                    {/* Diagonal light streaks */}
+                    <div className="absolute pointer-events-none" style={{
+                      top: "6px", left: "6px", right: "6px", bottom: "6px",
+                      clipPath: 'polygon(50% 0.6%, 92% 22.114%, 92% 77.886%, 50% 99.4%, 8% 77.886%, 8% 22.114%)',
+                      background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+                      opacity: 0.7
+                    }} />
+                    
+                    <span className="relative z-10 font-black text-white tracking-[0.08em] px-4"
                           style={{
-                            fontSize: "clamp(0.9rem, 4cqw, 1.6rem)",
-                            textShadow: "0 3px 10px rgba(0,0,0,1), 0 0 24px rgba(255,255,255,0.4)",
+                            fontSize: "clamp(0.7rem, 3.5cqw, 1.45rem)",
+                            textShadow: "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
                             whiteSpace: "nowrap"
                           }}>
                       {claiming ? 'FELDOLGOZÁS...' : 'KÖSZÖNÖM!'}
@@ -407,7 +465,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             onClick={onLater}
             disabled={claiming}
             className={`absolute top-[8vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '1200ms' }}
+            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '0ms' }}
           >
             ×
           </button>
