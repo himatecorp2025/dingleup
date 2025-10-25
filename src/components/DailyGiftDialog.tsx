@@ -234,7 +234,7 @@ const DailyGiftDialog = ({
           <div 
             className={`relative z-10 ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
             style={{ 
-              transition: 'transform 2000ms ease-in-out 300ms, opacity 2000ms ease-in-out 300ms',
+              transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms',
               transformOrigin: 'center center',
               willChange: 'transform, opacity'
             }}
