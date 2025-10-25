@@ -103,14 +103,17 @@ const Dashboard = () => {
     });
   }, [navigate]);
 
-  // Show Welcome Bonus dialog FIRST (highest priority) - only on handheld, not during gameplay
+  // Show Welcome Bonus dialog FIRST (highest priority) - testing: also on desktop, with 1s delay
   useEffect(() => {
-    if (isHandheld && canMountModals && canClaimWelcome && userId) {
-      setShowWelcomeBonus(true);
-      setShowDailyGift(false);
-      setShowPromo(false);
+    if (canMountModals && canClaimWelcome && userId) {
+      const t = setTimeout(() => {
+        setShowWelcomeBonus(true);
+        setShowDailyGift(false);
+        setShowPromo(false);
+      }, 1000);
+      return () => clearTimeout(t);
     }
-  }, [isHandheld, canMountModals, canClaimWelcome, userId]);
+  }, [canMountModals, canClaimWelcome, userId]);
 
   // Show Daily Gift dialog SECOND (after welcome bonus) - only on handheld, not during gameplay
   useEffect(() => {
