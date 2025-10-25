@@ -97,15 +97,23 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
     lg: 'py-2 sm:py-2.5 px-4 sm:px-5 text-base sm:text-lg',
   };
 
+  const hexPath = size === 'sm' 
+    ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' 
+    : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)';
+  
+  const hexInnerPath = size === 'sm'
+    ? 'polygon(10% 0.6%, 90% 0%, 100% 50%, 90% 100%, 10% 99.4%, 0% 50%)'
+    : 'polygon(8% 0.6%, 92% 0%, 100% 50%, 92% 100%, 8% 99.4%, 0% 50%)';
+
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`relative w-full ${sizeClasses[size]} font-black rounded-2xl transition-all ${
+      className={`relative w-full ${sizeClasses[size]} font-black transition-all ${
         disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'
       } ${className}`}
       style={{
-        clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+        clipPath: hexPath,
       }}
     >
       {/* Badge indicator */}
@@ -115,65 +123,96 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
         </span>
       )}
 
-      {/* Outer glow */}
+      {/* BASE SHADOW (3D depth) */}
       <div
-        className="absolute inset-0 rounded-full blur-xl opacity-50 animate-pulse -z-10"
-        style={{ background: colors.glowColor }}
-      />
-
-      {/* 3D Shadow base */}
-      <div
-        className="absolute inset-0 bg-black/60 blur-md"
+        className="absolute"
         style={{
-          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-          transform: 'translate(2px, 3px)',
+          top: '4px',
+          left: '4px',
+          right: '-4px',
+          bottom: '-4px',
+          clipPath: hexPath,
+          background: 'rgba(0,0,0,0.35)',
+          filter: 'blur(4px)',
         }}
+        aria-hidden
       />
 
-      {/* Outer frame - darkest */}
+      {/* OUTER FRAME - gradient with border */}
       <div
-        className={`absolute inset-0 bg-gradient-to-br ${colors.gradientOuter} border-2 ${colors.borderColor} ${colors.shadowColor} ${!disabled && colors.hoverShadow}`}
+        className={`absolute inset-0 bg-gradient-to-br ${colors.gradientOuter} ${colors.shadowColor} ${!disabled && colors.hoverShadow}`}
         style={{
-          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+          clipPath: hexPath,
+          boxShadow: `inset 0 0 0 2px ${colors.borderColor.replace('border-', 'hsl(var(--')})`,
         }}
+        aria-hidden
       />
 
-      {/* Middle layer */}
+      {/* MIDDLE GOLD/COLOR FRAME (bright inner highlight) */}
       <div
-        className={`absolute inset-[3px] bg-gradient-to-br ${colors.gradientMiddle}`}
+        className={`absolute inset-[3px] bg-gradient-to-b ${colors.gradientMiddle}`}
         style={{
-          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-          boxShadow: 'inset 0 0 0 1.5px rgba(255,255,255,0.2)',
+          clipPath: hexPath,
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
         }}
+        aria-hidden
       />
 
-      {/* Inner layer with diamond pattern */}
+      {/* INNER CRYSTAL/COLOR LAYER */}
       <div
-        className={`absolute inset-[5px] bg-gradient-to-b ${colors.gradientInner}`}
+        className={`absolute bg-gradient-to-b ${colors.gradientInner}`}
         style={{
-          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-          boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.5), inset 0 -3px 0 rgba(0,0,0,0.4)',
+          top: '5px',
+          left: '5px',
+          right: '5px',
+          bottom: '5px',
+          clipPath: hexInnerPath,
+          boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
         }}
+        aria-hidden
       />
 
-      {/* Diamond cross pattern overlay */}
+      {/* SPECULAR HIGHLIGHT (top-left) */}
       <div
-        className="absolute inset-[5px] pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
-          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-          background:
-            'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+          top: '5px',
+          left: '5px',
+          right: '5px',
+          bottom: '5px',
+          clipPath: hexInnerPath,
+          background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
+        }}
+        aria-hidden
+      />
+
+      {/* DIAGONAL LIGHT STREAKS */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          top: '5px',
+          left: '5px',
+          right: '5px',
+          bottom: '5px',
+          clipPath: hexInnerPath,
+          background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
           opacity: 0.7,
         }}
+        aria-hidden
       />
 
-      {/* Specular highlight */}
+      {/* INNER GLOW (bottom shadow for 3D depth) */}
       <div
-        className="absolute inset-[5px] pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
-          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-          background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)',
+          top: '5px',
+          left: '5px',
+          right: '5px',
+          bottom: '5px',
+          clipPath: hexInnerPath,
+          boxShadow: 'inset 0 0 10px rgba(0,0,0,0.25)',
         }}
+        aria-hidden
       />
 
       {/* Content */}
