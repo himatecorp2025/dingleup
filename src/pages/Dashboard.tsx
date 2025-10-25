@@ -347,14 +347,16 @@ return (
           <div className="flex items-start justify-between">
             {/* Left: Greeting */}
             <div className="flex flex-col items-start">
-              <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 flex items-center gap-2">
+              <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
                 Szia, {profile.username}!
-                {profile.is_subscribed && <GeniusCrownBadge size="sm" />}
               </h1>
             </div>
 
-            {/* Right: Stats & Avatar */}
+            {/* Right: Stats & Avatar - including Genius Crown as first hexagon */}
             <div className="flex items-center gap-1.5 sm:gap-2" data-tutorial="profile-header">
+              {/* Genius Crown Hexagon - only for subscribers */}
+              {profile.is_subscribed && <GeniusCrownBadge asHexagon showTooltip />}
+              
               {/* Rank Hexagon - 3D Diamond */}
               <DiamondHexagon type="rank" value={currentRank || '...'} />
 
@@ -474,8 +476,24 @@ return (
               <WeeklyRankingsCountdown compact={false} />
             </div>
             
-            {/* Right: Action Buttons - Vertical Stack, constrained width */}
-            <div className="flex flex-col gap-2 flex-1" style={{ maxWidth: 'calc(100% - 180px)' }}>
+            {/* Right: Action Buttons - Match width of hexagons above */}
+            <div 
+              className="flex flex-col gap-2"
+              style={{
+                width: profile.is_subscribed 
+                  ? 'calc(5 * (3rem) + 4 * 0.375rem)' // 5 hexagons mobile (48px × 5 + 6px × 4 = 264px)
+                  : 'calc(4 * (3rem) + 3 * 0.375rem)' // 4 hexagons mobile
+              }}
+            >
+              {/* Desktop width handled via sm: breakpoint */}
+              <style>{`
+                @media (min-width: 640px) {
+                  [data-buttons-container] {
+                    width: ${profile.is_subscribed ? 'calc(5 * (4rem) + 4 * 0.5rem)' : 'calc(4 * (4rem) + 3 * 0.5rem)'} !important;
+                  }
+                }
+              `}</style>
+              <div data-buttons-container className="flex flex-col gap-2 w-full">
               <DiamondButton
                 onClick={() => navigate('/invitation')}
                 variant="share"
@@ -505,6 +523,7 @@ return (
                 </svg>
                 <span className="text-[10px] sm:text-xs">RANGLISTA</span>
               </DiamondButton>
+            </div>
             </div>
           </div>
         </div>
