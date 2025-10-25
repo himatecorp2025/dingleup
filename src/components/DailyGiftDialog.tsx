@@ -247,10 +247,10 @@ const DailyGiftDialog = ({
               {/* Background glow behind shield - removed to prevent purple pulse */}
 
               <HexShieldFrame>
-              {/* Top Hex Badge - "DAILY GIFT" - 3D GOLD FRAME */}
+              {/* Top Hex Badge - "DAILY GIFT" - 3D GOLD FRAME - COVERS TOP POINT */}
               <div 
                 ref={badgeRef}
-                className="relative -mt-8 mb-3 mx-auto z-20" 
+                className="relative -mt-12 mb-3 mx-auto z-20" 
                 style={{ width: '78%' }}
               >
                 {/* 3D Shadow base */}
@@ -316,7 +316,7 @@ const DailyGiftDialog = ({
               </div>
 
               {/* Content Area */}
-              <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-[3%]">
+              <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-[6%]">
                 
                 {/* 3 Big Golden Stars (metallic) */}
                 <div className="flex gap-[2.5vw] my-[1.2vh]">
