@@ -138,48 +138,42 @@ const DailyGiftDialog = ({
       <DialogContent 
         className="overflow-visible p-0 border-0 bg-transparent [&>button[data-dialog-close]]:hidden"
 >
-          <DialogTitle className="sr-only">Daily Gift</DialogTitle>
-          <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
-          
-          {/* Háttér gradiens */}
-          <div
-            className="absolute inset-0 -z-10 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(120% 80% at 50% 10%, rgba(20,30,60,0.6), rgba(10,14,28,0.95))",
-            }}
-          />
+          <div className="relative w-full">
+            <DialogTitle className="sr-only">Daily Gift</DialogTitle>
+            <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
+            
+            {/* Háttér gradiens */}
+            <div
+              className="absolute inset-0 -z-10 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(120% 80% at 50% 10%, rgba(20,30,60,0.6), rgba(10,14,28,0.95))",
+              }}
+            />
 
-          {/* Bezáró X - jobb felső sarok */}
-          <button
-            onClick={onLater}
-            aria-label="Bezárás"
-            className="fixed z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
-            style={{
-              top: "max(12px, env(safe-area-inset-top))",
-              right: "max(12px, env(safe-area-inset-right))",
-              width: "clamp(36px, 8svw, 48px)",
-              height: "clamp(36px, 8svw, 48px)",
-              fontSize: "clamp(18px, 5svw, 28px)",
-              lineHeight: 1,
-            }}
-          >
-            ×
-          </button>
+            {/* Bezáró X - jobb felső sarok */}
+            <button
+              onClick={onLater}
+              aria-label="Bezárás"
+              className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
+              style={{
+                top: "max(12px, env(safe-area-inset-top))",
+                right: "max(12px, env(safe-area-inset-right))",
+                width: "clamp(36px, 8svw, 48px)",
+                height: "clamp(36px, 8svw, 48px)",
+                fontSize: "clamp(18px, 5svw, 28px)",
+                lineHeight: 1,
+              }}
+            >
+              ×
+            </button>
 
-          {/* Pajzs tartalom - relatív pozíció, a grid középre teszi */}
-          <div 
-            className="relative z-10"
-            style={{ 
-              transform: contentVisible ? 'scale(1)' : 'scale(0)',
-              opacity: contentVisible ? 1 : 0,
-              transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms',
-              transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto'
-            }}
-          >
-            <div style={{ transform: 'scale(1)', containerType: 'inline-size' }}>
-              <HexShieldFrame showShine={false}>
+            {/* Pajzs tartalom */}
+            <div 
+              className="relative z-10 flex items-center justify-center"
+            >
+              <div style={{ containerType: 'inline-size' }}>
+                <HexShieldFrame showShine={false}>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
                 ref={badgeRef}
@@ -374,6 +368,7 @@ const DailyGiftDialog = ({
                 </div>
               </div>
             </HexShieldFrame>
+              </div>
             </div>
           </div>
       </DialogContent>
