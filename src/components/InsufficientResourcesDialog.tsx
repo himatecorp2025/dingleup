@@ -83,7 +83,7 @@ export const InsufficientResourcesDialog = ({
     if (!open) return;
     if (!contentVisible) return;
     
-    // 200ms delay after shield appears (shield has 300ms delay, so total 500ms)
+    // 700ms delay after shield appears (shield has 150ms delay, so total 850ms)
     const timer = setTimeout(() => {
       requestAnimationFrame(() => {
         const el = flagRef.current;
@@ -96,7 +96,7 @@ export const InsufficientResourcesDialog = ({
           setBurstActive(true);
         }
       });
-    }, 200);
+    }, 700);
 
     return () => clearTimeout(timer);
   }, [contentVisible, open]);
@@ -226,13 +226,13 @@ export const InsufficientResourcesDialog = ({
             </div>
           )}
 
-          {/* ZOOM WRAPPER - scale animation for visual effect */}
+          {/* ZOOM WRAPPER - faster shield appearance */}
           <div 
             className="relative z-10"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
-              transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms',
+              transition: 'transform 1200ms ease-in-out 150ms, opacity 1200ms ease-in-out 150ms',
               transformOrigin: 'center center',
               willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
@@ -475,7 +475,7 @@ export const InsufficientResourcesDialog = ({
                       disabled={isLoadingPayment}
                       style={{ width: 'var(--sync-width)' }} 
                     >
-                      {isLoadingPayment ? 'Betöltés...' : 'MEGVESZEM!'}
+                      {isLoadingPayment ? 'Betöltés...' : 'MEGSZERZEM MOST!'}
                     </HexAcceptButton>
                   </div>
                 </div>
@@ -483,10 +483,10 @@ export const InsufficientResourcesDialog = ({
             </div>
           </div>
 
-          {/* Close X button - top right - DELAY 600ms */}
+          {/* Close X button - closer to shield */}
           <button
             onClick={() => onOpenChange(false)}
-            className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            className={`absolute top-[8vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
             style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '600ms' }}
           >
             ×
