@@ -10,7 +10,7 @@ import React, { PropsWithChildren } from 'react';
  * - Specular conic highlight a tetején
  * - 3D árnyékok és vastagság
  */
-const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ children, className = '' }) => {
+const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine?: boolean }>> = ({ children, className = '', showShine = true }) => {
   return (
     <div className={`relative overflow-hidden mx-auto ${className}`}
          style={{ 
@@ -18,29 +18,30 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
            height: 'clamp(540px, 88vh, 680px)'
          }}>
       
-      {/* Shine sweep - 120° sideways motion (original style, 120° angle) */}
-      <div 
-        className="absolute pointer-events-none"
-        style={{
-          top: '46px',
-          left: '34px',
-          right: '34px', 
-          bottom: '46px',
-          clipPath: 'polygon(50% 0%, 100% 4.756%, 100% 95.244%, 50% 100%, 0% 95.244%, 0% 4.756%)',
-          overflow: 'hidden',
-          zIndex: 5
-        }}
-      >
+      {showShine && (
         <div 
-          className="absolute w-[200%] h-[200%]"
+          className="absolute pointer-events-none"
           style={{
-            top: '-50%',
-            left: '-50%',
-            background: 'linear-gradient(120deg, transparent 46%, rgba(255,215,0,0.7) 50%, transparent 54%)',
-            animation: 'shine-sideways 1.5s linear infinite'
+            top: '46px',
+            left: '34px',
+            right: '34px', 
+            bottom: '46px',
+            clipPath: 'polygon(50% 0%, 100% 4.756%, 100% 95.244%, 50% 100%, 0% 95.244%, 0% 4.756%)',
+            overflow: 'hidden',
+            zIndex: 5
           }}
-        />
-      </div>
+        >
+          <div 
+            className="absolute w-[200%] h-[200%]"
+            style={{
+              top: '-50%',
+              left: '-50%',
+              background: 'linear-gradient(120deg, transparent 46%, rgba(255,215,0,0.7) 50%, transparent 54%)',
+              animation: 'shine-sideways 1.5s linear infinite'
+            }}
+          />
+        </div>
+      )}
       
       {/* SVG POINTY-TOP Hexagon/Trapezoid Layers */}
       <svg viewBox="0 0 360 600" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet" aria-hidden>

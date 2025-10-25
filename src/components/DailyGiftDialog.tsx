@@ -145,67 +145,11 @@ const DailyGiftDialog = ({
         }}
       >
         <div 
-          className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
+          className="fixed inset-0 grid place-items-center overflow-hidden"
           style={{ minHeight: '100vh', minWidth: '100vw' }}
         >
           <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
 
-          {/* Floating sparkle particles */}
-          {contentVisible && burstActive && (
-            <div key={burstKey} className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(180)].map((_, i) => {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 60 + 40;
-                const size = Math.random() * 2 + 1.2;
-                const burstDuration = Math.random() * 0.25 + 0.3;
-                const endX = Math.cos(angle) * speed;
-                const endY = Math.sin(angle) * speed;
-                const floatX = Math.random() * 40 - 20;
-                const floatY = Math.random() * 40 - 20;
-                const floatDuration = Math.random() * 1 + 1;
-                const finalOpacity = Math.random() * 0.4 + 0.5;
-
-                return (
-                  <div
-                    key={i}
-                    className="absolute rounded-full"
-                    style={{
-                      width: `${size}px`,
-                      height: `${size}px`,
-                      background: '#FFD700',
-                      left: `${origin.x}%`,
-                      top: `${origin.y}%`,
-                      boxShadow: '0 0 20px 4px #FFD700, 0 0 35px 10px #FFA500, 0 0 60px 12px rgba(255, 215, 0, 0.85)',
-                      filter: 'saturate(1.2) brightness(1.2)',
-                      transform: 'translate(-50%, -50%)',
-                      animation: `starBurst${i % 40} ${burstDuration}s cubic-bezier(0.2,0.8,0.2,1) forwards, starFloat${i % 40} ${floatDuration}s linear ${burstDuration}s infinite`,
-                      animationDelay: `${i * 0.003}s`,
-                      zIndex: 5
-                    }}
-                  >
-                    <style>{`
-                      @keyframes starBurst${i % 40} {
-                        0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-                        10% { opacity: 1; }
-                        100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(1); opacity: ${finalOpacity}; }
-                      }
-                      @keyframes starFloat${i % 40} {
-                        0% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
-                        12.5% { transform: translate(calc(-50% + ${endX + floatX * 0.25}vw), calc(-50% + ${endY + floatY * 0.25}vh)); }
-                        25% { transform: translate(calc(-50% + ${endX + floatX * 0.5}vw), calc(-50% + ${endY + floatY * 0.5}vh)); }
-                        37.5% { transform: translate(calc(-50% + ${endX + floatX * 0.75}vw), calc(-50% + ${endY + floatY * 0.75}vh)); }
-                        50% { transform: translate(calc(-50% + ${endX + floatX}vw), calc(-50% + ${endY + floatY}vh)); }
-                        62.5% { transform: translate(calc(-50% + ${endX + floatX * 0.75}vw), calc(-50% + ${endY - floatY * 0.25}vh)); }
-                        75% { transform: translate(calc(-50% + ${endX + floatX * 0.5}vw), calc(-50% + ${endY - floatY * 0.5}vh)); }
-                        87.5% { transform: translate(calc(-50% + ${endX + floatX * 0.25}vw), calc(-50% + ${endY - floatY * 0.25}vh)); }
-                        100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
-                      }
-                    `}</style>
-                  </div>
-                );
-              })}
-            </div>
-          )}
 
           <div 
             className="relative z-10 w-full flex justify-center"
@@ -218,7 +162,7 @@ const DailyGiftDialog = ({
             }}
           >
             <div style={{ transform: 'scale(1)', containerType: 'inline-size' }}>
-              <HexShieldFrame>
+              <HexShieldFrame showShine={false}>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
                 ref={badgeRef}
