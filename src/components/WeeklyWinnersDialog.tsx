@@ -223,7 +223,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
               {/* Premium WEEKLY WINNERS badge - ARANY 3D - ugyanaz mint Welcome */}
               <div 
                 ref={headerRef}
-                className="relative -mt-12 mb-4 mx-auto z-20" 
+                className="relative -mt-12 mb-1 mx-auto z-20" 
                 style={{ width: '80%' }}
               >
                 <div className="absolute inset-0 translate-y-1 translate-x-1"
@@ -282,14 +282,15 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                 </div>
               </div>
 
-              {/* Content - Player List */}
-              <div ref={containerRef} className="relative z-10 flex flex-col h-full pl-[6%] pr-[3%] pb-[6%] pt-0">
+              {/* Content - Player List - ONLY 7 VISIBLE */}
+              <div className="relative z-10 flex flex-col pl-[6%] pr-[3%] pb-[6%]">
                 
-                {/* Players List - scrollable, first 7 visible */}
+                {/* Players List - exactly 7 boxes visible */}
                 <div
                   className="w-full space-y-1.5 overflow-y-auto pr-1"
                   style={{ 
-                    maxHeight: 'calc(7 * 60px + 6 * 6px)',
+                    height: '420px',
+                    maxHeight: '420px',
                     paddingRight: '10px'
                   }}
                 >
