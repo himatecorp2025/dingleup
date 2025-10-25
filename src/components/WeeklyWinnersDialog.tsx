@@ -34,7 +34,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
       if (!first) return;
       const rowH = first.offsetHeight;
       const gap = second ? parseFloat(getComputedStyle(second).marginTop || '6') : 6;
-      setListHeight(Math.max(0, Math.round((rowH * 7 + gap * 6) * 1.03) - 8));
+      setListHeight(Math.max(0, Math.round((rowH * 7 + gap * 6) * 1.04) - 8));
     } catch {}
   };
 
@@ -291,16 +291,17 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
               </div>
 
               {/* Content - Player List - ONLY 7 VISIBLE */}
-              <div className="relative z-10 flex flex-col pl-[6%] pr-[3%] pb-[6%]">
+              <div className="relative z-10 flex flex-col pl-[6%] pr-[3%] pb-[6%] bg-transparent">
                 
                 {/* Players List - exactly 7 boxes visible */}
                 <div
                   ref={listRef}
-                  className="w-full space-y-1.5 overflow-y-auto pr-1"
+                  className="w-full space-y-1.5 overflow-y-auto pr-1 bg-transparent"
                   style={{ 
                     height: listHeight ? `${listHeight}px` : undefined,
                     maxHeight: listHeight ? `${listHeight}px` : undefined,
-                    paddingRight: '10px'
+                    paddingRight: '10px',
+                    background: 'transparent'
                   }}
                 >
                   {topPlayers.map((player, index) => (
