@@ -507,7 +507,7 @@ const DailyGiftDialog = ({
                 {/* Hex Accept Button */}
                 <div 
                   ref={buttonWrapperRef}
-                  className="flex justify-center mt-auto"
+                  className="flex justify-center mt-auto mb-[4%]"
                   style={{
                     width: 'var(--sync-width, 100%)',
                     maxWidth: '100%'
