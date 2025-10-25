@@ -117,10 +117,10 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
       </div>
       
       <div className="max-w-2xl w-full relative z-10">
-        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 font-poppins bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-400 to-purple-400 animate-pulse">
+        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 font-poppins bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-400 to-purple-400 animate-pulse pr-16 sm:pr-20">
           Válassz témakört!
         </h1>
-          <p className="text-center text-sm text-white mb-6">
+          <p className="text-center text-sm text-white mb-6 pr-16 sm:pr-20">
             Melyik területen méred össze tudásod?
           </p>
 

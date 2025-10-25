@@ -845,59 +845,59 @@ const GamePreview = () => {
       <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
         <CategorySelector onSelect={startGameWithCategory} />
         
-        {/* Lives & Coins Display - 3D Design */}
+        {/* Lives & Coins Display - 3D Design - Smaller & Responsive */}
         <div className="fixed top-4 right-4 z-50">
-          <div className="relative rounded-xl p-3 md:p-4" style={{ perspective: '1000px' }}>
+          <div className="relative rounded-lg p-2 md:p-2.5" style={{ perspective: '1000px' }}>
             {/* BASE SHADOW */}
-            <div className="absolute inset-0 bg-black/60 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+            <div className="absolute inset-0 bg-black/60 rounded-lg" style={{ transform: 'translate(3px, 3px)', filter: 'blur(5px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700/80 via-purple-600/70 to-purple-900/80 border-2 border-purple-500/50 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-purple-700/80 via-purple-600/70 to-purple-900/80 border-2 border-purple-500/50 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
-            <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+            <div className="absolute inset-[2px] rounded-lg bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,0.3), inset 0 -1.5px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[5px] rounded-xl bg-gradient-to-br from-purple-900/40 to-purple-800/40 backdrop-blur-sm" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+            <div className="absolute inset-[4px] rounded-lg bg-gradient-to-br from-purple-900/40 to-purple-800/40 backdrop-blur-sm" style={{ boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.2), inset 0 -6px 12px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+            <div className="absolute inset-[4px] rounded-lg pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
             
-            <div className="relative z-10 flex flex-col gap-2" style={{ transform: 'translateZ(40px)' }}>
+            <div className="relative z-10 flex flex-col gap-1.5" style={{ transform: 'translateZ(40px)' }}>
               {/* Lives */}
-              <div className="flex items-center gap-2">
-                <div className="relative p-1.5 rounded-lg">
+              <div className="flex items-center gap-1.5">
+                <div className="relative p-1 rounded">
                   {/* Heart icon base shadow */}
-                  <div className="absolute inset-0 bg-black/40 rounded-lg" style={{ transform: 'translate(1px, 1px)', filter: 'blur(2px)' }} aria-hidden />
+                  <div className="absolute inset-0 bg-black/40 rounded" style={{ transform: 'translate(1px, 1px)', filter: 'blur(2px)' }} aria-hidden />
                   
                   {/* Heart icon outer frame */}
-                  <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-red-600 via-red-500 to-red-700 border border-red-400/50" aria-hidden />
+                  <div className="absolute inset-0 rounded bg-gradient-to-br from-red-600 via-red-500 to-red-700 border border-red-400/50" aria-hidden />
                   
                   {/* Heart icon inner layer */}
-                  <div className="absolute inset-[2px] rounded-lg bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.3)' }} aria-hidden />
+                  <div className="absolute inset-[1.5px] rounded bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.2), inset 0 -1.5px 3px rgba(0,0,0,0.3)' }} aria-hidden />
                   
-                  <Heart className="w-4 h-4 md:w-5 md:h-5 text-white relative z-10 drop-shadow-lg" />
+                  <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 text-white relative z-10 drop-shadow-lg" />
                 </div>
-                <span className="font-black text-sm md:text-base text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                <span className="font-black text-xs md:text-sm text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                   {profile.lives}/{profile.max_lives}
                 </span>
               </div>
               
               {/* Coins */}
-              <div className="flex items-center gap-2">
-                <div className="relative p-1.5 rounded-lg">
+              <div className="flex items-center gap-1.5">
+                <div className="relative p-1 rounded">
                   {/* Coins icon base shadow */}
-                  <div className="absolute inset-0 bg-black/40 rounded-lg" style={{ transform: 'translate(1px, 1px)', filter: 'blur(2px)' }} aria-hidden />
+                  <div className="absolute inset-0 bg-black/40 rounded" style={{ transform: 'translate(1px, 1px)', filter: 'blur(2px)' }} aria-hidden />
                   
                   {/* Coins icon outer frame */}
-                  <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border border-yellow-400/50" aria-hidden />
+                  <div className="absolute inset-0 rounded bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border border-yellow-400/50" aria-hidden />
                   
                   {/* Coins icon inner layer */}
-                  <div className="absolute inset-[2px] rounded-lg bg-gradient-to-b from-yellow-500 via-yellow-600 to-yellow-700" style={{ boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.3)' }} aria-hidden />
+                  <div className="absolute inset-[1.5px] rounded bg-gradient-to-b from-yellow-500 via-yellow-600 to-yellow-700" style={{ boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.2), inset 0 -1.5px 3px rgba(0,0,0,0.3)' }} aria-hidden />
                   
-                  <Coins className="w-4 h-4 md:w-5 md:h-5 text-white relative z-10 drop-shadow-lg" />
+                  <Coins className="w-3.5 h-3.5 md:w-4 md:h-4 text-white relative z-10 drop-shadow-lg" />
                 </div>
-                <span className="font-black text-sm md:text-base text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                <span className="font-black text-xs md:text-sm text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                   {profile.coins}
                 </span>
               </div>
