@@ -2631,19 +2631,6 @@ export type Database = {
       }
     }
     Views: {
-      admin_stats_summary: {
-        Row: {
-          genius_count: number | null
-          last_refreshed: string | null
-          new_users_24h: number | null
-          pending_reports: number | null
-          total_accepted_invitations: number | null
-          total_purchases: number | null
-          total_revenue: number | null
-          total_users: number | null
-        }
-        Relationships: []
-      }
       error_rate_by_page: {
         Row: {
           affected_users: number | null

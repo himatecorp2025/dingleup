@@ -1,9 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 
 interface GameCompletion {
   category: string;
@@ -13,9 +9,13 @@ interface GameCompletion {
 }
 
 Deno.serve(async (req) => {
+  const origin = req.headers.get('origin');
+  
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return handleCorsPreflight(origin);
   }
+  
+  const corsHeaders = getCorsHeaders(origin);
 
   try {
     const authHeader = req.headers.get('Authorization');
