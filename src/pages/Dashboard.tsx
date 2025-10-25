@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DiamondHexagon } from '@/components/DiamondHexagon';
+import { DiamondButton } from '@/components/DiamondButton';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
@@ -344,24 +345,33 @@ return (
             
             {/* Right: Action Buttons - Vertical Stack, constrained width */}
             <div className="flex flex-col gap-2 flex-1" style={{ maxWidth: 'calc(100% - 180px)' }}>
-              <button
+              <DiamondButton
                 onClick={() => navigate('/invitation')}
-                data-tutorial="daily-gift"
-                className="w-full py-2 sm:py-2.5 px-2 sm:px-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-xs sm:text-sm rounded-lg border-2 border-blue-400 shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all flex items-center justify-center gap-1 sm:gap-1.5 casino-card shadow-[0_0_15px_rgba(59,130,246,0.5)]"
-                style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
+                variant="share"
+                size="sm"
               >
-                <Share2 className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
+                {/* Share SVG Icon */}
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M8.59 13.51L15.42 17.49M15.41 6.51L8.59 10.49" stroke="currentColor" strokeWidth="2"/>
+                </svg>
                 <span className="text-[10px] sm:text-xs">SHARE</span>
-              </button>
+              </DiamondButton>
               
-              <button
+              <DiamondButton
                 onClick={() => navigate('/shop')}
-                className="w-full py-2 sm:py-2.5 px-2 sm:px-3 bg-gradient-to-r from-yellow-600 to-yellow-800 text-gray-100 font-bold text-xs sm:text-sm rounded-lg border-2 border-yellow-400 shadow-lg hover:from-yellow-700 hover:to-yellow-900 transition-all flex items-center justify-center gap-1 sm:gap-1.5 casino-card shadow-[0_0_15px_rgba(234,179,8,0.6)] gold-glow"
-                style={{ clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' }}
+                variant="shop"
+                size="sm"
               >
-                <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-lg" />
+                {/* Shopping Bag SVG Icon */}
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 2L3 6V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 22 20.0391 21.7893 20.4142 21.4142C20.7893 21.0391 21 20.5304 21 20V6L18 2H6Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+                  <path d="M3 6H21M16 10C16 11.0609 15.5786 12.0783 14.8284 12.8284C14.0783 13.5786 13.0609 14 12 14C10.9391 14 9.92172 13.5786 9.17157 12.8284C8.42143 12.0783 8 11.0609 8 10" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+                </svg>
                 <span className="text-[10px] sm:text-xs">BOLT</span>
-              </button>
+              </DiamondButton>
             </div>
           </div>
         </div>
@@ -374,51 +384,57 @@ return (
           </div>
         </div>
 
-        {/* Play Button */}
-        <button
+        {/* Play Button - 3D Diamond */}
+        <DiamondButton
           data-tutorial="play-button"
           onClick={() => navigate('/game')}
-        	  className="w-full py-2 sm:py-2.5 px-4 sm:px-5 mb-2 sm:mb-3 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-base sm:text-lg rounded-2xl border-2 border-green-400 shadow-xl shadow-green-500/50 hover:shadow-green-500/70 hover:scale-105 transition-all animate-pulse-glow-green casino-card"
-        	  style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
-        	>
-        	  <Play className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" />
-        	  PLAY NOW
-        	</button>
+          variant="play"
+          size="lg"
+          className="mb-2 sm:mb-3 animate-pulse-glow-green"
+        >
+          {/* Play SVG Icon */}
+          <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 5.14v14l11-7-11-7z"/>
+          </svg>
+          PLAY NOW
+        </DiamondButton>
 
-        {/* Booster Button */}
-        <button
+        {/* Booster Button - 3D Diamond */}
+        <DiamondButton
           data-tutorial="booster-button"
           onClick={async () => {
-            // Ha már van aktív booster, mutassuk meg a részleteket
             if (hasActiveBooster) {
               setShowBoosterActivation(true);
               return;
             }
-            
-            // Ha nincs elérhető booster, irányítsuk a boltba
             if (availableBoosters.length === 0) {
               toast.error('Nincs elérhető booster! Vásárolj egyet a boltban.');
               navigate('/shop');
               return;
             }
-            
-            // Egyből aktiváljuk az első elérhető boostert
             const firstBooster = availableBoosters[0];
             const success = await activateBooster(firstBooster.id);
             if (success) {
               window.location.reload();
             }
           }}
-          className={`w-full py-2 sm:py-2.5 px-4 sm:px-5 mb-2 sm:mb-3 bg-gradient-to-r ${hasActiveBooster ? 'from-orange-500 via-orange-400 to-orange-500' : 'from-yellow-500 via-yellow-400 to-yellow-500'} ${hasActiveBooster ? 'text-white' : 'text-black'} font-black text-base sm:text-lg rounded-2xl border-2 ${hasActiveBooster ? 'border-orange-600' : 'border-yellow-600'} shadow-xl ${hasActiveBooster ? 'shadow-orange-500/60' : 'shadow-yellow-500/60'} hover:scale-105 transition-all relative casino-card`}
-          style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
+          variant="booster"
+          size="lg"
+          active={hasActiveBooster}
+          className="mb-2 sm:mb-3"
+          badge={
+            hasActiveBooster ? (
+              <span className="flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+              </span>
+            ) : undefined
+          }
         >
-          {hasActiveBooster && (
-            <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
-            </span>
-          )}
-          <Zap className={`inline w-4 h-4 sm:w-5 sm:h-5 mr-2 ${!hasActiveBooster ? 'text-black' : 'text-white'}`} />
+          {/* Lightning SVG Icon */}
+          <svg className={`inline w-4 h-4 sm:w-5 sm:h-5 mr-2 ${!hasActiveBooster ? 'text-black' : 'text-white'}`} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
+          </svg>
           {hasActiveBooster ? (
             <span className="text-sm sm:text-base">AKTÍV BOOSTER ({timeRemaining})</span>
           ) : availableBoosters.length > 0 ? (
@@ -429,7 +445,7 @@ return (
           ) : (
             <span className="text-sm sm:text-base">BOOSTER VÁSÁRLÁS</span>
           )}
-        </button>
+        </DiamondButton>
 
         {/* Leaderboard Carousel - Top 25 players */}
         <div className="my-3">
@@ -437,15 +453,22 @@ return (
         </div>
 
 
-        {/* Ranglista Button moved higher above bottom nav */}
-        <button
+        {/* Ranglista Button - 3D Diamond */}
+        <DiamondButton
           onClick={() => navigate('/leaderboard')}
-          className="w-full py-2 px-4 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500 text-white font-black text-base sm:text-lg rounded-2xl border-2 border-purple-600 shadow-xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105 transition-all mb-3 casino-card"
-          style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
+          variant="leaderboard"
+          size="lg"
+          className="mb-3"
         >
-          <Trophy className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" />
+          {/* Trophy SVG Icon */}
+          <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V5C3 4.44772 3.44772 4 4 4H6" stroke="currentColor" strokeWidth="2" fill="none"/>
+            <path d="M18 9H19.5C20.3284 9 21 8.32843 21 7.5V5C21 4.44772 20.5523 4 20 4H18" stroke="currentColor" strokeWidth="2" fill="none"/>
+            <path d="M8 4H16V10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10V4Z" stroke="currentColor" strokeWidth="2"/>
+            <path d="M12 14V17M8 20H16M10 17H14V20H10V17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
           RANGLISTA
-        </button>
+        </DiamondButton>
 
           {/* Life Regeneration Timer - removed from here, now at hexagon */}
 
