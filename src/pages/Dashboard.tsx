@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
+import { useWeeklyWinners } from '@/hooks/useWeeklyWinners';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { useBoosterTimer } from '@/hooks/useBoosterTimer';
 import { useGeniusPromo } from '@/hooks/useGeniusPromo';
@@ -16,6 +17,7 @@ import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
+import { WeeklyWinnersDialog } from '@/components/WeeklyWinnersDialog';
 import { GeniusPromoDialog } from '@/components/GeniusPromoDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
@@ -48,6 +50,7 @@ const Dashboard = () => {
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
   const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
+  const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
@@ -117,11 +120,15 @@ const Dashboard = () => {
 
   // Show Daily Gift dialog SECOND (after welcome bonus) - only on handheld, not during gameplay
   useEffect(() => {
-    if (isHandheld && canMountModals && canClaim && !canClaimWelcome && userId) {
-      setShowDailyGift(true);
-      setShowPromo(false);
+    if (isHandheld && canMountModals && canClaim && !canClaimWelcome && !showWeeklyWinners && userId) {
+      // Wait 3 seconds after daily gift might have appeared
+      const timer = setTimeout(() => {
+        setShowDailyGift(true);
+        setShowPromo(false);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [isHandheld, canMountModals, canClaim, canClaimWelcome, userId]);
+  }, [isHandheld, canMountModals, canClaim, canClaimWelcome, showWeeklyWinners, userId]);
 
   // Show Genius Promo THIRD (after welcome and daily, with scheduler) - only on handheld, not during gameplay
   useEffect(() => {
@@ -244,9 +251,14 @@ return (
       onStayActive={handleStayActive} 
     />
     
-    
-    {/* Weekly winner popup */}
+    {/* Weekly winner popup (old version - will be replaced) */}
     <WeeklyWinnerPopup userId={userId} />
+    
+    {/* Weekly Winners Dialog - shows after daily gift */}
+    <WeeklyWinnersDialog 
+      open={showWeeklyWinners} 
+      onClose={handleWeeklyWinnersClose} 
+    />
     
     {/* Falling coins background */}
     <FallingCoins />
