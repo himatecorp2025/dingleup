@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import logo from "@/assets/logo.png";
+import { WelcomeBonusDialog } from "@/components/WelcomeBonusDialog";
 
 const loginSchema = z.object({
   email: z.string().email("Érvénytelen email cím").max(255),
@@ -26,6 +27,13 @@ const Login = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof LoginForm, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // TEST: Show Welcome bonus dialog on login page (desktop preview) after 1s
+  const [showWelcomeTest, setShowWelcomeTest] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setShowWelcomeTest(true), 1000);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,6 +189,16 @@ const Login = () => {
             </Link>
           </p>
         </div>
+        <WelcomeBonusDialog
+          open={showWelcomeTest}
+          onClaim={async () => {
+            toast({ title: 'Bejelentkezés szükséges', description: 'A jutalom felvételéhez jelentkezz be.' });
+            setShowWelcomeTest(false);
+            return false;
+          }}
+          onLater={() => setShowWelcomeTest(false)}
+          claiming={false}
+        />
       </div>
     </div>
   );
