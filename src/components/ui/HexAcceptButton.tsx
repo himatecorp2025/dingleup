@@ -70,8 +70,12 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
       {/* INNER EMERALD CRYSTAL (radial + vertical, élénk zafír) */}
       <div
-        className="absolute inset-[6px]"
+        className="absolute"
         style={{
+          top: "6px",
+          left: "6px", 
+          right: "6px",
+          bottom: "6px",
           clipPath: HEX_PATH,
           background:
             "radial-gradient(ellipse 100% 80% at 50% -10%, hsl(155 90% 82%) 0%, hsl(155 85% 68%) 30%, hsl(155 78% 58%) 60%, hsl(155 70% 45%) 100%)",
@@ -83,8 +87,12 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
       {/* SPECULAR HIGHLIGHT (top-left conic) */}
       <div
-        className="absolute inset-[6px] pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
+          top: "6px",
+          left: "6px",
+          right: "6px", 
+          bottom: "6px",
           clipPath: HEX_PATH,
           background:
             "radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 30%, transparent 60%)",
@@ -94,8 +102,12 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
       {/* DIAGONAL LIGHT STREAKS */}
       <div
-        className="absolute inset-[6px] pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
+          top: "6px",
+          left: "6px",
+          right: "6px",
+          bottom: "6px",
           clipPath: HEX_PATH,
           background:
             "repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)",
@@ -106,8 +118,12 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
       {/* INNER GLOW (bottom shadow for 3D depth) */}
       <div
-        className="absolute inset-[6px] pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
+          top: "6px",
+          left: "6px",
+          right: "6px",
+          bottom: "6px",
           clipPath: HEX_PATH,
           boxShadow: "inset 0 0 12px rgba(0,0,0,0.3)",
           filter: "blur(3px)",
@@ -117,8 +133,12 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
       {/* GOLD INNER ACCENT STROKE */}
       <div
-        className="absolute inset-[6px] pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
+          top: "6px",
+          left: "6px",
+          right: "6px",
+          bottom: "6px",
           clipPath: HEX_PATH,
           boxShadow:
             "inset 0 0 0 1.5px hsla(var(--dup-gold-400) / 0.8)",
@@ -128,8 +148,12 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
       {/* 45° SHINE (animated, clipped to hex) */}
       <div
-        className="absolute inset-[6px] pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
+          top: "6px",
+          left: "6px",
+          right: "6px",
+          bottom: "6px",
           clipPath: HEX_PATH,
           overflow: "hidden",
         }}
