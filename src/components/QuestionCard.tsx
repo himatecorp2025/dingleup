@@ -71,7 +71,7 @@ export const QuestionCard = ({
         <div className="relative">
           <button
             onClick={onExit}
-            className="relative p-2 sm:p-3 rounded-full hover:scale-110 transition-all"
+            className="relative p-3 rounded-full hover:scale-110 transition-all"
             title="Vissza a témakategóriára"
           >
             {/* BASE SHADOW */}
@@ -90,7 +90,7 @@ export const QuestionCard = ({
             <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
             
             {/* Icon */}
-            <LogOut className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white relative z-10 -scale-x-100" />
+            <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
           </button>
         </div>
 
@@ -151,7 +151,7 @@ export const QuestionCard = ({
 
         {/* Answers with exact spacing */}
         <div className="mt-0">
-          <div className="space-y-1 sm:space-y-1.5 mb-1 sm:mb-1.5">{question.answers.map((answer) => {
+          <div className="space-y-2 sm:space-y-3 mb-2 sm:mb-3">{question.answers.map((answer) => {
             const isRemoved = removedAnswer === answer.key;
             const isSelected = selectedAnswer === answer.key;
             const isCorrect = answer.key === correctAnswerKey;
@@ -194,7 +194,7 @@ export const QuestionCard = ({
       </div>
 
       {/* Bottom section: Help buttons - hexagon shaped with deep 3D */}
-      <div className="grid grid-cols-4 gap-0.5 sm:gap-1 md:gap-1.5 mt-0 mb-1 sm:mb-2">
+      <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-3 mt-0 mb-1 sm:mb-2">
         {/* 1/3 Help Button */}
         <div className="relative" style={{ perspective: '600px' }}>
           <button

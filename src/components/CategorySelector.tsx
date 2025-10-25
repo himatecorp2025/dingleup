@@ -132,8 +132,8 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
               <button
                 key={category.id}
                 onClick={() => handleCategorySelect(category.id)}
-                className="group relative overflow-hidden rounded-2xl p-3 sm:p-4 bg-black/80 transition-all duration-300 hover:scale-105 text-left touch-manipulation active:scale-95 aspect-square flex flex-col justify-between"
-                style={{ perspective: '1000px' }}
+                className="group relative overflow-hidden rounded-2xl p-3 sm:p-4 bg-black/80 transition-all duration-300 hover:scale-105 text-left touch-manipulation active:scale-95 flex flex-col justify-between"
+                style={{ perspective: '1000px', aspectRatio: '1 / 1', minHeight: '200px' }}
               >
                 {/* Deep 3D Layers - ENHANCED */}
                 {/* BASE SHADOW - Deeper */}
@@ -164,7 +164,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                 
                 <div className="relative z-10 flex flex-col h-full items-center justify-between" style={{ transform: 'translateZ(50px)' }}>
                   <div className={`p-2 sm:p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-2 sm:mt-3 shadow-2xl`} style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.4)' }}>
-                    <Icon className="w-[50px] sm:w-[60px]" />
+                    <Icon className="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px]" />
                   </div>
                   
                   <div className="text-center pb-3 sm:pb-4">
