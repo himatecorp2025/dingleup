@@ -105,14 +105,14 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
           {/* Background layer - Deep gradient */}
           <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.85, borderRadius: 0 }}></div>
 
-          {/* Falling dollar bills - 3D SVG continuous animation */}
+          {/* Falling dollar bills - MORE and naturally falling */}
           {contentVisible && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(20)].map((_, i) => {
-                const delay = Math.random() * 10;
-                const duration = 8 + Math.random() * 4;
+              {[...Array(40)].map((_, i) => {
+                const delay = Math.random() * 5;
+                const duration = 6 + Math.random() * 3; // 6-9s natural fall
                 const startX = Math.random() * 100;
-                const swingAmount = 10 + Math.random() * 20;
+                const swingAmount = 15 + Math.random() * 25; // more natural swing
                 const rotation = Math.random() * 360;
                 const rotationSpeed = (Math.random() - 0.5) * 720;
                 
@@ -184,7 +184,7 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
             </div>
           )}
 
-          {/* ZOOM WRAPPER */}
+          {/* ZOOM WRAPPER with GLOW and PULSE */}
           <div 
             className="relative z-10"
             style={{ 
@@ -192,11 +192,25 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
               transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto'
+              willChange: contentVisible ? 'transform, opacity' : 'auto',
+              filter: 'drop-shadow(0 0 40px rgba(147,51,234,0.6)) drop-shadow(0 0 80px rgba(168,85,247,0.4))',
+              animation: 'shieldPulse 3s ease-in-out infinite'
             }}
           >
+            <style>{`
+              @keyframes shieldPulse {
+                0%, 100% { 
+                  filter: drop-shadow(0 0 40px rgba(147,51,234,0.6)) drop-shadow(0 0 80px rgba(168,85,247,0.4));
+                  transform: scale(1);
+                }
+                50% { 
+                  filter: drop-shadow(0 0 50px rgba(147,51,234,0.8)) drop-shadow(0 0 100px rgba(168,85,247,0.6));
+                  transform: scale(1.02);
+                }
+              }
+            `}</style>
             <div style={{ transform: 'scale(1)' }}>
-              <HexShieldFrame showShine={true}>
+              <HexShieldFrame showShine={false}>
                 {/* Top Hex Badge - "GENIUS" */}
                 <div 
                   className="relative -mt-12 mb-3 mx-auto z-20" 
@@ -276,9 +290,9 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
                     Légy Genius, vedd fel a tempót!
                   </p>
 
-                  {/* Price with discount badge - SPECTACULAR -25% SVG */}
+                  {/* Price with MASSIVE -25% badge */}
                   <div className="text-center mb-[2vh] relative">
-                    <div className="relative z-10 flex items-center justify-center gap-3">
+                    <div className="relative z-10 flex items-center justify-center gap-2">
                       <div className="flex flex-col items-end">
                         <span className="text-base font-bold text-yellow-400/70 line-through">${basePrice.toFixed(2)}</span>
                         <div
@@ -294,54 +308,74 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
                         <span className="text-sm font-bold text-yellow-300">/ hó</span>
                       </div>
                       
-                      {/* -25% OFF badge - SPECTACULAR SVG DIFFERENT from -80% */}
-                      <div className="relative" style={{ minWidth: 'clamp(60px, 18cqw, 100px)' }}>
-                        {/* Hexagonal badge burst - BEHIND, OVERFLOWS shield */}
+                      {/* MASSIVE -25% OFF badge - OVERFLOWS shield */}
+                      <div className="relative -mr-[10%]" style={{ minWidth: 'clamp(100px, 30cqw, 180px)' }}>
+                        {/* PREMIUM DIAMOND/STAR burst SVG - BEHIND, LARGE OVERFLOW */}
                         <svg 
-                          viewBox="0 0 200 200" 
-                          className="absolute -inset-[70%] pointer-events-none"
+                          viewBox="0 0 300 300" 
+                          className="absolute -inset-[120%] pointer-events-none"
                           style={{ 
-                            animation: 'pulse 2s ease-in-out infinite',
-                            filter: 'drop-shadow(0 0 16px rgba(147,51,234,0.8)) drop-shadow(0 0 32px rgba(147,51,234,0.5))',
+                            animation: 'spinSlow 8s linear infinite, pulseBadge 2s ease-in-out infinite',
+                            filter: 'drop-shadow(0 0 24px rgba(234,179,8,0.9)) drop-shadow(0 0 48px rgba(234,179,8,0.6))',
                             zIndex: -1
                           }}
                         >
                           <defs>
-                            <radialGradient id="hexGradient">
-                              <stop offset="0%" stopColor="#a855f7" />
-                              <stop offset="50%" stopColor="#9333ea" />
-                              <stop offset="100%" stopColor="#7e22ce" />
+                            <radialGradient id="goldBurst">
+                              <stop offset="0%" stopColor="#fbbf24" />
+                              <stop offset="50%" stopColor="#f59e0b" />
+                              <stop offset="100%" stopColor="#d97706" />
                             </radialGradient>
+                            <linearGradient id="diamondShine" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#fef3c7" />
+                              <stop offset="50%" stopColor="#fbbf24" />
+                              <stop offset="100%" stopColor="#f59e0b" />
+                            </linearGradient>
                           </defs>
-                          {/* 6 hexagons rotating */}
-                          {[...Array(6)].map((_, i) => {
-                            const angle = (i * 60 * Math.PI) / 180;
-                            const radius = 85;
-                            const cx = 100 + Math.cos(angle) * radius;
-                            const cy = 100 + Math.sin(angle) * radius;
+                          {/* Large rotating starburst */}
+                          {[...Array(12)].map((_, i) => {
+                            const angle = (i * 30 * Math.PI) / 180;
+                            const radius = 130;
+                            const cx = 150 + Math.cos(angle) * radius;
+                            const cy = 150 + Math.sin(angle) * radius;
+                            const size = i % 2 === 0 ? 35 : 25;
                             return (
-                              <g key={i} transform={`translate(${cx}, ${cy})`}>
+                              <g key={i}>
+                                {/* Diamond shape */}
                                 <polygon
-                                  points="0,-15 13,-7.5 13,7.5 0,15 -13,7.5 -13,-7.5"
-                                  fill="url(#hexGradient)"
-                                  opacity="0.8"
+                                  points={`${cx},${cy - size} ${cx + size * 0.6},${cy} ${cx},${cy + size} ${cx - size * 0.6},${cy}`}
+                                  fill="url(#diamondShine)"
+                                  opacity="0.9"
                                 />
                               </g>
                             );
                           })}
-                          {/* Center hexagon */}
+                          {/* Center large diamond */}
                           <polygon
-                            points="100,60 125,75 125,105 100,120 75,105 75,75"
-                            fill="#9333ea"
+                            points="150,80 200,150 150,220 100,150"
+                            fill="url(#goldBurst)"
+                            opacity="0.95"
                           />
                         </svg>
                         
+                        <style>{`
+                          @keyframes spinSlow {
+                            from { transform: rotate(0deg); }
+                            to { transform: rotate(360deg); }
+                          }
+                          @keyframes pulseBadge {
+                            0%, 100% { opacity: 0.9; transform: scale(1); }
+                            50% { opacity: 1; transform: scale(1.05); }
+                          }
+                        `}</style>
+                        
                         {/* Badge shadow */}
-                        <div className="absolute inset-0 bg-purple-900/80 rounded-lg translate-y-1.5 translate-x-1 blur-md" />
-                        {/* Main badge */}
-                        <div className="relative bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 text-white px-3 py-1.5 rounded-lg font-black text-base rotate-12 shadow-2xl shadow-purple-900/70 animate-pulse border-2 border-yellow-400">
-                          <div className="absolute inset-[2px] top-0 h-1/2 bg-gradient-to-b from-purple-400/50 to-transparent rounded-t-lg" />
-                          <span className="relative z-10 drop-shadow-lg" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.9)' }}>-25%</span>
+                        <div className="absolute inset-0 bg-yellow-900/80 rounded-xl translate-y-2 translate-x-2 blur-lg" />
+                        {/* Main MASSIVE badge */}
+                        <div className="relative bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 text-black px-5 py-3 rounded-xl font-black rotate-12 shadow-2xl border-4 border-yellow-300 animate-pulse"
+                             style={{ fontSize: 'clamp(1.2rem, 5cqw, 2rem)' }}>
+                          <div className="absolute inset-[3px] top-0 h-1/2 bg-gradient-to-b from-yellow-200/60 to-transparent rounded-t-xl" />
+                          <span className="relative z-10 drop-shadow-2xl" style={{ textShadow: '0 3px 8px rgba(0,0,0,0.9), 0 0 20px rgba(255,255,255,0.5)' }}>-25%</span>
                         </div>
                       </div>
                     </div>
@@ -360,28 +394,33 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
                       <div className="w-6 h-6 rounded-full bg-red-500/40 flex items-center justify-center flex-shrink-0 border-2 border-red-600">
                         <Check className="w-4 h-4 text-red-200" />
                       </div>
-                      <p className="text-white font-bold text-sm" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>-25% kedvezmény a Speed Shopban</p>
+                      <p className="text-white font-bold text-sm" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>Számtalan kedvezmények az egész játékban</p>
                     </div>
 
                     <div className="flex items-start gap-2">
                       <div className="w-6 h-6 rounded-full bg-green-500/40 flex items-center justify-center flex-shrink-0 border-2 border-green-600">
                         <Check className="w-4 h-4 text-green-200" />
                       </div>
-                      <p className="text-white font-bold text-sm" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>Közvélemény-szavazások</p>
+                      <p className="text-white font-bold text-sm" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>Fejlesztői szavazások</p>
                     </div>
 
                     <div className="flex items-start gap-2">
                       <div className="w-6 h-6 rounded-full bg-blue-500/40 flex items-center justify-center flex-shrink-0 border-2 border-blue-600">
                         <Check className="w-4 h-4 text-blue-200" />
                       </div>
-                      <p className="text-white font-bold text-sm" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>TikTok tippek & trükkök</p>
+                      <p className="text-white font-bold text-sm" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>Rejtett tippek & trükkök</p>
                     </div>
                   </div>
 
-                  {/* Small text */}
-                  <p className="text-center text-white/70 text-xs mb-[2vh]" style={{ fontSize: 'clamp(0.5rem, 2.5cqw, 0.7rem)' }}>
-                    Bármikor lemondható
-                  </p>
+                  {/* Updated small text with pricing info */}
+                  <div className="text-center text-white/70 mb-[2vh] space-y-1">
+                    <p className="text-xs" style={{ fontSize: 'clamp(0.5rem, 2.5cqw, 0.7rem)' }}>
+                      Bármikor lemondható
+                    </p>
+                    <p className="text-xs font-semibold text-yellow-300/80" style={{ fontSize: 'clamp(0.45rem, 2.2cqw, 0.65rem)' }}>
+                      Második hónaptól az ár $2.99
+                    </p>
+                  </div>
 
                   {/* Subscribe button */}
                   <div className="flex justify-center w-full px-[4%]">
