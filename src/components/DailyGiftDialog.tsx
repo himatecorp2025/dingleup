@@ -46,7 +46,8 @@ const DailyGiftDialog = ({
     const INNER_TO_OUTER_RATIO = 132 / 108; // outerHexWidth / innerGreenWidth
 
     const syncWidth = () => {
-      const badgeWidth = badgeRef.current?.getBoundingClientRect().width;
+      // Use offsetWidth (transform-independent) instead of getBoundingClientRect
+      const badgeWidth = badgeRef.current?.offsetWidth;
       if (badgeWidth && buttonWrapperRef.current) {
         const targetButtonWidth = Math.round(badgeWidth * INNER_TO_OUTER_RATIO);
         buttonWrapperRef.current.style.setProperty('--sync-width', `${targetButtonWidth}px`);
@@ -69,8 +70,8 @@ const DailyGiftDialog = ({
   useEffect(() => {
     if (!contentVisible) return;
     const logSizes = () => {
-      const badgeW = badgeRef.current?.getBoundingClientRect().width;
-      const wrapperW = buttonWrapperRef.current?.getBoundingClientRect().width;
+      const badgeW = badgeRef.current?.offsetWidth;
+      const wrapperW = buttonWrapperRef.current?.offsetWidth;
       const btnEl = buttonWrapperRef.current?.querySelector('button') as HTMLElement | null;
       const btnW = btnEl?.getBoundingClientRect().width;
       console.debug('[DailyGift][sizes] badge=', badgeW, 'wrapper=', wrapperW, 'button=', btnW);
@@ -229,13 +230,13 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central HEXAGON - REVEAL WRAPPER (clip-path, no scaling) */}
+          {/* Central HEXAGON - ZOOM FROM CENTER (layout-neutral) */}
           <div 
-            className={`relative z-10 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}
+            className={`relative z-10 transition-all duration-[2000ms] ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
             style={{ 
-              transition: 'clip-path 2000ms ease-out 300ms, opacity 250ms ease-out 300ms',
-              clipPath: contentVisible ? 'circle(140% at 50% 50%)' : 'circle(0% at 50% 50%)',
-              willChange: 'clip-path, opacity'
+              transitionDelay: '300ms',
+              transformOrigin: 'center center',
+              willChange: 'transform, opacity'
             }}
           >
             
