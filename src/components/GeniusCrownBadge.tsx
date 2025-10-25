@@ -13,28 +13,28 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
     lg: 'w-6 h-6'
   };
 
-  // Spectacular SVG Gold Crown
-  const crownSvg = (
+  // Spectacular SVG "G" Letter for Genius
+  const geniusSvg = (
     <svg 
       className={`${sizeClasses[size]}`}
       viewBox="0 0 24 24" 
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Crown base - deep gold gradient */}
+      {/* Gold gradient definitions */}
       <defs>
-        <linearGradient id="crownGold" x1="0%" y1="0%" x2="0%" y2="100%">
+        <linearGradient id="geniusGold" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="#FCD34D" />
           <stop offset="50%" stopColor="#F59E0B" />
           <stop offset="100%" stopColor="#B45309" />
         </linearGradient>
-        <linearGradient id="crownShine" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#FEF3C7" stopOpacity="0.8" />
-          <stop offset="50%" stopColor="#FDE68A" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#FCD34D" stopOpacity="0.2" />
+        <linearGradient id="geniusShine" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FEF3C7" stopOpacity="0.9" />
+          <stop offset="50%" stopColor="#FDE68A" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.3" />
         </linearGradient>
-        <filter id="crownGlow">
-          <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+        <filter id="geniusGlow">
+          <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
           <feMerge>
             <feMergeNode in="coloredBlur"/>
             <feMergeNode in="SourceGraphic"/>
@@ -43,32 +43,29 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
       </defs>
 
       {/* Glow effect */}
-      <circle cx="12" cy="12" r="10" fill="url(#crownGold)" opacity="0.3" filter="url(#crownGlow)" />
+      <circle cx="12" cy="12" r="11" fill="url(#geniusGold)" opacity="0.3" filter="url(#geniusGlow)" />
 
-      {/* Crown body */}
+      {/* Bold "G" Letter Path */}
       <path 
-        d="M3 18h18v2H3v-2zm0-7l3 3 3-6 3 6 3-3 3 6 3-6v10H3V11z" 
-        fill="url(#crownGold)"
+        d="M 14.5 4 C 10 4 6 7 6 12 C 6 17 10 20 14.5 20 C 17 20 19 19 20 17.5 L 20 13 L 14.5 13 L 14.5 15 L 17.5 15 L 17.5 16.5 C 16.8 17.3 15.7 18 14.5 18 C 11.2 18 8.5 15.8 8.5 12 C 8.5 8.2 11.2 6 14.5 6 C 16.2 6 17.5 6.7 18.5 7.8 L 20.2 6.2 C 18.7 4.7 16.8 4 14.5 4 Z" 
+        fill="url(#geniusGold)"
         stroke="#92400E"
-        strokeWidth="0.5"
+        strokeWidth="0.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
 
-      {/* Shine overlay */}
+      {/* Shine overlay on G */}
       <path 
-        d="M3 18h18v1H3v-1z" 
-        fill="url(#crownShine)"
-        opacity="0.6"
+        d="M 14.5 4 C 10 4 6 7 6 12 C 6 17 10 20 14.5 20 C 17 20 19 19 20 17.5 L 20 13 L 14.5 13 L 14.5 15 L 17.5 15 L 17.5 16.5 C 16.8 17.3 15.7 18 14.5 18 C 11.2 18 8.5 15.8 8.5 12 C 8.5 8.2 11.2 6 14.5 6 C 16.2 6 17.5 6.7 18.5 7.8 L 20.2 6.2 C 18.7 4.7 16.8 4 14.5 4 Z" 
+        fill="url(#geniusShine)"
+        opacity="0.4"
       />
 
-      {/* Crown points highlights */}
-      <circle cx="6" cy="14" r="1.5" fill="#FEF3C7" opacity="0.9" />
-      <circle cx="12" cy="8" r="1.5" fill="#FEF3C7" opacity="0.9" />
-      <circle cx="18" cy="14" r="1.5" fill="#FEF3C7" opacity="0.9" />
-
-      {/* Gemstones */}
-      <circle cx="6" cy="14" r="0.8" fill="#DC2626" opacity="0.8" />
-      <circle cx="12" cy="8" r="0.8" fill="#3B82F6" opacity="0.8" />
-      <circle cx="18" cy="14" r="0.8" fill="#10B981" opacity="0.8" />
+      {/* Sparkle effects */}
+      <circle cx="8" cy="8" r="1" fill="#FEF3C7" opacity="0.8" />
+      <circle cx="17" cy="10" r="0.8" fill="#FEF3C7" opacity="0.8" />
+      <circle cx="10" cy="17" r="0.7" fill="#FEF3C7" opacity="0.8" />
     </svg>
   );
 
@@ -135,10 +132,10 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* Crown SVG centered */}
+              {/* "G" Letter SVG centered */}
               <div className="absolute inset-0 clip-hexagon flex items-center justify-center z-10">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 animate-pulse" style={{ animationDuration: '2s' }}>
-                  {crownSvg}
+                  {geniusSvg}
                 </div>
               </div>
             </div>
@@ -152,21 +149,21 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
   }
 
   // Inline small version
-  const crownIcon = (
+  const geniusIcon = (
     <div className="inline-flex drop-shadow-[0_0_8px_rgba(251,191,36,0.8)] animate-pulse" style={{ animationDuration: '2s' }}>
-      {crownSvg}
+      {geniusSvg}
     </div>
   );
 
   if (!showTooltip) {
-    return crownIcon;
+    return geniusIcon;
   }
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="inline-flex">{crownIcon}</span>
+          <span className="inline-flex">{geniusIcon}</span>
         </TooltipTrigger>
         <TooltipContent>
           <p className="font-bold text-yellow-400">Genius tag</p>
