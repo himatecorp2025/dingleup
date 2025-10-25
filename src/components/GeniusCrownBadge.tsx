@@ -104,11 +104,11 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* OUTER FRAME with sparkle animation */}
+              {/* OUTER FRAME with intense sparkle animation */}
               <div
                 className="absolute inset-0 clip-hexagon bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border-2 sm:border-4 border-yellow-400 shadow-lg shadow-yellow-500/50"
                 style={{
-                  animation: 'hexagonSparkle 1.5s ease-in-out infinite'
+                  animation: 'hexagonSparkle 1.2s ease-in-out infinite'
                 }}
                 aria-hidden
               />
@@ -146,15 +146,23 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* "G" Letter SVG centered - 99% size, perfectly centered with sparkle */}
+              {/* Sparkle dots around hexagon */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ top: '10%', left: '20%', animation: 'twinkle 1s ease-in-out infinite' }} />
+                <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ top: '20%', right: '15%', animation: 'twinkle 1.3s ease-in-out infinite 0.2s' }} />
+                <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ bottom: '25%', left: '15%', animation: 'twinkle 1.5s ease-in-out infinite 0.4s' }} />
+                <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ bottom: '20%', right: '20%', animation: 'twinkle 1.2s ease-in-out infinite 0.6s' }} />
+              </div>
+
+              {/* "G" Letter SVG centered - 90% size, perfectly centered with intense sparkle */}
               <div className="absolute clip-hexagon flex items-center justify-center z-10" style={{ inset: '4px' }}>
                 <div style={{ 
-                  width: '99%', 
-                  height: '99%', 
+                  width: '90%', 
+                  height: '90%', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
-                  animation: 'geniusShimmer 1.2s ease-in-out infinite'
+                  animation: 'geniusShimmer 1s ease-in-out infinite'
                 }}>
                   {geniusSvg('w-full h-full')}
                 </div>
@@ -164,19 +172,32 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
               <style>{`
                 @keyframes hexagonSparkle {
                   0%, 100% {
-                    filter: brightness(1) drop-shadow(0 0 10px rgba(251, 191, 36, 0.7));
+                    filter: brightness(1) drop-shadow(0 0 12px rgba(251, 191, 36, 0.8));
+                    box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
                   }
                   50% {
-                    filter: brightness(1.4) drop-shadow(0 0 20px rgba(251, 191, 36, 1)) drop-shadow(0 0 30px rgba(251, 191, 36, 0.8));
+                    filter: brightness(1.5) drop-shadow(0 0 25px rgba(251, 191, 36, 1)) drop-shadow(0 0 35px rgba(251, 191, 36, 0.9));
+                    box-shadow: 0 0 30px rgba(251, 191, 36, 1);
                   }
                 }
 
                 @keyframes geniusShimmer {
                   0%, 100% {
-                    filter: brightness(1) drop-shadow(0 0 6px rgba(251, 191, 36, 0.5));
+                    filter: brightness(1.1) drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
                   }
                   50% {
-                    filter: brightness(1.3) drop-shadow(0 0 15px rgba(251, 191, 36, 0.9));
+                    filter: brightness(1.4) drop-shadow(0 0 18px rgba(251, 191, 36, 1)) drop-shadow(0 0 25px rgba(251, 191, 36, 0.8));
+                  }
+                }
+
+                @keyframes twinkle {
+                  0%, 100% {
+                    opacity: 0;
+                    transform: scale(0.5);
+                  }
+                  50% {
+                    opacity: 1;
+                    transform: scale(1.2);
                   }
                 }
               `}</style>
