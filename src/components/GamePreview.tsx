@@ -907,10 +907,10 @@ const GamePreview = () => {
                   <div className="absolute inset-0 bg-black/40 rounded" style={{ transform: 'translate(1px, 1px)', filter: 'blur(2px)' }} aria-hidden />
                   
                   {/* Heart icon outer frame */}
-                  <div className="absolute inset-0 rounded bg-gradient-to-br from-red-600 via-red-500 to-red-700 border border-red-400/50" aria-hidden />
+                  <div className="absolute inset-0 rounded bg-gradient-to-br from-red-400 via-red-500 to-red-600 border border-red-300/50" aria-hidden />
                   
                   {/* Heart icon inner layer */}
-                  <div className="absolute inset-[1.5px] rounded bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.2), inset 0 -1.5px 3px rgba(0,0,0,0.3)' }} aria-hidden />
+                  <div className="absolute inset-[1.5px] rounded bg-gradient-to-b from-red-400 via-red-500 to-red-600" style={{ boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.2), inset 0 -1.5px 3px rgba(0,0,0,0.3)' }} aria-hidden />
                   
                   <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 text-white relative z-10 drop-shadow-lg" />
                 </div>
@@ -926,10 +926,10 @@ const GamePreview = () => {
                   <div className="absolute inset-0 bg-black/40 rounded" style={{ transform: 'translate(1px, 1px)', filter: 'blur(2px)' }} aria-hidden />
                   
                   {/* Coins icon outer frame */}
-                  <div className="absolute inset-0 rounded bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border border-yellow-400/50" aria-hidden />
+                  <div className="absolute inset-0 rounded bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 border border-yellow-300/50" aria-hidden />
                   
                   {/* Coins icon inner layer */}
-                  <div className="absolute inset-[1.5px] rounded bg-gradient-to-b from-yellow-500 via-yellow-600 to-yellow-700" style={{ boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.2), inset 0 -1.5px 3px rgba(0,0,0,0.3)' }} aria-hidden />
+                  <div className="absolute inset-[1.5px] rounded bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600" style={{ boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.2), inset 0 -1.5px 3px rgba(0,0,0,0.3)' }} aria-hidden />
                   
                   <Coins className="w-3.5 h-3.5 md:w-4 md:h-4 text-white relative z-10 drop-shadow-lg" />
                 </div>
@@ -981,23 +981,23 @@ const GamePreview = () => {
               <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
               
               {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-red-700 via-red-600 to-red-900 opacity-95 border-4 border-red-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-red-400 via-red-500 to-red-600 opacity-95 border-4 border-red-300/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
               <div className="absolute inset-[6px] rounded-xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
               
               {/* INNER LAYER */}
-              <div className="absolute inset-[8px] rounded-xl bg-gradient-to-br from-red-600/90 to-red-800/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
+              <div className="absolute inset-[8px] rounded-xl bg-gradient-to-br from-red-400/90 to-red-500/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
               
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[8px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
               
-              <div className="relative text-white px-6 py-3 font-bold text-xs text-center animate-fade-in" style={{ transform: 'translateZ(60px)' }}>
-                <div className="mb-1 drop-shadow-lg">{errorBannerMessage}</div>
-                <div className="text-[10px] opacity-90 drop-shadow">
+              <div className="relative text-white px-6 py-3 font-bold text-xs text-center animate-fade-in" style={{ transform: 'translateZ(60px)', textShadow: '0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6), 1px 1px 0 rgba(0,0,0,1), -1px -1px 0 rgba(0,0,0,1), 1px -1px 0 rgba(0,0,0,1), -1px 1px 0 rgba(0,0,0,1)' }}>
+                <div className="mb-1">{errorBannerMessage}</div>
+                <div className="text-[10px] opacity-90">
                   ⬆️ Felfelé: tovább ({continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙 levonva)
                 </div>
-                <div className="text-[10px] opacity-90 drop-shadow">
+                <div className="text-[10px] opacity-90">
                   ⬇️ Lefelé: kilépés (nyeremény megőrzése)
                 </div>
               </div>
