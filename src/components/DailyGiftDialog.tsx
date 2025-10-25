@@ -208,13 +208,14 @@ const DailyGiftDialog = ({
           )}
 
           <div 
-            className="relative z-10"
+            className="relative z-10 flex items-center justify-center"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms',
               transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto'
+              willChange: contentVisible ? 'transform, opacity' : 'auto',
+              width: '100%'
             }}
           >
             <div style={{ transform: 'scale(1)', containerType: 'inline-size' }}>
@@ -247,7 +248,7 @@ const DailyGiftDialog = ({
                        boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
                      }} />
                 
-                <div className="relative px-[5%] py-[1.5%]"
+                <div className="relative px-[5vw] py-[1.2vh]"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
                      }}>
@@ -272,7 +273,7 @@ const DailyGiftDialog = ({
                   
                   <h1 ref={flagRef} className="relative z-10 font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
                       style={{ 
-                        fontSize: 'clamp(1.25rem, 10.4cqw, 2.1rem)', 
+                        fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
                         letterSpacing: '0.05em',
                         textShadow: '0 0 12px rgba(255,255,255,0.25)'
                       }}>
