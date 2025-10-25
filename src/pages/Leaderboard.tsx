@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { LogOut, Crown, Medal } from 'lucide-react';
+
 import WeeklyRewards from '@/components/WeeklyRewards';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import BottomNav from '@/components/BottomNav';
@@ -55,9 +55,33 @@ const Leaderboard = () => {
   };
 
   const getMedalIcon = (rank: number) => {
-    if (rank === 1) return <Crown className="w-6 h-6 text-yellow-400" />;
-    if (rank === 2) return <Crown className="w-6 h-6 text-gray-400" />;
-    if (rank === 3) return <Crown className="w-6 h-6 text-orange-400" />;
+    if (rank === 1) return (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+        <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke="currentColor" strokeWidth="2"/>
+        <circle cx="12" cy="9" r="1.5" fill="currentColor"/>
+        <circle cx="7" cy="11" r="1.5" fill="currentColor"/>
+        <circle cx="17" cy="11" r="1.5" fill="currentColor"/>
+      </svg>
+    );
+    if (rank === 2) return (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+        <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke="currentColor" strokeWidth="2"/>
+        <circle cx="12" cy="9" r="1.5" fill="currentColor"/>
+        <circle cx="7" cy="11" r="1.5" fill="currentColor"/>
+        <circle cx="17" cy="11" r="1.5" fill="currentColor"/>
+      </svg>
+    );
+    if (rank === 3) return (
+      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+        <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke="currentColor" strokeWidth="2"/>
+        <circle cx="12" cy="9" r="1.5" fill="currentColor"/>
+        <circle cx="7" cy="11" r="1.5" fill="currentColor"/>
+        <circle cx="17" cy="11" r="1.5" fill="currentColor"/>
+      </svg>
+    );
     return null;
   };
 
@@ -75,26 +99,49 @@ const Leaderboard = () => {
       
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
         <div className="max-w-6xl mx-auto p-4 w-full">
-          {/* Header with Back Button */}
-          <div className="flex items-center mb-6 pt-safe">
+          {/* Header with Back Button - 3D Box Style */}
+          <div className="flex items-center mb-4 sm:mb-6 pt-safe">
             <button
               onClick={() => navigate('/dashboard')}
-              className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+              className="relative p-2 sm:p-3 rounded-xl hover:scale-110 transition-all"
               title="Vissza"
             >
-              <LogOut className="w-6 h-6 -scale-x-100" />
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+              
+              {/* DIAGONAL STREAKS */}
+              <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px)', opacity: 0.7 }} aria-hidden />
+              
+              {/* Icon */}
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white relative z-10 -scale-x-100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
           </div>
 
         <div className="max-w-4xl mx-auto w-full">
 
         {/* Title */}
-        <h1 className="text-4xl font-black text-center mb-4 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent pt-safe">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-3 sm:mb-4 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent pt-safe px-2">
           🏆 Ranglista 🏆
         </h1>
 
         {/* Countdown Timer - below title */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-4 sm:mb-6 px-2">
           <WeeklyRankingsCountdown compact={false} />
         </div>
 
@@ -105,11 +152,11 @@ const Leaderboard = () => {
         {loading ? (
           <p className="text-center text-white">Betöltés...</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3 px-2">
             {topPlayers.map((player) => (
               <div
                 key={player.user_id}
-                className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
+                className={`relative flex items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-2xl border-2 transition-all overflow-hidden ${
                   player.rank === 1
                     ? 'bg-gradient-to-r from-yellow-600/20 to-yellow-900/20 border-yellow-500/50'
                     : player.rank === 2
@@ -119,50 +166,87 @@ const Leaderboard = () => {
                     : 'bg-black/60 border-purple-500/30'
                 }`}
               >
-                {/* Rank */}
-                <div className="flex items-center justify-center w-12">
-                  {getMedalIcon(player.rank) || (
-                    <span className="text-2xl font-black text-purple-400">
-                      {player.rank}
-                    </span>
+                {/* 3D Box Effect Layers */}
+                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.08) 0%, transparent 60%)' }} aria-hidden />
+                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255,255,255,0.03) 12px, rgba(255,255,255,0.03) 16px)', opacity: 0.5 }} aria-hidden />
+
+                <div className="relative z-10 flex items-center gap-2 sm:gap-4 w-full">
+                  {/* Rank */}
+                  <div className="flex items-center justify-center w-10 sm:w-12 flex-shrink-0">
+                    {getMedalIcon(player.rank) || (
+                      <span className="text-xl sm:text-2xl font-black text-purple-400">
+                        {player.rank}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Avatar - 3D Box Style */}
+                  <div className="relative rounded-xl w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0">
+                    {/* BASE SHADOW */}
+                    <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(2px, 2px)', filter: 'blur(2px)' }} aria-hidden />
+                    
+                    {/* OUTER FRAME */}
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400" aria-hidden />
+                    
+                    {/* MIDDLE FRAME */}
+                    <div className="absolute inset-[2px] rounded-xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+                    
+                    {/* INNER LAYER */}
+                    <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.2), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+                    
+                    {/* SPECULAR HIGHLIGHT */}
+                    <div className="absolute inset-[3px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)' }} aria-hidden />
+                    
+                    {/* DIAGONAL STREAKS */}
+                    <div className="absolute inset-[3px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(255,255,255,0.06) 6px, rgba(255,255,255,0.06) 9px)', opacity: 0.7 }} aria-hidden />
+                    
+                    {/* Content */}
+                    <div className="absolute inset-0 rounded-xl flex items-center justify-center z-10 overflow-hidden">
+                      {player.avatar_url ? (
+                        <img
+                          src={player.avatar_url}
+                          alt={player.username}
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      ) : (
+                        <span className="text-lg sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                          {getInitials(player.username)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Player info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm sm:text-lg font-bold text-white truncate">{player.username}</p>
+                    <p className="text-xs sm:text-sm text-purple-300 truncate">
+                      Helyes válaszok: {player.total_correct_answers}
+                    </p>
+                  </div>
+
+                  {/* Medal for top 3 */}
+                  {player.rank <= 3 && (
+                    <div className="flex-shrink-0">
+                      <svg 
+                        className={`w-6 h-6 sm:w-8 sm:h-8 ${
+                          player.rank === 1
+                            ? 'text-yellow-400'
+                            : player.rank === 2
+                            ? 'text-gray-400'
+                            : 'text-orange-400'
+                        }`}
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle cx="12" cy="15.5" r="6.5" stroke="currentColor" strokeWidth="2" fill="none"/>
+                        <path d="M12 2L14 8L12 9L10 8L12 2Z" stroke="currentColor" strokeWidth="2" fill="currentColor"/>
+                        <path d="M8 4L6 8L8 10L9 8L8 4Z" stroke="currentColor" strokeWidth="2" fill="currentColor"/>
+                        <path d="M16 4L18 8L16 10L15 8L16 4Z" stroke="currentColor" strokeWidth="2" fill="currentColor"/>
+                      </svg>
+                    </div>
                   )}
                 </div>
-
-                {/* Avatar */}
-                <div className="rounded-xl w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 border-purple-400">
-                  {player.avatar_url ? (
-                    <img
-                      src={player.avatar_url}
-                      alt={player.username}
-                      className="w-full h-full object-cover rounded-xl"
-                    />
-                  ) : (
-                    <span className="text-2xl font-black text-white">
-                      {getInitials(player.username)}
-                    </span>
-                  )}
-                </div>
-
-                {/* Player info */}
-                <div className="flex-1">
-                  <p className="text-lg font-bold text-white">{player.username}</p>
-                  <p className="text-sm text-purple-300">
-                    Helyes válaszok: {player.total_correct_answers}
-                  </p>
-                </div>
-
-                {/* Medal for top 3 */}
-                {player.rank <= 3 && (
-                  <Medal
-                    className={`w-8 h-8 ${
-                      player.rank === 1
-                        ? 'text-yellow-400'
-                        : player.rank === 2
-                        ? 'text-gray-400'
-                        : 'text-orange-400'
-                    }`}
-                  />
-                )}
               </div>
             ))}
 
