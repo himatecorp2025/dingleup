@@ -104,9 +104,9 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* OUTER FRAME */}
+              {/* OUTER FRAME with sparkle animation */}
               <div
-                className="absolute inset-0 clip-hexagon bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border-2 sm:border-4 border-yellow-400 shadow-lg shadow-yellow-500/50"
+                className="absolute inset-0 clip-hexagon bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border-2 sm:border-4 border-yellow-400 shadow-lg shadow-yellow-500/50 animate-sparkle"
                 aria-hidden
               />
 
@@ -143,9 +143,9 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* "G" Letter SVG centered - 99.8% size, perfectly centered */}
+              {/* "G" Letter SVG centered - 99.3% size, perfectly centered with sparkle */}
               <div className="absolute clip-hexagon flex items-center justify-center z-10" style={{ inset: '4px' }}>
-                <div style={{ width: '99.8%', height: '99.8%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="animate-shimmer" style={{ width: '99.3%', height: '99.3%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {geniusSvg('w-full h-full')}
                 </div>
               </div>
@@ -183,3 +183,42 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
     </TooltipProvider>
   );
 };
+
+// Sparkle and shimmer animations
+const styles = `
+  @keyframes sparkle {
+    0%, 100% {
+      filter: brightness(1) drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
+    }
+    50% {
+      filter: brightness(1.3) drop-shadow(0 0 16px rgba(251, 191, 36, 1));
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      filter: brightness(1) drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
+    }
+    50% {
+      filter: brightness(1.2) drop-shadow(0 0 12px rgba(251, 191, 36, 0.8));
+    }
+    100% {
+      filter: brightness(1) drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
+    }
+  }
+
+  .animate-sparkle {
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+`;
+
+// Inject styles
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement("style");
+  styleSheet.innerText = styles;
+  document.head.appendChild(styleSheet);
+}
