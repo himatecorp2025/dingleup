@@ -24,7 +24,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         boxSizing: "border-box",
         outline: "none",
         border: 0,
-        animation: "casino-pulse 3s ease-in-out infinite",
+        animation: "accept-button-pulse 2.5s ease-in-out infinite",
         ...style,
       }}
       {...props}
@@ -170,17 +170,41 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         />
       </div>
 
-      {/* LABEL */}
+      {/* LABEL - Pulsing text */}
       <span
         className="relative z-[1] font-black text-white tracking-[0.08em]"
         style={{
           fontSize: "clamp(1.05rem, 4.6vw, 1.45rem)",
           textShadow:
             "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
+          animation: "text-pulse 2.5s ease-in-out infinite"
         }}
       >
         {typeof children === "string" ? children.toUpperCase() : children}
       </span>
+
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes accept-button-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            filter: brightness(1);
+          }
+          50% { 
+            transform: scale(1.02);
+            filter: brightness(1.08);
+          }
+        }
+        
+        @keyframes text-pulse {
+          0%, 100% { 
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8);
+          }
+          50% { 
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.6);
+          }
+        }
+      `}</style>
     </button>
   );
 };
