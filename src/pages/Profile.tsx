@@ -323,118 +323,102 @@ const Profile = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6" data-tutorial="stats">
-          {/* Lives */}
-          <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu">
-            {/* Base shadow (3D depth) */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
+          {/* Lives - Deep 3D */}
+          <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu" style={{ perspective: '1000px' }}>
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
-            {/* Outer frame */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-500/60
-              shadow-[0_0_20px_rgba(239,68,68,0.6),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-red-700 via-red-600 to-red-900 opacity-90 border-3 border-red-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
-            {/* Middle frame (bright highlight) */}
-            <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-red-600 via-red-500 to-red-800"
-              style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
-            {/* Inner crystal layer */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-red-500 via-red-600 to-red-700"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+            {/* INNER LAYER */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            {/* Specular highlight */}
-            <div className="absolute rounded-xl sm:rounded-2xl pointer-events-none"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
             
             {/* Content */}
-            <div className="relative z-10">
+            <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <HeartIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Életek</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Életek</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.lives}/{profile.max_lives}</p>
             </div>
           </div>
 
-          {/* Coins */}
-          <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu">
-            {/* Base shadow (3D depth) */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
+          {/* Coins - Deep 3D */}
+          <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu" style={{ perspective: '1000px' }}>
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
-            {/* Outer frame */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-800 border-2 border-yellow-500/60
-              shadow-[0_0_20px_rgba(234,179,8,0.7),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 opacity-90 border-3 border-yellow-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
-            {/* Middle frame (bright highlight) */}
-            <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-500 via-yellow-400 to-yellow-700"
-              style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
-            {/* Inner crystal layer */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+            {/* INNER LAYER */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            {/* Specular highlight */}
-            <div className="absolute rounded-xl sm:rounded-2xl pointer-events-none"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
             
             {/* Content */}
-            <div className="relative z-10">
+            <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <CoinsIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Aranyérmék</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Aranyérmék</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.coins}</p>
             </div>
           </div>
 
-          {/* Total Correct Answers */}
-          <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu">
-            {/* Base shadow (3D depth) */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
+          {/* Total Correct Answers - Deep 3D */}
+          <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu" style={{ perspective: '1000px' }}>
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
-            {/* Outer frame */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-700 via-green-600 to-green-900 border-2 border-green-500/60
-              shadow-[0_0_20px_rgba(34,197,94,0.6),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-700 via-green-600 to-green-900 opacity-90 border-3 border-green-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
-            {/* Middle frame (bright highlight) */}
-            <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-green-600 via-green-500 to-green-800"
-              style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
-            {/* Inner crystal layer */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-green-500 via-green-600 to-green-700"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+            {/* INNER LAYER */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-green-500 via-green-600 to-green-700" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            {/* Specular highlight */}
-            <div className="absolute rounded-xl sm:rounded-2xl pointer-events-none"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
             
             {/* Content */}
-            <div className="relative z-10">
+            <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <TrophyIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Helyes válaszok</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Helyes válaszok</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.total_correct_answers || 0}</p>
             </div>
           </div>
 
-          {/* Daily Streak */}
-          <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu">
-            {/* Base shadow (3D depth) */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
+          {/* Daily Streak - Deep 3D */}
+          <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu" style={{ perspective: '1000px' }}>
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
-            {/* Outer frame */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-700 via-blue-600 to-blue-900 border-2 border-blue-500/60
-              shadow-[0_0_20px_rgba(59,130,246,0.6),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-700 via-blue-600 to-blue-900 opacity-90 border-3 border-blue-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
-            {/* Middle frame (bright highlight) */}
-            <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-blue-600 via-blue-500 to-blue-800"
-              style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
-            {/* Inner crystal layer */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+            {/* INNER LAYER */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            {/* Specular highlight */}
-            <div className="absolute rounded-xl sm:rounded-2xl pointer-events-none"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
             
             {/* Content */}
-            <div className="relative z-10">
+            <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <CalendarIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Napi sorozat</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Napi sorozat</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.daily_gift_streak} nap</p>
             </div>
           </div>
