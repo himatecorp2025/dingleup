@@ -229,13 +229,13 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central HEXAGON - ZOOM WRAPPER (doesn't affect layout) */}
+          {/* Central HEXAGON - REVEAL WRAPPER (clip-path, no scaling) */}
           <div 
-            className={`relative z-10 transition-all duration-[2000ms] ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+            className={`relative z-10 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}
             style={{ 
-              transitionDelay: '300ms',
-              transformOrigin: 'center center',
-              willChange: 'transform, opacity'
+              transition: 'clip-path 2000ms ease-out 300ms, opacity 250ms ease-out 300ms',
+              clipPath: contentVisible ? 'circle(140% at 50% 50%)' : 'circle(0% at 50% 50%)',
+              willChange: 'clip-path, opacity'
             }}
           >
             
