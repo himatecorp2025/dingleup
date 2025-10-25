@@ -201,54 +201,22 @@ const Dashboard = () => {
     const fetchUserRank = async () => {
       if (!userId) return;
       
-      const weekStart = getWeekStart();
-      const weekEnd = getWeekEnd();
-      if (!userId) return;
-      
-      // Get current user's total correct answers this week
-      const { data: userResults, error: userError } = await supabase
-        .from('game_results')
-        .select('correct_answers')
-        .eq('user_id', userId)
-        .gte('created_at', weekStart)
-        .lte('created_at', weekEnd);
-      
-      if (userError) {
-        console.error('Error fetching user results:', userError);
-        return;
-      }
-      
-      const userTotal = userResults?.reduce((sum, r) => sum + (r.correct_answers || 0), 0) || 0;
-      
-      // Get all users' totals this week and count how many are better
-      const { data: allResults, error: allError } = await supabase
-        .from('game_results')
-        .select('user_id, correct_answers')
-        .gte('created_at', weekStart)
-        .lte('created_at', weekEnd);
-      
-      if (allError) {
-        console.error('Error fetching all results:', allError);
-        return;
-      }
-      
-      // Group by user_id and sum correct_answers
-      const userTotals = new Map<string, number>();
-      allResults?.forEach(r => {
-        const current = userTotals.get(r.user_id) || 0;
-        userTotals.set(r.user_id, current + (r.correct_answers || 0));
-      });
-      
-      // Count how many users have more correct answers
-      let betterCount = 0;
-      userTotals.forEach((total, uid) => {
-        if (total > userTotal && uid !== userId) {
-          betterCount++;
+      try {
+        // Call the RPC function to get country-specific rank
+        const { data, error } = await supabase
+          .rpc('get_user_country_rank', { p_user_id: userId });
+        
+        if (error) {
+          console.error('Error fetching user rank:', error);
+          setCurrentRank(0);
+          return;
         }
-      });
-      
-      const rank = betterCount + 1;
-      setCurrentRank(rank);
+        
+        setCurrentRank(data || 0);
+      } catch (err) {
+        console.error('Exception fetching user rank:', err);
+        setCurrentRank(0);
+      }
     };
     
     // Fetch immediately

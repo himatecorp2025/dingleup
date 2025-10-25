@@ -1421,6 +1421,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           coins: number | null
+          country_code: string | null
           created_at: string | null
           daily_gift_last_claimed: string | null
           daily_gift_streak: number | null
@@ -1459,6 +1460,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           coins?: number | null
+          country_code?: string | null
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
@@ -1497,6 +1499,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           coins?: number | null
+          country_code?: string | null
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
@@ -2791,6 +2794,7 @@ export type Database = {
         Returns: Json
       }
       get_next_life_at: { Args: { p_user_id: string }; Returns: string }
+      get_user_country_rank: { Args: { p_user_id: string }; Returns: number }
       get_user_threads_optimized: {
         Args: { p_user_id: string }
         Returns: {
