@@ -143,9 +143,11 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* "G" Letter SVG centered - completely fills hexagon */}
+              {/* "G" Letter SVG centered - 99.8% size, perfectly centered */}
               <div className="absolute clip-hexagon flex items-center justify-center z-10" style={{ inset: '4px' }}>
-                {geniusSvg('w-full h-full')}
+                <div style={{ width: '99.8%', height: '99.8%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {geniusSvg('w-full h-full')}
+                </div>
               </div>
             </div>
           </TooltipTrigger>
