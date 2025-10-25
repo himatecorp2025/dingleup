@@ -122,7 +122,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                 const angle = Math.random() * 360;
                 const moveX = Math.cos(angle * Math.PI / 180) * explodeDistance;
                 const moveY = Math.sin(angle * Math.PI / 180) * explodeDistance;
-                const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#A78BFA', '#F59E0B', '#EC4899'];
+                const colors = ['#FFD700', '#1E40AF', '#7C3AED', '#F59E0B'];
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 
                 return (
@@ -162,7 +162,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
             </div>
           )}
 
-          {/* ZOOM WRAPPER - Pulzáló lila fénysugár háttér */}
+          {/* ZOOM WRAPPER - Pulzáló KÉK fénysugár háttér */}
           <div 
             className="relative z-10"
             style={{ 
@@ -173,11 +173,11 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
               willChange: contentVisible ? 'transform, opacity' : 'auto',
             }}
           >
-            {/* Pulzáló lila fénysugár háttér */}
+            {/* Pulzáló KÉK fénysugár háttér */}
             <div 
               className="absolute -inset-12"
               style={{
-                background: 'radial-gradient(ellipse 100% 100% at 50% 50%, rgba(168,85,247,0.4) 0%, rgba(147,51,234,0.2) 40%, transparent 70%)',
+                background: 'radial-gradient(ellipse 100% 100% at 50% 50%, rgba(30,64,175,0.4) 0%, rgba(37,99,235,0.2) 40%, transparent 70%)',
                 filter: 'blur(40px)',
                 animation: 'winnersShieldGlow 2s ease-in-out infinite',
                 zIndex: -1,
@@ -197,8 +197,21 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
               }
             `}</style>
 
+            {/* Close button (X) - jobb felső sarok, kívül a boxon */}
+            <button
+              onClick={onClose}
+              className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center bg-black/70 hover:bg-black/90 rounded-full text-white font-bold transition-all shadow-lg z-50"
+              style={{
+                fontSize: '1.5rem',
+                textShadow: '0 2px 4px rgba(0,0,0,0.8)',
+                border: '2px solid rgba(255,255,255,0.3)'
+              }}
+            >
+              ×
+            </button>
+
             <HexShieldFrame showShine={true}>
-              {/* Premium BEST PLAYERS badge - 3D LILA/RÓZSASZÍN */}
+              {/* Premium WEEKLY WINNERS badge - ARANY 3D - ugyanaz mint Welcome */}
               <div 
                 className="relative -mt-12 mb-4 mx-auto z-20" 
                 style={{ width: '80%' }}
@@ -214,15 +227,15 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                 <div className="absolute inset-0"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'linear-gradient(135deg, hsl(280, 70%, 50%), hsl(300, 70%, 60%) 50%, hsl(280, 70%, 40%))',
-                       boxShadow: 'inset 0 0 0 2px hsl(280, 60%, 30%), 0 6px 16px rgba(0,0,0,0.35)'
+                       background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                       boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 6px 16px rgba(0,0,0,0.35)'
                      }} />
                 
                 <div className="absolute inset-[3px]"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'linear-gradient(180deg, hsl(290, 80%, 70%), hsl(280, 75%, 60%) 40%, hsl(270, 70%, 50%))',
-                       boxShadow: 'inset 0 1px 0 hsl(300, 80%, 80%)'
+                       background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                       boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
                      }} />
                 
                 <div className="relative px-[5vw] py-[1.2vh]"
@@ -232,7 +245,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                   <div className="absolute inset-[6px]"
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(290, 100% 85%) 0%, hsl(285, 95% 70%) 30%, hsl(280, 90% 58%) 60%, hsl(275, 85% 45%) 100%)',
+                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(48 100% 85%) 0%, hsl(45 95% 70%) 30%, hsl(42 90% 58%) 60%, hsl(38 85% 45%) 100%)',
                          boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.25), inset 0 -12px 24px rgba(0,0,0,0.4)'
                        }} />
                   
@@ -250,65 +263,65 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                   
                   <h1 className="relative z-10 font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
                       style={{ 
-                        fontSize: 'clamp(1.25rem, 5.2cqw, 2.1rem)', 
+                        fontSize: 'clamp(1.15rem, 4.8cqw, 1.9rem)', 
                         letterSpacing: '0.05em',
                         textShadow: '0 0 12px rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.9)'
                       }}>
-                    BEST PLAYERS
+                    WEEKLY WINNERS
                   </h1>
                 </div>
               </div>
 
               {/* Content - Player List */}
-              <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
+              <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[4%] pb-[6%] pt-[2%]">
                 
-                {/* Players List */}
-                <div className="w-full max-w-[90%] space-y-2 mb-4 overflow-y-auto max-h-[50vh]">
-                  {topPlayers.map((player, index) => (
+                {/* Players List - szélesebb, kisebb boxok, nincs scrolling */}
+                <div className="w-full max-w-[96%] space-y-1.5">
+                  {topPlayers.slice(0, 10).map((player, index) => (
                     <div 
                       key={index}
                       className="relative"
                       style={{
-                        animation: `fadeInUp ${0.3 + index * 0.1}s ease-out ${index * 0.05}s both`
+                        animation: `fadeInUp ${0.3 + index * 0.08}s ease-out ${index * 0.04}s both`
                       }}
                     >
                       {/* 3D Card Shadow */}
-                      <div className="absolute inset-0 translate-y-1 translate-x-1 bg-black/40 rounded-xl blur-sm" />
+                      <div className="absolute inset-0 translate-y-0.5 translate-x-0.5 bg-black/40 rounded-lg blur-sm" />
                       
-                      {/* 3D Card Border - Purple/Pink gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-purple-700 rounded-xl" 
-                           style={{ boxShadow: 'inset 0 0 0 2px hsl(280, 60%, 40%), 0 4px 12px rgba(0,0,0,0.3)' }} />
+                      {/* 3D Card Border - KÉK/ARANY gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800 rounded-lg" 
+                           style={{ boxShadow: 'inset 0 0 0 1.5px hsl(220, 70%, 30%), 0 3px 8px rgba(0,0,0,0.3)' }} />
                       
                       {/* 3D Card Inner Layer */}
-                      <div className="absolute inset-[2px] bg-gradient-to-b from-purple-400 via-pink-400 to-purple-500 rounded-xl"
-                           style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)' }} />
+                      <div className="absolute inset-[1.5px] bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 rounded-lg"
+                           style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)' }} />
                       
                       {/* Card Content */}
-                      <div className="relative bg-gradient-to-br from-purple-500/95 via-pink-500/95 to-purple-600/95 rounded-xl px-3 py-2.5 flex items-center gap-3"
-                           style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }}>
+                      <div className="relative bg-gradient-to-br from-blue-600/95 via-blue-700/95 to-blue-800/95 rounded-lg px-2 py-1.5 flex items-center gap-2"
+                           style={{ boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.15), inset 0 -6px 12px rgba(0,0,0,0.25)' }}>
                         
                         {/* Rank Number - Left */}
-                        <div className="flex-shrink-0 w-8 text-center">
-                          <span className="font-black text-white drop-shadow-lg" 
+                        <div className="flex-shrink-0 w-6 text-center">
+                          <span className="font-black text-yellow-300 drop-shadow-lg" 
                                 style={{ 
-                                  fontSize: 'clamp(1rem, 4cqw, 1.5rem)',
+                                  fontSize: 'clamp(0.85rem, 3.5cqw, 1.1rem)',
                                   textShadow: '0 2px 4px rgba(0,0,0,0.8)'
                                 }}>
                             {player.rank}
                           </span>
                         </div>
 
-                        {/* Avatar */}
+                        {/* Avatar - Kisebb */}
                         <div className="flex-shrink-0">
                           {player.avatar_url ? (
                             <img 
                               src={player.avatar_url} 
                               alt={player.username}
-                              className="w-12 h-12 rounded-full border-4 border-white shadow-lg object-cover"
+                              className="w-9 h-9 rounded-full border-2 border-yellow-400 shadow-lg object-cover"
                             />
                           ) : (
-                            <div className="w-12 h-12 rounded-full border-4 border-white shadow-lg bg-gradient-to-br from-purple-300 to-purple-500 flex items-center justify-center">
-                              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <div className="w-9 h-9 rounded-full border-2 border-yellow-400 shadow-lg bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
+                              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                               </svg>
                             </div>
@@ -319,7 +332,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                         <div className="flex-1 min-w-0">
                           <p className="font-bold text-white truncate drop-shadow-md" 
                              style={{ 
-                               fontSize: 'clamp(0.85rem, 3.5cqw, 1.1rem)',
+                               fontSize: 'clamp(0.75rem, 3cqw, 0.95rem)',
                                textShadow: '0 2px 4px rgba(0,0,0,0.7)'
                              }}>
                             {player.username}
@@ -330,16 +343,16 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                         <div className="flex-shrink-0">
                           <p className="font-black text-yellow-200 drop-shadow-md" 
                              style={{ 
-                               fontSize: 'clamp(0.9rem, 3.8cqw, 1.2rem)',
+                               fontSize: 'clamp(0.8rem, 3.2cqw, 1rem)',
                                textShadow: '0 2px 4px rgba(0,0,0,0.8)'
                              }}>
                             {player.total_correct_answers.toLocaleString()}
                           </p>
                         </div>
 
-                        {/* Gift Icon */}
+                        {/* Gift Icon - Kisebb */}
                         <div className="flex-shrink-0">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="drop-shadow-lg">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="drop-shadow-lg">
                             <defs>
                               <linearGradient id={`giftGrad${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stopColor="#FFD700" />
@@ -373,32 +386,6 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                     }
                   }
                 `}</style>
-
-                {/* Bottom Text - Instead of button */}
-                <div className="mt-auto pt-4">
-                  <p className="text-center text-yellow-100 font-bold px-4 py-3 rounded-xl"
-                     style={{
-                       fontSize: 'clamp(0.85rem, 3.8cqw, 1.1rem)',
-                       textShadow: '0 2px 6px rgba(0,0,0,0.8)',
-                       background: 'linear-gradient(135deg, rgba(168,85,247,0.3) 0%, rgba(236,72,153,0.3) 50%, rgba(168,85,247,0.3) 100%)',
-                       boxShadow: 'inset 0 2px 8px rgba(255,255,255,0.2), inset 0 -2px 8px rgba(0,0,0,0.3)',
-                       border: '2px solid rgba(255,215,0,0.4)'
-                     }}>
-                    Ha nem vagy a listán, se baj,<br/>remélem jövő héten találkozunk!
-                  </p>
-                </div>
-
-                {/* Close button (X) - Small, top right */}
-                <button
-                  onClick={onClose}
-                  className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center bg-black/50 hover:bg-black/70 rounded-full text-white font-bold transition-all border-2 border-yellow-400 shadow-lg z-30"
-                  style={{
-                    fontSize: '1.5rem',
-                    textShadow: '0 2px 4px rgba(0,0,0,0.8)'
-                  }}
-                >
-                  ×
-                </button>
               </div>
             </HexShieldFrame>
           </div>
