@@ -23,21 +23,21 @@ export const LeaderboardCarousel = () => {
   }, []);
 
   const refresh = async () => {
-    // 1) Publikus nézet (RLS gond mentes)
+    // TOP 100 (vagy ahány van) a leaderboard_public táblából
     const fromPublic = await fetchFromLeaderboardPublic();
     if (fromPublic.length > 0) {
-      setTopPlayers(fromPublic.slice(0, 25));
+      setTopPlayers(fromPublic.slice(0, 100)); // TOP 100
       return;
     }
-    // 2) Global leaderboard (ha a felhasználó jogosult, különben 0-1 rekord)
+    // Fallback: global_leaderboard
     const fromGlobal = await fetchFromGlobalLeaderboard();
     if (fromGlobal.length > 0) {
-      setTopPlayers(fromGlobal.slice(0, 25));
+      setTopPlayers(fromGlobal.slice(0, 100));
       return;
     }
-    // 3) Heti rang fallback (összesítve profilokkal)
+    // További fallback: heti rangsor
     const fromWeekly = await fetchFromWeeklyRankings();
-    setTopPlayers(fromWeekly.slice(0, 25));
+    setTopPlayers(fromWeekly.slice(0, 100));
   };
 
   const fetchFromLeaderboardPublic = async (): Promise<LeaderboardEntry[]> => {
@@ -226,7 +226,7 @@ export const LeaderboardCarousel = () => {
 
   return (
     <div className="w-full py-1">
-      <h3 className="text-center text-xs sm:text-sm font-black text-white mb-1 drop-shadow-lg">🏆 TOP 25 JÁTÉKOS 🏆</h3>
+      <h3 className="text-center text-xs sm:text-sm font-black text-white mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <div className="inline-flex gap-2 sm:gap-3 px-2">
           {[...topPlayers, ...topPlayers].map((player, index) => {
@@ -245,10 +245,9 @@ export const LeaderboardCarousel = () => {
                 <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-1">
-                  {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 mb-0.5 ${getCrownColor(actualIndex)}`} />}
+                  {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 ${getCrownColor(actualIndex)}`} />}
+                  <p className="text-[10px] sm:text-xs font-black text-white drop-shadow-lg">{rank}.</p>
                   <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
-                  <p className="text-[9px] sm:text-[10px] font-semibold text-purple-200 drop-shadow-lg">{rank}. helyezett</p>
-                  <p className="text-[10px] sm:text-xs font-bold text-white drop-shadow-lg">Helyes válaszok: {player.total_correct_answers}</p>
                 </div>
               </div>
             );
