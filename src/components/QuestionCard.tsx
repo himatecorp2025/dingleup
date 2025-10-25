@@ -149,7 +149,7 @@ export const QuestionCard = ({
           </MillionaireQuestion>
         </div>
 
-        <div className="space-y-1.5 mt-8 sm:mt-10">{question.answers.map((answer) => {
+        <div className="space-y-1.5 mt-16 sm:mt-20">{question.answers.map((answer) => {
             const isRemoved = removedAnswer === answer.key;
             const isSelected = selectedAnswer === answer.key;
             const isCorrect = answer.key === correctAnswerKey;
@@ -191,7 +191,7 @@ export const QuestionCard = ({
       </div>
 
       {/* Bottom section: Help buttons - hexagon shaped with deep 3D */}
-      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mt-6 sm:mt-8 mb-2">
+      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mt-1.5 mb-2">
         {/* 1/3 Help Button */}
         <div className="relative" style={{ perspective: '600px' }}>
           <button
