@@ -21,33 +21,9 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     if (!userId) return;
 
     try {
-      // Check localStorage first
-      const laterKey = `welcome_bonus_later_${userId}`;
-      const showLaterStorage = localStorage.getItem(laterKey);
-      
-      if (showLaterStorage === 'true') {
-        setShowLater(true);
-        // Don't show again if user clicked "Később"
-        setCanClaim(false);
-        setLoading(false);
-        return;
-      }
-
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('welcome_bonus_claimed')
-        .eq('id', userId)
-        .single();
-
-      if (error) throw error;
-
-      const claimed = profile.welcome_bonus_claimed;
-      setCanClaim(!claimed);
-      
-      // Track impression if showing
-      if (!claimed) {
-        trackEvent('popup_impression', 'welcome');
-      }
+      // TESTING MODE: Always show, ignore all restrictions
+      setCanClaim(true);
+      trackEvent('popup_impression', 'welcome');
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error checking welcome bonus:', error);
@@ -94,8 +70,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
   const handleLater = () => {
     if (!userId) return;
     
-    const laterKey = `welcome_bonus_later_${userId}`;
-    localStorage.setItem(laterKey, 'true');
+    // TESTING MODE: Don't save to localStorage, just close
     setCanClaim(false);
     
     // Track later action

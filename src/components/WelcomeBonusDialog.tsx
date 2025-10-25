@@ -40,7 +40,8 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
     }
   };
 
-  if (!isHandheld || !open) return null;
+  // TESTING MODE: Show on all devices
+  if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
