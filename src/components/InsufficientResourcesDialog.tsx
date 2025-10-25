@@ -331,7 +331,7 @@ export const InsufficientResourcesDialog = ({
                 </div>
 
                 {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0" ref={contentRef} style={{ ['--shield-w' as any]: '320px' }}>
+                <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[6%] pb-[6%]" ref={contentRef} style={{ ['--shield-w' as any]: '320px' }}>
                   
                   
                   {/* Timer countdown at top */}
@@ -481,21 +481,19 @@ export const InsufficientResourcesDialog = ({
                     </div>
                   </div>
 
-                  {/* MEGSZERZEM MOST! button (ZÖLD) - SAME AS DAILY GIFT */}
+                  {/* MEGSZERZEM MOST! button (ZÖLD) - Equal padding on all sides */}
                   <div 
                     ref={buttonWrapperRef}
-                    className="flex justify-center mt-auto mb-[4%]"
-                    style={{
-                      width: 'var(--sync-width, 100%)',
-                      maxWidth: '100%',
-                      transform: 'translateZ(0)', // Force GPU acceleration for better rendering
-                      willChange: 'auto'
-                    }}
+                    className="flex justify-center mt-auto w-full"
                   >
                     <HexAcceptButton 
                       onClick={handleStartPayment} 
                       disabled={isLoadingPayment}
-                      style={{ width: 'var(--sync-width)', transform: 'translateZ(0)' }} 
+                      style={{ 
+                        width: '100%',
+                        fontSize: 'calc(var(--shield-w)*0.045)',
+                        transform: 'translateZ(0)'
+                      }} 
                     >
                       {isLoadingPayment ? 'Betöltés...' : 'MEGSZERZEM MOST!'}
                     </HexAcceptButton>
