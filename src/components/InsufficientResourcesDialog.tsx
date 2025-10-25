@@ -292,10 +292,15 @@ export const InsufficientResourcesDialog = ({
                 {/* Content Area */}
                 <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0">
                   
-                  {/* Resources Display - Simple 3D text effect */}
+                  {/* Resources Display - Simple 3D text effect, no backgrounds */}
                   <div className="relative flex items-center justify-center gap-[3vw] mb-[2vh]">
-                    <div className="flex items-center gap-2 bg-black/40 px-[3vw] py-[1vh] rounded-full shadow-lg">
-                      <Coins className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]" />
+                    <div className="flex items-center gap-2">
+                      <Coins 
+                        className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-yellow-300"
+                        style={{
+                          filter: 'drop-shadow(0 0 12px rgba(253,224,71,1)) drop-shadow(0 4px 8px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.4))'
+                        }}
+                      />
                       <span 
                         className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-yellow-200"
                         style={{
@@ -313,8 +318,13 @@ export const InsufficientResourcesDialog = ({
                     >
                       +
                     </div>
-                    <div className="flex items-center gap-2 bg-black/40 px-[3vw] py-[1vh] rounded-full shadow-lg">
-                      <Heart className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,1)]" />
+                    <div className="flex items-center gap-2">
+                      <Heart 
+                        className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-red-400"
+                        style={{
+                          filter: 'drop-shadow(0 0 12px rgba(248,113,113,1)) drop-shadow(0 4px 8px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.4))'
+                        }}
+                      />
                       <span 
                         className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-red-300"
                         style={{
@@ -326,7 +336,7 @@ export const InsufficientResourcesDialog = ({
                     </div>
                   </div>
 
-                  {/* Price with "CSAK" label */}
+                  {/* Price with "CSAK" label - Gold color */}
                   <div className="text-center mb-[2vh]">
                     <div 
                       className="text-[clamp(1.1rem,4.5vw,1.8rem)] font-black text-yellow-400 mb-1 uppercase tracking-wider"
@@ -337,7 +347,7 @@ export const InsufficientResourcesDialog = ({
                       CSAK
                     </div>
                     <div 
-                      className="text-[clamp(2.5rem,10vw,4rem)] font-black text-white"
+                      className="text-[clamp(2.5rem,10vw,4rem)] font-black text-yellow-400"
                       style={{
                         textShadow: '0 5px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), 0 0 24px rgba(255,215,0,0.7)'
                       }}
