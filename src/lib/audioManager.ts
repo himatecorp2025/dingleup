@@ -16,12 +16,13 @@ class AudioManager {
   private _volume: number = 0.03; // 3% default
 
   private constructor() {
-    // A2) Runtime detektor - detects duplicate Audio instances
-    if ((window as any).__AUDIO_INSTANCES__ >= 1) {
-      console.error('❌ DUPLIKÁLT AUDIO PÉLDÁNY! Single audio violation!');
-      throw new Error('AUDIO DUPLICATION DETECTED: Only AudioManager should create Audio instances!');
+    // Note: Multiple audio systems can coexist (BackgroundMusic for DingleUP + AudioManager for game)
+    // Track only AudioManager instances, not all Audio elements
+    if ((window as any).__AUDIO_MANAGER_INSTANCES__ >= 1) {
+      console.warn('[AudioManager] AudioManager instance already exists, using existing instance');
+      return;
     }
-    (window as any).__AUDIO_INSTANCES__ = ((window as any).__AUDIO_INSTANCES__ || 0) + 1;
+    (window as any).__AUDIO_MANAGER_INSTANCES__ = ((window as any).__AUDIO_MANAGER_INSTANCES__ || 0) + 1;
 
     this.bgm = new Audio(backMusic);
     this.bgm.loop = true;
@@ -38,7 +39,7 @@ class AudioManager {
     console.log('[AudioManager] Initialized with Web Audio API', { 
       volume: this._volume, 
       enabled: this._enabled, 
-      instances: (window as any).__AUDIO_INSTANCES__,
+      instances: (window as any).__AUDIO_MANAGER_INSTANCES__,
       percentage: `${Math.round(this._volume * 100)}%`
     });
   }
