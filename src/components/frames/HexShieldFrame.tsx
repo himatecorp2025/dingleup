@@ -34,7 +34,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
         <div 
           className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%]"
           style={{
-            background: 'linear-gradient(135deg, transparent 46%, rgba(255,215,0,0.7) 50%, transparent 54%)',
+            background: 'linear-gradient(45deg, transparent 46%, rgba(255,215,0,0.7) 50%, transparent 54%)',
             animation: 'slot-shine 3s linear infinite'
           }}
         />

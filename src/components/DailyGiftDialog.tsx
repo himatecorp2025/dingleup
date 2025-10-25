@@ -162,8 +162,8 @@ const DailyGiftDialog = ({
         <div 
           className="fixed inset-0 flex flex-col items-center justify-center py-4 overflow-y-auto"
         >
-          {/* Background layer - BRIGHTER purple gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-800 via-purple-800 to-blue-800" style={{ opacity: 0.85 }}></div>
+          {/* Background layer - NO ROUNDED CORNERS, 75%+ transparent */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-800 via-purple-800 to-blue-800" style={{ opacity: 0.25 }}></div>
 
           {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
           {contentVisible && burstActive && (
@@ -339,12 +339,13 @@ const DailyGiftDialog = ({
                     const isActive = day <= weeklyEntryCount + 1;
                     return (
                       <div key={day}
-                           className={`transition-all duration-500 ${isActive ? 'scale-100 opacity-100' : 'scale-75 opacity-35'}`}
+                           className={`transition-all duration-500 ${isActive ? 'scale-100 opacity-100' : 'scale-75 opacity-70'}`}
                            style={{ 
                              fontSize: 'clamp(0.875rem, 3.6vw, 1.3rem)',
                              filter: isActive 
                                ? `drop-shadow(0 0 6px hsl(var(--dup-gold-500)))` 
-                               : 'grayscale(1)'
+                               : 'drop-shadow(0 0 4px hsl(192 45% 65%))',
+                             color: isActive ? '' : 'hsl(192 45% 70%)'
                            }}>
                         {isActive ? '⭐' : '☆'}
                       </div>
