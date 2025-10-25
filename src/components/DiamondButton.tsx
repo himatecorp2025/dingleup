@@ -9,6 +9,7 @@ interface DiamondButtonProps {
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
   badge?: ReactNode;
+  style?: React.CSSProperties;
 }
 
 /**
@@ -24,6 +25,7 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
   disabled = false,
   size = 'lg',
   badge,
+  style,
 }) => {
   // Variant color schemes
   const variants = {
@@ -114,6 +116,7 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
       } ${className}`}
       style={{
         clipPath: hexPath,
+        ...style,
       }}
     >
       {/* Badge indicator */}
@@ -215,10 +218,43 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
         aria-hidden
       />
 
+      {/* 45° SHINE (animated, clipped to hex) */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          top: '5px',
+          left: '5px',
+          right: '5px',
+          bottom: '5px',
+          clipPath: hexInnerPath,
+          overflow: 'hidden',
+        }}
+        aria-hidden
+      >
+        <div
+          className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%]"
+          style={{
+            background: 'linear-gradient(45deg, transparent 46%, rgba(255,215,0,0.6) 50%, transparent 54%)',
+            animation: 'slot-shine 2s linear infinite',
+          }}
+        />
+      </div>
+
       {/* Content */}
       <div className={`relative z-10 flex items-center justify-center ${colors.textColor} drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]`}>
         {children}
       </div>
+
+      <style>{`
+        @keyframes slot-shine {
+          0% {
+            transform: translateX(-100%) translateY(-100%) rotate(45deg);
+          }
+          100% {
+            transform: translateX(100%) translateY(100%) rotate(45deg);
+          }
+        }
+      `}</style>
     </button>
   );
 };

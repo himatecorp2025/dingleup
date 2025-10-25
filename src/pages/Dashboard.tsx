@@ -473,7 +473,10 @@ return (
           onClick={() => navigate('/game')}
           variant="play"
           size="lg"
-          className="mb-2 sm:mb-3 animate-pulse-glow-green"
+          className="mb-2 sm:mb-3"
+          style={{
+            animation: 'play-pulse 0.8s ease-in-out infinite'
+          }}
         >
           {/* Play SVG Icon */}
           <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -481,6 +484,19 @@ return (
           </svg>
           PLAY NOW
         </DiamondButton>
+
+        <style>{`
+          @keyframes play-pulse {
+            0%, 100% { 
+              transform: scale(1);
+              filter: brightness(1) drop-shadow(0 0 8px rgba(34,197,94,0.4));
+            }
+            50% { 
+              transform: scale(1.02);
+              filter: brightness(1.1) drop-shadow(0 0 16px rgba(34,197,94,0.7));
+            }
+          }
+        `}</style>
 
         {/* Booster Button - 3D Diamond */}
         <DiamondButton
