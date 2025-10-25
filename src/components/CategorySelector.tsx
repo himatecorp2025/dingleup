@@ -124,8 +124,8 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
             Melyik területen méred össze tudásod?
           </p>
 
-        {/* 2x2 Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 max-w-md mx-auto">
+        {/* 2x2 Grid - Fixed equal sizing */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 max-w-md mx-auto" style={{ gridAutoRows: '1fr' }}>
           {categories.map((category) => {
             const Icon = category.icon;
             return (
@@ -133,7 +133,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                 key={category.id}
                 onClick={() => handleCategorySelect(category.id)}
                 className="group relative overflow-hidden rounded-2xl p-3 sm:p-4 bg-black/80 transition-all duration-300 hover:scale-105 text-left touch-manipulation active:scale-95 flex flex-col justify-between"
-                style={{ perspective: '1000px', aspectRatio: '1 / 1', minHeight: '200px' }}
+                style={{ perspective: '1000px', aspectRatio: '1 / 1', height: 'auto', minHeight: '200px', maxHeight: '250px' }}
               >
                 {/* Deep 3D Layers - ENHANCED */}
                 {/* BASE SHADOW - Deeper */}
@@ -163,15 +163,28 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                 </div>
                 
                 <div className="relative z-10 flex flex-col h-full items-center justify-between" style={{ transform: 'translateZ(50px)' }}>
-                  <div className={`p-2 sm:p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-2 sm:mt-3 shadow-2xl`} style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.4)' }}>
-                    <Icon className="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px]" />
+                  {/* 3D Icon wrapper with enhanced depth */}
+                  <div className="relative mt-2 sm:mt-3" style={{ perspective: '600px' }}>
+                    {/* BASE SHADOW for icon */}
+                    <div className="absolute inset-0 bg-black/60 rounded-xl translate-y-2 blur-lg" aria-hidden />
+                    
+                    {/* OUTER GLOW */}
+                    <div className={`absolute inset-[-4px] rounded-xl bg-gradient-to-br ${category.gradient} opacity-50 blur-md`} aria-hidden />
+                    
+                    {/* MAIN FRAME */}
+                    <div className={`relative p-2 sm:p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit shadow-2xl`} style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }}>
+                      {/* INNER HIGHLIGHT */}
+                      <div className="absolute inset-[3px] rounded-lg pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 20%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
+                      
+                      <Icon className="w-[85px] h-[85px] sm:w-[102px] sm:h-[102px] relative z-10" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
+                    </div>
                   </div>
                   
-                  <div className="text-center pb-3 sm:pb-4">
-                    <h3 className="text-base sm:text-lg font-bold mb-0.5 sm:mb-1 font-poppins leading-tight text-white drop-shadow-lg">
+                  <div className="text-center pb-3 sm:pb-4 px-2 max-w-full overflow-hidden">
+                    <h3 className="text-base sm:text-lg font-bold mb-0.5 sm:mb-1 font-poppins leading-tight text-white drop-shadow-lg truncate">
                       {category.name}
                     </h3>
-                    <p className="text-sm sm:text-base text-yellow-200/90 line-clamp-2 drop-shadow">
+                    <p className="text-sm sm:text-base text-yellow-200/90 line-clamp-2 drop-shadow break-words">
                       {category.description}
                     </p>
                   </div>

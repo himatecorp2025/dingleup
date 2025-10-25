@@ -151,7 +151,7 @@ export const QuestionCard = ({
 
         {/* Answers with exact spacing */}
         <div className="mt-0">
-          <div className="space-y-2 sm:space-y-3 mb-2 sm:mb-3">{question.answers.map((answer) => {
+          <div className="space-y-4 sm:space-y-6 mb-4 sm:mb-6">{question.answers.map((answer) => {
             const isRemoved = removedAnswer === answer.key;
             const isSelected = selectedAnswer === answer.key;
             const isCorrect = answer.key === correctAnswerKey;
