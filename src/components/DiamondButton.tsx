@@ -226,7 +226,7 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
       </div>
 
       {/* Content */}
-      <div className={`relative z-10 flex items-center justify-center ${colors.textColor} drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]`}>
+      <div className={`relative z-10 flex items-center justify-center ${colors.textColor}`}>
         {children}
       </div>
 
