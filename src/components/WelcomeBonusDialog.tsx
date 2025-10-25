@@ -87,50 +87,99 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             paddingTop: '0'
           }}
         >
-          {/* Átlátszó homályos háttér (blur) */}
-          <div className="absolute inset-0 w-full h-full min-h-screen bg-black/30 backdrop-blur-sm" style={{ borderRadius: 0 }}></div>
+          {/* Átlátszó homályos háttér - 25% homályosítás */}
+          <div className="absolute inset-0 w-full h-full min-h-screen bg-black/20 backdrop-blur-[2px]" style={{ borderRadius: 0 }}></div>
 
           {/* Animated golden stars */}
           {contentVisible && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(starCount)].map((_, i) => {
-                const delay = Math.random() * 3;
-                const duration = 1.5 + Math.random() * 1;
-                const startX = Math.random() * 100;
-                const startY = Math.random() * 100;
-                const moveX = (Math.random() - 0.5) * 20;
-                const moveY = (Math.random() - 0.5) * 20;
-                
-                return (
-                  <div
-                    key={i}
-                    className="absolute"
-                    style={{
-                      left: `${startX}%`,
-                      top: `${startY}%`,
-                      animation: `starFade${i} ${duration}s ease-in-out ${delay}s infinite`,
-                      zIndex: 3
-                    }}
-                  >
-                    <svg viewBox="0 0 24 24" className="w-3 h-3" fill="#fbbf24">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <style>{`
-                      @keyframes starFade${i} {
-                        0%, 100% { 
-                          transform: translate(0, 0) scale(0);
-                          opacity: 0;
+            <>
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {[...Array(starCount)].map((_, i) => {
+                  const delay = Math.random() * 3;
+                  const duration = 1.5 + Math.random() * 1;
+                  const startX = Math.random() * 100;
+                  const startY = Math.random() * 100;
+                  const moveX = (Math.random() - 0.5) * 20;
+                  const moveY = (Math.random() - 0.5) * 20;
+                  
+                  return (
+                    <div
+                      key={i}
+                      className="absolute"
+                      style={{
+                        left: `${startX}%`,
+                        top: `${startY}%`,
+                        animation: `starFade${i} ${duration}s ease-in-out ${delay}s infinite`,
+                        zIndex: 3
+                      }}
+                    >
+                      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="#fbbf24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                      <style>{`
+                        @keyframes starFade${i} {
+                          0%, 100% { 
+                            transform: translate(0, 0) scale(0);
+                            opacity: 0;
+                          }
+                          50% { 
+                            transform: translate(${moveX}px, ${moveY}px) scale(1.5);
+                            opacity: 1;
+                          }
                         }
-                        50% { 
-                          transform: translate(${moveX}px, ${moveY}px) scale(1.5);
-                          opacity: 1;
+                      `}</style>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* MARKETING: Konfetti animáció */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {[...Array(20)].map((_, i) => {
+                  const delay = Math.random() * 2;
+                  const duration = 3 + Math.random() * 2;
+                  const startX = Math.random() * 100;
+                  const rotate = Math.random() * 360;
+                  const colors = ['#fbbf24', '#f59e0b', '#fb7185', '#a855f7', '#3b82f6'];
+                  const color = colors[Math.floor(Math.random() * colors.length)];
+                  
+                  return (
+                    <div
+                      key={`confetti-${i}`}
+                      className="absolute"
+                      style={{
+                        left: `${startX}%`,
+                        top: '-10%',
+                        animation: `confettiFall${i} ${duration}s linear ${delay}s infinite`,
+                        zIndex: 2
+                      }}
+                    >
+                      <div 
+                        style={{ 
+                          width: '8px', 
+                          height: '8px', 
+                          background: color,
+                          transform: `rotate(${rotate}deg)`,
+                          opacity: 0.8
+                        }}
+                      />
+                      <style>{`
+                        @keyframes confettiFall${i} {
+                          0% { 
+                            transform: translateY(0) rotate(0deg);
+                            opacity: 1;
+                          }
+                          100% { 
+                            transform: translateY(110vh) rotate(720deg);
+                            opacity: 0;
+                          }
                         }
-                      }
-                    `}</style>
-                  </div>
-                );
-              })}
-            </div>
+                      `}</style>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
 
           {/* ZOOM WRAPPER - Pulzáló arany fénysugár háttér a pajzs mögött */}
@@ -203,11 +252,11 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
                      }}>
-                  {/* Inner crystal gradient */}
+                  {/* Inner ARANY kristály gradient - NEM ZÖLD! */}
                   <div className="absolute inset-[6px]"
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(155 90% 82%) 0%, hsl(155 85% 68%) 30%, hsl(155 78% 58%) 60%, hsl(155 70% 45%) 100%)',
+                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(48 100% 85%) 0%, hsl(45 95% 70%) 30%, hsl(42 90% 58%) 60%, hsl(38 85% 45%) 100%)',
                          boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.25), inset 0 -12px 24px rgba(0,0,0,0.4)'
                        }} />
                   
@@ -239,6 +288,35 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
               {/* Content */}
               <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                 
+                {/* MARKETING: "KÜLÖNLEGES AJÁNLAT!" banner */}
+                <div className="relative mb-2">
+                  <div className="px-6 py-1.5 bg-gradient-to-r from-red-600 via-red-500 to-red-600 rounded-full border-2 border-red-300 shadow-lg"
+                       style={{ 
+                         boxShadow: '0 0 20px rgba(239,68,68,0.6), inset 0 1px 0 rgba(255,255,255,0.3)',
+                         animation: 'offerPulse 1.5s ease-in-out infinite'
+                       }}>
+                    <p className="text-white font-black text-center tracking-wider"
+                       style={{ 
+                         fontSize: 'clamp(0.65rem, 3cqw, 0.9rem)',
+                         textShadow: '0 2px 6px rgba(0,0,0,0.9), 0 0 12px rgba(255,255,255,0.4)'
+                       }}>
+                      ⭐ KÜLÖNLEGES AJÁNLAT! ⭐
+                    </p>
+                  </div>
+                  <style>{`
+                    @keyframes offerPulse {
+                      0%, 100% { 
+                        transform: scale(1);
+                        filter: brightness(1);
+                      }
+                      50% { 
+                        transform: scale(1.05);
+                        filter: brightness(1.2);
+                      }
+                    }
+                  `}</style>
+                </div>
+
                 {/* Subtitle */}
                 <p className="text-center text-yellow-200 font-black mb-4"
                    style={{
