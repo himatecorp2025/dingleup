@@ -54,23 +54,97 @@ export const NextLifeTimer = ({
 
   return (
     <div 
-      className="absolute -bottom-[7.2px] -right-0.5 rounded z-50 text-[8px]"
+      className="absolute -bottom-[7.2px] -right-0.5 rounded-md z-50 text-[8px]"
       title="Következő élet érkezése"
-      style={{ perspective: '500px' }}
+      style={{ perspective: '1000px' }}
     >
-      {/* BASE SHADOW */}
-      <div className="absolute inset-0 bg-black/60 rounded" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+      {/* DEEP BOTTOM SHADOW - Multiple layers for depth */}
+      <div 
+        className="absolute inset-0 bg-black/70 rounded-md" 
+        style={{ 
+          transform: 'translate(4px, 6px) rotateX(5deg)', 
+          filter: 'blur(6px)' 
+        }} 
+        aria-hidden 
+      />
+      <div 
+        className="absolute inset-0 bg-black/40 rounded-md" 
+        style={{ 
+          transform: 'translate(2px, 4px) rotateX(3deg)', 
+          filter: 'blur(4px)' 
+        }} 
+        aria-hidden 
+      />
       
-      {/* OUTER FRAME */}
-      <div className="absolute inset-0 rounded bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border border-yellow-400/70 shadow-lg" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+      {/* DEEP 3D LAYERS - Bottom to top */}
+      {/* Layer 5 - Deepest */}
+      <div 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-900 via-yellow-800 to-yellow-950 border-2 border-yellow-950/80" 
+        style={{ 
+          transform: 'translateZ(-20px) rotateX(2deg)',
+          boxShadow: '0 8px 16px rgba(0,0,0,0.6)'
+        }} 
+        aria-hidden 
+      />
       
-      {/* MIDDLE FRAME */}
-      <div className="absolute inset-[1px] rounded bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.3)', transform: 'translateZ(5px)' }} aria-hidden />
+      {/* Layer 4 */}
+      <div 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-700 via-yellow-600 to-yellow-800 border-2 border-yellow-700/70" 
+        style={{ 
+          transform: 'translateZ(-15px) rotateX(1.5deg)',
+          boxShadow: '0 6px 12px rgba(0,0,0,0.5)'
+        }} 
+        aria-hidden 
+      />
       
-      {/* SPECULAR HIGHLIGHT */}
-      <div className="absolute inset-[1px] rounded pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(10px)' }} aria-hidden />
+      {/* Layer 3 */}
+      <div 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-500 via-yellow-400 to-yellow-600 border-2 border-yellow-600/60" 
+        style={{ 
+          transform: 'translateZ(-10px) rotateX(1deg)',
+          boxShadow: '0 4px 8px rgba(0,0,0,0.4)'
+        }} 
+        aria-hidden 
+      />
       
-      <span className="relative z-10 font-extrabold text-black drop-shadow leading-none block px-1 py-0.5" style={{ transform: 'translateZ(15px)' }}>
+      {/* Layer 2 */}
+      <div 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-400 via-yellow-300 to-yellow-500 border-2 border-yellow-500/50" 
+        style={{ 
+          transform: 'translateZ(-5px) rotateX(0.5deg)',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4)'
+        }} 
+        aria-hidden 
+      />
+      
+      {/* TOP SURFACE - Brightest gold */}
+      <div 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-500 border-2 border-yellow-400/40" 
+        style={{ 
+          transform: 'translateZ(0px)',
+          boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(0,0,0,0.2), 0 0 20px rgba(255,215,0,0.5)'
+        }} 
+        aria-hidden 
+      />
+      
+      {/* BRIGHT SPECULAR HIGHLIGHT */}
+      <div 
+        className="absolute inset-[2px] rounded-sm pointer-events-none" 
+        style={{ 
+          background: 'radial-gradient(ellipse 120% 70% at 40% 10%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.4) 30%, transparent 60%)',
+          transform: 'translateZ(5px)'
+        }} 
+        aria-hidden 
+      />
+      
+      {/* TEXT - Clean black, no effects */}
+      <span 
+        className="relative z-10 font-extrabold text-black leading-none block px-1.5 py-0.5" 
+        style={{ 
+          transform: 'translateZ(10px)',
+          textShadow: 'none'
+        }}
+      >
         {formattedTime}
       </span>
     </div>
