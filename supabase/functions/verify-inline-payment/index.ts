@@ -2,9 +2,11 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
+// SECURITY FIX: Restrict CORS to specific origins in production
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": Deno.env.get("FRONTEND_URL") || "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 const logStep = (step: string, details?: any) => {
@@ -27,13 +29,39 @@ serve(async (req) => {
 
     const { paymentIntentId } = await req.json();
     
+    // SECURITY: Strict input validation
     if (!paymentIntentId || typeof paymentIntentId !== 'string' || !paymentIntentId.startsWith('pi_')) {
-      throw new Error('Invalid payment intent ID format');
+      logStep("Invalid payment intent ID format", { received: paymentIntentId });
+      return new Response(JSON.stringify({ 
+        granted: false, 
+        error: 'Invalid payment intent ID format' 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
     }
     
-    logStep("Payment Intent ID received", { paymentIntentId });
+    // SECURITY: Limit payment intent ID length (prevent injection)
+    if (paymentIntentId.length > 100) {
+      logStep("Payment intent ID too long", { length: paymentIntentId.length });
+      return new Response(JSON.stringify({ 
+        granted: false, 
+        error: 'Invalid payment intent ID' 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+    
+    logStep("Payment Intent ID validated", { paymentIntentId });
 
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ granted: false, error: "Unauthorized" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
+    }
     const token = authHeader.replace("Bearer ", "");
     const { data } = await supabaseClient.auth.getUser(token);
     const user = data.user;
