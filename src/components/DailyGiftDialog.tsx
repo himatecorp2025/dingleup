@@ -240,25 +240,56 @@ const DailyGiftDialog = ({
                  }} />
 
             <HexShieldFrame>
-              {/* Top Hex Badge - "DAILY GIFT" */}
+              {/* Top Hex Badge - "DAILY GIFT" - 3D GOLD FRAME */}
               <div 
                 ref={badgeRef}
                 className="relative -mt-8 mb-3 mx-auto z-20" 
                 style={{ width: '78%' }}
               >
-                <div className="relative px-[5vw] py-[1.2vh] shadow-[0_8px_20px_rgba(0,0,0,0.4)]"
+                {/* 3D Shadow base */}
+                <div className="absolute inset-0 translate-y-1 translate-x-1"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'radial-gradient(ellipse at 40% 20%, hsl(var(--dup-purple-300)), hsl(var(--dup-purple-500)) 50%, hsl(var(--dup-purple-800)))',
-                       border: '4px solid hsl(var(--dup-gold-500))'
+                       background: 'rgba(0,0,0,0.4)',
+                       filter: 'blur(4px)',
+                       zIndex: -1
+                     }} />
+                
+                {/* Outer gold frame */}
+                <div className="absolute inset-0"
+                     style={{
+                       clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                       background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                       boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 6px 16px rgba(0,0,0,0.35)'
+                     }} />
+                
+                {/* Middle gold highlight frame */}
+                <div className="absolute inset-[3px]"
+                     style={{
+                       clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                       background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                       boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                     }} />
+                
+                <div className="relative px-[5vw] py-[1.2vh]"
+                     style={{
+                       clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
                      }}>
-                  {/* Inner glow highlight */}
-                  <div className="absolute inset-[3px] pointer-events-none" style={{
+                  {/* Inner purple crystal panel */}
+                  <div className="absolute inset-[6px]"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         background: 'radial-gradient(ellipse at 40% 20%, hsl(var(--dup-purple-300)), hsl(var(--dup-purple-500)) 50%, hsl(var(--dup-purple-800)))',
+                         boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)'
+                       }} />
+                  
+                  {/* Specular highlight */}
+                  <div className="absolute inset-[6px] pointer-events-none" style={{
                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                    background: 'linear-gradient(180deg, rgba(255,255,255,0.2), transparent 50%)'
+                    background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
                   }} />
                   
-                  <h1 className="font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
+                  <h1 className="relative z-10 font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
                       style={{ 
                         fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
                         letterSpacing: '0.05em',
@@ -319,28 +350,69 @@ const DailyGiftDialog = ({
                   {weeklyEntryCount + 1}. napi belépés 🔥
                 </p>
 
-                {/* Reward Card (gem-style, floating) */}
-                <div className="rounded-xl px-[5vw] py-[1.6vh] mb-[2.5vh] relative"
-                     style={{
-                       background: 'radial-gradient(ellipse at 40% 30%, hsl(var(--dup-purple-400)), hsl(var(--dup-purple-600)) 60%, hsl(var(--dup-purple-800)))',
-                       border: '4px solid hsl(var(--dup-gold-500))',
-                       boxShadow: `
-                         inset 0 1px 0 rgba(255,255,255,0.6),
-                         inset 0 -10px 24px rgba(0,0,0,0.25),
-                         0 12px 24px rgba(0,0,0,0.35)
-                       `
-                     }}>
+                {/* Reward Card - 3D ENHANCED */}
+                <div className="relative rounded-xl px-[5vw] py-[1.6vh] mb-[2.5vh]">
+                  {/* 3D Shadow base */}
+                  <div className="absolute inset-0 rounded-xl translate-y-1 translate-x-1"
+                       style={{
+                         background: 'rgba(0,0,0,0.4)',
+                         filter: 'blur(6px)',
+                         zIndex: -1
+                       }} />
+                  
+                  {/* Outer gold frame */}
+                  <div className="absolute inset-0 rounded-xl"
+                       style={{
+                         background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                         boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 8px 20px rgba(0,0,0,0.35)'
+                       }} />
+                  
+                  {/* Middle gold highlight */}
+                  <div className="absolute inset-[3px] rounded-xl"
+                       style={{
+                         background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                         boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                       }} />
+                  
+                  {/* Inner purple crystal */}
+                  <div className="absolute inset-[6px] rounded-xl"
+                       style={{
+                         background: 'radial-gradient(ellipse at 40% 30%, hsl(var(--dup-purple-400)), hsl(var(--dup-purple-600)) 60%, hsl(var(--dup-purple-800)))',
+                         boxShadow: `
+                           inset 0 1px 0 rgba(255,255,255,0.6),
+                           inset 0 -10px 24px rgba(0,0,0,0.25)
+                         `
+                       }} />
+                  
+                  {/* Specular highlight */}
+                  <div className="absolute inset-[6px] rounded-xl pointer-events-none"
+                       style={{
+                         background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
+                       }} />
+                  
                   {isPremium ? (
-                    <div className="flex flex-col items-center gap-[0.6vh]">
+                    <div className="relative z-10 flex flex-col items-center gap-[0.6vh]">
                       {/* Strikethrough old reward */}
                       <div className="flex items-center gap-[2vw]">
-                        <div className="rounded-full shadow-[0_0_12px_rgba(255,215,0,0.6)]"
+                        <div className="relative rounded-full"
                              style={{ 
                                width: 'clamp(1.25rem, 5vw, 2rem)', 
-                               height: 'clamp(1.25rem, 5vw, 2rem)', 
-                               background: 'radial-gradient(circle at 35% 25%, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-600)))',
-                               border: '2px solid hsl(var(--dup-gold-500))' 
-                             }} />
+                               height: 'clamp(1.25rem, 5vw, 2rem)',
+                             }}>
+                          {/* 3D Coin */}
+                          <div className="absolute inset-0 rounded-full translate-y-0.5"
+                               style={{ background: 'rgba(0,0,0,0.3)', filter: 'blur(2px)' }} />
+                          <div className="absolute inset-0 rounded-full"
+                               style={{ 
+                                 background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                                 boxShadow: 'inset 0 0 0 1px hsl(var(--dup-gold-900)), 0 4px 12px rgba(0,0,0,0.3)'
+                               }} />
+                          <div className="absolute inset-[1px] rounded-full"
+                               style={{ 
+                                 background: 'radial-gradient(circle at 35% 25%, hsl(var(--dup-gold-300)), hsl(var(--dup-gold-500)), hsl(var(--dup-gold-700)))',
+                                 boxShadow: 'inset 0 2px 8px rgba(255,255,255,0.4), inset 0 -2px 8px rgba(0,0,0,0.3)'
+                               }} />
+                        </div>
                         <span className="font-black text-yellow-300/50 line-through" 
                               style={{ fontSize: 'clamp(0.875rem, 4vw, 1.25rem)' }}>
                           +{nextReward / 2}
@@ -348,13 +420,25 @@ const DailyGiftDialog = ({
                       </div>
                       {/* Active reward */}
                       <div className="flex items-center gap-[2vw]">
-                        <div className="rounded-full shadow-[0_0_18px_rgba(255,215,0,0.85)]"
+                        <div className="relative rounded-full"
                              style={{ 
                                width: 'clamp(1.75rem, 7vw, 2.5rem)', 
-                               height: 'clamp(1.75rem, 7vw, 2.5rem)', 
-                               background: 'radial-gradient(circle at 35% 25%, hsl(var(--dup-gold-300)), hsl(var(--dup-gold-500)), hsl(var(--dup-gold-700)))',
-                               border: '3px solid hsl(var(--dup-gold-400))' 
-                             }} />
+                               height: 'clamp(1.75rem, 7vw, 2.5rem)',
+                             }}>
+                          {/* 3D Coin - larger */}
+                          <div className="absolute inset-0 rounded-full translate-y-1"
+                               style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(3px)' }} />
+                          <div className="absolute inset-0 rounded-full"
+                               style={{ 
+                                 background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                                 boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 6px 18px rgba(0,0,0,0.4)'
+                               }} />
+                          <div className="absolute inset-[2px] rounded-full"
+                               style={{ 
+                                 background: 'radial-gradient(circle at 35% 25%, hsl(var(--dup-gold-300)), hsl(var(--dup-gold-500)), hsl(var(--dup-gold-700)))',
+                                 boxShadow: 'inset 0 3px 12px rgba(255,255,255,0.5), inset 0 -3px 12px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.6)'
+                               }} />
+                        </div>
                         <span className="font-black text-yellow-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
                               style={{ fontSize: 'clamp(1.5rem, 6.2vw, 2.35rem)' }}>
                           +{nextReward}
@@ -362,14 +446,26 @@ const DailyGiftDialog = ({
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-[2vw]">
-                      <div className="rounded-full shadow-[0_0_18px_rgba(255,215,0,0.85)]"
+                    <div className="relative z-10 flex items-center gap-[2vw]">
+                      <div className="relative rounded-full"
                            style={{ 
                              width: 'clamp(1.75rem, 7vw, 2.75rem)', 
-                             height: 'clamp(1.75rem, 7vw, 2.75rem)', 
-                             background: 'radial-gradient(circle at 35% 25%, hsl(var(--dup-gold-300)), hsl(var(--dup-gold-500)), hsl(var(--dup-gold-700)))',
-                             border: '3px solid hsl(var(--dup-gold-400))' 
-                           }} />
+                             height: 'clamp(1.75rem, 7vw, 2.75rem)',
+                           }}>
+                        {/* 3D Coin */}
+                        <div className="absolute inset-0 rounded-full translate-y-1"
+                             style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(3px)' }} />
+                        <div className="absolute inset-0 rounded-full"
+                             style={{ 
+                               background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                               boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 6px 18px rgba(0,0,0,0.4)'
+                             }} />
+                        <div className="absolute inset-[2px] rounded-full"
+                             style={{ 
+                               background: 'radial-gradient(circle at 35% 25%, hsl(var(--dup-gold-300)), hsl(var(--dup-gold-500)), hsl(var(--dup-gold-700)))',
+                               boxShadow: 'inset 0 3px 12px rgba(255,255,255,0.5), inset 0 -3px 12px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.6)'
+                             }} />
+                      </div>
                       <span className="font-black text-yellow-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
                             style={{ fontSize: 'clamp(1.5rem, 6.2vw, 2.35rem)' }}>
                         +{nextReward}

@@ -18,23 +18,23 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
            height: 'clamp(540px, 88vh, 680px)'
          }}>
       
-      {/* Casino shine effect - csak a belső crystal területen, tartalom ALATT */}
+      {/* 45° Casino shine - PONTOSAN ugyanaz, mint az ELFOGADOM gombnál */}
       <div 
         className="absolute pointer-events-none"
         style={{
-          top: '16px',
-          left: '16px',
-          right: '16px', 
-          bottom: '16px',
+          top: '46px',
+          left: '34px',
+          right: '34px', 
+          bottom: '46px',
           clipPath: 'polygon(50% 0%, 92% 4.756%, 92% 95.244%, 50% 100%, 8% 95.244%, 8% 4.756%)',
           overflow: 'hidden',
           zIndex: 5
         }}
       >
         <div 
-          className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%]"
+          className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%]"
           style={{
-            background: 'linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.3), transparent)',
+            background: 'linear-gradient(45deg, transparent 46%, rgba(255,215,0,0.65) 50%, transparent 54%)',
             animation: 'slot-shine 3s linear infinite'
           }}
         />
