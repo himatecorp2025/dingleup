@@ -18,26 +18,30 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
            height: 'clamp(540px, 88vh, 680px)'
          }}>
       
-      {/* Shine sweep - 120° sideways motion (original style, 120° angle) */}
+      {/* Shine sweep - 120° sideways motion - FULL SHIELD COVERAGE */}
       <div 
         className="absolute pointer-events-none"
         style={{
-          top: '46px',
-          left: '34px',
-          right: '34px', 
-          bottom: '46px',
-          clipPath: 'polygon(50% 0%, 92% 4.756%, 92% 95.244%, 50% 100%, 8% 95.244%, 8% 4.756%)',
+          top: '0',
+          left: '0',
+          right: '0', 
+          bottom: '0',
+          clipPath: 'polygon(50% 5%, 95% 9.756%, 95% 90.244%, 50% 95%, 5% 90.244%, 5% 9.756%)',
           overflow: 'hidden',
           zIndex: 5
         }}
       >
         <div 
-          className="absolute w-[200%] h-[200%]"
+          className="absolute"
           style={{
-            top: '-50%',
-            left: '-50%',
-            background: 'linear-gradient(120deg, transparent 46%, rgba(255,215,0,0.7) 50%, transparent 54%)',
-            animation: 'shine-sideways 1.5s linear infinite'
+            top: '50%',
+            left: '50%',
+            width: '300%',
+            height: '40%',
+            background: 'linear-gradient(90deg, transparent 0%, transparent 46%, rgba(255,215,0,0.6) 50%, transparent 54%, transparent 100%)',
+            transform: 'translate(-50%, -50%) rotate(120deg)',
+            animation: 'shine-sideways 2.5s ease-in-out infinite',
+            transformOrigin: 'center center'
           }}
         />
       </div>

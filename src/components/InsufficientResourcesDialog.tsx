@@ -330,31 +330,6 @@ export const InsufficientResourcesDialog = ({
                   </div>
                 </div>
 
-                {/* Animated diagonal sparkle beam - 120° angle - SCALES WITH SHIELD */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none z-[5]">
-                  <div className="absolute"
-                       style={{
-                         left: '50%',
-                         top: '50%',
-                         width: 'calc(var(--shield-w) * 2.2)',
-                         height: 'calc(var(--shield-w) * 0.25)',
-                         background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.15) 20%, rgba(255,215,0,0.5) 50%, rgba(255,215,0,0.15) 80%, transparent)',
-                         transform: 'translate(-50%, -50%) rotate(120deg)',
-                         animation: 'sweepDiagonal 2.5s ease-in-out infinite',
-                         transformOrigin: 'center center',
-                         filter: 'blur(2px)'
-                       }} />
-                </div>
-                <style>{`
-                  @keyframes sweepDiagonal {
-                    0% { opacity: 0; transform: translate(-150%, -50%) rotate(120deg); }
-                    20% { opacity: 1; }
-                    50% { opacity: 0.8; }
-                    80% { opacity: 1; }
-                    100% { opacity: 0; transform: translate(50%, -50%) rotate(120deg); }
-                  }
-                `}</style>
-
                 {/* Content Area */}
                 <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]" ref={contentRef} style={{ ['--shield-w' as any]: '320px' }}>
                   
