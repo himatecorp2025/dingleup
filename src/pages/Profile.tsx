@@ -172,15 +172,26 @@ const Profile = () => {
         <div className="flex items-center justify-between mb-2 sm:mb-4 pt-safe">
           <button
             onClick={() => navigate('/dashboard')}
-            className="relative p-2.5 sm:p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50 neon-border
-              shadow-[0_8px_16px_rgba(220,38,38,0.6),0_0_32px_rgba(220,38,38,0.4),inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-2px_8px_rgba(0,0,0,0.3)]
-              before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none
-              after:absolute after:inset-[2px] after:rounded-full after:bg-gradient-to-b after:from-transparent after:to-black/20 after:pointer-events-none
-              hover:shadow-[0_12px_24px_rgba(220,38,38,0.7),0_0_40px_rgba(220,38,38,0.5),inset_0_1px_0_rgba(255,255,255,0.4)]
-              transform-gpu hover:-translate-y-0.5"
-            title="Vissza"
+            className="relative p-3 rounded-full hover:scale-110 transition-all"
+            title="Vissza a dashboardra"
           >
-            <LogOut className="w-5 h-5 sm:w-6 sm:h-6 -scale-x-100 relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+            
+            {/* Icon */}
+            <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
           </button>
 
           {/* Avatar on the same line as back button */}

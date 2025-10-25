@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, CheckCircle } from 'lucide-react';
+import { LogOut, Download, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import logoImage from '@/assets/logo.png';
 
@@ -52,11 +52,27 @@ const InstallApp = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4">
       <button
-        onClick={() => navigate('/')}
-        className="absolute top-4 left-4 p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
-        title="Vissza"
+        onClick={() => navigate('/dashboard')}
+        className="absolute top-4 left-4 p-3 rounded-full hover:scale-110 transition-all"
+        title="Vissza a dashboardra"
       >
-        <ArrowLeft className="w-6 h-6" />
+        {/* BASE SHADOW */}
+        <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
+        
+        {/* OUTER FRAME */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
+        
+        {/* MIDDLE FRAME */}
+        <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+        
+        {/* INNER LAYER */}
+        <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+        
+        {/* SPECULAR HIGHLIGHT */}
+        <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+        
+        {/* Icon */}
+        <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
       </button>
 
       <div className="max-w-md mx-auto pt-20 text-center">
