@@ -85,8 +85,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             minWidth: '100vw'
           }}
         >
-          {/* 5% homályos háttér - 95% átlátszó, sötétítés NULLA */}
-          <div className="absolute inset-0 w-full h-full min-h-screen backdrop-blur-[0.5px]" style={{ borderRadius: 0 }}></div>
+          {/* Teljesen átlátszó háttér - NULLA sötétítés, NULLA homályosítás */}
 
           {/* Animated golden stars + konfetti */}
           {contentVisible && (
