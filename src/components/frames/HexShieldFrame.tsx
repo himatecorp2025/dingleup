@@ -20,14 +20,15 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
       
       {/* Casino shine effect - csak a belső crystal területen, tartalom ALATT */}
       <div 
-        className="absolute pointer-events-none z-0"
+        className="absolute pointer-events-none"
         style={{
           top: '16px',
           left: '16px',
           right: '16px', 
           bottom: '16px',
           clipPath: 'polygon(50% 0%, 92% 4.756%, 92% 95.244%, 50% 100%, 8% 95.244%, 8% 4.756%)',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          zIndex: 5
         }}
       >
         <div 

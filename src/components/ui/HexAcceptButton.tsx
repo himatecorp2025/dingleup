@@ -7,7 +7,8 @@ interface HexAcceptButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 // POINTY-TOP hexagon with EXACTLY 165° interior angles at top/bottom vertices
 // Button: W=560, H=140, s=8%, theta=165°, y1=30.96px → y1%=22.114%
 const HEX_PATH = "polygon(50% 0%, 92% 22.114%, 92% 77.886%, 50% 100%, 8% 77.886%, 8% 22.114%)";
-
+// Inner layers use a slightly inset apex to avoid Safari clipping at 0%/100%
+const HEX_INNER_PATH = "polygon(50% 0.6%, 92% 22.114%, 92% 77.886%, 50% 99.4%, 8% 77.886%, 8% 22.114%)";
 const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
   children = "ELFOGADOM",
   className = "",
@@ -76,7 +77,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           left: "6px", 
           right: "6px",
           bottom: "6px",
-          clipPath: HEX_PATH,
+          clipPath: HEX_INNER_PATH,
           background:
             "radial-gradient(ellipse 100% 80% at 50% -10%, hsl(155 90% 82%) 0%, hsl(155 85% 68%) 30%, hsl(155 78% 58%) 60%, hsl(155 70% 45%) 100%)",
           boxShadow:
@@ -93,7 +94,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           left: "6px",
           right: "6px", 
           bottom: "6px",
-          clipPath: HEX_PATH,
+          clipPath: HEX_INNER_PATH,
           background:
             "radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 30%, transparent 60%)",
         }}
@@ -108,7 +109,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           left: "6px",
           right: "6px",
           bottom: "6px",
-          clipPath: HEX_PATH,
+          clipPath: HEX_INNER_PATH,
           background:
             "repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)",
           opacity: 0.7,
@@ -124,7 +125,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           left: "6px",
           right: "6px",
           bottom: "6px",
-          clipPath: HEX_PATH,
+          clipPath: HEX_INNER_PATH,
           boxShadow: "inset 0 0 12px rgba(0,0,0,0.3)",
           filter: "blur(3px)",
         }}
@@ -139,7 +140,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           left: "6px",
           right: "6px",
           bottom: "6px",
-          clipPath: HEX_PATH,
+          clipPath: HEX_INNER_PATH,
           boxShadow:
             "inset 0 0 0 1.5px hsla(var(--dup-gold-400) / 0.8)",
         }}
@@ -154,7 +155,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           left: "6px",
           right: "6px",
           bottom: "6px",
-          clipPath: HEX_PATH,
+          clipPath: HEX_INNER_PATH,
           overflow: "hidden",
         }}
         aria-hidden
