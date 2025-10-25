@@ -96,90 +96,107 @@ const Login = () => {
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 sm:mb-8 transition-colors">
+        <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 sm:mb-8 transition-colors drop-shadow-lg">
           <ArrowLeft className="w-4 h-4" />
           Vissza a főoldalra
         </Link>
 
-        <div className="bg-gradient-card border border-border/50 rounded-2xl p-6 sm:p-8 shadow-glow max-h-[calc(100svh-6rem)] sm:max-h-none overflow-y-auto">
-          <div className="text-center mb-6 sm:mb-8">
-            <img src={logo} alt="Dingle UP!" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4" />
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2 font-poppins">
-              <span className="text-transparent bg-clip-text bg-gradient-gold">Bejelentkezés</span>
-            </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Add meg email címed és jelszavad a bejelentkezéshez</p>
-          </div>
-
-          <div className="space-y-3 mb-4">
-            <Button type="button" variant="outline" className="w-full" onClick={handleGoogleAuth}>
-              Bejelentkezés Google-lel
-            </Button>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="h-px flex-1 bg-border"></span>
-              <span>vagy</span>
-              <span className="h-px flex-1 bg-border"></span>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-            <div>
-              <Label htmlFor="email" className="text-white">Email cím</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="pl: valaki@email.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className={errors.email ? "border-destructive" : ""}
-                disabled={isLoading}
-                autoComplete="email"
-              />
-              {errors.email && (
-                <p className="text-sm text-destructive mt-1">{errors.email}</p>
-              )}
+        <div className="relative" style={{ perspective: '1200px' }}>
+          {/* BASE SHADOW */}
+          <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
+          
+          {/* OUTER FRAME */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-95 border-4 border-purple-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+          
+          {/* MIDDLE FRAME */}
+          <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
+          
+          {/* INNER LAYER */}
+          <div className="absolute inset-[8px] rounded-2xl bg-gradient-to-br from-black/80 to-black/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.1), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
+          
+          {/* SPECULAR HIGHLIGHT */}
+          <div className="absolute inset-[8px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
+          
+          <div className="relative p-6 sm:p-8 max-h-[calc(100svh-6rem)] sm:max-h-none overflow-y-auto rounded-2xl" style={{ transform: 'translateZ(60px)' }}>
+            <div className="text-center mb-6 sm:mb-8">
+              <img src={logo} alt="Dingle UP!" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 drop-shadow-2xl" />
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2 font-poppins">
+                <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">Bejelentkezés</span>
+              </h1>
+              <p className="text-sm sm:text-base text-white/80 drop-shadow">Add meg email címed és jelszavad a bejelentkezéshez</p>
             </div>
 
-            <div>
-              <Label htmlFor="password" className="text-white">Jelszó</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Pl: Jelszó123!"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className={errors.password ? "border-destructive pr-10" : "pr-10"}
-                  disabled={isLoading}
-                  autoComplete="current-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+            <div className="space-y-3 mb-4">
+              <Button type="button" variant="outline" className="w-full" onClick={handleGoogleAuth}>
+                Bejelentkezés Google-lel
+              </Button>
+              <div className="flex items-center gap-2 text-xs text-white/70">
+                <span className="h-px flex-1 bg-white/20"></span>
+                <span>vagy</span>
+                <span className="h-px flex-1 bg-white/20"></span>
               </div>
-              {errors.password && (
-                <p className="text-sm text-destructive mt-1">{errors.password}</p>
-              )}
             </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all"
-              disabled={isLoading}
-            >
-              {isLoading ? "Bejelentkezés..." : "Bejelentkezés"}
-            </Button>
-          </form>
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+              <div>
+                <Label htmlFor="email" className="text-white drop-shadow">Email cím</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="pl: valaki@email.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className={errors.email ? "border-destructive" : ""}
+                  disabled={isLoading}
+                  autoComplete="email"
+                />
+                {errors.email && (
+                  <p className="text-sm text-destructive mt-1 drop-shadow">{errors.email}</p>
+                )}
+              </div>
 
-          <p className="text-center text-xs sm:text-sm text-muted-foreground mt-4 sm:mt-6">
-            Még nincs fiókod?{" "}
-            <Link to="/register" className="text-accent hover:underline font-semibold">
-              Regisztráció
-            </Link>
-          </p>
+              <div>
+                <Label htmlFor="password" className="text-white drop-shadow">Jelszó</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Pl: Jelszó123!"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className={errors.password ? "border-destructive pr-10" : "pr-10"}
+                    disabled={isLoading}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive mt-1 drop-shadow">{errors.password}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all shadow-lg"
+                disabled={isLoading}
+              >
+                {isLoading ? "Bejelentkezés..." : "Bejelentkezés"}
+              </Button>
+            </form>
+
+            <p className="text-center text-xs sm:text-sm text-white/70 mt-4 sm:mt-6 drop-shadow">
+              Még nincs fiókod?{" "}
+              <Link to="/register" className="text-accent hover:underline font-semibold">
+                Regisztráció
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
