@@ -124,7 +124,7 @@ const GamePreview = () => {
           if (error) throw error;
 
           if (data.success) {
-            toast.success(`${data.coins} arany és ${data.lives} élet hozzáadva!`);
+            // Nincs toast - a felhasználó látja az eredményt
             await refreshProfile();
             
             // Continue game automatically
@@ -136,13 +136,13 @@ const GamePreview = () => {
           }
         } catch (error: any) {
           console.error('Error verifying in-game payment:', error);
-          toast.error('Fizetés ellenőrzése sikertelen');
+          // Nincs toast - a felhasználó látja az eredményt
         }
         
         // Clean URL
         window.history.replaceState({}, '', '/game');
       } else if (paymentStatus === 'cancelled') {
-        toast.info('Fizetés megszakítva');
+        // Nincs toast - a felhasználó tudja, hogy megszakította
         window.history.replaceState({}, '', '/game');
       }
     };
@@ -334,7 +334,7 @@ const GamePreview = () => {
     
     const canPlay = await spendLife();
     if (!canPlay) {
-      toast.error("Nincs elég életed a játékhoz!");
+      // Nincs toast - a UI mutatja az életek számát
       setGameState('category-select');
       return;
     }
@@ -439,7 +439,7 @@ const GamePreview = () => {
     // SECURITY: Local counter only - actual coins awarded by complete-game edge function
     setCoinsEarned(coinsEarned + reward);
     
-    toast.success(`Helyes! +${reward} 🪙`);
+    // Nincs toast - a felhasználó látja a zöld választ
   };
 
   const handleWrongAnswer = (responseTime: number, answerKey: string) => {
@@ -514,7 +514,7 @@ const GamePreview = () => {
     if (success) {
       await refreshProfile();
       await logHelpUsage('skip');
-      toast.success(`Kérdés átugorva ${cost} aranyért`);
+      // Nincs toast - a felhasználó látja a kérdésváltást
       await handleNextQuestion();
     }
   };
@@ -528,10 +528,10 @@ const GamePreview = () => {
     const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
     if (success) {
       await refreshProfile();
-      toast.success(`${cost} aranyérme levonva - Tovább!`);
+      // Nincs toast - a felhasználó látja a következő kérdést
       await handleNextQuestion();
     } else {
-      toast.error('Hiba a fizetés során');
+      // Nincs toast - error banner látható
       await finishGame();
     }
   };
@@ -586,10 +586,10 @@ const GamePreview = () => {
         }
       }
 
-      toast.success(`Játék vége! ${correctAnswers}/${questions.length} helyes válasz`);
+      // Nincs toast - a result screen mutatja az eredményt
     } catch (error) {
       console.error('Error finishing game:', error);
-      toast.error('Hiba történt a játék befejezésekor');
+      // Nincs toast - error esetén is látszik a result
       await refreshProfile();
     }
   };
@@ -600,7 +600,7 @@ const GamePreview = () => {
     
     // Check usage count
     if (help5050UsageCount >= 2) {
-      toast.error('Az 1/3 segítséget már kétszer használtad ebben a játékban!');
+      // Nincs toast - UI mutatja hogy disabled
       return;
     }
     
@@ -619,14 +619,14 @@ const GamePreview = () => {
       await refreshProfile();
       await logHelpUsage('third');
       
-      toast.info('1/3 segítség aktiválva - első használat ingyenes!');
+      // Nincs toast - a felhasználó látja a segítség aktiválódását
       return;
     }
     
     // Second usage - costs 15 coins
     if (help5050UsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error('Nincs elég aranyérme! 15 🪙 szükséges.');
+        // Nincs toast - insufficient dialog fog megjelenni
         setInsufficientType('coins');
         setRequiredAmount(cost);
         setShowInsufficientDialog(true);
@@ -643,7 +643,7 @@ const GamePreview = () => {
         setIsHelp5050ActiveThisQuestion(true);
         setHelp5050UsageCount(2);
         await logHelpUsage('third');
-        toast.success('1/3 segítség aktiválva - 15 aranyérme levonva!');
+        // Nincs toast - a felhasználó látja a segítséget aktiválódni
       }
     }
   };
@@ -653,7 +653,7 @@ const GamePreview = () => {
     
     // Check usage count
     if (help2xAnswerUsageCount >= 2) {
-      toast.error('A dupla válasz segítséget már kétszer használtad ebben a játékban!');
+      // Nincs toast - UI mutatja hogy disabled
       return;
     }
     
@@ -670,14 +670,14 @@ const GamePreview = () => {
       await refreshProfile();
       await logHelpUsage('2x_answer');
       
-      toast.info('2× válasz aktiválva - első használat ingyenes!');
+      // Nincs toast - a felhasználó látja a segítség aktiválódását
       return;
     }
     
     // Second usage - costs 20 coins
     if (help2xAnswerUsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error('Nincs elég aranyérme! 20 🪙 szükséges.');
+        // Nincs toast - insufficient dialog fog megjelenni
         setInsufficientType('coins');
         setRequiredAmount(cost);
         setShowInsufficientDialog(true);
@@ -692,7 +692,7 @@ const GamePreview = () => {
         setFirstAttempt(null);
         setSecondAttempt(null);
         await logHelpUsage('2x_answer');
-        toast.success('2× válasz aktiválva - 20 aranyérme levonva!');
+        // Nincs toast - a felhasználó látja a segítséget aktiválódni
       }
     }
   };
@@ -702,7 +702,7 @@ const GamePreview = () => {
     
     // Check usage count
     if (helpAudienceUsageCount >= 2) {
-      toast.error('A közönség segítséget már kétszer használtad ebben a játékban!');
+      // Nincs toast - UI mutatja hogy disabled
       return;
     }
     
@@ -738,14 +738,14 @@ const GamePreview = () => {
       await refreshProfile();
       await logHelpUsage('audience');
       
-      toast.info('Közönség segítség aktiválva - első használat ingyenes!');
+      // Nincs toast - a felhasználó látja a segítség aktiválódását
       return;
     }
     
     // Second usage - costs 30 coins
     if (helpAudienceUsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error('Nincs elég aranyérme! 30 🪙 szükséges.');
+        // Nincs toast - insufficient dialog fog megjelenni
         setInsufficientType('coins');
         setRequiredAmount(cost);
         setShowInsufficientDialog(true);
@@ -759,7 +759,7 @@ const GamePreview = () => {
         setIsAudienceActiveThisQuestion(true);
         setHelpAudienceUsageCount(2);
         await logHelpUsage('audience');
-        toast.success('Közönség segítség aktiválva - 30 aranyérme levonva!');
+        // Nincs toast - a felhasználó látja a segítséget aktiválódni
       }
     }
   };
@@ -771,7 +771,7 @@ const GamePreview = () => {
     
     // Check if user has enough coins
     if (!profile || profile.coins < skipCost) {
-      toast.error(`Nincs elég aranyérme! ${skipCost} 🪙 szükséges.`);
+      // Nincs toast - insufficient dialog fog megjelenni
       setInsufficientType('coins');
       setRequiredAmount(skipCost);
       setShowInsufficientDialog(true);
@@ -781,7 +781,7 @@ const GamePreview = () => {
     // Spend coins
     const success = await supabase.rpc('spend_coins', { amount: skipCost });
     if (!success.data) {
-      toast.error('Hiba az arany levonásakor');
+      // Nincs toast - error látható a UI-ban
       return;
     }
     
@@ -790,7 +790,7 @@ const GamePreview = () => {
     const availableQuestions = questionBank.filter(q => !currentIds.includes(q.id));
     
     if (availableQuestions.length === 0) {
-      toast.error('Nincs több kérdés');
+      // Nincs toast - nincs több kérdés
       return;
     }
     
@@ -810,7 +810,7 @@ const GamePreview = () => {
     setUsedQuestionSwap(true);
     
     await refreshProfile();
-    toast.info(`Kérdés kicserélve! (${skipCost} 🪙 levonva)`);
+    // Nincs toast - a felhasználó látja az új kérdést
   };
 
   if (profileLoading || !userId) {

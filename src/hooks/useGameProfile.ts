@@ -101,11 +101,7 @@ export const useGameProfile = (userId: string | undefined) => {
 
   const spendCoins = async (amount: number): Promise<boolean> => {
     if (!profile || profile.coins < amount) {
-      toast({
-        title: 'Nincs elég aranyérme',
-        description: `${amount} aranyérme szükséges`,
-        variant: 'destructive'
-      });
+      // Nincs toast - a felhasználó látja a coin countert
       return false;
     }
 
@@ -113,16 +109,11 @@ export const useGameProfile = (userId: string | undefined) => {
       const { data, error } = await supabase.rpc('spend_coins', { amount });
       
       if (error || !data) {
-        toast({
-          title: 'Hiba',
-          description: 'Nem sikerült levonni az aranyérméket',
-          variant: 'destructive'
-        });
         return false;
       }
       
       setProfile({ ...profile, coins: profile.coins - amount });
-      toast({ title: 'Levonás', description: `-${amount} aranyérme levonva` });
+      // Nincs toast - a felhasználó látja a coin countert
       return true;
     } catch {
       return false;
@@ -152,11 +143,7 @@ export const useGameProfile = (userId: string | undefined) => {
 
   const spendLife = async (): Promise<boolean> => {
     if (!profile || profile.lives < 1) {
-      toast({
-        title: 'Nincs elég élet',
-        description: 'Vásárolj vagy várj az újratöltődésre',
-        variant: 'destructive'
-      });
+      // Nincs toast - a game UI kezeli a hibaüzenetet
       return false;
     }
 
@@ -164,15 +151,11 @@ export const useGameProfile = (userId: string | undefined) => {
       const { data, error } = await supabase.rpc('use_life');
       
       if (error || !data) {
-        toast({
-          title: 'Hiba',
-          description: 'Nem sikerült használni az életet',
-          variant: 'destructive'
-        });
         return false;
       }
       
       setProfile({ ...profile, lives: profile.lives - 1 });
+      // Nincs toast - azonnali UI frissítés van
       return true;
     } catch {
       return false;
