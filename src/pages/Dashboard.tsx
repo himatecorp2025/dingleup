@@ -487,55 +487,57 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - 3D Diamond - tiszta olvashatóság, fekete árnyék nélkül */}
-        <DiamondButton
-          data-tutorial="booster-button"
-          onClick={async () => {
-            if (hasActiveBooster) {
-              setShowBoosterActivation(true);
-              return;
+        {/* Booster Button - Fixált a TOP 100 cím alatt */}
+        <div className="fixed left-0 right-0 z-[9001] flex justify-center" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 5.5rem)' }}>
+          <DiamondButton
+            data-tutorial="booster-button"
+            onClick={async () => {
+              if (hasActiveBooster) {
+                setShowBoosterActivation(true);
+                return;
+              }
+              if (availableBoosters.length === 0) {
+                toast.error('Nincs elérhető booster! Vásárolj egyet a boltban.');
+                navigate('/shop');
+                return;
+              }
+              const firstBooster = availableBoosters[0];
+              const success = await activateBooster(firstBooster.id);
+              if (success) {
+                window.location.reload();
+              }
+            }}
+            variant="booster"
+            size="lg"
+            active={hasActiveBooster}
+            className="!py-3 sm:!py-4"
+            badge={
+              hasActiveBooster ? (
+                <span className="flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+                </span>
+              ) : undefined
             }
-            if (availableBoosters.length === 0) {
-              toast.error('Nincs elérhető booster! Vásárolj egyet a boltban.');
-              navigate('/shop');
-              return;
-            }
-            const firstBooster = availableBoosters[0];
-            const success = await activateBooster(firstBooster.id);
-            if (success) {
-              window.location.reload();
-            }
-          }}
-          variant="booster"
-          size="lg"
-          active={hasActiveBooster}
-          className="mb-4 sm:mb-5 !py-4 sm:!py-5"
-          badge={
-            hasActiveBooster ? (
-              <span className="flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+          >
+            {/* Lightning SVG Icon */}
+            <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.8))' }}>
+              <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
+            </svg>
+            {hasActiveBooster ? (
+              <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>AKTÍV BOOSTER ({timeRemaining})</span>
+            ) : availableBoosters.length > 0 ? (
+              <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>
+                BOOSTER AKTIVÁLÁS
+                <span className="block text-[10px] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
               </span>
-            ) : undefined
-          }
-        >
-          {/* Lightning SVG Icon - fekete árnyék nélkül */}
-          <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.8))' }}>
-            <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
-          </svg>
-          {hasActiveBooster ? (
-            <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>AKTÍV BOOSTER ({timeRemaining})</span>
-          ) : availableBoosters.length > 0 ? (
-            <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>
-              BOOSTER AKTIVÁLÁS
-              <span className="block text-[10px] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
-            </span>
-          ) : (
-            <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>BOOSTER VÁSÁRLÁS</span>
-          )}
-        </DiamondButton>
+            ) : (
+              <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>BOOSTER VÁSÁRLÁS</span>
+            )}
+          </DiamondButton>
+        </div>
 
-        {/* Leaderboard Carousel - Top 25 players - Fixált az alsó menüsáv fölé 2.5% távolsággal */}
+        {/* Leaderboard Carousel - Top 100 players - Fixált az alsó menüsáv fölé 2.5vh távolsággal */}
         <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh)' }}>
           <LeaderboardCarousel />
         </div>
