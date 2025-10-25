@@ -152,7 +152,7 @@ const DailyGiftDialog = ({
 
 
           <div 
-            className="absolute z-10 left-1/2 top-1/2 w-full flex justify-center"
+            className="absolute z-10 left-1/2 top-1/2"
             style={{ 
               transform: contentVisible 
                 ? 'translate(-50%, -50%) scale(1)' 
