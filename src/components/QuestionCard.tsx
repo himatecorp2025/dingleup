@@ -141,11 +141,11 @@ export const QuestionCard = ({
       <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 md:mt-[5.5vh]">
         {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
         <div className="flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2">
-          <div className="flex justify-center -mt-[5.5rem] sm:-mt-[7rem] md:-mt-[8.5rem]">
+          <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
             <TimerCircle timeLeft={timeLeft} />
           </div>
 
-          <div className="mt-4 sm:mt-5 md:mt-6 pb-14 sm:pb-16 md:pb-22">
+          <div className="-mt-[0.1rem] sm:-mt-[0.2rem] md:-mt-[0.3rem] pb-10 sm:pb-12 md:pb-16">
             <MillionaireQuestion questionNumber={questionNumber}>
               {question.question}
             </MillionaireQuestion>
@@ -202,7 +202,7 @@ export const QuestionCard = ({
           <button
             onClick={onUseHelp5050}
             disabled={disabled || help5050UsageCount >= 2}
-            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 py-3 sm:py-4 md:py-5 transition-all ${help5050UsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 h-14 sm:h-16 md:h-20 transition-all ${help5050UsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
@@ -236,7 +236,7 @@ export const QuestionCard = ({
           <button
             onClick={onUseHelp2xAnswer}
             disabled={disabled || help2xAnswerUsageCount >= 2}
-            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 py-3 sm:py-4 md:py-5 transition-all ${help2xAnswerUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 h-14 sm:h-16 md:h-20 transition-all ${help2xAnswerUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
@@ -270,7 +270,7 @@ export const QuestionCard = ({
           <button
             onClick={onUseHelpAudience}
             disabled={disabled || helpAudienceUsageCount >= 2}
-            className={`relative w-full clip-hexagon-tall text-white text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 py-3 sm:py-4 md:py-5 transition-all ${helpAudienceUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+            className={`relative w-full clip-hexagon-tall text-white text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 h-14 sm:h-16 md:h-20 transition-all ${helpAudienceUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
@@ -304,7 +304,7 @@ export const QuestionCard = ({
           <button
             onClick={onUseQuestionSwap}
             disabled={disabled || usedQuestionSwap}
-            className={`relative w-full clip-hexagon-tall text-white text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center py-3 sm:py-4 md:py-5 transition-all ${usedQuestionSwap ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+            className={`relative w-full clip-hexagon-tall text-white text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 h-14 sm:h-16 md:h-20 transition-all ${usedQuestionSwap ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
