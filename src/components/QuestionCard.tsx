@@ -65,8 +65,8 @@ export const QuestionCard = ({
 
   return (
     <div className={`w-full h-full flex flex-col p-1 sm:p-2 gap-1 sm:gap-2 ${className}`}>
-      {/* Top section: Exit button, Lives, Coins */}
-      <div className="flex justify-between items-start mb-1">
+      {/* Top section: Exit button, Lives, Coins - Moved higher */}
+      <div className="flex justify-between items-start">
         {/* Back Button - 3D Round Style */}
         <div className="relative">
           <button
@@ -137,9 +137,9 @@ export const QuestionCard = ({
         </div>
       </div>
 
-      {/* Middle section: Question and Answers */}
-      <div className="flex flex-col justify-start space-y-1 sm:space-y-1.5">
-        <div className="flex justify-center mb-0.5 sm:mb-1">
+      {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
+      <div className="flex flex-col justify-start space-y-0.5 sm:space-y-1">
+        <div className="flex justify-center">
           <TimerCircle timeLeft={timeLeft} />
         </div>
 

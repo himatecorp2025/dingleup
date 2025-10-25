@@ -11,6 +11,9 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
     return "#DC2626"; // Red
   };
   
+  // Determine if blinking animation should be active (3 seconds or less)
+  const shouldBlink = timeLeft <= 3;
+  
   const circumference = 2 * Math.PI * 54;
   const progress = (timeLeft / maxTime) * circumference;
   const timerColor = getTimerColor();
@@ -20,8 +23,29 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
       {/* BASE SHADOW */}
       <div className="absolute inset-0 bg-black/60 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
       
-      {/* OUTER DECORATIVE RING */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-600 via-blue-500 to-blue-800 border-2 border-blue-400/50 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+      {/* OUTER DECORATIVE RING - Animated based on time */}
+      <div 
+        className={`absolute inset-0 rounded-full border-2 shadow-xl transition-all duration-500 ${shouldBlink ? 'animate-pulse' : ''}`}
+        style={{ 
+          transform: 'translateZ(0px)',
+          background: timeLeft >= 8 
+            ? 'linear-gradient(135deg, #16A34A, #15803D, #166534)' // Green gradient
+            : timeLeft >= 4 
+            ? 'linear-gradient(135deg, #F59E0B, #D97706, #B45309)' // Orange gradient
+            : 'linear-gradient(135deg, #DC2626, #B91C1C, #991B1B)', // Red gradient
+          borderColor: timeLeft >= 8 
+            ? 'rgba(34, 197, 94, 0.5)' // Green border
+            : timeLeft >= 4 
+            ? 'rgba(251, 146, 60, 0.5)' // Orange border
+            : 'rgba(239, 68, 68, 0.5)', // Red border
+          boxShadow: timeLeft >= 8
+            ? '0 0 20px rgba(34, 197, 94, 0.6), 0 8px 25px rgba(0,0,0,0.5)' // Green glow
+            : timeLeft >= 4
+            ? '0 0 20px rgba(251, 146, 60, 0.6), 0 8px 25px rgba(0,0,0,0.5)' // Orange glow
+            : '0 0 20px rgba(239, 68, 68, 0.6), 0 8px 25px rgba(0,0,0,0.5)' // Red glow
+        }} 
+        aria-hidden 
+      />
       
       {/* MIDDLE FRAME */}
       <div className="absolute inset-[4px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -34,16 +58,17 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
       
       {/* Timer SVG Rings */}
       <div className="relative" style={{ transform: 'translateZ(40px)' }}>
-        {/* Outer decorative circle */}
+        {/* Outer decorative circle - animated color */}
         <svg className="absolute w-full h-full transform -rotate-90 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" width="112" height="112">
           <circle
             cx="56"
             cy="56"
             r="52"
-            stroke="#3b82f6"
+            stroke={timerColor}
             strokeWidth="2"
             fill="none"
             opacity="0.3"
+            className="transition-all duration-500"
           />
         </svg>
         
@@ -74,9 +99,12 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
         {/* Inner background with 3D effect */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full" style={{ background: 'radial-gradient(circle, #0f172a 0%, #020617 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(255,255,255,0.1)' }} />
         
-        {/* Timer number */}
+        {/* Timer number with blink animation */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-4xl font-black drop-shadow-[0_0_12px_currentColor]" style={{ color: timerColor }}>
+          <span 
+            className={`text-4xl font-black drop-shadow-[0_0_12px_currentColor] transition-all duration-500 ${shouldBlink ? 'animate-pulse' : ''}`}
+            style={{ color: timerColor }}
+          >
             {timeLeft}
           </span>
         </div>

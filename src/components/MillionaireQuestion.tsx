@@ -55,7 +55,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       />
       
       <div 
-        className="relative px-4 py-5 sm:py-6 text-white"
+        className="relative px-4 py-6 sm:py-7 text-white"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           transform: 'translateZ(40px)'
