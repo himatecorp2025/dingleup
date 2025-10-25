@@ -3,7 +3,7 @@ import React, { PropsWithChildren } from 'react';
 /**
  * HexShieldFrame - POINTY-TOP hexagon pajzs (trapéz), 3D specular fém keret + kristály panel
  * Referencia: Daily Gift popup - arany fém + lila kristály
- * - POINTY-TOP geometria: bal/jobb élek EGYENES vertikális, felső/alsó élek TÖRTEK
+ * - POINTY-TOP geometria: 165° interior angles at top/bottom vertices (laposabb csúcsok)
  * - Kétlépcsős arany keret (külső sötét, belső világos highlight)
  * - Lila kristály belső panel diagonális fénycsíkokkal
  * - Specular conic highlight a tetején
@@ -21,7 +21,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          clipPath: 'polygon(50% 11.3%, 86.7% 17.3%, 86.7% 82.7%, 50% 88.7%, 13.3% 82.7%, 13.3% 17.3%)',
+          clipPath: 'polygon(50% 7.5%, 86.7% 20%, 86.7% 80%, 50% 92.5%, 13.3% 80%, 13.3% 20%)',
           overflow: 'hidden'
         }}
       >
@@ -76,39 +76,39 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </filter>
         </defs>
 
-        {/* 3D Shadow Base - Felső 150°, Alsó 150°, oldalsó szögek 105° */}
+        {/* 3D Shadow Base - 165° felső/alsó csúcs */}
         <path
-          d="M 30 90 L 330 90 L 330 510 L 30 510 L 30 510 L 30 90 Z"
+          d="M 180 45 L 312 120 L 312 480 L 180 555 L 48 480 L 48 120 Z"
           fill="rgba(0,0,0,0.35)"
           transform="translate(6, 8)"
         />
 
-        {/* Outer Gold Frame - 150° felső/alsó csúcs */}
+        {/* Outer Gold Frame - 165° felső/alsó csúcs */}
         <path
-          d="M 180 44 L 336 84 L 336 516 L 180 556 L 24 516 L 24 84 Z"
+          d="M 180 45 L 312 120 L 312 480 L 180 555 L 48 480 L 48 120 Z"
           fill="url(#goldOuter)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
           filter="url(#depth-shadow)"
         />
 
-        {/* Middle Gold Frame - 150° felső/alsó csúcs (inset) */}
+        {/* Middle Gold Frame - 165° felső/alsó csúcs (inset 8px) */}
         <path
-          d="M 180 56 L 324 94 L 324 506 L 180 544 L 36 506 L 36 94 Z"
+          d="M 180 53 L 304 128 L 304 472 L 180 547 L 56 472 L 56 128 Z"
           fill="url(#goldInner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="3"
         />
 
-        {/* Inner Crystal Panel - 150° felső/alsó csúcs (inset) */}
+        {/* Inner Crystal Panel - 165° felső/alsó csúcs (inset 16px) */}
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 61 L 296 136 L 296 464 L 180 539 L 64 464 L 64 136 Z"
           fill="url(#crystalRadial)"
         />
 
         {/* Specular Highlight Overlay */}
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 61 L 296 136 L 296 464 L 180 539 L 64 464 L 64 136 Z"
           fill="url(#specular)"
           opacity="0.4"
         />
@@ -122,14 +122,14 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </pattern>
         </defs>
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 61 L 296 136 L 296 464 L 180 539 L 64 464 L 64 136 Z"
           fill="url(#diagonalStripes)"
           opacity="0.7"
         />
 
         {/* Inner Glow (bottom shadow for 3D) */}
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 61 L 296 136 L 296 464 L 180 539 L 64 464 L 64 136 Z"
           fill="none"
           stroke="rgba(0,0,0,0.25)"
           strokeWidth="8"
@@ -138,7 +138,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* Gold Inner Stroke (accent) */}
         <path
-          d="M 180 68 L 312 104 L 312 496 L 180 532 L 48 496 L 48 104 Z"
+          d="M 180 61 L 296 136 L 296 464 L 180 539 L 64 464 L 64 136 Z"
           fill="none"
           stroke="url(#goldInner)"
           strokeWidth="2"
