@@ -315,8 +315,33 @@ const DailyGiftDialog = ({
                 </div>
               </div>
 
+              {/* Animated diagonal sparkle beam - 120° angle - SCALES WITH SHIELD */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none z-[5]">
+                <div className="absolute"
+                     style={{
+                       left: '50%',
+                       top: '50%',
+                       width: 'calc(min(90vw, 400px) * 2.2)',
+                       height: 'calc(min(90vw, 400px) * 0.25)',
+                       background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.15) 20%, rgba(255,215,0,0.5) 50%, rgba(255,215,0,0.15) 80%, transparent)',
+                       transform: 'translate(-50%, -50%) rotate(120deg)',
+                       animation: 'sweepDiagonalDaily 2.5s ease-in-out infinite',
+                       transformOrigin: 'center center',
+                       filter: 'blur(2px)'
+                     }} />
+              </div>
+              <style>{`
+                @keyframes sweepDiagonalDaily {
+                  0% { opacity: 0; transform: translate(-150%, -50%) rotate(120deg); }
+                  20% { opacity: 1; }
+                  50% { opacity: 0.8; }
+                  80% { opacity: 1; }
+                  100% { opacity: 0; transform: translate(50%, -50%) rotate(120deg); }
+                }
+              `}</style>
+
               {/* Content Area */}
-              <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0">
+              <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                 
                 {/* 3 Big Golden Stars (metallic) */}
                 <div className="flex gap-[2.5vw] my-[1.2vh]">
@@ -365,8 +390,62 @@ const DailyGiftDialog = ({
                   {weeklyEntryCount + 1}. napi belépés 🔥
                 </p>
 
-                {/* Reward Card - 3D ENHANCED */}
-                <div className="relative rounded-xl px-[5vw] py-[1.6vh] mb-[2.5vh]">
+                {/* Tomorrow's Reward Preview */}
+                <div className="relative rounded-xl px-[4vw] py-[1.2vh] mb-[1.5vh]">
+                  {/* 3D Shadow base */}
+                  <div className="absolute inset-0 rounded-xl translate-y-0.5 translate-x-0.5"
+                       style={{
+                         background: 'rgba(0,0,0,0.3)',
+                         filter: 'blur(4px)',
+                         zIndex: -1
+                       }} />
+                  
+                  {/* Outer gold frame */}
+                  <div className="absolute inset-0 rounded-xl"
+                       style={{
+                         background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                         boxShadow: 'inset 0 0 0 1.5px hsl(var(--dup-gold-900)), 0 4px 12px rgba(0,0,0,0.3)'
+                       }} />
+                  
+                  {/* Inner semi-transparent purple */}
+                  <div className="absolute inset-[2px] rounded-xl"
+                       style={{
+                         background: 'linear-gradient(180deg, rgba(139, 92, 246, 0.3), rgba(109, 40, 217, 0.4))',
+                       }} />
+                  
+                  <div className="relative z-10 flex items-center justify-center gap-[1.5vw]">
+                    <span className="text-white/80 font-bold text-center" 
+                          style={{ fontSize: 'clamp(0.7rem, 3vw, 0.95rem)' }}>
+                      Holnap:
+                    </span>
+                    <div className="relative rounded-full"
+                         style={{ 
+                           width: 'clamp(1rem, 4vw, 1.5rem)', 
+                           height: 'clamp(1rem, 4vw, 1.5rem)',
+                         }}>
+                      {/* Coin */}
+                      <div className="absolute inset-0 rounded-full translate-y-0.5"
+                           style={{ background: 'rgba(0,0,0,0.35)', filter: 'blur(2px)' }} />
+                      <div className="absolute inset-0 rounded-full"
+                           style={{ 
+                             background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
+                             boxShadow: 'inset 0 0 0 1px hsl(45 90% 38%), 0 2px 6px rgba(0,0,0,0.3)'
+                           }} />
+                      <div className="absolute inset-[2px] rounded-full"
+                           style={{ 
+                             background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 85%), hsl(45 100% 70%) 35%, hsl(45 95% 58%) 65%, hsl(45 90% 45%))',
+                             boxShadow: 'inset 0 1px 4px rgba(255,255,255,0.7), inset 0 -1px 4px rgba(0,0,0,0.4)'
+                           }} />
+                    </div>
+                    <span className="text-yellow-300 font-black drop-shadow-lg"
+                          style={{ fontSize: 'clamp(0.875rem, 3.8vw, 1.15rem)' }}>
+                      +{DAILY_REWARDS[(weeklyEntryCount + 1) % 7] * (isPremium ? 2 : 1)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Today's Reward Card - 3D ENHANCED */}
+                <div className="relative rounded-xl px-[5vw] py-[1.6vh] mb-[1.5vh]">
                   {/* 3D Shadow base */}
                   <div className="absolute inset-0 rounded-xl translate-y-1 translate-x-1"
                        style={{
@@ -507,7 +586,7 @@ const DailyGiftDialog = ({
                 {/* Hex Accept Button */}
                 <div 
                   ref={buttonWrapperRef}
-                  className="flex justify-center mt-auto mb-[4%]"
+                  className="flex justify-center w-full"
                   style={{
                     width: 'var(--sync-width, 100%)',
                     maxWidth: '100%'
@@ -546,8 +625,8 @@ const DailyGiftDialog = ({
           {/* Close X button - top right - DELAY 600ms */}
           <button
             onClick={onLater}
-            className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '600ms' }}
+            className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[10vw] h-[10vw] max-w-[50px] max-h-[50px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)', transitionDelay: '600ms' }}
           >
             ×
           </button>

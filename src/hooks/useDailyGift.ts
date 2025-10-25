@@ -44,11 +44,11 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setWeeklyEntryCount(entryCount);
       setNextReward(isPremium ? reward * 2 : reward);
       
-      // Can claim if not claimed today AND not seen today
-      setCanClaim(!isToday && !seenToday);
+      // Can claim ONLY if not claimed today (removed seenToday check to prevent auto-claim)
+      setCanClaim(!isToday);
 
-      // Track impression if showing
-      if (!isToday && !seenToday) {
+      // Track impression if showing (only if not claimed today)
+      if (!isToday) {
         trackEvent('popup_impression', 'daily');
       }
     } catch (error) {
