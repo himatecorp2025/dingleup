@@ -109,47 +109,84 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
       {/* 3D Hexagon Container */}
       <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20">
-        {/* 3D Shadow base */}
+        {/* BASE SHADOW (3D depth) */}
         <div
-          className="absolute inset-0 clip-hexagon bg-black/60 blur-md"
-          style={{ transform: 'translate(3px, 4px)' }}
+          className="absolute clip-hexagon"
+          style={{
+            top: '3px',
+            left: '3px',
+            right: '-3px',
+            bottom: '-3px',
+            background: 'rgba(0,0,0,0.35)',
+            filter: 'blur(3px)',
+          }}
+          aria-hidden
         />
 
-        {/* Outer frame - darkest */}
+        {/* OUTER FRAME - gradient with border */}
         <div
           className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${colors.gradientOuter} border-2 ${colors.borderColor} ${colors.shadowColor}`}
+          aria-hidden
         />
 
-        {/* Middle layer */}
+        {/* MIDDLE FRAME (bright inner highlight) */}
         <div
-          className={`absolute inset-[3px] clip-hexagon bg-gradient-to-br ${colors.gradientMiddle}`}
-          style={{ boxShadow: 'inset 0 0 0 1.5px rgba(255,255,255,0.2)' }}
+          className={`absolute inset-[3px] clip-hexagon bg-gradient-to-b ${colors.gradientMiddle}`}
+          style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }}
+          aria-hidden
         />
 
-        {/* Inner layer with diamond pattern */}
+        {/* INNER CRYSTAL/COLOR LAYER */}
         <div
-          className={`absolute inset-[5px] clip-hexagon bg-gradient-to-b ${colors.gradientInner}`}
+          className={`absolute clip-hexagon bg-gradient-to-b ${colors.gradientInner}`}
           style={{
-            boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.5), inset 0 -3px 0 rgba(0,0,0,0.4)',
+            top: '5px',
+            left: '5px',
+            right: '5px',
+            bottom: '5px',
+            boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
           }}
+          aria-hidden
         />
 
-        {/* Diamond cross pattern overlay */}
+        {/* SPECULAR HIGHLIGHT (top-left) */}
         <div
-          className="absolute inset-[5px] clip-hexagon pointer-events-none"
+          className="absolute clip-hexagon pointer-events-none"
           style={{
-            background:
-              'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+            top: '5px',
+            left: '5px',
+            right: '5px',
+            bottom: '5px',
+            background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
+          }}
+          aria-hidden
+        />
+
+        {/* DIAGONAL LIGHT STREAKS */}
+        <div
+          className="absolute clip-hexagon pointer-events-none"
+          style={{
+            top: '5px',
+            left: '5px',
+            right: '5px',
+            bottom: '5px',
+            background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
             opacity: 0.7,
           }}
+          aria-hidden
         />
 
-        {/* Specular highlight */}
+        {/* INNER GLOW (bottom shadow for 3D depth) */}
         <div
-          className="absolute inset-[5px] clip-hexagon pointer-events-none"
+          className="absolute clip-hexagon pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.6), transparent 60%)',
+            top: '5px',
+            left: '5px',
+            right: '5px',
+            bottom: '5px',
+            boxShadow: 'inset 0 0 10px rgba(0,0,0,0.25)',
           }}
+          aria-hidden
         />
 
         {/* Content */}

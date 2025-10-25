@@ -87,21 +87,94 @@ export const LeaderboardCarousel = () => {
             return (
               <div
                 key={`${player.user_id}-${index}`}
-                className={`clip-hexagon w-16 h-16 flex flex-col items-center justify-center bg-gradient-to-br ${getMedalColor(actualIndex)} border border-purple-400 shadow-md transform hover:scale-105 transition-transform flex-shrink-0`}
+                className="relative clip-hexagon w-16 h-16 flex-shrink-0"
               >
-                {actualIndex < 3 && (
-                  <Crown className={`${actualIndex === 0 ? 'w-4 h-4' : 'w-3 h-3'} mb-0.5 ${
-                    actualIndex === 0 ? 'text-yellow-200' :
-                    actualIndex === 1 ? 'text-gray-200' :
-                    'text-orange-200'
-                  }`} />
-                )}
-                <p className={`${actualIndex < 3 ? 'text-[9px]' : 'text-[8px]'} font-bold text-white text-center px-1 truncate w-full`}>
-                  {actualIndex + 1}. {player.username}
-                </p>
-                <p className={`${actualIndex < 3 ? 'text-sm' : 'text-xs'} font-black text-white`}>
-                  {player.total_correct_answers}
-                </p>
+                {/* BASE SHADOW (3D depth) */}
+                <div
+                  className="absolute clip-hexagon"
+                  style={{
+                    top: '2px',
+                    left: '2px',
+                    right: '-2px',
+                    bottom: '-2px',
+                    background: 'rgba(0,0,0,0.35)',
+                    filter: 'blur(2px)',
+                  }}
+                  aria-hidden
+                />
+
+                {/* OUTER FRAME */}
+                <div
+                  className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getMedalColor(actualIndex)} border border-purple-400 shadow-md`}
+                  aria-hidden
+                />
+
+                {/* MIDDLE FRAME */}
+                <div
+                  className="absolute inset-[2px] clip-hexagon bg-gradient-to-b"
+                  style={{
+                    background: `linear-gradient(180deg, rgba(255,255,255,0.2), transparent)`,
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
+                  }}
+                  aria-hidden
+                />
+
+                {/* INNER LAYER */}
+                <div
+                  className="absolute clip-hexagon"
+                  style={{
+                    top: '3px',
+                    left: '3px',
+                    right: '3px',
+                    bottom: '3px',
+                    boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.2), inset 0 -4px 8px rgba(0,0,0,0.3)',
+                  }}
+                  aria-hidden
+                />
+
+                {/* SPECULAR HIGHLIGHT */}
+                <div
+                  className="absolute clip-hexagon pointer-events-none"
+                  style={{
+                    top: '3px',
+                    left: '3px',
+                    right: '3px',
+                    bottom: '3px',
+                    background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)',
+                  }}
+                  aria-hidden
+                />
+
+                {/* DIAGONAL LIGHT STREAKS */}
+                <div
+                  className="absolute clip-hexagon pointer-events-none"
+                  style={{
+                    top: '3px',
+                    left: '3px',
+                    right: '3px',
+                    bottom: '3px',
+                    background: 'repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(255,255,255,0.06) 6px, rgba(255,255,255,0.06) 9px)',
+                    opacity: 0.7,
+                  }}
+                  aria-hidden
+                />
+
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center z-10 transform hover:scale-105 transition-transform">
+                  {actualIndex < 3 && (
+                    <Crown className={`${actualIndex === 0 ? 'w-4 h-4' : 'w-3 h-3'} mb-0.5 ${
+                      actualIndex === 0 ? 'text-yellow-200' :
+                      actualIndex === 1 ? 'text-gray-200' :
+                      'text-orange-200'
+                    }`} />
+                  )}
+                  <p className={`${actualIndex < 3 ? 'text-[9px]' : 'text-[8px]'} font-bold text-white text-center px-1 truncate w-full`}>
+                    {actualIndex + 1}. {player.username}
+                  </p>
+                  <p className={`${actualIndex < 3 ? 'text-sm' : 'text-xs'} font-black text-white`}>
+                    {player.total_correct_answers}
+                  </p>
+                </div>
               </div>
             );
           })}

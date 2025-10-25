@@ -319,19 +319,102 @@ return (
               {/* Avatar Hexagon */}
               <button
                 onClick={() => navigate('/profile')}
-                className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 sm:border-4 border-purple-400 shadow-lg shadow-purple-500/50 hover:scale-105 transition-transform gold-glow"
+                className="relative w-12 h-12 sm:w-16 sm:h-16 aspect-square hover:scale-105 transition-transform"
               >
-                {profile.avatar_url ? (
-                  <img 
-                    src={profile.avatar_url} 
-                    alt={profile.username}
-                    className="w-full h-full object-cover clip-hexagon"
-                  />
-                ) : (
-                  <span className="text-lg sm:text-2xl font-black text-white">
-                    {getInitials(profile.username)}
-                  </span>
-                )}
+                {/* BASE SHADOW (3D depth) */}
+                <div
+                  className="absolute clip-hexagon"
+                  style={{
+                    top: '3px',
+                    left: '3px',
+                    right: '-3px',
+                    bottom: '-3px',
+                    background: 'rgba(0,0,0,0.35)',
+                    filter: 'blur(3px)',
+                  }}
+                  aria-hidden
+                />
+
+                {/* OUTER FRAME */}
+                <div
+                  className="absolute inset-0 clip-hexagon bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 sm:border-4 border-purple-400 shadow-lg shadow-purple-500/50"
+                  aria-hidden
+                />
+
+                {/* MIDDLE FRAME */}
+                <div
+                  className="absolute inset-[3px] clip-hexagon bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800"
+                  style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }}
+                  aria-hidden
+                />
+
+                {/* INNER LAYER */}
+                <div
+                  className="absolute clip-hexagon bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700"
+                  style={{
+                    top: '5px',
+                    left: '5px',
+                    right: '5px',
+                    bottom: '5px',
+                    boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
+                  }}
+                  aria-hidden
+                />
+
+                {/* SPECULAR HIGHLIGHT */}
+                <div
+                  className="absolute clip-hexagon pointer-events-none"
+                  style={{
+                    top: '5px',
+                    left: '5px',
+                    right: '5px',
+                    bottom: '5px',
+                    background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
+                  }}
+                  aria-hidden
+                />
+
+                {/* DIAGONAL LIGHT STREAKS */}
+                <div
+                  className="absolute clip-hexagon pointer-events-none"
+                  style={{
+                    top: '5px',
+                    left: '5px',
+                    right: '5px',
+                    bottom: '5px',
+                    background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+                    opacity: 0.7,
+                  }}
+                  aria-hidden
+                />
+
+                {/* INNER GLOW */}
+                <div
+                  className="absolute clip-hexagon pointer-events-none"
+                  style={{
+                    top: '5px',
+                    left: '5px',
+                    right: '5px',
+                    bottom: '5px',
+                    boxShadow: 'inset 0 0 10px rgba(0,0,0,0.25)',
+                  }}
+                  aria-hidden
+                />
+
+                {/* Content - Avatar */}
+                <div className="absolute inset-0 clip-hexagon flex items-center justify-center z-10 overflow-hidden">
+                  {profile.avatar_url ? (
+                    <img 
+                      src={profile.avatar_url} 
+                      alt={profile.username}
+                      className="w-full h-full object-cover clip-hexagon"
+                    />
+                  ) : (
+                    <span className="text-lg sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                      {getInitials(profile.username)}
+                    </span>
+                  )}
+                </div>
               </button>
             </div>
           </div>
