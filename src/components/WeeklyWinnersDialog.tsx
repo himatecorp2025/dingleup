@@ -283,13 +283,13 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
               </div>
 
               {/* Content - Player List */}
-              <div ref={containerRef} className="relative z-10 flex flex-col h-full pl-[6%] pr-[3%] pb-[6%] pt-[1%]">
+              <div ref={containerRef} className="relative z-10 flex flex-col h-full pl-[6%] pr-[3%] pb-[6%] pt-0">
                 
-                {/* Players List - scrollable */}
+                {/* Players List - scrollable, first 7 visible */}
                 <div
-                  className="w-full flex-1 space-y-1.5 overflow-y-auto pr-1"
+                  className="w-full space-y-1.5 overflow-y-auto pr-1"
                   style={{ 
-                    maxHeight: listMaxHeight || '60vh',
+                    maxHeight: 'calc(7 * 60px + 6 * 6px)',
                     paddingRight: '10px'
                   }}
                 >
