@@ -146,8 +146,14 @@ const DailyGiftDialog = ({
       >
         {/* Középre igazító, teljes képernyős konténer (fix + flex) */}
         <div 
-          className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
-          style={{ minHeight: '100vh', minWidth: '100vw' }}
+          className="fixed inset-0 flex flex-col items-center overflow-hidden"
+          style={{ 
+            minHeight: '100vh', 
+            minWidth: '100vw',
+            justifyContent: 'center',
+            paddingTop: '0',
+            marginTop: '-3vh'  // 3% feljebb, vertikális center javítás
+          }}
         >
           <DialogTitle className="sr-only">Daily Gift</DialogTitle>
           <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
@@ -178,11 +184,20 @@ const DailyGiftDialog = ({
             ×
           </button>
 
-          {/* Pajzs tartalom */}
+          {/* Zoom animáció wrapper - 1.5mp scale-in középről */}
           <div 
             className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center"
+            style={{ 
+              transform: contentVisible ? 'scale(1)' : 'scale(0)',
+              opacity: contentVisible ? 1 : 0,
+              transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
+              transformOrigin: 'center center',
+              willChange: contentVisible ? 'transform, opacity' : 'auto'
+            }}
           >
-            <HexShieldFrame showShine={false}>
+            {/* SVG rendereléshez mindig scale(1) */}
+            <div style={{ transform: 'scale(1)' }}>
+              <HexShieldFrame showShine={false}>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
                 ref={badgeRef}
@@ -377,6 +392,7 @@ const DailyGiftDialog = ({
                 </div>
               </div>
             </HexShieldFrame>
+            </div>
           </div>
         </div>
       </DialogContent>
