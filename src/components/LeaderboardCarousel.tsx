@@ -117,24 +117,22 @@ export const LeaderboardCarousel = () => {
     }
   };
 
-  // Auto-scroll logika - VÉGTELEN LOOP
+  // Auto-scroll logika - TÉNYLEG VÉGTELEN LOOP (seamless)
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || topPlayers.length === 0) return;
     let animationFrameId: number;
-    let scrollPosition = 0;
     const scrollSpeed = 1.5;
     
     const scroll = () => {
       if (!autoScrollPausedRef.current) {
-        scrollPosition += scrollSpeed;
-        // Ha elérte a lista felét (duplikált tartalom miatt), visszaugrik az elejére
-        const halfWidth = container.scrollWidth / 2;
-        if (scrollPosition >= halfWidth) {
-          scrollPosition = 0;
+        container.scrollLeft += scrollSpeed;
+        
+        // Végtelen loop: amikor eléri a duplikált tartalom felét, 
+        // észrevétlenül visszaállítja az elejére
+        const maxScroll = container.scrollWidth / 2;
+        if (container.scrollLeft >= maxScroll) {
           container.scrollLeft = 0;
-        } else {
-          container.scrollLeft = scrollPosition;
         }
       }
       animationFrameId = requestAnimationFrame(scroll);
