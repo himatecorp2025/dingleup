@@ -374,19 +374,6 @@ return (
                   aria-hidden
                 />
 
-                {/* DIAGONAL LIGHT STREAKS */}
-                <div
-                  className="absolute clip-hexagon pointer-events-none"
-                  style={{
-                    top: '5px',
-                    left: '5px',
-                    right: '5px',
-                    bottom: '5px',
-                    background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
-                    opacity: 0.7,
-                  }}
-                  aria-hidden
-                />
 
                 {/* INNER GLOW */}
                 <div
