@@ -292,19 +292,21 @@ export const InsufficientResourcesDialog = ({
                 {/* Content Area */}
                 <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0">
                   
-                  {/* Resources Display - Simple 3D text effect, no backgrounds */}
+                  {/* Resources Display - Strong 3D icons */}
                   <div className="relative flex items-center justify-center gap-[3vw] mb-[2vh]">
                     <div className="flex items-center gap-2">
                       <Coins 
-                        className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-yellow-300"
+                        className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-yellow-400"
                         style={{
-                          filter: 'drop-shadow(0 0 12px rgba(253,224,71,1)) drop-shadow(0 4px 8px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.4))'
+                          filter: 'drop-shadow(0 0 16px rgba(255,215,0,0.9)) drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 3px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 24px rgba(255,215,0,0.6))',
+                          strokeWidth: '1.5px',
+                          stroke: 'rgba(255,215,0,0.8)'
                         }}
                       />
                       <span 
                         className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-yellow-200"
                         style={{
-                          textShadow: '0 4px 8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(253,224,71,0.5)'
+                          textShadow: '0 6px 12px rgba(0,0,0,0.7), 0 3px 6px rgba(0,0,0,0.5), 0 0 16px rgba(253,224,71,0.6), 0 0 24px rgba(255,215,0,0.4)'
                         }}
                       >
                         500
@@ -320,15 +322,18 @@ export const InsufficientResourcesDialog = ({
                     </div>
                     <div className="flex items-center gap-2">
                       <Heart 
-                        className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-red-400"
+                        className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-red-500"
                         style={{
-                          filter: 'drop-shadow(0 0 12px rgba(248,113,113,1)) drop-shadow(0 4px 8px rgba(0,0,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.4))'
+                          filter: 'drop-shadow(0 0 16px rgba(239,68,68,0.9)) drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 3px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 24px rgba(239,68,68,0.6))',
+                          fill: '#ef4444',
+                          strokeWidth: '1px',
+                          stroke: 'rgba(220,38,38,0.8)'
                         }}
                       />
                       <span 
-                        className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-red-300"
+                        className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-red-400"
                         style={{
-                          textShadow: '0 4px 8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(248,113,113,0.5)'
+                          textShadow: '0 6px 12px rgba(0,0,0,0.7), 0 3px 6px rgba(0,0,0,0.5), 0 0 16px rgba(248,113,113,0.6), 0 0 24px rgba(239,68,68,0.4)'
                         }}
                       >
                         15
