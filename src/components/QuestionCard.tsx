@@ -138,7 +138,7 @@ export const QuestionCard = ({
       </div>
 
       {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
-      <div className="flex flex-col justify-start space-y-1 sm:space-y-1.5 md:space-y-2 mt-[3vh] sm:mt-[4vh] md:mt-[5vh]">
+      <div className="flex flex-col justify-start space-y-1 sm:space-y-1.5 md:space-y-2 mt-[3.3vh] sm:mt-[4.4vh] md:mt-[5.5vh]">
         <div className="flex justify-center -mt-8 sm:-mt-10 md:-mt-12">
           <TimerCircle timeLeft={timeLeft} />
         </div>
