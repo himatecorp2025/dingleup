@@ -230,19 +230,23 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central HEXAGON - CLIP-PATH REVEAL (forces full render from start) */}
+          {/* ZOOM WRAPPER - scale animation for visual effect */}
           <div 
             className="relative z-10"
             style={{ 
-              clipPath: contentVisible ? 'circle(140% at 50% 50%)' : 'circle(0% at 50% 50%)',
-              transition: 'clip-path 1500ms ease-in-out 300ms',
-              willChange: contentVisible ? 'clip-path' : 'auto'
+              transform: contentVisible ? 'scale(1)' : 'scale(0)',
+              opacity: contentVisible ? 1 : 0,
+              transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms',
+              transformOrigin: 'center center',
+              willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
           >
-            
-            {/* Background glow behind shield - removed to prevent purple pulse */}
+            {/* SHIELD CONTAINER - always scale(1) so SVG filters render immediately */}
+            <div style={{ transform: 'scale(1)' }}>
+              
+              {/* Background glow behind shield - removed to prevent purple pulse */}
 
-            <HexShieldFrame>
+              <HexShieldFrame>
               {/* Top Hex Badge - "DAILY GIFT" - 3D GOLD FRAME */}
               <div 
                 ref={badgeRef}
@@ -537,6 +541,7 @@ const DailyGiftDialog = ({
                 </div>
               )}
             </HexShieldFrame>
+            </div>
           </div>
 
           {/* Close X button - top right - DELAY 600ms */}
