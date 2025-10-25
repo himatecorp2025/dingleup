@@ -318,51 +318,14 @@ const DailyGiftDialog = ({
               {/* Content Area */}
               <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                 
-                {/* 3 Big Golden Stars (metallic) */}
-                <div className="flex gap-[2.5vw] my-[1.2vh]">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="relative" style={{ fontSize: 'clamp(2.25rem, 9vw, 3.5rem)' }}>
-                      <span className="relative" style={{
-                        filter: `drop-shadow(4px 6px 8px rgba(0,0,0,0.35)) 
-                                 drop-shadow(0 0 12px hsl(var(--dup-gold-400)))`
-                      }}>⭐</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* DAY Counter */}
-                <p className="font-black text-white text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] mb-[1.2vh]"
+                {/* DAY Counter with fire emoji */}
+                <p className="font-black text-white text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] mb-[2.5vh]"
                    style={{ 
                      fontSize: 'clamp(1.5rem, 6.5vw, 2.6rem)', 
                      letterSpacing: '0.06em',
                      textShadow: '0 0 16px rgba(255,255,255,0.2)'
                    }}>
-                  DAY {weeklyEntryCount + 1}
-                </p>
-
-                {/* 7 Mini Stars Progress (horizontal row) - SAME SIZE, gold vs silver */}
-                <div className="flex gap-[1.8vw] justify-center mb-[1.2vh]">
-                  {[1, 2, 3, 4, 5, 6, 7].map((day) => {
-                    const isActive = day <= weeklyEntryCount + 1;
-                    return (
-                      <div key={day}
-                           className="transition-all duration-500"
-                           style={{ 
-                             fontSize: 'clamp(0.875rem, 3.6vw, 1.3rem)',
-                             filter: isActive 
-                               ? `drop-shadow(0 0 6px hsl(var(--dup-gold-500)))` 
-                               : 'grayscale(100%) brightness(1.2) drop-shadow(0 0 4px rgba(192,192,192,0.6))'
-                           }}>
-                        ⭐
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Streak Text */}
-                <p className="text-white font-bold text-center drop-shadow-lg mb-[1.8vh]"
-                   style={{ fontSize: 'clamp(0.875rem, 3.6vw, 1.15rem)' }}>
-                  {weeklyEntryCount + 1}. napi belépés 🔥
+                  DAY {weeklyEntryCount + 1} 🔥
                 </p>
 
                 {/* Weekly Rewards Preview - 7 boxes */}
