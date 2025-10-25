@@ -46,10 +46,15 @@ serve(async (req) => {
     if (customers.data.length === 0) {
       logStep("No customer found");
       
-      // Update profile to ensure is_subscribed is false
+      // Update profile to ensure is_subscribed is false (Normal user)
       await supabaseClient
         .from('profiles')
-        .update({ is_subscribed: false, subscription_tier: null })
+        .update({ 
+          is_subscribed: false, 
+          subscription_tier: null,
+          max_lives: 15,
+          lives_regeneration_rate: 12 // Normal: 12 minutes per life
+        })
         .eq('id', user.id);
       
       return new Response(JSON.stringify({ subscribed: false }), {
@@ -75,13 +80,14 @@ serve(async (req) => {
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
 
-      // Update profile with subscription status
+      // Update profile with subscription status (Genius member)
       await supabaseClient
         .from('profiles')
         .update({ 
           is_subscribed: true, 
           subscription_tier: 'premium',
-          max_lives: 30 // Premium users get 30 max lives
+          max_lives: 30, // Genius users get 30 max lives
+          lives_regeneration_rate: 6 // Genius: 6 minutes per life
         })
         .eq('id', user.id);
 
@@ -102,13 +108,14 @@ serve(async (req) => {
     } else {
       logStep("No active subscription found");
       
-      // Update profile to disable subscription
+      // Update profile to disable subscription (Normal user)
       await supabaseClient
         .from('profiles')
         .update({ 
           is_subscribed: false, 
           subscription_tier: null,
-          max_lives: 15 // Reset to default
+          max_lives: 15, // Normal users: 15 max lives
+          lives_regeneration_rate: 12 // Normal: 12 minutes per life
         })
         .eq('id', user.id);
     }

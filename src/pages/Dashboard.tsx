@@ -128,11 +128,41 @@ const Dashboard = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUserId(session.user.id);
+        // Check subscription status on login
+        checkSubscriptionStatus(session.user.id);
       } else {
         navigate('/login');
       }
     });
   }, [navigate]);
+
+  // Check subscription status helper
+  const checkSubscriptionStatus = async (uid: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      if (error) {
+        console.error('[Dashboard] Subscription check error:', error);
+        return;
+      }
+      console.log('[Dashboard] Subscription status updated:', data);
+      // Refresh profile to get updated is_subscribed, max_lives, lives_regeneration_rate
+      await refreshProfile();
+      await refetchWallet();
+    } catch (err) {
+      console.error('[Dashboard] Exception checking subscription:', err);
+    }
+  };
+
+  // Periodic subscription check (every 5 minutes)
+  useEffect(() => {
+    if (!userId) return;
+    
+    const interval = setInterval(() => {
+      checkSubscriptionStatus(userId);
+    }, 5 * 60 * 1000); // 5 minutes
+    
+    return () => clearInterval(interval);
+  }, [userId]);
 
   // Show Welcome Bonus dialog FIRST (highest priority) - TESTING MODE: show on desktop too, with 1s delay
   useEffect(() => {
