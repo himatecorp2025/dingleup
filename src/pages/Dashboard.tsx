@@ -456,23 +456,27 @@ return (
           </div>
         </div>
 
-        {/* Play Button - 3D Diamond - közel a TOP 25-höz */}
-        <DiamondButton
-          data-tutorial="play-button"
-          onClick={() => navigate('/game')}
-          variant="play"
-          size="lg"
-          className="mb-2 sm:mb-3 !py-5 sm:!py-6"
-          style={{
-            animation: 'play-pulse 0.8s ease-in-out infinite'
-          }}
-        >
-          {/* Play SVG Icon */}
-          <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 5.14v14l11-7-11-7z"/>
-          </svg>
-          <span className="text-sm sm:text-base font-black">PLAY NOW</span>
-        </DiamondButton>
+        {/* Play Button - 3D Diamond - fixált pozíció a booster gomb felett, 2.5vh távolságra */}
+        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh + 3.5rem + 2.5vh)' }}>
+          <div className="w-full max-w-screen-lg">
+            <DiamondButton
+              data-tutorial="play-button"
+              onClick={() => navigate('/game')}
+              variant="play"
+              size="lg"
+              className="!py-5 sm:!py-6"
+              style={{
+                animation: 'play-pulse 0.8s ease-in-out infinite'
+              }}
+            >
+              {/* Play SVG Icon */}
+              <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5.14v14l11-7-11-7z"/>
+              </svg>
+              <span className="text-sm sm:text-base font-black">PLAY NOW</span>
+            </DiamondButton>
+          </div>
+        </div>
 
         <style>{`
           @keyframes play-pulse {
