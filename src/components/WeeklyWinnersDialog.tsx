@@ -9,6 +9,7 @@ interface WeeklyWinnersDialogProps {
 }
 
 interface TopPlayer {
+  user_id: string;
   rank: number;
   username: string;
   avatar_url: string | null;
@@ -73,15 +74,16 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
       if (!profiles) return;
 
       // Combine rankings with profiles
-      const players: TopPlayer[] = rankings.map(ranking => {
-        const profile = profiles.find(p => p.id === ranking.user_id);
+      const players: TopPlayer[] = (rankings || []).map((ranking: any) => {
+        const profile = profiles.find((p: any) => p.id === ranking.user_id);
         return {
+          user_id: ranking.user_id,
           rank: ranking.rank,
           username: profile?.username || 'Unknown',
           avatar_url: profile?.avatar_url || null,
           total_correct_answers: ranking.total_correct_answers
-        };
-      });
+        } as TopPlayer;
+      }).sort((a: TopPlayer, b: TopPlayer) => a.rank - b.rank);
 
       setTopPlayers(players);
     } catch (error) {
@@ -273,105 +275,130 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
               </div>
 
               {/* Content - Player List */}
-              <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[4%] pb-[6%] pt-[2%]">
+              <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[2%] pb-[4%] pt-[1%]">
                 
-                {/* Players List - szélesebb, kisebb boxok, nincs scrolling */}
-                <div className="w-full max-w-[96%] space-y-1.5">
-                  {topPlayers.slice(0, 10).map((player, index) => (
-                    <div 
-                      key={index}
-                      className="relative"
-                      style={{
-                        animation: `fadeInUp ${0.3 + index * 0.08}s ease-out ${index * 0.04}s both`
-                      }}
-                    >
-                      {/* 3D Card Shadow */}
-                      <div className="absolute inset-0 translate-y-0.5 translate-x-0.5 bg-black/40 rounded-lg blur-sm" />
-                      
-                      {/* 3D Card Border - KÉK/ARANY gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800 rounded-lg" 
-                           style={{ boxShadow: 'inset 0 0 0 1.5px hsl(220, 70%, 30%), 0 3px 8px rgba(0,0,0,0.3)' }} />
-                      
-                      {/* 3D Card Inner Layer */}
-                      <div className="absolute inset-[1.5px] bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 rounded-lg"
-                           style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)' }} />
-                      
-                      {/* Card Content */}
-                      <div className="relative bg-gradient-to-br from-blue-600/95 via-blue-700/95 to-blue-800/95 rounded-lg px-2 py-1.5 flex items-center gap-2"
-                           style={{ boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.15), inset 0 -6px 12px rgba(0,0,0,0.25)' }}>
+                {/* Players List - szélesebb, kisebb boxok, belső görgetés, első 7 látszik */}
+                <div
+                  className="w-full max-w-[98%] space-y-1.5 overflow-y-auto pr-1"
+                  style={{ maxHeight: 'clamp(280px, 45vh, 420px)' }}
+                >
+                  {topPlayers
+                    .slice(0, 10)
+                    .map((player, index) => (
+                      <div 
+                        key={player.user_id || index}
+                        className="relative"
+                        style={{
+                          animation: `fadeInUp ${0.28 + index * 0.07}s ease-out ${index * 0.04}s both`
+                        }}
+                      >
+                        {/* 3D Card Shadow */}
+                        <div className="absolute inset-0 translate-y-0.5 translate-x-0.5 bg-black/40 rounded-lg blur-sm" />
                         
-                        {/* Rank Number - Left */}
-                        <div className="flex-shrink-0 w-6 text-center">
-                          <span className="font-black text-yellow-300 drop-shadow-lg" 
-                                style={{ 
-                                  fontSize: 'clamp(0.85rem, 3.5cqw, 1.1rem)',
-                                  textShadow: '0 2px 4px rgba(0,0,0,0.8)'
-                                }}>
-                            {player.rank}
-                          </span>
-                        </div>
+                        {/* 3D Card Border - KÉK/ARANY gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800 rounded-lg" 
+                             style={{ boxShadow: 'inset 0 0 0 1.5px hsl(220, 70%, 30%), 0 3px 8px rgba(0,0,0,0.3)' }} />
+                        
+                        {/* 3D Card Inner Layer */}
+                        <div className="absolute inset-[1.5px] bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 rounded-lg"
+                             style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)' }} />
+                        
+                        {/* Card Content */}
+                        <div className="relative bg-gradient-to-br from-blue-600/95 via-blue-700/95 to-blue-800/95 rounded-lg px-2 py-1.5 flex items-center gap-2"
+                             style={{ boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.15), inset 0 -6px 12px rgba(0,0,0,0.25)' }}>
+                          
+                          {/* Rank Number - Left */}
+                          <div className="flex-shrink-0 w-6 text-center">
+                            <span className="font-black text-yellow-300 drop-shadow-lg" 
+                                  style={{ 
+                                    fontSize: 'clamp(0.85rem, 3.5cqw, 1.1rem)',
+                                    textShadow: '0 2px 4px rgba(0,0,0,0.8)'
+                                  }}>
+                              {player.rank ?? index + 1}
+                            </span>
+                          </div>
 
-                        {/* Avatar - Kisebb */}
-                        <div className="flex-shrink-0">
-                          {player.avatar_url ? (
-                            <img 
-                              src={player.avatar_url} 
-                              alt={player.username}
-                              className="w-9 h-9 rounded-full border-2 border-yellow-400 shadow-lg object-cover"
-                            />
-                          ) : (
-                            <div className="w-9 h-9 rounded-full border-2 border-yellow-400 shadow-lg bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
-                              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                          {/* Avatar - Kisebb */}
+                          <div className="flex-shrink-0">
+                            {player.avatar_url ? (
+                              <img 
+                                src={player.avatar_url} 
+                                alt={player.username}
+                                className="w-9 h-9 rounded-full border-2 border-yellow-400 shadow-lg object-cover"
+                              />
+                            ) : (
+                              <div className="w-9 h-9 rounded-full border-2 border-yellow-400 shadow-lg bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Username */}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-white truncate drop-shadow-md" 
+                               style={{ 
+                                 fontSize: 'clamp(0.75rem, 3cqw, 0.95rem)',
+                                 textShadow: '0 2px 4px rgba(0,0,0,0.7)'
+                               }}>
+                              {player.username}
+                            </p>
+                          </div>
+
+                          {/* Score */}
+                          <div className="flex-shrink-0">
+                            <p className="font-black text-yellow-200 drop-shadow-md" 
+                               style={{ 
+                                 fontSize: 'clamp(0.8rem, 3.2cqw, 1rem)',
+                                 textShadow: '0 2px 4px rgba(0,0,0,0.8)'
+                               }}>
+                              {player.total_correct_answers.toLocaleString()}
+                            </p>
+                          </div>
+
+                          {/* Crowns for Top 3 */}
+                          <div className="flex-shrink-0">
+                            {player.rank === 1 && (
+                              <svg width="22" height="22" viewBox="0 0 24 24" className="drop-shadow-lg" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                  <linearGradient id={`crownGold${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stopColor="#FFE08A"/>
+                                    <stop offset="50%" stopColor="#F59E0B"/>
+                                    <stop offset="100%" stopColor="#D97706"/>
+                                  </linearGradient>
+                                </defs>
+                                <path d="M4 7l4 4 4-6 4 6 4-4 0 10H4z" fill={`url(#crownGold${index})`} stroke="#7c5800" strokeWidth="0.8"/>
                               </svg>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Username */}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-bold text-white truncate drop-shadow-md" 
-                             style={{ 
-                               fontSize: 'clamp(0.75rem, 3cqw, 0.95rem)',
-                               textShadow: '0 2px 4px rgba(0,0,0,0.7)'
-                             }}>
-                            {player.username}
-                          </p>
-                        </div>
-
-                        {/* Score */}
-                        <div className="flex-shrink-0">
-                          <p className="font-black text-yellow-200 drop-shadow-md" 
-                             style={{ 
-                               fontSize: 'clamp(0.8rem, 3.2cqw, 1rem)',
-                               textShadow: '0 2px 4px rgba(0,0,0,0.8)'
-                             }}>
-                            {player.total_correct_answers.toLocaleString()}
-                          </p>
-                        </div>
-
-                        {/* Gift Icon - Kisebb */}
-                        <div className="flex-shrink-0">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="drop-shadow-lg">
-                            <defs>
-                              <linearGradient id={`giftGrad${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#FFD700" />
-                                <stop offset="50%" stopColor="#FFA500" />
-                                <stop offset="100%" stopColor="#FFD700" />
-                              </linearGradient>
-                            </defs>
-                            <rect x="4" y="10" width="16" height="11" rx="1" fill={`url(#giftGrad${index})`} stroke="rgba(0,0,0,0.3)" strokeWidth="0.5"/>
-                            <rect x="4.5" y="10.5" width="15" height="1.5" fill="rgba(255,255,255,0.3)"/>
-                            <rect x="11" y="10" width="2" height="11" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                            <rect x="4" y="13" width="16" height="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                            <circle cx="9" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                            <circle cx="15" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                            <circle cx="12" cy="7" r="1.5" fill="rgba(220,38,38,1)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                          </svg>
+                            )}
+                            {player.rank === 2 && (
+                              <svg width="22" height="22" viewBox="0 0 24 24" className="drop-shadow-lg" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                  <linearGradient id={`crownSilver${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stopColor="#F3F4F6"/>
+                                    <stop offset="50%" stopColor="#D1D5DB"/>
+                                    <stop offset="100%" stopColor="#9CA3AF"/>
+                                  </linearGradient>
+                                </defs>
+                                <path d="M4 7l4 4 4-6 4 6 4-4 0 10H4z" fill={`url(#crownSilver${index})`} stroke="#4b5563" strokeWidth="0.8"/>
+                              </svg>
+                            )}
+                            {player.rank === 3 && (
+                              <svg width="22" height="22" viewBox="0 0 24 24" className="drop-shadow-lg" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                  <linearGradient id={`crownBronze${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stopColor="#F59E0B"/>
+                                    <stop offset="50%" stopColor="#B45309"/>
+                                    <stop offset="100%" stopColor="#78350F"/>
+                                  </linearGradient>
+                                </defs>
+                                <path d="M4 7l4 4 4-6 4 6 4-4 0 10H4z" fill={`url(#crownBronze${index})`} stroke="#6b4000" strokeWidth="0.8"/>
+                              </svg>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
 
                 <style>{`
