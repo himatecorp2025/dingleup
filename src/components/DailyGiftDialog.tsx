@@ -82,7 +82,7 @@ const DailyGiftDialog = ({
 
   useEffect(() => {
     if (open) {
-      const t = setTimeout(() => setContentVisible(true), 50);
+      const t = setTimeout(() => setContentVisible(true), 10);
       return () => {
         clearTimeout(t);
         setContentVisible(false);
@@ -98,7 +98,7 @@ const DailyGiftDialog = ({
     if (!open) return;
     if (!contentVisible) return;
     
-    // Delay burst until after shield zoom completes (2200ms animation + 200ms buffer)
+    // 200ms delay after shield appears (shield has 300ms delay, so total 500ms)
     const timer = setTimeout(() => {
       requestAnimationFrame(() => {
         const el = flagRef.current;
@@ -111,7 +111,7 @@ const DailyGiftDialog = ({
           setBurstActive(true);
         }
       });
-    }, 2400);
+    }, 200);
 
     return () => clearTimeout(timer);
   }, [contentVisible, open]);
@@ -229,13 +229,9 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central HEXAGON - ZOOM from center (2s animation) */}
-          <div className={`relative z-10 transition-all ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
-               style={{ 
-                 transitionDuration: '2000ms',
-                 transitionDelay: '200ms',
-                 transformOrigin: 'center center'
-               }}>
+          {/* Central HEXAGON (Flat-Top Geometry + 3D Specular) - DELAY 300ms */}
+          <div className={`relative z-10 transition-all duration-[220ms] ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.96]'}`}
+               style={{ transitionDelay: '300ms' }}>
             
             {/* Background glow behind shield - removed to prevent purple pulse */}
 
@@ -536,11 +532,11 @@ const DailyGiftDialog = ({
             </HexShieldFrame>
           </div>
 
-          {/* Close X button - top right - appears after shield zoom */}
+          {/* Close X button - top right - DELAY 600ms */}
           <button
             onClick={onLater}
             className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '2200ms' }}
+            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '600ms' }}
           >
             ×
           </button>
