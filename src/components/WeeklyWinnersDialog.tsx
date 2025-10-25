@@ -340,8 +340,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                           animation: `fadeInUp ${0.28 + index * 0.07}s ease-out ${index * 0.04}s both`
                         }}
                       >
-                      {/* 3D Card Shadow - ERŐSEBB, VASTAG */}
-                      <div className="absolute inset-0 translate-y-2 translate-x-2 bg-black/60 rounded-xl blur-lg" />
+                      {/* 3D Card Shadow - REMOVED for transparency */}
                       
                       {/* 3D Card Border - VASTAG KÉK FRAME */}
                       <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950 rounded-xl" 
