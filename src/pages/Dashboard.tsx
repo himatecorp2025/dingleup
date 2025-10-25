@@ -37,6 +37,7 @@ import { useWeeklyLogin } from '@/hooks/useWeeklyLogin';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
+import gameBackground from '@/assets/game-background.jpg';
 import { toast } from 'sonner';
 
 const Dashboard = () => {
@@ -253,10 +254,17 @@ if (!profile) {
 }
 
 return (
-  <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+  <div className="h-screen w-screen overflow-hidden fixed inset-0" style={{
     paddingTop: 'env(safe-area-inset-top)',
     paddingBottom: 'env(safe-area-inset-bottom)'
   }}>
+    {/* Háttérkép - mobilra optimalizálva */}
+    <div 
+      className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${gameBackground})` }}
+    />
+    {/* Áttetsző kék overlay - 90% opacity */}
+    <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] opacity-90" />
     {/* Idle warning (60s countdown before logout) */}
     <IdleWarning 
       show={showWarning} 
