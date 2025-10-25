@@ -228,6 +228,32 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
             </button>
 
             <HexShieldFrame showShine={true}>
+              {/* Fireworks around banner */}
+              {contentVisible && (
+                <div className="absolute inset-0 pointer-events-none overflow-hidden z-30">
+                  {[...Array(8)].map((_, i) => {
+                    const x = 10 + Math.random() * 80;
+                    const y = 5 + Math.random() * 25;
+                    const delay = Math.random() * 1.5;
+                    const colors = ['#FFD700', '#FFA500', '#FF6B6B', '#4ECDC4'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    return (
+                      <div
+                        key={`fw-${i}`}
+                        className="absolute w-1 h-1 rounded-full"
+                        style={{
+                          left: `${x}%`,
+                          top: `${y}%`,
+                          background: color,
+                          boxShadow: `0 0 8px ${color}`,
+                          animation: `fireworkPulse 2s ease-in-out ${delay}s infinite`
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+              
               {/* Premium WEEKLY WINNERS badge - ARANY 3D - ugyanaz mint Welcome */}
               <div 
                 ref={headerRef}
@@ -290,18 +316,19 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                 </div>
               </div>
 
-              {/* Content - Player List - ONLY 7 VISIBLE */}
-              <div className="relative z-10 flex flex-col pl-[6%] pr-[3%] pb-[6%] bg-transparent">
+              {/* Content - Player List - ONLY 7 VISIBLE - NO BG */}
+              <div className="relative z-10 flex flex-col pl-[6%] pr-[3%] pb-[6%]" style={{ background: 'none' }}>
                 
-                {/* Players List - exactly 7 boxes visible */}
+                {/* Players List - exactly 7 boxes visible - transparent bg */}
                 <div
                   ref={listRef}
-                  className="w-full space-y-1.5 overflow-y-auto pr-1 bg-transparent"
+                  className="w-full space-y-1.5 overflow-y-auto pr-1"
                   style={{ 
                     height: listHeight ? `${listHeight}px` : undefined,
                     maxHeight: listHeight ? `${listHeight}px` : undefined,
                     paddingRight: '10px',
-                    background: 'transparent'
+                    background: 'none',
+                    backgroundColor: 'transparent'
                   }}
                 >
                   {topPlayers.map((player, index) => (
@@ -448,6 +475,17 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                     to {
                       opacity: 1;
                       transform: translateY(0);
+                    }
+                  }
+                  
+                  @keyframes fireworkPulse {
+                    0%, 100% {
+                      transform: scale(1);
+                      opacity: 0.6;
+                    }
+                    50% {
+                      transform: scale(2.5);
+                      opacity: 1;
                     }
                   }
                 `}</style>
