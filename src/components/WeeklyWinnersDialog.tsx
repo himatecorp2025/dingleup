@@ -53,15 +53,25 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
         .from('global_leaderboard')
         .select('user_id, username, total_correct_answers, avatar_url')
         .order('total_correct_answers', { ascending: false })
-        .limit(10);
+        .limit(20);
 
       if (error) throw error;
 
-      // Add rank to each entry (same as Leaderboard page)
-      const rankedData = (data || []).map((entry, index) => ({
-        ...entry,
-        rank: index + 1
-      }));
+      // Remove duplicates by user_id and take top 10
+      const uniqueUsers = new Map();
+      (data || []).forEach(entry => {
+        if (!uniqueUsers.has(entry.user_id)) {
+          uniqueUsers.set(entry.user_id, entry);
+        }
+      });
+
+      // Add rank to each unique entry
+      const rankedData = Array.from(uniqueUsers.values())
+        .slice(0, 10)
+        .map((entry, index) => ({
+          ...entry,
+          rank: index + 1
+        }));
 
       setTopPlayers(rankedData as TopPlayer[]);
     } catch (error) {
@@ -299,11 +309,11 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                              margin: '5px'
                            }}>
                           
-                        {/* Rank Number - Left - CORRECTED */}
-                        <div className="flex-shrink-0 w-7 text-center">
-                          <span className="font-black text-yellow-300 drop-shadow-lg" 
+                        {/* Rank Number - Left */}
+                        <div className="flex-shrink-0 w-8 text-center overflow-hidden">
+                          <span className="font-black text-yellow-300 drop-shadow-lg block" 
                                 style={{ 
-                                  fontSize: 'clamp(0.9rem, 3.8cqw, 1.2rem)',
+                                  fontSize: 'clamp(0.85rem, 3.5cqw, 1.1rem)',
                                   textShadow: '0 2px 4px rgba(0,0,0,0.8)'
                                 }}>
                             {player.rank}
