@@ -95,15 +95,25 @@ export const ExitGameDialog = ({
             </div>
           </div>
 
-          {/* Title - centered */}
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent animate-in fade-in slide-in-from-top-2 duration-500 delay-100">
-            Biztosan kilépsz?
-          </h2>
+          {/* Title - centered with enhanced readability */}
+          <div className="relative px-4 py-3 sm:py-4 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-500 delay-100">
+            {/* Dark semi-transparent background for better readability */}
+            <div className="absolute inset-0 bg-black/60 rounded-2xl backdrop-blur-sm border-2 border-white/20" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 2px 8px rgba(255,255,255,0.1)' }} aria-hidden />
+            
+            <h2 className="relative z-10 text-xl sm:text-2xl md:text-3xl font-black text-center text-white" style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.9), 2px 2px 4px rgba(0,0,0,1), -2px -2px 4px rgba(0,0,0,1), 2px -2px 4px rgba(0,0,0,1), -2px 2px 4px rgba(0,0,0,1)' }}>
+              Biztosan kilépsz?
+            </h2>
+          </div>
 
-          {/* Description */}
-          <p className="text-center text-white/90 text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 animate-in fade-in slide-in-from-top-2 duration-500 delay-200">
-            Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.
-          </p>
+          {/* Description - enhanced readability */}
+          <div className="relative px-3 sm:px-4 py-2 sm:py-3 rounded-xl animate-in fade-in slide-in-from-top-2 duration-500 delay-200">
+            {/* Dark semi-transparent background */}
+            <div className="absolute inset-0 bg-black/50 rounded-xl backdrop-blur-sm border border-white/10" aria-hidden />
+            
+            <p className="relative z-10 text-center text-white text-xs sm:text-sm md:text-base font-semibold" style={{ textShadow: '0 0 10px rgba(0,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' }}>
+              Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.
+            </p>
+          </div>
 
           {/* 3D Buttons */}
           <div className="flex flex-col w-full gap-3 sm:gap-4 mt-2 sm:mt-3 md:mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
