@@ -340,21 +340,21 @@ const DailyGiftDialog = ({
                   DAY {weeklyEntryCount + 1}
                 </p>
 
-                {/* 7 Mini Stars Progress (horizontal row) */}
+                {/* 7 Mini Stars Progress (horizontal row) - SAME SIZE, gold vs silver */}
                 <div className="flex gap-[1.8vw] justify-center mb-[1.2vh]">
                   {[1, 2, 3, 4, 5, 6, 7].map((day) => {
                     const isActive = day <= weeklyEntryCount + 1;
                     return (
                       <div key={day}
-                           className={`transition-all duration-500 ${isActive ? 'scale-100 opacity-100' : 'scale-75 opacity-70'}`}
+                           className="transition-all duration-500"
                            style={{ 
                              fontSize: 'clamp(0.875rem, 3.6vw, 1.3rem)',
                              filter: isActive 
                                ? `drop-shadow(0 0 6px hsl(var(--dup-gold-500)))` 
-                               : 'drop-shadow(0 0 4px hsl(192 45% 65%))',
-                             color: isActive ? '' : 'hsl(192 45% 70%)'
+                               : 'drop-shadow(0 0 4px hsl(0 0% 70%))',
+                             color: isActive ? '' : 'hsl(0 0% 75%)'
                            }}>
-                        {isActive ? '⭐' : '☆'}
+                        ⭐
                       </div>
                     );
                   })}
