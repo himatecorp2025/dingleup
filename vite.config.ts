@@ -23,14 +23,22 @@ export default defineConfig(({ mode }) => ({
         description: 'Teszteld tudásod 15 izgalmas kérdéssel! Gyűjts aranyérméket és versenyezz a ranglistán.',
         theme_color: '#0a0a2e',
         background_color: '#0a0a2e',
-        display: 'standalone',
+        display: 'fullscreen',
+        orientation: 'portrait',
         start_url: '/',
+        scope: '/',
         icons: [
+          {
+            src: '/logo.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any'
+          },
           {
             src: '/logo.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'maskable'
           }
         ]
       },
