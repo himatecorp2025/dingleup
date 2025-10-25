@@ -206,13 +206,13 @@ export const QuestionCard = ({
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-900 border-2 border-blue-400/60 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 border-2 border-blue-300/80 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[3px] bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ clipPath: 'inherit', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)', transform: 'translateZ(8px)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[4px] bg-gradient-to-br from-blue-600/80 to-blue-900/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
+            <div className="absolute inset-[4px] bg-gradient-to-br from-blue-500/80 to-blue-700/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
@@ -240,13 +240,13 @@ export const QuestionCard = ({
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 bg-gradient-to-br from-green-700 via-green-600 to-green-900 border-2 border-green-400/60 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 bg-gradient-to-br from-green-400 via-green-500 to-green-600 border-2 border-green-300/80 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[3px] bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ clipPath: 'inherit', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)', transform: 'translateZ(8px)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[4px] bg-gradient-to-br from-green-600/80 to-green-900/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
+            <div className="absolute inset-[4px] bg-gradient-to-br from-green-500/80 to-green-700/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
@@ -274,13 +274,13 @@ export const QuestionCard = ({
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400/60 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 border-2 border-purple-300/80 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[3px] bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ clipPath: 'inherit', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)', transform: 'translateZ(8px)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[4px] bg-gradient-to-br from-purple-600/80 to-purple-900/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
+            <div className="absolute inset-[4px] bg-gradient-to-br from-purple-500/80 to-purple-700/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
@@ -308,13 +308,13 @@ export const QuestionCard = ({
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/60 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 bg-gradient-to-br from-red-400 via-red-500 to-red-600 border-2 border-red-300/80 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[3px] bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ clipPath: 'inherit', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)', transform: 'translateZ(8px)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[4px] bg-gradient-to-br from-red-600/80 to-red-900/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
+            <div className="absolute inset-[4px] bg-gradient-to-br from-red-500/80 to-red-700/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />

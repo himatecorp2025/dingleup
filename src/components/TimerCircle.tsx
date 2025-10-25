@@ -29,20 +29,20 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
         style={{ 
           transform: 'translateZ(0px)',
           background: timeLeft >= 8 
-            ? 'linear-gradient(135deg, #16A34A, #15803D, #166534)' // Green gradient
+            ? 'linear-gradient(135deg, #22c55e, #16a34a, #15803d)' // Bright green gradient
             : timeLeft >= 4 
-            ? 'linear-gradient(135deg, #F59E0B, #D97706, #B45309)' // Orange gradient
-            : 'linear-gradient(135deg, #DC2626, #B91C1C, #991B1B)', // Red gradient
+            ? 'linear-gradient(135deg, #fb923c, #f59e0b, #ea580c)' // Bright orange gradient
+            : 'linear-gradient(135deg, #f87171, #ef4444, #dc2626)', // Bright red gradient
           borderColor: timeLeft >= 8 
-            ? 'rgba(34, 197, 94, 0.5)' // Green border
+            ? 'rgba(74, 222, 128, 0.7)' // Bright green border
             : timeLeft >= 4 
-            ? 'rgba(251, 146, 60, 0.5)' // Orange border
-            : 'rgba(239, 68, 68, 0.5)', // Red border
+            ? 'rgba(251, 146, 60, 0.7)' // Bright orange border
+            : 'rgba(248, 113, 113, 0.7)', // Bright red border
           boxShadow: timeLeft >= 8
-            ? '0 0 20px rgba(34, 197, 94, 0.6), 0 8px 25px rgba(0,0,0,0.5)' // Green glow
+            ? '0 0 25px rgba(74, 222, 128, 0.8), 0 8px 25px rgba(0,0,0,0.5)' // Bright green glow
             : timeLeft >= 4
-            ? '0 0 20px rgba(251, 146, 60, 0.6), 0 8px 25px rgba(0,0,0,0.5)' // Orange glow
-            : '0 0 20px rgba(239, 68, 68, 0.6), 0 8px 25px rgba(0,0,0,0.5)' // Red glow
+            ? '0 0 25px rgba(251, 146, 60, 0.8), 0 8px 25px rgba(0,0,0,0.5)' // Bright orange glow
+            : '0 0 25px rgba(248, 113, 113, 0.8), 0 8px 25px rgba(0,0,0,0.5)' // Bright red glow
         }} 
         aria-hidden 
       />

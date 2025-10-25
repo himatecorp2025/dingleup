@@ -119,11 +119,11 @@ export const MillionaireAnswer = ({
       {/* OUTER FRAME */}
       <div 
         className={`absolute inset-0 bg-gradient-to-br opacity-90 border-4 shadow-2xl transition-all duration-300 ${
-          showCorrectPulse ? 'from-green-700 via-green-600 to-green-900 border-green-500/60 animate-pulse' :
-          isDoubleChoiceActive ? 'from-orange-700 via-orange-600 to-orange-900 border-orange-500/60' :
-          isCorrect ? 'from-green-700 via-green-600 to-green-900 border-green-500/60' :
-          isWrong ? 'from-red-700 via-red-600 to-red-900 border-red-500/60' :
-          'from-yellow-700 via-yellow-600 to-yellow-900 border-yellow-500/60'
+          showCorrectPulse ? 'from-green-400 via-green-500 to-green-600 border-green-300/80 animate-pulse' :
+          isDoubleChoiceActive ? 'from-orange-400 via-orange-500 to-orange-600 border-orange-300/80' :
+          isCorrect ? 'from-green-400 via-green-500 to-green-600 border-green-300/80' :
+          isWrong ? 'from-red-400 via-red-500 to-red-600 border-red-300/80' :
+          'from-yellow-400 via-yellow-500 to-yellow-600 border-yellow-300/80'
         }`}
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
@@ -146,10 +146,10 @@ export const MillionaireAnswer = ({
       {/* INNER LAYER */}
       <div 
         className={`absolute inset-[7px] bg-gradient-to-br transition-all duration-300 ${
-          showCorrectPulse ? 'from-green-600/80 to-green-900/80' :
-          isDoubleChoiceActive ? 'from-orange-600/80 to-orange-900/80' :
-          isCorrect ? 'from-green-600/80 to-green-900/80' :
-          isWrong ? 'from-red-600/80 to-red-900/80' :
+          showCorrectPulse ? 'from-green-500/80 to-green-700/80' :
+          isDoubleChoiceActive ? 'from-orange-500/80 to-orange-700/80' :
+          isCorrect ? 'from-green-500/80 to-green-700/80' :
+          isWrong ? 'from-red-500/80 to-red-700/80' :
           'from-slate-900/80 to-slate-950/80'
         }`}
         style={{
@@ -190,7 +190,7 @@ export const MillionaireAnswer = ({
                 isDoubleChoiceActive ? 'bg-gradient-to-br from-orange-300 to-orange-400 border-orange-200' :
                 isCorrect ? 'bg-gradient-to-br from-green-300 to-green-400 border-green-200' :
                 isWrong ? 'bg-gradient-to-br from-red-300 to-red-400 border-red-200' :
-                'bg-gradient-to-br from-yellow-500 to-yellow-600 border-yellow-400'
+                'bg-gradient-to-br from-yellow-400 to-yellow-500 border-yellow-300'
               }`}
               style={{ 
                 clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',

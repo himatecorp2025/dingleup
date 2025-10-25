@@ -13,7 +13,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       
       {/* OUTER FRAME */}
       <div 
-        className="absolute inset-0 bg-gradient-to-br from-cyan-700 via-cyan-600 to-cyan-900 opacity-90 border-3 border-cyan-500/60 shadow-2xl"
+        className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 opacity-90 border-3 border-cyan-300/80 shadow-2xl"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           transform: 'translateZ(0px)'
@@ -67,7 +67,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
             style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
           >
             {/* Number badge 3D */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-600 via-cyan-500 to-cyan-700 border-2 border-cyan-400" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.3)' }} aria-hidden />
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 border-2 border-cyan-300" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.3)' }} aria-hidden />
             {typeof questionNumber === 'number' && (
               <span className="relative z-10 text-white font-bold text-sm leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>{questionNumber}</span>
             )}
