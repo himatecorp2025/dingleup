@@ -510,7 +510,7 @@ return (
             variant="booster"
             size="lg"
             active={hasActiveBooster}
-            className="!py-3 sm:!py-4"
+            className="!py-5 sm:!py-6"
             badge={
               hasActiveBooster ? (
                 <span className="flex h-3 w-3">
@@ -521,18 +521,18 @@ return (
             }
           >
             {/* Lightning SVG Icon */}
-            <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.8))' }}>
+            <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
             </svg>
             {hasActiveBooster ? (
-              <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>AKTÍV BOOSTER ({timeRemaining})</span>
+              <span className="text-sm sm:text-base font-black">AKTÍV BOOSTER ({timeRemaining})</span>
             ) : availableBoosters.length > 0 ? (
-              <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>
+              <span className="text-sm sm:text-base font-black">
                 BOOSTER AKTIVÁLÁS
                 <span className="block text-[10px] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
               </span>
             ) : (
-              <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>BOOSTER VÁSÁRLÁS</span>
+              <span className="text-sm sm:text-base font-black">BOOSTER VÁSÁRLÁS</span>
             )}
           </DiamondButton>
         </div>
