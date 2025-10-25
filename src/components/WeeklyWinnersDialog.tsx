@@ -34,7 +34,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
       if (!first) return;
       const rowH = first.offsetHeight;
       const gap = second ? parseFloat(getComputedStyle(second).marginTop || '6') : 6;
-      setListHeight(Math.max(0, Math.round(rowH * 7 + gap * 6) - 2));
+      setListHeight(Math.max(0, Math.round(rowH * 7 + gap * 6) - 8));
     } catch {}
   };
 
@@ -295,16 +295,18 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                 
                 {/* Players List - exactly 7 boxes visible */}
                 <div
+                  ref={listRef}
                   className="w-full space-y-1.5 overflow-y-auto pr-1"
                   style={{ 
-                    height: '420px',
-                    maxHeight: '420px',
+                    height: listHeight ? `${listHeight}px` : undefined,
+                    maxHeight: listHeight ? `${listHeight}px` : undefined,
                     paddingRight: '10px'
                   }}
                 >
                   {topPlayers.map((player, index) => (
                       <div 
                         key={player.user_id || index}
+                        data-row-index={index}
                         className="relative"
                         style={{
                           animation: `fadeInUp ${0.28 + index * 0.07}s ease-out ${index * 0.04}s both`
