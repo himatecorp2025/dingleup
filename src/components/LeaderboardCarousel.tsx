@@ -12,6 +12,8 @@ interface LeaderboardEntry {
 export const LeaderboardCarousel = () => {
   const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const autoScrollPausedRef = useRef(false);
+  const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     refresh();
@@ -21,21 +23,17 @@ export const LeaderboardCarousel = () => {
   }, []);
 
   const refresh = async () => {
-    // 1) Publikus nézet (RLS gond mentes)
-    const fromPublic = await fetchFromLeaderboardPublic();
-    if (fromPublic.length > 0) {
-      setTopPlayers(fromPublic.slice(0, 25));
-      return;
-    }
-    // 2) Global leaderboard (ha a felhasználó jogosult, különben 0-1 rekord)
+    // Ugyanaz az adatforrás, mint a Ranglista oldalon: global_leaderboard
     const fromGlobal = await fetchFromGlobalLeaderboard();
     if (fromGlobal.length > 0) {
       setTopPlayers(fromGlobal.slice(0, 25));
       return;
     }
-    // 3) Heti rang fallback (összesítve profilokkal)
-    const fromWeekly = await fetchFromWeeklyRankings();
-    setTopPlayers(fromWeekly.slice(0, 25));
+    // Fallback: publikus nézet
+    const fromPublic = await fetchFromLeaderboardPublic();
+    if (fromPublic.length > 0) {
+      setTopPlayers(fromPublic.slice(0, 25));
+    }
   };
 
   const fetchFromLeaderboardPublic = async (): Promise<LeaderboardEntry[]> => {
@@ -110,6 +108,7 @@ export const LeaderboardCarousel = () => {
     }
   };
 
+  // Auto-scroll logika
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || topPlayers.length === 0) return;
@@ -117,14 +116,93 @@ export const LeaderboardCarousel = () => {
     let scrollPosition = 0;
     const scrollSpeed = 1.5;
     const scroll = () => {
-      scrollPosition += scrollSpeed;
-      if (scrollPosition >= container.scrollWidth / 2) scrollPosition = 0;
-      container.scrollLeft = scrollPosition;
+      if (!autoScrollPausedRef.current) {
+        scrollPosition += scrollSpeed;
+        if (scrollPosition >= container.scrollWidth / 2) scrollPosition = 0;
+        container.scrollLeft = scrollPosition;
+      }
       animationFrameId = requestAnimationFrame(scroll);
     };
     animationFrameId = requestAnimationFrame(scroll);
     return () => cancelAnimationFrame(animationFrameId);
   }, [topPlayers]);
+
+  // Érintéses/manuális csúsztatás
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    let isDragging = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    const pauseAutoScroll = () => {
+      autoScrollPausedRef.current = true;
+      if (autoScrollTimeoutRef.current) {
+        clearTimeout(autoScrollTimeoutRef.current);
+      }
+      autoScrollTimeoutRef.current = setTimeout(() => {
+        autoScrollPausedRef.current = false;
+      }, 3000);
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isDragging = true;
+      startX = e.pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+      container.style.cursor = 'grabbing';
+      pauseAutoScroll();
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      isDragging = true;
+      startX = e.touches[0].pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+      pauseAutoScroll();
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - container.offsetLeft;
+      const walk = (x - startX) * 2;
+      container.scrollLeft = scrollLeft - walk;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
+      const x = e.touches[0].pageX - container.offsetLeft;
+      const walk = (x - startX) * 2;
+      container.scrollLeft = scrollLeft - walk;
+    };
+
+    const handleEnd = () => {
+      isDragging = false;
+      container.style.cursor = 'grab';
+    };
+
+    container.style.cursor = 'grab';
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('touchstart', handleTouchStart);
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('touchmove', handleTouchMove);
+    container.addEventListener('mouseup', handleEnd);
+    container.addEventListener('mouseleave', handleEnd);
+    container.addEventListener('touchend', handleEnd);
+
+    return () => {
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('mouseup', handleEnd);
+      container.removeEventListener('mouseleave', handleEnd);
+      container.removeEventListener('touchend', handleEnd);
+      if (autoScrollTimeoutRef.current) {
+        clearTimeout(autoScrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const getHexagonColor = (index: number) => {
     if (index === 0) return 'from-yellow-400 via-yellow-500 to-yellow-600'; // Arany
