@@ -48,44 +48,22 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
 
   const fetchTopPlayers = async () => {
     try {
-      // Get current week start
-      const { data: weekData } = await supabase.rpc('get_current_week_start');
-      if (!weekData) return;
-
-      const currentWeekStart = weekData as string;
-
-      // Fetch top 10 players from weekly_rankings for the current week
-      const { data: rankings } = await supabase
-        .from('weekly_rankings')
-        .select('user_id, rank, total_correct_answers')
-        .eq('week_start', currentWeekStart)
-        .order('rank', { ascending: true })
+      // Use SAME logic as Leaderboard page - global_leaderboard table
+      const { data, error } = await supabase
+        .from('global_leaderboard')
+        .select('user_id, username, total_correct_answers, avatar_url')
+        .order('total_correct_answers', { ascending: false })
         .limit(10);
 
-      if (!rankings || rankings.length === 0) return;
+      if (error) throw error;
 
-      // Fetch user profiles for these players
-      const userIds = rankings.map(r => r.user_id);
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, username, avatar_url')
-        .in('id', userIds);
+      // Add rank to each entry (same as Leaderboard page)
+      const rankedData = (data || []).map((entry, index) => ({
+        ...entry,
+        rank: index + 1
+      }));
 
-      if (!profiles) return;
-
-      // Combine rankings with profiles
-      const players: TopPlayer[] = (rankings || []).map((ranking: any) => {
-        const profile = profiles.find((p: any) => p.id === ranking.user_id);
-        return {
-          user_id: ranking.user_id,
-          rank: ranking.rank,
-          username: profile?.username || 'Unknown',
-          avatar_url: profile?.avatar_url || null,
-          total_correct_answers: ranking.total_correct_answers
-        } as TopPlayer;
-      }).sort((a: TopPlayer, b: TopPlayer) => a.rank - b.rank);
-
-      setTopPlayers(players);
+      setTopPlayers(rankedData as TopPlayer[]);
     } catch (error) {
       console.error('[WEEKLY-WINNERS] Error fetching top players:', error);
     }
@@ -274,17 +252,14 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                 </div>
               </div>
 
-              {/* Content - Player List */}
-              <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[2%] pb-[4%] pt-[1%]">
+              {/* Content - Player List - FULL HEIGHT */}
+              <div className="relative z-10 flex flex-col flex-1 px-[2%] pb-[4%] pt-[1%]">
                 
-                {/* Players List - szélesebb, kisebb boxok, belső görgetés, első 7 látszik */}
+                {/* Players List - FULL HEIGHT, 3D BOXES */}
                 <div
-                  className="w-full max-w-[98%] space-y-1.5 overflow-y-auto pr-1"
-                  style={{ maxHeight: 'clamp(280px, 45vh, 420px)' }}
+                  className="w-full flex-1 space-y-1.5 overflow-y-auto pr-1"
                 >
-                  {topPlayers
-                    .slice(0, 10)
-                    .map((player, index) => (
+                  {topPlayers.map((player, index) => (
                       <div 
                         key={player.user_id || index}
                         className="relative"
@@ -292,70 +267,70 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                           animation: `fadeInUp ${0.28 + index * 0.07}s ease-out ${index * 0.04}s both`
                         }}
                       >
-                        {/* 3D Card Shadow */}
-                        <div className="absolute inset-0 translate-y-0.5 translate-x-0.5 bg-black/40 rounded-lg blur-sm" />
+                      {/* 3D Card Shadow - ERŐSEBB */}
+                      <div className="absolute inset-0 translate-y-1 translate-x-1 bg-black/50 rounded-lg blur-md" />
+                      
+                      {/* 3D Card Border - KÉK/ARANY gradient - VASTAGABB */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-800 via-blue-700 to-blue-900 rounded-lg" 
+                           style={{ boxShadow: 'inset 0 0 0 2px hsl(220, 80%, 25%), 0 6px 16px rgba(0,0,0,0.4)' }} />
+                      
+                      {/* 3D Card Inner Layer - ERŐSEBB FÉNYHATÁS */}
+                      <div className="absolute inset-[2px] bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 rounded-lg"
+                           style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.3)' }} />
                         
-                        {/* 3D Card Border - KÉK/ARANY gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800 rounded-lg" 
-                             style={{ boxShadow: 'inset 0 0 0 1.5px hsl(220, 70%, 30%), 0 3px 8px rgba(0,0,0,0.3)' }} />
-                        
-                        {/* 3D Card Inner Layer */}
-                        <div className="absolute inset-[1.5px] bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 rounded-lg"
-                             style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)' }} />
-                        
-                        {/* Card Content */}
-                        <div className="relative bg-gradient-to-br from-blue-600/95 via-blue-700/95 to-blue-800/95 rounded-lg px-2 py-1.5 flex items-center gap-2"
-                             style={{ boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.15), inset 0 -6px 12px rgba(0,0,0,0.25)' }}>
+                      {/* Card Content - ERŐSEBB 3D */}
+                      <div className="relative bg-gradient-to-br from-blue-600/98 via-blue-700/98 to-blue-800/98 rounded-lg px-2.5 py-2 flex items-center gap-2.5"
+                           style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }}>
                           
-                          {/* Rank Number - Left */}
-                          <div className="flex-shrink-0 w-6 text-center">
-                            <span className="font-black text-yellow-300 drop-shadow-lg" 
-                                  style={{ 
-                                    fontSize: 'clamp(0.85rem, 3.5cqw, 1.1rem)',
-                                    textShadow: '0 2px 4px rgba(0,0,0,0.8)'
-                                  }}>
-                              {player.rank ?? index + 1}
-                            </span>
-                          </div>
+                        {/* Rank Number - Left - CORRECTED */}
+                        <div className="flex-shrink-0 w-7 text-center">
+                          <span className="font-black text-yellow-300 drop-shadow-lg" 
+                                style={{ 
+                                  fontSize: 'clamp(0.9rem, 3.8cqw, 1.2rem)',
+                                  textShadow: '0 2px 4px rgba(0,0,0,0.8)'
+                                }}>
+                            {player.rank}
+                          </span>
+                        </div>
 
-                          {/* Avatar - Kisebb */}
-                          <div className="flex-shrink-0">
-                            {player.avatar_url ? (
-                              <img 
-                                src={player.avatar_url} 
-                                alt={player.username}
-                                className="w-9 h-9 rounded-full border-2 border-yellow-400 shadow-lg object-cover"
-                              />
-                            ) : (
-                              <div className="w-9 h-9 rounded-full border-2 border-yellow-400 shadow-lg bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
-                                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                </svg>
-                              </div>
-                            )}
-                          </div>
+                        {/* Avatar - Nagyobb */}
+                        <div className="flex-shrink-0">
+                          {player.avatar_url ? (
+                            <img 
+                              src={player.avatar_url} 
+                              alt={player.username}
+                              className="w-10 h-10 rounded-full border-2 border-yellow-400 shadow-lg object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full border-2 border-yellow-400 shadow-lg bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
+                              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                              </svg>
+                            </div>
+                          )}
+                        </div>
 
-                          {/* Username */}
-                          <div className="flex-1 min-w-0">
-                            <p className="font-bold text-white truncate drop-shadow-md" 
-                               style={{ 
-                                 fontSize: 'clamp(0.75rem, 3cqw, 0.95rem)',
-                                 textShadow: '0 2px 4px rgba(0,0,0,0.7)'
-                               }}>
-                              {player.username}
-                            </p>
-                          </div>
+                        {/* Username - Nagyobb */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-white truncate drop-shadow-md" 
+                             style={{ 
+                               fontSize: 'clamp(0.8rem, 3.3cqw, 1rem)',
+                               textShadow: '0 2px 4px rgba(0,0,0,0.7)'
+                             }}>
+                            {player.username}
+                          </p>
+                        </div>
 
-                          {/* Score */}
-                          <div className="flex-shrink-0">
-                            <p className="font-black text-yellow-200 drop-shadow-md" 
-                               style={{ 
-                                 fontSize: 'clamp(0.8rem, 3.2cqw, 1rem)',
-                                 textShadow: '0 2px 4px rgba(0,0,0,0.8)'
-                               }}>
-                              {player.total_correct_answers.toLocaleString()}
-                            </p>
-                          </div>
+                        {/* Score - Nagyobb */}
+                        <div className="flex-shrink-0">
+                          <p className="font-black text-yellow-200 drop-shadow-md" 
+                             style={{ 
+                               fontSize: 'clamp(0.85rem, 3.5cqw, 1.05rem)',
+                               textShadow: '0 2px 4px rgba(0,0,0,0.8)'
+                             }}>
+                            {player.total_correct_answers.toLocaleString()}
+                          </p>
+                        </div>
 
                           {/* Crowns for Top 3 */}
                           <div className="flex-shrink-0">
