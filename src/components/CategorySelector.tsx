@@ -88,14 +88,32 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
       {/* Casino lights animation */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-60 animate-pulse"></div>
       
-      {/* Back button */}
-      <button
-        onClick={() => window.location.href = '/dashboard'}
-        className="p-3 mb-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50 neon-border"
-        title="Vissza"
-      >
-        <LogOut className="w-6 h-6 -scale-x-100" />
-      </button>
+      {/* Back Button - 3D Round Style */}
+      <div className="fixed top-4 left-4 z-50">
+        <button
+          onClick={() => window.location.href = '/dashboard'}
+          className="relative p-3 rounded-full hover:scale-110 transition-all"
+          title="Vissza a dashboardra"
+        >
+          {/* BASE SHADOW */}
+          <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
+          
+          {/* OUTER FRAME */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
+          
+          {/* MIDDLE FRAME */}
+          <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+          
+          {/* INNER LAYER */}
+          <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+          
+          {/* SPECULAR HIGHLIGHT */}
+          <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+          
+          {/* Icon */}
+          <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
+        </button>
+      </div>
       
       <div className="max-w-2xl w-full relative z-10">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 font-poppins bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-400 to-purple-400 animate-pulse">
@@ -113,12 +131,38 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
               <button
                 key={category.id}
                 onClick={() => handleCategorySelect(category.id)}
-                className={`group relative overflow-hidden rounded-2xl p-4 border-3 ${category.borderColor} bg-black/80 hover:border-yellow-400/70 transition-all duration-300 hover:scale-105 ${category.shadowColor} shadow-xl text-left touch-manipulation active:scale-95 aspect-square flex flex-col justify-between casino-card`}
+                className="group relative overflow-hidden rounded-2xl p-4 bg-black/80 transition-all duration-300 hover:scale-105 text-left touch-manipulation active:scale-95 aspect-square flex flex-col justify-between"
+                style={{ perspective: '1000px' }}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-20 group-hover:opacity-30 transition-opacity duration-300`}></div>
+                {/* Deep 3D Layers */}
+                {/* BASE SHADOW */}
+                <div className="absolute inset-0 bg-black/60 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
                 
-                <div className="relative z-10 flex flex-col h-full items-center justify-between">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-3 shadow-lg gold-glow`}>
+                {/* OUTER FRAME - Level 1 */}
+                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${category.gradient} opacity-90 border-3 ${category.borderColor} shadow-2xl`} style={{ transform: 'translateZ(0px)' }} aria-hidden />
+                
+                {/* MIDDLE FRAME - Level 2 */}
+                <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+                
+                {/* INNER LAYER - Level 3 */}
+                <div className={`absolute inset-[6px] rounded-2xl bg-gradient-to-br ${category.gradient} opacity-30`} style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+                
+                {/* SPECULAR HIGHLIGHT */}
+                <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+                
+                {/* Animated Shine Effect */}
+                <div 
+                  className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden"
+                  style={{ transform: 'translateZ(40px)' }}
+                  aria-hidden
+                >
+                  <div 
+                    className="absolute top-0 -left-full h-full w-1/2 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 animate-[shine_3s_ease-in-out_infinite]"
+                  />
+                </div>
+                
+                <div className="relative z-10 flex flex-col h-full items-center justify-between" style={{ transform: 'translateZ(50px)' }}>
+                  <div className={`p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-3 shadow-2xl`} style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.4)' }}>
                     <Icon className="w-12 h-12" />
                   </div>
                   
@@ -131,6 +175,14 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                     </p>
                   </div>
                 </div>
+                
+                {/* Keyframe for shine animation */}
+                <style>{`
+                  @keyframes shine {
+                    0% { transform: translateX(-100%) skewX(-12deg); }
+                    100% { transform: translateX(300%) skewX(-12deg); }
+                  }
+                `}</style>
               </button>
             );
           })}
