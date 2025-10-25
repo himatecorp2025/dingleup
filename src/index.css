@@ -381,13 +381,22 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 60px;
+  max-height: 60px;
 }
 
 @media (min-width: 640px) {
   .clip-hexagon-tall {
     clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
     min-height: 70px;
+    max-height: 70px;
     padding: 16px 12px;
+  }
+}
+
+@media (min-width: 768px) {
+  .clip-hexagon-tall {
+    min-height: 80px;
+    max-height: 80px;
   }
 }
 
