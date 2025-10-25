@@ -122,35 +122,36 @@ const Profile = () => {
 
   const TrophyIcon = () => (
     <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(74,222,128,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#4ade80" strokeWidth="2" strokeLinecap="round"/>
-      <rect x="6" y="4" width="12" height="12" rx="1" stroke="#4ade80" strokeWidth="2" fill="#4ade80" fillOpacity="0.4"/>
-      <rect x="9" y="16" width="6" height="5" rx="1" stroke="#4ade80" strokeWidth="2" fill="#4ade80" fillOpacity="0.3"/>
-      <line x1="8" y1="21" x2="16" y2="21" stroke="#4ade80" strokeWidth="2" strokeLinecap="round"/>
-      <circle cx="12" cy="9" r="2" fill="#4ade80"/>
+      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"/>
+      <path d="M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"/>
+      <rect x="6" y="4" width="12" height="12" rx="2" stroke="#22c55e" strokeWidth="2.5" fill="#22c55e" fillOpacity="0.6"/>
+      <rect x="9" y="16" width="6" height="5" rx="1" stroke="#22c55e" strokeWidth="2.5" fill="#22c55e" fillOpacity="0.5"/>
+      <line x1="7" y1="21" x2="17" y2="21" stroke="#22c55e" strokeWidth="3" strokeLinecap="round"/>
+      <circle cx="12" cy="10" r="2.5" fill="#fff"/>
     </svg>
   );
 
   const CalendarIcon = () => (
     <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(96,165,250,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="6" width="18" height="16" rx="2" stroke="#60a5fa" strokeWidth="2" fill="#60a5fa" fillOpacity="0.3"/>
-      <line x1="3" y1="10" x2="21" y2="10" stroke="#60a5fa" strokeWidth="2"/>
-      <line x1="7" y1="3" x2="7" y2="7" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round"/>
-      <line x1="17" y1="3" x2="17" y2="7" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round"/>
-      <rect x="7" y="13" width="2" height="2" fill="#60a5fa" rx="0.5"/>
-      <rect x="11" y="13" width="2" height="2" fill="#60a5fa" rx="0.5"/>
-      <rect x="15" y="13" width="2" height="2" fill="#60a5fa" rx="0.5"/>
-      <rect x="7" y="17" width="2" height="2" fill="#60a5fa" rx="0.5"/>
-      <rect x="11" y="17" width="2" height="2" fill="#60a5fa" rx="0.5"/>
+      <rect x="3" y="6" width="18" height="16" rx="2" stroke="#3b82f6" strokeWidth="2.5" fill="#3b82f6" fillOpacity="0.5"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" strokeWidth="2.5"/>
+      <line x1="7" y1="3" x2="7" y2="8" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="8" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
+      <rect x="7" y="13" width="3" height="3" fill="#fff" rx="1"/>
+      <rect x="11" y="13" width="3" height="3" fill="#fff" rx="1"/>
+      <rect x="15" y="13" width="3" height="3" fill="#fff" rx="1"/>
+      <rect x="7" y="17" width="3" height="3" fill="#fff" rx="1"/>
+      <rect x="11" y="17" width="3" height="3" fill="#fff" rx="1"/>
     </svg>
   );
 
-  const PurpleTrophyIcon = () => (
+  const ShareIcon = () => (
     <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(192,132,252,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#c084fc" strokeWidth="2" strokeLinecap="round"/>
-      <rect x="6" y="4" width="12" height="12" rx="1" stroke="#c084fc" strokeWidth="2" fill="#c084fc" fillOpacity="0.4"/>
-      <rect x="9" y="16" width="6" height="5" rx="1" stroke="#c084fc" strokeWidth="2" fill="#c084fc" fillOpacity="0.3"/>
-      <line x1="8" y1="21" x2="16" y2="21" stroke="#c084fc" strokeWidth="2" strokeLinecap="round"/>
-      <circle cx="12" cy="9" r="2" fill="#c084fc"/>
+      <circle cx="18" cy="5" r="3" stroke="#a855f7" strokeWidth="2.5" fill="#a855f7" fillOpacity="0.6"/>
+      <circle cx="6" cy="12" r="3" stroke="#a855f7" strokeWidth="2.5" fill="#a855f7" fillOpacity="0.6"/>
+      <circle cx="18" cy="19" r="3" stroke="#a855f7" strokeWidth="2.5" fill="#a855f7" fillOpacity="0.6"/>
+      <line x1="8.5" y1="10.5" x2="15.5" y2="6.5" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="8.5" y1="13.5" x2="15.5" y2="17.5" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round"/>
     </svg>
   );
 
@@ -459,7 +460,7 @@ const Profile = () => {
           
           {/* Content */}
           <div className="relative z-10">
-            <PurpleTrophyIcon />
+            <ShareIcon />
             <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Meghívó kód (kattints a másoláshoz)</p>
             <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.invitation_code}</p>
           </div>
