@@ -332,7 +332,10 @@ const GamePreview = () => {
     
     const canPlay = await spendLife();
     if (!canPlay) {
-      // Nincs toast - a UI mutatja az életek számát
+      // Show insufficient lives dialog
+      setInsufficientType('lives');
+      setRequiredAmount(1);
+      setShowInsufficientDialog(true);
       setGameState('category-select');
       return;
     }
@@ -880,6 +883,23 @@ const GamePreview = () => {
     return (
       <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
         <CategorySelector onSelect={startGameWithCategory} />
+        
+        {/* Insufficient Resources Dialog for category selection */}
+        <InsufficientResourcesDialog
+          open={showInsufficientDialog}
+          onOpenChange={setShowInsufficientDialog}
+          type={insufficientType}
+          requiredAmount={requiredAmount}
+          currentAmount={insufficientType === 'coins' ? profile.coins : profile.lives}
+          onGoToShop={() => {
+            // Keep modal open for in-game purchase
+          }}
+          userId={userId}
+          onPurchaseComplete={async () => {
+            await refreshProfile();
+            setShowInsufficientDialog(false);
+          }}
+        />
         
         {/* Lives & Coins Display - 3D Design - Smaller & Responsive */}
         <div className="fixed top-4 right-4 z-50">

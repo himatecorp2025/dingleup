@@ -1,11 +1,6 @@
 import { GameCategory } from '@/types/game';
 import { Heart, Brain, Palette, TrendingUp, ArrowLeft, LogOut } from 'lucide-react';
 import { MusicControls } from './MusicControls';
-import { InsufficientResourcesDialog } from './InsufficientResourcesDialog';
-import { useGameProfile } from '@/hooks/useGameProfile';
-import { supabase } from '@/integrations/supabase/client';
-import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
 import { TutorialManager } from './tutorial/TutorialManager';
 
 interface CategorySelectorProps {
@@ -13,36 +8,11 @@ interface CategorySelectorProps {
 }
 
 const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
-  const [userId, setUserId] = useState<string | undefined>();
-  const { profile, refreshProfile } = useGameProfile(userId);
-  const [showInsufficientDialog, setShowInsufficientDialog] = useState(false);
-
-  // Auth check
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUserId(session.user.id);
-      }
-    });
-  }, []);
 
   const handleCategorySelect = (category: GameCategory) => {
-    // Check if user has enough lives
-    if (profile && profile.lives < 1) {
-      setShowInsufficientDialog(true);
-      return;
-    }
     onSelect(category);
   };
 
-  const handleGoToShop = () => {
-    window.location.href = '/shop';
-  };
-
-  const handlePurchaseComplete = () => {
-    refreshProfile();
-    toast.success('Vásárlás sikeres! Most már játszhatsz! 🎉');
-  };
   const categories = [
     {
       id: 'health' as GameCategory,
@@ -176,7 +146,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                       {/* INNER HIGHLIGHT */}
                       <div className="absolute inset-[3px] rounded-lg pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 20%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
                       
-                      <Icon className="w-[85px] h-[85px] sm:w-[102px] sm:h-[102px] relative z-10" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
+                      <Icon className="w-[77px] h-[77px] sm:w-[92px] sm:h-[92px] relative z-10" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
                     </div>
                   </div>
                   
@@ -216,16 +186,6 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
       
       {/* Note: Daily Gift dialog is now ONLY shown on Dashboard if canClaim is true */}
       
-      <InsufficientResourcesDialog
-        open={showInsufficientDialog}
-        onOpenChange={setShowInsufficientDialog}
-        type="lives"
-        requiredAmount={1}
-        currentAmount={profile?.lives || 0}
-        onGoToShop={handleGoToShop}
-        userId={userId}
-        onPurchaseComplete={handlePurchaseComplete}
-      />
       
       <TutorialManager route="topics" />
     </div>
