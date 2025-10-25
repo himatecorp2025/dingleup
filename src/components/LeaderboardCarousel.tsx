@@ -14,26 +14,79 @@ export const LeaderboardCarousel = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetchTopPlayers();
-    
-    // Realtime frissítés
-    const interval = setInterval(fetchTopPlayers, 10000);
+    refresh();
+    // Ugyanaz a frissítési ritmus, mint a Ranglista oldalon
+    const interval = setInterval(refresh, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  const fetchTopPlayers = async () => {
+  const refresh = async () => {
+    const primary = await fetchFromGlobalLeaderboard();
+    if (primary.length >= 3) {
+      setTopPlayers(primary.slice(0, 25));
+      return;
+    }
+    const fallback = await fetchFromWeeklyRankings();
+    setTopPlayers(fallback.slice(0, 25));
+  };
+
+  const fetchFromGlobalLeaderboard = async (): Promise<LeaderboardEntry[]> => {
     try {
       const { data, error } = await supabase
         .from('global_leaderboard')
         .select('user_id, username, total_correct_answers, avatar_url')
         .order('total_correct_answers', { ascending: false })
-        .limit(25);
+        .limit(100);
 
       if (error) throw error;
-      console.log('[LeaderboardCarousel] Fetched players:', data?.length);
-      setTopPlayers(data || []);
+      return data || [];
     } catch (error) {
-      console.error('[LeaderboardCarousel] Error fetching top players:', error);
+      console.error('[LeaderboardCarousel] global_leaderboard error:', error);
+      return [];
+    }
+  };
+
+  const getWeekStart = () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday.toISOString().split('T')[0];
+  };
+
+  const fetchFromWeeklyRankings = async (): Promise<LeaderboardEntry[]> => {
+    try {
+      const weekStart = getWeekStart();
+      const { data, error } = await supabase
+        .from('weekly_rankings')
+        .select('user_id, total_correct_answers, profiles:profiles!inner(username, avatar_url)')
+        .eq('week_start', weekStart)
+        .order('total_correct_answers', { ascending: false })
+        .limit(200);
+
+      if (error) throw error;
+
+      const map = new Map<string, LeaderboardEntry>();
+      (data || []).forEach((row: any) => {
+        const uid = row.user_id;
+        const name = row.profiles?.username ?? 'Player';
+        const avatar = row.profiles?.avatar_url ?? null;
+        const prev = map.get(uid);
+        const total = (prev?.total_correct_answers || 0) + (row.total_correct_answers || 0);
+        map.set(uid, {
+          user_id: uid,
+          username: name,
+          avatar_url: avatar,
+          total_correct_answers: total,
+        });
+      });
+
+      return Array.from(map.values()).sort((a, b) => b.total_correct_answers - a.total_correct_answers);
+    } catch (error) {
+      console.error('[LeaderboardCarousel] weekly_rankings fallback error:', error);
+      return [];
     }
   };
 
@@ -47,20 +100,15 @@ export const LeaderboardCarousel = () => {
 
     const scroll = () => {
       scrollPosition += scrollSpeed;
-      
       if (scrollPosition >= container.scrollWidth / 2) {
         scrollPosition = 0;
       }
-      
       container.scrollLeft = scrollPosition;
       animationFrameId = requestAnimationFrame(scroll);
     };
 
     animationFrameId = requestAnimationFrame(scroll);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
+    return () => cancelAnimationFrame(animationFrameId);
   }, [topPlayers]);
 
   const getHexagonColor = (index: number) => {
@@ -71,115 +119,37 @@ export const LeaderboardCarousel = () => {
   };
 
   const getCrownColor = (index: number) => {
-    if (index === 0) return 'text-yellow-300'; // Arany korona
-    if (index === 1) return 'text-gray-200'; // Ezüst korona
-    if (index === 2) return 'text-orange-300'; // Bronz korona
+    if (index === 0) return 'text-yellow-300';
+    if (index === 1) return 'text-gray-200';
+    if (index === 2) return 'text-orange-300';
     return '';
   };
 
-  if (topPlayers.length === 0) {
-    return null;
-  }
+  if (topPlayers.length === 0) return null;
 
   return (
-    <div className="w-full py-2">
-      <h3 className="text-center text-xs sm:text-sm font-black text-white mb-2 drop-shadow-lg">
-        🏆 TOP 25 JÁTÉKOS 🏆
-      </h3>
-      
-      <div
-        ref={scrollContainerRef}
-        className="overflow-x-hidden whitespace-nowrap h-20 sm:h-24"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        <div className="inline-flex gap-2 sm:gap-3">
-          {/* Duplikált tömb a seamless loophoz */}
+    <div className="w-full py-1">
+      <h3 className="text-center text-xs sm:text-sm font-black text-white mb-1 drop-shadow-lg">🏆 TOP 25 JÁTÉKOS 🏆</h3>
+      <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="inline-flex gap-2 sm:gap-3 px-2">
           {[...topPlayers, ...topPlayers].map((player, index) => {
             const actualIndex = index % topPlayers.length;
             const showCrown = actualIndex < 3;
-            
             return (
-              <div
-                key={`${player.user_id}-${index}`}
-                className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 transform hover:scale-110 transition-transform duration-200"
-              >
+              <div key={`${player.user_id}-${index}`} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
                 {/* BASE SHADOW */}
-                <div
-                  className="absolute clip-hexagon"
-                  style={{
-                    top: '3px',
-                    left: '3px',
-                    right: '-3px',
-                    bottom: '-3px',
-                    background: 'rgba(0,0,0,0.5)',
-                    filter: 'blur(4px)',
-                  }}
-                  aria-hidden
-                />
-
+                <div className="absolute clip-hexagon" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} aria-hidden />
                 {/* OUTER FRAME */}
-                <div
-                  className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(actualIndex)} border-2 shadow-xl`}
-                  style={{
-                    borderColor: actualIndex === 0 ? '#fbbf24' : 
-                                actualIndex === 1 ? '#d1d5db' : 
-                                actualIndex === 2 ? '#fb923c' : '#a855f7',
-                    boxShadow: `0 0 15px ${
-                      actualIndex === 0 ? 'rgba(251,191,36,0.6)' : 
-                      actualIndex === 1 ? 'rgba(209,213,219,0.6)' : 
-                      actualIndex === 2 ? 'rgba(251,146,60,0.6)' : 'rgba(168,85,247,0.6)'
-                    }`
-                  }}
-                  aria-hidden
-                />
-
+                <div className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(actualIndex)} border-2 shadow-xl`} style={{ borderColor: actualIndex === 0 ? '#fbbf24' : actualIndex === 1 ? '#d1d5db' : actualIndex === 2 ? '#fb923c' : '#a855f7' }} aria-hidden />
                 {/* MIDDLE FRAME */}
-                <div
-                  className="absolute inset-[2px] clip-hexagon"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))',
-                    boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)',
-                  }}
-                  aria-hidden
-                />
-
+                <div className="absolute inset-[2px] clip-hexagon" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)' }} aria-hidden />
                 {/* INNER LAYER */}
-                <div
-                  className="absolute clip-hexagon"
-                  style={{
-                    top: '4px',
-                    left: '4px',
-                    right: '4px',
-                    bottom: '4px',
-                    boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)',
-                  }}
-                  aria-hidden
-                />
-
-                {/* SPECULAR HIGHLIGHT */}
-                <div
-                  className="absolute clip-hexagon pointer-events-none"
-                  style={{
-                    top: '4px',
-                    left: '4px',
-                    right: '4px',
-                    bottom: '4px',
-                    background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
-                  }}
-                  aria-hidden
-                />
-
-                {/* Content - korona az első 3 helyezettnél */}
+                <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+                {/* Content */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-1">
-                  {showCrown && (
-                    <Crown className={`w-3 h-3 sm:w-4 sm:h-4 mb-0.5 ${getCrownColor(actualIndex)} drop-shadow-lg`} />
-                  )}
-                  <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
-                    {player.username}
-                  </p>
-                  <p className="text-xs sm:text-sm font-black text-white drop-shadow-lg" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
-                    {player.total_correct_answers}
-                  </p>
+                  {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 mb-0.5 ${getCrownColor(actualIndex)}`} />}
+                  <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
+                  <p className="text-xs sm:text-sm font-black text-white drop-shadow-lg">{player.total_correct_answers}</p>
                 </div>
               </div>
             );
