@@ -14,6 +14,7 @@ import { usePromoScheduler } from '@/hooks/usePromoScheduler';
 import { useScrollBehavior } from '@/hooks/useScrollBehavior';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useWallet } from '@/hooks/useWallet';
+import { useRealtimeWallet } from '@/hooks/useRealtimeWallet';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useWeeklyWinnersPopup } from '@/hooks/useWeeklyWinnersPopup';
@@ -49,6 +50,15 @@ const Dashboard = () => {
   const { markActive } = useActivityTracker('route_view');
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { walletData, serverDriftMs, refetchWallet } = useWallet(userId);
+  
+  // Realtime wallet updates for instant sync
+  useRealtimeWallet({
+    userId,
+    onWalletUpdate: () => {
+      refetchWallet();
+    },
+    enabled: !!userId,
+  });
   const { loginState } = useWeeklyLogin(userId);
   
   // Auto logout on inactivity with warning
