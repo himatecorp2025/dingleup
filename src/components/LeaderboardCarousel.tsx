@@ -13,7 +13,7 @@ export const LeaderboardCarousel = () => {
   const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollPausedRef = useRef(false);
-  const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     refresh();
@@ -23,17 +23,21 @@ export const LeaderboardCarousel = () => {
   }, []);
 
   const refresh = async () => {
-    // Ugyanaz az adatforrás, mint a Ranglista oldalon: global_leaderboard
+    // 1) Publikus nézet (RLS gond mentes)
+    const fromPublic = await fetchFromLeaderboardPublic();
+    if (fromPublic.length > 0) {
+      setTopPlayers(fromPublic.slice(0, 25));
+      return;
+    }
+    // 2) Global leaderboard (ha a felhasználó jogosult, különben 0-1 rekord)
     const fromGlobal = await fetchFromGlobalLeaderboard();
     if (fromGlobal.length > 0) {
       setTopPlayers(fromGlobal.slice(0, 25));
       return;
     }
-    // Fallback: publikus nézet
-    const fromPublic = await fetchFromLeaderboardPublic();
-    if (fromPublic.length > 0) {
-      setTopPlayers(fromPublic.slice(0, 25));
-    }
+    // 3) Heti rang fallback (összesítve profilokkal)
+    const fromWeekly = await fetchFromWeeklyRankings();
+    setTopPlayers(fromWeekly.slice(0, 25));
   };
 
   const fetchFromLeaderboardPublic = async (): Promise<LeaderboardEntry[]> => {
@@ -227,6 +231,7 @@ export const LeaderboardCarousel = () => {
         <div className="inline-flex gap-2 sm:gap-3 px-2">
           {[...topPlayers, ...topPlayers].map((player, index) => {
             const actualIndex = index % topPlayers.length;
+            const rank = actualIndex + 1;
             const showCrown = actualIndex < 3;
             return (
               <div key={`${player.user_id}-${index}`} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
@@ -242,7 +247,8 @@ export const LeaderboardCarousel = () => {
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-1">
                   {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 mb-0.5 ${getCrownColor(actualIndex)}`} />}
                   <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
-                  <p className="text-xs sm:text-sm font-black text-white drop-shadow-lg">{player.total_correct_answers}</p>
+                  <p className="text-[9px] sm:text-[10px] font-semibold text-purple-200 drop-shadow-lg">{rank}. helyezett</p>
+                  <p className="text-[10px] sm:text-xs font-bold text-white drop-shadow-lg">Helyes válaszok: {player.total_correct_answers}</p>
                 </div>
               </div>
             );
