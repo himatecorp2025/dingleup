@@ -143,9 +143,9 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* "G" Letter SVG centered - larger to fill hexagon */}
-              <div className="absolute inset-0 clip-hexagon flex items-center justify-center z-10">
-                <div className="w-10 h-10 sm:w-14 sm:h-14 animate-pulse" style={{ animationDuration: '2s' }}>
+              {/* "G" Letter SVG centered - fills hexagon but stays centered */}
+              <div className="absolute inset-0 clip-hexagon flex items-center justify-center z-10 p-1 sm:p-1.5">
+                <div className="w-full h-full animate-pulse" style={{ animationDuration: '2s' }}>
                   {geniusSvg}
                 </div>
               </div>
