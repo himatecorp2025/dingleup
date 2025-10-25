@@ -261,11 +261,11 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
       setHasMore(data?.messages?.length === 50);
       
       if (initial) {
-        // Scroll to bottom on initial load
+        // Scroll to bottom on initial load with longer delay to ensure DOM is ready
         setTimeout(() => {
           scrollToBottom('auto', 'initial-load');
           isNearBottomRef.current = true;
-        }, 100);
+        }, 300);
       }
     } catch (error) {
       console.error('Error loading messages:', error);
