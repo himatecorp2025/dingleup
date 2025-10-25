@@ -11,7 +11,7 @@ interface BackgroundMusicState {
 
 export const useBackgroundMusicStore = create<BackgroundMusicState>((set) => ({
   enabled: true,
-  volume: 0.05, // Default 5%
+  volume: 0.03, // Default 3%
   loaded: false,
   
   setEnabled: (enabled) => {
@@ -30,7 +30,7 @@ export const useBackgroundMusicStore = create<BackgroundMusicState>((set) => ({
     const savedVolume = localStorage.getItem('bgMusicVolume');
     
     const newEnabled = savedEnabled ? JSON.parse(savedEnabled) : true;
-    const newVolume = savedVolume ? parseFloat(savedVolume) : 0.05; // Default 5%
+    const newVolume = savedVolume ? parseFloat(savedVolume) : 0.03; // Default 3%
     
     console.log('[BackgroundMusicStore] Loading settings:', { 
       enabled: newEnabled, 
