@@ -331,36 +331,48 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                     <div className="absolute inset-[3px] bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 rounded-2xl"
                          style={{ boxShadow: 'inset 0 1px 0 #fef3c7' }} />
                     
-                    <div className="relative bg-gradient-to-br from-yellow-500/95 via-yellow-600/95 to-orange-600/95 rounded-2xl px-6 py-3"
+                    <div className="relative bg-gradient-to-br from-yellow-500/95 via-yellow-600/95 to-orange-600/95 rounded-2xl px-6 py-3 overflow-visible"
                          style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)' }}>
                       <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
                            style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)' }} />
                       
-                      <div className="relative flex items-center justify-center gap-3">
-                        <svg viewBox="0 0 100 100" className="w-12 h-12 drop-shadow-2xl flex-shrink-0" style={{ animation: 'coinPulse 1.5s ease-in-out infinite' }}>
+                      <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                           style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)' }}>
+                        <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ animation: 'coinPulse 1.5s ease-in-out infinite' }}>
                           <defs>
-                            <radialGradient id="coinGrad">
+                            <radialGradient id="coinGradL">
                               <stop offset="0%" stopColor="#fef3c7" />
                               <stop offset="50%" stopColor="#fbbf24" />
                               <stop offset="100%" stopColor="#f59e0b" />
                             </radialGradient>
                           </defs>
-                          <circle cx="50" cy="50" r="48" fill="url(#coinGrad)" stroke="#d97706" strokeWidth="3" />
+                          <circle cx="50" cy="50" r="48" fill="url(#coinGradL)" stroke="#d97706" strokeWidth="3" />
                           <circle cx="50" cy="50" r="38" fill="none" stroke="#fef3c7" strokeWidth="2" opacity="0.6" />
                           <text x="50" y="65" fontSize="40" fontWeight="bold" fill="#92400e" textAnchor="middle" fontFamily="serif">$</text>
                         </svg>
-                        
-                        <div className="flex items-center gap-2">
-                          <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
-                                style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
-                            +2,500
-                          </span>
-                          <svg viewBox="0 0 100 100" className="w-12 h-12 drop-shadow-2xl flex-shrink-0" style={{ animation: 'coinPulse 1.5s ease-in-out infinite 0.3s' }}>
-                            <circle cx="50" cy="50" r="48" fill="url(#coinGrad)" stroke="#d97706" strokeWidth="3" />
-                            <circle cx="50" cy="50" r="38" fill="none" stroke="#fef3c7" strokeWidth="2" opacity="0.6" />
-                            <text x="50" y="65" fontSize="40" fontWeight="bold" fill="#92400e" textAnchor="middle" fontFamily="serif">$</text>
-                          </svg>
-                        </div>
+                      </div>
+
+                      <div className="relative flex items-center justify-center">
+                        <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
+                              style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
+                          +2,500
+                        </span>
+                      </div>
+
+                      <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2"
+                           style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)' }}>
+                        <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ animation: 'coinPulse 1.5s ease-in-out infinite 0.3s' }}>
+                          <defs>
+                            <radialGradient id="coinGradR">
+                              <stop offset="0%" stopColor="#fef3c7" />
+                              <stop offset="50%" stopColor="#fbbf24" />
+                              <stop offset="100%" stopColor="#f59e0b" />
+                            </radialGradient>
+                          </defs>
+                          <circle cx="50" cy="50" r="48" fill="url(#coinGradR)" stroke="#d97706" strokeWidth="3" />
+                          <circle cx="50" cy="50" r="38" fill="none" stroke="#fef3c7" strokeWidth="2" opacity="0.6" />
+                          <text x="50" y="65" fontSize="40" fontWeight="bold" fill="#92400e" textAnchor="middle" fontFamily="serif">$</text>
+                        </svg>
                       </div>
                     </div>
                   </div>
@@ -379,10 +391,10 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                       <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
                            style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)' }} />
                       
-                      <div className="relative flex items-center justify-center gap-2">
-                        {/* Left heart - inline, 50% overhang */}
-                        <svg viewBox="0 0 100 100" className="drop-shadow-2xl flex-shrink-0"
-                             style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)', marginLeft: 'calc(clamp(32px, 9cqw, 48px) / -2)', animation: 'heartPulse 1.5s ease-in-out infinite' }}>
+                      {/* Absolute hearts anchored to box edges, 50% overhang */}
+                      <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                           style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)' }}>
+                        <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ animation: 'heartPulse 1.5s ease-in-out infinite' }}>
                           <defs>
                             <radialGradient id="heartGradRedLeft">
                               <stop offset="0%" stopColor="#fca5a5" />
@@ -393,15 +405,18 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                           <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
                                 fill="url(#heartGradRedLeft)" stroke="#7f1d1d" strokeWidth="2" />
                         </svg>
-                        
+                      </div>
+
+                      <div className="relative flex items-center justify-center">
                         <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
                               style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
                           +50
                         </span>
-                        
-                        {/* Right heart - inline, 50% overhang */}
-                        <svg viewBox="0 0 100 100" className="drop-shadow-2xl flex-shrink-0"
-                             style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)', marginRight: 'calc(clamp(32px, 9cqw, 48px) / -2)', animation: 'heartPulse 1.5s ease-in-out infinite 0.3s' }}>
+                      </div>
+
+                      <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2"
+                           style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)' }}>
+                        <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ animation: 'heartPulse 1.5s ease-in-out infinite 0.3s' }}>
                           <defs>
                             <radialGradient id="heartGradRedRight">
                               <stop offset="0%" stopColor="#fca5a5" />
