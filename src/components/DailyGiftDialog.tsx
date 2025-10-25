@@ -82,7 +82,7 @@ const DailyGiftDialog = ({
 
   useEffect(() => {
     if (open) {
-      const t = setTimeout(() => setContentVisible(true), 50);
+      const t = setTimeout(() => setContentVisible(true), 10);
       return () => {
         clearTimeout(t);
         setContentVisible(false);
@@ -229,13 +229,9 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central HEXAGON (Flat-Top Geometry + 3D Specular) - Zoom from center animation */}
-          <div className={`relative z-10 transition-all ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
-               style={{ 
-                 transitionDuration: '2000ms',
-                 transitionDelay: '200ms',
-                 transformOrigin: 'center center'
-               }}>
+          {/* Central HEXAGON (Flat-Top Geometry + 3D Specular) - DELAY 300ms */}
+          <div className={`relative z-10 transition-all duration-[220ms] ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.96]'}`}
+               style={{ transitionDelay: '300ms' }}>
             
             {/* Background glow behind shield - removed to prevent purple pulse */}
 
