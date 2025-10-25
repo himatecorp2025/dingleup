@@ -37,7 +37,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
             top: '-50%',
             left: '-50%',
             background: 'linear-gradient(120deg, transparent 46%, rgba(255,215,0,0.7) 50%, transparent 54%)',
-            animation: 'shine-sideways 3s linear infinite'
+            animation: 'shine-sideways 1.5s linear infinite'
           }}
         />
       </div>

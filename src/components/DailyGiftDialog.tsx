@@ -409,7 +409,7 @@ const DailyGiftDialog = ({
                           <div className="absolute inset-0 rounded-full"
                                style={{ 
                                  background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
-                                 boxShadow: 'inset 0 0 0 1px hsl(45 90% 38%), 0 3px 8px rgba(0,0,0,0.3), 0 0 12px rgba(255,215,0,0.4)'
+                                 boxShadow: 'inset 0 0 0 1px hsl(45 90% 38%), 0 3px 8px rgba(0,0,0,0.3)'
                                }} />
                           <div className="absolute inset-[2px] rounded-full"
                                style={{ 
@@ -440,12 +440,12 @@ const DailyGiftDialog = ({
                           <div className="absolute inset-0 rounded-full"
                                style={{ 
                                  background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
-                                 boxShadow: 'inset 0 0 0 2px hsl(45 90% 38%), 0 6px 18px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.6)'
+                                 boxShadow: 'inset 0 0 0 2px hsl(45 90% 38%), 0 6px 18px rgba(0,0,0,0.4)'
                                }} />
                           <div className="absolute inset-[3px] rounded-full"
                                style={{ 
                                  background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 88%), hsl(45 100% 72%) 30%, hsl(45 95% 60%) 60%, hsl(45 90% 48%))',
-                                 boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.8), inset 0 -4px 12px rgba(0,0,0,0.5), 0 0 24px rgba(255,215,0,0.5)'
+                                 boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.8), inset 0 -4px 12px rgba(0,0,0,0.5)'
                                }} />
                           {/* Edge rim highlight */}
                           <div className="absolute inset-[4px] rounded-full pointer-events-none"
@@ -472,12 +472,12 @@ const DailyGiftDialog = ({
                         <div className="absolute inset-0 rounded-full"
                              style={{ 
                                background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
-                               boxShadow: 'inset 0 0 0 2px hsl(45 90% 38%), 0 6px 18px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.6)'
+                               boxShadow: 'inset 0 0 0 2px hsl(45 90% 38%), 0 6px 18px rgba(0,0,0,0.4)'
                              }} />
                         <div className="absolute inset-[3px] rounded-full"
                              style={{ 
                                background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 88%), hsl(45 100% 72%) 30%, hsl(45 95% 60%) 60%, hsl(45 90% 48%))',
-                               boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.8), inset 0 -4px 12px rgba(0,0,0,0.5), 0 0 24px rgba(255,215,0,0.5)'
+                               boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.8), inset 0 -4px 12px rgba(0,0,0,0.5)'
                              }} />
                         {/* Edge rim highlight */}
                         <div className="absolute inset-[4px] rounded-full pointer-events-none"
