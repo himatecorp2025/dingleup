@@ -456,13 +456,13 @@ return (
           </div>
         </div>
 
-        {/* Play Button - 3D Diamond - arányosan méretezve */}
+        {/* Play Button - 3D Diamond - közel a TOP 25-höz */}
         <DiamondButton
           data-tutorial="play-button"
           onClick={() => navigate('/game')}
           variant="play"
           size="lg"
-          className="mb-1 sm:mb-2 !py-5 sm:!py-6"
+          className="mb-2 sm:mb-3 !py-5 sm:!py-6"
           style={{
             animation: 'play-pulse 0.8s ease-in-out infinite'
           }}
@@ -487,7 +487,7 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - 3D Diamond - arányosan méretezve, jobb olvashatóság */}
+        {/* Booster Button - 3D Diamond - tiszta olvashatóság, fekete árnyék nélkül */}
         <DiamondButton
           data-tutorial="booster-button"
           onClick={async () => {
@@ -509,7 +509,7 @@ return (
           variant="booster"
           size="lg"
           active={hasActiveBooster}
-          className="mb-1 sm:mb-2 !py-4 sm:!py-5"
+          className="mb-4 sm:mb-5 !py-4 sm:!py-5"
           badge={
             hasActiveBooster ? (
               <span className="flex h-3 w-3">
@@ -519,19 +519,19 @@ return (
             ) : undefined
           }
         >
-          {/* Lightning SVG Icon */}
-          <svg className={`inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]`} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' }}>
+          {/* Lightning SVG Icon - fekete árnyék nélkül */}
+          <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.8))' }}>
             <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
           </svg>
           {hasActiveBooster ? (
-            <span className="text-xs sm:text-sm font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>AKTÍV BOOSTER ({timeRemaining})</span>
+            <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>AKTÍV BOOSTER ({timeRemaining})</span>
           ) : availableBoosters.length > 0 ? (
-            <span className="text-xs sm:text-sm font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>
+            <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>
               BOOSTER AKTIVÁLÁS
               <span className="block text-[10px] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
             </span>
           ) : (
-            <span className="text-xs sm:text-sm font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 0 8px rgba(255,255,255,0.3)' }}>BOOSTER VÁSÁRLÁS</span>
+            <span className="text-xs sm:text-sm font-black" style={{ textShadow: '0 1px 3px rgba(255,255,255,0.5)' }}>BOOSTER VÁSÁRLÁS</span>
           )}
         </DiamondButton>
 
