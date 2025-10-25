@@ -37,33 +37,62 @@ export const ExitGameDialog = ({
         
         {/* Dialog content - fully transparent background, no borders */}
         <div className="relative z-10 flex flex-col items-center gap-6 p-8 max-w-md w-full mx-4 animate-in zoom-in-95 duration-300">
-          {/* Sad SVG Icon */}
-          <div className="w-24 h-24 sm:w-32 sm:h-32 animate-in fade-in slide-in-from-top-4 duration-500">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Face circle with gradient */}
-              <circle cx="50" cy="50" r="45" fill="url(#sadGradient)" stroke="#9333ea" strokeWidth="2"/>
-              <defs>
-                <linearGradient id="sadGradient" x1="0" y1="0" x2="0" y2="100">
-                  <stop offset="0%" stopColor="#a855f7" />
-                  <stop offset="100%" stopColor="#7c3aed" />
-                </linearGradient>
-              </defs>
-              
-              {/* Sad eyes with tears */}
-              <ellipse cx="35" cy="38" rx="4" ry="6" fill="#1f2937"/>
-              <ellipse cx="65" cy="38" rx="4" ry="6" fill="#1f2937"/>
-              
-              {/* Tears - animated */}
-              <path d="M 35 44 Q 34 50, 33 56 Q 32 60, 34 62 Q 36 60, 35 56 Q 34 50, 35 44 Z" fill="#60a5fa" opacity="0.7">
-                <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2s" repeatCount="indefinite"/>
-              </path>
-              <path d="M 65 44 Q 64 50, 63 56 Q 62 60, 64 62 Q 66 60, 65 56 Q 64 50, 65 44 Z" fill="#60a5fa" opacity="0.7">
-                <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2s" repeatCount="indefinite"/>
-              </path>
-              
-              {/* Sad mouth - curved down */}
-              <path d="M 30 65 Q 50 55, 70 65" stroke="#1f2937" strokeWidth="3" strokeLinecap="round" fill="none"/>
-            </svg>
+          {/* Sad SVG Icon - 3D Deep Effect */}
+          <div className="relative w-24 h-24 sm:w-32 sm:h-32 animate-in fade-in slide-in-from-top-4 duration-500">
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(8px)', background: 'rgba(0,0,0,0.4)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400/50 shadow-lg shadow-purple-500/30" aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-purple-500/40 via-purple-600/40 to-purple-700/40" style={{ boxShadow: 'inset 0 10px 25px rgba(255,255,255,0.2), inset 0 -10px 25px rgba(0,0,0,0.5)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 70% at 30% 20%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 65%)' }} aria-hidden />
+            
+            {/* SVG Content */}
+            <div className="absolute inset-[5px] flex items-center justify-center rounded-full overflow-hidden">
+              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                {/* Face circle - transparent to show gradient behind */}
+                <circle cx="50" cy="50" r="40" fill="rgba(139, 92, 246, 0.3)" stroke="none"/>
+                
+                {/* Sad eyes with tears */}
+                <ellipse cx="35" cy="40" rx="4" ry="7" fill="#1f2937"/>
+                <ellipse cx="65" cy="40" rx="4" ry="7" fill="#1f2937"/>
+                
+                {/* Tears - animated with glow */}
+                <g filter="url(#tearGlow)">
+                  <path d="M 35 47 Q 34 53, 33 59 Q 32 63, 34 65 Q 36 63, 35 59 Q 34 53, 35 47 Z" fill="#60a5fa" opacity="0.8">
+                    <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+                  </path>
+                  <path d="M 65 47 Q 64 53, 63 59 Q 62 63, 64 65 Q 66 63, 65 59 Q 64 53, 65 47 Z" fill="#60a5fa" opacity="0.8">
+                    <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+                  </path>
+                </g>
+                
+                {/* Sad mouth - curved down with thicker stroke */}
+                <path d="M 30 68 Q 50 58, 70 68" stroke="#1f2937" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+                
+                {/* Inner highlight on face for depth */}
+                <circle cx="38" cy="32" r="3" fill="rgba(255,255,255,0.3)"/>
+                <circle cx="68" cy="32" r="3" fill="rgba(255,255,255,0.3)"/>
+                
+                {/* Filter definition for tear glow */}
+                <defs>
+                  <filter id="tearGlow">
+                    <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+              </svg>
+            </div>
           </div>
 
           {/* Title - centered */}
