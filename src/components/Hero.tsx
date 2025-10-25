@@ -133,29 +133,46 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons - Deep 3D */}
           <div className="flex flex-col gap-4 justify-center items-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <button
-                onClick={() => navigate('/login')}
-                className="group relative w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg rounded-2xl border-4 border-green-400 shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 hover:scale-105 transition-all animate-pulse-glow-green overflow-hidden"
-                style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-white/30 to-green-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                <div className="relative flex items-center justify-center gap-2">
-                  <Play className="w-5 h-5" />
-                  TESZTJÁTÉK INDÍTÁSA
-                </div>
-              </button>
+              <div className="relative group" style={{ perspective: '1000px' }}>
+                <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(10px)' }} aria-hidden />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-green-700 via-green-600 to-green-900 opacity-90 border-4 border-green-500/70 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+                <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+                <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-br from-green-600/30 to-green-700/30" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.15), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+                <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+                
+                <button
+                  onClick={() => navigate('/login')}
+                  className="relative w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg rounded-2xl overflow-hidden transition-all hover:scale-105"
+                  style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)', transform: 'translateZ(40px)' }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-white/30 to-green-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                  <div className="relative flex items-center justify-center gap-2 drop-shadow-lg">
+                    <Play className="w-5 h-5" />
+                    TESZTJÁTÉK INDÍTÁSA
+                  </div>
+                </button>
+              </div>
 
-              <Button
-                onClick={scrollToFeatures}
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto text-base px-8 py-6 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/20 hover:scale-105 transition-all"
-              >
-                Tudj meg többet
-              </Button>
+              <div className="relative group" style={{ perspective: '1000px' }}>
+                <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(8px)' }} aria-hidden />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-80 border-2 border-purple-500/50 shadow-lg" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+                <div className="absolute inset-[3px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+                <div className="absolute inset-[5px] rounded-2xl bg-gradient-to-br from-white/10 to-black/20 backdrop-blur-sm" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+                <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
+                
+                <Button
+                  onClick={scrollToFeatures}
+                  variant="ghost"
+                  size="lg"
+                  className="relative w-full sm:w-auto text-base px-8 py-6 text-white hover:scale-105 transition-all"
+                  style={{ transform: 'translateZ(40px)' }}
+                >
+                  <span className="drop-shadow-lg">Tudj meg többet</span>
+                </Button>
+              </div>
             </div>
             
           {/* Mobile-only note */}

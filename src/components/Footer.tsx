@@ -17,31 +17,55 @@ const Footer = () => {
             <div className="flex gap-4">
               <a 
                 href="#" 
-                className="bg-muted/50 hover:bg-accent/20 border border-border/50 hover:border-accent/50 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                className="relative group"
                 aria-label="Facebook"
+                style={{ perspective: '500px' }}
               >
-                <Facebook className="w-5 h-5" />
+                <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-80 border-2 border-purple-500/50 shadow-lg group-hover:border-accent/70 transition-all" aria-hidden />
+                <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-black/70 to-black/90" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+                <div className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                  <Facebook className="w-5 h-5 text-white drop-shadow-lg" />
+                </div>
               </a>
               <a 
                 href="#" 
-                className="bg-muted/50 hover:bg-accent/20 border border-border/50 hover:border-accent/50 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                className="relative group"
                 aria-label="Instagram"
+                style={{ perspective: '500px' }}
               >
-                <Instagram className="w-5 h-5" />
+                <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-80 border-2 border-purple-500/50 shadow-lg group-hover:border-accent/70 transition-all" aria-hidden />
+                <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-black/70 to-black/90" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+                <div className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                  <Instagram className="w-5 h-5 text-white drop-shadow-lg" />
+                </div>
               </a>
               <a 
                 href="#" 
-                className="bg-muted/50 hover:bg-accent/20 border border-border/50 hover:border-accent/50 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                className="relative group"
                 aria-label="Twitter"
+                style={{ perspective: '500px' }}
               >
-                <Twitter className="w-5 h-5" />
+                <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-80 border-2 border-purple-500/50 shadow-lg group-hover:border-accent/70 transition-all" aria-hidden />
+                <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-black/70 to-black/90" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+                <div className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                  <Twitter className="w-5 h-5 text-white drop-shadow-lg" />
+                </div>
               </a>
               <a 
                 href="mailto:info@dingleup.hu" 
-                className="bg-muted/50 hover:bg-accent/20 border border-border/50 hover:border-accent/50 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                className="relative group"
                 aria-label="Email"
+                style={{ perspective: '500px' }}
               >
-                <Mail className="w-5 h-5" />
+                <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-80 border-2 border-purple-500/50 shadow-lg group-hover:border-accent/70 transition-all" aria-hidden />
+                <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-black/70 to-black/90" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+                <div className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                  <Mail className="w-5 h-5 text-white drop-shadow-lg" />
+                </div>
               </a>
             </div>
           </div>

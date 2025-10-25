@@ -74,30 +74,47 @@ const DevelopmentStatus = () => {
           </p>
         </div>
 
-        {/* Progress Bars */}
+        {/* Progress Bars - Deep 3D */}
         <div className="grid md:grid-cols-2 gap-6 mb-20">
           {statusItems.map((item, index) => (
-            <Card 
+            <div 
               key={index}
-              className="bg-gradient-card border-border/50 p-6 hover:border-accent/50 transition-all duration-300 animate-fade-in"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="relative animate-fade-in"
+              style={{ animationDelay: `${index * 0.1}s`, perspective: '1000px' }}
             >
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-lg font-semibold font-poppins text-white">{item.category}</h3>
-                <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${item.color}">
-                  {item.progress}%
-                </span>
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-3 border-purple-500/60 shadow-2xl transition-all duration-300 group-hover:border-accent/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-br from-black/80 to-black/90 backdrop-blur-sm" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.1), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+              
+              <div className="relative p-6 transition-all duration-300 hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-semibold font-poppins text-white drop-shadow-lg">{item.category}</h3>
+                  <span className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${item.color} drop-shadow-lg`}>
+                    {item.progress}%
+                  </span>
+                </div>
+                <div className={`h-3 w-full bg-muted rounded-full overflow-hidden mb-4 relative`}>
+                  <div 
+                    className={`h-full bg-gradient-to-r ${item.color} transition-all duration-1000 rounded-full shadow-glow`}
+                    style={{ width: `${item.progress}%` }}
+                  />
+                </div>
+                <p className="text-sm text-white/80 leading-relaxed drop-shadow">
+                  {item.description}
+                </p>
               </div>
-              <div className={`h-3 w-full bg-muted rounded-full overflow-hidden mb-4`}>
-                <div 
-                  className={`h-full bg-gradient-to-r ${item.color} transition-all duration-1000 rounded-full shadow-glow`}
-                  style={{ width: `${item.progress}%` }}
-                />
-              </div>
-              <p className="text-sm text-white/80 leading-relaxed">
-                {item.description}
-              </p>
-            </Card>
+            </div>
           ))}
         </div>
 
@@ -114,30 +131,51 @@ const DevelopmentStatus = () => {
 
         <div className="grid md:grid-cols-2 gap-6">
           {comingSoonFeatures.map((feature, index) => (
-            <Card 
+            <div 
               key={index}
-              className="bg-gradient-card border-border/50 p-6 hover:border-secondary/50 transition-all duration-300 hover:scale-105 group animate-fade-in relative overflow-hidden"
-              style={{ animationDelay: `${index * 0.15}s` }}
+              className="relative group animate-fade-in"
+              style={{ animationDelay: `${index * 0.15}s`, perspective: '1000px' }}
             >
-              {/* Badge */}
-              <div className="absolute top-4 right-4">
-                <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-secondary to-purple-500 text-white shadow-lg">
-                  {feature.badge}
-                </span>
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-3 border-purple-500/60 shadow-2xl transition-all duration-300 group-hover:border-secondary/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-br from-black/80 to-black/90 backdrop-blur-sm" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.1), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+              
+              <div className="relative p-6 transition-all duration-300 group-hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+                {/* Badge */}
+                <div className="absolute top-4 right-4">
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-secondary to-purple-500 text-white shadow-lg drop-shadow-lg">
+                    {feature.badge}
+                  </span>
+                </div>
+
+                {/* Icon */}
+                <div className="relative mb-4" style={{ perspective: '500px' }}>
+                  <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-secondary/20 to-purple-500/20 border border-secondary/30 shadow-lg" aria-hidden />
+                  <div className="relative w-14 h-14 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <feature.icon className="w-7 h-7 text-secondary drop-shadow-lg" />
+                  </div>
+                </div>
+
+                {/* Content */}
+                <h3 className="text-xl font-semibold mb-2 font-poppins pr-24 text-white drop-shadow-lg">{feature.title}</h3>
+                <p className="text-white/80 leading-relaxed drop-shadow">{feature.description}</p>
+
+                {/* Glow effect on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
               </div>
-
-              {/* Icon */}
-              <div className="bg-secondary/20 w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                <feature.icon className="w-7 h-7 text-secondary" />
-              </div>
-
-              {/* Content */}
-              <h3 className="text-xl font-semibold mb-2 font-poppins pr-24 text-white">{feature.title}</h3>
-              <p className="text-white/80 leading-relaxed">{feature.description}</p>
-
-              {/* Glow effect on hover */}
-              <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-            </Card>
+            </div>
           ))}
         </div>
       </div>
