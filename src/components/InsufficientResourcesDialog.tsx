@@ -292,47 +292,86 @@ export const InsufficientResourcesDialog = ({
                 {/* Content Area */}
                 <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0">
                   
-                  {/* Offer box - 500 coins + 15 lives */}
-                  <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-[4vw] mb-[1.5vh] overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] w-full max-w-[85%]">
-                    {/* Animated background sparkles */}
-                    <div className="absolute inset-0 opacity-30">
-                      <Sparkles className="absolute top-2 right-2 w-6 h-6 text-yellow-200" />
-                      <Sparkles className="absolute bottom-2 left-2 w-5 h-5 text-yellow-200" />
-                      <Sparkles className="absolute top-1/2 right-1/4 w-4 h-4 text-yellow-300" />
+                  {/* Resources Display - Simple 3D text effect */}
+                  <div className="relative flex items-center justify-center gap-[3vw] mb-[2vh]">
+                    <div className="flex items-center gap-2 bg-black/40 px-[3vw] py-[1vh] rounded-full shadow-lg">
+                      <Coins className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]" />
+                      <span 
+                        className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-yellow-200"
+                        style={{
+                          textShadow: '0 4px 8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(253,224,71,0.5)'
+                        }}
+                      >
+                        500
+                      </span>
                     </div>
-                    
-                    <div className="relative z-10">
-                      <div className="flex items-center justify-center gap-[3vw] mb-[1.5vh]">
-                        <div className="flex items-center gap-2 bg-black/40 px-[3vw] py-[1vh] rounded-full shadow-lg">
-                          <Coins className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]" />
-                          <span className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-yellow-200 drop-shadow-lg">500</span>
-                        </div>
-                        <div className="text-[clamp(2rem,8vw,3.5rem)] font-black text-yellow-200 drop-shadow-lg">+</div>
-                        <div className="flex items-center gap-2 bg-black/40 px-[3vw] py-[1vh] rounded-full shadow-lg">
-                          <Heart className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,1)]" />
-                          <span className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-red-300 drop-shadow-lg">15</span>
-                        </div>
-                      </div>
-                      
-                      <div className="text-center space-y-[0.5vh]">
-                        <p className="text-[clamp(2.5rem,10vw,4rem)] font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]" ref={flagRef}>
-                          $0.99
-                        </p>
-                        <div className="flex items-center justify-center gap-2">
-                          <Sparkles className="w-4 h-4 text-yellow-300" />
-                          <p className="text-[clamp(0.75rem,3vw,1rem)] text-yellow-100 font-bold drop-shadow-md">Azonnal jóváírva • Játék folytatása</p>
-                          <Sparkles className="w-4 h-4 text-yellow-300" />
-                        </div>
-                      </div>
+                    <div 
+                      className="text-[clamp(2rem,8vw,3.5rem)] font-black text-yellow-200"
+                      style={{
+                        textShadow: '0 4px 8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4)'
+                      }}
+                    >
+                      +
+                    </div>
+                    <div className="flex items-center gap-2 bg-black/40 px-[3vw] py-[1vh] rounded-full shadow-lg">
+                      <Heart className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,1)]" />
+                      <span 
+                        className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-red-300"
+                        style={{
+                          textShadow: '0 4px 8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(248,113,113,0.5)'
+                        }}
+                      >
+                        15
+                      </span>
                     </div>
                   </div>
 
-                  {/* Payment methods */}
-                  <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-[1.5vh] mb-[1.5vh] w-full max-w-[85%]">
-                    <p className="text-center text-white font-bold text-[clamp(0.65rem,2.8vw,0.9rem)] flex items-center justify-center gap-2">
-                      <CreditCard className="w-4 h-4" />
-                      Biztonságos fizetés • Apple Pay • Google Pay • Kártya
+                  {/* Price with "CSAK" label */}
+                  <div className="text-center mb-[2vh]">
+                    <div 
+                      className="text-[clamp(1.1rem,4.5vw,1.8rem)] font-black text-yellow-400 mb-1 uppercase tracking-wider"
+                      style={{
+                        textShadow: '0 3px 6px rgba(0,0,0,0.7), 0 1px 3px rgba(0,0,0,0.5), 0 0 10px rgba(255,215,0,0.6)'
+                      }}
+                    >
+                      CSAK
+                    </div>
+                    <div 
+                      className="text-[clamp(2.5rem,10vw,4rem)] font-black text-white"
+                      style={{
+                        textShadow: '0 5px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), 0 0 24px rgba(255,215,0,0.7)'
+                      }}
+                      ref={flagRef}
+                    >
+                      $0.99
+                    </div>
+                  </div>
+
+                  {/* Additional Info - 3D effect */}
+                  <div className="text-center mb-[2vh]">
+                    <div className="flex items-center justify-center gap-2">
+                      <Sparkles className="w-4 h-4 text-yellow-300 drop-shadow-lg" />
+                      <p 
+                        className="text-[clamp(0.75rem,3vw,1rem)] text-yellow-100 font-bold"
+                        style={{
+                          textShadow: '0 3px 6px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.4)'
+                        }}
+                      >
+                        Azonnal jóváírva • Játék folytatása
+                      </p>
+                      <Sparkles className="w-4 h-4 text-yellow-300 drop-shadow-lg" />
+                    </div>
+                  </div>
+
+                  {/* Payment methods - Smaller, no box */}
+                  <div className="relative flex flex-col items-center gap-2 mb-[2vh]">
+                    <p className="text-[clamp(0.5rem,2vw,0.7rem)] text-white/70 font-medium">
+                      Biztonságos fizetés:
                     </p>
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-white/70" />
+                      <span className="text-[clamp(0.45rem,1.8vw,0.65rem)] text-white/70">Apple Pay • Google Pay • Kártya</span>
+                    </div>
                   </div>
 
                   {/* ELFOGADOM button (ZÖLD) - SAME AS DAILY GIFT */}
