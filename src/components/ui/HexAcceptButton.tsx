@@ -17,15 +17,6 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 }) => {
   return (
     <>
-      {/* Golden GLOW behind button */}
-      <div 
-        className="absolute inset-0 -z-10 pointer-events-none"
-        style={{
-          filter: 'blur(20px)',
-          background: 'radial-gradient(ellipse 110% 60% at 50% 50%, rgba(255,215,0,0.7), transparent 70%)',
-          animation: 'glow-pulse 2s ease-in-out infinite'
-        }}
-      />
       
       <button
         className={`relative grid place-items-center select-none disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
@@ -176,7 +167,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           style={{
             background:
               "linear-gradient(45deg, transparent 46%, rgba(255,215,0,0.65) 50%, transparent 54%)",
-            animation: "slot-shine 3s linear infinite",
+            animation: "slot-shine 1.5s linear infinite",
           }}
         />
       </div>
