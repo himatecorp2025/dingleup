@@ -11,13 +11,9 @@ interface DiamondButtonProps {
   badge?: ReactNode;
 }
 
-// POINTY-TOP hexagon paths (same as HexAcceptButton)
-const HEX_PATH = "polygon(50% 0%, 92% 22.114%, 92% 77.886%, 50% 100%, 8% 77.886%, 8% 22.114%)";
-const HEX_INNER_PATH = "polygon(50% 0.6%, 92% 22.114%, 92% 77.886%, 50% 99.4%, 8% 77.886%, 8% 22.114%)";
-
 /**
- * 3D Diamond Button with hexagon shape - MEGSZERZEM MOST style
- * Uses layered hexagon approach with variant-specific crystal colors
+ * 3D Diamond Button with SVG icons
+ * Hexagonal shape with diamond cross pattern
  */
 export const DiamondButton: React.FC<DiamondButtonProps> = ({
   onClick,
@@ -29,40 +25,87 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
   size = 'lg',
   badge,
 }) => {
-  // Variant-specific crystal gradients (inner fill)
-  const crystalColors = {
-    play: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(155 90% 82%) 0%, hsl(155 85% 68%) 30%, hsl(155 78% 58%) 60%, hsl(155 70% 45%) 100%)',
-    booster: active 
-      ? 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(25 95% 75%) 0%, hsl(25 90% 65%) 30%, hsl(25 85% 55%) 60%, hsl(25 78% 48%) 100%)'
-      : 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(45 95% 75%) 0%, hsl(45 90% 65%) 30%, hsl(45 85% 55%) 60%, hsl(45 78% 48%) 100%)',
-    shop: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(45 95% 75%) 0%, hsl(45 90% 65%) 30%, hsl(45 85% 55%) 60%, hsl(45 78% 48%) 100%)',
-    share: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(215 90% 82%) 0%, hsl(215 85% 68%) 30%, hsl(215 78% 58%) 60%, hsl(215 70% 45%) 100%)',
-    leaderboard: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(280 90% 82%) 0%, hsl(280 85% 68%) 30%, hsl(280 78% 58%) 60%, hsl(280 70% 45%) 100%)',
+  // Variant color schemes
+  const variants = {
+    play: {
+      gradientOuter: 'from-green-700 via-green-600 to-green-900',
+      gradientMiddle: 'from-green-600 via-green-500 to-green-800',
+      gradientInner: 'from-green-500 via-green-600 to-green-700',
+      borderColor: 'border-green-400',
+      shadowColor: 'shadow-[0_0_20px_rgba(34,197,94,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
+      hoverShadow: 'hover:shadow-[0_0_30px_rgba(34,197,94,0.8),0_12px_30px_rgba(0,0,0,0.6)]',
+      glowColor: 'rgba(34,197,94,0.4)',
+      textColor: 'text-white',
+      iconColor: '#ffffff',
+    },
+    booster: {
+      gradientOuter: active ? 'from-orange-600 via-orange-500 to-orange-800' : 'from-yellow-600 via-yellow-500 to-yellow-800',
+      gradientMiddle: active ? 'from-orange-500 via-orange-400 to-orange-700' : 'from-yellow-500 via-yellow-400 to-yellow-700',
+      gradientInner: active ? 'from-orange-400 via-orange-500 to-orange-600' : 'from-yellow-400 via-yellow-500 to-yellow-600',
+      borderColor: active ? 'border-orange-500' : 'border-yellow-500',
+      shadowColor: active
+        ? 'shadow-[0_0_20px_rgba(249,115,22,0.6),0_8px_25px_rgba(0,0,0,0.5)]'
+        : 'shadow-[0_0_20px_rgba(234,179,8,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
+      hoverShadow: active
+        ? 'hover:shadow-[0_0_30px_rgba(249,115,22,0.8),0_12px_30px_rgba(0,0,0,0.6)]'
+        : 'hover:shadow-[0_0_30px_rgba(234,179,8,0.8),0_12px_30px_rgba(0,0,0,0.6)]',
+      glowColor: active ? 'rgba(249,115,22,0.4)' : 'rgba(234,179,8,0.4)',
+      textColor: active ? 'text-white' : 'text-black',
+      iconColor: active ? '#ffffff' : '#000000',
+    },
+    shop: {
+      gradientOuter: 'from-yellow-600 via-yellow-500 to-yellow-800',
+      gradientMiddle: 'from-yellow-500 via-yellow-400 to-yellow-700',
+      gradientInner: 'from-yellow-400 via-yellow-500 to-yellow-600',
+      borderColor: 'border-yellow-400',
+      shadowColor: 'shadow-[0_0_15px_rgba(234,179,8,0.6),0_6px_20px_rgba(0,0,0,0.5)]',
+      hoverShadow: 'hover:shadow-[0_0_25px_rgba(234,179,8,0.8),0_10px_25px_rgba(0,0,0,0.6)]',
+      glowColor: 'rgba(234,179,8,0.3)',
+      textColor: 'text-gray-100',
+      iconColor: '#f3f4f6',
+    },
+    share: {
+      gradientOuter: 'from-blue-700 via-blue-600 to-blue-900',
+      gradientMiddle: 'from-blue-600 via-blue-500 to-blue-800',
+      gradientInner: 'from-blue-500 via-blue-600 to-blue-700',
+      borderColor: 'border-blue-400',
+      shadowColor: 'shadow-[0_0_15px_rgba(59,130,246,0.5),0_6px_20px_rgba(0,0,0,0.5)]',
+      hoverShadow: 'hover:shadow-[0_0_25px_rgba(59,130,246,0.7),0_10px_25px_rgba(0,0,0,0.6)]',
+      glowColor: 'rgba(59,130,246,0.3)',
+      textColor: 'text-white',
+      iconColor: '#ffffff',
+    },
+    leaderboard: {
+      gradientOuter: 'from-purple-700 via-purple-600 to-purple-900',
+      gradientMiddle: 'from-purple-600 via-purple-500 to-purple-800',
+      gradientInner: 'from-purple-500 via-purple-600 to-purple-700',
+      borderColor: 'border-purple-600',
+      shadowColor: 'shadow-[0_0_20px_rgba(168,85,247,0.5),0_8px_25px_rgba(0,0,0,0.5)]',
+      hoverShadow: 'hover:shadow-[0_0_30px_rgba(168,85,247,0.7),0_12px_30px_rgba(0,0,0,0.6)]',
+      glowColor: 'rgba(168,85,247,0.3)',
+      textColor: 'text-white',
+      iconColor: '#ffffff',
+    },
   };
 
-  const crystal = crystalColors[variant];
+  const colors = variants[variant];
 
-  // Size configuration
-  const sizeConfig = {
-    sm: { width: '80px', height: '50px', iconSize: '18px', fontSize: '9px' },
-    md: { width: '100px', height: '60px', iconSize: '22px', fontSize: '11px' },
-    lg: { width: '120px', height: '70px', iconSize: '26px', fontSize: '12px' },
+  // Size classes
+  const sizeClasses = {
+    sm: 'py-2 px-2 text-xs',
+    md: 'py-2 sm:py-2.5 px-3 sm:px-4 text-sm sm:text-base',
+    lg: 'py-2 sm:py-2.5 px-4 sm:px-5 text-base sm:text-lg',
   };
-
-  const config = sizeConfig[size];
 
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`relative grid place-items-center select-none disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`relative w-full ${sizeClasses[size]} font-black rounded-2xl transition-all ${
+        disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'
+      } ${className}`}
       style={{
-        width: config.width,
-        height: config.height,
-        boxSizing: 'border-box',
-        outline: 'none',
-        border: 0,
-        animation: 'diamond-button-pulse 2s ease-in-out infinite',
+        clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
       }}
     >
       {/* Badge indicator */}
@@ -72,159 +115,71 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
         </span>
       )}
 
-      {/* BASE SHADOW (3D depth) */}
+      {/* Outer glow */}
       <div
-        className="absolute"
-        style={{
-          top: '3px',
-          left: '3px',
-          right: '-3px',
-          bottom: '-3px',
-          clipPath: HEX_PATH,
-          background: 'rgba(0,0,0,0.35)',
-          filter: 'blur(3px)',
-        }}
-        aria-hidden
+        className="absolute inset-0 rounded-full blur-xl opacity-50 animate-pulse -z-10"
+        style={{ background: colors.glowColor }}
       />
 
-      {/* OUTER GOLD FRAME (dark diagonal gradient) */}
+      {/* 3D Shadow base */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 bg-black/60 blur-md"
         style={{
-          clipPath: HEX_PATH,
+          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+          transform: 'translate(2px, 3px)',
+        }}
+      />
+
+      {/* Outer frame - darkest */}
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${colors.gradientOuter} border-2 ${colors.borderColor} ${colors.shadowColor} ${!disabled && colors.hoverShadow}`}
+        style={{
+          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+        }}
+      />
+
+      {/* Middle layer */}
+      <div
+        className={`absolute inset-[3px] bg-gradient-to-br ${colors.gradientMiddle}`}
+        style={{
+          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+          boxShadow: 'inset 0 0 0 1.5px rgba(255,255,255,0.2)',
+        }}
+      />
+
+      {/* Inner layer with diamond pattern */}
+      <div
+        className={`absolute inset-[5px] bg-gradient-to-b ${colors.gradientInner}`}
+        style={{
+          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+          boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.5), inset 0 -3px 0 rgba(0,0,0,0.4)',
+        }}
+      />
+
+      {/* Diamond cross pattern overlay */}
+      <div
+        className="absolute inset-[5px] pointer-events-none"
+        style={{
+          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
           background:
-            'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-          boxShadow:
-            'inset 0 0 0 1.5px hsl(var(--dup-gold-900)), 0 4px 12px rgba(0,0,0,0.35)',
-        }}
-        aria-hidden
-      />
-
-      {/* MIDDLE GOLD FRAME (bright inner highlight) */}
-      <div
-        className="absolute inset-[2px]"
-        style={{
-          clipPath: HEX_PATH,
-          background:
-            'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-          boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))',
-        }}
-        aria-hidden
-      />
-
-      {/* INNER CRYSTAL (variant color) */}
-      <div
-        className="absolute"
-        style={{
-          top: '4px',
-          left: '4px', 
-          right: '4px',
-          bottom: '4px',
-          clipPath: HEX_INNER_PATH,
-          background: crystal,
-          boxShadow:
-            'inset 0 8px 16px rgba(255,255,255,0.25), inset 0 -8px 16px rgba(0,0,0,0.4)',
-        }}
-        aria-hidden
-      />
-
-      {/* SPECULAR HIGHLIGHT */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          top: '4px',
-          left: '4px',
-          right: '4px', 
-          bottom: '4px',
-          clipPath: HEX_INNER_PATH,
-          background:
-            'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
-        }}
-        aria-hidden
-      />
-
-      {/* DIAGONAL LIGHT STREAKS */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          top: '4px',
-          left: '4px',
-          right: '4px',
-          bottom: '4px',
-          clipPath: HEX_INNER_PATH,
-          background:
-            'repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(255,255,255,0.08) 6px, rgba(255,255,255,0.08) 9px, transparent 9px, transparent 15px, rgba(255,255,255,0.05) 15px, rgba(255,255,255,0.05) 18px)',
+            'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
           opacity: 0.7,
         }}
-        aria-hidden
       />
 
-      {/* GOLD INNER ACCENT STROKE */}
+      {/* Specular highlight */}
       <div
-        className="absolute pointer-events-none"
+        className="absolute inset-[5px] pointer-events-none"
         style={{
-          top: '4px',
-          left: '4px',
-          right: '4px',
-          bottom: '4px',
-          clipPath: HEX_INNER_PATH,
-          boxShadow:
-            'inset 0 0 0 0.8px hsla(var(--dup-gold-400) / 0.6)',
+          clipPath: size === 'sm' ? 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)' : 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+          background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)',
         }}
-        aria-hidden
       />
 
-      {/* 45° SHINE (animated) */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          top: '4px',
-          left: '4px',
-          right: '4px',
-          bottom: '4px',
-          clipPath: HEX_INNER_PATH,
-          overflow: 'hidden',
-        }}
-        aria-hidden
-      >
-        <div
-          className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%]"
-          style={{
-            background:
-              'linear-gradient(45deg, transparent 46%, rgba(255,215,0,0.4) 50%, transparent 54%)',
-            animation: 'slot-shine 2.5s linear infinite',
-          }}
-        />
-      </div>
-
-      {/* CONTENT (icon + text) */}
-      <div 
-        className="relative z-[1] text-white"
-        style={{
-          filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8))',
-          fontSize: config.iconSize,
-        }}
-      >
+      {/* Content */}
+      <div className={`relative z-10 flex items-center justify-center ${colors.textColor} drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]`}>
         {children}
       </div>
-
-      <style>{`
-        @keyframes diamond-button-pulse {
-          0%, 100% { 
-            transform: scale(1);
-            filter: brightness(1) drop-shadow(0 0 4px rgba(255,215,0,0.3));
-          }
-          50% { 
-            transform: scale(1.02);
-            filter: brightness(1.08) drop-shadow(0 0 10px rgba(255,215,0,0.5));
-          }
-        }
-        
-        @keyframes slot-shine {
-          0% { transform: translateX(-100%) translateY(-100%); }
-          100% { transform: translateX(100%) translateY(100%); }
-        }
-      `}</style>
     </button>
   );
 };
