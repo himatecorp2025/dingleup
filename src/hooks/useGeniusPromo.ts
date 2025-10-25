@@ -34,7 +34,7 @@ export const useGeniusPromo = (
         }
         promoData.count += 1;
         promoData.lastShown = now;
-        promoData.cooldownUntil = now + (30 * 1000); // 30 seconds for testing
+        promoData.cooldownUntil = now + (5 * 1000); // 5 seconds for testing
         localStorage.setItem(promoDataKey, JSON.stringify(promoData));
         
         trackEvent('popup_impression', 'daily_first_sub');
@@ -84,10 +84,7 @@ export const useGeniusPromo = (
         }
       }
 
-      // Check max 5 per day
-      if (promoData.count >= 5) {
-        return;
-      }
+      // NO LIMIT for testing - removed max 5 per day check
 
       // Check 2 hour cooldown
       if (now < promoData.cooldownUntil) {
@@ -100,7 +97,7 @@ export const useGeniusPromo = (
       // Update data
       promoData.count += 1;
       promoData.lastShown = now;
-      promoData.cooldownUntil = now + (30 * 1000); // 30 seconds for testing
+      promoData.cooldownUntil = now + (5 * 1000); // 5 seconds for testing
       
       localStorage.setItem(promoDataKey, JSON.stringify(promoData));
 
