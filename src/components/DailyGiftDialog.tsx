@@ -136,44 +136,54 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="overflow-visible p-0 border-0 bg-transparent [&>button[data-dialog-close]]:hidden"
->
-          <div className="relative w-full">
-            <DialogTitle className="sr-only">Daily Gift</DialogTitle>
-            <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
-            
-            {/* Háttér gradiens */}
-            <div
-              className="absolute inset-0 -z-10 pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(120% 80% at 50% 10%, rgba(20,30,60,0.6), rgba(10,14,28,0.95))",
-              }}
-            />
+        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
+        style={{
+          margin: 0,
+          maxHeight: '100vh',
+          minHeight: '100vh',
+          borderRadius: 0
+        }}
+      >
+        {/* Középre igazító, teljes képernyős konténer (fix + flex) */}
+        <div 
+          className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
+          style={{ minHeight: '100vh', minWidth: '100vw' }}
+        >
+          <DialogTitle className="sr-only">Daily Gift</DialogTitle>
+          <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
 
-            {/* Bezáró X - jobb felső sarok */}
-            <button
-              onClick={onLater}
-              aria-label="Bezárás"
-              className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
-              style={{
-                top: "max(12px, env(safe-area-inset-top))",
-                right: "max(12px, env(safe-area-inset-right))",
-                width: "clamp(36px, 8svw, 48px)",
-                height: "clamp(36px, 8svw, 48px)",
-                fontSize: "clamp(18px, 5svw, 28px)",
-                lineHeight: 1,
-              }}
-            >
-              ×
-            </button>
+          {/* Háttér gradiens */}
+          <div
+            className="absolute inset-0 -z-10 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(120% 80% at 50% 10%, rgba(20,30,60,0.6), rgba(10,14,28,0.95))",
+            }}
+          />
 
-            {/* Pajzs tartalom */}
-            <div 
-              className="relative z-10 flex items-center justify-center"
-            >
-              <div style={{ containerType: 'inline-size' }}>
-                <HexShieldFrame showShine={false}>
+          {/* Bezáró X - jobb felső sarok */}
+          <button
+            onClick={onLater}
+            aria-label="Bezárás"
+            className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
+            style={{
+              top: "max(12px, env(safe-area-inset-top))",
+              right: "max(12px, env(safe-area-inset-right))",
+              width: "clamp(36px, 8svw, 48px)",
+              height: "clamp(36px, 8svw, 48px)",
+              fontSize: "clamp(18px, 5svw, 28px)",
+              lineHeight: 1,
+            }}
+          >
+            ×
+          </button>
+
+          {/* Pajzs tartalom */}
+          <div 
+            className="relative z-10 flex items-center justify-center"
+          >
+            <div style={{ containerType: 'inline-size' }}>
+              <HexShieldFrame showShine={false}>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
                 ref={badgeRef}
