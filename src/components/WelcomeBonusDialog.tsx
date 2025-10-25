@@ -79,35 +79,39 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
           {/* Deep purple gradient background */}
           <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-purple-950 via-purple-900 to-indigo-950" style={{ opacity: 0.95, borderRadius: 0 }}></div>
 
-          {/* Animated golden particles */}
+          {/* Animated golden stars - more, faster, fade in/out */}
           {contentVisible && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(30)].map((_, i) => {
+              {[...Array(50)].map((_, i) => {
                 const delay = Math.random() * 3;
-                const duration = 4 + Math.random() * 2;
+                const duration = 1.5 + Math.random() * 1;
                 const startX = Math.random() * 100;
                 const startY = Math.random() * 100;
+                const moveX = (Math.random() - 0.5) * 20;
+                const moveY = (Math.random() - 0.5) * 20;
                 
                 return (
                   <div
                     key={i}
-                    className="absolute w-1 h-1 bg-yellow-400 rounded-full"
+                    className="absolute"
                     style={{
                       left: `${startX}%`,
                       top: `${startY}%`,
-                      animation: `sparkle${i} ${duration}s ease-in-out ${delay}s infinite`,
-                      boxShadow: '0 0 8px 2px rgba(250, 204, 21, 0.8)',
+                      animation: `starFade${i} ${duration}s ease-in-out ${delay}s infinite`,
                       zIndex: 3
                     }}
                   >
+                    <svg viewBox="0 0 24 24" className="w-3 h-3" fill="#fbbf24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
                     <style>{`
-                      @keyframes sparkle${i} {
+                      @keyframes starFade${i} {
                         0%, 100% { 
-                          transform: scale(0) rotate(0deg);
+                          transform: translate(0, 0) scale(0);
                           opacity: 0;
                         }
                         50% { 
-                          transform: scale(1.5) rotate(180deg);
+                          transform: translate(${moveX}px, ${moveY}px) scale(1.5);
                           opacity: 1;
                         }
                       }
@@ -118,26 +122,26 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             </div>
           )}
 
-          {/* ZOOM WRAPPER with mega glow */}
+          {/* ZOOM WRAPPER with MASSIVE GOLD GLOW */}
           <div 
             className="relative z-10"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
-              transition: 'transform 1200ms cubic-bezier(0.34, 1.56, 0.64, 1) 10ms, opacity 1200ms ease-in-out 10ms',
+              transition: 'transform 1200ms cubic-bezier(0.34, 1.56, 0.64, 1) 1000ms, opacity 1200ms ease-in-out 1000ms',
               transformOrigin: 'center center',
               willChange: contentVisible ? 'transform, opacity' : 'auto',
-              filter: 'drop-shadow(0 0 60px rgba(250,204,21,0.8)) drop-shadow(0 0 100px rgba(234,179,8,0.5))',
+              filter: 'drop-shadow(0 0 80px rgba(250,204,21,0.9)) drop-shadow(0 0 140px rgba(234,179,8,0.7)) drop-shadow(0 0 200px rgba(250,204,21,0.5))',
               animation: 'welcomePulse 2.5s ease-in-out infinite'
             }}
           >
             <style>{`
               @keyframes welcomePulse {
                 0%, 100% { 
-                  filter: drop-shadow(0 0 60px rgba(250,204,21,0.8)) drop-shadow(0 0 100px rgba(234,179,8,0.5));
+                  filter: drop-shadow(0 0 80px rgba(250,204,21,0.9)) drop-shadow(0 0 140px rgba(234,179,8,0.7)) drop-shadow(0 0 200px rgba(250,204,21,0.5));
                 }
                 50% { 
-                  filter: drop-shadow(0 0 80px rgba(250,204,21,1)) drop-shadow(0 0 120px rgba(234,179,8,0.7));
+                  filter: drop-shadow(0 0 100px rgba(250,204,21,1)) drop-shadow(0 0 180px rgba(234,179,8,0.9)) drop-shadow(0 0 240px rgba(250,204,21,0.7));
                 }
               }
             `}</style>
@@ -214,15 +218,15 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                 </p>
 
                 {/* Rewards display */}
-                <div className="w-full max-w-[85%] space-y-4 mb-6">
+                <div className="w-full max-w-[85%] space-y-3 mb-4">
                   {/* Coins reward */}
                   <div className="relative">
                     {/* Glow background */}
                     <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-yellow-300/30 to-yellow-400/20 rounded-2xl blur-xl animate-pulse" />
                     
-                    <div className="relative bg-gradient-to-br from-yellow-500/90 via-yellow-600/90 to-orange-600/90 border-4 border-yellow-300 rounded-2xl px-6 py-4 shadow-2xl backdrop-blur-sm">
-                      <div className="flex items-center justify-center gap-4">
-                        <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-2xl">
+                    <div className="relative bg-gradient-to-br from-yellow-500/90 via-yellow-600/90 to-orange-600/90 border-4 border-yellow-300 rounded-2xl px-6 py-3 shadow-2xl backdrop-blur-sm">
+                      <div className="flex items-center justify-center gap-3">
+                        <svg viewBox="0 0 100 100" className="w-12 h-12 drop-shadow-2xl flex-shrink-0">
                           <defs>
                             <radialGradient id="coinGrad">
                               <stop offset="0%" stopColor="#fef3c7" />
@@ -234,14 +238,23 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                           <circle cx="50" cy="50" r="38" fill="none" stroke="#fef3c7" strokeWidth="2" opacity="0.6" />
                           <text x="50" y="65" fontSize="40" fontWeight="bold" fill="#92400e" textAnchor="middle" fontFamily="serif">$</text>
                         </svg>
-                        <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
                           <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
-                                style={{ fontSize: 'clamp(2rem, 10cqw, 3.5rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
+                                style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
                             +2,500
                           </span>
-                          <span className="text-yellow-100 font-bold" style={{ fontSize: 'clamp(0.75rem, 3cqw, 1rem)' }}>
-                            ARANYÉRME
-                          </span>
+                          <svg viewBox="0 0 100 100" className="w-10 h-10 drop-shadow-2xl flex-shrink-0">
+                            <defs>
+                              <radialGradient id="coinGrad2">
+                                <stop offset="0%" stopColor="#fef3c7" />
+                                <stop offset="50%" stopColor="#fbbf24" />
+                                <stop offset="100%" stopColor="#f59e0b" />
+                              </radialGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="48" fill="url(#coinGrad2)" stroke="#d97706" strokeWidth="3" />
+                            <circle cx="50" cy="50" r="38" fill="none" stroke="#fef3c7" strokeWidth="2" opacity="0.6" />
+                            <text x="50" y="65" fontSize="40" fontWeight="bold" fill="#92400e" textAnchor="middle" fontFamily="serif">$</text>
+                          </svg>
                         </div>
                       </div>
                     </div>
@@ -252,9 +265,9 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                     {/* Glow background */}
                     <div className="absolute inset-0 bg-gradient-to-r from-pink-400/20 via-pink-300/30 to-pink-400/20 rounded-2xl blur-xl animate-pulse" style={{ animationDelay: '0.5s' }} />
                     
-                    <div className="relative bg-gradient-to-br from-pink-500/90 via-pink-600/90 to-rose-600/90 border-4 border-pink-300 rounded-2xl px-6 py-4 shadow-2xl backdrop-blur-sm">
-                      <div className="flex items-center justify-center gap-4">
-                        <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-2xl">
+                    <div className="relative bg-gradient-to-br from-pink-500/90 via-pink-600/90 to-rose-600/90 border-4 border-pink-300 rounded-2xl px-6 py-3 shadow-2xl backdrop-blur-sm">
+                      <div className="flex items-center justify-center gap-3">
+                        <svg viewBox="0 0 100 100" className="w-10 h-10 drop-shadow-2xl flex-shrink-0">
                           <defs>
                             <radialGradient id="heartGrad">
                               <stop offset="0%" stopColor="#fecdd3" />
@@ -265,35 +278,37 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                           <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
                                 fill="url(#heartGrad)" stroke="#9f1239" strokeWidth="2" />
                         </svg>
-                        <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
                           <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
-                                style={{ fontSize: 'clamp(2rem, 10cqw, 3.5rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
+                                style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
                             +50
                           </span>
-                          <span className="text-pink-100 font-bold" style={{ fontSize: 'clamp(0.75rem, 3cqw, 1rem)' }}>
-                            EXTRA ÉLET
-                          </span>
+                          <svg viewBox="0 0 100 100" className="w-8 h-8 drop-shadow-2xl flex-shrink-0">
+                            <defs>
+                              <radialGradient id="heartGrad2">
+                                <stop offset="0%" stopColor="#fecdd3" />
+                                <stop offset="50%" stopColor="#fb7185" />
+                                <stop offset="100%" stopColor="#e11d48" />
+                              </radialGradient>
+                            </defs>
+                            <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
+                                  fill="url(#heartGrad2)" stroke="#9f1239" strokeWidth="2" />
+                          </svg>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Info text */}
-                <p className="text-white/90 font-semibold text-center mb-4 px-4"
-                   style={{ fontSize: 'clamp(0.8rem, 3.5cqw, 1rem)', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
-                  🎁 Egyszeri ajándék az induláshoz!
-                </p>
-
                 {/* Claim button - using gold hexagon style */}
-                <div className="flex justify-center w-full px-[4%]">
+                <div className="flex justify-center w-full px-[4%] mt-3">
                   <button
                     onClick={handleClaim}
                     disabled={claiming}
                     className="relative grid place-items-center select-none disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       width: "100%",
-                      height: "clamp(60px, 15vh, 85px)",
+                      height: "clamp(56px, 14vh, 75px)",
                       boxSizing: "border-box",
                       outline: "none",
                       border: 0,
@@ -365,14 +380,14 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             </HexShieldFrame>
           </div>
 
-          {/* Later button */}
+          {/* Close X button */}
           <button
             onClick={onLater}
             disabled={claiming}
-            className={`absolute bottom-[5vh] text-white/60 hover:text-white font-bold z-30 disabled:cursor-not-allowed transition-all duration-500 ease-out ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-            style={{ fontSize: 'clamp(0.9rem, 3.5vw, 1.1rem)', transitionDelay: '800ms' }}
+            className={`absolute top-[8vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '1200ms' }}
           >
-            Később
+            ×
           </button>
         </div>
       </DialogContent>
