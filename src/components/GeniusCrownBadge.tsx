@@ -154,11 +154,11 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ bottom: '20%', right: '20%', animation: 'twinkle 1.2s ease-in-out infinite 0.6s' }} />
               </div>
 
-              {/* "G" Letter SVG centered - 85% size, perfectly centered horizontally AND vertically */}
+              {/* "G" Letter SVG centered - 75% size, perfectly centered horizontally AND vertically */}
               <div className="absolute inset-0 clip-hexagon flex items-center justify-center z-10">
                 <div style={{ 
-                  width: '85%', 
-                  height: '85%', 
+                  width: '75%', 
+                  height: '75%', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
