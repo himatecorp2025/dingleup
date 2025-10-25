@@ -168,7 +168,7 @@ export const InsufficientResourcesDialog = ({
           {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
           {contentVisible && burstActive && (
             <div key={burstKey} className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(180)].map((_, i) => {
+              {[...Array(60)].map((_, i) => {
                 const angle = Math.random() * Math.PI * 2;
                 const speed = Math.random() * 60 + 40; // vw
                 const size = Math.random() * 2 + 1.2;
