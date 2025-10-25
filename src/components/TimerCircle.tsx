@@ -19,7 +19,7 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
   const timerColor = getTimerColor();
   
   return (
-    <div className="relative w-28 h-28 flex items-center justify-center" style={{ perspective: '800px' }}>
+    <div className="relative w-[100px] h-[100px] flex items-center justify-center" style={{ perspective: '800px' }}>
       {/* BASE SHADOW */}
       <div className="absolute inset-0 bg-black/60 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
       

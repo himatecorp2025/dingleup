@@ -97,12 +97,13 @@ export const MillionaireAnswer = ({
   }
 
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className="w-full mb-2 touch-manipulation group relative"
-      style={{ perspective: '1000px' }}
-    >
+    <div className="w-full flex justify-center mb-2">
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        className="w-[90%] touch-manipulation group relative"
+        style={{ perspective: '1000px' }}
+      >
       {/* BASE SHADOW */}
       <div 
         className="absolute inset-0 bg-black/70 rounded-2xl" 
@@ -207,6 +208,7 @@ export const MillionaireAnswer = ({
           </span>
         </div>
       </div>
-    </button>
+      </button>
+    </div>
   );
 };
