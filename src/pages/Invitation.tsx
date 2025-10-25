@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Copy, Gift, Coins, Heart, Users, Check, X, Trophy } from 'lucide-react';
+
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -106,16 +106,37 @@ const Invitation = () => {
       paddingTop: 'env(safe-area-inset-top)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
-      {/* Back Button */}
+      {/* Back Button - 3D Box Style */}
       <div className="fixed top-4 left-4 z-50 pt-safe">
         <button
-          onClick={() => {
-            navigate('/dashboard');
-          }}
-          className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+          onClick={() => navigate('/dashboard')}
+          className="relative p-3 rounded-xl hover:scale-110 transition-all"
           title="Vissza"
         >
-          <LogOut className="w-6 h-6 -scale-x-100" />
+          {/* BASE SHADOW */}
+          <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
+          
+          {/* OUTER FRAME */}
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
+          
+          {/* MIDDLE FRAME */}
+          <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+          
+          {/* INNER LAYER */}
+          <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+          
+          {/* SPECULAR HIGHLIGHT */}
+          <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+          
+          {/* DIAGONAL STREAKS */}
+          <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px)', opacity: 0.7 }} aria-hidden />
+          
+          {/* Icon */}
+          <svg className="w-6 h-6 text-white relative z-10 -scale-x-100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </button>
       </div>
 
@@ -124,7 +145,12 @@ const Invitation = () => {
         {/* Header */}
         <div className="text-center mb-6 pt-safe">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Users className="w-8 h-8 text-purple-400" />
+            <svg className="w-8 h-8 text-purple-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
             <h1 className="text-3xl font-black text-white">Hívd meg barátaidat!</h1>
           </div>
           <p className="text-white/70">Oszd meg meghívó kódodat vagy linkedet</p>
@@ -145,7 +171,10 @@ const Invitation = () => {
                 onClick={() => copyToClipboard(invitationCode, 'code')}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-4"
               >
-                <Copy className="w-5 h-5" />
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 9H11C9.89543 9 9 9.89543 9 11V20C9 21.1046 9.89543 22 11 22H20C21.1046 22 22 21.1046 22 20V11C22 9.89543 21.1046 9 20 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M5 15H4C3.46957 15 2.96086 14.7893 2.58579 14.4142C2.21071 14.0391 2 13.5304 2 13V4C2 3.46957 2.21071 2.96086 2.58579 2.58579C2.96086 2.21071 3.46957 2 4 2H13C13.5304 2 14.0391 2.21071 14.4142 2.58579C14.7893 2.96086 15 3.46957 15 4V5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </Button>
             </div>
           </div>
@@ -164,142 +193,220 @@ const Invitation = () => {
                 onClick={() => copyToClipboard(invitationLink, 'link')}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-4"
               >
-                <Copy className="w-5 h-5" />
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 9H11C9.89543 9 9 9.89543 9 11V20C9 21.1046 9.89543 22 11 22H20C21.1046 22 22 21.1046 22 20V11C22 9.89543 21.1046 9 20 9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M5 15H4C3.46957 15 2.96086 14.7893 2.58579 14.4142C2.21071 14.0391 2 13.5304 2 13V4C2 3.46957 2.21071 2.96086 2.58579 2.58579C2.96086 2.21071 3.46957 2 4 2H13C13.5304 2 14.0391 2.21071 14.4142 2.58579C14.7893 2.96086 15 3.46957 15 4V5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </Button>
             </div>
           </div>
 
-          {/* Total Rewards Summary */}
-          <div className="bg-gradient-to-br from-yellow-600/30 to-orange-600/30 rounded-xl p-4 border-2 border-yellow-500/50 mb-4">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Gift className="w-6 h-6 text-yellow-400" />
-              <h2 className="text-xl font-black text-white">Összes jutalom</h2>
-            </div>
-            <div className="flex justify-center gap-6">
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-1 text-yellow-400 text-2xl font-black">
-                  <Coins className="w-6 h-6" /> {totalCoins}
-                </div>
-                <p className="text-xs text-white/70">Aranyérmék</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-1 text-red-400 text-2xl font-black">
-                  <Heart className="w-6 h-6" /> {totalLives}
-                </div>
-                <p className="text-xs text-white/70">Életek</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Rewards Section - Tier based */}
-          <div className="bg-gradient-to-br from-yellow-900/40 to-purple-900/40 rounded-xl p-5 border-2 border-yellow-500/30">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Trophy className="w-6 h-6 text-yellow-400" />
-              <h2 className="text-xl font-black text-white">Jutalom szintek</h2>
-            </div>
+          {/* Total Rewards Summary - 3D Box Style */}
+          <div className="relative bg-gradient-to-br from-yellow-600/30 to-orange-600/30 rounded-xl p-4 border-2 border-yellow-500/50 mb-4 overflow-hidden">
+            {/* 3D Layers */}
+            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.15) 0%, transparent 60%)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255,255,255,0.05) 12px, rgba(255,255,255,0.05) 16px)', opacity: 0.5 }} aria-hidden />
             
-            <div className="space-y-2">
-              <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
-                invitedCount >= 1 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
-              }`}>
-                <span className="text-white font-bold text-sm">1-2. barát {invitedCount >= 1 && '✓'}</span>
-                <div className="flex gap-2 text-xs">
-                  <span className="flex items-center gap-1 text-white">
-                    <Coins className="w-3 h-3 text-yellow-500" /> 200/fő
-                  </span>
-                  <span className="flex items-center gap-1 text-white">
-                    <Heart className="w-3 h-3 text-red-500" /> 3/fő
-                  </span>
-                </div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <svg className="w-6 h-6 text-yellow-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 12V22H4V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M22 7H2V12H22V7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 22V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 7H7.5C6.83696 7 6.20107 6.73661 5.73223 6.26777C5.26339 5.79893 5 5.16304 5 4.5C5 3.83696 5.26339 3.20107 5.73223 2.73223C6.20107 2.26339 6.83696 2 7.5 2C11 2 12 7 12 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 7H16.5C17.163 7 17.7989 6.73661 18.2678 6.26777C18.7366 5.79893 19 5.16304 19 4.5C19 3.83696 18.7366 3.20107 18.2678 2.73223C17.7989 2.26339 17.163 2 16.5 2C13 2 12 7 12 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <h2 className="text-xl font-black text-white">Összes jutalom</h2>
               </div>
-
-              <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
-                invitedCount >= 3 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
-              }`}>
-                <span className="text-white font-bold text-sm">3-9. barát {invitedCount >= 3 && '✓'}</span>
-                <div className="flex gap-2 text-xs">
-                  <span className="flex items-center gap-1 text-white">
-                    <Coins className="w-3 h-3 text-yellow-500" /> 1000/fő
-                  </span>
-                  <span className="flex items-center gap-1 text-white">
-                    <Heart className="w-3 h-3 text-red-500" /> 5/fő
-                  </span>
-                </div>
-              </div>
-
-              <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
-                invitedCount >= 10 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
-              }`}>
-                <span className="text-white font-bold text-sm">10+ barát {invitedCount >= 10 && '✓'}</span>
-                <div className="flex gap-2 text-xs">
-                  <span className="flex items-center gap-1 text-white">
-                    <Coins className="w-3 h-3 text-yellow-500" /> 6000/fő
-                  </span>
-                  <span className="flex items-center gap-1 text-white">
-                    <Heart className="w-3 h-3 text-red-500" /> 20/fő
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-xs text-white/60 mt-4 text-center">
-              A sorozat minden 60 napban nullázódik. Minden elfogadott barát után jutalmat kapsz!
-            </p>
-          </div>
-
-          {/* Invited Friends List */}
-          <div className="bg-purple-900/30 rounded-xl p-5 border-2 border-purple-500/30">
-            <h2 className="text-lg font-black text-white mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-purple-400" />
-              Meghívott barátok ({invitedFriends.length})
-            </h2>
-            
-            {invitedFriends.length === 0 ? (
-              <p className="text-white/60 text-center py-4">Még nem hívtál meg senkit</p>
-            ) : (
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {invitedFriends.map((friend) => (
-                  <div
-                    key={friend.id}
-                    className={`flex items-center justify-between p-3 rounded-lg border ${
-                      friend.accepted
-                        ? 'bg-green-900/20 border-green-500/30'
-                        : 'bg-black/40 border-purple-500/20'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      {friend.accepted ? (
-                        <Check className="w-5 h-5 text-green-400" />
-                      ) : (
-                        <X className="w-5 h-5 text-gray-500" />
-                      )}
-                      <div>
-                        <p className="text-white font-medium">
-                          {friend.invited_email || 'Ismeretlen'}
-                        </p>
-                        <p className="text-xs text-white/60">
-                          {friend.accepted 
-                            ? `Csatlakozott: ${new Date(friend.accepted_at!).toLocaleDateString()}`
-                            : 'Függőben'}
-                        </p>
-                      </div>
-                    </div>
-                    {friend.accepted && (
-                      <div className="flex gap-2 text-xs">
-                        <span className="flex items-center gap-1 text-yellow-400">
-                          <Coins className="w-3 h-3" />
-                          {getRewardForCount(invitedCount).coins}
-                        </span>
-                        <span className="flex items-center gap-1 text-red-400">
-                          <Heart className="w-3 h-3" />
-                          {getRewardForCount(invitedCount).lives}
-                        </span>
-                      </div>
-                    )}
+              <div className="flex justify-center gap-6">
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 text-yellow-400 text-2xl font-black">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="9" fill="currentColor" stroke="#d97706" strokeWidth="2"/>
+                      <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
+                      <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
+                    </svg>
+                    {totalCoins}
                   </div>
-                ))}
+                  <p className="text-xs text-white/70">Aranyérmék</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 text-red-400 text-2xl font-black">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
+                    </svg>
+                    {totalLives}
+                  </div>
+                  <p className="text-xs text-white/70">Életek</p>
+                </div>
               </div>
-            )}
+            </div>
+          </div>
+
+          {/* Rewards Section - Tier based - 3D Box Style */}
+          <div className="relative bg-gradient-to-br from-yellow-900/40 to-purple-900/40 rounded-xl p-5 border-2 border-yellow-500/30 overflow-hidden">
+            {/* 3D Layers */}
+            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.1) 0%, transparent 60%)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255,255,255,0.04) 12px, rgba(255,255,255,0.04) 16px)', opacity: 0.5 }} aria-hidden />
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <svg className="w-6 h-6 text-yellow-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9H4.5C4.10218 9 3.72064 9.15804 3.43934 9.43934C3.15804 9.72064 3 10.1022 3 10.5V19.5C3 19.8978 3.15804 20.2794 3.43934 20.5607C3.72064 20.842 4.10218 21 4.5 21H19.5C19.8978 21 20.2794 20.842 20.5607 20.5607C20.842 20.2794 21 19.8978 21 19.5V10.5C21 10.1022 20.842 9.72064 20.5607 9.43934C20.2794 9.15804 19.8978 9 19.5 9H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 3L6 9H18L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 9V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <h2 className="text-xl font-black text-white">Jutalom szintek</h2>
+              </div>
+              
+              <div className="space-y-2">
+                <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                  invitedCount >= 1 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
+                }`}>
+                  <span className="text-white font-bold text-sm">1-2. barát {invitedCount >= 1 && '✓'}</span>
+                  <div className="flex gap-2 text-xs">
+                    <span className="flex items-center gap-1 text-white">
+                      <svg className="w-3 h-3 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="9" fill="currentColor" stroke="#d97706" strokeWidth="2"/>
+                        <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
+                        <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
+                      </svg>
+                      200/fő
+                    </span>
+                    <span className="flex items-center gap-1 text-white">
+                      <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
+                      </svg>
+                      3/fő
+                    </span>
+                  </div>
+                </div>
+
+                <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                  invitedCount >= 3 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
+                }`}>
+                  <span className="text-white font-bold text-sm">3-9. barát {invitedCount >= 3 && '✓'}</span>
+                  <div className="flex gap-2 text-xs">
+                    <span className="flex items-center gap-1 text-white">
+                      <svg className="w-3 h-3 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="9" fill="currentColor" stroke="#d97706" strokeWidth="2"/>
+                        <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
+                        <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
+                      </svg>
+                      1000/fő
+                    </span>
+                    <span className="flex items-center gap-1 text-white">
+                      <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
+                      </svg>
+                      5/fő
+                    </span>
+                  </div>
+                </div>
+
+                <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                  invitedCount >= 10 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
+                }`}>
+                  <span className="text-white font-bold text-sm">10+ barát {invitedCount >= 10 && '✓'}</span>
+                  <div className="flex gap-2 text-xs">
+                    <span className="flex items-center gap-1 text-white">
+                      <svg className="w-3 h-3 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="9" fill="currentColor" stroke="#d97706" strokeWidth="2"/>
+                        <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
+                        <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
+                      </svg>
+                      6000/fő
+                    </span>
+                    <span className="flex items-center gap-1 text-white">
+                      <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
+                      </svg>
+                      20/fő
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-xs text-white/60 mt-4 text-center">
+                A sorozat minden 60 napban nullázódik. Minden elfogadott barát után jutalmat kapsz!
+              </p>
+            </div>
+          </div>
+
+          {/* Invited Friends List - 3D Box Style */}
+          <div className="relative bg-purple-900/30 rounded-xl p-5 border-2 border-purple-500/30 overflow-hidden">
+            {/* 3D Layers */}
+            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(147,51,234,0.1) 0%, transparent 60%)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(147,51,234,0.04) 12px, rgba(147,51,234,0.04) 16px)', opacity: 0.5 }} aria-hidden />
+            
+            <div className="relative z-10">
+              <h2 className="text-lg font-black text-white mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Meghívott barátok ({invitedFriends.length})
+              </h2>
+              
+              {invitedFriends.length === 0 ? (
+                <p className="text-white/60 text-center py-4">Még nem hívtál meg senkit</p>
+              ) : (
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {invitedFriends.map((friend) => (
+                    <div
+                      key={friend.id}
+                      className={`flex items-center justify-between p-3 rounded-lg border ${
+                        friend.accepted
+                          ? 'bg-green-900/20 border-green-500/30'
+                          : 'bg-black/40 border-purple-500/20'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {friend.accepted ? (
+                          <svg className="w-5 h-5 text-green-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                        <div>
+                          <p className="text-white font-medium">
+                            {friend.invited_email || 'Ismeretlen'}
+                          </p>
+                          <p className="text-xs text-white/60">
+                            {friend.accepted 
+                              ? `Csatlakozott: ${new Date(friend.accepted_at!).toLocaleDateString()}`
+                              : 'Függőben'}
+                          </p>
+                        </div>
+                      </div>
+                      {friend.accepted && (
+                        <div className="flex gap-2 text-xs">
+                          <span className="flex items-center gap-1 text-yellow-400">
+                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                              <circle cx="12" cy="12" r="9" fill="currentColor" stroke="#d97706" strokeWidth="2"/>
+                              <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
+                              <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
+                            </svg>
+                            {getRewardForCount(invitedCount).coins}
+                          </span>
+                          <span className="flex items-center gap-1 text-red-400">
+                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
+                            </svg>
+                            {getRewardForCount(invitedCount).lives}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
