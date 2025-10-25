@@ -47,80 +47,63 @@ const AdminDashboard = () => {
     checkAuth();
   }, []);
 
-  // Auto-refresh every 5 seconds + realtime subscriptions for immediate updates
+  // PERFORMANCE OPTIMIZED: Single realtime channel + 30s polling instead of 5s
   useEffect(() => {
+    // Reduced polling frequency - realtime handles most updates
     const interval = setInterval(() => {
       fetchData();
-    }, 5000);
+    }, 30000); // 30 seconds instead of 5
     
-    // Realtime subscriptions for instant updates
-    const invitationsChannel = supabase
-      .channel('admin-invitations')
+    // OPTIMIZED: Single channel for all tables (much more efficient)
+    const channel = supabase
+      .channel('admin-dashboard-optimized')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'invitations'
       }, () => {
-        console.log('[Admin] Invitations changed, refreshing...');
+        console.log('[Admin] Invitations changed - realtime update');
         fetchData();
       })
-      .subscribe();
-    
-    const reportsChannel = supabase
-      .channel('admin-reports')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'reports'
       }, () => {
-        console.log('[Admin] Reports changed, refreshing...');
+        console.log('[Admin] Reports changed - realtime update');
         fetchData();
       })
-      .subscribe();
-    
-    const friendshipsChannel = supabase
-      .channel('admin-friendships')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'friendships'
       }, () => {
-        console.log('[Admin] Friendships changed, refreshing...');
+        console.log('[Admin] Friendships changed - realtime update');
         fetchData();
       })
-      .subscribe();
-
-    const purchasesChannel = supabase
-      .channel('admin-purchases')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'purchases'
       }, () => {
-        console.log('[Admin] Purchases changed, refreshing...');
+        console.log('[Admin] Purchases changed - realtime update');
         fetchData();
       })
-      .subscribe();
-
-    const profilesChannel = supabase
-      .channel('admin-profiles')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'profiles'
       }, () => {
-        console.log('[Admin] Profiles changed, refreshing...');
+        console.log('[Admin] Profiles changed - realtime update');
         fetchData();
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log('[Admin] Realtime status:', status);
+      });
 
     return () => {
       clearInterval(interval);
-      supabase.removeChannel(invitationsChannel);
-      supabase.removeChannel(reportsChannel);
-      supabase.removeChannel(friendshipsChannel);
-      supabase.removeChannel(purchasesChannel);
-      supabase.removeChannel(profilesChannel);
+      supabase.removeChannel(channel);
     };
   }, []);
 
