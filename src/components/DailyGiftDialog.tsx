@@ -230,13 +230,16 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central HEXAGON - ZOOM FROM CENTER (layout-neutral) */}
+          {/* Central HEXAGON - ZOOM FROM CENTER (layout-neutral, always scale-100 in DOM) */}
           <div 
-            className={`relative z-10 ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+            className="relative z-10"
             style={{ 
-              transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms',
+              opacity: contentVisible ? 1 : 0,
+              visibility: contentVisible ? 'visible' : 'hidden',
+              transform: contentVisible ? 'scale(1)' : 'scale(0)',
+              transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms, visibility 0ms linear 0ms',
               transformOrigin: 'center center',
-              willChange: 'transform, opacity'
+              willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
           >
             
