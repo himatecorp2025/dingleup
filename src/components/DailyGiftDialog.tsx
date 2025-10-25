@@ -358,24 +358,6 @@ const DailyGiftDialog = ({
                   )}
                 </div>
               </div>
-
-              {/* Premium Lives Bonus Badge */}
-              {isPremium && (
-                <div className="absolute -right-[6vw] top-[36%] rounded-full w-[14vw] h-[14vw] max-w-[72px] max-h-[72px] flex flex-col items-center justify-center shadow-[0_6px_18px_rgba(0,0,0,0.45)] z-30 animate-bounce"
-                     style={{ 
-                       background: 'radial-gradient(circle at 35% 25%, hsl(142 70% 65%), hsl(142 70% 50%), hsl(142 70% 35%))',
-                       border: '4px solid white' 
-                     }}>
-                  <div className="absolute inset-0 rounded-full pointer-events-none"
-                       style={{
-                         background: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.5), transparent 60%)',
-                         mixBlendMode: 'soft-light'
-                       }} />
-                  <span className="text-white font-black drop-shadow-lg relative z-10" 
-                        style={{ fontSize: 'clamp(1rem, 4.5vw, 1.55rem)' }}>+3</span>
-                  <span className="relative z-10" style={{ fontSize: 'clamp(0.75rem, 3vw, 1rem)' }}>❤️</span>
-                </div>
-              )}
             </HexShieldFrame>
             </div>
           </div>
