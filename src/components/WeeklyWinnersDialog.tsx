@@ -267,20 +267,37 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
                           animation: `fadeInUp ${0.28 + index * 0.07}s ease-out ${index * 0.04}s both`
                         }}
                       >
-                      {/* 3D Card Shadow - ERŐSEBB */}
-                      <div className="absolute inset-0 translate-y-1 translate-x-1 bg-black/50 rounded-lg blur-md" />
+                      {/* 3D Card Shadow - ERŐSEBB, VASTAG */}
+                      <div className="absolute inset-0 translate-y-2 translate-x-2 bg-black/60 rounded-xl blur-lg" />
                       
-                      {/* 3D Card Border - KÉK/ARANY gradient - VASTAGABB */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-800 via-blue-700 to-blue-900 rounded-lg" 
-                           style={{ boxShadow: 'inset 0 0 0 2px hsl(220, 80%, 25%), 0 6px 16px rgba(0,0,0,0.4)' }} />
+                      {/* 3D Card Border - VASTAG KÉK FRAME */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950 rounded-xl" 
+                           style={{ boxShadow: 'inset 0 0 0 3px hsl(220, 90%, 20%), 0 8px 20px rgba(0,0,0,0.5)' }} />
                       
-                      {/* 3D Card Inner Layer - ERŐSEBB FÉNYHATÁS */}
-                      <div className="absolute inset-[2px] bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 rounded-lg"
-                           style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.3)' }} />
-                        
+                      {/* 3D Card Middle Layer */}
+                      <div className="absolute inset-[3px] bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800 rounded-xl"
+                           style={{ boxShadow: 'inset 0 0 0 2px hsl(220, 80%, 35%)' }} />
+                      
+                      {/* 3D Card Inner Layer - GYÉMÁNT KERESZT PATTERN */}
+                      <div className="absolute inset-[5px] bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 rounded-xl"
+                           style={{ 
+                             boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.5), inset 0 -3px 0 rgba(0,0,0,0.4)',
+                             background: 'linear-gradient(to bottom, hsl(220, 80%, 55%), hsl(220, 75%, 60%), hsl(220, 70%, 50%))'
+                           }} />
+                      
+                      {/* Gyémánt kereszt pattern overlay */}
+                      <div className="absolute inset-[5px] rounded-xl pointer-events-none"
+                           style={{
+                             background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+                             opacity: 0.7
+                           }} />
+                      
                       {/* Card Content - ERŐSEBB 3D */}
-                      <div className="relative bg-gradient-to-br from-blue-600/98 via-blue-700/98 to-blue-800/98 rounded-lg px-2.5 py-2 flex items-center gap-2.5"
-                           style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }}>
+                      <div className="relative bg-gradient-to-br from-blue-600/98 via-blue-700/98 to-blue-800/98 rounded-xl px-2.5 py-2.5 flex items-center gap-2.5"
+                           style={{ 
+                             boxShadow: 'inset 0 10px 20px rgba(255,255,255,0.25), inset 0 -10px 20px rgba(0,0,0,0.35)',
+                             margin: '5px'
+                           }}>
                           
                         {/* Rank Number - Left - CORRECTED */}
                         <div className="flex-shrink-0 w-7 text-center">
