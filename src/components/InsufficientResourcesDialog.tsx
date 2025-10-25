@@ -4,7 +4,7 @@ import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import HexAcceptButton from './ui/HexAcceptButton';
-import { CreditCard, Sparkles, Clock, Users } from 'lucide-react';
+import { CreditCard, Sparkles, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface InsufficientResourcesDialogProps {
@@ -37,7 +37,7 @@ export const InsufficientResourcesDialog = ({
   const [burstActive, setBurstActive] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
   const [isLoadingPayment, setIsLoadingPayment] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(60); // 1 minute in seconds
 
   // Sync badge width to button (account for inner hexagon vs. outer frame ratio)
   useEffect(() => {
@@ -101,10 +101,10 @@ export const InsufficientResourcesDialog = ({
     return () => clearTimeout(timer);
   }, [contentVisible, open]);
 
-  // 5-minute countdown timer
+  // 1-minute countdown timer
   useEffect(() => {
     if (!open) {
-      setTimeLeft(300);
+      setTimeLeft(60);
       return;
     }
 
@@ -317,10 +317,9 @@ export const InsufficientResourcesDialog = ({
                   {/* Timer countdown at top */}
                   <div className="flex items-center gap-2 mb-3 bg-red-600/90 px-4 py-2 rounded-full animate-pulse">
                     <Clock className="w-5 h-5 text-white" />
-                    <span className="text-white font-black text-sm">
+                    <span className="text-white font-black text-base">
                       {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                     </span>
-                    <span className="text-white/90 text-xs font-bold">Az ajánlat hamarosan lejár!</span>
                   </div>
 
                   {/* BEST DEAL badge */}
@@ -445,16 +444,10 @@ export const InsufficientResourcesDialog = ({
                           textShadow: '0 3px 6px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.4)'
                         }}
                       >
-                        Azonnal jóváírva • Játék folytatása
+                        Azonnal jóváírva
                       </p>
                       <Sparkles className="w-4 h-4 text-yellow-300 drop-shadow-lg" />
                     </div>
-                  </div>
-
-                  {/* Social proof testimonial */}
-                  <div className="flex items-center gap-2 mb-[2vh] bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <Users className="w-4 h-4 text-green-400" />
-                    <span className="text-white/90 text-xs font-semibold">500+ játékos vette meg még ma</span>
                   </div>
 
                   {/* Payment methods - Smaller, no box */}
@@ -482,7 +475,7 @@ export const InsufficientResourcesDialog = ({
                       disabled={isLoadingPayment}
                       style={{ width: 'var(--sync-width)' }} 
                     >
-                      {isLoadingPayment ? 'Betöltés...' : 'MEGSZERZEM MOST!'}
+                      {isLoadingPayment ? 'Betöltés...' : 'MEGVESZEM!'}
                     </HexAcceptButton>
                   </div>
                 </div>

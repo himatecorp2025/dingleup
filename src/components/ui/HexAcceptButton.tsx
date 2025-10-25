@@ -172,15 +172,14 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         />
       </div>
 
-      {/* LABEL - Pulsing text with adjusted padding */}
+      {/* LABEL - Pulsing text */}
       <span
         className="relative z-[1] font-black text-white tracking-[0.08em]"
         style={{
           fontSize: "clamp(1.05rem, 4.6vw, 1.45rem)",
           textShadow:
             "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
-          animation: "text-pulse 1.125s ease-in-out infinite",
-          paddingTop: "5px"
+          animation: "text-pulse 1.125s ease-in-out infinite"
         }}
       >
         {typeof children === "string" ? children.toUpperCase() : children}
