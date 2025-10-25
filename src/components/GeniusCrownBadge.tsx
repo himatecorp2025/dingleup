@@ -106,7 +106,10 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
 
               {/* OUTER FRAME with sparkle animation */}
               <div
-                className="absolute inset-0 clip-hexagon bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border-2 sm:border-4 border-yellow-400 shadow-lg shadow-yellow-500/50 animate-sparkle"
+                className="absolute inset-0 clip-hexagon bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border-2 sm:border-4 border-yellow-400 shadow-lg shadow-yellow-500/50"
+                style={{
+                  animation: 'hexagonSparkle 1.5s ease-in-out infinite'
+                }}
                 aria-hidden
               />
 
@@ -143,12 +146,40 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* "G" Letter SVG centered - 99.3% size, perfectly centered with sparkle */}
+              {/* "G" Letter SVG centered - 99% size, perfectly centered with sparkle */}
               <div className="absolute clip-hexagon flex items-center justify-center z-10" style={{ inset: '4px' }}>
-                <div className="animate-shimmer" style={{ width: '99.3%', height: '99.3%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ 
+                  width: '99%', 
+                  height: '99%', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  animation: 'geniusShimmer 1.2s ease-in-out infinite'
+                }}>
                   {geniusSvg('w-full h-full')}
                 </div>
               </div>
+
+              {/* Keyframe animations */}
+              <style>{`
+                @keyframes hexagonSparkle {
+                  0%, 100% {
+                    filter: brightness(1) drop-shadow(0 0 10px rgba(251, 191, 36, 0.7));
+                  }
+                  50% {
+                    filter: brightness(1.4) drop-shadow(0 0 20px rgba(251, 191, 36, 1)) drop-shadow(0 0 30px rgba(251, 191, 36, 0.8));
+                  }
+                }
+
+                @keyframes geniusShimmer {
+                  0%, 100% {
+                    filter: brightness(1) drop-shadow(0 0 6px rgba(251, 191, 36, 0.5));
+                  }
+                  50% {
+                    filter: brightness(1.3) drop-shadow(0 0 15px rgba(251, 191, 36, 0.9));
+                  }
+                }
+              `}</style>
             </div>
           </TooltipTrigger>
           <TooltipContent>
@@ -183,42 +214,3 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
     </TooltipProvider>
   );
 };
-
-// Sparkle and shimmer animations
-const styles = `
-  @keyframes sparkle {
-    0%, 100% {
-      filter: brightness(1) drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
-    }
-    50% {
-      filter: brightness(1.3) drop-shadow(0 0 16px rgba(251, 191, 36, 1));
-    }
-  }
-
-  @keyframes shimmer {
-    0% {
-      filter: brightness(1) drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
-    }
-    50% {
-      filter: brightness(1.2) drop-shadow(0 0 12px rgba(251, 191, 36, 0.8));
-    }
-    100% {
-      filter: brightness(1) drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
-    }
-  }
-
-  .animate-sparkle {
-    animation: sparkle 2s ease-in-out infinite;
-  }
-
-  .animate-shimmer {
-    animation: shimmer 1.5s ease-in-out infinite;
-  }
-`;
-
-// Inject styles
-if (typeof document !== 'undefined') {
-  const styleSheet = document.createElement("style");
-  styleSheet.innerText = styles;
-  document.head.appendChild(styleSheet);
-}
