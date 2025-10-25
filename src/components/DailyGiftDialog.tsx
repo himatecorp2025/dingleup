@@ -232,9 +232,9 @@ const DailyGiftDialog = ({
 
           {/* Central HEXAGON - ZOOM FROM CENTER (layout-neutral) */}
           <div 
-            className={`relative z-10 transition-all duration-[2000ms] ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+            className={`relative z-10 ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
             style={{ 
-              transitionDelay: '300ms',
+              transition: 'transform 2000ms ease-in-out 300ms, opacity 2000ms ease-in-out 300ms',
               transformOrigin: 'center center',
               willChange: 'transform, opacity'
             }}
