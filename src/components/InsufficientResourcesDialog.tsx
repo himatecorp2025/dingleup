@@ -33,6 +33,7 @@ export const InsufficientResourcesDialog = ({
   const flagRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
   const buttonWrapperRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [origin, setOrigin] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
   const [burstActive, setBurstActive] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
@@ -64,6 +65,24 @@ export const InsufficientResourcesDialog = ({
       window.removeEventListener('resize', syncWidth);
     };
   }, [contentVisible, open]);
+
+  // Sync --shield-w to content width for proportional scaling
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const update = () => {
+      const w = el.offsetWidth;
+      el.style.setProperty('--shield-w', `${w}px`);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    window.addEventListener('resize', update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -312,7 +331,8 @@ export const InsufficientResourcesDialog = ({
                 </div>
 
                 {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0">
+                <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0" ref={contentRef} style={{ ['--shield-w' as any]: '320px' }}>
+                  
                   
                   {/* Timer countdown at top */}
                   <div className="flex items-center gap-2 mb-3 bg-red-600/90 px-4 py-2 rounded-full animate-pulse">
@@ -328,10 +348,10 @@ export const InsufficientResourcesDialog = ({
                   </div>
                   
                   {/* Resources Display - 3D SVG icons */}
-                  <div className="relative flex items-center justify-center gap-[3vw] mb-[2vh]">
-                    <div className="flex items-center gap-2">
+                  <div className="relative flex items-center justify-center gap-[calc(var(--shield-w)*0.06)] mb-[2vh]">
+                    <div className="flex items-center gap-[calc(var(--shield-w)*0.02)]">
                       {/* 3D Gold Coin SVG */}
-                      <svg width="clamp(32, 8vw, 48)" height="clamp(32, 8vw, 48)" viewBox="0 0 64 64" className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)]" style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(255,215,0,0.8))' }}>
+                      <svg viewBox="0 0 64 64" style={{ width: 'calc(var(--shield-w)*0.1)', height: 'calc(var(--shield-w)*0.1)', filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(255,215,0,0.8))' }}>
                         <defs>
                           <radialGradient id="goldGradient" cx="35%" cy="25%">
                             <stop offset="0%" stopColor="#ffd700" />
@@ -345,20 +365,17 @@ export const InsufficientResourcesDialog = ({
                             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
                           </radialGradient>
                         </defs>
-                        {/* Shadow layer */}
                         <ellipse cx="32" cy="34" rx="28" ry="26" fill="rgba(0,0,0,0.4)" />
-                        {/* Main coin */}
                         <ellipse cx="32" cy="32" rx="28" ry="26" fill="url(#goldGradient)" stroke="#b8860b" strokeWidth="2" />
-                        {/* Inner ring */}
                         <ellipse cx="32" cy="32" rx="22" ry="20" fill="none" stroke="#d4af37" strokeWidth="1.5" opacity="0.6" />
-                        {/* Highlight */}
                         <ellipse cx="32" cy="32" rx="28" ry="26" fill="url(#goldHighlight)" />
-                        {/* Dollar sign */}
                         <text x="32" y="40" fontSize="28" fontWeight="black" fill="#b8860b" textAnchor="middle" fontFamily="Arial">$</text>
                       </svg>
                       <span 
-                        className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-yellow-200"
+                        className="font-black text-yellow-200"
                         style={{
+                          fontSize: 'calc(var(--shield-w)*0.09)',
+                          lineHeight: 1,
                           textShadow: '0 6px 12px rgba(0,0,0,0.7), 0 3px 6px rgba(0,0,0,0.5), 0 0 16px rgba(253,224,71,0.6), 0 0 24px rgba(255,215,0,0.4)'
                         }}
                       >
@@ -366,16 +383,18 @@ export const InsufficientResourcesDialog = ({
                       </span>
                     </div>
                     <div 
-                      className="text-[clamp(2rem,8vw,3.5rem)] font-black text-yellow-200"
+                      className="font-black text-yellow-200"
                       style={{
+                        fontSize: 'calc(var(--shield-w)*0.1)',
+                        lineHeight: 1,
                         textShadow: '0 4px 8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4)'
                       }}
                     >
                       +
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-[calc(var(--shield-w)*0.02)]">
                       {/* 3D Heart SVG */}
-                      <svg width="clamp(32, 8vw, 48)" height="clamp(32, 8vw, 48)" viewBox="0 0 64 64" className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)]" style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(239,68,68,0.8))' }}>
+                      <svg viewBox="0 0 64 64" style={{ width: 'calc(var(--shield-w)*0.1)', height: 'calc(var(--shield-w)*0.1)', filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(239,68,68,0.8))' }}>
                         <defs>
                           <radialGradient id="heartGradient" cx="40%" cy="30%">
                             <stop offset="0%" stopColor="#ff6b6b" />
@@ -389,16 +408,15 @@ export const InsufficientResourcesDialog = ({
                             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
                           </radialGradient>
                         </defs>
-                        {/* Shadow */}
                         <path d="M32 54 C12 42, 8 32, 8 24 C8 16, 14 10, 20 10 C26 10, 30 14, 32 18 C34 14, 38 10, 44 10 C50 10, 56 16, 56 24 C56 32, 52 42, 32 54 Z" fill="rgba(0,0,0,0.4)" transform="translate(0, 2)" />
-                        {/* Main heart */}
                         <path d="M32 52 C12 40, 8 30, 8 22 C8 14, 14 8, 20 8 C26 8, 30 12, 32 16 C34 12, 38 8, 44 8 C50 8, 56 14, 56 22 C56 30, 52 40, 32 52 Z" fill="url(#heartGradient)" stroke="#991b1b" strokeWidth="1.5" />
-                        {/* Highlight */}
                         <path d="M32 52 C12 40, 8 30, 8 22 C8 14, 14 8, 20 8 C26 8, 30 12, 32 16 C34 12, 38 8, 44 8 C50 8, 56 14, 56 22 C56 30, 52 40, 32 52 Z" fill="url(#heartHighlight)" />
                       </svg>
                       <span 
-                        className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-red-400"
+                        className="font-black text-red-400"
                         style={{
+                          fontSize: 'calc(var(--shield-w)*0.09)',
+                          lineHeight: 1,
                           textShadow: '0 6px 12px rgba(0,0,0,0.7), 0 3px 6px rgba(0,0,0,0.5), 0 0 16px rgba(248,113,113,0.6), 0 0 24px rgba(239,68,68,0.4)'
                         }}
                       >
@@ -419,8 +437,10 @@ export const InsufficientResourcesDialog = ({
                     </div>
                     <div className="flex items-center justify-center gap-3">
                       <div 
-                        className="text-[clamp(2.5rem,10vw,4rem)] font-black text-yellow-400"
+                        className="font-black text-yellow-400"
                         style={{
+                          fontSize: 'calc(var(--shield-w)*0.16)',
+                          lineHeight: 1,
                           textShadow: '0 5px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), 0 0 24px rgba(255,215,0,0.7)'
                         }}
                         ref={flagRef}
