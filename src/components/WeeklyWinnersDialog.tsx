@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
@@ -22,10 +22,26 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
   const confettiCount = isMobile ? 25 : 50;
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [listMaxHeight, setListMaxHeight] = useState<number>(0);
+  const measureHeights = () => {
+    try {
+      const c = containerRef.current;
+      const h = headerRef.current;
+      if (c) {
+        const headerH = h ? h.offsetHeight : 0;
+        const computed = c.clientHeight - headerH - 16; // buffer for paddings
+        setListMaxHeight(Math.max(120, computed));
+      }
+    } catch {}
+  };
+
   useEffect(() => {
     const handleResize = () => {
       try {
         setIsMobile(window.innerWidth <= 768);
+        measureHeights();
       } catch {}
     };
     handleResize();
@@ -36,7 +52,10 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
   useEffect(() => {
     if (open) {
       fetchTopPlayers();
-      const t = setTimeout(() => setContentVisible(true), 10);
+      const t = setTimeout(() => {
+        setContentVisible(true);
+        measureHeights();
+      }, 10);
       return () => {
         clearTimeout(t);
         setContentVisible(false);
@@ -203,6 +222,7 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
             <HexShieldFrame showShine={true}>
               {/* Premium WEEKLY WINNERS badge - ARANY 3D - ugyanaz mint Welcome */}
               <div 
+                ref={headerRef}
                 className="relative -mt-12 mb-4 mx-auto z-20" 
                 style={{ width: '80%' }}
               >
@@ -263,14 +283,14 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
               </div>
 
               {/* Content - Player List */}
-              <div className="relative z-10 flex flex-col h-full px-[5%] pb-[6%] pt-[1%]">
+              <div ref={containerRef} className="relative z-10 flex flex-col h-full pl-[6%] pr-[3%] pb-[6%] pt-[1%]">
                 
                 {/* Players List - scrollable */}
                 <div
                   className="w-full flex-1 space-y-1.5 overflow-y-auto pr-1"
                   style={{ 
-                    maxHeight: '100%',
-                    paddingRight: '8px'
+                    maxHeight: listMaxHeight || '60vh',
+                    paddingRight: '10px'
                   }}
                 >
                   {topPlayers.map((player, index) => (
