@@ -1001,6 +1001,33 @@ export type Database = {
           },
         ]
       }
+      leaderboard_public_cache: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          rank: number
+          total_correct_answers: number | null
+          updated_at: string | null
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          rank: number
+          total_correct_answers?: number | null
+          updated_at?: string | null
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          rank?: number
+          total_correct_answers?: number | null
+          updated_at?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
       lives_ledger: {
         Row: {
           correlation_id: string
@@ -2794,6 +2821,7 @@ export type Database = {
         Returns: Json
       }
       refresh_admin_stats: { Args: never; Returns: undefined }
+      refresh_leaderboard_public_cache: { Args: never; Returns: undefined }
       regenerate_invitation_code: { Args: never; Returns: string }
       regenerate_lives: { Args: never; Returns: undefined }
       regenerate_lives_background: { Args: never; Returns: undefined }
