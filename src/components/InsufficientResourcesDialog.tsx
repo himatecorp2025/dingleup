@@ -325,21 +325,35 @@ export const InsufficientResourcesDialog = ({
                 <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                   
                   
-                  {/* Timer countdown at top */}
-                  <div className="flex items-center gap-2 mb-3 bg-red-600/90 px-4 py-2 rounded-full animate-pulse">
-                    <Clock className="w-5 h-5 text-white" />
-                    <span className="text-white font-black text-base">
+                  {/* Timer countdown at top - 3D SVG enhanced */}
+                  <div className="relative flex items-center gap-2 mb-3 px-4 py-2 rounded-full">
+                    {/* 3D Shadow base */}
+                    <div className="absolute inset-0 bg-red-800/90 rounded-full translate-y-1 blur-sm" />
+                    {/* Main background with gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-full shadow-lg shadow-red-900/50" />
+                    {/* Inner highlight */}
+                    <div className="absolute inset-[2px] bg-gradient-to-br from-red-400/30 to-transparent rounded-full" />
+                    
+                    <Clock className="w-5 h-5 text-white relative z-10 drop-shadow-lg animate-pulse" />
+                    <span className="text-white font-black text-base relative z-10 drop-shadow-lg" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
                       {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                     </span>
                   </div>
 
-                  {/* BEST DEAL badge */}
-                  <div className="mb-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 px-6 py-1.5 rounded-full animate-pulse shadow-lg shadow-yellow-500/50">
-                    <span className="text-black font-black text-sm tracking-wider">⚡ BEST DEAL ⚡</span>
+                  {/* BEST DEAL badge - 3D SVG enhanced */}
+                  <div className="relative mb-2 px-6 py-1.5 rounded-full">
+                    {/* 3D Shadow base */}
+                    <div className="absolute inset-0 bg-yellow-600/80 rounded-full translate-y-1.5 blur-md" />
+                    {/* Main gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 rounded-full shadow-2xl shadow-yellow-500/70 animate-pulse" />
+                    {/* Top highlight */}
+                    <div className="absolute inset-[2px] top-0 h-1/2 bg-gradient-to-b from-yellow-200/60 to-transparent rounded-t-full" />
+                    
+                    <span className="relative z-10 text-black font-black text-sm tracking-wider drop-shadow-lg" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>⚡ BEST DEAL ⚡</span>
                   </div>
                   
-                  {/* Resources Display - 3D SVG icons (cqw scaling) */}
-                  <div className="relative flex items-center justify-center gap-[6cqw] mb-[2vh]">
+                  {/* Resources Display - 3D SVG icons (cqw scaling) - CLOSER together */}
+                  <div className="relative flex items-center justify-center gap-[3cqw] mb-[2vh] px-[4%]">
                     <div className="flex items-center gap-[2cqw]">
                       {/* 3D Gold Coin SVG */}
                       <svg viewBox="0 0 64 64" style={{ width: 'clamp(32px, 10cqw, 64px)', height: 'clamp(32px, 10cqw, 64px)', filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(255,215,0,0.8))' }}>
@@ -416,17 +430,41 @@ export const InsufficientResourcesDialog = ({
                     </div>
                   </div>
 
-                  {/* Price with "MA CSAK" label and discount badge */}
+                  {/* Price with "MA CSAK" label and discount badge - 3D enhanced */}
                   <div className="text-center mb-[2vh] relative">
+                    {/* Decorative SVG burst behind price - CAN overflow shield */}
+                    <div className="absolute -inset-[20%] pointer-events-none opacity-30 z-0">
+                      <svg viewBox="0 0 200 200" className="w-full h-full">
+                        <defs>
+                          <radialGradient id="burstGrad">
+                            <stop offset="0%" stopColor="#ffd700" stopOpacity="0.8" />
+                            <stop offset="100%" stopColor="#ffd700" stopOpacity="0" />
+                          </radialGradient>
+                        </defs>
+                        {[...Array(16)].map((_, i) => (
+                          <line
+                            key={i}
+                            x1="100"
+                            y1="100"
+                            x2={100 + Math.cos((i * Math.PI) / 8) * 90}
+                            y2={100 + Math.sin((i * Math.PI) / 8) * 90}
+                            stroke="url(#burstGrad)"
+                            strokeWidth="3"
+                            opacity="0.6"
+                          />
+                        ))}
+                      </svg>
+                    </div>
+
                     <div 
-                      className="text-[clamp(0.9rem,3.8vw,1.4rem)] font-black text-yellow-400 mb-1 uppercase tracking-wider"
+                      className="relative z-10 text-[clamp(0.9rem,3.8vw,1.4rem)] font-black text-yellow-400 mb-1 uppercase tracking-wider"
                       style={{
                         textShadow: '0 3px 6px rgba(0,0,0,0.7), 0 1px 3px rgba(0,0,0,0.5), 0 0 10px rgba(255,215,0,0.6)'
                       }}
                     >
                       MA CSAK
                     </div>
-                    <div className="flex items-center justify-center gap-3">
+                    <div className="relative z-10 flex items-center justify-center gap-3">
                       <div
                         className="font-black text-yellow-400"
                         style={{
@@ -438,9 +476,13 @@ export const InsufficientResourcesDialog = ({
                       >
                         $0.99
                       </div>
-                      {/* -80% OFF badge */}
-                      <div className="bg-red-600 text-white px-3 py-1 rounded-lg font-black text-sm rotate-12 shadow-lg animate-pulse">
-                        -80%
+                      {/* -80% OFF badge - 3D enhanced */}
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-red-800/80 rounded-lg translate-y-1 blur-sm" />
+                        <div className="relative bg-gradient-to-br from-red-500 to-red-700 text-white px-3 py-1 rounded-lg font-black text-sm rotate-12 shadow-lg shadow-red-900/50 animate-pulse">
+                          <div className="absolute inset-[2px] top-0 h-1/2 bg-gradient-to-b from-red-400/40 to-transparent rounded-t-lg" />
+                          <span className="relative z-10">-80%</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -472,7 +514,7 @@ export const InsufficientResourcesDialog = ({
                     </div>
                   </div>
 
-                  {/* MEGSZERZEM MOST! button (ZÖLD) - Equal padding on all sides */}
+                  {/* MEGSZERZEM MOST! button (ZÖLD) - Responsive text sizing */}
                   <div 
                     ref={buttonWrapperRef}
                     className="flex justify-center w-full"
@@ -480,8 +522,11 @@ export const InsufficientResourcesDialog = ({
                     <HexAcceptButton 
                       onClick={handleStartPayment} 
                       disabled={isLoadingPayment}
-                      style={{ 
-                        width: '100%'
+                      style={{
+                        width: '100%',
+                        fontSize: 'clamp(0.75rem, 4cqw, 1.25rem)',
+                        padding: 'clamp(8px, 2cqh, 16px) clamp(12px, 4cqw, 24px)',
+                        whiteSpace: 'nowrap'
                       }} 
                     >
                       {isLoadingPayment ? 'Betöltés...' : 'MEGSZERZEM MOST!'}
