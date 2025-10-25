@@ -21,13 +21,33 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     if (!userId) return;
 
     try {
-      // TESTING MODE: Always show, ignore all restrictions
+      // Check if user is on mobile/tablet
+      const isMobileOrTablet = window.innerWidth <= 1024;
+      if (!isMobileOrTablet) {
+        setCanClaim(false);
+        setLoading(false);
+        return;
+      }
+
+      // Check if user clicked "later" in this session
+      const laterKey = `welcome_bonus_later_${userId}`;
+      const clickedLater = localStorage.getItem(laterKey);
+      if (clickedLater) {
+        setCanClaim(false);
+        setLoading(false);
+        return;
+      }
+
+      // Try to claim to check eligibility (without actually claiming)
+      // The claim_welcome_bonus RPC will return success: false if already claimed
+      // We'll show the dialog optimistically and let the claim function handle validation
       setCanClaim(true);
       trackEvent('popup_impression', 'welcome');
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error checking welcome bonus:', error);
       }
+      setCanClaim(false);
     } finally {
       setLoading(false);
     }
@@ -70,7 +90,9 @@ export const useWelcomeBonus = (userId: string | undefined) => {
   const handleLater = () => {
     if (!userId) return;
     
-    // TESTING MODE: Don't save to localStorage, just close
+    // Save "later" choice in localStorage for this session
+    const laterKey = `welcome_bonus_later_${userId}`;
+    localStorage.setItem(laterKey, 'true');
     setCanClaim(false);
     
     // Track later action
