@@ -476,12 +476,48 @@ export const InsufficientResourcesDialog = ({
                       >
                         $0.99
                       </div>
-                      {/* -80% OFF badge - 3D enhanced */}
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-red-800/80 rounded-lg translate-y-1 blur-sm" />
-                        <div className="relative bg-gradient-to-br from-red-500 to-red-700 text-white px-3 py-1 rounded-lg font-black text-sm rotate-12 shadow-lg shadow-red-900/50 animate-pulse">
-                          <div className="absolute inset-[2px] top-0 h-1/2 bg-gradient-to-b from-red-400/40 to-transparent rounded-t-lg" />
-                          <span className="relative z-10">-80%</span>
+                      {/* -80% OFF badge - SPECTACULAR 3D SVG starburst that CAN OVERFLOW */}
+                      <div className="relative" style={{ minWidth: 'clamp(60px, 18cqw, 100px)' }}>
+                        {/* Spectacular SVG Starburst - BEHIND badge, OVERFLOWS shield */}
+                        <svg 
+                          viewBox="0 0 200 200" 
+                          className="absolute -inset-[80%] pointer-events-none animate-spin"
+                          style={{ 
+                            animation: 'spin 4s linear infinite',
+                            filter: 'drop-shadow(0 0 12px rgba(239,68,68,0.8)) drop-shadow(0 0 24px rgba(239,68,68,0.5))',
+                            zIndex: -1
+                          }}
+                        >
+                          <defs>
+                            <radialGradient id="starburstGradient">
+                              <stop offset="0%" stopColor="#fbbf24" />
+                              <stop offset="50%" stopColor="#f59e0b" />
+                              <stop offset="100%" stopColor="#dc2626" />
+                            </radialGradient>
+                          </defs>
+                          {/* 16-point starburst */}
+                          {[...Array(16)].map((_, i) => {
+                            const angle = (i * 22.5 * Math.PI) / 180;
+                            const length = i % 2 === 0 ? 95 : 70;
+                            return (
+                              <polygon
+                                key={i}
+                                points={`100,100 ${100 + Math.cos(angle - 0.1) * length},${100 + Math.sin(angle - 0.1) * length} ${100 + Math.cos(angle) * 100},${100 + Math.sin(angle) * 100} ${100 + Math.cos(angle + 0.1) * length},${100 + Math.sin(angle + 0.1) * length}`}
+                                fill="url(#starburstGradient)"
+                                opacity="0.9"
+                              />
+                            );
+                          })}
+                          {/* Center circle */}
+                          <circle cx="100" cy="100" r="25" fill="#ef4444" />
+                        </svg>
+                        
+                        {/* Badge shadow */}
+                        <div className="absolute inset-0 bg-red-800/80 rounded-lg translate-y-1.5 translate-x-1 blur-md" />
+                        {/* Main badge */}
+                        <div className="relative bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white px-3 py-1.5 rounded-lg font-black text-base rotate-12 shadow-2xl shadow-red-900/70 animate-pulse border-2 border-yellow-400">
+                          <div className="absolute inset-[2px] top-0 h-1/2 bg-gradient-to-b from-red-400/50 to-transparent rounded-t-lg" />
+                          <span className="relative z-10 drop-shadow-lg" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.9)' }}>-80%</span>
                         </div>
                       </div>
                     </div>
@@ -514,22 +550,20 @@ export const InsufficientResourcesDialog = ({
                     </div>
                   </div>
 
-                  {/* MEGSZERZEM MOST! button (ZÖLD) - Responsive text sizing */}
+                  {/* MEGSZERZEM MOST! button (ZÖLD) - Container query width responsive */}
                   <div 
                     ref={buttonWrapperRef}
-                    className="flex justify-center w-full"
+                    className="flex justify-center w-full px-[4%]"
                   >
                     <HexAcceptButton 
                       onClick={handleStartPayment} 
                       disabled={isLoadingPayment}
-                      style={{
+                      style={{ 
                         width: '100%',
-                        fontSize: 'clamp(0.75rem, 4cqw, 1.25rem)',
-                        padding: 'clamp(8px, 2cqh, 16px) clamp(12px, 4cqw, 24px)',
-                        whiteSpace: 'nowrap'
+                        maxWidth: '100%'
                       }} 
                     >
-                      {isLoadingPayment ? 'Betöltés...' : 'MEGSZERZEM MOST!'}
+                      {isLoadingPayment ? 'BETÖLTÉS...' : 'MEGSZERZEM MOST!'}
                     </HexAcceptButton>
                   </div>
                 </div>

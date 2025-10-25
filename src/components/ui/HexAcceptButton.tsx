@@ -27,6 +27,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           outline: "none",
           border: 0,
           animation: "accept-button-pulse 1.125s ease-in-out infinite",
+          containerType: "inline-size",
           ...style,
         }}
         {...props}
@@ -172,14 +173,19 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         />
       </div>
 
-      {/* LABEL - Pulsing text */}
+      {/* LABEL - Responsive text that NEVER overflows */}
       <span
-        className="relative z-[1] font-black text-white tracking-[0.08em]"
+        className="relative z-[1] font-black text-white tracking-[0.08em] px-4"
         style={{
-          fontSize: "clamp(1.05rem, 4.6vw, 1.45rem)",
+          fontSize: "clamp(0.7rem, 3.5cqw, 1.45rem)",
           textShadow:
             "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
-          animation: "text-pulse 1.125s ease-in-out infinite"
+          animation: "text-pulse 1.125s ease-in-out infinite",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          maxWidth: "100%",
+          display: "block"
         }}
       >
         {typeof children === "string" ? children.toUpperCase() : children}

@@ -32,12 +32,15 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine
           }}
         >
           <div 
-            className="absolute w-[200%] h-[200%]"
+            className="absolute"
             style={{
-              top: '-50%',
-              left: '-50%',
-              background: 'linear-gradient(120deg, transparent 46%, rgba(255,215,0,0.7) 50%, transparent 54%)',
-              animation: 'shine-sideways 1.5s linear infinite'
+              top: '-100%',
+              left: '-100%',
+              width: '300%',
+              height: '300%',
+              background: 'linear-gradient(120deg, transparent 48%, rgba(255,215,0,0.7) 50%, transparent 52%)',
+              animation: 'shine-sideways 1.5s linear infinite',
+              transformOrigin: 'center center'
             }}
           />
         </div>
