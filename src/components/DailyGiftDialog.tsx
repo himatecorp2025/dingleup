@@ -229,9 +229,15 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* Central HEXAGON (Flat-Top Geometry + 3D Specular) - DELAY 300ms */}
-          <div className={`relative z-10 transition-all duration-[220ms] ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.96]'}`}
-               style={{ transitionDelay: '300ms' }}>
+          {/* Central HEXAGON - ZOOM WRAPPER (doesn't affect layout) */}
+          <div 
+            className={`relative z-10 transition-all duration-[2000ms] ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+            style={{ 
+              transitionDelay: '300ms',
+              transformOrigin: 'center center',
+              willChange: 'transform, opacity'
+            }}
+          >
             
             {/* Background glow behind shield - removed to prevent purple pulse */}
 
