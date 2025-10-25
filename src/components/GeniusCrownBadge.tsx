@@ -14,9 +14,9 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
   };
 
   // Spectacular SVG "G" Letter for Genius
-  const geniusSvg = (
+  const geniusSvg = (sizeClass?: string) => (
     <svg 
-      className={`${sizeClasses[size]}`}
+      className={sizeClass || sizeClasses[size]}
       viewBox="0 0 24 24" 
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
@@ -143,11 +143,9 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                 aria-hidden
               />
 
-              {/* "G" Letter SVG centered - fills hexagon but stays centered */}
-              <div className="absolute inset-0 clip-hexagon flex items-center justify-center z-10 p-1 sm:p-1.5">
-                <div className="w-full h-full animate-pulse" style={{ animationDuration: '2s' }}>
-                  {geniusSvg}
-                </div>
+              {/* "G" Letter SVG centered - completely fills hexagon */}
+              <div className="absolute clip-hexagon flex items-center justify-center z-10" style={{ inset: '4px' }}>
+                {geniusSvg('w-full h-full')}
               </div>
             </div>
           </TooltipTrigger>
@@ -162,7 +160,7 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
   // Inline small version
   const geniusIcon = (
     <div className="inline-flex drop-shadow-[0_0_8px_rgba(251,191,36,0.8)] animate-pulse" style={{ animationDuration: '2s' }}>
-      {geniusSvg}
+      {geniusSvg()}
     </div>
   );
 
