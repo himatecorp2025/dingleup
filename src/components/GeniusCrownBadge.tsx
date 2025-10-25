@@ -45,10 +45,10 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
       {/* Glow effect */}
       <circle cx="12" cy="12" r="11" fill="url(#geniusGold)" opacity="0.3" filter="url(#geniusGlow)" />
 
-      {/* Bold "G" Letter Path - Centered at 12,12 with sub-pixel X offset to correct visual shift */}
-      <g transform="translate(12, 12) translate(-0.75, 0)">
+      {/* Bold "G" Letter Path - Perfectly symmetrical around center (12,12) */}
+      <g transform="translate(12, 12)">
         <path 
-          d="M 2.5 -10 C -3 -10 -8 -5.5 -8 0 C -8 5.5 -3 10 2.5 10 C 5.5 10 8 8.8 9.2 6.8 L 9.2 0.5 L 2 0.5 L 2 3.5 L 6 3.5 L 6 5.5 C 5 6.8 3.8 7.5 2.5 7.5 C -1.5 7.5 -5 4.5 -5 0 C -5 -4.5 -1.5 -7.5 2.5 -7.5 C 4.5 -7.5 6.2 -6.7 7.5 -5.2 L 9.5 -7.2 C 7.5 -9.2 5.2 -10 2.5 -10 Z" 
+          d="M 1.9 -10 C -3.6 -10 -8.6 -5.5 -8.6 0 C -8.6 5.5 -3.6 10 1.9 10 C 4.9 10 7.4 8.8 8.6 6.8 L 8.6 0.5 L 1.4 0.5 L 1.4 3.5 L 5.4 3.5 L 5.4 5.5 C 4.4 6.8 3.2 7.5 1.9 7.5 C -2.1 7.5 -5.6 4.5 -5.6 0 C -5.6 -4.5 -2.1 -7.5 1.9 -7.5 C 3.9 -7.5 5.6 -6.7 6.9 -5.2 L 8.9 -7.2 C 6.9 -9.2 4.6 -10 1.9 -10 Z" 
           fill="url(#geniusGold)"
           stroke="#92400E"
           strokeWidth="1.2"
@@ -58,7 +58,7 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
 
         {/* Dark shadow for depth */}
         <path 
-          d="M 2.5 -10 C -3 -10 -8 -5.5 -8 0 C -8 5.5 -3 10 2.5 10 C 5.5 10 8 8.8 9.2 6.8 L 9.2 0.5 L 2 0.5 L 2 3.5 L 6 3.5 L 6 5.5 C 5 6.8 3.8 7.5 2.5 7.5 C -1.5 7.5 -5 4.5 -5 0 C -5 -4.5 -1.5 -7.5 2.5 -7.5 C 4.5 -7.5 6.2 -6.7 7.5 -5.2 L 9.5 -7.2 C 7.5 -9.2 5.2 -10 2.5 -10 Z" 
+          d="M 1.9 -10 C -3.6 -10 -8.6 -5.5 -8.6 0 C -8.6 5.5 -3.6 10 1.9 10 C 4.9 10 7.4 8.8 8.6 6.8 L 8.6 0.5 L 1.4 0.5 L 1.4 3.5 L 5.4 3.5 L 5.4 5.5 C 4.4 6.8 3.2 7.5 1.9 7.5 C -2.1 7.5 -5.6 4.5 -5.6 0 C -5.6 -4.5 -2.1 -7.5 1.9 -7.5 C 3.9 -7.5 5.6 -6.7 6.9 -5.2 L 8.9 -7.2 C 6.9 -9.2 4.6 -10 1.9 -10 Z" 
           fill="none"
           stroke="#654321"
           strokeWidth="2"
@@ -69,7 +69,7 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
 
         {/* Shine overlay on G */}
         <path 
-          d="M 2.5 -10 C -3 -10 -8 -5.5 -8 0 C -8 5.5 -3 10 2.5 10 C 5.5 10 8 8.8 9.2 6.8 L 9.2 0.5 L 2 0.5 L 2 3.5 L 6 3.5 L 6 5.5 C 5 6.8 3.8 7.5 2.5 7.5 C -1.5 7.5 -5 4.5 -5 0 C -5 -4.5 -1.5 -7.5 2.5 -7.5 C 4.5 -7.5 6.2 -6.7 7.5 -5.2 L 9.5 -7.2 C 7.5 -9.2 5.2 -10 2.5 -10 Z" 
+          d="M 1.9 -10 C -3.6 -10 -8.6 -5.5 -8.6 0 C -8.6 5.5 -3.6 10 1.9 10 C 4.9 10 7.4 8.8 8.6 6.8 L 8.6 0.5 L 1.4 0.5 L 1.4 3.5 L 5.4 3.5 L 5.4 5.5 C 4.4 6.8 3.2 7.5 1.9 7.5 C -2.1 7.5 -5.6 4.5 -5.6 0 C -5.6 -4.5 -2.1 -7.5 1.9 -7.5 C 3.9 -7.5 5.6 -6.7 6.9 -5.2 L 8.9 -7.2 C 6.9 -9.2 4.6 -10 1.9 -10 Z" 
           fill="url(#geniusShine)"
           opacity="0.5"
         />
