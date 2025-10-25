@@ -180,7 +180,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           textShadow:
             "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
           animation: "text-pulse 1.125s ease-in-out infinite",
-          paddingTop: "3px"
+          paddingTop: "5px"
         }}
       >
         {typeof children === "string" ? children.toUpperCase() : children}

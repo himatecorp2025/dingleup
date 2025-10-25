@@ -4,7 +4,7 @@ import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import HexAcceptButton from './ui/HexAcceptButton';
-import { Coins, Heart, CreditCard, Sparkles } from 'lucide-react';
+import { CreditCard, Sparkles, Clock, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface InsufficientResourcesDialogProps {
@@ -37,6 +37,7 @@ export const InsufficientResourcesDialog = ({
   const [burstActive, setBurstActive] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
   const [isLoadingPayment, setIsLoadingPayment] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
 
   // Sync badge width to button (account for inner hexagon vs. outer frame ratio)
   useEffect(() => {
@@ -100,6 +101,27 @@ export const InsufficientResourcesDialog = ({
     return () => clearTimeout(timer);
   }, [contentVisible, open]);
 
+  // 5-minute countdown timer
+  useEffect(() => {
+    if (!open) {
+      setTimeLeft(300);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          onOpenChange(false);
+          toast.info('Az ajánlat lejárt');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [open, onOpenChange]);
+
   const handleStartPayment = async () => {
     if (!userId) {
       toast.error('Nincs bejelentkezve');
@@ -140,8 +162,8 @@ export const InsufficientResourcesDialog = ({
           className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
           style={{ minHeight: '100vh', minWidth: '100vw' }}
         >
-          {/* Background layer - Deep dark blue, 85% transparent, FULL SCREEN */}
-          <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
+          {/* Background layer - Deep gradient */}
+          <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.85, borderRadius: 0 }}></div>
 
           {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
           {contentVisible && burstActive && (
@@ -292,17 +314,49 @@ export const InsufficientResourcesDialog = ({
                 {/* Content Area */}
                 <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0">
                   
-                  {/* Resources Display - Strong 3D icons */}
+                  {/* Timer countdown at top */}
+                  <div className="flex items-center gap-2 mb-3 bg-red-600/90 px-4 py-2 rounded-full animate-pulse">
+                    <Clock className="w-5 h-5 text-white" />
+                    <span className="text-white font-black text-sm">
+                      {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                    </span>
+                    <span className="text-white/90 text-xs font-bold">Az ajánlat hamarosan lejár!</span>
+                  </div>
+
+                  {/* BEST DEAL badge */}
+                  <div className="mb-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 px-6 py-1.5 rounded-full animate-pulse shadow-lg shadow-yellow-500/50">
+                    <span className="text-black font-black text-sm tracking-wider">⚡ BEST DEAL ⚡</span>
+                  </div>
+                  
+                  {/* Resources Display - 3D SVG icons */}
                   <div className="relative flex items-center justify-center gap-[3vw] mb-[2vh]">
                     <div className="flex items-center gap-2">
-                      <Coins 
-                        className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-yellow-400"
-                        style={{
-                          filter: 'drop-shadow(0 0 16px rgba(255,215,0,0.9)) drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 3px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 24px rgba(255,215,0,0.6))',
-                          strokeWidth: '1.5px',
-                          stroke: 'rgba(255,215,0,0.8)'
-                        }}
-                      />
+                      {/* 3D Gold Coin SVG */}
+                      <svg width="clamp(32, 8vw, 48)" height="clamp(32, 8vw, 48)" viewBox="0 0 64 64" className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)]" style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(255,215,0,0.8))' }}>
+                        <defs>
+                          <radialGradient id="goldGradient" cx="35%" cy="25%">
+                            <stop offset="0%" stopColor="#ffd700" />
+                            <stop offset="40%" stopColor="#ffed4e" />
+                            <stop offset="70%" stopColor="#d4af37" />
+                            <stop offset="100%" stopColor="#b8860b" />
+                          </radialGradient>
+                          <radialGradient id="goldHighlight" cx="30%" cy="20%">
+                            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+                            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.3" />
+                            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                          </radialGradient>
+                        </defs>
+                        {/* Shadow layer */}
+                        <ellipse cx="32" cy="34" rx="28" ry="26" fill="rgba(0,0,0,0.4)" />
+                        {/* Main coin */}
+                        <ellipse cx="32" cy="32" rx="28" ry="26" fill="url(#goldGradient)" stroke="#b8860b" strokeWidth="2" />
+                        {/* Inner ring */}
+                        <ellipse cx="32" cy="32" rx="22" ry="20" fill="none" stroke="#d4af37" strokeWidth="1.5" opacity="0.6" />
+                        {/* Highlight */}
+                        <ellipse cx="32" cy="32" rx="28" ry="26" fill="url(#goldHighlight)" />
+                        {/* Dollar sign */}
+                        <text x="32" y="40" fontSize="28" fontWeight="black" fill="#b8860b" textAnchor="middle" fontFamily="Arial">$</text>
+                      </svg>
                       <span 
                         className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-yellow-200"
                         style={{
@@ -321,15 +375,28 @@ export const InsufficientResourcesDialog = ({
                       +
                     </div>
                     <div className="flex items-center gap-2">
-                      <Heart 
-                        className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-red-500"
-                        style={{
-                          filter: 'drop-shadow(0 0 16px rgba(239,68,68,0.9)) drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 3px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 24px rgba(239,68,68,0.6))',
-                          fill: '#ef4444',
-                          strokeWidth: '1px',
-                          stroke: 'rgba(220,38,38,0.8)'
-                        }}
-                      />
+                      {/* 3D Heart SVG */}
+                      <svg width="clamp(32, 8vw, 48)" height="clamp(32, 8vw, 48)" viewBox="0 0 64 64" className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)]" style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(239,68,68,0.8))' }}>
+                        <defs>
+                          <radialGradient id="heartGradient" cx="40%" cy="30%">
+                            <stop offset="0%" stopColor="#ff6b6b" />
+                            <stop offset="40%" stopColor="#ef4444" />
+                            <stop offset="70%" stopColor="#dc2626" />
+                            <stop offset="100%" stopColor="#991b1b" />
+                          </radialGradient>
+                          <radialGradient id="heartHighlight" cx="35%" cy="25%">
+                            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+                            <stop offset="40%" stopColor="#ffffff" stopOpacity="0.3" />
+                            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                          </radialGradient>
+                        </defs>
+                        {/* Shadow */}
+                        <path d="M32 54 C12 42, 8 32, 8 24 C8 16, 14 10, 20 10 C26 10, 30 14, 32 18 C34 14, 38 10, 44 10 C50 10, 56 16, 56 24 C56 32, 52 42, 32 54 Z" fill="rgba(0,0,0,0.4)" transform="translate(0, 2)" />
+                        {/* Main heart */}
+                        <path d="M32 52 C12 40, 8 30, 8 22 C8 14, 14 8, 20 8 C26 8, 30 12, 32 16 C34 12, 38 8, 44 8 C50 8, 56 14, 56 22 C56 30, 52 40, 32 52 Z" fill="url(#heartGradient)" stroke="#991b1b" strokeWidth="1.5" />
+                        {/* Highlight */}
+                        <path d="M32 52 C12 40, 8 30, 8 22 C8 14, 14 8, 20 8 C26 8, 30 12, 32 16 C34 12, 38 8, 44 8 C50 8, 56 14, 56 22 C56 30, 52 40, 32 52 Z" fill="url(#heartHighlight)" />
+                      </svg>
                       <span 
                         className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-red-400"
                         style={{
@@ -341,24 +408,30 @@ export const InsufficientResourcesDialog = ({
                     </div>
                   </div>
 
-                  {/* Price with "CSAK" label - Gold color */}
-                  <div className="text-center mb-[2vh]">
+                  {/* Price with "MA CSAK" label and discount badge */}
+                  <div className="text-center mb-[2vh] relative">
                     <div 
-                      className="text-[clamp(1.1rem,4.5vw,1.8rem)] font-black text-yellow-400 mb-1 uppercase tracking-wider"
+                      className="text-[clamp(0.9rem,3.8vw,1.4rem)] font-black text-yellow-400 mb-1 uppercase tracking-wider"
                       style={{
                         textShadow: '0 3px 6px rgba(0,0,0,0.7), 0 1px 3px rgba(0,0,0,0.5), 0 0 10px rgba(255,215,0,0.6)'
                       }}
                     >
-                      CSAK
+                      MA CSAK
                     </div>
-                    <div 
-                      className="text-[clamp(2.5rem,10vw,4rem)] font-black text-yellow-400"
-                      style={{
-                        textShadow: '0 5px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), 0 0 24px rgba(255,215,0,0.7)'
-                      }}
-                      ref={flagRef}
-                    >
-                      $0.99
+                    <div className="flex items-center justify-center gap-3">
+                      <div 
+                        className="text-[clamp(2.5rem,10vw,4rem)] font-black text-yellow-400"
+                        style={{
+                          textShadow: '0 5px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), 0 0 24px rgba(255,215,0,0.7)'
+                        }}
+                        ref={flagRef}
+                      >
+                        $0.99
+                      </div>
+                      {/* -80% OFF badge */}
+                      <div className="bg-red-600 text-white px-3 py-1 rounded-lg font-black text-sm rotate-12 shadow-lg animate-pulse">
+                        -80%
+                      </div>
                     </div>
                   </div>
 
@@ -376,6 +449,12 @@ export const InsufficientResourcesDialog = ({
                       </p>
                       <Sparkles className="w-4 h-4 text-yellow-300 drop-shadow-lg" />
                     </div>
+                  </div>
+
+                  {/* Social proof testimonial */}
+                  <div className="flex items-center gap-2 mb-[2vh] bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+                    <Users className="w-4 h-4 text-green-400" />
+                    <span className="text-white/90 text-xs font-semibold">500+ játékos vette meg még ma</span>
                   </div>
 
                   {/* Payment methods - Smaller, no box */}
