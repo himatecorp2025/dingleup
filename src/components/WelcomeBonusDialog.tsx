@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { trackBonusEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
@@ -69,6 +69,9 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
+      {/* Fully transparent overlay - no darkening */}
+      <DialogOverlay className="bg-transparent backdrop-blur-none" />
+      
       <DialogContent 
         className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
         style={{ 
