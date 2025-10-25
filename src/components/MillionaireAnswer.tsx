@@ -36,12 +36,12 @@ export const MillionaireAnswer = ({
         >
           <div className="flex items-center gap-4">
             <div 
-              className="w-10 h-10 bg-gray-700 border-2 border-gray-600 flex items-center justify-center flex-shrink-0 text-base font-bold"
+              className="w-10 h-10 bg-gray-700 border-2 border-gray-600 flex items-center justify-center flex-shrink-0 text-base font-bold ml-[5%] font-poppins"
               style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
             >
               {letter}:
             </div>
-            <span className="text-base md:text-lg line-through">{children}</span>
+            <span className="text-base md:text-lg line-through font-bold font-poppins">{children}</span>
           </div>
         </div>
       </div>
@@ -179,7 +179,7 @@ export const MillionaireAnswer = ({
       >
         <div className="flex items-center gap-4">
           <div 
-            className={`relative w-10 h-10 flex items-center justify-center flex-shrink-0 text-sm font-black`}
+            className={`relative w-10 h-10 flex items-center justify-center flex-shrink-0 text-sm font-black ml-[5%]`}
             style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
           >
             {/* Letter badge 3D */}
@@ -197,13 +197,13 @@ export const MillionaireAnswer = ({
               }} 
               aria-hidden 
             />
-            <span className={`relative z-10 ${
+            <span className={`relative z-10 font-poppins font-bold ${
               showCorrectPulse || isDoubleChoiceActive || isCorrect || isWrong ? 'text-gray-900' : 'text-gray-100'
-            }`}>
+            }`} style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
               {letter}:
             </span>
           </div>
-          <span className={`text-base sm:text-lg font-normal text-center flex-1 ${textColor} drop-shadow-lg`}>
+          <span className={`text-base sm:text-lg font-bold text-center flex-1 ${textColor} drop-shadow-lg font-poppins`} style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
             {children}
           </span>
         </div>

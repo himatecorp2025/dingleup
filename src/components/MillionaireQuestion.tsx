@@ -63,16 +63,16 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       >
         <div className="flex items-center gap-3">
           <div 
-            className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center"
+            className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center ml-[5%]"
             style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
           >
             {/* Number badge 3D */}
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-600 via-cyan-500 to-cyan-700 border-2 border-cyan-400" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.3)' }} aria-hidden />
             {typeof questionNumber === 'number' && (
-              <span className="relative z-10 text-white font-bold text-sm leading-none drop-shadow-lg">{questionNumber}</span>
+              <span className="relative z-10 text-white font-bold text-sm leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>{questionNumber}</span>
             )}
           </div>
-          <p className="text-base md:text-lg font-normal leading-snug text-center flex-1 drop-shadow-lg">
+          <p className="text-base md:text-lg font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
             {children}
           </p>
         </div>
