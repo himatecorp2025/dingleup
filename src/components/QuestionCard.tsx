@@ -138,7 +138,7 @@ export const QuestionCard = ({
       </div>
 
       {/* Wrapper for Timer + Question + Answers + Help - Vertically centered on mobile/tablet */}
-      <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 md:mt-[5.5vh]">
+      <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 pt-[7.2rem] sm:pt-[9rem] pb-[7.2rem] sm:pb-[9rem] md:pt-0 md:pb-0 md:mt-[5.5vh]">
         {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
         <div className="flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2">
           <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
@@ -196,7 +196,7 @@ export const QuestionCard = ({
         </div>
 
         {/* Bottom section: Help buttons - hexagon shaped with deep 3D */}
-        <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-3 mt-0 mb-1 sm:mb-2">
+        <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-3 mt-0">
         {/* 1/3 Help Button */}
         <div className="relative" style={{ perspective: '600px' }}>
           <button
