@@ -137,64 +137,66 @@ export const QuestionCard = ({
         </div>
       </div>
 
-      {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
-      <div className="flex flex-col justify-start space-y-1 sm:space-y-1.5 md:space-y-2 mt-[3.3vh] sm:mt-[4.4vh] md:mt-[5.5vh]">
-        <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
-          <TimerCircle timeLeft={timeLeft} />
-        </div>
+      {/* Wrapper for Timer + Question + Answers + Help - Vertically centered on mobile/tablet */}
+      <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 md:mt-[5.5vh]">
+        {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
+        <div className="flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2">
+          <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
+            <TimerCircle timeLeft={timeLeft} />
+          </div>
 
-        <div className="-mt-[0.1rem] sm:-mt-[0.2rem] md:-mt-[0.3rem] pb-10 sm:pb-12 md:pb-16">
-          <MillionaireQuestion questionNumber={questionNumber}>
-            {question.question}
-          </MillionaireQuestion>
-        </div>
+          <div className="-mt-[0.1rem] sm:-mt-[0.2rem] md:-mt-[0.3rem] pb-10 sm:pb-12 md:pb-16">
+            <MillionaireQuestion questionNumber={questionNumber}>
+              {question.question}
+            </MillionaireQuestion>
+          </div>
 
-        {/* Answers with exact spacing */}
-        <div className="mt-0">
-          <div className="space-y-4 sm:space-y-6 mb-4 sm:mb-6">{question.answers.map((answer) => {
-            const isRemoved = removedAnswer === answer.key;
-            const isSelected = selectedAnswer === answer.key;
-            const isCorrect = answer.key === correctAnswerKey;
-            const isSelectedCorrect = isSelected && isCorrect;
-            const isSelectedWrong = isSelected && !isCorrect;
-            const isFirstAttempt = firstAttempt === answer.key;
-            const isDoubleChoiceActive = isDoubleAnswerActiveThisQuestion && isFirstAttempt && !selectedAnswer;
-            const showCorrectPulse = selectedAnswer && !isSelected && isCorrect; // Show green pulse on correct when user selected wrong
+          {/* Answers with exact spacing */}
+          <div className="mt-0">
+            <div className="space-y-4 sm:space-y-6 mb-4 sm:mb-6">{question.answers.map((answer) => {
+              const isRemoved = removedAnswer === answer.key;
+              const isSelected = selectedAnswer === answer.key;
+              const isCorrect = answer.key === correctAnswerKey;
+              const isSelectedCorrect = isSelected && isCorrect;
+              const isSelectedWrong = isSelected && !isCorrect;
+              const isFirstAttempt = firstAttempt === answer.key;
+              const isDoubleChoiceActive = isDoubleAnswerActiveThisQuestion && isFirstAttempt && !selectedAnswer;
+              const showCorrectPulse = selectedAnswer && !isSelected && isCorrect; // Show green pulse on correct when user selected wrong
 
-            return (
-              <div key={answer.key} className="relative">
-                <MillionaireAnswer
-                  letter={answer.key as 'A' | 'B' | 'C'}
-                  onClick={() => !disabled && onAnswerSelect(answer.key)}
-                  isSelected={isSelected}
-                  isCorrect={isSelectedCorrect}
-                  isWrong={isSelectedWrong}
-                  disabled={disabled || isRemoved}
-                  isRemoved={isRemoved}
-                  isDoubleChoiceActive={isDoubleChoiceActive}
-                  showCorrectPulse={showCorrectPulse}
-                >
-                  {answer.text}
-                </MillionaireAnswer>
-                
-                {/* Audience percentage */}
-                {isAudienceActiveThisQuestion && audienceVotes[answer.key] && (
-                  <div className="absolute right-2 sm:right-3 md:right-4 top-1/2 -translate-y-1/2 flex items-center gap-1 sm:gap-1.5 md:gap-2 bg-purple-600/90 px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 rounded-full">
-                    <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-white" />
-                    <span className="text-white font-bold text-xs sm:text-sm">
-                      {audienceVotes[answer.key]}%
-                    </span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              return (
+                <div key={answer.key} className="relative">
+                  <MillionaireAnswer
+                    letter={answer.key as 'A' | 'B' | 'C'}
+                    onClick={() => !disabled && onAnswerSelect(answer.key)}
+                    isSelected={isSelected}
+                    isCorrect={isSelectedCorrect}
+                    isWrong={isSelectedWrong}
+                    disabled={disabled || isRemoved}
+                    isRemoved={isRemoved}
+                    isDoubleChoiceActive={isDoubleChoiceActive}
+                    showCorrectPulse={showCorrectPulse}
+                  >
+                    {answer.text}
+                  </MillionaireAnswer>
+                  
+                  {/* Audience percentage */}
+                  {isAudienceActiveThisQuestion && audienceVotes[answer.key] && (
+                    <div className="absolute right-2 sm:right-3 md:right-4 top-1/2 -translate-y-1/2 flex items-center gap-1 sm:gap-1.5 md:gap-2 bg-purple-600/90 px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 rounded-full">
+                      <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-white" />
+                      <span className="text-white font-bold text-xs sm:text-sm">
+                        {audienceVotes[answer.key]}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom section: Help buttons - hexagon shaped with deep 3D */}
-      <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-3 mt-0 mb-1 sm:mb-2">
+        {/* Bottom section: Help buttons - hexagon shaped with deep 3D */}
+        <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-3 mt-0 mb-1 sm:mb-2">
         {/* 1/3 Help Button */}
         <div className="relative" style={{ perspective: '600px' }}>
           <button
@@ -328,6 +330,7 @@ export const QuestionCard = ({
             </div>
           </button>
         </div>
+      </div>
       </div>
     </div>
   );
