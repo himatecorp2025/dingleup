@@ -141,11 +141,11 @@ export const QuestionCard = ({
       <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 md:mt-[5.5vh]">
         {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
         <div className="flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2">
-          <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
+          <div className="flex justify-center -mt-[5.5rem] sm:-mt-[7rem] md:-mt-[8.5rem]">
             <TimerCircle timeLeft={timeLeft} />
           </div>
 
-          <div className="-mt-[0.1rem] sm:-mt-[0.2rem] md:-mt-[0.3rem] pb-10 sm:pb-12 md:pb-16">
+          <div className="mt-4 sm:mt-5 md:mt-6 pb-12 sm:pb-14 md:pb-19">
             <MillionaireQuestion questionNumber={questionNumber}>
               {question.question}
             </MillionaireQuestion>
@@ -321,10 +321,10 @@ export const QuestionCard = ({
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            <div className="relative z-10 font-poppins flex flex-col items-center gap-0.5" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
-              <SkipForward className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-              <span className="text-xs sm:text-sm font-bold flex items-center gap-0.5">
-                <Coins className="w-3 h-3 sm:w-4 sm:h-4" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
+            <div className="relative z-10 font-poppins flex flex-col items-center gap-0" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
+              <SkipForward className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
+              <span className="text-[10px] sm:text-xs font-bold flex items-center gap-0.5">
+                <Coins className="w-2.5 h-2.5 sm:w-3 sm:h-3" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
                 {skipCost}
               </span>
             </div>
