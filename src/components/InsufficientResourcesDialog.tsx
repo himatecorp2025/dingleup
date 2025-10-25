@@ -1,18 +1,11 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Coins, Heart, CreditCard, Sparkles, Trophy } from "lucide-react";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { useEffect, useRef, useState } from 'react';
+import { Dialog, DialogContent } from './ui/dialog';
+import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { supabase } from '@/integrations/supabase/client';
+import HexShieldFrame from './frames/HexShieldFrame';
+import HexAcceptButton from './ui/HexAcceptButton';
+import { Coins, Heart, CreditCard, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface InsufficientResourcesDialogProps {
   open: boolean;
@@ -25,102 +18,6 @@ interface InsufficientResourcesDialogProps {
   onPurchaseComplete?: () => void;
 }
 
-const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined;
-const stripePromise = publishableKey ? loadStripe(publishableKey) : null as any;
-
-const PaymentForm = ({ 
-  clientSecret, 
-  onSuccess, 
-  onCancel 
-}: { 
-  clientSecret: string; 
-  onSuccess: () => void; 
-  onCancel: () => void;
-}) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
-      const { error, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: window.location.href,
-        },
-        redirect: 'if_required',
-      });
-
-      if (error) {
-        toast.error(error.message || 'Fizetési hiba történt');
-        setIsProcessing(false);
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        // Verify payment on backend
-        const { data, error: verifyError } = await supabase.functions.invoke('verify-inline-payment', {
-          body: { paymentIntentId: paymentIntent.id }
-        });
-
-        if (verifyError || !data?.granted) {
-          toast.error('Fizetés ellenőrzése sikertelen');
-          setIsProcessing(false);
-        } else {
-          toast.success(`${data.coins} aranyérme és ${data.lives} élet hozzáadva! 🎉`);
-          onSuccess();
-        }
-      }
-    } catch (err) {
-      console.error('Payment error:', err);
-      toast.error('Váratlan hiba történt');
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 rounded-xl p-4 border border-purple-500/30">
-        <PaymentElement />
-      </div>
-      
-      <div className="flex gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={isProcessing}
-          className="flex-1 border-white/30 text-white hover:bg-white/10"
-        >
-          Mégse
-        </Button>
-        <Button
-          type="submit"
-          disabled={!stripe || isProcessing}
-          className="flex-1 bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 hover:from-yellow-600 hover:via-yellow-700 hover:to-yellow-600 text-black font-black text-base shadow-[0_0_20px_rgba(234,179,8,0.6)] hover:shadow-[0_0_30px_rgba(234,179,8,0.8)] transition-all duration-300"
-        >
-          {isProcessing ? (
-            <span className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-              Feldolgozás...
-            </span>
-          ) : (
-            <span className="flex items-center gap-2">
-              <CreditCard className="w-5 h-5" />
-              Vásárlás most! 💳
-            </span>
-          )}
-        </Button>
-      </div>
-    </form>
-  );
-};
-
 export const InsufficientResourcesDialog = ({
   open,
   onOpenChange,
@@ -131,24 +28,77 @@ export const InsufficientResourcesDialog = ({
   userId,
   onPurchaseComplete
 }: InsufficientResourcesDialogProps) => {
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const isHandheld = usePlatformDetection();
+  const [contentVisible, setContentVisible] = useState(false);
+  const flagRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const buttonWrapperRef = useRef<HTMLDivElement>(null);
+  const [origin, setOrigin] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
+  const [burstActive, setBurstActive] = useState(false);
+  const [burstKey, setBurstKey] = useState(0);
   const [isLoadingPayment, setIsLoadingPayment] = useState(false);
-  const Icon = type === 'coins' ? Coins : type === 'lives' ? Heart : Coins;
-  
-  const getTitle = () => {
-    if (type === 'both') return '⚠️ Nincs elegendő erőforrás!';
-    return type === 'coins' ? '💰 Nincs elegendő aranyérme!' : '❤️ Nincs elegendő élet!';
-  };
-  
-  const getDescription = () => {
-    if (userId) {
-      return '🎮 Ne hagyd abba! Folytasd most azonnal!';
+
+  // Sync badge width to button (account for inner hexagon vs. outer frame ratio)
+  useEffect(() => {
+    if (!badgeRef.current || !buttonWrapperRef.current) return;
+
+    const INNER_TO_OUTER_RATIO = 132 / 108; // outerHexWidth / innerGreenWidth
+
+    const syncWidth = () => {
+      // Use offsetWidth (transform-independent) instead of getBoundingClientRect
+      const badgeWidth = badgeRef.current?.offsetWidth;
+      if (badgeWidth && buttonWrapperRef.current) {
+        const targetButtonWidth = Math.round(badgeWidth * INNER_TO_OUTER_RATIO);
+        buttonWrapperRef.current.style.setProperty('--sync-width', `${targetButtonWidth}px`);
+      }
+    };
+
+    syncWidth();
+    const observer = new ResizeObserver(syncWidth);
+    observer.observe(badgeRef.current);
+    window.addEventListener('resize', syncWidth);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', syncWidth);
+    };
+  }, [contentVisible, open]);
+
+  useEffect(() => {
+    if (open) {
+      const t = setTimeout(() => setContentVisible(true), 10);
+      return () => {
+        clearTimeout(t);
+        setContentVisible(false);
+        setBurstActive(false);
+      };
+    } else {
+      setContentVisible(false);
+      setBurstActive(false);
     }
-    if (requiredAmount && currentAmount !== undefined) {
-      return `Szükséges: ${requiredAmount}, Jelenleg: ${currentAmount}`;
-    }
-    return 'Látogass el a boltba, hogy több erőforrást szerezz!';
-  };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!contentVisible) return;
+    
+    // 200ms delay after shield appears (shield has 300ms delay, so total 500ms)
+    const timer = setTimeout(() => {
+      requestAnimationFrame(() => {
+        const el = flagRef.current;
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const x = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
+          const y = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
+          setOrigin({ x, y });
+          setBurstKey((k) => k + 1);
+          setBurstActive(true);
+        }
+      });
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [contentVisible, open]);
 
   const handleStartPayment = async () => {
     if (!userId) {
@@ -162,8 +112,9 @@ export const InsufficientResourcesDialog = ({
       
       if (error) throw error;
       
-      if (data.clientSecret) {
-        setClientSecret(data.clientSecret);
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
       }
     } catch (error: any) {
       console.error('Error creating payment:', error);
@@ -172,157 +123,249 @@ export const InsufficientResourcesDialog = ({
     }
   };
 
-  const handlePaymentSuccess = () => {
-    setClientSecret(null);
-    setIsLoadingPayment(false);
-    onPurchaseComplete?.();
-    onOpenChange(false);
-  };
-
-  const handlePaymentCancel = () => {
-    setClientSecret(null);
-    setIsLoadingPayment(false);
-  };
-
-  useEffect(() => {
-    if (!open) {
-      setClientSecret(null);
-      setIsLoadingPayment(false);
-    }
-  }, [open]);
-
-  const title = getTitle();
-  const description = getDescription();
-
+  if (!isHandheld || !open) return null;
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="flex flex-col bg-gradient-to-br from-[#1a1a3e] via-[#2a1a4e] to-[#1a1a5e] border-4 border-yellow-500/70 text-white shadow-[0_0_60px_rgba(234,179,8,0.5)] dialog-enter-slow"
-        style={{
-          width: '95vw',
-          maxWidth: '95vw',
-          height: 'calc(var(--vh, 1vh) * 70)',
-          maxHeight: 'calc(var(--vh, 1vh) * 70)',
-          overflow: 'hidden'
+        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
+        style={{ 
+          margin: 0,
+          maxHeight: '100vh',
+          minHeight: '100vh',
+          borderRadius: 0
         }}
       >
-        <DialogHeader className="text-center">
-          <DialogTitle className="text-2xl font-black text-center justify-center">
-            {title}
-          </DialogTitle>
-          <DialogDescription className="text-base text-white/90 pt-2 font-bold text-center">
-            {description}
-          </DialogDescription>
-        </DialogHeader>
-        
-        {userId && !clientSecret && (
-          <>
-            <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-6 my-3 overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)]">
-              {/* Animated background sparkles */}
-              <div className="absolute inset-0 opacity-30">
-                <Sparkles className="absolute top-2 right-2 w-6 h-6 text-yellow-200" />
-                <Sparkles className="absolute bottom-2 left-2 w-5 h-5 text-yellow-200" />
-                <Sparkles className="absolute top-1/2 right-1/4 w-4 h-4 text-yellow-300" />
-                <Trophy className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 text-yellow-300/10" />
-              </div>
+        <div 
+          className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
+          style={{ minHeight: '100vh', minWidth: '100vw' }}
+        >
+          {/* Background layer - Deep dark blue, 85% transparent, FULL SCREEN */}
+          <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
+
+          {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
+          {contentVisible && burstActive && (
+            <div key={burstKey} className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(180)].map((_, i) => {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 60 + 40; // vw
+                const size = Math.random() * 2 + 1.2;
+                const burstDuration = Math.random() * 0.25 + 0.3; // 0.3-0.55s
+
+                const endX = Math.cos(angle) * speed;
+                const endY = Math.sin(angle) * speed;
+
+                // Continuous floating parameters - faster and smoother
+                const floatX = Math.random() * 40 - 20; // vw
+                const floatY = Math.random() * 40 - 20; // vh
+                const floatDuration = Math.random() * 1 + 1; // 1-2s - much faster
+                const finalOpacity = Math.random() * 0.4 + 0.5; // 0.5-0.9
+
+                return (
+                  <div
+                    key={i}
+                    className="absolute rounded-full"
+                    style={{
+                      width: `${size}px`,
+                      height: `${size}px`,
+                      background: '#FFD700',
+                      left: `${origin.x}%`,
+                      top: `${origin.y}%`,
+                      boxShadow:
+                        '0 0 20px 4px #FFD700, 0 0 35px 10px #FFA500, 0 0 60px 12px rgba(255, 215, 0, 0.85)',
+                      filter: 'saturate(1.2) brightness(1.2)',
+                      transform: 'translate(-50%, -50%)',
+                      animation: `starBurst${i % 40} ${burstDuration}s cubic-bezier(0.2,0.8,0.2,1) forwards, starFloat${i % 40} ${floatDuration}s linear ${burstDuration}s infinite`,
+                      animationDelay: `${i * 0.003}s`,
+                      zIndex: 5
+                    }}
+                  >
+                    <style>{`
+                      @keyframes starBurst${i % 40} {
+                        0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                        10% { opacity: 1; }
+                        100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)) scale(1); opacity: ${finalOpacity}; }
+                      }
+                      @keyframes starFloat${i % 40} {
+                        0% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
+                        12.5% { transform: translate(calc(-50% + ${endX + floatX * 0.25}vw), calc(-50% + ${endY + floatY * 0.25}vh)); }
+                        25% { transform: translate(calc(-50% + ${endX + floatX * 0.5}vw), calc(-50% + ${endY + floatY * 0.5}vh)); }
+                        37.5% { transform: translate(calc(-50% + ${endX + floatX * 0.75}vw), calc(-50% + ${endY + floatY * 0.75}vh)); }
+                        50% { transform: translate(calc(-50% + ${endX + floatX}vw), calc(-50% + ${endY + floatY}vh)); }
+                        62.5% { transform: translate(calc(-50% + ${endX + floatX * 0.75}vw), calc(-50% + ${endY - floatY * 0.25}vh)); }
+                        75% { transform: translate(calc(-50% + ${endX + floatX * 0.5}vw), calc(-50% + ${endY - floatY * 0.5}vh)); }
+                        87.5% { transform: translate(calc(-50% + ${endX + floatX * 0.25}vw), calc(-50% + ${endY - floatY * 0.25}vh)); }
+                        100% { transform: translate(calc(-50% + ${endX}vw), calc(-50% + ${endY}vh)); }
+                      }
+                    `}</style>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ZOOM WRAPPER - scale animation for visual effect */}
+          <div 
+            className="relative z-10"
+            style={{ 
+              transform: contentVisible ? 'scale(1)' : 'scale(0)',
+              opacity: contentVisible ? 1 : 0,
+              transition: 'transform 1500ms ease-in-out 300ms, opacity 1500ms ease-in-out 300ms',
+              transformOrigin: 'center center',
+              willChange: contentVisible ? 'transform, opacity' : 'auto'
+            }}
+          >
+            {/* SHIELD CONTAINER - always scale(1) so SVG filters render immediately */}
+            <div style={{ transform: 'scale(1)' }}>
               
-              <div className="relative z-10">
-                <div className="flex items-center justify-center gap-4 mb-4">
-                  <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full shadow-lg">
-                    <Coins className="w-8 h-8 text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]" />
-                    <span className="text-2xl font-black text-yellow-200 drop-shadow-lg">500</span>
-                  </div>
-                  <div className="text-4xl font-black text-yellow-200 drop-shadow-lg">+</div>
-                  <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full shadow-lg">
-                    <Heart className="w-8 h-8 text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,1)]" />
-                    <span className="text-2xl font-black text-red-300 drop-shadow-lg">15</span>
+              {/* Background glow behind shield - removed to prevent purple pulse */}
+
+              <HexShieldFrame>
+                {/* Top Hex Badge - "BUY NOW" - 3D GOLD FRAME - COVERS TOP POINT */}
+                <div 
+                  ref={badgeRef}
+                  className="relative -mt-12 mb-3 mx-auto z-20" 
+                  style={{ width: '78%' }}
+                >
+                  {/* 3D Shadow base */}
+                  <div className="absolute inset-0 translate-y-1 translate-x-1"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         background: 'rgba(0,0,0,0.4)',
+                         filter: 'blur(4px)',
+                         zIndex: -1
+                       }} />
+                  
+                  {/* Outer gold frame */}
+                  <div className="absolute inset-0"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                         boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 6px 16px rgba(0,0,0,0.35)'
+                       }} />
+                  
+                  {/* Middle gold highlight frame */}
+                  <div className="absolute inset-[3px]"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                         boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                       }} />
+                  
+                  <div className="relative px-[5vw] py-[1.2vh]"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                       }}>
+                    {/* Inner RED RUBY crystal with diagonal streaks */}
+                    <div className="absolute inset-[6px]"
+                         style={{
+                           clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                           background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 95% 75%) 0%, hsl(0 90% 65%) 30%, hsl(0 85% 55%) 60%, hsl(0 78% 48%) 100%)',
+                           boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.25), inset 0 -12px 24px rgba(0,0,0,0.4)'
+                         }} />
+                    
+                    {/* Diagonal light streaks - SAME as ELFOGADOM button */}
+                    <div className="absolute inset-[6px] pointer-events-none"
+                         style={{
+                           clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                           background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+                           opacity: 0.7
+                         }} />
+                    
+                    {/* Specular highlight */}
+                    <div className="absolute inset-[6px] pointer-events-none" style={{
+                      clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                      background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
+                    }} />
+                    
+                    <h1 className="relative z-10 font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
+                        style={{ 
+                          fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
+                          letterSpacing: '0.05em',
+                          textShadow: '0 0 12px rgba(255,255,255,0.25)'
+                        }}>
+                      BUY NOW
+                    </h1>
                   </div>
                 </div>
-                
-                <div className="text-center space-y-2">
-                  <p className="text-4xl font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]">
-                    $0.99
-                  </p>
-                  <div className="flex items-center justify-center gap-2">
-                    <Sparkles className="w-4 h-4 text-yellow-300" />
-                    <p className="text-sm text-yellow-100 font-bold drop-shadow-md">Azonnal jóváírva • Játék folytatása</p>
-                    <Sparkles className="w-4 h-4 text-yellow-300" />
+
+                {/* Content Area */}
+                <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-[4%] pb-0">
+                  
+                  {/* Offer box - 500 coins + 15 lives */}
+                  <div className="relative bg-gradient-to-br from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border-4 border-yellow-400/60 rounded-2xl p-[4vw] mb-[1.5vh] overflow-hidden shadow-[0_0_40px_rgba(234,179,8,0.5)] w-full max-w-[85%]">
+                    {/* Animated background sparkles */}
+                    <div className="absolute inset-0 opacity-30">
+                      <Sparkles className="absolute top-2 right-2 w-6 h-6 text-yellow-200" />
+                      <Sparkles className="absolute bottom-2 left-2 w-5 h-5 text-yellow-200" />
+                      <Sparkles className="absolute top-1/2 right-1/4 w-4 h-4 text-yellow-300" />
+                    </div>
+                    
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-center gap-[3vw] mb-[1.5vh]">
+                        <div className="flex items-center gap-2 bg-black/40 px-[3vw] py-[1vh] rounded-full shadow-lg">
+                          <Coins className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]" />
+                          <span className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-yellow-200 drop-shadow-lg">500</span>
+                        </div>
+                        <div className="text-[clamp(2rem,8vw,3.5rem)] font-black text-yellow-200 drop-shadow-lg">+</div>
+                        <div className="flex items-center gap-2 bg-black/40 px-[3vw] py-[1vh] rounded-full shadow-lg">
+                          <Heart className="w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)] text-red-400 drop-shadow-[0_0_12px_rgba(248,113,113,1)]" />
+                          <span className="text-[clamp(1.5rem,6vw,2.5rem)] font-black text-red-300 drop-shadow-lg">15</span>
+                        </div>
+                      </div>
+                      
+                      <div className="text-center space-y-[0.5vh]">
+                        <p className="text-[clamp(2.5rem,10vw,4rem)] font-black text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]" ref={flagRef}>
+                          $0.99
+                        </p>
+                        <div className="flex items-center justify-center gap-2">
+                          <Sparkles className="w-4 h-4 text-yellow-300" />
+                          <p className="text-[clamp(0.75rem,3vw,1rem)] text-yellow-100 font-bold drop-shadow-md">Azonnal jóváírva • Játék folytatása</p>
+                          <Sparkles className="w-4 h-4 text-yellow-300" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Payment methods */}
+                  <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-[1.5vh] mb-[1.5vh] w-full max-w-[85%]">
+                    <p className="text-center text-white font-bold text-[clamp(0.65rem,2.8vw,0.9rem)] flex items-center justify-center gap-2">
+                      <CreditCard className="w-4 h-4" />
+                      Biztonságos fizetés • Apple Pay • Google Pay • Kártya
+                    </p>
+                  </div>
+
+                  {/* ELFOGADOM button (ZÖLD) - SAME AS DAILY GIFT */}
+                  <div 
+                    ref={buttonWrapperRef}
+                    className="flex justify-center mt-auto mb-[4%]"
+                    style={{
+                      width: 'var(--sync-width, 100%)',
+                      maxWidth: '100%'
+                    }}
+                  >
+                    <HexAcceptButton 
+                      onClick={handleStartPayment} 
+                      disabled={isLoadingPayment}
+                      style={{ width: 'var(--sync-width)' }} 
+                    >
+                      {isLoadingPayment ? 'Betöltés...' : 'MEGSZERZEM MOST!'}
+                    </HexAcceptButton>
                   </div>
                 </div>
-              </div>
+              </HexShieldFrame>
             </div>
-
-            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/50 rounded-xl p-3 mb-2">
-              <p className="text-center text-white font-bold text-xs flex items-center justify-center gap-2">
-                <CreditCard className="w-4 h-4" />
-                Biztonságos fizetés • Apple Pay • Google Pay • Kártya
-              </p>
-            </div>
-          </>
-        )}
-
-        {clientSecret && stripePromise && (
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <PaymentForm 
-              clientSecret={clientSecret} 
-              onSuccess={handlePaymentSuccess}
-              onCancel={handlePaymentCancel}
-            />
-          </Elements>
-        )}
-        {clientSecret && !stripePromise && (
-          <div className="text-center text-sm text-red-300">
-            Fizetés nem elérhető: hiányzó Stripe kulcs.
           </div>
-        )}
-        
-        {userId && !clientSecret && (
-          <DialogFooter className="flex flex-col gap-3 sm:gap-3">
-            <Button 
-              onClick={handleStartPayment}
-              disabled={isLoadingPayment}
-              className="w-full bg-gradient-to-r from-green-500 via-green-600 to-green-500 hover:from-green-600 hover:via-green-700 hover:to-green-600 text-black font-black text-xl gap-3 py-6 shadow-[0_0_25px_rgba(34,197,94,0.6)] hover:shadow-[0_0_35px_rgba(34,197,94,0.8)] transition-all duration-300 animate-pulse hover:animate-none border-4 border-yellow-400"
-            >
-              {isLoadingPayment ? (
-                <>
-                  <div className="w-6 h-6 border-3 border-black border-t-transparent rounded-full animate-spin" />
-                  Betöltés...
-                </>
-              ) : (
-                <>
-                  <CreditCard className="w-6 h-6" />
-                  VÁSÁRLÁS $0.99 🎰
-                </>
-              )}
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              onClick={() => onOpenChange(false)}
-              className="text-white/60 hover:text-white/80 hover:bg-transparent text-sm"
-            >
-              Később
-            </Button>
-          </DialogFooter>
-        )}
 
-        {!userId && (
-          <DialogFooter className="flex flex-col gap-3 sm:gap-3 mt-4">
-            <Button 
-              onClick={onGoToShop} 
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white gap-2 py-5 text-lg font-bold"
-            >
-              Bejelentkezés és vásárlás
-            </Button>
-            <Button 
-              variant="ghost" 
-              onClick={() => onOpenChange(false)}
-              className="text-white/60 hover:text-white/80 hover:bg-transparent text-sm"
-            >
-              Mégse
-            </Button>
-          </DialogFooter>
-        )}
+          {/* Close X button - top right - DELAY 600ms */}
+          <button
+            onClick={() => onOpenChange(false)}
+            className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '600ms' }}
+          >
+            ×
+          </button>
+        </div>
       </DialogContent>
     </Dialog>
   );

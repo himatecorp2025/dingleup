@@ -1,7 +1,7 @@
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 
 interface GameStateScreenProps {
-  type: 'timeout' | 'lose' | 'out-of-lives' | 'win';
+  type: 'out-of-lives';
   onContinue: () => void;
   onSkip?: () => void;
   score?: number;
@@ -19,37 +19,7 @@ export const GameStateScreen = ({
 }: GameStateScreenProps) => {
   const isHandheld = usePlatformDetection();
   
-  const isWinState = type === 'win';
-  const isLoseState = type === 'lose' || type === 'timeout' || type === 'out-of-lives';
-
   const config = {
-    win: {
-      title: 'YOU WIN!',
-      bgColor: 'from-purple-600 to-purple-800',
-      titleColor: 'from-white to-purple-100',
-      borderColor: 'border-yellow-400',
-      stars: [true, true, true],
-      buttonText: 'OK',
-      buttonColor: 'from-pink-500 to-pink-700'
-    },
-    lose: {
-      title: 'YOU LOSE!',
-      bgColor: 'from-red-600 to-red-800',
-      titleColor: 'from-white to-red-100',
-      borderColor: 'border-gray-400',
-      stars: [false, false, false],
-      buttonText: 'Továbbjutás 50 aranyért',
-      buttonColor: 'from-pink-500 to-pink-700'
-    },
-    timeout: {
-      title: 'YOU LOSE!',
-      bgColor: 'from-orange-600 to-orange-800',
-      titleColor: 'from-white to-orange-100',
-      borderColor: 'border-gray-400',
-      stars: [false, false, false],
-      buttonText: 'Továbbjutás 150 aranyért',
-      buttonColor: 'from-pink-500 to-pink-700'
-    },
     'out-of-lives': {
       title: 'YOU LOSE!',
       bgColor: 'from-red-600 to-red-800',
@@ -117,7 +87,7 @@ export const GameStateScreen = ({
           {/* Content */}
           <div className="relative z-10 flex flex-col items-center justify-between h-full">
             {/* Title banner */}
-            <div className={`bg-gradient-to-b ${isWinState ? 'from-purple-700 to-purple-900' : 'from-red-700 to-red-900'} px-[8vw] py-[2vh] rounded-2xl border-4 ${borderColor} -mt-[2vh] shadow-xl`}
+            <div className="bg-gradient-to-b from-red-700 to-red-900 px-[8vw] py-[2vh] rounded-2xl border-4 border-gray-400 -mt-[2vh] shadow-xl"
                  style={{
                    clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)'
                  }}>
@@ -145,18 +115,6 @@ export const GameStateScreen = ({
                 TOTAL SCORE: {totalScore}
               </p>
             </div>
-
-            {/* Reward box */}
-            {isWinState && reward > 0 && (
-              <div className="bg-purple-800/80 border-4 border-purple-400 rounded-xl px-[6vw] py-[2vh] backdrop-blur-sm">
-                <div className="flex items-center gap-[2vw]">
-                  <span style={{ fontSize: 'clamp(2rem, 10vw, 3rem)' }}>💎</span>
-                  <span className="font-black text-cyan-300 drop-shadow-lg" style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)' }}>
-                    +{reward}
-                  </span>
-                </div>
-              </div>
-            )}
 
             {/* Action buttons as circular icons */}
             <div className="flex gap-[6vw] mt-[3vh]">
