@@ -64,7 +64,7 @@ export const QuestionCard = ({
   const skipCost = getSkipCost(questionNumber - 1); // Convert to 0-indexed
 
   return (
-    <div className={`w-full h-full flex flex-col p-1 sm:p-2 gap-1 sm:gap-2 ${className}`}>
+    <div className={`w-full h-full flex flex-col p-1 sm:p-2 gap-0 ${className}`}>
       {/* Top section: Exit button, Lives, Coins - Moved higher */}
       <div className="flex justify-between items-start">
         {/* Back Button - 3D Round Style */}
@@ -138,7 +138,7 @@ export const QuestionCard = ({
       </div>
 
       {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
-      <div className="flex flex-col justify-start space-y-0.5 sm:space-y-1">
+      <div className="flex flex-col justify-start space-y-2 sm:space-y-3">
         <div className="flex justify-center">
           <TimerCircle timeLeft={timeLeft} />
         </div>
