@@ -85,8 +85,8 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             minWidth: '100vw'
           }}
         >
-          {/* 10% homályos háttér - 90% átlátszó */}
-          <div className="absolute inset-0 w-full h-full min-h-screen bg-black/10 backdrop-blur-[1px]" style={{ borderRadius: 0 }}></div>
+          {/* 5% homályos háttér - 95% átlátszó, sötétítés NULLA */}
+          <div className="absolute inset-0 w-full h-full min-h-screen backdrop-blur-[0.5px]" style={{ borderRadius: 0 }}></div>
 
           {/* Animated golden stars + konfetti */}
           {contentVisible && (
@@ -131,52 +131,6 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                 })}
               </div>
 
-              {/* Konfetti animáció */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(20)].map((_, i) => {
-                  const delay = Math.random() * 2;
-                  const duration = 3 + Math.random() * 2;
-                  const startX = Math.random() * 100;
-                  const rotate = Math.random() * 360;
-                  const colors = ['#fbbf24', '#f59e0b', '#fb7185', '#a855f7', '#3b82f6'];
-                  const color = colors[Math.floor(Math.random() * colors.length)];
-                  
-                  return (
-                    <div
-                      key={`confetti-${i}`}
-                      className="absolute"
-                      style={{
-                        left: `${startX}%`,
-                        top: '-10%',
-                        animation: `confettiFall${i} ${duration}s linear ${delay}s infinite`,
-                        zIndex: 2
-                      }}
-                    >
-                      <div 
-                        style={{ 
-                          width: '8px', 
-                          height: '8px', 
-                          background: color,
-                          transform: `rotate(${rotate}deg)`,
-                          opacity: 0.8
-                        }}
-                      />
-                      <style>{`
-                        @keyframes confettiFall${i} {
-                          0% { 
-                            transform: translateY(0) rotate(0deg);
-                            opacity: 1;
-                          }
-                          100% { 
-                            transform: translateY(110vh) rotate(720deg);
-                            opacity: 0;
-                          }
-                        }
-                      `}</style>
-                    </div>
-                  );
-                })}
-              </div>
             </>
           )}
 
@@ -280,11 +234,14 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
               {/* Content */}
               <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                 
-                {/* MARKETING banner - 3 csillag */}
+                {/* MARKETING banner - 3D crystal effect with 3 stars */}
                 <div className="relative mb-2">
-                  <div className="px-6 py-1.5 bg-gradient-to-r from-red-600 via-red-500 to-red-600 rounded-full border-2 border-red-300 shadow-lg"
+                  <div className="px-6 py-1.5 rounded-full border-2 border-red-300 shadow-[0_8px_16px_rgba(220,38,38,0.5),inset_0_2px_8px_rgba(255,255,255,0.3),inset_0_-2px_8px_rgba(0,0,0,0.3)]"
                        style={{ 
-                         boxShadow: '0 0 20px rgba(239,68,68,0.6), inset 0 1px 0 rgba(255,255,255,0.3)',
+                         background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #dc2626 100%)',
+                         transform: 'perspective(500px) rotateX(5deg)',
+                         borderTop: '2px solid rgba(255,255,255,0.4)',
+                         borderBottom: '2px solid rgba(0,0,0,0.3)',
                          animation: 'offerPulse 1.5s ease-in-out infinite'
                        }}>
                     <p className="text-white font-black text-center tracking-wider flex items-center justify-center gap-2"
@@ -300,25 +257,69 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                   <style>{`
                     @keyframes offerPulse {
                       0%, 100% { 
-                        transform: scale(1);
+                        transform: perspective(500px) rotateX(5deg) scale(1);
                         filter: brightness(1);
                       }
                       50% { 
-                        transform: scale(1.05);
+                        transform: perspective(500px) rotateX(5deg) scale(1.05);
                         filter: brightness(1.2);
                       }
                     }
                   `}</style>
                 </div>
 
-                {/* Subtitle */}
-                <p className="text-center text-yellow-200 font-black mb-4"
-                   style={{
-                     fontSize: 'clamp(1rem, 4.8cqw, 1.4rem)',
-                     textShadow: '0 4px 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)'
-                   }}>
-                  Különleges kezdő csomag!
-                </p>
+                {/* Subtitle with 3D gift boxes */}
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  {/* Left 3D Gift Box SVG */}
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="drop-shadow-[0_4px_8px_rgba(255,215,0,0.4)] flex-shrink-0">
+                    <defs>
+                      <linearGradient id="giftGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#FFD700" />
+                        <stop offset="50%" stopColor="#FFA500" />
+                        <stop offset="100%" stopColor="#FFD700" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="4" y="10" width="16" height="11" rx="1" fill="url(#giftGrad1)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.5"/>
+                    <rect x="4.5" y="10.5" width="15" height="1.5" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="11" y="10" width="2" height="11" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    <rect x="4" y="13" width="16" height="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    <circle cx="9" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    <circle cx="15" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    <circle cx="12" cy="7" r="1.5" fill="rgba(220,38,38,1)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                  </svg>
+                  
+                  <p className="text-center text-yellow-200 font-black shadow-[0_4px_8px_rgba(255,215,0,0.3),inset_0_1px_4px_rgba(255,255,255,0.2),inset_0_-1px_4px_rgba(0,0,0,0.2)]"
+                     style={{
+                       fontSize: 'clamp(1rem, 4.8cqw, 1.4rem)',
+                       textShadow: '0 4px 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)',
+                       background: 'linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.25) 50%, rgba(255,215,0,0.15) 100%)',
+                       transform: 'perspective(300px) rotateX(3deg)',
+                       padding: '6px 12px',
+                       borderRadius: '8px',
+                       borderTop: '1px solid rgba(255,255,255,0.2)',
+                       borderBottom: '1px solid rgba(0,0,0,0.2)'
+                     }}>
+                    Ajándék csak neked!
+                  </p>
+                  
+                  {/* Right 3D Gift Box SVG */}
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="drop-shadow-[0_4px_8px_rgba(255,215,0,0.4)] flex-shrink-0">
+                    <defs>
+                      <linearGradient id="giftGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#FFD700" />
+                        <stop offset="50%" stopColor="#FFA500" />
+                        <stop offset="100%" stopColor="#FFD700" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="4" y="10" width="16" height="11" rx="1" fill="url(#giftGrad2)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.5"/>
+                    <rect x="4.5" y="10.5" width="15" height="1.5" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="11" y="10" width="2" height="11" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    <rect x="4" y="13" width="16" height="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    <circle cx="9" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    <circle cx="15" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    <circle cx="12" cy="7" r="1.5" fill="rgba(220,38,38,1)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                  </svg>
+                </div>
 
                 {/* Rewards - Pulzáló érmék + piros szívek */}
                 <div className="w-full max-w-[85%] space-y-3 mb-4">
@@ -378,16 +379,17 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                            style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)' }} />
                       
                       <div className="relative flex items-center justify-center gap-3">
+                        {/* Left pulsing heart SVG - PIROS */}
                         <svg viewBox="0 0 100 100" className="w-12 h-12 drop-shadow-2xl flex-shrink-0" style={{ animation: 'heartPulse 1.5s ease-in-out infinite' }}>
                           <defs>
-                            <radialGradient id="heartGradRed">
+                            <radialGradient id="heartGradRedLeft">
                               <stop offset="0%" stopColor="#fca5a5" />
-                              <stop offset="50%" stopColor="#ef4444" />
-                              <stop offset="100%" stopColor="#dc2626" />
+                              <stop offset="50%" stopColor="#dc2626" />
+                              <stop offset="100%" stopColor="#991b1b" />
                             </radialGradient>
                           </defs>
                           <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
-                                fill="url(#heartGradRed)" stroke="#991b1b" strokeWidth="2" />
+                                fill="url(#heartGradRedLeft)" stroke="#7f1d1d" strokeWidth="2" />
                         </svg>
                         
                         <div className="flex items-center gap-2">
@@ -395,11 +397,20 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                                 style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
                             +50
                           </span>
-                          <svg viewBox="0 0 100 100" className="w-12 h-12 drop-shadow-2xl flex-shrink-0" style={{ animation: 'heartPulse 1.5s ease-in-out infinite 0.3s' }}>
-                            <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
-                                  fill="url(#heartGradRed)" stroke="#991b1b" strokeWidth="2" />
-                          </svg>
                         </div>
+                        
+                        {/* Right pulsing heart SVG - PIROS */}
+                        <svg viewBox="0 0 100 100" className="w-12 h-12 drop-shadow-2xl flex-shrink-0" style={{ animation: 'heartPulse 1.5s ease-in-out infinite 0.3s' }}>
+                          <defs>
+                            <radialGradient id="heartGradRedRight">
+                              <stop offset="0%" stopColor="#fca5a5" />
+                              <stop offset="50%" stopColor="#dc2626" />
+                              <stop offset="100%" stopColor="#991b1b" />
+                            </radialGradient>
+                          </defs>
+                          <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
+                                fill="url(#heartGradRedRight)" stroke="#7f1d1d" strokeWidth="2" />
+                        </svg>
                       </div>
                     </div>
                   </div>
