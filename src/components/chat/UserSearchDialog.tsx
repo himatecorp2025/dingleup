@@ -182,7 +182,7 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
         return (
           <button
             onClick={() => sendFriendRequest(user.id)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-lg text-white text-sm font-medium transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 rounded-lg text-white text-sm font-medium transition-all shadow-lg shadow-purple-500/30"
           >
             <UserPlus className="w-4 h-4" />
             Bejelölöm
@@ -198,7 +198,7 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
         return (
           <button
             onClick={() => openThread(user.id)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-lg text-white text-sm font-medium transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 rounded-lg text-white text-sm font-medium transition-all shadow-lg shadow-purple-500/30"
           >
             <MessageCircle className="w-4 h-4" />
             Üzenet
@@ -350,7 +350,7 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
                         case 'pending':
                           return <span className="px-2 py-1 bg-[#D4AF37]/20 border border-[#D4AF37]/50 rounded text-xs text-[#D4AF37]">Függőben</span>;
                         case 'active':
-                          return <span className="px-2 py-1 bg-[#138F5E]/20 border border-[#138F5E]/50 rounded text-xs text-[#138F5E]">Elfogadva</span>;
+                          return <span className="px-2 py-1 bg-purple-600/20 border border-purple-500/50 rounded text-xs text-purple-400">Elfogadva</span>;
                         case 'declined':
                           return <span className="px-2 py-1 bg-[#8B0000]/20 border border-[#8B0000]/50 rounded text-xs text-[#8B0000]">Elutasítva</span>;
                         default:
@@ -395,7 +395,7 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
                           <div className="flex gap-2">
                             <button
                               onClick={() => acceptRequest(request.requester_id)}
-                              className="p-2 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-lg transition-all"
+                              className="p-2 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 rounded-lg transition-all shadow-lg shadow-purple-500/30"
                               aria-label="Elfogadom"
                             >
                               <Check className="w-4 h-4 text-white" />
@@ -412,7 +412,7 @@ export const UserSearchDialog = ({ onClose, userId }: UserSearchDialogProps) => 
                         {request.status === 'active' && (
                           <button
                             onClick={() => openThread(request.requester_id)}
-                            className="px-3 py-1.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-lg text-white text-sm font-medium transition-all"
+                            className="px-3 py-1.5 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 rounded-lg text-white text-sm font-medium transition-all shadow-lg shadow-purple-500/30"
                           >
                             <MessageCircle className="w-4 h-4" />
                           </button>

@@ -131,7 +131,7 @@ export const FriendRequestsList = ({ onRequestHandled }: FriendRequestsListProps
             <div className="flex gap-2 flex-shrink-0">
               <button
                 onClick={() => handleAccept(request.requested_by)}
-                className="p-2 bg-[#138F5E] hover:bg-[#138F5E]/80 rounded-lg transition-colors"
+                className="p-2 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 rounded-lg transition-colors shadow-lg shadow-purple-500/30"
                 title="Elfogadás"
               >
                 <Check className="w-4 h-4 text-white" />

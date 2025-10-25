@@ -24,7 +24,7 @@ const getIcon = (kind: string) => {
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'uploaded': return 'border-[#138F5E]';
+    case 'uploaded': return 'border-purple-600 shadow-lg shadow-purple-500/30';
     case 'uploading': case 'presigned': return 'border-[#D4AF37]';
     case 'failed': return 'border-red-500';
     default: return 'border-white/20';

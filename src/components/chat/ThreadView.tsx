@@ -407,10 +407,10 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         return (
           <button 
             onClick={handleSendFriendRequest}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#138F5E]/20 hover:bg-[#138F5E]/30 border border-[#138F5E]/50 rounded-lg transition-colors text-sm"
+            className="flex items-center gap-2 px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/50 rounded-lg transition-colors text-sm shadow-lg shadow-purple-500/20"
           >
-            <UserPlus className="w-4 h-4 text-[#138F5E]" />
-            <span className="text-[#138F5E] font-medium">Bejelölöm</span>
+            <UserPlus className="w-4 h-4 text-purple-400" />
+            <span className="text-purple-400 font-medium">Bejelölöm</span>
           </button>
         );
       case 'pending_sent':
@@ -424,7 +424,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
           <div className="flex items-center gap-2">
             <button 
               onClick={handleAcceptRequest}
-              className="px-3 py-1.5 bg-[#138F5E] hover:bg-[#138F5E]/90 text-white rounded-lg text-sm"
+              className="px-3 py-1.5 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white rounded-lg text-sm shadow-lg shadow-purple-500/30"
             >Elfogadom</button>
             <button 
               onClick={handleDeclineRequest}
@@ -621,7 +621,7 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
           {messageText.trim() ? (
             <button
               onClick={() => { if (permsLoading || canSend) sendMessage(); }}
-              className="p-2.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-full transition-all duration-200 flex-shrink-0 mb-1 shadow-lg shadow-[#138F5E]/30 disabled:opacity-50"
+              className="p-2.5 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 rounded-full transition-all duration-200 flex-shrink-0 mb-1 shadow-lg shadow-purple-500/30 disabled:opacity-50"
               aria-label="Küldés"
               disabled={!permsLoading && !canSend}
             >

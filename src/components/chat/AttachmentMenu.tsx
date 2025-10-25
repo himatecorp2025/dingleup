@@ -32,8 +32,8 @@ export const AttachmentMenu = ({ onImageSelect, onFileSelect, onClose }: Attachm
             }}
             className="w-full flex items-center gap-3 p-3 bg-[#1a1a1a] hover:bg-[#1a1a1a]/80 border border-[#D4AF37]/20 rounded-lg transition-all text-left"
           >
-            <div className="w-10 h-10 rounded-full bg-[#138F5E]/20 flex items-center justify-center">
-              <ImageIcon className="w-5 h-5 text-[#138F5E]" />
+            <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center">
+              <ImageIcon className="w-5 h-5 text-purple-400" />
             </div>
             <div>
               <p className="font-medium text-white">Fotó / Kép</p>

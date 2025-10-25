@@ -93,7 +93,7 @@ export const FriendProfileCard = ({ friend, onClose, onMessageSent }: FriendProf
           <button
             onClick={handleSendMessage}
             disabled={loading}
-            className="w-full py-4 bg-[#138F5E] hover:bg-[#138F5E]/90 disabled:bg-[#138F5E]/50 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-[#138F5E]/50 disabled:cursor-not-allowed"
+            className="w-full py-4 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 disabled:opacity-50 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 disabled:cursor-not-allowed"
           >
             <MessageCircle className="w-5 h-5" />
             {loading ? 'Betöltés...' : 'Üzenet küldése'}

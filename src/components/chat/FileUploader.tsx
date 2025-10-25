@@ -154,7 +154,7 @@ export const FileUploader = ({
             <button
               onClick={handleUpload}
               disabled={uploading}
-              className="px-3 py-1.5 bg-[#138F5E] hover:bg-[#138F5E]/90 rounded-lg text-white text-sm font-medium transition-all duration-200 disabled:opacity-50 flex items-center gap-1"
+              className="px-3 py-1.5 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 rounded-lg text-white text-sm font-medium transition-all duration-200 disabled:opacity-50 flex items-center gap-1 shadow-lg shadow-purple-500/30"
             >
               {uploading ? (
                 <>
