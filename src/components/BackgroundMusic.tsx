@@ -17,23 +17,23 @@ export const BackgroundMusic = () => {
   const location = useLocation();
   const { enabled, volume, loaded, loadSettings } = useBackgroundMusicStore();
 
-  // Load settings on mount
+  // Load settings immediately on mount
   useEffect(() => {
-    if (!loaded) {
-      loadSettings();
-    }
-  }, [loaded, loadSettings]);
+    loadSettings();
+  }, [loadSettings]);
 
-  // Initialize audio element
+  // Initialize audio element with proper volume
   useEffect(() => {
-    if (!audioRef.current) {
+    if (!audioRef.current && loaded) {
       const audio = new Audio(backgroundMusic);
       audio.loop = true;
-      audio.volume = volume;
+      audio.volume = volume; // Use loaded volume from store
       audioRef.current = audio;
 
       // Preload
       audio.load();
+      
+      console.log('[BackgroundMusic] Audio initialized with volume:', volume);
     }
 
     return () => {
@@ -42,12 +42,13 @@ export const BackgroundMusic = () => {
         audioRef.current = null;
       }
     };
-  }, []);
+  }, [loaded, volume]);
 
-  // Handle volume changes
+  // Handle volume changes in real-time
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
+      console.log('[BackgroundMusic] Volume changed to:', volume, `(${Math.round(volume * 100)}%)`);
     }
   }, [volume]);
 
@@ -58,18 +59,21 @@ export const BackgroundMusic = () => {
     const shouldPlay = enabled && !EXCLUDED_ROUTES.includes(location.pathname);
 
     if (shouldPlay) {
+      // Ensure volume is set before playing
+      audioRef.current.volume = volume;
+      
       // Play with user interaction fallback
       const playPromise = audioRef.current.play();
       if (playPromise !== undefined) {
         playPromise.catch((error) => {
-          console.log('Background music autoplay prevented:', error);
+          console.log('[BackgroundMusic] Autoplay prevented:', error);
           // Will be played on first user interaction
         });
       }
     } else {
       audioRef.current.pause();
     }
-  }, [location.pathname, enabled, loaded]);
+  }, [location.pathname, enabled, loaded, volume]);
 
   // No visual component
   return null;

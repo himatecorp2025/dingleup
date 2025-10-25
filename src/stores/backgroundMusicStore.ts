@@ -32,6 +32,12 @@ export const useBackgroundMusicStore = create<BackgroundMusicState>((set) => ({
     const newEnabled = savedEnabled ? JSON.parse(savedEnabled) : true;
     const newVolume = savedVolume ? parseFloat(savedVolume) : 0.05; // Default 5%
     
+    console.log('[BackgroundMusicStore] Loading settings:', { 
+      enabled: newEnabled, 
+      volume: newVolume,
+      percentage: `${Math.round(newVolume * 100)}%`
+    });
+    
     set({
       enabled: newEnabled,
       volume: newVolume,
