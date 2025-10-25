@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { DiamondHexagon } from '@/components/DiamondHexagon';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
@@ -292,24 +293,15 @@ return (
 
             {/* Right: Stats & Avatar */}
             <div className="flex items-center gap-1.5 sm:gap-2" data-tutorial="profile-header">
-              {/* Rank Hexagon */}
-              <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex flex-col items-center justify-center border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.5)] neon-border">
-                <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 mb-0.5" />
-                <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{currentRank || '...'}</span>
-              </div>
+              {/* Rank Hexagon - 3D Diamond */}
+              <DiamondHexagon type="rank" value={currentRank || '...'} />
 
-              {/* Coins Hexagon */}
-              <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-yellow-600 to-yellow-900 flex flex-col items-center justify-center border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.6)] gold-glow">
-                <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
-                <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.coins}</span>
-              </div>
+              {/* Coins Hexagon - 3D Diamond */}
+              <DiamondHexagon type="coins" value={profile.coins} />
 
-              {/* Lives Hexagon with Timer */}
+              {/* Lives Hexagon with Timer - 3D Diamond */}
               <div className="relative flex flex-col items-center">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 aspect-square clip-hexagon bg-gradient-to-br from-red-600 to-red-900 flex flex-col items-center justify-center border-2 border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.5)]">
-                  <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-white mb-0.5 drop-shadow-lg" />
-                  <span className="text-white text-[10px] sm:text-xs font-bold drop-shadow-lg">{profile.lives}</span>
-                </div>
+                <DiamondHexagon type="lives" value={profile.lives} />
                 {/* Life Regeneration Timer - server authoritative */}
                 <NextLifeTimer
                   nextLifeAt={walletData?.nextLifeAt || null}
