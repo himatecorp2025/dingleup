@@ -112,10 +112,11 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine
           strokeWidth="3"
         />
 
-        {/* Inner Crystal Panel - 165° (inset 16px) */}
+        {/* Inner Crystal Panel - 165° (inset 16px) - TRANSPARENT */}
         <path
           d="M 180 46 L 326 74.536 L 326 525.464 L 180 554 L 34 525.464 L 34 74.536 Z"
           fill="url(#crystalRadial)"
+          opacity="0.15"
         />
 
         {/* Specular Highlight Overlay */}
@@ -139,14 +140,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine
           opacity="0.7"
         />
 
-        {/* Inner Glow (bottom shadow for 3D) */}
-        <path
-          d="M 180 46 L 326 74.536 L 326 525.464 L 180 554 L 34 525.464 L 34 74.536 Z"
-          fill="none"
-          stroke="rgba(0,0,0,0.25)"
-          strokeWidth="8"
-          style={{ filter: 'blur(6px)' }}
-        />
+        {/* Inner Glow (bottom shadow for 3D) - REMOVED for transparency */}
 
         {/* Gold Inner Stroke (accent) */}
         <path
