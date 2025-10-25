@@ -44,13 +44,13 @@ const Hero = () => {
           </div>
 
           {/* Title and Description */}
-          <div className="text-center mb-6 space-y-3 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <div className="text-center mb-6 space-y-3 animate-fade-in px-4" style={{ animationDelay: '0.2s' }}>
             <div className="inline-flex items-center gap-2 bg-accent/10 border border-accent/30 rounded-full px-4 py-2 mb-4">
-              <Sparkles className="w-4 h-4 text-accent animate-pulse" />
-              <span className="text-sm font-semibold text-accent">Új játékélmény</span>
+              <Sparkles className="w-4 h-4 text-accent animate-pulse flex-shrink-0" />
+              <span className="text-xs sm:text-sm font-semibold text-accent whitespace-nowrap">Új játékélmény</span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 leading-tight">
               <span className="text-white text-with-stroke">Legyen Ön is</span>
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-gold animate-pulse">
@@ -58,14 +58,14 @@ const Hero = () => {
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed font-light">
+            <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed font-light px-2">
               Teszteld tudásod <span className="font-bold text-accent">15 izgalmas kérdésben</span>, 
               versenyezz a ranglistán, és nyerj <span className="font-bold text-yellow-400">értékes jutalmakat</span>!
             </p>
           </div>
 
           {/* Features Pills - Deep 3D */}
-          <div className="flex flex-wrap justify-center gap-3 mb-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 animate-fade-in px-4" style={{ animationDelay: '0.4s' }}>
             <div className="relative" style={{ perspective: '1000px' }}>
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
@@ -82,9 +82,9 @@ const Hero = () => {
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
               
-              <div className="relative flex items-center gap-2 px-6 py-3 transition-all hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
-                <Trophy className="w-5 h-5 text-yellow-400 drop-shadow-lg" />
-                <span className="text-white font-semibold drop-shadow-lg">Heti Rangsor</span>
+              <div className="relative flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 transition-all hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 drop-shadow-lg flex-shrink-0" />
+                <span className="text-white font-semibold drop-shadow-lg text-xs sm:text-sm whitespace-nowrap">Heti Rangsor</span>
               </div>
             </div>
             
