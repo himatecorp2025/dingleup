@@ -538,6 +538,42 @@ const GamePreview = () => {
     finishGame();
   };
 
+  const resetGameState = () => {
+    // Reset ALL game states to initial values
+    setGameState('category-select');
+    setSelectedCategory(null);
+    setQuestions([]);
+    setCurrentQuestionIndex(0);
+    setTimeLeft(10);
+    setSelectedAnswer(null);
+    setCorrectAnswers(0);
+    setCoinsEarned(0);
+    setResponseTimes([]);
+    setQuestionStartTime(Date.now());
+    
+    // Reset help counters
+    setHelp5050UsageCount(0);
+    setHelp2xAnswerUsageCount(0);
+    setHelpAudienceUsageCount(0);
+    setIsHelp5050ActiveThisQuestion(false);
+    setIsDoubleAnswerActiveThisQuestion(false);
+    setIsAudienceActiveThisQuestion(false);
+    setUsedQuestionSwap(false);
+    setFirstAttempt(null);
+    setSecondAttempt(null);
+    setRemovedAnswer(null);
+    setAudienceVotes({});
+    
+    // Reset UI states
+    setShowExitDialog(false);
+    setErrorBannerVisible(false);
+    setErrorBannerMessage('');
+    setQuestionVisible(true);
+    setCanSwipe(true);
+    setIsAnimating(false);
+    setTranslateY(0);
+  };
+
   const finishGame = async () => {
     if (!profile || !selectedCategory) return;
 
@@ -1017,8 +1053,7 @@ const GamePreview = () => {
           open={showExitDialog}
           onOpenChange={setShowExitDialog}
           onConfirmExit={() => {
-            setGameState('category-select');
-            setShowExitDialog(false);
+            resetGameState();
           }}
         />
 

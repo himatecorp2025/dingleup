@@ -27,9 +27,9 @@ export const MillionaireAnswer = ({
 }: MillionaireAnswerProps) => {
   if (isRemoved) {
     return (
-      <div className="w-full mb-2 opacity-30">
+      <div className="w-full flex justify-center mb-2 opacity-30">
         <div 
-          className="bg-gray-800/50 border-2 border-gray-600/50 px-5 py-4 text-gray-500"
+          className="w-[90%] bg-gray-800/50 border-2 border-gray-600/50 px-5 py-4 text-gray-500"
           style={{
             clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
           }}
