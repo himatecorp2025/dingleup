@@ -131,9 +131,10 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
   const handleLater = () => {
     if (!userId) return;
     
-    // Mark as seen today
+    // Mark as seen today when user closes
     const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
     localStorage.setItem(todayKey, 'true');
+    setHasSeenToday(true);
     setCanClaim(false);
     
     // Track later action
@@ -144,8 +145,11 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     checkDailyGift();
   }, [userId, isPremium]);
 
+  // Ne ugorjon fel ha már látta ma (bezárta vagy elfogadta)
+  const shouldShowPopup = canClaim && !hasSeenToday;
+
   return {
-    canClaim,
+    canClaim: shouldShowPopup,
     weeklyEntryCount,
     nextReward,
     claimDailyGift,

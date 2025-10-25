@@ -66,23 +66,7 @@ export const InsufficientResourcesDialog = ({
     };
   }, [contentVisible, open]);
 
-  // Sync --shield-w to content width for proportional scaling
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-    const update = () => {
-      const w = el.offsetWidth;
-      el.style.setProperty('--shield-w', `${w}px`);
-    };
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    window.addEventListener('resize', update);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener('resize', update);
-    };
-  }, []);
+  // Container query engedélyezése (nincs --shield-w CSS var, cqw használat)
 
   useEffect(() => {
     if (open) {
@@ -177,9 +161,16 @@ export const InsufficientResourcesDialog = ({
           borderRadius: 0
         }}
       >
+        {/* Középre igazító konténer - vertikális korrekció */}
         <div 
-          className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
-          style={{ minHeight: '100vh', minWidth: '100vw' }}
+          className="fixed inset-0 flex flex-col items-center overflow-hidden"
+          style={{ 
+            minHeight: '100vh', 
+            minWidth: '100vw',
+            justifyContent: 'center',
+            paddingTop: '0',
+            marginTop: '-3vh'  // 3% feljebb, mint a daily giftnél
+          }}
         >
           {/* Background layer - Deep gradient */}
           <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.85, borderRadius: 0 }}></div>
@@ -245,13 +236,13 @@ export const InsufficientResourcesDialog = ({
             </div>
           )}
 
-          {/* ZOOM WRAPPER - faster shield appearance */}
+          {/* ZOOM WRAPPER - 1.5s animáció mint a daily giftnél */}
           <div 
             className="relative z-10"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
-              transition: 'transform 1200ms ease-in-out 150ms, opacity 1200ms ease-in-out 150ms',
+              transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
               transformOrigin: 'center center',
               willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
@@ -261,7 +252,7 @@ export const InsufficientResourcesDialog = ({
               
               {/* Background glow behind shield - removed to prevent purple pulse */}
 
-              <HexShieldFrame>
+              <HexShieldFrame showShine={true}>
                 {/* Top Hex Badge - "BUY NOW" - 3D GOLD FRAME - COVERS TOP POINT */}
                 <div 
                   ref={badgeRef}
@@ -321,7 +312,7 @@ export const InsufficientResourcesDialog = ({
                     
                     <h1 className="relative z-10 font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
                         style={{ 
-                          fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
+                          fontSize: 'clamp(1.25rem, 5.2cqw, 2.1rem)', 
                           letterSpacing: '0.05em',
                           textShadow: '0 0 12px rgba(255,255,255,0.25)'
                         }}>
@@ -330,8 +321,8 @@ export const InsufficientResourcesDialog = ({
                   </div>
                 </div>
 
-                {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]" ref={contentRef} style={{ ['--shield-w' as any]: '320px' }}>
+                {/* Content Area - container query cqw scaling */}
+                <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                   
                   
                   {/* Timer countdown at top */}
@@ -347,11 +338,11 @@ export const InsufficientResourcesDialog = ({
                     <span className="text-black font-black text-sm tracking-wider">⚡ BEST DEAL ⚡</span>
                   </div>
                   
-                  {/* Resources Display - 3D SVG icons */}
-                  <div className="relative flex items-center justify-center gap-[calc(var(--shield-w)*0.06)] mb-[2vh]">
-                    <div className="flex items-center gap-[calc(var(--shield-w)*0.02)]">
+                  {/* Resources Display - 3D SVG icons (cqw scaling) */}
+                  <div className="relative flex items-center justify-center gap-[6cqw] mb-[2vh]">
+                    <div className="flex items-center gap-[2cqw]">
                       {/* 3D Gold Coin SVG */}
-                      <svg viewBox="0 0 64 64" style={{ width: 'calc(var(--shield-w)*0.1)', height: 'calc(var(--shield-w)*0.1)', filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(255,215,0,0.8))' }}>
+                      <svg viewBox="0 0 64 64" style={{ width: 'clamp(32px, 10cqw, 64px)', height: 'clamp(32px, 10cqw, 64px)', filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(255,215,0,0.8))' }}>
                         <defs>
                           <radialGradient id="goldGradient" cx="35%" cy="25%">
                             <stop offset="0%" stopColor="#ffd700" />
@@ -374,7 +365,7 @@ export const InsufficientResourcesDialog = ({
                       <span 
                         className="font-black text-yellow-200"
                         style={{
-                          fontSize: 'calc(var(--shield-w)*0.09)',
+                          fontSize: 'clamp(14px, 9cqw, 32px)',
                           lineHeight: 1,
                           textShadow: '0 6px 12px rgba(0,0,0,0.7), 0 3px 6px rgba(0,0,0,0.5), 0 0 16px rgba(253,224,71,0.6), 0 0 24px rgba(255,215,0,0.4)'
                         }}
@@ -385,16 +376,16 @@ export const InsufficientResourcesDialog = ({
                     <div 
                       className="font-black text-yellow-200"
                       style={{
-                        fontSize: 'calc(var(--shield-w)*0.1)',
+                        fontSize: 'clamp(16px, 10cqw, 40px)',
                         lineHeight: 1,
                         textShadow: '0 4px 8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4)'
                       }}
                     >
                       +
                     </div>
-                    <div className="flex items-center gap-[calc(var(--shield-w)*0.02)]">
+                    <div className="flex items-center gap-[2cqw]">
                       {/* 3D Heart SVG */}
-                      <svg viewBox="0 0 64 64" style={{ width: 'calc(var(--shield-w)*0.1)', height: 'calc(var(--shield-w)*0.1)', filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(239,68,68,0.8))' }}>
+                      <svg viewBox="0 0 64 64" style={{ width: 'clamp(32px, 10cqw, 64px)', height: 'clamp(32px, 10cqw, 64px)', filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(239,68,68,0.8))' }}>
                         <defs>
                           <radialGradient id="heartGradient" cx="40%" cy="30%">
                             <stop offset="0%" stopColor="#ff6b6b" />
@@ -415,7 +406,7 @@ export const InsufficientResourcesDialog = ({
                       <span 
                         className="font-black text-red-400"
                         style={{
-                          fontSize: 'calc(var(--shield-w)*0.09)',
+                          fontSize: 'clamp(14px, 9cqw, 32px)',
                           lineHeight: 1,
                           textShadow: '0 6px 12px rgba(0,0,0,0.7), 0 3px 6px rgba(0,0,0,0.5), 0 0 16px rgba(248,113,113,0.6), 0 0 24px rgba(239,68,68,0.4)'
                         }}
@@ -436,10 +427,10 @@ export const InsufficientResourcesDialog = ({
                       MA CSAK
                     </div>
                     <div className="flex items-center justify-center gap-3">
-                      <div 
+                      <div
                         className="font-black text-yellow-400"
                         style={{
-                          fontSize: 'calc(var(--shield-w)*0.16)',
+                          fontSize: 'clamp(20px, 16cqw, 64px)',
                           lineHeight: 1,
                           textShadow: '0 5px 12px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6), 0 0 24px rgba(255,215,0,0.7)'
                         }}
@@ -490,10 +481,7 @@ export const InsufficientResourcesDialog = ({
                       onClick={handleStartPayment} 
                       disabled={isLoadingPayment}
                       style={{ 
-                        width: '100%',
-                        fontSize: 'calc(var(--shield-w)*0.042)',
-                        transform: 'translateZ(0)',
-                        padding: 'calc(var(--shield-w)*0.035) calc(var(--shield-w)*0.06)'
+                        width: '100%'
                       }} 
                     >
                       {isLoadingPayment ? 'Betöltés...' : 'MEGSZERZEM MOST!'}

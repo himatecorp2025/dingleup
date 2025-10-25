@@ -167,14 +167,14 @@ const DailyGiftDialog = ({
             }}
           />
 
-          {/* Bezáró X - jobb felső sarok */}
+          {/* Bezáró X - közelebb a pajzshoz (top: 2vh helyett 1vh) */}
           <button
             onClick={onLater}
             aria-label="Bezárás"
             className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
             style={{
-              top: "max(12px, env(safe-area-inset-top))",
-              right: "max(12px, env(safe-area-inset-right))",
+              top: "max(1vh, env(safe-area-inset-top))",
+              right: "max(1vh, env(safe-area-inset-right))",
               width: "clamp(36px, 8svw, 48px)",
               height: "clamp(36px, 8svw, 48px)",
               fontSize: "clamp(18px, 5svw, 28px)",
@@ -197,7 +197,7 @@ const DailyGiftDialog = ({
           >
             {/* SVG rendereléshez mindig scale(1) */}
             <div style={{ transform: 'scale(1)' }}>
-              <HexShieldFrame showShine={false}>
+              <HexShieldFrame showShine={true}>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
                 ref={badgeRef}
