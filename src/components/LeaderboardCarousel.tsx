@@ -236,15 +236,15 @@ export const LeaderboardCarousel = () => {
 
   return (
     <div className="w-full py-1">
-      <h3 className="text-center text-xs sm:text-sm font-black text-white mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
-      <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-white mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
+      <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <div className="inline-flex gap-2 sm:gap-3 px-2">
           {[...topPlayers, ...topPlayers].map((player, index) => {
             const actualIndex = index % topPlayers.length;
             const rank = actualIndex + 1;
             const showCrown = actualIndex < 3;
             return (
-              <div key={`${player.user_id}-${index}`} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
+              <div key={`${player.user_id}-${index}`} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
                 {/* BASE SHADOW */}
                 <div className="absolute clip-hexagon" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} aria-hidden />
                 {/* OUTER FRAME */}
@@ -257,15 +257,15 @@ export const LeaderboardCarousel = () => {
                 <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
                   {/* Felső rész: korona + rang */}
                   <div className="flex flex-col items-center gap-0">
-                    {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 ${getCrownColor(actualIndex)}`} />}
-                    <p className="text-[9px] sm:text-[10px] font-black text-white drop-shadow-lg leading-none">{rank}.</p>
+                    {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ${getCrownColor(actualIndex)}`} />}
+                    <p className="text-[9px] sm:text-[10px] md:text-xs font-black text-white drop-shadow-lg leading-none">{rank}.</p>
                   </div>
                   
                   {/* Középső rész: felhasználónév */}
-                  <p className="text-[9px] sm:text-[10px] font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
+                  <p className="text-[9px] sm:text-[10px] md:text-xs font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
                   
                   {/* Alsó rész: helyes válaszok */}
-                  <p className="text-[8px] sm:text-[9px] font-semibold text-white/90 drop-shadow-lg leading-none">{player.total_correct_answers}</p>
+                  <p className="text-[8px] sm:text-[9px] md:text-[10px] font-semibold text-white/90 drop-shadow-lg leading-none">{player.total_correct_answers}</p>
                 </div>
               </div>
             );

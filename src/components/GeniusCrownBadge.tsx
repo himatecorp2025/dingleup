@@ -89,7 +89,7 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
         <Tooltip>
           <TooltipTrigger asChild>
             <div 
-              className="relative w-12 h-12 sm:w-16 sm:h-16 aspect-square hover:scale-105 transition-transform cursor-pointer"
+              className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 aspect-square hover:scale-105 transition-transform cursor-pointer"
               style={{ perspective: '500px' }}
             >
               {/* BASE SHADOW */}

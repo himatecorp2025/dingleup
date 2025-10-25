@@ -53,12 +53,12 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       case 'rank':
         // Crown SVG
         return (
-          <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 mb-0.5 drop-shadow-lg"
-            viewBox="0 0 24 24"
-            fill={color}
-            xmlns="http://www.w3.org/2000/svg"
-          >
+            <svg
+              className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
+              viewBox="0 0 24 24"
+              fill={color}
+              xmlns="http://www.w3.org/2000/svg"
+            >
             <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke={color} strokeWidth="2" strokeLinejoin="round"/>
             <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke={color} strokeWidth="2"/>
             <circle cx="12" cy="9" r="1.5" fill={color}/>
@@ -70,7 +70,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         // Coin SVG
         return (
           <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 mb-0.5 drop-shadow-lg"
+            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +84,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         // Heart SVG
         return (
           <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 mb-0.5 drop-shadow-lg"
+            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
             viewBox="0 0 24 24"
             fill={color}
             xmlns="http://www.w3.org/2000/svg"
@@ -108,7 +108,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       />
 
       {/* 3D Hexagon Container */}
-      <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20">
+      <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
         {/* BASE SHADOW (3D depth) */}
         <div
           className="absolute clip-hexagon"
@@ -179,7 +179,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         {/* Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
           {renderIcon()}
-          <span className="text-white text-[10px] sm:text-xs md:text-sm font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             {value}
           </span>
         </div>

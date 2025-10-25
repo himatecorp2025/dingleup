@@ -346,8 +346,8 @@ return (
           {/* First Row: Username and Stats */}
           <div className="flex items-center justify-between">
             {/* Left: Greeting - vertically centered with hexagons */}
-            <div className="flex items-center h-12 sm:h-16">
-              <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
+            <div className="flex items-center h-12 sm:h-16 md:h-20">
+              <h1 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
                 Szia, {profile.username}!
               </h1>
             </div>
@@ -379,10 +379,10 @@ return (
                 />
               </div>
 
-              {/* Avatar Hexagon */}
+               {/* Avatar Hexagon */}
               <button
                 onClick={() => navigate('/profile')}
-                className="relative w-12 h-12 sm:w-16 sm:h-16 aspect-square hover:scale-105 transition-transform"
+                className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 aspect-square hover:scale-105 transition-transform"
               >
                 {/* BASE SHADOW (3D depth) */}
                 <div
@@ -460,7 +460,7 @@ return (
                       className="w-full h-full object-cover clip-hexagon"
                     />
                   ) : (
-                    <span className="text-lg sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    <span className="text-lg sm:text-2xl md:text-3xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                       {getInitials(profile.username)}
                     </span>
                   )}
@@ -483,11 +483,16 @@ return (
                 width: 'calc(4 * (3rem) + 3 * 0.375rem)' // 4 hexagons mobile: rank + coins + lives + avatar
               }}
             >
-              {/* Desktop width handled via sm: breakpoint */}
+              {/* Desktop width handled via sm: and md: breakpoint */}
               <style>{`
                 @media (min-width: 640px) {
                   [data-buttons-container] {
                     width: calc(4 * (4rem) + 3 * 0.5rem) !important;
+                  }
+                }
+                @media (min-width: 768px) {
+                  [data-buttons-container] {
+                    width: calc(4 * (5rem) + 3 * 0.5rem) !important;
                   }
                 }
               `}</style>
@@ -498,13 +503,13 @@ return (
                 size="sm"
               >
                 {/* Share SVG Icon */}
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" strokeWidth="2"/>
                   <path d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z" stroke="currentColor" strokeWidth="2"/>
                   <path d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z" stroke="currentColor" strokeWidth="2"/>
                   <path d="M8.59 13.51L15.42 17.49M15.41 6.51L8.59 10.49" stroke="currentColor" strokeWidth="2"/>
                 </svg>
-                <span className="text-[10px] sm:text-xs">SHARE</span>
+                <span className="text-[10px] sm:text-xs md:text-sm">SHARE</span>
               </DiamondButton>
               
               <DiamondButton
@@ -513,13 +518,13 @@ return (
                 size="sm"
               >
                 {/* Trophy SVG Icon */}
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V5C3 4.44772 3.44772 4 4 4H6" stroke="currentColor" strokeWidth="2" fill="none"/>
                   <path d="M18 9H19.5C20.3284 9 21 8.32843 21 7.5V5C21 4.44772 20.5523 4 20 4H18" stroke="currentColor" strokeWidth="2" fill="none"/>
                   <path d="M8 4H16V10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10V4Z" stroke="currentColor" strokeWidth="2"/>
                   <path d="M12 14V17M8 20H16M10 17H14V20H10V17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-[10px] sm:text-xs">RANGLISTA</span>
+                <span className="text-[10px] sm:text-xs md:text-sm">RANGLISTA</span>
               </DiamondButton>
             </div>
             </div>
@@ -528,7 +533,7 @@ return (
 
         {/* Logo - 50%-kal megnövelt méret, reszponzív */}
         <div className="flex justify-center mb-1 sm:mb-2">
-          <div className="relative w-36 h-36 sm:w-48 sm:h-48">
+          <div className="relative w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-72 lg:h-72">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
@@ -548,13 +553,12 @@ return (
               }}
             >
               {/* Play SVG Icon */}
-              <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <svg className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 5.14v14l11-7-11-7z"/>
               </svg>
               <span 
-                className="font-black" 
+                className="font-black text-sm sm:text-base md:text-lg lg:text-xl" 
                 style={{ 
-                  fontSize: 'calc(0.875rem * 1.25)',
                   textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
                 }}
               >
@@ -612,18 +616,18 @@ return (
               }
             >
               {/* Lightning SVG Icon */}
-              <svg className="inline w-4 h-4 sm:w-5 sm:h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <svg className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
               </svg>
               {hasActiveBooster ? (
-                <span className="text-sm sm:text-base font-black">AKTÍV BOOSTER ({timeRemaining})</span>
+                <span className="text-sm sm:text-base md:text-lg font-black">AKTÍV BOOSTER ({timeRemaining})</span>
               ) : availableBoosters.length > 0 ? (
-                <span className="text-sm sm:text-base font-black">
+                <span className="text-sm sm:text-base md:text-lg font-black">
                   BOOSTER AKTIVÁLÁS
-                  <span className="block text-[10px] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
+                  <span className="block text-[10px] sm:text-xs md:text-sm mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
                 </span>
               ) : (
-                <span className="font-black" style={{ fontSize: 'calc(0.875rem * 1.15)' }}>BOOSTERS</span>
+                <span className="font-black text-sm sm:text-base md:text-lg">BOOSTERS</span>
               )}
             </DiamondButton>
           </div>

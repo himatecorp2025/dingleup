@@ -57,7 +57,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
 
   return (
     <div 
-      className="relative h-full flex items-center w-[180px] sm:w-[220px]"
+      className="relative h-full flex items-center w-[180px] sm:w-[220px] md:w-[260px]"
       style={{ 
         clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
       }}
@@ -182,10 +182,10 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
       {/* Content */}
       <div className="relative z-10 text-center w-full px-4">
         <div className="flex items-center justify-center gap-1.5 mb-0.5">
-          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] animate-pulse" />
-          <p className="text-xs sm:text-sm text-black font-black drop-shadow-[0_2px_4px_rgba(255,215,0,0.5)]">DÍJAZÁSIG</p>
+          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] animate-pulse" />
+          <p className="text-xs sm:text-sm md:text-base text-black font-black drop-shadow-[0_2px_4px_rgba(255,215,0,0.5)]">DÍJAZÁSIG</p>
         </div>
-        <p className="text-sm sm:text-base font-black text-black drop-shadow-[0_3px_6px_rgba(255,215,0,0.6)] leading-tight tracking-wider">
+        <p className="text-sm sm:text-base md:text-lg font-black text-black drop-shadow-[0_3px_6px_rgba(255,215,0,0.6)] leading-tight tracking-wider">
           {timeRemaining}
         </p>
       </div>
