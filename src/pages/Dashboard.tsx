@@ -197,76 +197,61 @@ const Dashboard = () => {
 
 
 
-  // Realtime rank updates - instant refresh when any player's score changes
+  // Realtime rank updates - same calculation as Leaderboard page
   useEffect(() => {
     if (!userId) return;
 
     const fetchUserRank = async () => {
       try {
+        // Query global_leaderboard table - same as Leaderboard page
         const { data, error } = await supabase
-          .rpc('get_user_country_rank', { p_user_id: userId });
+          .from('global_leaderboard')
+          .select('user_id, total_correct_answers')
+          .order('total_correct_answers', { ascending: false });
         
         if (error) {
-          console.error('Error fetching user rank:', error);
-          setCurrentRank(0);
+          console.error('Error fetching leaderboard:', error);
+          setCurrentRank(null);
           return;
         }
         
-        setCurrentRank(data || 0);
+        // Find current user's rank
+        const userRank = data?.findIndex(entry => entry.user_id === userId);
+        if (userRank !== undefined && userRank !== -1) {
+          setCurrentRank(userRank + 1); // +1 because findIndex is 0-based
+        } else {
+          setCurrentRank(null);
+        }
       } catch (err) {
         console.error('Exception fetching user rank:', err);
-        setCurrentRank(0);
+        setCurrentRank(null);
       }
     };
     
     // Fetch immediately on mount
     fetchUserRank();
     
-    // Subscribe to realtime changes in profiles
-    const profilesChannel = supabase
-      .channel('rank-updates')
+    // Subscribe to realtime changes in global_leaderboard
+    const leaderboardChannel = supabase
+      .channel('global-leaderboard-updates')
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
-          table: 'profiles'
-        },
-        (payload) => {
-          // Check if the updated profile is from same country
-          const updatedProfile = payload.new as any;
-          if (profile?.country_code && updatedProfile.country_code === profile.country_code) {
-            fetchUserRank();
-          } else if (!profile?.country_code) {
-            // If current user has no country_code, still refresh (will show 0)
-            fetchUserRank();
-          }
-        }
-      )
-      .subscribe();
-    
-    // Also subscribe to game_results for immediate updates when games finish
-    const gameResultsChannel = supabase
-      .channel('game-results-updates')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'game_results'
+          table: 'global_leaderboard'
         },
         () => {
-          // New game result -> recalculate rank
+          // Leaderboard changed -> recalculate rank
           fetchUserRank();
         }
       )
       .subscribe();
     
     return () => {
-      supabase.removeChannel(profilesChannel);
-      supabase.removeChannel(gameResultsChannel);
+      supabase.removeChannel(leaderboardChannel);
     };
-  }, [userId, profile?.country_code]);
+  }, [userId]);
 
   const handleClaimDailyGift = async () => {
     const success = await claimDailyGift(refetchWallet);
