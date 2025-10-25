@@ -1,22 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Hook to manage weekly winners popup visibility
- * Shows popup once per week on first login
+ * Shows popup 3 seconds after daily gift claim/dismiss, once per week
  */
 export const useWeeklyWinnersPopup = (userId: string | undefined) => {
   const [showPopup, setShowPopup] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (!userId) {
-      setIsLoading(false);
-      return;
-    }
-
-    checkAndShowPopup();
-  }, [userId]);
+  const [canShowThisWeek, setCanShowThisWeek] = useState(false);
 
   const getCurrentWeek = () => {
     const now = new Date();
@@ -27,7 +18,16 @@ export const useWeeklyWinnersPopup = (userId: string | undefined) => {
     return `${year}-W${weekNumber.toString().padStart(2, '0')}`;
   };
 
-  const checkAndShowPopup = async () => {
+  useEffect(() => {
+    if (!userId) {
+      setCanShowThisWeek(false);
+      return;
+    }
+
+    checkIfCanShowThisWeek();
+  }, [userId]);
+
+  const checkIfCanShowThisWeek = async () => {
     try {
       const currentWeek = getCurrentWeek();
 
@@ -40,23 +40,28 @@ export const useWeeklyWinnersPopup = (userId: string | undefined) => {
 
       if (error && error.code !== 'PGRST116') {
         console.error('[WEEKLY-POPUP] Error checking popup status:', error);
-        setIsLoading(false);
+        setCanShowThisWeek(false);
         return;
       }
 
-      // Show popup if not seen this week
-      if (!data || data.last_shown_week !== currentWeek) {
-        setShowPopup(true);
-      }
-
-      setIsLoading(false);
+      // Can show if not seen this week
+      setCanShowThisWeek(!data || data.last_shown_week !== currentWeek);
     } catch (error) {
-      console.error('[WEEKLY-POPUP] Error in checkAndShowPopup:', error);
-      setIsLoading(false);
+      console.error('[WEEKLY-POPUP] Error in checkIfCanShowThisWeek:', error);
+      setCanShowThisWeek(false);
     }
   };
 
-  const markAsShown = async () => {
+  const triggerPopup = useCallback(() => {
+    if (!canShowThisWeek) return;
+
+    // Show popup after 3 seconds
+    setTimeout(() => {
+      setShowPopup(true);
+    }, 3000);
+  }, [canShowThisWeek]);
+
+  const closePopup = async () => {
     if (!userId) return;
 
     try {
@@ -81,14 +86,16 @@ export const useWeeklyWinnersPopup = (userId: string | undefined) => {
       }
 
       setShowPopup(false);
+      setCanShowThisWeek(false);
     } catch (error) {
-      console.error('[WEEKLY-POPUP] Error in markAsShown:', error);
+      console.error('[WEEKLY-POPUP] Error in closePopup:', error);
     }
   };
 
   return {
     showPopup,
-    isLoading,
-    closePopup: markAsShown,
+    canShowThisWeek,
+    triggerPopup,
+    closePopup,
   };
 };

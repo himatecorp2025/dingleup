@@ -52,7 +52,7 @@ const Dashboard = () => {
   const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
-  const { showPopup: showWeeklyWinnersPopup, closePopup: closeWeeklyWinnersPopup } = useWeeklyWinnersPopup(userId);
+  const { showPopup: showWeeklyWinnersPopup, triggerPopup: triggerWeeklyWinnersPopup, closePopup: closeWeeklyWinnersPopup } = useWeeklyWinnersPopup(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
@@ -211,7 +211,16 @@ const Dashboard = () => {
       await refreshProfile();
       setShowDailyGift(false);
       setDailyGiftJustClaimed(true);
+      
+      // Trigger weekly winners popup 3 seconds after claiming
+      triggerWeeklyWinnersPopup();
     }
+  };
+
+  const handleCloseDailyGift = () => {
+    setShowDailyGift(false);
+    // Trigger weekly winners popup 3 seconds after dismissing
+    triggerWeeklyWinnersPopup();
   };
 
   const handleClaimWelcomeBonus = async () => {
@@ -470,10 +479,7 @@ return (
           setDailyGiftJustClaimed(true);
           setTimeout(() => setDailyGiftJustClaimed(false), 2000);
         }}
-        onLater={() => {
-          handleDailyLater();
-          setShowDailyGift(false);
-        }}
+        onLater={handleCloseDailyGift}
         weeklyEntryCount={weeklyEntryCount}
         nextReward={nextReward}
         canClaim={canClaim}
