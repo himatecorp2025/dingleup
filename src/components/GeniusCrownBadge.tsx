@@ -13,7 +13,7 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
     lg: 'w-6 h-6'
   };
 
-  // Spectacular SVG "G" Letter for Genius
+  // Spectacular SVG "G" Letter for Genius - Perfectly centered
   const geniusSvg = (sizeClass?: string) => (
     <svg 
       className={sizeClass || sizeClasses[size]}
@@ -45,33 +45,35 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
       {/* Glow effect */}
       <circle cx="12" cy="12" r="11" fill="url(#geniusGold)" opacity="0.3" filter="url(#geniusGlow)" />
 
-      {/* Bold "G" Letter Path - Larger and bolder */}
-      <path 
-        d="M 14.5 2 C 9 2 4 6.5 4 12 C 4 17.5 9 22 14.5 22 C 17.5 22 20 20.8 21.2 18.8 L 21.2 12.5 L 14 12.5 L 14 15.5 L 18 15.5 L 18 17.5 C 17 18.8 15.8 19.5 14.5 19.5 C 10.5 19.5 7 16.5 7 12 C 7 7.5 10.5 4.5 14.5 4.5 C 16.5 4.5 18.2 5.3 19.5 6.8 L 21.5 4.8 C 19.5 2.8 17.2 2 14.5 2 Z" 
-        fill="url(#geniusGold)"
-        stroke="#92400E"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      {/* Bold "G" Letter Path - Centered at 12,12 */}
+      <g transform="translate(12, 12)">
+        <path 
+          d="M 2.5 -10 C -3 -10 -8 -5.5 -8 0 C -8 5.5 -3 10 2.5 10 C 5.5 10 8 8.8 9.2 6.8 L 9.2 0.5 L 2 0.5 L 2 3.5 L 6 3.5 L 6 5.5 C 5 6.8 3.8 7.5 2.5 7.5 C -1.5 7.5 -5 4.5 -5 0 C -5 -4.5 -1.5 -7.5 2.5 -7.5 C 4.5 -7.5 6.2 -6.7 7.5 -5.2 L 9.5 -7.2 C 7.5 -9.2 5.2 -10 2.5 -10 Z" 
+          fill="url(#geniusGold)"
+          stroke="#92400E"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
 
-      {/* Dark shadow for depth */}
-      <path 
-        d="M 14.5 2 C 9 2 4 6.5 4 12 C 4 17.5 9 22 14.5 22 C 17.5 22 20 20.8 21.2 18.8 L 21.2 12.5 L 14 12.5 L 14 15.5 L 18 15.5 L 18 17.5 C 17 18.8 15.8 19.5 14.5 19.5 C 10.5 19.5 7 16.5 7 12 C 7 7.5 10.5 4.5 14.5 4.5 C 16.5 4.5 18.2 5.3 19.5 6.8 L 21.5 4.8 C 19.5 2.8 17.2 2 14.5 2 Z" 
-        fill="none"
-        stroke="#654321"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.3"
-      />
+        {/* Dark shadow for depth */}
+        <path 
+          d="M 2.5 -10 C -3 -10 -8 -5.5 -8 0 C -8 5.5 -3 10 2.5 10 C 5.5 10 8 8.8 9.2 6.8 L 9.2 0.5 L 2 0.5 L 2 3.5 L 6 3.5 L 6 5.5 C 5 6.8 3.8 7.5 2.5 7.5 C -1.5 7.5 -5 4.5 -5 0 C -5 -4.5 -1.5 -7.5 2.5 -7.5 C 4.5 -7.5 6.2 -6.7 7.5 -5.2 L 9.5 -7.2 C 7.5 -9.2 5.2 -10 2.5 -10 Z" 
+          fill="none"
+          stroke="#654321"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.3"
+        />
 
-      {/* Shine overlay on G */}
-      <path 
-        d="M 14.5 2 C 9 2 4 6.5 4 12 C 4 17.5 9 22 14.5 22 C 17.5 22 20 20.8 21.2 18.8 L 21.2 12.5 L 14 12.5 L 14 15.5 L 18 15.5 L 18 17.5 C 17 18.8 15.8 19.5 14.5 19.5 C 10.5 19.5 7 16.5 7 12 C 7 7.5 10.5 4.5 14.5 4.5 C 16.5 4.5 18.2 5.3 19.5 6.8 L 21.5 4.8 C 19.5 2.8 17.2 2 14.5 2 Z" 
-        fill="url(#geniusShine)"
-        opacity="0.5"
-      />
+        {/* Shine overlay on G */}
+        <path 
+          d="M 2.5 -10 C -3 -10 -8 -5.5 -8 0 C -8 5.5 -3 10 2.5 10 C 5.5 10 8 8.8 9.2 6.8 L 9.2 0.5 L 2 0.5 L 2 3.5 L 6 3.5 L 6 5.5 C 5 6.8 3.8 7.5 2.5 7.5 C -1.5 7.5 -5 4.5 -5 0 C -5 -4.5 -1.5 -7.5 2.5 -7.5 C 4.5 -7.5 6.2 -6.7 7.5 -5.2 L 9.5 -7.2 C 7.5 -9.2 5.2 -10 2.5 -10 Z" 
+          fill="url(#geniusShine)"
+          opacity="0.5"
+        />
+      </g>
 
       {/* Sparkle effects */}
       <circle cx="8" cy="8" r="1" fill="#FEF3C7" opacity="0.8" />
