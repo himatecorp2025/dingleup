@@ -351,8 +351,7 @@ const DailyGiftDialog = ({
                              fontSize: 'clamp(0.875rem, 3.6vw, 1.3rem)',
                              filter: isActive 
                                ? `drop-shadow(0 0 6px hsl(var(--dup-gold-500)))` 
-                               : 'drop-shadow(0 0 4px hsl(0 0% 70%))',
-                             color: isActive ? '' : 'hsl(0 0% 75%)'
+                               : 'grayscale(100%) brightness(1.2) drop-shadow(0 0 4px rgba(192,192,192,0.6))'
                            }}>
                         ⭐
                       </div>
