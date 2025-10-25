@@ -365,58 +365,59 @@ const DailyGiftDialog = ({
                   {weeklyEntryCount + 1}. napi belépés 🔥
                 </p>
 
-                {/* Tomorrow's Reward Preview */}
-                <div className="relative rounded-xl px-[4vw] py-[1.2vh] mb-[1.5vh]">
-                  {/* 3D Shadow base */}
-                  <div className="absolute inset-0 rounded-xl translate-y-0.5 translate-x-0.5"
-                       style={{
-                         background: 'rgba(0,0,0,0.3)',
-                         filter: 'blur(4px)',
-                         zIndex: -1
-                       }} />
-                  
-                  {/* Outer gold frame */}
-                  <div className="absolute inset-0 rounded-xl"
-                       style={{
-                         background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                         boxShadow: 'inset 0 0 0 1.5px hsl(var(--dup-gold-900)), 0 4px 12px rgba(0,0,0,0.3)'
-                       }} />
-                  
-                  {/* Inner semi-transparent purple */}
-                  <div className="absolute inset-[2px] rounded-xl"
-                       style={{
-                         background: 'linear-gradient(180deg, rgba(139, 92, 246, 0.3), rgba(109, 40, 217, 0.4))',
-                       }} />
-                  
-                  <div className="relative z-10 flex items-center justify-center gap-[1.5vw]">
-                    <span className="text-white/80 font-bold text-center" 
-                          style={{ fontSize: 'clamp(0.7rem, 3vw, 0.95rem)' }}>
-                      Holnap:
-                    </span>
-                    <div className="relative rounded-full"
-                         style={{ 
-                           width: 'clamp(1rem, 4vw, 1.5rem)', 
-                           height: 'clamp(1rem, 4vw, 1.5rem)',
-                         }}>
-                      {/* Coin */}
-                      <div className="absolute inset-0 rounded-full translate-y-0.5"
-                           style={{ background: 'rgba(0,0,0,0.35)', filter: 'blur(2px)' }} />
-                      <div className="absolute inset-0 rounded-full"
-                           style={{ 
-                             background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
-                             boxShadow: 'inset 0 0 0 1px hsl(45 90% 38%), 0 2px 6px rgba(0,0,0,0.3)'
-                           }} />
-                      <div className="absolute inset-[2px] rounded-full"
-                           style={{ 
-                             background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 85%), hsl(45 100% 70%) 35%, hsl(45 95% 58%) 65%, hsl(45 90% 45%))',
-                             boxShadow: 'inset 0 1px 4px rgba(255,255,255,0.7), inset 0 -1px 4px rgba(0,0,0,0.4)'
-                           }} />
-                    </div>
-                    <span className="text-yellow-300 font-black drop-shadow-lg"
-                          style={{ fontSize: 'clamp(0.875rem, 3.8vw, 1.15rem)' }}>
-                      +{DAILY_REWARDS[(weeklyEntryCount + 1) % 7] * (isPremium ? 2 : 1)}
-                    </span>
-                  </div>
+                {/* Weekly Rewards Preview - 7 boxes */}
+                <div className="flex gap-[1.2vw] justify-center mb-[1.5vh] flex-wrap">
+                  {DAILY_REWARDS.map((reward, index) => {
+                    const dayNumber = index + 1;
+                    const isActive = dayNumber <= weeklyEntryCount + 1;
+                    const displayReward = isPremium ? reward * 2 : reward;
+                    
+                    return (
+                      <div key={dayNumber} className="flex flex-col items-center gap-[0.5vh]">
+                        {/* Star */}
+                        <div
+                          style={{ 
+                            fontSize: 'clamp(0.875rem, 3.2vw, 1.2rem)',
+                            filter: isActive 
+                              ? `drop-shadow(0 0 6px hsl(var(--dup-gold-500)))` 
+                              : 'grayscale(100%) brightness(1.2) drop-shadow(0 0 4px rgba(192,192,192,0.6))'
+                          }}>
+                          ⭐
+                        </div>
+                        
+                        {/* Reward box */}
+                        <div className="relative rounded-lg px-[1.5vw] py-[0.5vh]">
+                          {/* Outer gold frame */}
+                          <div className="absolute inset-0 rounded-lg"
+                               style={{
+                                 background: isActive 
+                                   ? 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))'
+                                   : 'linear-gradient(135deg, hsl(0 0% 50%), hsl(0 0% 40%) 50%, hsl(0 0% 30%))',
+                                 boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.2)'
+                               }} />
+                          
+                          {/* Inner semi-transparent purple */}
+                          <div className="absolute inset-[1.5px] rounded-lg"
+                               style={{
+                                 background: isActive
+                                   ? 'linear-gradient(180deg, rgba(139, 92, 246, 0.3), rgba(109, 40, 217, 0.4))'
+                                   : 'linear-gradient(180deg, rgba(100, 100, 100, 0.3), rgba(80, 80, 80, 0.4))',
+                               }} />
+                          
+                          <div className="relative z-10 flex items-center justify-center gap-[0.8vw]">
+                            <span style={{ fontSize: 'clamp(0.625rem, 2.6vw, 0.9rem)' }}>🪙</span>
+                            <span className="font-bold text-white"
+                                  style={{ 
+                                    fontSize: 'clamp(0.625rem, 2.6vw, 0.9rem)',
+                                    textShadow: '0 1px 3px rgba(0,0,0,0.8)'
+                                  }}>
+                              +{displayReward}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* Today's Reward Card - 3D ENHANCED */}

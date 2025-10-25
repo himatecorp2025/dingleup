@@ -26,7 +26,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           left: '34px',
           right: '34px', 
           bottom: '46px',
-          clipPath: 'polygon(50% 0%, 92% 4.756%, 92% 95.244%, 50% 100%, 8% 95.244%, 8% 4.756%)',
+          clipPath: 'polygon(50% 0%, 100% 4.756%, 100% 95.244%, 50% 100%, 0% 95.244%, 0% 4.756%)',
           overflow: 'hidden',
           zIndex: 5
         }}
