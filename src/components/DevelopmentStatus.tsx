@@ -134,24 +134,24 @@ const DevelopmentStatus = () => {
             <div 
               key={index}
               className="relative group animate-fade-in"
-              style={{ animationDelay: `${index * 0.15}s`, perspective: '1000px' }}
+              style={{ animationDelay: `${index * 0.15}s`, perspective: '1200px' }}
             >
               {/* BASE SHADOW */}
-              <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+              <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
               
               {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-3 border-purple-500/60 shadow-2xl transition-all duration-300 group-hover:border-secondary/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-95 border-4 border-purple-500/60 shadow-2xl transition-all duration-300 group-hover:border-secondary/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
-              <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
               
               {/* INNER LAYER */}
-              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-br from-black/80 to-black/90 backdrop-blur-sm" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.1), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
+              <div className="absolute inset-[8px] rounded-2xl bg-gradient-to-br from-black/80 to-black/90 backdrop-blur-sm" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.1), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
               
               {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
+              <div className="absolute inset-[8px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
               
-              <div className="relative p-6 transition-all duration-300 group-hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+              <div className="relative p-6 transition-all duration-300 group-hover:scale-105" style={{ transform: 'translateZ(60px)' }}>
                 {/* Badge */}
                 <div className="absolute top-4 right-4">
                   <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-secondary to-purple-500 text-white shadow-lg drop-shadow-lg">
