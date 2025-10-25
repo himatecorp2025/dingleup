@@ -17,7 +17,7 @@ import { useWallet } from '@/hooks/useWallet';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useWeeklyWinnersPopup } from '@/hooks/useWeeklyWinnersPopup';
-import { Trophy, Coins, Heart, Crown, Play, ShoppingBag, Share2, LogOut, Zap, Clock } from 'lucide-react';
+
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { WeeklyWinnersDialog } from '@/components/WeeklyWinnersDialog';
