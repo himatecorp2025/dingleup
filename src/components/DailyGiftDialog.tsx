@@ -46,12 +46,10 @@ const DailyGiftDialog = ({
     const INNER_TO_OUTER_RATIO = 132 / 108; // outerHexWidth / innerGreenWidth
 
     const syncWidth = () => {
-      // Use offsetWidth (transform-independent) instead of getBoundingClientRect
       const badgeWidth = badgeRef.current?.offsetWidth;
       if (badgeWidth && buttonWrapperRef.current) {
         const targetButtonWidth = Math.round(badgeWidth * INNER_TO_OUTER_RATIO);
         buttonWrapperRef.current.style.setProperty('--sync-width', `${targetButtonWidth}px`);
-        console.debug('[DailyGift] badgeWidth=', badgeWidth, 'targetButtonWidth=', targetButtonWidth);
       }
     };
 
@@ -65,21 +63,6 @@ const DailyGiftDialog = ({
       window.removeEventListener('resize', syncWidth);
     };
   }, [contentVisible, open]);
-
-  // Diagnostics: log measured widths
-  useEffect(() => {
-    if (!contentVisible) return;
-    const logSizes = () => {
-      const badgeW = badgeRef.current?.offsetWidth;
-      const wrapperW = buttonWrapperRef.current?.offsetWidth;
-      const btnEl = buttonWrapperRef.current?.querySelector('button') as HTMLElement | null;
-      const btnW = btnEl?.getBoundingClientRect().width;
-      console.debug('[DailyGift][sizes] badge=', badgeW, 'wrapper=', wrapperW, 'button=', btnW);
-    };
-    const t = setTimeout(logSizes, 100);
-    window.addEventListener('resize', logSizes);
-    return () => { clearTimeout(t); window.removeEventListener('resize', logSizes); };
-  }, [contentVisible]);
 
   useEffect(() => {
     if (open) {
@@ -99,7 +82,6 @@ const DailyGiftDialog = ({
     if (!open) return;
     if (!contentVisible) return;
     
-    // 200ms delay after shield appears (shield has 300ms delay, so total 500ms)
     const timer = setTimeout(() => {
       requestAnimationFrame(() => {
         const el = flagRef.current;
@@ -166,26 +148,22 @@ const DailyGiftDialog = ({
           className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
           style={{ minHeight: '100vh', minWidth: '100vw' }}
         >
-          {/* Background layer - Deep dark blue, 85% transparent, FULL SCREEN */}
           <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
 
-          {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
+          {/* Floating sparkle particles */}
           {contentVisible && burstActive && (
             <div key={burstKey} className="absolute inset-0 overflow-hidden pointer-events-none">
               {[...Array(180)].map((_, i) => {
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 60 + 40; // vw
+                const speed = Math.random() * 60 + 40;
                 const size = Math.random() * 2 + 1.2;
-                const burstDuration = Math.random() * 0.25 + 0.3; // 0.3-0.55s
-
+                const burstDuration = Math.random() * 0.25 + 0.3;
                 const endX = Math.cos(angle) * speed;
                 const endY = Math.sin(angle) * speed;
-
-                // Continuous floating parameters - faster and smoother
-                const floatX = Math.random() * 40 - 20; // vw
-                const floatY = Math.random() * 40 - 20; // vh
-                const floatDuration = Math.random() * 1 + 1; // 1-2s - much faster
-                const finalOpacity = Math.random() * 0.4 + 0.5; // 0.5-0.9
+                const floatX = Math.random() * 40 - 20;
+                const floatY = Math.random() * 40 - 20;
+                const floatDuration = Math.random() * 1 + 1;
+                const finalOpacity = Math.random() * 0.4 + 0.5;
 
                 return (
                   <div
@@ -197,8 +175,7 @@ const DailyGiftDialog = ({
                       background: '#FFD700',
                       left: `${origin.x}%`,
                       top: `${origin.y}%`,
-                      boxShadow:
-                        '0 0 20px 4px #FFD700, 0 0 35px 10px #FFA500, 0 0 60px 12px rgba(255, 215, 0, 0.85)',
+                      boxShadow: '0 0 20px 4px #FFD700, 0 0 35px 10px #FFA500, 0 0 60px 12px rgba(255, 215, 0, 0.85)',
                       filter: 'saturate(1.2) brightness(1.2)',
                       transform: 'translate(-50%, -50%)',
                       animation: `starBurst${i % 40} ${burstDuration}s cubic-bezier(0.2,0.8,0.2,1) forwards, starFloat${i % 40} ${floatDuration}s linear ${burstDuration}s infinite`,
@@ -230,7 +207,6 @@ const DailyGiftDialog = ({
             </div>
           )}
 
-          {/* ZOOM WRAPPER - scale animation for visual effect */}
           <div 
             className="relative z-10"
             style={{ 
@@ -241,19 +217,14 @@ const DailyGiftDialog = ({
               willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
           >
-            {/* SHIELD CONTAINER - always scale(1) so SVG filters render immediately */}
-            <div style={{ transform: 'scale(1)' }}>
-              
-              {/* Background glow behind shield - removed to prevent purple pulse */}
-
+            <div style={{ transform: 'scale(1)', containerType: 'inline-size' }}>
               <HexShieldFrame>
-              {/* Top Hex Badge - "DAILY GIFT" - 3D GOLD FRAME - COVERS TOP POINT */}
+              {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
                 ref={badgeRef}
                 className="relative -mt-12 mb-3 mx-auto z-20" 
                 style={{ width: '78%' }}
               >
-                {/* 3D Shadow base */}
                 <div className="absolute inset-0 translate-y-1 translate-x-1"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
@@ -262,7 +233,6 @@ const DailyGiftDialog = ({
                        zIndex: -1
                      }} />
                 
-                {/* Outer gold frame */}
                 <div className="absolute inset-0"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
@@ -270,7 +240,6 @@ const DailyGiftDialog = ({
                        boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 6px 16px rgba(0,0,0,0.35)'
                      }} />
                 
-                {/* Middle gold highlight frame */}
                 <div className="absolute inset-[3px]"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
@@ -278,11 +247,10 @@ const DailyGiftDialog = ({
                        boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
                      }} />
                 
-                <div className="relative px-[5vw] py-[1.2vh]"
+                <div className="relative px-[5%] py-[1.5%]"
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
                      }}>
-                  {/* Inner RED RUBY crystal with diagonal streaks */}
                   <div className="absolute inset-[6px]"
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
@@ -290,7 +258,6 @@ const DailyGiftDialog = ({
                          boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.25), inset 0 -12px 24px rgba(0,0,0,0.4)'
                        }} />
                   
-                  {/* Diagonal light streaks - SAME as ELFOGADOM button */}
                   <div className="absolute inset-[6px] pointer-events-none"
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
@@ -298,15 +265,14 @@ const DailyGiftDialog = ({
                          opacity: 0.7
                        }} />
                   
-                  {/* Specular highlight */}
                   <div className="absolute inset-[6px] pointer-events-none" style={{
                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
                     background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
                   }} />
                   
-                  <h1 className="relative z-10 font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
+                  <h1 ref={flagRef} className="relative z-10 font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
                       style={{ 
-                        fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
+                        fontSize: 'clamp(1.25rem, 10.4cqw, 2.1rem)', 
                         letterSpacing: '0.05em',
                         textShadow: '0 0 12px rgba(255,255,255,0.25)'
                       }}>
@@ -319,9 +285,9 @@ const DailyGiftDialog = ({
               <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                 
                 {/* DAY Counter with fire emoji */}
-                <p className="font-black text-white text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] mb-[2.5vh]"
+                <p className="font-black text-white text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] mb-[3%]"
                    style={{ 
-                     fontSize: 'clamp(1.5rem, 6.5vw, 2.6rem)', 
+                     fontSize: 'clamp(1.5rem, 13cqw, 2.6rem)', 
                      letterSpacing: '0.06em',
                      textShadow: '0 0 16px rgba(255,255,255,0.2)'
                    }}>
@@ -329,18 +295,17 @@ const DailyGiftDialog = ({
                 </p>
 
                 {/* Weekly Rewards Preview - 7 boxes */}
-                <div className="flex gap-[1.2vw] justify-center mb-[1.5vh] flex-wrap">
+                <div className="flex gap-[2.5%] justify-center mb-[4%] flex-wrap w-full">
                   {DAILY_REWARDS.map((reward, index) => {
                     const dayNumber = index + 1;
                     const isActive = dayNumber <= weeklyEntryCount + 1;
                     const displayReward = isPremium ? reward * 2 : reward;
                     
                     return (
-                      <div key={dayNumber} className="flex flex-col items-center gap-[0.5vh]">
-                        {/* Star */}
+                      <div key={dayNumber} className="flex flex-col items-center gap-[1.5%]">
                         <div
                           style={{ 
-                            fontSize: 'clamp(0.875rem, 3.2vw, 1.2rem)',
+                            fontSize: 'clamp(0.875rem, 6.5cqw, 1.2rem)',
                             filter: isActive 
                               ? `drop-shadow(0 0 6px hsl(var(--dup-gold-500)))` 
                               : 'grayscale(100%) brightness(1.2) drop-shadow(0 0 4px rgba(192,192,192,0.6))'
@@ -348,9 +313,7 @@ const DailyGiftDialog = ({
                           ⭐
                         </div>
                         
-                        {/* Reward box */}
-                        <div className="relative rounded-lg px-[1.5vw] py-[0.5vh]">
-                          {/* Outer gold frame */}
+                        <div className="relative rounded-lg" style={{ padding: '1.2% 3.5%' }}>
                           <div className="absolute inset-0 rounded-lg"
                                style={{
                                  background: isActive 
@@ -359,7 +322,6 @@ const DailyGiftDialog = ({
                                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.2)'
                                }} />
                           
-                          {/* Inner semi-transparent purple */}
                           <div className="absolute inset-[1.5px] rounded-lg"
                                style={{
                                  background: isActive
@@ -367,11 +329,11 @@ const DailyGiftDialog = ({
                                    : 'linear-gradient(180deg, rgba(100, 100, 100, 0.3), rgba(80, 80, 80, 0.4))',
                                }} />
                           
-                          <div className="relative z-10 flex items-center justify-center gap-[0.8vw]">
-                            <span style={{ fontSize: 'clamp(0.625rem, 2.6vw, 0.9rem)' }}>🪙</span>
+                          <div className="relative z-10 flex items-center justify-center gap-[0.3em]">
+                            <span style={{ fontSize: 'clamp(0.625rem, 5.2cqw, 0.9rem)' }}>🪙</span>
                             <span className="font-bold text-white"
                                   style={{ 
-                                    fontSize: 'clamp(0.625rem, 2.6vw, 0.9rem)',
+                                    fontSize: 'clamp(0.625rem, 5.2cqw, 0.9rem)',
                                     textShadow: '0 1px 3px rgba(0,0,0,0.8)'
                                   }}>
                               +{displayReward}
@@ -383,143 +345,55 @@ const DailyGiftDialog = ({
                   })}
                 </div>
 
-                {/* Today's Reward Card - 3D ENHANCED */}
-                <div className="relative rounded-xl px-[5vw] py-[1.6vh] mb-[1.5vh]">
-                  {/* 3D Shadow base */}
-                  <div className="absolute inset-0 rounded-xl translate-y-1 translate-x-1"
+                {/* Today's Reward - BIG DISPLAY */}
+                <div className="relative rounded-xl mb-[4%]" style={{ padding: '2.5% 8%' }}>
+                  <div className="absolute inset-0 rounded-xl translate-y-0.5 translate-x-0.5"
                        style={{
-                         background: 'rgba(0,0,0,0.4)',
-                         filter: 'blur(6px)',
+                         background: 'rgba(0,0,0,0.3)',
+                         filter: 'blur(4px)',
                          zIndex: -1
                        }} />
                   
-                  {/* Outer gold frame */}
                   <div className="absolute inset-0 rounded-xl"
                        style={{
                          background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                         boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 8px 20px rgba(0,0,0,0.35)'
+                         boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 6px 16px rgba(0,0,0,0.35)'
                        }} />
                   
-                  {/* Middle gold highlight */}
                   <div className="absolute inset-[3px] rounded-xl"
                        style={{
                          background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
                          boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
                        }} />
                   
-                  {/* Inner purple crystal - NO SHINE */}
                   <div className="absolute inset-[6px] rounded-xl"
                        style={{
-                         background: 'radial-gradient(ellipse at 40% 30%, hsl(var(--dup-purple-400)), hsl(var(--dup-purple-600)) 60%, hsl(var(--dup-purple-800)))',
-                         boxShadow: `
-                           inset 0 1px 0 rgba(255,255,255,0.6),
-                           inset 0 -10px 24px rgba(0,0,0,0.25)
-                         `
+                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(var(--dup-purple-500)) 0%, hsl(var(--dup-purple-600)) 40%, hsl(var(--dup-purple-800)) 100%)',
+                         boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.15), inset 0 -12px 24px rgba(0,0,0,0.3)'
                        }} />
                   
-                  {/* Specular highlight only */}
                   <div className="absolute inset-[6px] rounded-xl pointer-events-none"
                        style={{
-                         background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
+                         background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+                         opacity: 0.7
                        }} />
                   
-                  {isPremium ? (
-                    <div className="relative z-10 flex flex-col items-center gap-[0.6vh]">
-                      {/* Strikethrough old reward */}
-                      <div className="flex items-center gap-[2vw]">
-                        <div className="relative rounded-full"
-                             style={{ 
-                               width: 'clamp(1.25rem, 5vw, 2rem)', 
-                               height: 'clamp(1.25rem, 5vw, 2rem)',
-                             }}>
-                          {/* Realistic BRIGHT 3D Coin - small */}
-                          <div className="absolute inset-0 rounded-full translate-y-0.5"
-                               style={{ background: 'rgba(0,0,0,0.35)', filter: 'blur(2px)' }} />
-                          <div className="absolute inset-0 rounded-full"
-                               style={{ 
-                                 background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
-                                 boxShadow: 'inset 0 0 0 1px hsl(45 90% 38%), 0 3px 8px rgba(0,0,0,0.3)'
-                               }} />
-                          <div className="absolute inset-[2px] rounded-full"
-                               style={{ 
-                                 background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 85%), hsl(45 100% 70%) 35%, hsl(45 95% 58%) 65%, hsl(45 90% 45%))',
-                                 boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
-                               }} />
-                          {/* Edge rim highlight */}
-                          <div className="absolute inset-[3px] rounded-full pointer-events-none"
-                               style={{
-                                 boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.5)'
-                               }} />
-                        </div>
-                        <span className="font-black text-yellow-300/50 line-through" 
-                              style={{ fontSize: 'clamp(0.875rem, 4vw, 1.25rem)' }}>
-                          +{nextReward / 2}
-                        </span>
-                      </div>
-                      {/* Active reward */}
-                      <div className="flex items-center gap-[2vw]">
-                        <div className="relative rounded-full"
-                             style={{ 
-                               width: 'clamp(1.75rem, 7vw, 2.5rem)', 
-                               height: 'clamp(1.75rem, 7vw, 2.5rem)',
-                             }}>
-                          {/* Realistic BRIGHT 3D Coin - large */}
-                          <div className="absolute inset-0 rounded-full translate-y-1"
-                               style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(4px)' }} />
-                          <div className="absolute inset-0 rounded-full"
-                               style={{ 
-                                 background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
-                                 boxShadow: 'inset 0 0 0 2px hsl(45 90% 38%), 0 6px 18px rgba(0,0,0,0.4)'
-                               }} />
-                          <div className="absolute inset-[3px] rounded-full"
-                               style={{ 
-                                 background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 88%), hsl(45 100% 72%) 30%, hsl(45 95% 60%) 60%, hsl(45 90% 48%))',
-                                 boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.8), inset 0 -4px 12px rgba(0,0,0,0.5)'
-                               }} />
-                          {/* Edge rim highlight */}
-                          <div className="absolute inset-[4px] rounded-full pointer-events-none"
-                               style={{
-                                 boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.6)'
-                               }} />
-                        </div>
-                        <span className="font-black text-yellow-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
-                              style={{ fontSize: 'clamp(1.5rem, 6.2vw, 2.35rem)' }}>
-                          +{nextReward}
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="relative z-10 flex items-center gap-[2vw]">
-                      <div className="relative rounded-full"
-                           style={{ 
-                             width: 'clamp(1.75rem, 7vw, 2.75rem)', 
-                             height: 'clamp(1.75rem, 7vw, 2.75rem)',
-                           }}>
-                        {/* Realistic BRIGHT 3D Coin */}
-                        <div className="absolute inset-0 rounded-full translate-y-1"
-                             style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(4px)' }} />
-                        <div className="absolute inset-0 rounded-full"
-                             style={{ 
-                               background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
-                               boxShadow: 'inset 0 0 0 2px hsl(45 90% 38%), 0 6px 18px rgba(0,0,0,0.4)'
-                             }} />
-                        <div className="absolute inset-[3px] rounded-full"
-                             style={{ 
-                               background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 88%), hsl(45 100% 72%) 30%, hsl(45 95% 60%) 60%, hsl(45 90% 48%))',
-                               boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.8), inset 0 -4px 12px rgba(0,0,0,0.5)'
-                             }} />
-                        {/* Edge rim highlight */}
-                        <div className="absolute inset-[4px] rounded-full pointer-events-none"
-                             style={{
-                               boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.6)'
-                             }} />
-                      </div>
-                      <span className="font-black text-yellow-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
-                            style={{ fontSize: 'clamp(1.5rem, 6.2vw, 2.35rem)' }}>
-                        +{nextReward}
-                      </span>
-                    </div>
-                  )}
+                  <div className="absolute inset-[6px] rounded-xl pointer-events-none"
+                       style={{
+                         background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.35), transparent 60%)'
+                       }} />
+                  
+                  <div className="relative z-10 flex items-center justify-center gap-[0.4em]">
+                    <span style={{ fontSize: 'clamp(1.25rem, 10cqw, 2rem)' }}>🪙</span>
+                    <span className="font-black text-white"
+                          style={{ 
+                            fontSize: 'clamp(1.5rem, 12cqw, 2.5rem)',
+                            textShadow: '0 0 16px rgba(255,255,255,0.3), 0 2px 8px rgba(0,0,0,0.9)',
+                            letterSpacing: '0.02em'
+                          }}>
+                      +{nextReward}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Hex Accept Button */}
@@ -539,14 +413,13 @@ const DailyGiftDialog = ({
                 </div>
               </div>
 
-              {/* Premium Lives Bonus Badge (floating, right side) */}
+              {/* Premium Lives Bonus Badge */}
               {isPremium && (
                 <div className="absolute -right-[6vw] top-[36%] rounded-full w-[14vw] h-[14vw] max-w-[72px] max-h-[72px] flex flex-col items-center justify-center shadow-[0_6px_18px_rgba(0,0,0,0.45)] z-30 animate-bounce"
                      style={{ 
                        background: 'radial-gradient(circle at 35% 25%, hsl(142 70% 65%), hsl(142 70% 50%), hsl(142 70% 35%))',
                        border: '4px solid white' 
                      }}>
-                  {/* Inner specular */}
                   <div className="absolute inset-0 rounded-full pointer-events-none"
                        style={{
                          background: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.5), transparent 60%)',
@@ -561,7 +434,7 @@ const DailyGiftDialog = ({
             </div>
           </div>
 
-          {/* Close X button - top right - DELAY 600ms */}
+          {/* Close X button */}
           <button
             onClick={onLater}
             className={`absolute top-[3vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[10vw] h-[10vw] max-w-[50px] max-h-[50px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
