@@ -244,11 +244,6 @@ return (
       onStayActive={handleStayActive} 
     />
     
-    {/* Login promo - first modal for normal users */}
-    <LoginPromoManager 
-      isGenius={profile.is_subscribed || false} 
-      userId={userId || null} 
-    />
     
     {/* Weekly winner popup */}
     <WeeklyWinnerPopup userId={userId} />
