@@ -103,7 +103,7 @@ const Dashboard = () => {
     });
   }, [navigate]);
 
-  // Show Welcome Bonus dialog FIRST (highest priority) - testing: also on desktop, with 1s delay
+  // Show Welcome Bonus dialog FIRST (highest priority) - TESTING MODE: show on desktop too, with 1s delay
   useEffect(() => {
     if (canMountModals && canClaimWelcome && userId) {
       const t = setTimeout(() => {
