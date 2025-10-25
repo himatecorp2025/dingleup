@@ -126,6 +126,7 @@ const DailyGiftDialog = ({
       });
     }
 
+    // NO cleanup needed - this executes before component unmount
     if (onClaimSuccess) {
       setTimeout(() => onClaimSuccess(), 500);
     }

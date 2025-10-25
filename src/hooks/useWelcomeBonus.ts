@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -8,17 +8,11 @@ export const useWelcomeBonus = (userId: string | undefined) => {
   const [loading, setLoading] = useState(true);
   const [showLater, setShowLater] = useState(false);
 
-  useEffect(() => {
+  const checkWelcomeBonus = useCallback(async () => {
     if (!userId) {
       setLoading(false);
       return;
     }
-
-    checkWelcomeBonus();
-  }, [userId]);
-
-  const checkWelcomeBonus = async () => {
-    if (!userId) return;
 
     try {
       // Check if user is on mobile/tablet
@@ -59,7 +53,11 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    checkWelcomeBonus();
+  }, [checkWelcomeBonus]);
 
   const claimWelcomeBonus = async () => {
     if (!userId || claiming) return false;

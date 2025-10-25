@@ -381,7 +381,7 @@ const GamePreview = () => {
       setFirstAttempt(answerKey);
       
       if (isCorrect) {
-        // After 200ms, show correct answer in green
+        // After 200ms, show correct answer in green - NO cleanup needed, runs before component unmount
         setTimeout(() => {
           handleCorrectAnswer(responseTime, answerKey);
         }, 200);
@@ -394,11 +394,12 @@ const GamePreview = () => {
       const firstAnswerObj = currentQuestion.answers.find(a => a.key === firstAttempt);
       
       if (isCorrect || firstAnswerObj?.correct) {
-        // After 200ms, show correct answer in green
+        // After 200ms, show correct answer in green - NO cleanup needed, runs before component unmount
         setTimeout(() => {
           handleCorrectAnswer(responseTime, isCorrect ? answerKey : firstAttempt!);
         }, 200);
       } else {
+        // After 200ms, show wrong answer - NO cleanup needed, runs before component unmount
         setTimeout(() => {
           handleWrongAnswer(responseTime, answerKey);
         }, 200);
@@ -413,7 +414,7 @@ const GamePreview = () => {
     }
   };
 
-  const handleCorrectAnswer = async (responseTime: number, answerKey: string) => {
+  const handleCorrectAnswer = (responseTime: number, answerKey: string) => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer(answerKey);
     setCorrectAnswers(correctAnswers + 1);

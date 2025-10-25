@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 /**
@@ -8,6 +8,8 @@ import { supabase } from '@/integrations/supabase/client';
 export const useWeeklyWinnersPopup = (userId: string | undefined) => {
   const [showPopup, setShowPopup] = useState(false);
   const [canShowThisWeek, setCanShowThisWeek] = useState(false);
+  const [triggerActive, setTriggerActive] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const getCurrentWeek = () => {
     const now = new Date();
@@ -26,6 +28,40 @@ export const useWeeklyWinnersPopup = (userId: string | undefined) => {
 
     checkIfCanShowThisWeek();
   }, [userId]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+
+  // Trigger effect - show popup after 3 seconds
+  useEffect(() => {
+    if (!triggerActive || !canShowThisWeek) return;
+
+    // Clear existing timer
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    // Show popup after 3 seconds
+    timerRef.current = setTimeout(() => {
+      setShowPopup(true);
+      setTriggerActive(false);
+      timerRef.current = null;
+    }, 3000);
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [triggerActive, canShowThisWeek]);
 
   const checkIfCanShowThisWeek = async () => {
     try {
@@ -54,11 +90,7 @@ export const useWeeklyWinnersPopup = (userId: string | undefined) => {
 
   const triggerPopup = useCallback(() => {
     if (!canShowThisWeek) return;
-
-    // Show popup after 3 seconds
-    setTimeout(() => {
-      setShowPopup(true);
-    }, 3000);
+    setTriggerActive(true);
   }, [canShowThisWeek]);
 
   const closePopup = async () => {
