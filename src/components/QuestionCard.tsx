@@ -138,14 +138,16 @@ export const QuestionCard = ({
       </div>
 
       {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
-      <div className="flex flex-col justify-start space-y-1.5 sm:space-y-2 -mt-8 sm:-mt-10">
-        <div className="flex justify-center">
+      <div className="flex flex-col justify-start space-y-1.5 sm:space-y-2">
+        <div className="flex justify-center -mt-8 sm:-mt-10">
           <TimerCircle timeLeft={timeLeft} />
         </div>
 
-        <MillionaireQuestion questionNumber={questionNumber}>
-          {question.question}
-        </MillionaireQuestion>
+        <div className="-mt-2 sm:-mt-3">
+          <MillionaireQuestion questionNumber={questionNumber}>
+            {question.question}
+          </MillionaireQuestion>
+        </div>
 
         <div className="space-y-1.5 mt-8 sm:mt-10">{question.answers.map((answer) => {
             const isRemoved = removedAnswer === answer.key;
@@ -189,7 +191,7 @@ export const QuestionCard = ({
       </div>
 
       {/* Bottom section: Help buttons - hexagon shaped with deep 3D */}
-      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mt-2 mb-2">
+      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mt-6 sm:mt-8 mb-2">
         {/* 1/3 Help Button */}
         <div className="relative" style={{ perspective: '600px' }}>
           <button
