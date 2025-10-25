@@ -122,29 +122,35 @@ const Profile = () => {
 
   const TrophyIcon = () => (
     <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(74,222,128,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#4ade80" strokeWidth="2"/>
-      <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" stroke="#4ade80" strokeWidth="2" fill="#4ade80" fillOpacity="0.3"/>
-      <path d="M9 21h6M12 16v5" stroke="#4ade80" strokeWidth="2"/>
+      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#4ade80" strokeWidth="2" strokeLinecap="round"/>
+      <rect x="6" y="4" width="12" height="12" rx="1" stroke="#4ade80" strokeWidth="2" fill="#4ade80" fillOpacity="0.4"/>
+      <rect x="9" y="16" width="6" height="5" rx="1" stroke="#4ade80" strokeWidth="2" fill="#4ade80" fillOpacity="0.3"/>
+      <line x1="8" y1="21" x2="16" y2="21" stroke="#4ade80" strokeWidth="2" strokeLinecap="round"/>
+      <circle cx="12" cy="9" r="2" fill="#4ade80"/>
     </svg>
   );
 
   const CalendarIcon = () => (
     <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(96,165,250,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="4" width="18" height="18" rx="2" stroke="#60a5fa" strokeWidth="2" fill="#60a5fa" fillOpacity="0.2"/>
-      <path d="M3 10h18M8 2v4M16 2v4" stroke="#60a5fa" strokeWidth="2"/>
-      <circle cx="8" cy="14" r="1" fill="#60a5fa"/>
-      <circle cx="12" cy="14" r="1" fill="#60a5fa"/>
-      <circle cx="16" cy="14" r="1" fill="#60a5fa"/>
-      <circle cx="8" cy="18" r="1" fill="#60a5fa"/>
-      <circle cx="12" cy="18" r="1" fill="#60a5fa"/>
+      <rect x="3" y="6" width="18" height="16" rx="2" stroke="#60a5fa" strokeWidth="2" fill="#60a5fa" fillOpacity="0.3"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#60a5fa" strokeWidth="2"/>
+      <line x1="7" y1="3" x2="7" y2="7" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="7" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round"/>
+      <rect x="7" y="13" width="2" height="2" fill="#60a5fa" rx="0.5"/>
+      <rect x="11" y="13" width="2" height="2" fill="#60a5fa" rx="0.5"/>
+      <rect x="15" y="13" width="2" height="2" fill="#60a5fa" rx="0.5"/>
+      <rect x="7" y="17" width="2" height="2" fill="#60a5fa" rx="0.5"/>
+      <rect x="11" y="17" width="2" height="2" fill="#60a5fa" rx="0.5"/>
     </svg>
   );
 
   const PurpleTrophyIcon = () => (
     <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(192,132,252,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#c084fc" strokeWidth="2"/>
-      <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" stroke="#c084fc" strokeWidth="2" fill="#c084fc" fillOpacity="0.3"/>
-      <path d="M9 21h6M12 16v5" stroke="#c084fc" strokeWidth="2"/>
+      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#c084fc" strokeWidth="2" strokeLinecap="round"/>
+      <rect x="6" y="4" width="12" height="12" rx="1" stroke="#c084fc" strokeWidth="2" fill="#c084fc" fillOpacity="0.4"/>
+      <rect x="9" y="16" width="6" height="5" rx="1" stroke="#c084fc" strokeWidth="2" fill="#c084fc" fillOpacity="0.3"/>
+      <line x1="8" y1="21" x2="16" y2="21" stroke="#c084fc" strokeWidth="2" strokeLinecap="round"/>
+      <circle cx="12" cy="9" r="2" fill="#c084fc"/>
     </svg>
   );
 
