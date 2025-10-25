@@ -166,12 +166,8 @@ export const useGameProfile = (userId: string | undefined) => {
     fetchProfile();
   }, [userId]);
 
-  useEffect(() => {
-    if (profile) {
-      const interval = setInterval(regenerateLives, 5000); // Check every 5 seconds for immediate updates
-      return () => clearInterval(interval);
-    }
-  }, [profile]);
+  // Life regeneration is now handled by get-wallet edge function + realtime updates
+  // No need for client-side regenerate_lives calls
 
   return {
     profile,
