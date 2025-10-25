@@ -344,9 +344,9 @@ return (
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3">
           {/* First Row: Username and Stats */}
-          <div className="flex items-start justify-between">
-            {/* Left: Greeting */}
-            <div className="flex flex-col items-start">
+          <div className="flex items-center justify-between">
+            {/* Left: Greeting - vertically centered with hexagons */}
+            <div className="flex items-center h-12 sm:h-16">
               <h1 className="text-base sm:text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
                 Szia, {profile.username}!
               </h1>
@@ -476,20 +476,18 @@ return (
               <WeeklyRankingsCountdown compact={false} />
             </div>
             
-            {/* Right: Action Buttons - Match width of hexagons above */}
+            {/* Right: Action Buttons - Match width from Rank hexagon to Avatar hexagon (always 4 hexagons) */}
             <div 
               className="flex flex-col gap-2"
               style={{
-                width: profile.is_subscribed 
-                  ? 'calc(5 * (3rem) + 4 * 0.375rem)' // 5 hexagons mobile (48px × 5 + 6px × 4 = 264px)
-                  : 'calc(4 * (3rem) + 3 * 0.375rem)' // 4 hexagons mobile
+                width: 'calc(4 * (3rem) + 3 * 0.375rem)' // 4 hexagons mobile: rank + coins + lives + avatar
               }}
             >
               {/* Desktop width handled via sm: breakpoint */}
               <style>{`
                 @media (min-width: 640px) {
                   [data-buttons-container] {
-                    width: ${profile.is_subscribed ? 'calc(5 * (4rem) + 4 * 0.5rem)' : 'calc(4 * (4rem) + 3 * 0.5rem)'} !important;
+                    width: calc(4 * (4rem) + 3 * 0.5rem) !important;
                   }
                 }
               `}</style>
