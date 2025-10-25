@@ -105,10 +105,10 @@ export const useGeniusPromo = (
       trackEvent('popup_impression', 'sub_promo');
     };
 
-    // Show after 30 seconds (or immediately if daily gift just claimed)
+    // Show immediately for testing
     const timer = setTimeout(() => {
       checkAndShow();
-    }, dailyGiftJustClaimed ? 0 : 30000);
+    }, 0);
 
     return () => clearTimeout(timer);
   }, [userId, isPremium, hasOtherDialogs, dailyGiftJustClaimed]);
