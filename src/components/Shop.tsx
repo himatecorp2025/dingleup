@@ -432,13 +432,30 @@ const Shop = ({ userId }: ShopProps) => {
       />
       
       <div className="space-y-8">
-        {/* User Coins Display */}
-        <div className="bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-2xl p-6 text-center border-2 border-yellow-400/50">
-          <div className="flex items-center justify-center gap-3">
-            <Coins className="w-8 h-8 text-yellow-900" />
-            <span className="text-3xl font-bold text-yellow-900">{profile.coins}</span>
+        {/* User Coins Display - 3D Box Style */}
+        <div className="relative rounded-2xl p-6 text-center overflow-hidden">
+          {/* BASE SHADOW */}
+          <div className="absolute inset-0 bg-black/40 rounded-2xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+          
+          {/* OUTER FRAME */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 border-2 border-yellow-400/50 shadow-lg shadow-yellow-500/20" aria-hidden />
+          
+          {/* MIDDLE FRAME */}
+          <div className="absolute inset-[3px] rounded-2xl bg-gradient-to-b from-yellow-600 via-yellow-500 to-yellow-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+          
+          {/* INNER LAYER */}
+          <div className="absolute inset-[5px] rounded-2xl bg-gradient-to-b from-yellow-500/40 via-yellow-600/40 to-yellow-700/40" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+          
+          {/* SPECULAR HIGHLIGHT */}
+          <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.18) 40%, transparent 70%)' }} aria-hidden />
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-center gap-3">
+              <Coins className="w-8 h-8 text-yellow-100 drop-shadow-lg" />
+              <span className="text-3xl font-bold text-white drop-shadow-lg">{profile.coins}</span>
+            </div>
+            <p className="text-white drop-shadow-lg mt-2">Jelenlegi egyenleged</p>
           </div>
-          <p className="text-yellow-900 mt-2">Jelenlegi egyenleged</p>
         </div>
 
         {/* Tips & Tricks Section - ONLY for Genius members */}
@@ -463,22 +480,39 @@ const Shop = ({ userId }: ShopProps) => {
 
         {/* Subscription Info Box - only show if NOT Genius */}
         {!isGenius && (
-          <div className="bg-gradient-to-br from-purple-600/30 to-purple-900/30 border-2 border-purple-500/50 rounded-xl p-4 backdrop-blur-sm animate-pulse" data-tutorial="genius-section" style={{ animationDuration: '3s' }}>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-yellow-500/30 rounded-lg">
-                <Crown className="w-6 h-6 text-yellow-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+          <div className="relative rounded-xl p-4 backdrop-blur-sm overflow-hidden animate-pulse" data-tutorial="genius-section" style={{ animationDuration: '3s' }}>
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400/50 shadow-lg shadow-purple-500/20" aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-purple-500/30 via-purple-600/30 to-purple-700/30" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.12), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
+            
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-yellow-500/30 rounded-lg">
+                  <Crown className="w-6 h-6 text-yellow-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+                </div>
+                <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200 drop-shadow-lg">Genius Előfizetés</h3>
               </div>
-              <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">Genius Előfizetés</h3>
+              <p className="text-white/90 text-sm mb-3 font-semibold drop-shadow-lg">
+                🌟 Dupla napi jutalmak, 50% kedvezmény speed boosterekre, 25% kedvezmény valódi pénzes megszerzéseknél, és exkluzív Tippek & Trükkök videók!
+              </p>
+              <button 
+                onClick={() => setShowGeniusDialog(true)}
+                className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-black py-3 px-4 rounded-lg transition-all shadow-lg shadow-yellow-500/50"
+              >
+                Előfizetek $2.99/hó
+              </button>
             </div>
-            <p className="text-white/90 text-sm mb-3 font-semibold">
-              🌟 Dupla napi jutalmak, 50% kedvezmény speed boosterekre, 25% kedvezmény valódi pénzes megszerzéseknél, és exkluzív Tippek & Trükkök videók!
-            </p>
-            <button 
-              onClick={() => setShowGeniusDialog(true)}
-              className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-black py-3 px-4 rounded-lg transition-all shadow-lg shadow-yellow-500/50"
-            >
-              Előfizetek $2.99/hó
-            </button>
           </div>
         )}
 
@@ -497,97 +531,114 @@ const Shop = ({ userId }: ShopProps) => {
             {boosterItems.map((item) => (
               <div 
                 key={item.id} 
-                className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] rounded-xl p-3 border-2 border-purple-500/30 hover:border-purple-500/60 transition-all flex flex-col min-h-[200px] md:min-h-[220px]"
+                className="relative rounded-xl p-3 overflow-hidden hover:scale-105 transition-all flex flex-col min-h-[200px] md:min-h-[220px]"
               >
-                {/* Genius Badge */}
-                {isGenius && item.baseCoinPrice && item.baseCoinPrice !== item.price && (
-                  <div className="flex justify-end mb-1">
-                    <span className="inline-flex items-center gap-1 text-[10px] bg-yellow-500 text-black font-black px-2 py-0.5 rounded-full">
-                      <Crown className="w-3 h-3" />
-                      -50%
-                    </span>
-                  </div>
-                )}
+                {/* BASE SHADOW */}
+                <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(5px)' }} aria-hidden />
                 
-                {/* Icon */}
-                <div className="w-full aspect-video flex items-center justify-center mb-2">
-                  <div className="p-3 bg-yellow-500/10 rounded-xl border-2 border-yellow-500/30">
-                    <item.icon className="w-8 h-8 text-yellow-500" />
-                  </div>
-                </div>
+                {/* OUTER FRAME */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400/40 shadow-lg shadow-purple-500/20" aria-hidden />
                 
-                {/* Title */}
-                <h3 className="text-sm md:text-base font-bold text-white mb-1 line-clamp-2 break-words">
-                  {item.name}
-                </h3>
+                {/* MIDDLE FRAME */}
+                <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25)' }} aria-hidden />
                 
-                {/* Description */}
-                <p className="text-xs text-white/70 mb-2 line-clamp-2 flex-1">
-                  {item.description}
-                </p>
+                {/* INNER LAYER */}
+                <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-[#1a1a3e]/90 via-[#0f0f2e]/90 to-[#1a1a3e]/90" style={{ boxShadow: 'inset 0 6px 16px rgba(255,255,255,0.08), inset 0 -6px 16px rgba(0,0,0,0.4)' }} aria-hidden />
                 
-                {/* Price - Coins */}
-                <div className="space-y-2 mt-auto">
-                  <div className="flex items-center justify-between flex-wrap gap-1">
-                    <div className="flex items-center gap-1 flex-wrap">
-                      <Coins className="w-4 h-4 text-yellow-500 flex-shrink-0" />
-                      {isGenius && item.baseCoinPrice && item.baseCoinPrice !== item.price ? (
-                        <div className="flex items-center gap-1 flex-wrap">
-                          <span className="text-xs font-bold text-yellow-600/50 line-through">{item.baseCoinPrice}</span>
-                          <span className="text-base md:text-lg font-bold text-yellow-400">{item.price}</span>
-                        </div>
-                      ) : (
-                        <span className="text-base md:text-lg font-bold text-yellow-500">{item.price}</span>
-                      )}
+                {/* SPECULAR HIGHLIGHT */}
+                <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 40%, transparent 70%)' }} aria-hidden />
+                
+                <div className="relative z-10 flex flex-col h-full">
+                  {/* Genius Badge */}
+                  {isGenius && item.baseCoinPrice && item.baseCoinPrice !== item.price && (
+                    <div className="flex justify-end mb-1">
+                      <span className="inline-flex items-center gap-1 text-[10px] bg-yellow-500 text-black font-black px-2 py-0.5 rounded-full">
+                        <Crown className="w-3 h-3" />
+                        -50%
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Icon */}
+                  <div className="w-full aspect-video flex items-center justify-center mb-2">
+                    <div className="p-3 bg-yellow-500/10 rounded-xl border-2 border-yellow-500/30">
+                      <item.icon className="w-8 h-8 text-yellow-500" />
                     </div>
                   </div>
                   
-                  <button
-                    onClick={() => item.action()}
-                    disabled={loading === item.id || profile.coins < item.price}
-                    className="w-full bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading === item.id ? 'Betöltés...' : 'MEGSZERZEM'}
-                  </button>
+                  {/* Title */}
+                  <h3 className="text-sm md:text-base font-bold text-white mb-1 line-clamp-2 break-words drop-shadow-lg">
+                    {item.name}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-xs text-white/70 mb-2 line-clamp-2 flex-1">
+                    {item.description}
+                  </p>
+                  
+                  {/* Price - Coins */}
+                  <div className="space-y-2 mt-auto">
+                    <div className="flex items-center justify-between flex-wrap gap-1">
+                      <div className="flex items-center gap-1 flex-wrap">
+                        <Coins className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                        {isGenius && item.baseCoinPrice && item.baseCoinPrice !== item.price ? (
+                          <div className="flex items-center gap-1 flex-wrap">
+                            <span className="text-xs font-bold text-yellow-600/50 line-through">{item.baseCoinPrice}</span>
+                            <span className="text-base md:text-lg font-bold text-yellow-400">{item.price}</span>
+                          </div>
+                        ) : (
+                          <span className="text-base md:text-lg font-bold text-yellow-500">{item.price}</span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={() => item.action()}
+                      disabled={loading === item.id || profile.coins < item.price}
+                      className="w-full bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading === item.id ? 'Betöltés...' : 'MEGSZERZEM'}
+                    </button>
 
-                  {/* Stripe USD purchase option */}
-                  {item.priceUsd && (
-                    <>
-                      <div className="border-t border-white/10 my-1"></div>
-                      <div className="flex items-center justify-between flex-wrap gap-1">
-                        <div className="flex items-center gap-1 flex-wrap">
-                          <CreditCard className="w-4 h-4 text-green-500 flex-shrink-0" />
-                          {isGenius && item.baseUsdPrice && item.baseUsdPrice !== item.priceUsd ? (
-                            <div className="flex items-center gap-1 flex-wrap">
-                              <span className="text-xs font-bold text-green-600/50 line-through">
-                                ${item.baseUsdPrice.toFixed(2)}
-                              </span>
-                              <span className="text-base md:text-lg font-bold text-green-400">
+                    {/* Stripe USD purchase option */}
+                    {item.priceUsd && (
+                      <>
+                        <div className="border-t border-white/10 my-1"></div>
+                        <div className="flex items-center justify-between flex-wrap gap-1">
+                          <div className="flex items-center gap-1 flex-wrap">
+                            <CreditCard className="w-4 h-4 text-green-500 flex-shrink-0" />
+                            {isGenius && item.baseUsdPrice && item.baseUsdPrice !== item.priceUsd ? (
+                              <div className="flex items-center gap-1 flex-wrap">
+                                <span className="text-xs font-bold text-green-600/50 line-through">
+                                  ${item.baseUsdPrice.toFixed(2)}
+                                </span>
+                                <span className="text-base md:text-lg font-bold text-green-400">
+                                  ${item.priceUsd.toFixed(2)}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-base md:text-lg font-bold text-green-500">
                                 ${item.priceUsd.toFixed(2)}
                               </span>
-                            </div>
-                          ) : (
-                            <span className="text-base md:text-lg font-bold text-green-500">
-                              ${item.priceUsd.toFixed(2)}
-                            </span>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                      
-                      <button
-                        onClick={() => buyWithStripe(item.id as any)}
-                        disabled={loading === `stripe-${item.id}`}
-                        className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
-                      >
-                        {loading === `stripe-${item.id}` ? 'Betöltés...' : (
-                          <>
-                            <CreditCard className="w-3 h-3" />
-                            MEGSZERZEM USD
-                          </>
-                        )}
-                      </button>
-                    </>
-                  )}
+                        
+                        <button
+                          onClick={() => buyWithStripe(item.id as any)}
+                          disabled={loading === `stripe-${item.id}`}
+                          className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
+                        >
+                          {loading === `stripe-${item.id}` ? 'Betöltés...' : (
+                            <>
+                              <CreditCard className="w-3 h-3" />
+                              MEGSZERZEM USD
+                            </>
+                          )}
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
@@ -610,47 +661,64 @@ const Shop = ({ userId }: ShopProps) => {
             {shopItems.map((item) => (
               <div 
                 key={item.id} 
-                className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] rounded-xl p-3 border-2 border-purple-500/30 hover:border-purple-500/60 transition-all flex flex-col min-h-[180px]"
+                className="relative rounded-xl p-3 overflow-hidden hover:scale-105 transition-all flex flex-col min-h-[180px]"
               >
-                {/* Icon */}
-                <div className="w-full aspect-video flex items-center justify-center mb-2">
-                  <div className="p-3 bg-purple-500/10 rounded-xl border-2 border-purple-500/30">
-                    <item.icon className="w-8 h-8 text-purple-400" />
-                  </div>
-                </div>
+                {/* BASE SHADOW */}
+                <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(5px)' }} aria-hidden />
                 
-                {/* Title */}
-                <h3 className="text-sm md:text-base font-bold text-white mb-1 line-clamp-2 break-words">
-                  {item.name}
-                </h3>
+                {/* OUTER FRAME */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400/40 shadow-lg shadow-purple-500/20" aria-hidden />
                 
-                {/* Description */}
-                <p className="text-xs text-white/70 mb-2 line-clamp-2 flex-1">
-                  {item.description}
-                </p>
+                {/* MIDDLE FRAME */}
+                <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25)' }} aria-hidden />
                 
-                {/* Price and Button */}
-                <div className="space-y-2 mt-auto">
-                  <div className="flex items-center justify-between flex-wrap gap-1">
-                    <div className="flex items-center gap-1">
-                      <Coins className="w-4 h-4 text-yellow-500" />
-                      <span className="text-base md:text-lg font-bold text-yellow-500">{item.price}</span>
+                {/* INNER LAYER */}
+                <div className="absolute inset-[5px] rounded-xl bg-gradient-to-b from-[#1a1a3e]/90 via-[#0f0f2e]/90 to-[#1a1a3e]/90" style={{ boxShadow: 'inset 0 6px 16px rgba(255,255,255,0.08), inset 0 -6px 16px rgba(0,0,0,0.4)' }} aria-hidden />
+                
+                {/* SPECULAR HIGHLIGHT */}
+                <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 40%, transparent 70%)' }} aria-hidden />
+                
+                <div className="relative z-10 flex flex-col h-full">
+                  {/* Icon */}
+                  <div className="w-full aspect-video flex items-center justify-center mb-2">
+                    <div className="p-3 bg-purple-500/10 rounded-xl border-2 border-purple-500/30">
+                      <item.icon className="w-8 h-8 text-purple-400" />
                     </div>
                   </div>
                   
-                  <button
-                    onClick={() => item.action()}
-                    disabled={loading === item.id || profile.coins < item.price || item.disabled}
-                    className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading === item.id ? 'Betöltés...' : 'AKAROM'}
-                  </button>
+                  {/* Title */}
+                  <h3 className="text-sm md:text-base font-bold text-white mb-1 line-clamp-2 break-words drop-shadow-lg">
+                    {item.name}
+                  </h3>
                   
-                  {item.disabled && (
-                    <p className="text-[10px] text-white/50 mt-1 text-center">
-                      Már aktív
-                    </p>
-                  )}
+                  {/* Description */}
+                  <p className="text-xs text-white/70 mb-2 line-clamp-2 flex-1">
+                    {item.description}
+                  </p>
+                  
+                  {/* Price and Button */}
+                  <div className="space-y-2 mt-auto">
+                    <div className="flex items-center justify-between flex-wrap gap-1">
+                      <div className="flex items-center gap-1">
+                        <Coins className="w-4 h-4 text-yellow-500" />
+                        <span className="text-base md:text-lg font-bold text-yellow-500">{item.price}</span>
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={() => item.action()}
+                      disabled={loading === item.id || profile.coins < item.price || item.disabled}
+                      className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white text-xs md:text-sm font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading === item.id ? 'Betöltés...' : 'AKAROM'}
+                    </button>
+                    
+                    {item.disabled && (
+                      <p className="text-[10px] text-white/50 mt-1 text-center">
+                        Már aktív
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

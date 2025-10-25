@@ -52,20 +52,73 @@ const ShopPage = () => {
         <div className="flex items-center justify-between mb-6 pt-safe">
           <button 
             onClick={() => navigate('/dashboard')}
-            className="p-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full shadow-lg hover:from-red-700 hover:to-red-900 transition-all hover:scale-110 border-2 border-red-400/50"
+            className="relative p-3 rounded-full hover:scale-110 transition-all"
             title="Vissza"
           >
-            <LogOut className="w-6 h-6 -scale-x-100" />
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+            
+            {/* Icon */}
+            <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
           </button>
           
-          <div className="flex items-center gap-4">
-            <div className="bg-black/60 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 border-2 border-red-500/50">
-              <Heart className="w-5 h-5 text-red-500" />
-              <span className="font-bold text-white">{profile.lives}/{profile.max_lives}</span>
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Lives Badge - 3D Box Style */}
+            <div className="relative rounded-full px-3 sm:px-4 py-2 overflow-hidden">
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[2px] rounded-full bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/60 via-black/40 to-black/60" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[3px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.2) 0%, transparent 60%)' }} aria-hidden />
+              
+              <div className="relative z-10 flex items-center gap-2">
+                <Heart className="w-5 h-5 text-red-500" />
+                <span className="font-bold text-white">{profile.lives}/{profile.max_lives}</span>
+              </div>
             </div>
-            <div className="bg-black/60 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 border-2 border-yellow-500/50">
-              <Coins className="w-5 h-5 text-yellow-500" />
-              <span className="font-bold text-white">{profile.coins}</span>
+            
+            {/* Coins Badge - 3D Box Style */}
+            <div className="relative rounded-full px-3 sm:px-4 py-2 overflow-hidden">
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 border-2 border-yellow-400/50 shadow-lg" aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[2px] rounded-full bg-gradient-to-b from-yellow-600 via-yellow-500 to-yellow-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/60 via-black/40 to-black/60" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[3px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.2) 0%, transparent 60%)' }} aria-hidden />
+              
+              <div className="relative z-10 flex items-center gap-2">
+                <Coins className="w-5 h-5 text-yellow-500" />
+                <span className="font-bold text-white">{profile.coins}</span>
+              </div>
             </div>
           </div>
         </div>
