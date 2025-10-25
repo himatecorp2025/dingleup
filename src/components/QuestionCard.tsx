@@ -64,14 +64,14 @@ export const QuestionCard = ({
   const skipCost = getSkipCost(questionNumber - 1); // Convert to 0-indexed
 
   return (
-    <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-1 sm:pb-2 gap-0 ${className}`}>
+    <div className={`w-full h-full flex flex-col pt-0 px-1 sm:px-2 pb-1 gap-0 ${className}`}>
       {/* Top section: Exit button, Lives, Coins - Moved higher */}
-      <div className="flex justify-between items-start pt-1 sm:pt-2">
+      <div className="flex justify-between items-start pt-1">
         {/* Back Button - 3D Round Style */}
         <div className="relative">
           <button
             onClick={onExit}
-            className="relative p-2 sm:p-3 rounded-full hover:scale-110 transition-all touch-manipulation active:scale-95"
+            className="relative p-3 rounded-full hover:scale-110 transition-all"
             title="Vissza a témakategóriára"
           >
             {/* BASE SHADOW */}
@@ -94,7 +94,7 @@ export const QuestionCard = ({
           </button>
         </div>
 
-        <div className="flex gap-1.5 sm:gap-2 md:gap-3">
+        <div className="flex gap-2 sm:gap-4">
           {/* Lives indicator with deep 3D */}
           <div className="relative rounded-full" style={{ perspective: '500px' }}>
             {/* BASE SHADOW */}
@@ -138,12 +138,12 @@ export const QuestionCard = ({
       </div>
 
       {/* Middle section: Question and Answers - Timer moved up, Question box moved up */}
-      <div className="flex flex-col justify-start space-y-1.5 sm:space-y-2 md:space-y-3 mt-[5vh] sm:mt-[6vh]">
-        <div className="flex justify-center -mt-10 sm:-mt-12 md:-mt-14">
+      <div className="flex flex-col justify-start space-y-1.5 sm:space-y-2 mt-[5vh]">
+        <div className="flex justify-center -mt-12 sm:-mt-14">
           <TimerCircle timeLeft={timeLeft} />
         </div>
 
-        <div className="-mt-2 sm:-mt-3 md:-mt-4 pb-6 sm:pb-7 md:pb-8">
+        <div className="-mt-2 sm:-mt-3 pb-7 sm:pb-8">
           <MillionaireQuestion questionNumber={questionNumber}>
             {question.question}
           </MillionaireQuestion>
@@ -194,13 +194,13 @@ export const QuestionCard = ({
       </div>
 
       {/* Bottom section: Help buttons - hexagon shaped with deep 3D */}
-      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 md:gap-2 mt-0 mb-2 sm:mb-3">
+      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mt-0 mb-2">
         {/* 1/3 Help Button */}
         <div className="relative" style={{ perspective: '600px' }}>
           <button
             onClick={onUseHelp5050}
             disabled={disabled || help5050UsageCount >= 2}
-            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 transition-all touch-manipulation ${help5050UsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
+            className={`relative w-full clip-hexagon-tall text-white font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition-all ${help5050UsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
@@ -234,7 +234,7 @@ export const QuestionCard = ({
           <button
             onClick={onUseHelp2xAnswer}
             disabled={disabled || help2xAnswerUsageCount >= 2}
-            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 transition-all touch-manipulation ${help2xAnswerUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
+            className={`relative w-full clip-hexagon-tall text-white font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-0.5 transition-all ${help2xAnswerUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
@@ -268,7 +268,7 @@ export const QuestionCard = ({
           <button
             onClick={onUseHelpAudience}
             disabled={disabled || helpAudienceUsageCount >= 2}
-            className={`relative w-full clip-hexagon-tall text-white flex flex-col items-center justify-center gap-0.5 transition-all touch-manipulation ${helpAudienceUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
+            className={`relative w-full clip-hexagon-tall text-white flex flex-col items-center justify-center gap-0.5 transition-all ${helpAudienceUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
@@ -302,7 +302,7 @@ export const QuestionCard = ({
           <button
             onClick={onUseQuestionSwap}
             disabled={disabled || usedQuestionSwap}
-            className={`relative w-full clip-hexagon-tall text-white flex flex-col items-center justify-center transition-all touch-manipulation ${usedQuestionSwap ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
+            className={`relative w-full clip-hexagon-tall text-white flex flex-col items-center justify-center transition-all ${usedQuestionSwap ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />

@@ -83,7 +83,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
   ];
 
   return (
-    <div className="category-selector h-screen w-screen flex flex-col items-start justify-start p-3 sm:p-4 pt-10 sm:pt-12 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
+    <div className="category-selector h-screen w-screen flex flex-col items-start justify-start p-4 pt-12 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0">
       <div className="absolute inset-0 bg-gradient-to-tr from-yellow-600/10 via-red-600/10 to-purple-600/10 pointer-events-none"></div>
       
       {/* Casino lights animation */}
@@ -117,22 +117,22 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
       </div>
       
       <div className="max-w-2xl w-full relative z-10">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-2 font-poppins bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-400 to-purple-400 animate-pulse pr-14 sm:pr-16 md:pr-20">
+        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 font-poppins bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-400 to-purple-400 animate-pulse pr-16 sm:pr-20">
           Válassz témakört!
         </h1>
-          <p className="text-center text-xs sm:text-sm text-white mb-4 sm:mb-6 pr-14 sm:pr-16 md:pr-20">
+          <p className="text-center text-sm text-white mb-6 pr-16 sm:pr-20">
             Melyik területen méred össze tudásod?
           </p>
 
         {/* 2x2 Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 max-w-md mx-auto">
+        <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
           {categories.map((category) => {
             const Icon = category.icon;
             return (
               <button
                 key={category.id}
                 onClick={() => handleCategorySelect(category.id)}
-                className="group relative overflow-hidden rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-black/80 transition-all duration-300 hover:scale-105 text-left touch-manipulation active:scale-95 aspect-square flex flex-col justify-between"
+                className="group relative overflow-hidden rounded-2xl p-4 bg-black/80 transition-all duration-300 hover:scale-105 text-left touch-manipulation active:scale-95 aspect-square flex flex-col justify-between"
                 style={{ perspective: '1000px' }}
               >
                 {/* Deep 3D Layers */}
@@ -163,15 +163,15 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
                 </div>
                 
                 <div className="relative z-10 flex flex-col h-full items-center justify-between" style={{ transform: 'translateZ(50px)' }}>
-                  <div className={`p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-2 sm:mt-3 shadow-2xl`} style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.4)' }}>
-                    <Icon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
+                  <div className={`p-3 rounded-xl bg-gradient-to-br ${category.gradient} text-white w-fit mt-3 shadow-2xl`} style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.4)' }}>
+                    <Icon className="w-12 h-12" />
                   </div>
                   
-                  <div className="text-center pb-2 sm:pb-3 md:pb-4">
-                    <h3 className="text-xs sm:text-sm font-bold mb-0.5 sm:mb-1 font-poppins leading-tight text-white drop-shadow-lg">
+                  <div className="text-center pb-4">
+                    <h3 className="text-sm font-bold mb-1 font-poppins leading-tight text-white drop-shadow-lg">
                       {category.name}
                     </h3>
-                    <p className="text-[10px] sm:text-xs text-yellow-200/90 line-clamp-2 drop-shadow">
+                    <p className="text-xs text-yellow-200/90 line-clamp-2 drop-shadow">
                       {category.description}
                     </p>
                   </div>
@@ -189,8 +189,8 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
           })}
         </div>
 
-        <div className="mt-4 sm:mt-6 text-center">
-          <p className="text-[10px] sm:text-xs text-yellow-300/90 drop-shadow font-semibold mb-3 sm:mb-4">
+        <div className="mt-6 text-center">
+          <p className="text-xs text-yellow-300/90 drop-shadow font-semibold mb-4">
             15 kérdés • 10 mp/kérdés • Akár 100 aranyérme
           </p>
         </div>

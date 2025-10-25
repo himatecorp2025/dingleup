@@ -14,7 +14,6 @@ import { QuestionCard } from "./QuestionCard";
 import { InsufficientResourcesDialog } from "./InsufficientResourcesDialog";
 import { ExitGameDialog } from "./ExitGameDialog";
 import { useBroadcastChannel } from "@/hooks/useBroadcastChannel";
-import { GameResultsDialog } from "./GameResultsDialog";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -1079,23 +1078,56 @@ const GamePreview = () => {
 
   if (gameState === 'finished') {
     return (
-      <div className="min-h-screen w-screen flex flex-col items-center justify-center relative">
+      <div className="fixed inset-0 md:relative md:min-h-screen flex items-center justify-center p-4 relative">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
-        <GameResultsDialog
-          open={true}
-          correctAnswers={correctAnswers}
-          totalQuestions={15}
-          coinsEarned={coinsEarned}
-          averageResponseTime={responseTimes.length > 0 ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length) : 0}
-          onNewGame={() => {
-            setGameState('category-select');
-            resetGameState();
-          }}
-          onBackToDashboard={() => navigate('/dashboard')}
-        />
+        <div className="relative z-10 w-full flex items-center justify-center">
+          <div className="max-w-md w-full bg-black/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 text-center border-2 border-green-500/50">
+            <div className="text-8xl mb-6 animate-bounce">🏆</div>
+            <h1 className="text-3xl md:text-4xl font-black text-green-500 mb-6">Gratulálunk!</h1>
+            
+            <div className="space-y-3 mb-6">
+              <div className="bg-green-500/20 rounded-xl p-4 border border-green-500/30">
+                <p className="text-sm text-white/70">Helyes válaszok</p>
+                <p className="text-2xl md:text-3xl font-bold text-white">{correctAnswers}/15</p>
+              </div>
+              <div className="bg-yellow-500/20 rounded-xl p-4 border border-yellow-500/30">
+                <p className="text-sm text-white/70">Szerzett aranyérme</p>
+                <p className="text-2xl md:text-3xl font-bold text-white">+{coinsEarned} 🪙</p>
+              </div>
+              {responseTimes.length > 0 && (
+                <div className="bg-blue-500/20 rounded-xl p-4 border border-blue-500/30">
+                  <p className="text-sm text-white/70">Átlagos válaszidő</p>
+                  <p className="text-2xl md:text-3xl font-bold text-white">
+                    {(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)}s
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <HexagonButton 
+              variant="yellow" 
+              size="lg" 
+              onClick={() => {
+                setGameState('category-select');
+              }}
+              className="w-full max-w-sm mx-auto mb-3"
+            >
+              Új játék
+            </HexagonButton>
+            
+            <button 
+              onClick={() => {
+                navigate('/dashboard');
+              }}
+              className="text-white text-sm hover:underline"
+            >
+              Vissza a főoldalra
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
