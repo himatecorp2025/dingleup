@@ -4,7 +4,7 @@ import React, { PropsWithChildren } from 'react';
  * HexShieldFrame - POINTY-TOP hexagon pajzs (trapéz), 3D specular fém keret + kristály panel
  * Referencia: Daily Gift popup - arany fém + lila kristály
  * - POINTY-TOP geometria: 165° interior angles at top/bottom vertices
- * - Calculated: s=8%, tan(82.5°)≈7.595754 → y1%≈5.529%
+ * - Shield: W=640, H=744, s=8%, theta=165°, y1=35.39px → y1%=4.756%
  * - Kétlépcsős arany keret (külső sötét, belső világos highlight)
  * - Lila kristály belső panel diagonális fénycsíkokkal
  * - Specular conic highlight a tetején
@@ -22,7 +22,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          clipPath: 'polygon(50% 0%, 92% 5.529%, 92% 94.471%, 50% 100%, 8% 94.471%, 8% 5.529%)',
+          clipPath: 'polygon(50% 0%, 92% 4.756%, 92% 95.244%, 50% 100%, 8% 95.244%, 8% 4.756%)',
           overflow: 'hidden'
         }}
       >
@@ -77,16 +77,16 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </filter>
         </defs>
 
-        {/* 3D Shadow Base - 165° pointy-top (s=8%, y1=5.529% scaled to viewBox 600) */}
+        {/* 3D Shadow Base - 165° pointy-top (y1=4.756% scaled to viewBox 600) */}
         <path
-          d="M 180 0 L 331.2 33.174 L 331.2 566.826 L 180 600 L 28.8 566.826 L 28.8 33.174 Z"
+          d="M 180 0 L 331.2 28.536 L 331.2 571.464 L 180 600 L 28.8 571.464 L 28.8 28.536 Z"
           fill="rgba(0,0,0,0.35)"
           transform="translate(6, 8)"
         />
 
         {/* Outer Gold Frame - 165° pointy-top */}
         <path
-          d="M 180 0 L 331.2 33.174 L 331.2 566.826 L 180 600 L 28.8 566.826 L 28.8 33.174 Z"
+          d="M 180 0 L 331.2 28.536 L 331.2 571.464 L 180 600 L 28.8 571.464 L 28.8 28.536 Z"
           fill="url(#goldOuter)"
           stroke="hsl(var(--dup-gold-800))"
           strokeWidth="2"
@@ -95,7 +95,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* Middle Gold Frame - 165° (inset 8px) */}
         <path
-          d="M 180 8 L 323.2 41.174 L 323.2 558.826 L 180 592 L 36.8 558.826 L 36.8 41.174 Z"
+          d="M 180 8 L 323.2 36.536 L 323.2 563.464 L 180 592 L 36.8 563.464 L 36.8 36.536 Z"
           fill="url(#goldInner)"
           stroke="hsl(var(--dup-gold-400))"
           strokeWidth="3"
@@ -103,13 +103,13 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* Inner Crystal Panel - 165° (inset 16px) */}
         <path
-          d="M 180 16 L 315.2 49.174 L 315.2 550.826 L 180 584 L 44.8 550.826 L 44.8 49.174 Z"
+          d="M 180 16 L 315.2 44.536 L 315.2 555.464 L 180 584 L 44.8 555.464 L 44.8 44.536 Z"
           fill="url(#crystalRadial)"
         />
 
         {/* Specular Highlight Overlay */}
         <path
-          d="M 180 16 L 315.2 49.174 L 315.2 550.826 L 180 584 L 44.8 550.826 L 44.8 49.174 Z"
+          d="M 180 16 L 315.2 44.536 L 315.2 555.464 L 180 584 L 44.8 555.464 L 44.8 44.536 Z"
           fill="url(#specular)"
           opacity="0.4"
         />
@@ -123,14 +123,14 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
           </pattern>
         </defs>
         <path
-          d="M 180 16 L 315.2 49.174 L 315.2 550.826 L 180 584 L 44.8 550.826 L 44.8 49.174 Z"
+          d="M 180 16 L 315.2 44.536 L 315.2 555.464 L 180 584 L 44.8 555.464 L 44.8 44.536 Z"
           fill="url(#diagonalStripes)"
           opacity="0.7"
         />
 
         {/* Inner Glow (bottom shadow for 3D) */}
         <path
-          d="M 180 16 L 315.2 49.174 L 315.2 550.826 L 180 584 L 44.8 550.826 L 44.8 49.174 Z"
+          d="M 180 16 L 315.2 44.536 L 315.2 555.464 L 180 584 L 44.8 555.464 L 44.8 44.536 Z"
           fill="none"
           stroke="rgba(0,0,0,0.25)"
           strokeWidth="8"
@@ -139,7 +139,7 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string }>> = ({ c
 
         {/* Gold Inner Stroke (accent) */}
         <path
-          d="M 180 16 L 315.2 49.174 L 315.2 550.826 L 180 584 L 44.8 550.826 L 44.8 49.174 Z"
+          d="M 180 16 L 315.2 44.536 L 315.2 555.464 L 180 584 L 44.8 555.464 L 44.8 44.536 Z"
           fill="none"
           stroke="url(#goldInner)"
           strokeWidth="2"
