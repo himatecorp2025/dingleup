@@ -79,8 +79,8 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
   const basePrice = 2.99;
   const discountedPrice = Math.round(basePrice * 0.75 * 100) / 100;
 
-  // Show on all devices (testing mode removed - back to mobile/tablet only)
-  if (!open || !isHandheld) return null;
+  // Show on all devices (TESTING MODE)
+  if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={handleLater}>
