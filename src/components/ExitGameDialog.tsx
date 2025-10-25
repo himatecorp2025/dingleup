@@ -36,9 +36,9 @@ export const ExitGameDialog = ({
         />
         
         {/* Dialog content - fully transparent background, no borders */}
-        <div className="relative z-10 flex flex-col items-center gap-6 p-8 max-w-md w-full mx-4 animate-in zoom-in-95 duration-300">
+        <div className="relative z-10 flex flex-col items-center gap-4 sm:gap-5 md:gap-6 p-4 sm:p-6 md:p-8 max-w-md w-full mx-4 animate-in zoom-in-95 duration-300">
           {/* Sad SVG Icon - 3D Deep Effect */}
-          <div className="relative w-24 h-24 sm:w-32 sm:h-32 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 animate-in fade-in slide-in-from-top-4 duration-500">
             {/* BASE SHADOW */}
             <div className="absolute inset-0 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(8px)', background: 'rgba(0,0,0,0.4)' }} aria-hidden />
             
@@ -96,21 +96,21 @@ export const ExitGameDialog = ({
           </div>
 
           {/* Title - centered */}
-          <h2 className="text-2xl sm:text-3xl font-black text-center bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent animate-in fade-in slide-in-from-top-2 duration-500 delay-100">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent animate-in fade-in slide-in-from-top-2 duration-500 delay-100">
             Biztosan kilépsz?
           </h2>
 
           {/* Description */}
-          <p className="text-center text-white/90 text-sm sm:text-base px-4 animate-in fade-in slide-in-from-top-2 duration-500 delay-200">
+          <p className="text-center text-white/90 text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 animate-in fade-in slide-in-from-top-2 duration-500 delay-200">
             Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.
           </p>
 
           {/* 3D Buttons */}
-          <div className="flex flex-col w-full gap-4 mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+          <div className="flex flex-col w-full gap-3 sm:gap-4 mt-2 sm:mt-3 md:mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
             {/* Exit Button - 3D Red */}
             <button
               onClick={onConfirmExit}
-              className="relative w-full py-4 px-6 rounded-2xl font-bold text-lg text-white transition-all hover:scale-105 active:scale-95"
+              className="relative w-full py-3 sm:py-3.5 md:py-4 px-4 sm:px-5 md:px-6 rounded-2xl font-bold text-base sm:text-lg text-white transition-all hover:scale-105 active:scale-95"
             >
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/40 rounded-2xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
@@ -134,7 +134,7 @@ export const ExitGameDialog = ({
             {/* Stay Button - 3D Green */}
             <button
               onClick={() => onOpenChange(false)}
-              className="relative w-full py-4 px-6 rounded-2xl font-bold text-lg text-white transition-all hover:scale-105 active:scale-95"
+              className="relative w-full py-3 sm:py-3.5 md:py-4 px-4 sm:px-5 md:px-6 rounded-2xl font-bold text-base sm:text-lg text-white transition-all hover:scale-105 active:scale-95"
             >
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/40 rounded-2xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />

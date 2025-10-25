@@ -55,7 +55,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       />
       
       <div 
-        className="relative px-4 py-6 sm:py-7 text-white"
+        className="relative px-3 sm:px-4 md:px-5 py-4 sm:py-5 md:py-6 text-white"
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           transform: 'translateZ(40px)'
@@ -63,19 +63,19 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       >
         <div className="flex items-center justify-center w-full">
           <div 
-            className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center"
+            className="relative w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center"
             style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
           >
             {/* Number badge 3D */}
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 border-2 border-cyan-300" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.3)' }} aria-hidden />
             {typeof questionNumber === 'number' && (
-              <span className="relative z-10 text-white font-bold text-sm leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>{questionNumber}</span>
+              <span className="relative z-10 text-white font-bold text-xs sm:text-sm leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>{questionNumber}</span>
             )}
           </div>
-          <p className="text-base md:text-lg font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins px-4" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
+          <p className="text-sm sm:text-base md:text-lg font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins px-2 sm:px-3 md:px-4" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
             {children}
           </p>
-          <div className="w-10 flex-shrink-0" aria-hidden />
+          <div className="w-8 sm:w-9 md:w-10 flex-shrink-0" aria-hidden />
         </div>
       </div>
     </div>

@@ -28,21 +28,21 @@ export const MillionaireAnswer = ({
   if (isRemoved) {
     return (
       <div className="w-full flex justify-center mb-2 opacity-30">
-        <div 
-          className="w-[90%] bg-gray-800/50 border-2 border-gray-600/50 px-5 py-4 text-gray-500"
+      <div 
+        className="w-[90%] bg-gray-800/50 border-2 border-gray-600/50 px-3 sm:px-4 md:px-5 py-2 sm:py-3 md:py-4 text-gray-500"
           style={{
             clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
           }}
         >
           <div className="flex items-center justify-center w-full">
             <div 
-              className="w-10 h-10 bg-gray-700 border-2 border-gray-600 flex items-center justify-center flex-shrink-0 text-base font-bold font-poppins"
+              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gray-700 border-2 border-gray-600 flex items-center justify-center flex-shrink-0 text-sm sm:text-base font-bold font-poppins"
               style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
             >
               {letter}:
             </div>
-            <span className="text-base md:text-lg line-through font-bold font-poppins flex-1 text-center px-4">{children}</span>
-            <div className="w-10 flex-shrink-0" aria-hidden />
+            <span className="text-sm sm:text-base md:text-lg line-through font-bold font-poppins flex-1 text-center px-2 sm:px-3 md:px-4">{children}</span>
+            <div className="w-8 sm:w-9 md:w-10 flex-shrink-0" aria-hidden />
           </div>
         </div>
       </div>
@@ -172,7 +172,7 @@ export const MillionaireAnswer = ({
       />
       
       <div 
-        className={`relative px-5 py-4 transition-all duration-300 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}`}
+        className={`relative px-3 sm:px-4 md:px-5 py-2 sm:py-3 md:py-4 transition-all duration-300 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}`}
         style={{
           clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           transform: 'translateZ(40px)'
@@ -180,7 +180,7 @@ export const MillionaireAnswer = ({
       >
         <div className="flex items-center justify-center w-full">
           <div 
-            className={`relative w-10 h-10 flex items-center justify-center flex-shrink-0 text-sm font-black`}
+            className={`relative w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 text-xs sm:text-sm font-black`}
             style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
           >
             {/* Letter badge 3D */}
@@ -204,10 +204,10 @@ export const MillionaireAnswer = ({
               {letter}:
             </span>
           </div>
-          <span className={`text-base sm:text-lg font-bold text-center flex-1 ${textColor} drop-shadow-lg font-poppins px-4`} style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
+          <span className={`text-sm sm:text-base md:text-lg font-bold text-center flex-1 ${textColor} drop-shadow-lg font-poppins px-2 sm:px-3 md:px-4`} style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
             {children}
           </span>
-          <div className="w-10 flex-shrink-0" aria-hidden />
+          <div className="w-8 sm:w-9 md:w-10 flex-shrink-0" aria-hidden />
         </div>
       </div>
       </button>

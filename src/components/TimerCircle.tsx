@@ -19,7 +19,7 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
   const timerColor = getTimerColor();
   
   return (
-    <div className="relative w-[100px] h-[100px] flex items-center justify-center" style={{ perspective: '800px' }}>
+    <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center" style={{ perspective: '800px' }}>
       {/* BASE SHADOW */}
       <div className="absolute inset-0 bg-black/60 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
       
@@ -59,7 +59,7 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
       {/* Timer SVG Rings */}
       <div className="relative" style={{ transform: 'translateZ(40px)' }}>
         {/* Outer decorative circle - animated color */}
-        <svg className="absolute w-full h-full transform -rotate-90 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" width="112" height="112">
+        <svg className="absolute w-full h-full transform -rotate-90 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" viewBox="0 0 112 112">
           <circle
             cx="56"
             cy="56"
@@ -73,7 +73,7 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
         </svg>
         
         {/* Main timer circle */}
-        <svg className="absolute w-full h-full transform -rotate-90 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" width="112" height="112">
+        <svg className="absolute w-full h-full transform -rotate-90 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" viewBox="0 0 112 112">
           <circle
             cx="56"
             cy="56"
@@ -97,12 +97,12 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
         </svg>
         
         {/* Inner background with 3D effect */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full" style={{ background: 'radial-gradient(circle, #0f172a 0%, #020617 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(255,255,255,0.1)' }} />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full" style={{ background: 'radial-gradient(circle, #0f172a 0%, #020617 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(255,255,255,0.1)' }} />
         
         {/* Timer number with blink animation */}
         <div className="absolute inset-0 flex items-center justify-center">
           <span 
-            className={`text-4xl font-black drop-shadow-[0_0_12px_currentColor] transition-all duration-500 ${shouldBlink ? 'animate-pulse' : ''}`}
+            className={`text-2xl sm:text-3xl md:text-4xl font-black drop-shadow-[0_0_12px_currentColor] transition-all duration-500 ${shouldBlink ? 'animate-pulse' : ''}`}
             style={{ color: timerColor }}
           >
             {timeLeft}
