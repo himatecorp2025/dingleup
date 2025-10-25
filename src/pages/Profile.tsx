@@ -114,42 +114,40 @@ const Profile = () => {
 
   const CoinsIcon = () => (
     <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="9" fill="#facc15" stroke="#d97706" strokeWidth="2"/>
-      <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
-      <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
+      <circle cx="12" cy="12" r="8" fill="#ffffff" stroke="#eab308" strokeWidth="2.5"/>
+      <circle cx="12" cy="12" r="5.5" fill="none" stroke="#eab308" strokeWidth="2" opacity="0.6"/>
     </svg>
   );
 
   const TrophyIcon = () => (
-    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(74,222,128,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(34,197,94,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" fill="#ffffff" stroke="#22c55e" strokeWidth="2.5"/>
       <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"/>
       <path d="M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"/>
-      <rect x="6" y="4" width="12" height="12" rx="2" stroke="#22c55e" strokeWidth="2.5" fill="#22c55e" fillOpacity="0.6"/>
-      <rect x="9" y="16" width="6" height="5" rx="1" stroke="#22c55e" strokeWidth="2.5" fill="#22c55e" fillOpacity="0.5"/>
+      <rect x="9" y="16" width="6" height="4.5" rx="1" fill="#ffffff" stroke="#22c55e" strokeWidth="2.5"/>
       <line x1="7" y1="21" x2="17" y2="21" stroke="#22c55e" strokeWidth="3" strokeLinecap="round"/>
-      <circle cx="12" cy="10" r="2.5" fill="#fff"/>
     </svg>
   );
 
   const CalendarIcon = () => (
-    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(96,165,250,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="6" width="18" height="16" rx="2" stroke="#3b82f6" strokeWidth="2.5" fill="#3b82f6" fillOpacity="0.5"/>
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(59,130,246,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="6" width="18" height="16" rx="2" fill="#ffffff" stroke="#3b82f6" strokeWidth="2.5"/>
       <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" strokeWidth="2.5"/>
       <line x1="7" y1="3" x2="7" y2="8" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
       <line x1="17" y1="3" x2="17" y2="8" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
-      <rect x="7" y="13" width="3" height="3" fill="#fff" rx="1"/>
-      <rect x="11" y="13" width="3" height="3" fill="#fff" rx="1"/>
-      <rect x="15" y="13" width="3" height="3" fill="#fff" rx="1"/>
-      <rect x="7" y="17" width="3" height="3" fill="#fff" rx="1"/>
-      <rect x="11" y="17" width="3" height="3" fill="#fff" rx="1"/>
+      <rect x="7" y="13" width="3" height="3" fill="#3b82f6" rx="1"/>
+      <rect x="11" y="13" width="3" height="3" fill="#3b82f6" rx="1"/>
+      <rect x="15" y="13" width="3" height="3" fill="#3b82f6" rx="1"/>
+      <rect x="7" y="17" width="3" height="3" fill="#3b82f6" rx="1"/>
+      <rect x="11" y="17" width="3" height="3" fill="#3b82f6" rx="1"/>
     </svg>
   );
 
   const ShareIcon = () => (
-    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(192,132,252,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="18" cy="5" r="3" stroke="#a855f7" strokeWidth="2.5" fill="#a855f7" fillOpacity="0.6"/>
-      <circle cx="6" cy="12" r="3" stroke="#a855f7" strokeWidth="2.5" fill="#a855f7" fillOpacity="0.6"/>
-      <circle cx="18" cy="19" r="3" stroke="#a855f7" strokeWidth="2.5" fill="#a855f7" fillOpacity="0.6"/>
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(168,85,247,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="5" r="3" fill="#ffffff" stroke="#a855f7" strokeWidth="2.5"/>
+      <circle cx="6" cy="12" r="3" fill="#ffffff" stroke="#a855f7" strokeWidth="2.5"/>
+      <circle cx="18" cy="19" r="3" fill="#ffffff" stroke="#a855f7" strokeWidth="2.5"/>
       <line x1="8.5" y1="10.5" x2="15.5" y2="6.5" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round"/>
       <line x1="8.5" y1="13.5" x2="15.5" y2="17.5" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round"/>
     </svg>
