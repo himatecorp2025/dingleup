@@ -153,19 +153,74 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="overflow-auto p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
+        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
         style={{ 
           margin: 0,
           maxHeight: '100vh',
+          minHeight: '100vh',
           borderRadius: 0
         }}
       >
         <div 
-          className="fixed inset-0 flex flex-col items-center justify-center py-4 overflow-y-auto"
-          style={{ borderRadius: 0 }}
+          className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
+          style={{ minHeight: '100vh', minWidth: '100vw' }}
         >
-          {/* Background layer - Deep dark blue, 85% transparent */}
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
+          {/* Background layer - Deep dark blue, 85% transparent, FULL SCREEN */}
+          <div className="absolute inset-0 w-full h-full min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950" style={{ opacity: 0.15, borderRadius: 0 }}></div>
+
+          {/* Falling coins animation - continuous, random */}
+          {contentVisible && (
+            <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none" style={{ zIndex: 1 }}>
+              {[...Array(120)].map((_, i) => {
+                const delay = (i * 0.15) % 8; // stagger starts over 8s
+                const duration = 3 + Math.random() * 2; // 3-5s fall time
+                const startX = Math.random() * 100; // random horizontal position
+                const size = 16 + Math.random() * 16; // 16-32px
+                const rotation = Math.random() * 720 - 360; // -360 to 360deg
+                const opacity = 0.6 + Math.random() * 0.4; // 0.6-1.0
+
+                return (
+                  <div
+                    key={i}
+                    className="absolute rounded-full"
+                    style={{
+                      width: `${size}px`,
+                      height: `${size}px`,
+                      left: `${startX}%`,
+                      top: '-40px',
+                      animation: `coinFall${i % 20} ${duration}s linear ${delay}s infinite`,
+                      opacity
+                    }}
+                  >
+                    {/* 3D Coin layers */}
+                    <div className="absolute inset-0 rounded-full translate-y-0.5"
+                         style={{ background: 'rgba(0,0,0,0.35)', filter: 'blur(2px)' }} />
+                    <div className="absolute inset-0 rounded-full"
+                         style={{ 
+                           background: 'linear-gradient(135deg, hsl(45 95% 48%), hsl(45 95% 58%) 50%, hsl(45 90% 45%))',
+                           boxShadow: 'inset 0 0 0 1px hsl(45 90% 38%), 0 2px 6px rgba(0,0,0,0.3)'
+                         }} />
+                    <div className="absolute inset-[2px] rounded-full"
+                         style={{ 
+                           background: 'radial-gradient(circle at 35% 25%, hsl(45 100% 85%), hsl(45 100% 70%) 35%, hsl(45 95% 58%) 65%, hsl(45 90% 45%))',
+                           boxShadow: 'inset 0 1px 4px rgba(255,255,255,0.7), inset 0 -1px 4px rgba(0,0,0,0.4)'
+                         }} />
+                    
+                    <style>{`
+                      @keyframes coinFall${i % 20} {
+                        0% { 
+                          transform: translateY(0) rotate(0deg);
+                        }
+                        100% { 
+                          transform: translateY(calc(100vh + 80px)) rotate(${rotation}deg);
+                        }
+                      }
+                    `}</style>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Floating sparkle particles - EXPLOSIVE BURST FROM FLAG CENTER then continuous float */}
           {contentVisible && burstActive && (

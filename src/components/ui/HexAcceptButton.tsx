@@ -26,7 +26,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           boxSizing: "border-box",
           outline: "none",
           border: 0,
-          animation: "accept-button-pulse 1.5s ease-in-out infinite",
+          animation: "accept-button-pulse 1.125s ease-in-out infinite",
           ...style,
         }}
         {...props}
@@ -179,7 +179,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
           fontSize: "clamp(1.05rem, 4.6vw, 1.45rem)",
           textShadow:
             "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
-          animation: "text-pulse 1.5s ease-in-out infinite"
+          animation: "text-pulse 1.125s ease-in-out infinite"
         }}
       >
         {typeof children === "string" ? children.toUpperCase() : children}
