@@ -136,61 +136,32 @@ const Hero = () => {
           {/* CTA Buttons - Enhanced Deep 3D */}
           <div className="flex flex-col gap-4 justify-center items-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <div className="relative group" style={{ perspective: '1500px' }}>
-                {/* Multiple shadow layers for depth */}
-                <div className="absolute inset-0 bg-black/80" style={{ transform: 'translate(10px, 10px)', filter: 'blur(20px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
-                <div className="absolute inset-0 bg-green-900/60" style={{ transform: 'translate(6px, 6px)', filter: 'blur(15px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
+              <div className="relative group" style={{ perspective: '1200px' }}>
+                {/* BASE SHADOW */}
+                <div className="absolute inset-0 bg-black/70" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
-                {/* Outer glow effect */}
-                <div className="absolute inset-[-8px] bg-gradient-to-br from-green-400/30 via-green-500/20 to-green-600/30 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500 animate-pulse" aria-hidden />
+                {/* OUTER FRAME */}
+                <div className="absolute inset-0 bg-gradient-to-br from-green-700 via-green-600 to-green-900 opacity-95 border-4 border-green-500/60 shadow-2xl transition-all duration-500 group-hover:border-green-400/70" style={{ transform: 'translateZ(0px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
-                {/* OUTER FRAME - Enhanced */}
-                <div className="absolute inset-0 bg-gradient-to-br from-green-600 via-green-500 to-green-700 opacity-95 border-[5px] border-green-400/80 shadow-[0_0_30px_rgba(34,197,94,0.6)]" 
-                     style={{ transform: 'translateZ(0px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
+                {/* MIDDLE FRAME */}
+                <div className="absolute inset-[6px] bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
-                {/* MIDDLE FRAME - Enhanced with pattern */}
-                <div className="absolute inset-[7px] bg-gradient-to-b from-white/20 via-transparent to-black/80" 
-                     style={{ 
-                       boxShadow: 'inset 0 4px 0 rgba(255,255,255,0.4), inset 0 -4px 0 rgba(0,0,0,0.7)', 
-                       transform: 'translateZ(20px)', 
-                       clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-                       backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px)'
-                     }} aria-hidden />
+                {/* INNER LAYER */}
+                <div className="absolute inset-[8px] bg-gradient-to-br from-black/80 to-black/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.1), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
-                {/* INNER LAYER - Enhanced depth */}
-                <div className="absolute inset-[10px] bg-gradient-to-br from-green-500/50 via-green-600/40 to-green-800/50 backdrop-blur-sm" 
-                     style={{ 
-                       boxShadow: 'inset 0 20px 40px rgba(255,255,255,0.2), inset 0 -20px 40px rgba(0,0,0,0.6)', 
-                       transform: 'translateZ(40px)', 
-                       clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' 
-                     }} aria-hidden />
-                
-                {/* SPECULAR HIGHLIGHT - Enhanced realism */}
-                <div className="absolute inset-[10px] pointer-events-none" 
-                     style={{ 
-                       background: 'radial-gradient(ellipse 150% 120% at 50% 0%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 30%, transparent 70%)', 
-                       transform: 'translateZ(60px)', 
-                       clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' 
-                     }} aria-hidden />
-                
-                {/* Secondary highlight for glass effect */}
-                <div className="absolute inset-[10px] pointer-events-none opacity-50" 
-                     style={{ 
-                       background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.2) 100%)', 
-                       transform: 'translateZ(70px)', 
-                       clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' 
-                     }} aria-hidden />
+                {/* SPECULAR HIGHLIGHT */}
+                <div className="absolute inset-[8px] pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
                 <button
                   onClick={() => navigate('/login')}
-                  className="relative w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg overflow-hidden transition-all group-hover:scale-110 group-hover:shadow-[0_0_50px_rgba(34,197,94,0.8)]"
-                  style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)', transform: 'translateZ(80px)' }}
+                  className="relative w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg overflow-hidden transition-all group-hover:scale-105 group-hover:shadow-[0_0_50px_rgba(34,197,94,0.8)]"
+                  style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)', transform: 'translateZ(60px)' }}
                 >
                   {/* Animated shine effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                   
-                  {/* Pulsing glow inside button */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-300/20 via-transparent to-green-300/20 animate-pulse"></div>
+                  {/* Glow effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-green-400/10 to-green-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                   
                   <div className="relative flex items-center justify-center gap-3 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
                     <Play className="w-6 h-6 drop-shadow-lg" />
