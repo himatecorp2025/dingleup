@@ -10,7 +10,7 @@ import { z } from "zod";
 import logo from "@/assets/logo.png";
 
 const loginSchema = z.object({
-  email: z.string().email("Érvénytelen email cím").max(255),
+  username: z.string().min(1, "A felhasználónév mező kötelező").max(100),
   password: z.string().min(1, "A jelszó mező kötelező"),
 });
 
@@ -20,7 +20,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [formData, setFormData] = useState<LoginForm>({
-    email: "",
+    username: "",
     password: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof LoginForm, string>>>({});
@@ -35,15 +35,32 @@ const Login = () => {
     try {
       const validated = loginSchema.parse(formData);
 
+      // First, look up the user by username to get their email
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('username', validated.username)
+        .single();
+
+      if (profileError || !profile) {
+        toast({
+          title: "Bejelentkezési hiba",
+          description: "Helytelen felhasználónév vagy jelszó",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Now sign in with the email
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: validated.email,
+        email: profile.email,
         password: validated.password,
       });
 
       if (error) {
         toast({
           title: "Bejelentkezési hiba",
-          description: "Helytelen email vagy jelszó",
+          description: "Helytelen felhasználónév vagy jelszó",
           variant: "destructive",
         });
         return;
@@ -118,12 +135,12 @@ const Login = () => {
           <div className="absolute inset-[8px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
           
           <div className="relative p-6 sm:p-8 max-h-[calc(100svh-6rem)] sm:max-h-none overflow-y-auto rounded-2xl" style={{ transform: 'translateZ(60px)' }}>
-            <div className="text-center mb-6 sm:mb-8">
+              <div className="text-center mb-6 sm:mb-8">
               <img src={logo} alt="Dingle UP!" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 drop-shadow-2xl" />
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 font-poppins px-2">
                 <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">Bejelentkezés</span>
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-white/80 drop-shadow px-2">Add meg email címed és jelszavad</p>
+              <p className="text-xs sm:text-sm md:text-base text-white/80 drop-shadow px-2">Add meg felhasználóneved és jelszavad</p>
             </div>
 
             <div className="space-y-3 mb-4">
@@ -158,26 +175,26 @@ const Login = () => {
 
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div>
-                <Label htmlFor="email" className="text-white drop-shadow">Email cím</Label>
+                <Label htmlFor="username" className="text-white drop-shadow">Felhasználónév</Label>
                 <div className="relative mt-1" style={{ perspective: '800px' }}>
                   <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700/40 via-purple-600/40 to-purple-900/40 border border-purple-500/30 shadow-md" style={{ transform: 'translateZ(0px)' }} aria-hidden />
                   <div className="absolute inset-[2px] rounded-xl bg-gradient-to-b from-black/30 to-black/50" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.3)', transform: 'translateZ(5px)' }} aria-hidden />
                   
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="pl: valaki@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className={`relative bg-black/60 border-0 ${errors.email ? "ring-2 ring-destructive" : ""}`}
+                    id="username"
+                    type="text"
+                    placeholder="pl: JohnDoe123"
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    className={`relative bg-black/60 border-0 ${errors.username ? "ring-2 ring-destructive" : ""}`}
                     disabled={isLoading}
-                    autoComplete="email"
+                    autoComplete="username"
                     style={{ transform: 'translateZ(10px)' }}
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-sm text-destructive mt-1 drop-shadow">{errors.email}</p>
+                {errors.username && (
+                  <p className="text-sm text-destructive mt-1 drop-shadow">{errors.username}</p>
                 )}
               </div>
 

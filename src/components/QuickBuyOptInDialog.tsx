@@ -15,17 +15,16 @@ export function QuickBuyOptInDialog({ open, onAccept, onDecline }: QuickBuyOptIn
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onDecline()}>
       <DialogContent 
-        className="overflow-hidden p-0 border-0 bg-transparent max-w-[95vw] w-[95vw]"
+        className="overflow-hidden p-0 border-0 bg-transparent max-w-[95vw] w-[95vw] sm:max-w-[500px] sm:w-auto"
         style={{ 
           height: 'auto',
           maxHeight: '90vh'
         }}
       >
         <div 
-          className="relative w-full flex flex-col items-center justify-center p-[4vw] bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-400 rounded-3xl"
+          className="relative w-full flex flex-col items-center justify-center p-[4vw] sm:p-6 bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-400 rounded-3xl"
           style={{ 
-            minHeight: '70vh',
-            aspectRatio: '1'
+            minHeight: 'min(70vh, 600px)'
           }}
         >
           {/* Animated stars */}

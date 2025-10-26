@@ -107,16 +107,16 @@ export const InvitationDialog = ({ open, onClose, userId }: InvitationDialogProp
           {/* Invitation Link */}
           <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
             <label className="text-sm font-medium mb-2 block text-white">Meghívó link</label>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <input
                 type="text"
                 value={invitationLink}
                 readOnly
-                className="flex-1 px-4 py-2 bg-black/40 border-2 border-purple-500/50 rounded-lg text-sm text-white"
+                className="flex-1 min-w-0 px-3 py-2 bg-black/40 border-2 border-purple-500/50 rounded-lg text-xs sm:text-sm text-white truncate"
               />
               <Button
                 onClick={() => copyToClipboard(invitationLink, 'link')}
-                className="bg-purple-600 hover:bg-purple-700 text-white"
+                className="bg-purple-600 hover:bg-purple-700 text-white flex-shrink-0"
                 size="icon"
               >
                 {<Copy className="w-4 h-4" />}
@@ -125,41 +125,41 @@ export const InvitationDialog = ({ open, onClose, userId }: InvitationDialogProp
           </div>
 
           {/* Stats */}
-          <div className="bg-purple-900/30 rounded-xl p-4 text-center border-2 border-purple-500/30">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Gift className="w-5 h-5 text-yellow-400" />
-              <span className="text-sm font-medium text-white">Meghívott barátok</span>
+          <div className="bg-purple-900/30 rounded-xl p-3 sm:p-4 text-center border-2 border-purple-500/30">
+            <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
+              <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+              <span className="text-xs sm:text-sm font-medium text-white">Meghívott barátok</span>
             </div>
-            <p className="text-3xl font-bold text-yellow-400">{invitedCount}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-yellow-400">{invitedCount}</p>
           </div>
 
           {/* Rewards */}
           <div className="space-y-2">
-            <h3 className="font-bold text-sm text-white">Jutalmak:</h3>
+            <h3 className="font-bold text-xs sm:text-sm text-white">Jutalmak:</h3>
             {INVITATION_REWARDS.map((reward) => {
               const achieved = invitedCount >= reward.count;
               return (
                 <div
                   key={reward.count}
-                  className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                  className={`flex items-center justify-between p-2 sm:p-3 rounded-lg border-2 gap-2 ${
                     achieved
                       ? 'bg-purple-600/30 border-purple-400'
                       : 'bg-black/40 border-purple-500/30'
                   }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <span className={`text-sm font-medium ${achieved ? 'text-purple-300' : 'text-white/70'}`}>
+                  <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+                    <span className={`text-xs sm:text-sm font-medium whitespace-nowrap ${achieved ? 'text-purple-300' : 'text-white/70'}`}>
                       {reward.count} barát
                     </span>
-                    {achieved && <Check className="w-4 h-4 text-purple-300" />}
+                    {achieved && <Check className="w-3 h-3 sm:w-4 sm:h-4 text-purple-300 flex-shrink-0" />}
                   </div>
-                  <div className="flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm flex-shrink-0">
                     <div className="flex items-center gap-1">
-                      <Coins className="w-4 h-4 text-yellow-500" />
+                      <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500" />
                       <span className="font-bold">{reward.coins}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Heart className="w-4 h-4 text-red-500" />
+                      <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-red-500" />
                       <span className="font-bold">{reward.lives}</span>
                     </div>
                   </div>
