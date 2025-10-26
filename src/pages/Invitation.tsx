@@ -11,6 +11,10 @@ interface InvitedFriend {
   id: string;
   invited_email: string | null;
   invited_user_id: string | null;
+  invited_user?: {
+    username: string;
+    avatar_url: string | null;
+  };
   accepted: boolean;
   created_at: string;
   accepted_at: string | null;
@@ -49,10 +53,16 @@ const Invitation = () => {
       setInvitationCode(profile.invitation_code);
       setInvitationLink(`${window.location.origin}/register?code=${profile.invitation_code}`);
 
-      // Get all invitations (accepted and pending)
+      // Get all invitations with user details (accepted and pending)
       const { data: invitations, error: invitationsError } = await supabase
         .from('invitations')
-        .select('*')
+        .select(`
+          *,
+          invited_user:profiles!invited_user_id (
+            username,
+            avatar_url
+          )
+        `)
         .eq('inviter_id', uid)
         .order('created_at', { ascending: false });
 
@@ -439,12 +449,12 @@ const Invitation = () => {
                         )}
                         <div>
                           <p className="text-white font-medium">
-                            {friend.invited_email || 'Ismeretlen'}
+                            {friend.invited_user?.username || friend.invited_email || 'Függőben'}
                           </p>
                           <p className="text-xs text-white/60">
                             {friend.accepted 
                               ? `Csatlakozott: ${new Date(friend.accepted_at!).toLocaleDateString()}`
-                              : 'Függőben'}
+                              : 'Várakozik a regisztrációra'}
                           </p>
                         </div>
                       </div>

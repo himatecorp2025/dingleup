@@ -57,17 +57,9 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    
-    if (!user.email || !EMAIL_REGEX.test(user.email)) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Érvénytelen email cím' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
 
-    // Use authenticated user's ID and email
+    // Use authenticated user's ID
     const invitedUserId = user.id;
-    const invitedEmail = user.email;
 
     // Verify inviter exists and has this invitation code
     const { data: inviterProfile, error: inviterError } = await supabaseClient
@@ -90,12 +82,12 @@ serve(async (req) => {
       );
     }
 
-    // Check if invitation record exists
+    // Check if invitation record exists (by inviterId and invitedUserId OR invited_email)
     const { data: existingInvitation } = await supabaseClient
       .from('invitations')
       .select('id, accepted')
       .eq('inviter_id', inviterId)
-      .eq('invited_email', invitedEmail.toLowerCase())
+      .or(`invited_user_id.eq.${invitedUserId}${user.email ? `,invited_email.eq.${user.email.toLowerCase()}` : ''}`)
       .maybeSingle();
 
     if (existingInvitation?.accepted) {
@@ -116,6 +108,7 @@ serve(async (req) => {
           accepted: true,
           accepted_at: new Date().toISOString(),
           invited_user_id: invitedUserId,
+          invited_email: user.email?.toLowerCase() || null,
         })
         .eq('id', existingInvitation.id);
 
@@ -127,12 +120,12 @@ serve(async (req) => {
         );
       }
     } else {
-      // Create new invitation record
+      // Create new invitation record (register with code but no pre-invite)
       const { error: insertError } = await supabaseClient
         .from('invitations')
         .insert({
           inviter_id: inviterId,
-          invited_email: invitedEmail.toLowerCase(),
+          invited_email: user.email?.toLowerCase() || null,
           invited_user_id: invitedUserId,
           invitation_code: invitationCode,
           accepted: true,
@@ -158,7 +151,7 @@ serve(async (req) => {
       p_idempotency_key: idempotencyKey,
       p_metadata: {
         invited_user_id: invitedUserId,
-        invited_email: invitedEmail
+        invited_email: user.email || 'no-email'
       }
     });
 
