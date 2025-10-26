@@ -25,6 +25,8 @@ serve(async (req) => {
       );
     }
 
+    const normalizedUsername = typeof username === 'string' ? username.trim() : '';
+
     // Create Supabase client with service role key for admin operations
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -36,11 +38,11 @@ serve(async (req) => {
       }
     });
 
-    // Find user by username
+    // Find user by username (case-insensitive, trimmed)
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('id')
-      .eq('username', username)
+      .ilike('username', normalizedUsername)
       .maybeSingle();
 
     if (profileError) {

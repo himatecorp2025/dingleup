@@ -10,7 +10,7 @@ import { z } from "zod";
 import logo from "@/assets/logo.png";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "A felhasználónév mező kötelező").max(100),
+  username: z.string().trim().min(1, "A felhasználónév mező kötelező").max(100),
   password: z.string().min(1, "A jelszó mező kötelező"),
 });
 
@@ -35,29 +35,30 @@ const Login = () => {
     try {
       const validated = loginSchema.parse(formData);
 
-      // First, look up the user by username to get their email
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('username', validated.username)
-        .single();
+      // Kérjük le az email címet felhasználónév alapján az edge functionből
+      const { data: fnData, error: fnError } = await supabase.functions.invoke('login-with-username', {
+        body: {
+          username: validated.username,
+          password: validated.password,
+        },
+      });
 
-      if (profileError || !profile) {
+      if (fnError || fnData?.error || !fnData?.email) {
         toast({
           title: "Bejelentkezési hiba",
-          description: "Helytelen felhasználónév vagy jelszó",
+          description: fnData?.error || "Helytelen felhasználónév vagy jelszó",
           variant: "destructive",
         });
         return;
       }
 
-      // Now sign in with the email
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: profile.email,
+      // Jelentkezzünk be az email+jelszó párossal
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: fnData.email,
         password: validated.password,
       });
 
-      if (error) {
+      if (signInError) {
         toast({
           title: "Bejelentkezési hiba",
           description: "Helytelen felhasználónév vagy jelszó",
@@ -66,13 +67,11 @@ const Login = () => {
         return;
       }
 
-      if (data.user) {
+      if (signInData.user) {
         toast({
           title: "Sikeres bejelentkezés!",
           description: "Átirányítunk...",
         });
-        
-        // AudioManager handles music automatically based on user settings
         
         navigate("/intro?next=/dashboard");
       }

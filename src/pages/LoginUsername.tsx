@@ -10,7 +10,7 @@ import { z } from "zod";
 import logo from "@/assets/logo.png";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "A felhasználónév mező kötelező").max(255),
+  username: z.string().trim().min(1, "A felhasználónév mező kötelező").max(255),
   password: z.string().min(1, "A jelszó mező kötelező"),
 });
 
