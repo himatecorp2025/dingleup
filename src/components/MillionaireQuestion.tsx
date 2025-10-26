@@ -25,15 +25,34 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       </svg>
 
       <div className="w-[96%] sm:w-[94%] relative group overflow-visible" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
-        {/* Single horizontal line in the middle - BEHIND the box */}
+        {/* 3D horizontal line in the middle - BEHIND the box */}
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-0"
           style={{
             width: '100vw',
-            borderTop: `${borderWidth}px solid #22d3ee`,
             zIndex: -1,
           }}
-        />
+        >
+          {/* Shadow layer */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              borderTop: `${borderWidth + 2}px solid rgba(0,0,0,0.4)`,
+              transform: 'translateY(4px)',
+              filter: 'blur(8px)',
+            }}
+            aria-hidden
+          />
+          {/* Main gradient line */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              borderTop: `${borderWidth}px solid #22d3ee`,
+              boxShadow: '0 0 20px rgba(34, 211, 238, 0.6), inset 0 -2px 4px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3)',
+            }}
+            aria-hidden
+          />
+        </div>
 
         {/* Question number badge */}
         {questionNumber && (
