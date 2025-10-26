@@ -86,25 +86,25 @@ export const MillionaireAnswer = ({
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
-            {/* True hexagon with curved corners - 6 sides */}
+            {/* Sharp pointed left/right, more curved top/bottom */}
             <path d="
-              M 0.15,0 
-              L 0.85,0 
-              C 0.88,0 0.90,0.01 0.92,0.03
-              L 0.98,0.15
-              C 0.99,0.17 1,0.20 1,0.23
-              L 1,0.77
-              C 1,0.80 0.99,0.83 0.98,0.85
-              L 0.92,0.97
-              C 0.90,0.99 0.88,1 0.85,1
-              L 0.15,1
-              C 0.12,1 0.10,0.99 0.08,0.97
-              L 0.02,0.85
-              C 0.01,0.83 0,0.80 0,0.77
-              L 0,0.23
-              C 0,0.20 0.01,0.17 0.02,0.15
-              L 0.08,0.03
-              C 0.10,0.01 0.12,0 0.15,0
+              M 0.20,0 
+              L 0.80,0 
+              C 0.84,0 0.87,0.02 0.89,0.05
+              L 0.97,0.20
+              C 0.985,0.23 0.995,0.27 1,0.30
+              L 1,0.70
+              C 0.995,0.73 0.985,0.77 0.97,0.80
+              L 0.89,0.95
+              C 0.87,0.98 0.84,1 0.80,1
+              L 0.20,1
+              C 0.16,1 0.13,0.98 0.11,0.95
+              L 0.03,0.80
+              C 0.015,0.77 0.005,0.73 0,0.70
+              L 0,0.30
+              C 0.005,0.27 0.015,0.23 0.03,0.20
+              L 0.11,0.05
+              C 0.13,0.02 0.16,0 0.20,0
               Z
             " />
           </clipPath>
@@ -114,7 +114,7 @@ export const MillionaireAnswer = ({
       <button
         onClick={onClick}
         disabled={disabled}
-        className="w-[90%] touch-manipulation group relative"
+        className="w-[72%] touch-manipulation group relative"
         style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
       >
       {/* Single horizontal line in the middle - BEHIND the button */}
