@@ -141,10 +141,6 @@ const Register = () => {
           }
         }
 
-        toast({
-          title: "Sikeres regisztráció!",
-          description: inviterCode ? "Meghívód jutalmat kapott! Köszönjük, hogy csatlakoztál!" : "Átirányítunk...",
-        });
         navigate("/dashboard");
       }
     } catch (error) {
