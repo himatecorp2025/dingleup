@@ -91,11 +91,12 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
           }}
           aria-hidden
         />
-        {/* STROKE LAYER (inset, keeps tips needle-sharp) */}
+        
+        {/* STROKE LAYER - egyenletes border mindenütt */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            boxShadow: `inset 0 0 0 ${borderWidth}px #22d3ee`,
+            boxShadow: 'inset 0 0 0 4px #22d3ee',
             clipPath: `url(#${clipPathId})`
           }}
           aria-hidden

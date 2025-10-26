@@ -533,8 +533,8 @@ return (
           </div>
         </div>
 
-        {/* Play Button - Hexagon Shape with 3D Line - fixált pozíció a booster gomb felett, 2.5vh távolságra, 10% lejjebb */}
-        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh + 3.5rem + 2.5vh - 10vh)' }}>
+        {/* Play Button - Hexagon Shape with 3D Line - 15% vertikálisan nagyobb, booster fölött */}
+        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 5vh + 6.5rem + 2.5vh + 4rem)' }}>
           <div className="w-full max-w-screen-lg">
             <HexagonActionButton
               data-tutorial="play-button"
@@ -542,7 +542,8 @@ return (
               variant="play"
               show3DLine={true}
               style={{
-                animation: 'play-pulse 0.8s ease-in-out infinite'
+                animation: 'play-pulse 0.8s ease-in-out infinite',
+                transform: 'scaleY(1.15)'
               }}
             >
               {/* Play SVG Icon */}
@@ -574,8 +575,8 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - Hexagon Shape with 3D Line - Fixált a TOP 100 cím felett, 2.5vh távolságra, 10% lejjebb */}
-        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh - 10vh)' }}>
+        {/* Booster Button - Hexagon Shape with 3D Line - TOP 100 felett 5%-kal */}
+        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 5vh + 6.5rem)' }}>
           <div className="w-full max-w-screen-lg">
             <HexagonActionButton
               data-tutorial="booster-button"

@@ -147,6 +147,16 @@ export const HexagonActionButton = ({
           aria-hidden
         />
         
+        {/* STROKE LAYER - egyenletes border */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            boxShadow: `inset 0 0 0 3px ${colors.border}`,
+            clipPath: `url(#${clipPathId})`
+          }}
+          aria-hidden
+        />
+        
         {/* MIDDLE FRAME */}
         <div 
           className="absolute inset-[5px] bg-gradient-to-b from-black/60 via-transparent to-black/80"
