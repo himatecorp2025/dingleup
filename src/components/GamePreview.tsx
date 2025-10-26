@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { GameCategory, Question, Answer, getSkipCost, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from "@/types/game";
 import CategorySelector from "./CategorySelector";
 import { HexagonButton } from "./HexagonButton";
+import { DiamondButton } from "./DiamondButton";
 import { GameStateScreen } from "./GameStateScreen";
 import { QuestionCard } from "./QuestionCard";
 import { InsufficientResourcesDialog } from "./InsufficientResourcesDialog";
@@ -1272,19 +1273,18 @@ const GamePreview = () => {
 
           {/* Buttons - Full width */}
           <div className="w-full max-w-md space-y-3 flex-shrink-0">
-            <HexagonButton 
-              variant="yellow" 
+            <DiamondButton 
+              variant="booster" 
               size="lg" 
               onClick={() => {
                 resetGameState();
               }}
-              className="w-full transform hover:scale-105 transition-all shadow-[0_8px_32px_rgba(255,215,0,0.4)] text-base sm:text-lg"
-              style={{
-                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
-              }}
+              className="!py-5 sm:!py-6"
             >
-              Új játék
-            </HexagonButton>
+              <span className="font-black text-base sm:text-xl md:text-2xl">
+                ÚJ JÁTÉK
+              </span>
+            </DiamondButton>
             
             <button 
               onClick={() => {
