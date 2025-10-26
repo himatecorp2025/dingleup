@@ -9,7 +9,7 @@ export const Trophy3D = ({ className = "", animate = true }: Trophy3DProps) => {
       viewBox="0 0 200 240" 
       className={`${className} ${animate ? 'animate-[bounce_2s_ease-in-out_infinite]' : ''}`}
       style={{ 
-        filter: 'drop-shadow(0 20px 40px rgba(255,215,0,0.6))',
+        filter: 'drop-shadow(0 30px 60px rgba(255,215,0,0.8)) drop-shadow(0 0 40px rgba(255,215,0,0.6))',
       }}
     >
       {/* Base/Podium */}

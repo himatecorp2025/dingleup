@@ -1164,13 +1164,21 @@ const GamePreview = () => {
           ))}
         </div>
 
-        {/* Main content - Centered */}
-        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4 sm:p-6">
-          {/* 3D Trophy */}
-          <Trophy3D className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mb-6" animate={true} />
+        {/* Main content - Centered with safe area */}
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-3 py-4 sm:px-4 sm:py-6 md:px-6 md:py-8 overflow-y-auto">
+          {/* 3D Trophy - Much Larger with Glow */}
+          <div className="relative flex items-center justify-center mb-4 sm:mb-6 md:mb-8">
+            {/* Multiple glow layers for emphasis */}
+            <div className="absolute inset-0 bg-yellow-400/40 rounded-full blur-[80px] scale-150 animate-pulse" />
+            <div className="absolute inset-0 bg-orange-500/30 rounded-full blur-[60px] scale-125 animate-pulse" style={{ animationDelay: '0.5s' }} />
+            <Trophy3D 
+              className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80" 
+              animate={true} 
+            />
+          </div>
           
           {/* Title */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-8 sm:mb-10 md:mb-12 relative">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 sm:mb-8 md:mb-10 relative text-center px-4">
             <span 
               className="relative inline-block"
               style={{
@@ -1186,8 +1194,8 @@ const GamePreview = () => {
             </span>
           </h1>
 
-          {/* Stats cards with 3D effect */}
-          <div className="w-full max-w-md space-y-3 sm:space-y-4 mb-8 sm:mb-10">
+          {/* Stats cards with 3D effect - Fully responsive */}
+          <div className="w-full max-w-[90%] sm:max-w-md space-y-3 sm:space-y-4 mb-6 sm:mb-8 md:mb-10">
             {/* Correct answers */}
             <div className="relative group" style={{ perspective: '1000px' }}>
               <div 
@@ -1199,14 +1207,14 @@ const GamePreview = () => {
                 }}
               />
               <div 
-                className="relative bg-gradient-to-br from-green-500/30 to-green-700/30 backdrop-blur-md rounded-2xl p-4 sm:p-5 border-2 border-green-400/50 transition-transform hover:scale-105"
+                className="relative bg-gradient-to-br from-green-500/30 to-green-700/30 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 border-2 border-green-400/50 transition-transform hover:scale-105"
                 style={{
                   transform: 'translateZ(0)',
                   boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(0,255,0,0.3)'
                 }}
               >
-                <p className="text-sm sm:text-base text-white/80 font-semibold mb-1">Helyes válaszok</p>
-                <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white drop-shadow-lg">{correctAnswers}/15</p>
+                <p className="text-xs sm:text-sm md:text-base text-white/80 font-semibold mb-0.5 sm:mb-1">Helyes válaszok</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">{correctAnswers}/15</p>
               </div>
             </div>
 
@@ -1221,15 +1229,15 @@ const GamePreview = () => {
                 }}
               />
               <div 
-                className="relative bg-gradient-to-br from-yellow-500/30 to-orange-600/30 backdrop-blur-md rounded-2xl p-4 sm:p-5 border-2 border-yellow-400/50 transition-transform hover:scale-105"
+                className="relative bg-gradient-to-br from-yellow-500/30 to-orange-600/30 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 border-2 border-yellow-400/50 transition-transform hover:scale-105"
                 style={{
                   transform: 'translateZ(0)',
                   boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(255,215,0,0.3)'
                 }}
               >
-                <p className="text-sm sm:text-base text-white/80 font-semibold mb-1">Szerzett aranyérme</p>
-                <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white drop-shadow-lg flex items-center justify-center gap-2">
-                  +{coinsEarned} <span className="text-2xl sm:text-3xl">🪙</span>
+                <p className="text-xs sm:text-sm md:text-base text-white/80 font-semibold mb-0.5 sm:mb-1">Szerzett aranyérme</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg flex items-center justify-center gap-2">
+                  +{coinsEarned} <span className="text-xl sm:text-2xl md:text-3xl">🪙</span>
                 </p>
               </div>
             </div>
@@ -1246,14 +1254,14 @@ const GamePreview = () => {
                   }}
                 />
                 <div 
-                  className="relative bg-gradient-to-br from-blue-500/30 to-purple-600/30 backdrop-blur-md rounded-2xl p-4 sm:p-5 border-2 border-blue-400/50 transition-transform hover:scale-105"
+                  className="relative bg-gradient-to-br from-blue-500/30 to-purple-600/30 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 border-2 border-blue-400/50 transition-transform hover:scale-105"
                   style={{
                     transform: 'translateZ(0)',
                     boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(96,165,250,0.3)'
                   }}
                 >
-                  <p className="text-sm sm:text-base text-white/80 font-semibold mb-1">Átlagos válaszidő</p>
-                  <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white drop-shadow-lg">
+                  <p className="text-xs sm:text-sm md:text-base text-white/80 font-semibold mb-0.5 sm:mb-1">Átlagos válaszidő</p>
+                  <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">
                     {(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)}s
                   </p>
                 </div>
@@ -1261,15 +1269,15 @@ const GamePreview = () => {
             )}
           </div>
 
-          {/* Buttons */}
-          <div className="w-full max-w-md space-y-3">
+          {/* Buttons - Fully responsive */}
+          <div className="w-full max-w-[90%] sm:max-w-md space-y-2.5 sm:space-y-3 pb-4">
             <HexagonButton 
               variant="yellow" 
               size="lg" 
               onClick={() => {
                 setGameState('category-select');
               }}
-              className="w-full transform hover:scale-105 transition-all shadow-[0_8px_32px_rgba(255,215,0,0.4)]"
+              className="w-full transform hover:scale-105 transition-all shadow-[0_8px_32px_rgba(255,215,0,0.4)] text-sm sm:text-base"
               style={{
                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
               }}
@@ -1281,7 +1289,7 @@ const GamePreview = () => {
               onClick={() => {
                 navigate('/dashboard');
               }}
-              className="w-full text-white text-base sm:text-lg font-semibold py-3 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-white/20"
+              className="w-full text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 sm:py-3 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-white/20"
               style={{
                 textShadow: '0 2px 4px rgba(0,0,0,0.5)'
               }}
