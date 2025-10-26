@@ -41,6 +41,24 @@ export default defineConfig(({ mode }) => ({
             purpose: 'maskable'
           }
         ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg}'],
+        navigateFallback: null,
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.origin === 'https://wdpxmwsxhckazwxufttk.supabase.co',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'supabase-api',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24
+              },
+              networkTimeoutSeconds: 10
+            }
+          }
+        ]
       }
     })
   ].filter(Boolean),
