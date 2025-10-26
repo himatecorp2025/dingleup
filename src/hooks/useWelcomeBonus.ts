@@ -75,14 +75,13 @@ export const useWelcomeBonus = (userId: string | undefined) => {
       
       const result = data as { success: boolean; coins: number; error?: string };
       if (result.success) {
-        toast.success('🎉 Üdvözlő bónusz felvéve! +2500 arany és +50 élet!');
+        // Track claim BEFORE showing success message
+        trackEvent('popup_cta_click', 'welcome', 'claim');
+        
         setCanClaim(false);
         
-        // SECURITY: No longer using localStorage for claimed status
-        // Server-side database is the source of truth
-        
-        // Track claim
-        trackEvent('popup_cta_click', 'welcome', 'claim');
+        // Show success toast AFTER server confirmed the claim
+        toast.success('🎉 Üdvözlő bónusz felvéve! +2500 arany és +50 élet!');
         
         return true;
       } else {

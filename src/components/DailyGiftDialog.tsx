@@ -115,9 +115,8 @@ const DailyGiftDialog = ({
     }
   }, [open, userId, nextReward, weeklyEntryCount, isPremium]);
 
-  const handleClaim = () => {
-    onClaim();
-    
+  const handleClaim = async () => {
+    // Track the claim attempt
     if (userId) {
       trackBonusEvent(userId, 'daily_claimed', 'daily', {
         coins_amount: nextReward,
@@ -126,7 +125,10 @@ const DailyGiftDialog = ({
       });
     }
 
-    // NO cleanup needed - this executes before component unmount
+    // Execute the actual claim - wait for it to complete
+    await onClaim();
+
+    // Only call success callback after server confirmation
     if (onClaimSuccess) {
       setTimeout(() => onClaimSuccess(), 500);
     }
