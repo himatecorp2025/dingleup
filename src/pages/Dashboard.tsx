@@ -524,9 +524,9 @@ return (
           </div>
         </div>
 
-        {/* Logo - 10%-kal megnövelt méret, vertikálisan 45%-al feljebb */}
+        {/* Logo - 10%-kal megnövelt méret, vertikálisan 55%-al feljebb */}
         <div className="flex-1 flex items-center justify-center mb-1 sm:mb-2">
-          <div className="relative w-40 h-40 sm:w-52 sm:h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 transform -translate-y-[45%]">
+          <div className="relative w-40 h-40 sm:w-52 sm:h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 transform -translate-y-[55%]">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
