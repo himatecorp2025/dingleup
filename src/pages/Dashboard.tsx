@@ -524,9 +524,9 @@ return (
           </div>
         </div>
 
-        {/* Logo - 50%-kal megnövelt méret, reszponzív */}
-        <div className="flex justify-center mb-1 sm:mb-2">
-          <div className="relative w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-72 lg:h-72">
+        {/* Logo - 10%-kal megnövelt méret, vertikálisan és horizontálisan középen */}
+        <div className="flex-1 flex items-center justify-center mb-1 sm:mb-2">
+          <div className="relative w-40 h-40 sm:w-52 sm:h-52 md:w-72 md:h-72 lg:w-80 lg:h-80">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
