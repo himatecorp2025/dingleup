@@ -67,12 +67,7 @@ const LoginUsername = () => {
         return;
       }
 
-      toast({
-        title: "Sikeres bejelentkezés!",
-        description: "Átirányítunk...",
-      });
-      
-      navigate("/intro?next=/dashboard");
+        navigate("/intro?next=/dashboard");
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof LoginForm, string>> = {};

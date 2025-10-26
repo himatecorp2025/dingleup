@@ -68,11 +68,6 @@ const Login = () => {
       }
 
       if (signInData.user) {
-        toast({
-          title: "Sikeres bejelentkezés!",
-          description: "Átirányítunk...",
-        });
-        
         navigate("/intro?next=/dashboard");
       }
     } catch (error) {
