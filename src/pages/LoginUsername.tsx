@@ -61,24 +61,6 @@ const LoginUsername = () => {
       setIsLoading(false);
       navigate('/login');
       return;
-
-      if (error) {
-        toast({
-          title: "Bejelentkezési hiba",
-          description: "Helytelen felhasználónév vagy jelszó",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (data.user) {
-        toast({
-          title: "Sikeres bejelentkezés!",
-          description: "Átirányítunk...",
-        });
-        
-        navigate("/intro?next=/dashboard");
-      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof LoginForm, string>> = {};
