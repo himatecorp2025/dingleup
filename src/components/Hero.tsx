@@ -82,9 +82,9 @@ const Hero = () => {
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
               
-              <div className="relative flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 transition-all hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+              <div className="relative flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 transition-all hover:scale-105 min-h-[44px]" style={{ transform: 'translateZ(40px)' }}>
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 drop-shadow-lg flex-shrink-0" />
-                <span className="text-white font-semibold drop-shadow-lg text-xs sm:text-sm whitespace-nowrap">Heti Rangsor</span>
+                <span className="text-white font-semibold drop-shadow-lg text-xs sm:text-sm whitespace-nowrap leading-none">Heti Rangsor</span>
               </div>
             </div>
             
@@ -104,9 +104,9 @@ const Hero = () => {
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
               
-              <div className="relative flex items-center justify-center gap-2 px-6 py-3 transition-all hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+              <div className="relative flex items-center justify-center gap-2 px-6 py-3 transition-all hover:scale-105 min-h-[44px]" style={{ transform: 'translateZ(40px)' }}>
                 <Zap className="w-5 h-5 text-accent drop-shadow-lg" />
-                <span className="text-white font-semibold drop-shadow-lg">4 Kategória</span>
+                <span className="text-white font-semibold drop-shadow-lg leading-none">4 Kategória</span>
               </div>
             </div>
             
@@ -126,9 +126,9 @@ const Hero = () => {
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
               
-              <div className="relative flex items-center justify-center gap-2 px-6 py-3 transition-all hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
+              <div className="relative flex items-center justify-center gap-2 px-6 py-3 transition-all hover:scale-105 min-h-[44px]" style={{ transform: 'translateZ(40px)' }}>
                 <Sparkles className="w-5 h-5 text-purple-400 drop-shadow-lg" />
-                <span className="text-white font-semibold drop-shadow-lg">Prémium Jutalmak</span>
+                <span className="text-white font-semibold drop-shadow-lg leading-none">Prémium Jutalmak</span>
               </div>
             </div>
           </div>
