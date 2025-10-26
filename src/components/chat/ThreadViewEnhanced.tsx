@@ -638,7 +638,7 @@ export const ThreadViewEnhanced = ({ friendId, userId, onBack, hideHeader = fals
   };
 
   return (
-    <div className="chat-thread" style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', background: '#0f0f12', overflow: 'hidden' }}>
+    <div className="chat-thread" style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', background: '#000000', overflow: 'hidden' }}>
       {/* Header - Fixed at top (optional) */}
       { !hideHeader && (
         <header 
