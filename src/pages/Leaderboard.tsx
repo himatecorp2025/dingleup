@@ -8,7 +8,7 @@ import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import BottomNav from '@/components/BottomNav';
 
 interface LeaderboardEntry {
-  user_id: string;
+  user_id?: string;
   username: string;
   total_correct_answers: number;
   avatar_url: string | null;
@@ -34,17 +34,19 @@ const Leaderboard = () => {
   const fetchLeaderboard = async () => {
     try {
       const { data, error } = await supabase
-        .from('global_leaderboard')
-        .select('user_id, username, total_correct_answers, avatar_url')
-        .order('total_correct_answers', { ascending: false })
+        .from('leaderboard_public_cache')
+        .select('username, total_correct_answers, avatar_url, rank')
+        .order('rank', { ascending: true })
         .limit(100);
 
       if (error) throw error;
 
-      // Add rank to each entry
-      const rankedData = (data || []).map((entry, index) => ({
-        ...entry,
-        rank: index + 1
+      const rankedData = (data || []).map((entry) => ({
+        username: entry.username,
+        total_correct_answers: entry.total_correct_answers,
+        avatar_url: entry.avatar_url,
+        user_id: '',
+        rank: entry.rank
       }));
 
       setTopPlayers(rankedData);
