@@ -278,11 +278,11 @@ const GamePreview = () => {
   };
 
   const handleSwipeDown = async () => {
-    // Always show exit confirmation when swiping down
-    // User must explicitly confirm to exit and see results
-    if (!showExitDialog) {
-      setShowExitDialog(true);
+    // Swipe down always finishes the game and shows results (serleg ablak)
+    if (errorBannerVisible) {
+      setErrorBannerVisible(false);
     }
+    await finishGame();
   };
 
   const handleTimeout = () => {
