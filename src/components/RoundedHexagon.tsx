@@ -49,6 +49,7 @@ export const RoundedHexagon: React.FC<RoundedHexagonProps> = ({
 
   const colors = colorSchemes[type];
   const borderWidth = 2;
+  const clipPathId = `hex-${type}-${Math.random().toString(36).substr(2, 9)}`;
 
   // SVG Icons
   const renderIcon = () => {
@@ -106,6 +107,16 @@ export const RoundedHexagon: React.FC<RoundedHexagonProps> = ({
 
   return (
     <div className={`relative ${className}`}>
+      {/* SVG ClipPath Definition */}
+      <svg width="0" height="0" className="absolute">
+        <defs>
+          <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
+            {/* Rounded hexagon - unified shape */}
+            <path d="M 0.12,0 L 0.88,0 C 0.94,0 0.97,0.02 1,0.08 L 1,0.42 C 1,0.48 1,0.52 1,0.58 L 1,0.92 C 0.97,0.98 0.94,1 0.88,1 L 0.12,1 C 0.06,1 0.03,0.98 0,0.92 L 0,0.58 C 0,0.52 0,0.48 0,0.42 L 0,0.08 C 0.03,0.02 0.06,0 0.12,0 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
       {/* Outer glow */}
       <div
         className="absolute inset-0 rounded-full blur-xl opacity-60 animate-pulse"
@@ -136,7 +147,7 @@ export const RoundedHexagon: React.FC<RoundedHexagonProps> = ({
 
         {/* BASE SHADOW (3D depth) */}
         <div
-          className="absolute rounded-3xl"
+          className="absolute"
           style={{
             top: '3px',
             left: '3px',
@@ -144,61 +155,69 @@ export const RoundedHexagon: React.FC<RoundedHexagonProps> = ({
             bottom: '-3px',
             background: 'rgba(0,0,0,0.35)',
             filter: 'blur(3px)',
+            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
 
         {/* OUTER FRAME - gradient with border */}
         <div
-          className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${colors.gradientOuter} ${colors.shadowColor}`}
+          className={`absolute inset-0 bg-gradient-to-br ${colors.gradientOuter} ${colors.shadowColor}`}
           style={{
             border: `${borderWidth}px solid ${colors.borderColor}`,
+            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
 
         {/* MIDDLE FRAME (bright inner highlight) */}
         <div
-          className={`absolute inset-[3px] rounded-3xl bg-gradient-to-b ${colors.gradientMiddle}`}
-          style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }}
+          className={`absolute inset-[3px] bg-gradient-to-b ${colors.gradientMiddle}`}
+          style={{ 
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
+            clipPath: `url(#${clipPathId})`
+          }}
           aria-hidden
         />
 
         {/* INNER CRYSTAL/COLOR LAYER */}
         <div
-          className={`absolute rounded-3xl bg-gradient-to-b ${colors.gradientInner}`}
+          className={`absolute bg-gradient-to-b ${colors.gradientInner}`}
           style={{
             top: '5px',
             left: '5px',
             right: '5px',
             bottom: '5px',
             boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
+            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
 
         {/* SPECULAR HIGHLIGHT (top-left) */}
         <div
-          className="absolute rounded-3xl pointer-events-none"
+          className="absolute pointer-events-none"
           style={{
             top: '5px',
             left: '5px',
             right: '5px',
             bottom: '5px',
             background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
+            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
 
         {/* INNER GLOW (bottom shadow for 3D depth) */}
         <div
-          className="absolute rounded-3xl pointer-events-none"
+          className="absolute pointer-events-none"
           style={{
             top: '5px',
             left: '5px',
             right: '5px',
             bottom: '5px',
             boxShadow: 'inset 0 0 10px rgba(0,0,0,0.25)',
+            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
