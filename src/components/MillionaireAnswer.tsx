@@ -86,7 +86,8 @@ export const MillionaireAnswer = ({
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
-            <path d="M 0.12,0.05 Q 0.12,0 0.17,0 L 0.83,0 Q 0.88,0 0.88,0.05 L 0.98,0.45 Q 1,0.5 0.98,0.55 L 0.88,0.95 Q 0.88,1 0.83,1 L 0.17,1 Q 0.12,1 0.12,0.95 L 0.02,0.55 Q 0,0.5 0.02,0.45 Z" />
+            {/* Hexagon lekerekített csúcsokkal */}
+            <path d="M 0.15,0.03 Q 0.12,0 0.15,0 L 0.85,0 Q 0.88,0 0.85,0.03 L 0.99,0.47 Q 1,0.5 0.99,0.53 L 0.85,0.97 Q 0.88,1 0.85,1 L 0.15,1 Q 0.12,1 0.15,0.97 L 0.01,0.53 Q 0,0.5 0.01,0.47 Z" />
           </clipPath>
         </defs>
       </svg>
