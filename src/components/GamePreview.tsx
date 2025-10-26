@@ -1160,14 +1160,14 @@ const GamePreview = () => {
 
         {/* Main content - Full screen optimized */}
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 py-6 overflow-y-auto">
-          {/* 3D Trophy - DOUBLE SIZE */}
+          {/* 3D Trophy - Responsive DOUBLE SIZE with max-width */}
           <div className="relative flex items-center justify-center mb-6 flex-shrink-0">
             {/* Multiple glow layers for maximum emphasis */}
             <div className="absolute inset-0 bg-yellow-400/50 rounded-full blur-[100px] scale-[2.5] animate-pulse" />
             <div className="absolute inset-0 bg-orange-500/40 rounded-full blur-[80px] scale-[2.2] animate-pulse" style={{ animationDelay: '0.5s' }} />
             <div className="absolute inset-0 bg-yellow-300/30 rounded-full blur-[60px] scale-[2] animate-pulse" style={{ animationDelay: '1s' }} />
             <Trophy3D 
-              className="relative w-96 h-96 sm:w-[32rem] sm:h-[32rem] md:w-[40rem] md:h-[40rem]" 
+              className="relative w-[50vw] h-[50vw] max-w-[384px] max-h-[384px] sm:max-w-[512px] sm:max-h-[512px]" 
               animate={true} 
             />
           </div>
