@@ -88,13 +88,13 @@ export const MillionaireAnswer = ({
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
             {/* Complete hexagon: sharp left/right points, curved top/bottom */}
             <path shapeRendering="crispEdges" d="
-              M 0.15,0 
-               L 0.85,0 
-               C 0.90,0 0.996,0.40 1.00,0.50
-               C 0.996,0.60 0.90,1.00 0.85,1.00
-               L 0.15,1.00
-               C 0.10,1.00 0.004,0.60 0.00,0.50
-               C 0.004,0.40 0.10,0.00 0.15,0.00
+              M 0.20,0 
+               L 0.80,0 
+               C 0.87,0 0.999,0.45 1.00,0.50
+               C 0.999,0.55 0.87,1.00 0.80,1.00
+               L 0.20,1.00
+               C 0.13,1.00 0.001,0.55 0.00,0.50
+               C 0.001,0.45 0.13,0.00 0.20,0.00
                Z
             " />
           </clipPath>
@@ -104,7 +104,7 @@ export const MillionaireAnswer = ({
       <button
         onClick={onClick}
         disabled={disabled}
-        className="w-[72%] touch-manipulation group relative overflow-visible"
+        className="w-[92%] touch-manipulation group relative overflow-visible"
         style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
       >
       {/* Single horizontal line in the middle - BEHIND the button */}

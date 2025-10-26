@@ -17,20 +17,20 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
             {/* Complete hexagon: sharp left/right points, curved top/bottom */}
             <path shapeRendering="crispEdges" d="
-              M 0.15,0 
-               L 0.85,0 
-               C 0.92,0 0.998,0.38 1.00,0.50
-               C 0.998,0.62 0.92,1.00 0.85,1.00
-               L 0.15,1.00
-               C 0.08,1.00 0.002,0.62 0.00,0.50
-               C 0.002,0.38 0.08,0.00 0.15,0.00
+              M 0.20,0 
+               L 0.80,0 
+               C 0.88,0 0.999,0.44 1.00,0.50
+               C 0.999,0.56 0.88,1.00 0.80,1.00
+               L 0.20,1.00
+               C 0.12,1.00 0.001,0.56 0.00,0.50
+               C 0.001,0.44 0.12,0.00 0.20,0.00
                Z
             " />
           </clipPath>
         </defs>
       </svg>
 
-      <div className="w-[76%] sm:w-[72%] relative group overflow-visible" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
+      <div className="w-[96%] sm:w-[94%] relative group overflow-visible" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
         {/* Single horizontal line in the middle - BEHIND the box */}
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-0"
@@ -122,7 +122,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         />
         
         <div 
-          className="relative px-4 sm:px-6 md:px-8 py-[24px] sm:py-[30px] md:py-[37px] cursor-default"
+          className="relative px-4 sm:px-6 md:px-8 py-[28px] sm:py-[35px] md:py-[43px] cursor-default"
           style={{
             transform: 'translateZ(40px)',
             clipPath: `url(#${clipPathId})`
