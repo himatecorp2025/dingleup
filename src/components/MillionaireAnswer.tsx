@@ -116,7 +116,7 @@ export const MillionaireAnswer = ({
       <button
         onClick={onClick}
         disabled={disabled}
-        className="w-[72%] touch-manipulation group relative"
+        className="w-[72%] touch-manipulation group relative overflow-visible"
         style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
       >
       {/* Single horizontal line in the middle - BEHIND the button */}
@@ -150,12 +150,11 @@ export const MillionaireAnswer = ({
           'from-yellow-400 via-yellow-500 to-yellow-600'
         }`}
         style={{
-          border: `${borderWidth}px solid ${borderColorHex}`,
           transform: 'translateZ(0px)',
-          boxShadow: showCorrectPulse ? '0 0 30px rgba(74, 222, 128, 0.8), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
-                     isCorrect ? '0 0 30px rgba(74, 222, 128, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
-                     isWrong ? '0 0 30px rgba(248, 113, 113, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
-                     '0 0 20px rgba(250, 204, 21, 0.4), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)',
+          boxShadow: showCorrectPulse ? `inset 0 0 0 ${borderWidth}px ${borderColorHex}, 0 0 30px rgba(74, 222, 128, 0.8), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)` :
+                     isCorrect ? `inset 0 0 0 ${borderWidth}px ${borderColorHex}, 0 0 30px rgba(74, 222, 128, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)` :
+                     isWrong ? `inset 0 0 0 ${borderWidth}px ${borderColorHex}, 0 0 30px rgba(248, 113, 113, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)` :
+                     `inset 0 0 0 ${borderWidth}px ${borderColorHex}, 0 0 20px rgba(250, 204, 21, 0.4), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)`,
           clipPath: `url(#${clipPathId})`
         }}
         aria-hidden

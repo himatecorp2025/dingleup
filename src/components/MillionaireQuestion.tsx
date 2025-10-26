@@ -42,7 +42,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         </defs>
       </svg>
 
-      <div className="w-[76%] sm:w-[72%] relative group" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
+      <div className="w-[76%] sm:w-[72%] relative group overflow-visible" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
         {/* Single horizontal line in the middle - BEHIND the box */}
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-0"
@@ -84,9 +84,17 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         <div 
           className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 shadow-2xl opacity-95"
           style={{
-            border: `${borderWidth}px solid #22d3ee`,
             transform: 'translateZ(0px)',
             boxShadow: '0 0 30px rgba(34, 211, 238, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)',
+            clipPath: `url(#${clipPathId})`
+          }}
+          aria-hidden
+        />
+        {/* STROKE LAYER (inset, keeps tips needle-sharp) */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            boxShadow: `inset 0 0 0 ${borderWidth}px #22d3ee`,
             clipPath: `url(#${clipPathId})`
           }}
           aria-hidden

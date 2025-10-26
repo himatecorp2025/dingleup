@@ -106,7 +106,7 @@ export const RoundedHexagon: React.FC<RoundedHexagonProps> = ({
   };
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative overflow-visible ${className}`}>
       {/* SVG ClipPath Definition */}
       <svg width="0" height="0" className="absolute">
         <defs>
@@ -175,7 +175,16 @@ export const RoundedHexagon: React.FC<RoundedHexagonProps> = ({
         <div
           className={`absolute inset-0 bg-gradient-to-br ${colors.gradientOuter} ${colors.shadowColor}`}
           style={{
-            border: `${borderWidth}px solid ${colors.borderColor}`,
+            clipPath: `url(#${clipPathId})`
+          }}
+          aria-hidden
+        />
+
+        {/* STROKE LAYER (inset) */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            boxShadow: `inset 0 0 0 ${borderWidth}px ${colors.borderColor}`,
             clipPath: `url(#${clipPathId})`
           }}
           aria-hidden

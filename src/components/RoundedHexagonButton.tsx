@@ -110,7 +110,7 @@ export const RoundedHexagonButton: React.FC<RoundedHexagonButtonProps> = ({
       disabled={disabled}
       className={`relative w-full ${sizeClasses[size]} font-black transition-all ${
         disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'
-      } ${className}`}
+      } overflow-visible ${className}`}
       style={style}
     >
       {/* SVG ClipPath Definition */}
@@ -180,7 +180,16 @@ export const RoundedHexagonButton: React.FC<RoundedHexagonButtonProps> = ({
       <div
         className={`absolute inset-0 bg-gradient-to-br ${colors.gradientOuter} ${colors.shadowColor} ${!disabled && colors.hoverShadow}`}
         style={{
-          border: `${borderWidth}px solid ${colors.borderColor}`,
+          clipPath: `url(#${clipPathId})`
+        }}
+        aria-hidden
+      />
+
+      {/* STROKE LAYER (inset) */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          boxShadow: `inset 0 0 0 ${borderWidth}px ${colors.borderColor}`,
           clipPath: `url(#${clipPathId})`
         }}
         aria-hidden
