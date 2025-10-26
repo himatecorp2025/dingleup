@@ -111,8 +111,8 @@ export const RoundedHexagon: React.FC<RoundedHexagonProps> = ({
       <svg width="0" height="0" className="absolute">
         <defs>
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
-            {/* Rounded hexagon - unified shape */}
-            <path d="M 0.12,0 L 0.88,0 C 0.94,0 0.97,0.02 1,0.08 L 1,0.42 C 1,0.48 1,0.52 1,0.58 L 1,0.92 C 0.97,0.98 0.94,1 0.88,1 L 0.12,1 C 0.06,1 0.03,0.98 0,0.92 L 0,0.58 C 0,0.52 0,0.48 0,0.42 L 0,0.08 C 0.03,0.02 0.06,0 0.12,0 Z" />
+            {/* Elongated hexagon with pointed left/right ends */}
+            <path d="M 0.05,0.5 C 0.05,0.3 0.06,0.15 0.08,0.08 C 0.09,0.03 0.11,0 0.15,0 L 0.85,0 C 0.89,0 0.91,0.03 0.92,0.08 C 0.94,0.15 0.95,0.3 0.95,0.5 C 0.95,0.7 0.94,0.85 0.92,0.92 C 0.91,0.97 0.89,1 0.85,1 L 0.15,1 C 0.11,1 0.09,0.97 0.08,0.92 C 0.06,0.85 0.05,0.7 0.05,0.5 Z" />
           </clipPath>
         </defs>
       </svg>
@@ -125,23 +125,13 @@ export const RoundedHexagon: React.FC<RoundedHexagonProps> = ({
 
       {/* 3D Hexagon Container */}
       <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
-        {/* Vízszintes vonalak */}
-        {/* Felső vonal */}
+        {/* Single horizontal line in the middle - BEHIND */}
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 h-0"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-0"
           style={{
             width: lineLength === 'full' ? '100vw' : '5%',
             borderTop: `${borderWidth}px solid ${colors.borderColor}`,
-            zIndex: 5,
-          }}
-        />
-        {/* Alsó vonal */}
-        <div
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0"
-          style={{
-            width: lineLength === 'full' ? '100vw' : '5%',
-            borderTop: `${borderWidth}px solid ${colors.borderColor}`,
-            zIndex: 5,
+            zIndex: -1,
           }}
         />
 
