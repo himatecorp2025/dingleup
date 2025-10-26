@@ -278,18 +278,11 @@ const GamePreview = () => {
   };
 
   const handleSwipeDown = async () => {
-    console.log('[DEBUG] handleSwipeDown called - should show serleg');
-    console.log('[DEBUG] errorBannerVisible:', errorBannerVisible);
-    console.log('[DEBUG] showExitDialog:', showExitDialog);
-    
     // Swipe down always finishes the game and shows results (serleg ablak)
     if (errorBannerVisible) {
       setErrorBannerVisible(false);
     }
-    
-    console.log('[DEBUG] Calling finishGame()...');
     await finishGame();
-    console.log('[DEBUG] finishGame() completed');
   };
 
   const handleTimeout = () => {
@@ -1139,13 +1132,13 @@ const GamePreview = () => {
 
   if (gameState === 'finished') {
     return (
-      <div className="fixed inset-0 w-screen h-screen flex items-center justify-center overflow-hidden">
+      <div className="fixed inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
         {/* Background with blur */}
         <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-30"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
-        <div className="absolute inset-0 w-full h-full backdrop-blur-[10px] bg-black/10" />
+        <div className="absolute inset-0 w-full h-full backdrop-blur-sm" />
         
         {/* Animated particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -1165,22 +1158,22 @@ const GamePreview = () => {
           ))}
         </div>
 
-        {/* Main content - Perfectly centered vertically and horizontally */}
-        <div className="relative z-10 w-full max-w-[95%] sm:max-w-2xl max-h-[95vh] flex flex-col items-center justify-center overflow-y-auto px-3 py-4 sm:px-6 sm:py-6">
-          {/* 3D Trophy - Double the size with enhanced glow */}
-          <div className="relative flex items-center justify-center mb-4 sm:mb-6 flex-shrink-0">
+        {/* Main content - Full screen optimized */}
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 py-6 overflow-y-auto">
+          {/* 3D Trophy - Optimized for mobile */}
+          <div className="relative flex items-center justify-center mb-6 flex-shrink-0">
             {/* Multiple glow layers for maximum emphasis */}
             <div className="absolute inset-0 bg-yellow-400/50 rounded-full blur-[100px] scale-[2] animate-pulse" />
             <div className="absolute inset-0 bg-orange-500/40 rounded-full blur-[80px] scale-[1.8] animate-pulse" style={{ animationDelay: '0.5s' }} />
             <div className="absolute inset-0 bg-yellow-300/30 rounded-full blur-[60px] scale-[1.5] animate-pulse" style={{ animationDelay: '1s' }} />
             <Trophy3D 
-              className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] xl:w-[32rem] xl:h-[32rem]" 
+              className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80" 
               animate={true} 
             />
           </div>
           
           {/* Title */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 relative text-center px-4 flex-shrink-0">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6 relative text-center px-4 flex-shrink-0">
             <span 
               className="relative inline-block"
               style={{
@@ -1196,8 +1189,8 @@ const GamePreview = () => {
             </span>
           </h1>
 
-          {/* Stats cards with 3D effect - Fully responsive and compact */}
-          <div className="w-full space-y-2 sm:space-y-3 mb-4 sm:mb-6 flex-shrink-0">
+          {/* Stats cards with 3D effect - Full width */}
+          <div className="w-full max-w-md space-y-3 mb-6 flex-shrink-0">
             {/* Correct answers */}
             <div className="relative group" style={{ perspective: '1000px' }}>
               <div 
@@ -1271,15 +1264,15 @@ const GamePreview = () => {
             )}
           </div>
 
-          {/* Buttons - Fully responsive and compact */}
-          <div className="w-full space-y-2 sm:space-y-2.5 flex-shrink-0">
+          {/* Buttons - Full width */}
+          <div className="w-full max-w-md space-y-3 flex-shrink-0">
             <HexagonButton 
               variant="yellow" 
               size="lg" 
               onClick={() => {
-                setGameState('category-select');
+                resetGameState();
               }}
-              className="w-full transform hover:scale-105 transition-all shadow-[0_8px_32px_rgba(255,215,0,0.4)] text-xs sm:text-sm md:text-base"
+              className="w-full transform hover:scale-105 transition-all shadow-[0_8px_32px_rgba(255,215,0,0.4)] text-base sm:text-lg"
               style={{
                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
               }}
@@ -1291,7 +1284,7 @@ const GamePreview = () => {
               onClick={() => {
                 navigate('/dashboard');
               }}
-              className="w-full text-white text-xs sm:text-sm md:text-base font-semibold py-2 sm:py-2.5 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-white/20"
+              className="w-full text-white text-base sm:text-lg font-semibold py-3 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-white/20"
               style={{
                 textShadow: '0 2px 4px rgba(0,0,0,0.5)'
               }}
