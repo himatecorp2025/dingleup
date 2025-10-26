@@ -45,56 +45,52 @@ export const MillionaireAnswer = ({
     );
   }
 
+  const borderWidth = 4;
+  const clipPathId = `hexClip-answer-${letter}-${Math.random().toString(36).substr(2, 9)}`;
+  const borderColorHex = showCorrectPulse ? '#4ade80' :
+                         isDoubleChoiceActive ? '#fb923c' :
+                         isCorrect ? '#4ade80' :
+                         isWrong ? '#f87171' :
+                         '#fde047';
+
   let bgColor = 'bg-slate-900';
-  let borderColor = 'border-yellow-500';
   let textColor = 'text-white';
-  let letterBg = 'bg-yellow-500';
-  let letterBorder = 'border-yellow-400';
-  let letterText = 'text-gray-100';
   
   // Green pulsing animation for correct answer when user selected wrong
   if (showCorrectPulse) {
     bgColor = 'bg-green-600 animate-pulse';
-    borderColor = 'border-green-400';
     textColor = 'text-white';
-    letterBg = 'bg-green-300';
-    letterBorder = 'border-green-200';
-    letterText = 'text-gray-900';
   }
   
   // Double choice active state (orange background)
   if (isDoubleChoiceActive) {
     bgColor = 'bg-orange-600';
-    borderColor = 'border-orange-400';
     textColor = 'text-white';
-    letterBg = 'bg-orange-300';
-    letterBorder = 'border-orange-200';
-    letterText = 'text-gray-900';
   }
   
   if (isSelected && !isCorrect && !isWrong) {
     bgColor = 'bg-orange-600';
-    borderColor = 'border-orange-400';
-    letterBg = 'bg-orange-300';
-    letterBorder = 'border-orange-200';
   }
   
   if (isCorrect) {
     bgColor = 'bg-green-600';
-    borderColor = 'border-green-400';
-    letterBg = 'bg-green-300';
-    letterBorder = 'border-green-200';
   }
   
   if (isWrong) {
     bgColor = 'bg-red-600';
-    borderColor = 'border-red-400';
-    letterBg = 'bg-red-300';
-    letterBorder = 'border-red-200';
   }
 
   return (
     <div className="w-full flex justify-center mb-2">
+      {/* SVG clip-path definition - lekerekített hexagon */}
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
+            <path d="M 0.12,0.05 Q 0.12,0 0.17,0 L 0.83,0 Q 0.88,0 0.88,0.05 L 0.98,0.45 Q 1,0.5 0.98,0.55 L 0.88,0.95 Q 0.88,1 0.83,1 L 0.17,1 Q 0.12,1 0.12,0.95 L 0.02,0.55 Q 0,0.5 0.02,0.45 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
       <button
         onClick={onClick}
         disabled={disabled}
@@ -106,13 +102,7 @@ export const MillionaireAnswer = ({
         className="absolute top-0 left-1/2 -translate-x-1/2 h-0"
         style={{
           width: '100vw',
-          borderTop: `4px solid ${
-            showCorrectPulse ? '#4ade80' :
-            isDoubleChoiceActive ? '#fb923c' :
-            isCorrect ? '#4ade80' :
-            isWrong ? '#f87171' :
-            '#fde047'
-          }`,
+          borderTop: `${borderWidth}px solid ${borderColorHex}`,
           zIndex: 5,
         }}
       />
@@ -120,30 +110,25 @@ export const MillionaireAnswer = ({
         className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0"
         style={{
           width: '100vw',
-          borderTop: `4px solid ${
-            showCorrectPulse ? '#4ade80' :
-            isDoubleChoiceActive ? '#fb923c' :
-            isCorrect ? '#4ade80' :
-            isWrong ? '#f87171' :
-            '#fde047'
-          }`,
+          borderTop: `${borderWidth}px solid ${borderColorHex}`,
           zIndex: 5,
         }}
       />
 
       {/* BASE SHADOW - Enhanced */}
       <div 
-        className="absolute inset-0 rounded-3xl bg-black/80" 
+        className="absolute inset-0 bg-black/80" 
         style={{ 
           transform: 'translate(8px, 8px) translateZ(-10px)', 
           filter: 'blur(12px)',
+          clipPath: `url(#${clipPathId})`
         }} 
         aria-hidden 
       />
       
       {/* OUTER FRAME - Enhanced */}
       <div 
-        className={`absolute inset-0 rounded-3xl bg-gradient-to-br opacity-95 shadow-2xl transition-all duration-300 ${
+        className={`absolute inset-0 bg-gradient-to-br opacity-95 shadow-2xl transition-all duration-300 ${
           showCorrectPulse ? 'from-green-400 via-green-500 to-green-600 animate-pulse' :
           isDoubleChoiceActive ? 'from-orange-400 via-orange-500 to-orange-600' :
           isCorrect ? 'from-green-400 via-green-500 to-green-600' :
@@ -151,35 +136,31 @@ export const MillionaireAnswer = ({
           'from-yellow-400 via-yellow-500 to-yellow-600'
         }`}
         style={{
-          border: `4px solid ${
-            showCorrectPulse ? '#4ade80' :
-            isDoubleChoiceActive ? '#fb923c' :
-            isCorrect ? '#4ade80' :
-            isWrong ? '#f87171' :
-            '#fde047'
-          }`,
+          border: `${borderWidth}px solid ${borderColorHex}`,
           transform: 'translateZ(0px)',
           boxShadow: showCorrectPulse ? '0 0 30px rgba(74, 222, 128, 0.8), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
                      isCorrect ? '0 0 30px rgba(74, 222, 128, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
                      isWrong ? '0 0 30px rgba(248, 113, 113, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
-                     '0 0 20px rgba(250, 204, 21, 0.4), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)'
+                     '0 0 20px rgba(250, 204, 21, 0.4), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)',
+          clipPath: `url(#${clipPathId})`
         }}
         aria-hidden
       />
       
       {/* MIDDLE FRAME - Enhanced */}
       <div 
-        className="absolute inset-[5px] rounded-3xl bg-gradient-to-b from-black/60 via-transparent to-black/80"
+        className="absolute inset-[5px] bg-gradient-to-b from-black/60 via-transparent to-black/80"
         style={{
           boxShadow: 'inset 0 3px 6px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6)',
-          transform: 'translateZ(15px)'
+          transform: 'translateZ(15px)',
+          clipPath: `url(#${clipPathId})`
         }}
         aria-hidden
       />
       
       {/* INNER LAYER - Enhanced */}
       <div 
-        className={`absolute inset-[7px] rounded-3xl bg-gradient-to-br transition-all duration-300 ${
+        className={`absolute inset-[7px] bg-gradient-to-br transition-all duration-300 ${
           showCorrectPulse ? 'from-green-500/90 to-green-700/90' :
           isDoubleChoiceActive ? 'from-orange-500/90 to-orange-700/90' :
           isCorrect ? 'from-green-500/90 to-green-700/90' :
@@ -188,17 +169,19 @@ export const MillionaireAnswer = ({
         }`}
         style={{
           boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
-          transform: 'translateZ(25px)'
+          transform: 'translateZ(25px)',
+          clipPath: `url(#${clipPathId})`
         }}
         aria-hidden
       />
       
       {/* SPECULAR HIGHLIGHT - Enhanced */}
       <div 
-        className="absolute inset-[7px] rounded-3xl pointer-events-none"
+        className="absolute inset-[7px] pointer-events-none"
         style={{
           background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
-          transform: 'translateZ(35px)'
+          transform: 'translateZ(35px)',
+          clipPath: `url(#${clipPathId})`
         }}
         aria-hidden
       />
@@ -206,7 +189,8 @@ export const MillionaireAnswer = ({
       <div 
         className={`relative px-3 sm:px-4 md:px-5 py-[18px] sm:py-[28px] md:py-[37px] transition-all duration-300 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}`}
         style={{
-          transform: 'translateZ(40px)'
+          transform: 'translateZ(40px)',
+          clipPath: `url(#${clipPathId})`
         }}
       >
         <div className="flex items-center justify-center w-full">

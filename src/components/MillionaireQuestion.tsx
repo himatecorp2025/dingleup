@@ -7,12 +7,21 @@ interface MillionaireQuestionProps {
 
 export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
   const borderWidth = 4;
+  const clipPathId = `hexClip-question-${Math.random().toString(36).substr(2, 9)}`;
   
   return (
     <div className="w-full flex justify-center mb-4">
+      {/* SVG clip-path definition - lekerekített hexagon */}
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
+            <path d="M 0.12,0.05 Q 0.12,0 0.17,0 L 0.83,0 Q 0.88,0 0.88,0.05 L 0.98,0.45 Q 1,0.5 0.98,0.55 L 0.88,0.95 Q 0.88,1 0.83,1 L 0.17,1 Q 0.12,1 0.12,0.95 L 0.02,0.55 Q 0,0.5 0.02,0.45 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
       <div className="w-[95%] sm:w-[90%] relative group" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
         {/* Vízszintes vonalak - teljes szélesség */}
-        {/* Felső vonal */}
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 h-0"
           style={{
@@ -21,7 +30,6 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
             zIndex: 5,
           }}
         />
-        {/* Alsó vonal */}
         <div
           className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0"
           style={{
@@ -31,7 +39,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
           }}
         />
 
-        {/* Question number badge - left side */}
+        {/* Question number badge */}
         {questionNumber && (
           <div 
             className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 z-20"
@@ -49,51 +57,56 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
 
         {/* BASE SHADOW */}
         <div 
-          className="absolute inset-0 rounded-3xl bg-black/80" 
+          className="absolute inset-0 bg-black/80" 
           style={{ 
             transform: 'translate(8px, 8px) translateZ(-10px)', 
             filter: 'blur(12px)',
+            clipPath: `url(#${clipPathId})`
           }} 
           aria-hidden 
         />
         
         {/* OUTER FRAME */}
         <div 
-          className="absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 shadow-2xl opacity-95"
+          className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 shadow-2xl opacity-95"
           style={{
             border: `${borderWidth}px solid #22d3ee`,
             transform: 'translateZ(0px)',
-            boxShadow: '0 0 30px rgba(34, 211, 238, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)'
+            boxShadow: '0 0 30px rgba(34, 211, 238, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)',
+            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
         
         {/* MIDDLE FRAME */}
         <div 
-          className="absolute inset-[5px] rounded-3xl bg-gradient-to-b from-black/60 via-transparent to-black/80"
+          className="absolute inset-[5px] bg-gradient-to-b from-black/60 via-transparent to-black/80"
           style={{
             boxShadow: 'inset 0 3px 6px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6)',
-            transform: 'translateZ(15px)'
+            transform: 'translateZ(15px)',
+            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
         
         {/* INNER LAYER */}
         <div 
-          className="absolute inset-[7px] rounded-3xl bg-gradient-to-br from-slate-900/90 to-slate-950/90"
+          className="absolute inset-[7px] bg-gradient-to-br from-slate-900/90 to-slate-950/90"
           style={{
             boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
-            transform: 'translateZ(25px)'
+            transform: 'translateZ(25px)',
+            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
         
         {/* SPECULAR HIGHLIGHT */}
         <div 
-          className="absolute inset-[7px] rounded-3xl pointer-events-none"
+          className="absolute inset-[7px] pointer-events-none"
           style={{
             background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
-            transform: 'translateZ(35px)'
+            transform: 'translateZ(35px)',
+            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
@@ -101,7 +114,8 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         <div 
           className="relative px-4 sm:px-6 md:px-8 py-[24px] sm:py-[30px] md:py-[37px] cursor-default"
           style={{
-            transform: 'translateZ(40px)'
+            transform: 'translateZ(40px)',
+            clipPath: `url(#${clipPathId})`
           }}
         >
           <div className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-center text-white drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
