@@ -243,16 +243,30 @@ export const LeaderboardCarousel = () => {
             const actualIndex = index % topPlayers.length;
             const rank = actualIndex + 1;
             const showCrown = actualIndex < 3;
+            const clipPathId = `hexClip-leaderboard-${player.user_id}-${index}`;
             return (
-              <div key={`${player.user_id}-${index}`} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
+              <div key={`${player.user_id}-${index}`} className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
+                <HexClipPath clipPathId={clipPathId} />
                 {/* BASE SHADOW */}
-                <div className="absolute clip-hexagon" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} aria-hidden />
+                <div className="absolute" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)', clipPath: `url(#${clipPathId})` }} aria-hidden />
                 {/* OUTER FRAME */}
-                <div className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(actualIndex)} border-2 shadow-xl`} style={{ borderColor: actualIndex === 0 ? '#fbbf24' : actualIndex === 1 ? '#d1d5db' : actualIndex === 2 ? '#fb923c' : '#a855f7' }} aria-hidden />
+                <div className={`absolute inset-0 bg-gradient-to-br ${getHexagonColor(actualIndex)} border-2 shadow-xl`} style={{ borderColor: actualIndex === 0 ? '#fbbf24' : actualIndex === 1 ? '#d1d5db' : actualIndex === 2 ? '#fb923c' : '#a855f7', clipPath: `url(#${clipPathId})` }} aria-hidden />
                 {/* MIDDLE FRAME */}
-                <div className="absolute inset-[2px] clip-hexagon" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)' }} aria-hidden />
+                <div className="absolute inset-[2px]" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)', clipPath: `url(#${clipPathId})` }} aria-hidden />
                 {/* INNER LAYER */}
-                <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+                <div className="absolute" style={{ top: '8px', left: '16px', right: '16px', bottom: '8px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)', clipPath: `url(#${clipPathId})` }} aria-hidden />
+            const clipPathId = `hexClip-leaderboard-${index}`;
+            return (
+              <div key={`${player.user_id}-${index}`} className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
+                <HexClipPath clipPathId={clipPathId} />
+                {/* BASE SHADOW */}
+                <div className="absolute" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)', clipPath: `url(#${clipPathId})` }} aria-hidden />
+                {/* OUTER FRAME */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${getHexagonColor(actualIndex)} border-2 shadow-xl`} style={{ borderColor: actualIndex === 0 ? '#fbbf24' : actualIndex === 1 ? '#d1d5db' : actualIndex === 2 ? '#fb923c' : '#a855f7', clipPath: `url(#${clipPathId})` }} aria-hidden />
+                {/* MIDDLE FRAME */}
+                <div className="absolute inset-[2px]" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)', clipPath: `url(#${clipPathId})` }} aria-hidden />
+                {/* INNER LAYER */}
+                <div className="absolute" style={{ top: '8px', left: '16px', right: '16px', bottom: '8px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)', clipPath: `url(#${clipPathId})` }} aria-hidden />
                 {/* Content - MÓDOSÍTOTT ELRENDEZÉS */}
                 <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
                   {/* Felső rész: korona + rang */}

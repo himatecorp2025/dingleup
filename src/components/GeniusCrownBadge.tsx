@@ -1,4 +1,5 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { HexClipPath } from '@/components/frames/HexClipPath';
 
 interface GeniusCrownBadgeProps {
   size?: 'sm' | 'md' | 'lg';
@@ -84,6 +85,7 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
 
   // Hexagon version for dashboard
   if (asHexagon) {
+    const clipPathId = 'hexClip-genius-crown';
     return (
       <TooltipProvider>
         <Tooltip>
@@ -92,9 +94,10 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
               className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 aspect-square hover:scale-105 transition-transform cursor-pointer"
               style={{ perspective: '500px' }}
             >
+              <HexClipPath clipPathId={clipPathId} />
               {/* BASE SHADOW */}
               <div
-                className="absolute clip-hexagon"
+                className="absolute"
                 style={{
                   top: '3px',
                   left: '3px',
@@ -102,22 +105,61 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
                   bottom: '-3px',
                   background: 'rgba(0,0,0,0.35)',
                   filter: 'blur(3px)',
+                  clipPath: `url(#${clipPathId})`
                 }}
                 aria-hidden
               />
 
               {/* OUTER FRAME with intense sparkle animation */}
               <div
-                className="absolute inset-0 clip-hexagon bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border-2 sm:border-4 border-yellow-400 shadow-lg shadow-yellow-500/50"
+                className="absolute inset-0 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 border-2 sm:border-4 border-yellow-400 shadow-lg shadow-yellow-500/50"
                 style={{
-                  animation: 'hexagonSparkle 1.2s ease-in-out infinite'
+                  animation: 'hexagonSparkle 1.2s ease-in-out infinite',
+                  clipPath: `url(#${clipPathId})`
                 }}
                 aria-hidden
               />
 
               {/* MIDDLE FRAME */}
               <div
-                className="absolute inset-[3px] clip-hexagon bg-gradient-to-b from-yellow-500 via-yellow-400 to-yellow-600"
+                className="absolute inset-[3px] bg-gradient-to-b from-yellow-500 via-yellow-400 to-yellow-600"
+                style={{
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
+                  clipPath: `url(#${clipPathId})`
+                }}
+                aria-hidden
+              />
+
+              {/* INNER LAYER */}
+              <div
+                className="absolute bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600"
+                style={{
+                  top: '8px',
+                  left: '16px',
+                  right: '16px',
+                  bottom: '8px',
+                  boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
+                  clipPath: `url(#${clipPathId})`
+                }}
+                aria-hidden
+              />
+
+              {/* SPECULAR HIGHLIGHT */}
+              <div
+                className="absolute pointer-events-none"
+                style={{
+                  top: '8px',
+                  left: '16px',
+                  right: '16px',
+                  bottom: '8px',
+                  background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
+                  clipPath: `url(#${clipPathId})`
+                }}
+                aria-hidden
+              />
+
+              {/* Content */}
+              <div className="absolute inset-0 flex items-center justify-center z-10" style={{ clipPath: `url(#${clipPathId})` }}>
                 style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }}
                 aria-hidden
               />

@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 interface HexagonActionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: 'play' | 'booster' | 'default';
+  variant?: 'play' | 'booster' | 'share' | 'leaderboard' | 'default';
   show3DLine?: boolean;
   active?: boolean;
   badge?: ReactNode;
@@ -25,10 +25,10 @@ export const HexagonActionButton = ({
   // Variant colors
   const variantColors = {
     play: {
-      border: '#22c55e',
-      gradient: 'from-green-400 via-green-500 to-green-600',
-      inner: 'from-slate-900/90 to-slate-950/90',
-      glow: 'rgba(34, 197, 94, 0.6)',
+      border: '#10b981',
+      gradient: 'from-emerald-400 via-emerald-500 to-emerald-600',
+      inner: 'from-emerald-500/90 to-emerald-700/90',
+      glow: 'rgba(16, 185, 129, 0.6)',
     },
     booster: active ? {
       border: '#fb923c',
@@ -36,10 +36,22 @@ export const HexagonActionButton = ({
       inner: 'from-orange-500/90 to-orange-700/90',
       glow: 'rgba(251, 146, 60, 0.6)',
     } : {
-      border: '#f59e0b',
-      gradient: 'from-amber-400 via-amber-500 to-amber-600',
+      border: '#ea580c',
+      gradient: 'from-orange-500 via-orange-600 to-orange-700',
       inner: 'from-slate-900/90 to-slate-950/90',
-      glow: 'rgba(245, 158, 11, 0.6)',
+      glow: 'rgba(234, 88, 12, 0.6)',
+    },
+    share: {
+      border: '#3b82f6',
+      gradient: 'from-blue-400 via-blue-500 to-blue-600',
+      inner: 'from-slate-900/90 to-slate-950/90',
+      glow: 'rgba(59, 130, 246, 0.6)',
+    },
+    leaderboard: {
+      border: '#a855f7',
+      gradient: 'from-purple-400 via-purple-500 to-purple-600',
+      inner: 'from-slate-900/90 to-slate-950/90',
+      glow: 'rgba(168, 85, 247, 0.6)',
     },
     default: {
       border: '#fde047',
@@ -98,8 +110,8 @@ export const HexagonActionButton = ({
             <div 
               className="absolute inset-0"
               style={{
-                borderTop: `${borderWidth}px solid ${colors.border}`,
-                boxShadow: `0 0 20px ${colors.glow}, inset 0 -2px 4px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3)`,
+                borderTop: `${borderWidth + 2}px solid ${colors.border}`,
+                boxShadow: `0 0 30px ${colors.glow}, 0 4px 15px ${colors.glow}, inset 0 -3px 6px rgba(0,0,0,0.7), inset 0 3px 6px rgba(255,255,255,0.4)`,
               }}
               aria-hidden
             />
@@ -148,8 +160,12 @@ export const HexagonActionButton = ({
         
         {/* INNER LAYER */}
         <div 
-          className={`absolute inset-[7px] bg-gradient-to-br ${colors.inner} transition-all duration-300`}
+          className={`absolute bg-gradient-to-br ${colors.inner} transition-all duration-300`}
           style={{
+            top: '10px',
+            left: '20px',
+            right: '20px',
+            bottom: '10px',
             boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
             transform: 'translateZ(25px)',
             clipPath: `url(#${clipPathId})`
@@ -159,8 +175,12 @@ export const HexagonActionButton = ({
         
         {/* SPECULAR HIGHLIGHT */}
         <div 
-          className="absolute inset-[7px] pointer-events-none"
+          className="absolute pointer-events-none"
           style={{
+            top: '10px',
+            left: '20px',
+            right: '20px',
+            bottom: '10px',
             background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
             transform: 'translateZ(35px)',
             clipPath: `url(#${clipPathId})`

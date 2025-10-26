@@ -493,7 +493,7 @@ return (
               <div data-buttons-container className="flex flex-col gap-2 w-full">
               <HexagonActionButton
                 onClick={() => navigate('/invitation')}
-                variant="default"
+                variant="share"
                 show3DLine={false}
               >
                 {/* Share SVG Icon */}
@@ -508,7 +508,7 @@ return (
               
               <HexagonActionButton
                 onClick={() => navigate('/leaderboard')}
-                variant="default"
+                variant="leaderboard"
                 show3DLine={false}
               >
                 {/* Trophy SVG Icon */}
@@ -533,8 +533,8 @@ return (
           </div>
         </div>
 
-        {/* Play Button - Hexagon Shape with 3D Line - fixált pozíció a booster gomb felett, 2.5vh távolságra */}
-        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh + 3.5rem + 2.5vh)' }}>
+        {/* Play Button - Hexagon Shape with 3D Line - fixált pozíció a booster gomb felett, 2.5vh távolságra, 10% lejjebb */}
+        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh + 3.5rem + 2.5vh - 10vh)' }}>
           <div className="w-full max-w-screen-lg">
             <HexagonActionButton
               data-tutorial="play-button"
@@ -574,8 +574,8 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - Hexagon Shape with 3D Line - Fixált a TOP 100 cím felett, 2.5vh távolságra */}
-        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh)' }}>
+        {/* Booster Button - Hexagon Shape with 3D Line - Fixált a TOP 100 cím felett, 2.5vh távolságra, 10% lejjebb */}
+        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh - 10vh)' }}>
           <div className="w-full max-w-screen-lg">
             <HexagonActionButton
               data-tutorial="booster-button"

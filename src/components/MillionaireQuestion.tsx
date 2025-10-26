@@ -47,8 +47,8 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
           <div 
             className="absolute inset-0"
             style={{
-              borderTop: `${borderWidth}px solid #22d3ee`,
-              boxShadow: '0 0 20px rgba(34, 211, 238, 0.6), inset 0 -2px 4px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3)',
+              borderTop: `${borderWidth + 4}px solid #22d3ee`,
+              boxShadow: '0 0 40px rgba(34, 211, 238, 0.8), 0 6px 20px rgba(34, 211, 238, 0.6), inset 0 -4px 8px rgba(0,0,0,0.7), inset 0 4px 8px rgba(255,255,255,0.5)',
             }}
             aria-hidden
           />
@@ -57,7 +57,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         {/* Question number badge */}
         {questionNumber && (
           <div 
-            className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 z-50"
+            className="absolute left-[5%] top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 z-50"
             style={{ perspective: '500px', transform: 'translateY(-50%) translateZ(50px)' }}
           >
             <div className="absolute inset-0 rounded-full bg-black/60" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
@@ -114,8 +114,12 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         
         {/* INNER LAYER */}
         <div 
-          className="absolute inset-[7px] bg-gradient-to-br from-slate-900/90 to-slate-950/90"
+          className="absolute bg-gradient-to-br from-slate-900/90 to-slate-950/90"
           style={{
+            top: '10px',
+            left: '20px',
+            right: '20px',
+            bottom: '10px',
             boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
             transform: 'translateZ(25px)',
             clipPath: `url(#${clipPathId})`
@@ -125,8 +129,12 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         
         {/* SPECULAR HIGHLIGHT */}
         <div 
-          className="absolute inset-[7px] pointer-events-none"
+          className="absolute pointer-events-none"
           style={{
+            top: '10px',
+            left: '20px',
+            right: '20px',
+            bottom: '10px',
             background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
             transform: 'translateZ(35px)',
             clipPath: `url(#${clipPathId})`

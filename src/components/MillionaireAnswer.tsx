@@ -123,8 +123,8 @@ export const MillionaireAnswer = ({
         <div 
           className="absolute inset-0"
           style={{
-            borderTop: `${borderWidth}px solid ${borderColorHex}`,
-            boxShadow: `0 0 20px ${showCorrectPulse || isCorrect ? 'rgba(74, 222, 128, 0.6)' : isWrong ? 'rgba(248, 113, 113, 0.6)' : 'rgba(250, 204, 21, 0.4)'}, inset 0 -2px 4px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3)`,
+            borderTop: `${borderWidth + 4}px solid ${borderColorHex}`,
+            boxShadow: `0 0 40px ${showCorrectPulse || isCorrect ? 'rgba(74, 222, 128, 0.8)' : isWrong ? 'rgba(248, 113, 113, 0.8)' : 'rgba(250, 204, 21, 0.6)'}, 0 6px 20px ${showCorrectPulse || isCorrect ? 'rgba(74, 222, 128, 0.6)' : isWrong ? 'rgba(248, 113, 113, 0.6)' : 'rgba(250, 204, 21, 0.4)'}, inset 0 -4px 8px rgba(0,0,0,0.7), inset 0 4px 8px rgba(255,255,255,0.5)`,
           }}
           aria-hidden
         />
@@ -174,7 +174,7 @@ export const MillionaireAnswer = ({
       
       {/* INNER LAYER - Enhanced */}
       <div 
-        className={`absolute inset-[7px] bg-gradient-to-br transition-all duration-300 ${
+        className={`absolute bg-gradient-to-br transition-all duration-300 ${
           showCorrectPulse ? 'from-green-500/90 to-green-700/90' :
           isDoubleChoiceActive ? 'from-orange-500/90 to-orange-700/90' :
           isCorrect ? 'from-green-500/90 to-green-700/90' :
@@ -182,6 +182,10 @@ export const MillionaireAnswer = ({
           'from-slate-900/90 to-slate-950/90'
         }`}
         style={{
+          top: '10px',
+          left: '20px',
+          right: '20px',
+          bottom: '10px',
           boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
           transform: 'translateZ(25px)',
           clipPath: `url(#${clipPathId})`
@@ -191,8 +195,12 @@ export const MillionaireAnswer = ({
       
       {/* SPECULAR HIGHLIGHT - Enhanced */}
       <div 
-        className="absolute inset-[7px] pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
+          top: '10px',
+          left: '20px',
+          right: '20px',
+          bottom: '10px',
           background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
           transform: 'translateZ(35px)',
           clipPath: `url(#${clipPathId})`
@@ -209,7 +217,7 @@ export const MillionaireAnswer = ({
       >
         <div className="flex items-center justify-center w-full">
           <div 
-            className={`relative w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 text-xs sm:text-sm font-black`}
+            className={`relative w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 text-xs sm:text-sm font-black ml-[15%]`}
           >
             {/* Letter badge 3D */}
             <div 
