@@ -7,7 +7,7 @@ import { useGameProfile } from '@/hooks/useGameProfile';
 import { useUserBoosters } from '@/hooks/useUserBoosters';
 import { SPEED_BOOSTERS } from '@/types/game';
 import { supabase } from '@/integrations/supabase/client';
-import { QuickBuyOptInDialog } from './QuickBuyOptInDialog';
+import { QuickBuyOptInDialogFixed } from './QuickBuyOptInDialogFixed';
 import { GeniusSubscriptionDialog } from './GeniusSubscriptionDialog';
 import { TipsVideosGrid } from './TipsVideosGrid';
 import { calculateUsdPrice, calculateCoinCost } from '@/lib/geniusPricing';
@@ -421,7 +421,7 @@ const Shop = ({ userId }: ShopProps) => {
 
   return (
     <>
-      <QuickBuyOptInDialog 
+      <QuickBuyOptInDialogFixed 
         open={showQuickBuyDialog} 
         onAccept={handleQuickBuyAccept}
         onDecline={handleQuickBuyDecline}

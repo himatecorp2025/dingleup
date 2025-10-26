@@ -15,6 +15,7 @@ import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import LoginUsername from "./pages/LoginUsername";
 import Register from "./pages/Register";
 
 // Lazy load secondary pages
@@ -270,6 +271,7 @@ const App = () => {
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/login-username" element={<LoginUsername />} />
               <Route path="/registration-success" element={<RegistrationSuccess />} />
               <Route path="/install" element={<InstallApp />} />
               <Route path="/invitation" element={<Invitation />} />

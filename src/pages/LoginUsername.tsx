@@ -35,32 +35,37 @@ const LoginUsername = () => {
     try {
       const validated = loginSchema.parse(formData);
 
-      // Find user by username
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('username', validated.username)
-        .maybeSingle();
+      // Call the login-with-username edge function
+      const { data, error } = await supabase.functions.invoke('login-with-username', {
+        body: {
+          username: validated.username,
+          password: validated.password
+        }
+      });
 
-      if (profileError || !profile) {
+      if (error || data?.error) {
         toast({
           title: "Bejelentkezési hiba",
-          description: "Helytelen felhasználónév vagy jelszó",
+          description: data?.error || "Helytelen felhasználónév vagy jelszó",
           variant: "destructive",
         });
-        setIsLoading(false);
         return;
       }
 
-      // Username login requires server-side lookup - for now redirect to email login
-      toast({
-        title: "Átirányítás",
-        description: "Kérlek használd az email címes bejelentkezést egyelőre",
-        variant: "default",
-      });
-      setIsLoading(false);
-      navigate('/login');
-      return;
+      if (data?.session) {
+        // Set the session in Supabase
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token
+        });
+
+        toast({
+          title: "Sikeres bejelentkezés!",
+          description: "Átirányítunk...",
+        });
+        
+        navigate("/intro?next=/dashboard");
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof LoginForm, string>> = {};
@@ -70,6 +75,12 @@ const LoginUsername = () => {
           }
         });
         setErrors(fieldErrors);
+      } else {
+        toast({
+          title: "Bejelentkezési hiba",
+          description: "Váratlan hiba történt",
+          variant: "destructive",
+        });
       }
     } finally {
       setIsLoading(false);
