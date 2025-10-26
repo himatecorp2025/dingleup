@@ -70,8 +70,8 @@ const Hero = () => {
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
               
-              {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 opacity-90 border-2 border-yellow-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              {/* OUTER FRAME - világosabb színek */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 opacity-90 border-2 border-yellow-400/80 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
               <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -92,8 +92,8 @@ const Hero = () => {
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
               
-              {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-2 border-purple-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              {/* OUTER FRAME - világosabb színek */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500 via-purple-400 to-purple-600 opacity-90 border-2 border-purple-400/80 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
               <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -114,8 +114,8 @@ const Hero = () => {
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
               
-              {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-700 via-pink-600 to-pink-900 opacity-90 border-2 border-pink-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              {/* OUTER FRAME - világosabb színek */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-500 via-pink-400 to-pink-600 opacity-90 border-2 border-pink-400/80 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
               <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -141,8 +141,8 @@ const Hero = () => {
                 {/* BASE SHADOW - exactly like feature pills */}
                 <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
-                {/* OUTER FRAME - exactly like feature pills */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-700 via-green-600 to-green-900 opacity-90 border-2 border-green-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
+                {/* OUTER FRAME - világosabb színek */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500 via-green-400 to-green-600 opacity-90 border-2 border-green-400/80 shadow-2xl" style={{ transform: 'translateZ(0px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
                 {/* MIDDLE FRAME - exactly like feature pills */}
                 <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
@@ -167,7 +167,7 @@ const Hero = () => {
 
               <div className="relative group" style={{ perspective: '1000px' }}>
                 <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(8px)' }} aria-hidden />
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-80 border-2 border-purple-500/50 shadow-lg" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500 via-purple-400 to-purple-600 opacity-80 border-2 border-purple-400/70 shadow-lg" style={{ transform: 'translateZ(0px)' }} aria-hidden />
                 <div className="absolute inset-[3px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
                 <div className="absolute inset-[5px] rounded-2xl bg-gradient-to-br from-white/10 to-black/20 backdrop-blur-sm" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
                 <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
