@@ -1138,7 +1138,7 @@ const GamePreview = () => {
 
   if (gameState === 'finished') {
     return (
-      <div className="fixed inset-0 w-screen h-screen overflow-hidden">
+      <div className="fixed inset-0 w-screen h-screen flex items-center justify-center overflow-hidden">
         {/* Background with blur */}
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
@@ -1148,13 +1148,13 @@ const GamePreview = () => {
         
         {/* Animated particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(40)].map((_, i) => (
+          {[...Array(50)].map((_, i) => (
             <div
               key={i}
               className="absolute rounded-full bg-yellow-400/30 animate-pulse"
               style={{
-                width: `${Math.random() * 6 + 2}px`,
-                height: `${Math.random() * 6 + 2}px`,
+                width: `${Math.random() * 8 + 3}px`,
+                height: `${Math.random() * 8 + 3}px`,
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
                 animationDelay: `${i * 0.1}s`,
@@ -1164,21 +1164,22 @@ const GamePreview = () => {
           ))}
         </div>
 
-        {/* Main content - Centered with safe area */}
-        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-3 py-4 sm:px-4 sm:py-6 md:px-6 md:py-8 overflow-y-auto">
-          {/* 3D Trophy - Much Larger with Glow */}
-          <div className="relative flex items-center justify-center mb-4 sm:mb-6 md:mb-8">
-            {/* Multiple glow layers for emphasis */}
-            <div className="absolute inset-0 bg-yellow-400/40 rounded-full blur-[80px] scale-150 animate-pulse" />
-            <div className="absolute inset-0 bg-orange-500/30 rounded-full blur-[60px] scale-125 animate-pulse" style={{ animationDelay: '0.5s' }} />
+        {/* Main content - Perfectly centered vertically and horizontally */}
+        <div className="relative z-10 w-full max-w-[95%] sm:max-w-2xl max-h-[95vh] flex flex-col items-center justify-center overflow-y-auto px-3 py-4 sm:px-6 sm:py-6">
+          {/* 3D Trophy - Double the size with enhanced glow */}
+          <div className="relative flex items-center justify-center mb-4 sm:mb-6 flex-shrink-0">
+            {/* Multiple glow layers for maximum emphasis */}
+            <div className="absolute inset-0 bg-yellow-400/50 rounded-full blur-[100px] scale-[2] animate-pulse" />
+            <div className="absolute inset-0 bg-orange-500/40 rounded-full blur-[80px] scale-[1.8] animate-pulse" style={{ animationDelay: '0.5s' }} />
+            <div className="absolute inset-0 bg-yellow-300/30 rounded-full blur-[60px] scale-[1.5] animate-pulse" style={{ animationDelay: '1s' }} />
             <Trophy3D 
-              className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80" 
+              className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] xl:w-[32rem] xl:h-[32rem]" 
               animate={true} 
             />
           </div>
           
           {/* Title */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 sm:mb-8 md:mb-10 relative text-center px-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 relative text-center px-4 flex-shrink-0">
             <span 
               className="relative inline-block"
               style={{
@@ -1194,8 +1195,8 @@ const GamePreview = () => {
             </span>
           </h1>
 
-          {/* Stats cards with 3D effect - Fully responsive */}
-          <div className="w-full max-w-[90%] sm:max-w-md space-y-3 sm:space-y-4 mb-6 sm:mb-8 md:mb-10">
+          {/* Stats cards with 3D effect - Fully responsive and compact */}
+          <div className="w-full space-y-2 sm:space-y-3 mb-4 sm:mb-6 flex-shrink-0">
             {/* Correct answers */}
             <div className="relative group" style={{ perspective: '1000px' }}>
               <div 
@@ -1269,15 +1270,15 @@ const GamePreview = () => {
             )}
           </div>
 
-          {/* Buttons - Fully responsive */}
-          <div className="w-full max-w-[90%] sm:max-w-md space-y-2.5 sm:space-y-3 pb-4">
+          {/* Buttons - Fully responsive and compact */}
+          <div className="w-full space-y-2 sm:space-y-2.5 flex-shrink-0">
             <HexagonButton 
               variant="yellow" 
               size="lg" 
               onClick={() => {
                 setGameState('category-select');
               }}
-              className="w-full transform hover:scale-105 transition-all shadow-[0_8px_32px_rgba(255,215,0,0.4)] text-sm sm:text-base"
+              className="w-full transform hover:scale-105 transition-all shadow-[0_8px_32px_rgba(255,215,0,0.4)] text-xs sm:text-sm md:text-base"
               style={{
                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
               }}
@@ -1289,7 +1290,7 @@ const GamePreview = () => {
               onClick={() => {
                 navigate('/dashboard');
               }}
-              className="w-full text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 sm:py-3 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-white/20"
+              className="w-full text-white text-xs sm:text-sm md:text-base font-semibold py-2 sm:py-2.5 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-white/20"
               style={{
                 textShadow: '0 2px 4px rgba(0,0,0,0.5)'
               }}
