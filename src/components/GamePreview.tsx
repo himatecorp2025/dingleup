@@ -106,6 +106,33 @@ const GamePreview = () => {
     });
   }, [navigate]);
 
+  // Background detection - exit game if app goes to background
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log('[GameSecurity] App went to background - exiting game');
+        toast.error('A játék megszakadt, mert elhagytad az alkalmazást');
+        navigate('/dashboard');
+      }
+    };
+
+    const handleBlur = () => {
+      console.log('[GameSecurity] Window lost focus - exiting game');
+      toast.error('A játék megszakadt, mert elhagytad az alkalmazást');
+      navigate('/dashboard');
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleBlur);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleBlur);
+    };
+  }, [gameState, navigate]);
+
   // Check for in-game payment success
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
