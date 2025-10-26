@@ -82,21 +82,15 @@ export const MillionaireAnswer = ({
 
   return (
     <div className="w-full flex justify-center mb-2">
-      {/* SVG clip-path definition - lekerekített hexagon */}
+      {/* SVG clip-path definition - EXACT HEXAGON from provided SVG */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
-            {/* Hexagon: sharp left/right tips, precise 60° rounded corners on top/bottom */}
-            <path shapeRendering="crispEdges" d="
-              M 0.00,0.50
-               C 0.03,0.35 0.10,0.15 0.20,0.00
-               L 0.80,0.00
-               C 0.90,0.15 0.97,0.35 1.00,0.50
-               C 0.97,0.65 0.90,0.85 0.80,1.00
-               L 0.20,1.00
-               C 0.10,0.85 0.03,0.65 0.00,0.50
-               Z
-            " />
+            {/* Pixel-perfect hexagon: sharp left/right tips, rounded diagonal corners (r=56) */}
+            <path 
+              shapeRendering="geometricPrecision"
+              d="M 0.00000,0.50000 L 0.15287,0.04128 A 0.04667,0.13333 0 0 1 0.18667,0.00000 L 0.81333,0.00000 A 0.04667,0.13333 0 0 1 0.84713,0.04128 L 1.00000,0.50000 L 0.84713,0.95872 A 0.04667,0.13333 0 0 1 0.81333,1.00000 L 0.18667,1.00000 A 0.04667,0.13333 0 0 1 0.15287,0.95872 L 0.00000,0.50000 Z"
+            />
           </clipPath>
         </defs>
       </svg>
