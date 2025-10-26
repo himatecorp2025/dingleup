@@ -111,8 +111,27 @@ export const RoundedHexagon: React.FC<RoundedHexagonProps> = ({
       <svg width="0" height="0" className="absolute">
         <defs>
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
-            {/* Elongated hexagon with pointed left/right ends */}
-            <path d="M 0.05,0.5 C 0.05,0.3 0.06,0.15 0.08,0.08 C 0.09,0.03 0.11,0 0.15,0 L 0.85,0 C 0.89,0 0.91,0.03 0.92,0.08 C 0.94,0.15 0.95,0.3 0.95,0.5 C 0.95,0.7 0.94,0.85 0.92,0.92 C 0.91,0.97 0.89,1 0.85,1 L 0.15,1 C 0.11,1 0.09,0.97 0.08,0.92 C 0.06,0.85 0.05,0.7 0.05,0.5 Z" />
+            {/* True hexagon with curved corners - 6 sides */}
+            <path d="
+              M 0.15,0 
+              L 0.85,0 
+              C 0.88,0 0.90,0.01 0.92,0.03
+              L 0.98,0.15
+              C 0.99,0.17 1,0.20 1,0.23
+              L 1,0.77
+              C 1,0.80 0.99,0.83 0.98,0.85
+              L 0.92,0.97
+              C 0.90,0.99 0.88,1 0.85,1
+              L 0.15,1
+              C 0.12,1 0.10,0.99 0.08,0.97
+              L 0.02,0.85
+              C 0.01,0.83 0,0.80 0,0.77
+              L 0,0.23
+              C 0,0.20 0.01,0.17 0.02,0.15
+              L 0.08,0.03
+              C 0.10,0.01 0.12,0 0.15,0
+              Z
+            " />
           </clipPath>
         </defs>
       </svg>
