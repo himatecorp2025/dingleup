@@ -87,14 +87,14 @@ export const MillionaireAnswer = ({
         <defs>
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
             {/* Complete hexagon: sharp left/right points, curved top/bottom */}
-            <path d="
+            <path shapeRendering="crispEdges" d="
               M 0.10,0 
                L 0.90,0 
-               C 0.96,0 0.995,0.18 1.00,0.50
-               C 0.995,0.82 0.96,1.00 0.90,1.00
+               C 0.94,0 0.992,0.30 1.00,0.50
+               C 0.992,0.70 0.94,1.00 0.90,1.00
                L 0.10,1.00
-               C 0.04,1.00 0.005,0.82 0.00,0.50
-               C 0.005,0.18 0.04,0.00 0.10,0.00
+               C 0.06,1.00 0.008,0.70 0.00,0.50
+               C 0.008,0.30 0.06,0.00 0.10,0.00
                Z
             " />
           </clipPath>
