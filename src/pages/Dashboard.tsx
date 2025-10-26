@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DiamondHexagon } from '@/components/DiamondHexagon';
 import { DiamondButton } from '@/components/DiamondButton';
-import { HexagonActionButton } from '@/components/HexagonActionButton';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
@@ -491,10 +490,10 @@ return (
                 }
               `}</style>
               <div data-buttons-container className="flex flex-col gap-2 w-full">
-              <HexagonActionButton
+              <DiamondButton
                 onClick={() => navigate('/invitation')}
                 variant="share"
-                show3DLine={false}
+                size="sm"
               >
                 {/* Share SVG Icon */}
                 <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -503,13 +502,13 @@ return (
                   <path d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z" stroke="currentColor" strokeWidth="2"/>
                   <path d="M8.59 13.51L15.42 17.49M15.41 6.51L8.59 10.49" stroke="currentColor" strokeWidth="2"/>
                 </svg>
-                <span className="text-[10px] sm:text-xs md:text-sm font-bold">SHARE</span>
-              </HexagonActionButton>
+                <span className="text-[10px] sm:text-xs md:text-sm">SHARE</span>
+              </DiamondButton>
               
-              <HexagonActionButton
+              <DiamondButton
                 onClick={() => navigate('/leaderboard')}
                 variant="leaderboard"
-                show3DLine={false}
+                size="sm"
               >
                 {/* Trophy SVG Icon */}
                 <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -518,8 +517,8 @@ return (
                   <path d="M8 4H16V10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10V4Z" stroke="currentColor" strokeWidth="2"/>
                   <path d="M12 14V17M8 20H16M10 17H14V20H10V17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                <span className="text-[10px] sm:text-xs md:text-sm font-bold">RANGLISTA</span>
-              </HexagonActionButton>
+                <span className="text-[10px] sm:text-xs md:text-sm">RANGLISTA</span>
+              </DiamondButton>
             </div>
             </div>
           </div>
@@ -533,17 +532,17 @@ return (
           </div>
         </div>
 
-        {/* Play Button - Hexagon Shape with 3D Line - 15% vertikálisan nagyobb, booster fölött */}
-        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 5vh + 6.5rem + 2.5vh + 4rem)' }}>
+        {/* Play Button - 3D Diamond - fixált pozíció a booster gomb felett, 2.5vh távolságra */}
+        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh + 3.5rem + 2.5vh)' }}>
           <div className="w-full max-w-screen-lg">
-            <HexagonActionButton
+            <DiamondButton
               data-tutorial="play-button"
               onClick={() => navigate('/game')}
               variant="play"
-              show3DLine={true}
+              size="lg"
+              className="!py-5 sm:!py-6"
               style={{
-                animation: 'play-pulse 0.8s ease-in-out infinite',
-                transform: 'scaleY(1.15)'
+                animation: 'play-pulse 0.8s ease-in-out infinite'
               }}
             >
               {/* Play SVG Icon */}
@@ -558,7 +557,7 @@ return (
               >
                 PLAY NOW
               </span>
-            </HexagonActionButton>
+            </DiamondButton>
           </div>
         </div>
 
@@ -575,10 +574,10 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - Hexagon Shape with 3D Line - TOP 100 felett 5%-kal */}
-        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 5vh + 6.5rem)' }}>
+        {/* Booster Button - Fixált a TOP 100 cím felett, 2.5vh távolságra */}
+        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh)' }}>
           <div className="w-full max-w-screen-lg">
-            <HexagonActionButton
+            <DiamondButton
               data-tutorial="booster-button"
               onClick={async () => {
                 if (hasActiveBooster) {
@@ -597,8 +596,9 @@ return (
                 }
               }}
               variant="booster"
-              show3DLine={true}
+              size="lg"
               active={hasActiveBooster}
+              className="!py-5 sm:!py-6"
               badge={
                 hasActiveBooster ? (
                   <span className="flex h-3 w-3">
@@ -622,7 +622,7 @@ return (
               ) : (
                 <span className="font-black text-base sm:text-xl md:text-2xl">BOOSTERS</span>
               )}
-            </HexagonActionButton>
+            </DiamondButton>
           </div>
         </div>
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { HexClipPath } from './frames/HexClipPath';
 
 interface DiamondHexagonProps {
   type: 'rank' | 'coins' | 'lives';
@@ -100,12 +99,8 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
     }
   };
 
-  const clipPathId = `hexClip-diamond-${type}-${Math.random().toString(36).substr(2, 9)}`;
-
   return (
     <div className={`relative ${className}`}>
-      <HexClipPath clipPathId={clipPathId} />
-      
       {/* Outer glow */}
       <div
         className="absolute inset-0 rounded-full blur-xl opacity-60 animate-pulse"
@@ -116,7 +111,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
         {/* BASE SHADOW (3D depth) */}
         <div
-          className="absolute"
+          className="absolute clip-hexagon"
           style={{
             top: '3px',
             left: '3px',
@@ -124,53 +119,45 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
             bottom: '-3px',
             background: 'rgba(0,0,0,0.35)',
             filter: 'blur(3px)',
-            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
 
         {/* OUTER FRAME - gradient with border */}
         <div
-          className={`absolute inset-0 bg-gradient-to-br ${colors.gradientOuter} border-2 ${colors.borderColor} ${colors.shadowColor}`}
-          style={{ clipPath: `url(#${clipPathId})` }}
+          className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${colors.gradientOuter} border-2 ${colors.borderColor} ${colors.shadowColor}`}
           aria-hidden
         />
 
         {/* MIDDLE FRAME (bright inner highlight) */}
         <div
-          className={`absolute inset-[3px] bg-gradient-to-b ${colors.gradientMiddle}`}
-          style={{ 
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
-            clipPath: `url(#${clipPathId})`
-          }}
+          className={`absolute inset-[3px] clip-hexagon bg-gradient-to-b ${colors.gradientMiddle}`}
+          style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }}
           aria-hidden
         />
 
         {/* INNER CRYSTAL/COLOR LAYER */}
         <div
-          className="absolute bg-gradient-to-b"
+          className={`absolute clip-hexagon bg-gradient-to-b ${colors.gradientInner}`}
           style={{
-            top: '8px',
-            left: '16px',
-            right: '16px',
-            bottom: '8px',
-            background: `linear-gradient(to bottom, ${colors.gradientInner.split(' ')[0].replace('from-', '')}, ${colors.gradientInner.split(' ')[2].replace('to-', '')})`,
+            top: '5px',
+            left: '5px',
+            right: '5px',
+            bottom: '5px',
             boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
-            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
 
         {/* SPECULAR HIGHLIGHT (top-left) */}
         <div
-          className="absolute pointer-events-none"
+          className="absolute clip-hexagon pointer-events-none"
           style={{
-            top: '8px',
-            left: '16px',
-            right: '16px',
-            bottom: '8px',
+            top: '5px',
+            left: '5px',
+            right: '5px',
+            bottom: '5px',
             background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
-            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />
@@ -178,14 +165,13 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
         {/* INNER GLOW (bottom shadow for 3D depth) */}
         <div
-          className="absolute pointer-events-none"
+          className="absolute clip-hexagon pointer-events-none"
           style={{
-            top: '8px',
-            left: '16px',
-            right: '16px',
-            bottom: '8px',
+            top: '5px',
+            left: '5px',
+            right: '5px',
+            bottom: '5px',
             boxShadow: 'inset 0 0 10px rgba(0,0,0,0.25)',
-            clipPath: `url(#${clipPathId})`
           }}
           aria-hidden
         />

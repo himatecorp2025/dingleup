@@ -2,7 +2,7 @@ import { RefreshCw, LogOut, Users, SkipForward, Coins } from "lucide-react";
 import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
 import { TimerCircle } from "./TimerCircle";
-import { HelpButton } from "./HelpButton";
+import { HexagonButton } from "./HexagonButton";
 import { Question, getSkipCost } from "@/types/game";
 import { ScreenshotProtection } from "./ScreenshotProtection";
 
@@ -200,65 +200,46 @@ export const QuestionCard = ({
         {/* Bottom section: Help buttons - hexagon shaped with deep 3D */}
         <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-3 mt-0">
         {/* 1/3 Help Button */}
-        <HelpButton
-          onClick={onUseHelp5050}
-          disabled={disabled || help5050UsageCount >= 2}
-          color="blue"
-        >
-          <span className="font-bold text-base sm:text-lg">1/3</span>
-          {help5050UsageCount === 1 && (
-            <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
-              <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-              15
-            </span>
-          )}
-        </HelpButton>
+        <div className="relative" style={{ perspective: '600px' }}>
+          <button
+            onClick={onUseHelp5050}
+            disabled={disabled || help5050UsageCount >= 2}
+            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 transition-all ${help5050UsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+          >
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 border-2 border-blue-300/80 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[3px] bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ clipPath: 'inherit', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)', transform: 'translateZ(8px)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[4px] bg-gradient-to-br from-blue-500/80 to-blue-700/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
+            
+            <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
+              <span className="font-bold text-base sm:text-lg">1/3</span>
+              {help5050UsageCount === 1 && (
+                <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
+                  <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
+                  15
+                </span>
+              )}
+            </div>
+          </button>
+        </div>
         
         {/* 2x Help Button */}
-        <HelpButton
-          onClick={onUseHelp2xAnswer}
-          disabled={disabled || help2xAnswerUsageCount >= 2}
-          color="green"
-        >
-          <span className="font-bold text-base sm:text-lg">2x</span>
-          {help2xAnswerUsageCount === 1 && (
-            <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
-              <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-              20
-            </span>
-          )}
-        </HelpButton>
-        
-        {/* Audience Help Button */}
-        <HelpButton
-          onClick={onUseHelpAudience}
-          disabled={disabled || helpAudienceUsageCount >= 2}
-          color="purple"
-        >
-          <Users className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-          {helpAudienceUsageCount === 1 && (
-            <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
-              <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-              30
-            </span>
-          )}
-        </HelpButton>
-        
-        {/* Skip Question Button */}
-        <HelpButton
-          onClick={onUseQuestionSwap}
-          disabled={disabled || usedQuestionSwap}
-          color="orange"
-        >
-          <SkipForward className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-          {!usedQuestionSwap && (
-            <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
-              <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-              {skipCost}
-            </span>
-          )}
-        </HelpButton>
-        </div>
+        <div className="relative" style={{ perspective: '600px' }}>
+          <button
+            onClick={onUseHelp2xAnswer}
+            disabled={disabled || help2xAnswerUsageCount >= 2}
+            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 transition-all ${help2xAnswerUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+          >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
             

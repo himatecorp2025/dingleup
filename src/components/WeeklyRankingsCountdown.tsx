@@ -56,19 +56,12 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
   }
 
   return (
-    <div className="relative h-full flex items-center w-[180px] sm:w-[220px] md:w-[260px]">
-      {/* SVG clip-path definition - EXACT HEXAGON */}
-      <svg width="0" height="0" style={{ position: 'absolute' }}>
-        <defs>
-          <clipPath id="hexClip-countdown" clipPathUnits="objectBoundingBox">
-            <path 
-              shapeRendering="geometricPrecision"
-              d="M 0.00000,0.50000 L 0.15287,0.04128 A 0.04667,0.13333 0 0 1 0.18667,0.00000 L 0.81333,0.00000 A 0.04667,0.13333 0 0 1 0.84713,0.04128 L 1.00000,0.50000 L 0.84713,0.95872 A 0.04667,0.13333 0 0 1 0.81333,1.00000 L 0.18667,1.00000 A 0.04667,0.13333 0 0 1 0.15287,0.95872 L 0.00000,0.50000 Z"
-            />
-          </clipPath>
-        </defs>
-      </svg>
-
+    <div 
+      className="relative h-full flex items-center w-[180px] sm:w-[220px] md:w-[260px]"
+      style={{ 
+        clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+      }}
+    >
       {/* BASE SHADOW (3D depth) */}
       <div
         className="absolute"
@@ -77,7 +70,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
           left: '4px',
           right: '-4px',
           bottom: '-4px',
-          clipPath: 'url(#hexClip-countdown)',
+          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
           background: 'rgba(0,0,0,0.35)',
           filter: 'blur(4px)',
         }}
@@ -88,7 +81,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
       <div
         className="absolute inset-0"
         style={{
-          clipPath: 'url(#hexClip-countdown)',
+          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
           background: 'linear-gradient(135deg, #B8860B, #DAA520 50%, #8B6914)',
           boxShadow: 'inset 0 0 0 3px #FFD700, 0 0 30px rgba(255,215,0,0.8)',
         }}
@@ -99,7 +92,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
       <div
         className="absolute inset-[3px]"
         style={{
-          clipPath: 'url(#hexClip-countdown)',
+          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
           background: 'linear-gradient(180deg, #FFD700, #FDB931 40%, #D97706)',
           boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.6)',
         }}
@@ -114,7 +107,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
           left: '6px',
           right: '6px',
           bottom: '6px',
-          clipPath: 'url(#hexClip-countdown)',
+          clipPath: 'polygon(8% 0.6%, 92% 0%, 100% 50%, 92% 100%, 8% 99.4%, 0% 50%)',
           background: 'radial-gradient(ellipse 100% 80% at 50% -10%, #FFF9E6 0%, #FFE082 30%, #FDB931 60%, #F59E0B 100%)',
           boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.4), inset 0 -12px 24px rgba(0,0,0,0.3)',
         }}
@@ -129,7 +122,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
           left: '6px',
           right: '6px',
           bottom: '6px',
-          clipPath: 'url(#hexClip-countdown)',
+          clipPath: 'polygon(8% 0.6%, 92% 0%, 100% 50%, 92% 100%, 8% 99.4%, 0% 50%)',
           background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 30%, transparent 60%)',
         }}
         aria-hidden
@@ -143,7 +136,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
           left: '6px',
           right: '6px',
           bottom: '6px',
-          clipPath: 'url(#hexClip-countdown)',
+          clipPath: 'polygon(8% 0.6%, 92% 0%, 100% 50%, 92% 100%, 8% 99.4%, 0% 50%)',
           background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.12) 8px, rgba(255,255,255,0.12) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.08) 20px, rgba(255,255,255,0.08) 24px)',
           opacity: 0.7,
         }}
@@ -158,7 +151,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
           left: '6px',
           right: '6px',
           bottom: '6px',
-          clipPath: 'url(#hexClip-countdown)',
+          clipPath: 'polygon(8% 0.6%, 92% 0%, 100% 50%, 92% 100%, 8% 99.4%, 0% 50%)',
           overflow: 'hidden',
         }}
         aria-hidden
@@ -180,7 +173,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
           left: '6px',
           right: '6px',
           bottom: '6px',
-          clipPath: 'url(#hexClip-countdown)',
+          clipPath: 'polygon(8% 0.6%, 92% 0%, 100% 50%, 92% 100%, 8% 99.4%, 0% 50%)',
           boxShadow: 'inset 0 0 12px rgba(0,0,0,0.2)',
         }}
         aria-hidden
