@@ -13,8 +13,52 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
-    // PWA temporarily disabled for debugging build issues
-    // mode === "production" && VitePWA({ ... })
+    // Only enable PWA in production builds to avoid sandbox proxy issues in preview/dev
+    mode === "production" && VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['logo.png'],
+      manifest: {
+        name: 'Dingle UP! - Kvízjáték',
+        short_name: 'Dingle UP',
+        description: 'Teszteld tudásod 15 izgalmas kérdéssel! Gyűjts aranyérméket és versenyezz a ranglistán.',
+        theme_color: '#0a0a2e',
+        background_color: '#0a0a2e',
+        display: 'fullscreen',
+        orientation: 'portrait',
+        start_url: '/',
+        scope: '/',
+        icons: [
+          {
+            src: '/logo.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/logo.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
+          }
+        ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'supabase-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 // 1 day
+              }
+            }
+          }
+        ]
+      }
+    })
   ].filter(Boolean),
   resolve: {
     alias: {
