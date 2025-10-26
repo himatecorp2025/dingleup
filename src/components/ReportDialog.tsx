@@ -322,13 +322,22 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
             </div>
           </div>
 
-          <Button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="w-full bg-gradient-to-r from-yellow-600 to-yellow-800 text-black font-bold h-9 text-sm"
-          >
-            {submitting ? 'Küldés...' : 'Jelentés beküldése'}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => onOpenChange(false)}
+              variant="outline"
+              className="flex-1 bg-gray-800 border-purple-500/50 text-white hover:bg-gray-700 h-9 text-sm"
+            >
+              Mégsem
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="flex-1 bg-gradient-to-r from-yellow-600 to-yellow-800 text-black font-bold h-9 text-sm"
+            >
+              {submitting ? 'Küldés...' : 'Jelentés beküldése'}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

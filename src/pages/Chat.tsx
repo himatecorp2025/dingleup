@@ -12,13 +12,13 @@ import { usePresenceHeartbeat } from '@/hooks/usePresenceHeartbeat';
 
 interface ChatThread {
   id: string;
-  otherUserId: string;
-  otherUsername: string;
-  otherAvatar: string | null;
-  lastMessage: string | null;
-  lastMessageAt: string | null;
-  unreadCount: number;
-  isOnline: boolean;
+  other_user_id: string;
+  other_user_name: string;
+  other_user_avatar: string | null;
+  last_message_preview: string | null;
+  last_message_at: string | null;
+  unread_count: number;
+  online_status: 'online' | 'away' | 'offline';
 }
 
 export default function Chat() {
@@ -59,19 +59,23 @@ export default function Chat() {
     
     loadThreads();
     
-    // Real-time subscriptions
+    // Real-time subscriptions - reload threads on any change
     const channel = supabase
       .channel('chat-updates')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, () => {
+        console.log('[Chat] dm_threads changed, reloading threads');
         loadThreads();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, () => {
+        console.log('[Chat] dm_messages changed, reloading threads');
         loadThreads();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, () => {
+        console.log('[Chat] user_presence changed, reloading threads');
         loadThreads();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, () => {
+        console.log('[Chat] friendships changed, reloading threads');
         loadThreads();
       })
       .subscribe();
@@ -85,8 +89,10 @@ export default function Chat() {
     if (!session?.user?.id) return;
 
     try {
+      console.log('[Chat] Loading threads for user:', session.user.id);
       const { data, error } = await supabase.functions.invoke('get-threads');
       if (error) throw error;
+      console.log('[Chat] Loaded threads:', data?.threads?.length || 0);
       setThreads(data?.threads || []);
     } catch (error) {
       console.error('[Chat] Error loading threads:', error);
@@ -132,22 +138,22 @@ export default function Chat() {
 
   // Get friends from threads for avatar bar
   const friends = threads.map(t => ({
-    id: t.otherUserId,
-    display_name: t.otherUsername,
-    avatar_url: t.otherAvatar,
-    is_online: t.isOnline
+    id: t.other_user_id,
+    display_name: t.other_user_name,
+    avatar_url: t.other_user_avatar,
+    is_online: t.online_status === 'online'
   }));
 
   // Convert ChatThread to Thread format expected by ThreadsList
   const threadsForList = threads.map(t => ({
     id: t.id,
-    other_user_id: t.otherUserId,
-    other_user_name: t.otherUsername,
-    other_user_avatar: t.otherAvatar,
-    last_message_preview: t.lastMessage,
-    last_message_at: t.lastMessageAt,
-    unread_count: t.unreadCount,
-    online_status: (t.isOnline ? 'online' : 'offline') as 'online' | 'away' | 'offline'
+    other_user_id: t.other_user_id,
+    other_user_name: t.other_user_name,
+    other_user_avatar: t.other_user_avatar,
+    last_message_preview: t.last_message_preview,
+    last_message_at: t.last_message_at,
+    unread_count: t.unread_count,
+    online_status: t.online_status
   }));
 
   return (
