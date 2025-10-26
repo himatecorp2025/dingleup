@@ -1132,13 +1132,13 @@ const GamePreview = () => {
 
   if (gameState === 'finished') {
     return (
-      <div className="fixed inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-        {/* Background with blur */}
+      <div className="fixed inset-0 w-full h-full flex items-center justify-center overflow-hidden">
+        {/* Background with only 10% blur - transparent */}
         <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-30"
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
-        <div className="absolute inset-0 w-full h-full backdrop-blur-sm" />
+        <div className="absolute inset-0 w-full h-full backdrop-blur-[2px]" />
         
         {/* Animated particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -1160,14 +1160,14 @@ const GamePreview = () => {
 
         {/* Main content - Full screen optimized */}
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 py-6 overflow-y-auto">
-          {/* 3D Trophy - Optimized for mobile */}
+          {/* 3D Trophy - DOUBLE SIZE */}
           <div className="relative flex items-center justify-center mb-6 flex-shrink-0">
             {/* Multiple glow layers for maximum emphasis */}
-            <div className="absolute inset-0 bg-yellow-400/50 rounded-full blur-[100px] scale-[2] animate-pulse" />
-            <div className="absolute inset-0 bg-orange-500/40 rounded-full blur-[80px] scale-[1.8] animate-pulse" style={{ animationDelay: '0.5s' }} />
-            <div className="absolute inset-0 bg-yellow-300/30 rounded-full blur-[60px] scale-[1.5] animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute inset-0 bg-yellow-400/50 rounded-full blur-[100px] scale-[2.5] animate-pulse" />
+            <div className="absolute inset-0 bg-orange-500/40 rounded-full blur-[80px] scale-[2.2] animate-pulse" style={{ animationDelay: '0.5s' }} />
+            <div className="absolute inset-0 bg-yellow-300/30 rounded-full blur-[60px] scale-[2] animate-pulse" style={{ animationDelay: '1s' }} />
             <Trophy3D 
-              className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80" 
+              className="relative w-96 h-96 sm:w-[32rem] sm:h-[32rem] md:w-[40rem] md:h-[40rem]" 
               animate={true} 
             />
           </div>
@@ -1189,47 +1189,51 @@ const GamePreview = () => {
             </span>
           </h1>
 
-          {/* Stats cards with 3D effect - Full width */}
+          {/* Stats cards with DEEP 3D effect like Profile page */}
           <div className="w-full max-w-md space-y-3 mb-6 flex-shrink-0">
-            {/* Correct answers */}
-            <div className="relative group" style={{ perspective: '1000px' }}>
-              <div 
-                className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-700 rounded-2xl"
-                style={{ 
-                  transform: 'translateZ(-8px)',
-                  filter: 'blur(8px)',
-                  opacity: 0.6
-                }}
-              />
-              <div 
-                className="relative bg-gradient-to-br from-green-500/30 to-green-700/30 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 border-2 border-green-400/50 transition-transform hover:scale-105"
-                style={{
-                  transform: 'translateZ(0)',
-                  boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(0,255,0,0.3)'
-                }}
-              >
+            {/* Correct answers - Deep 3D */}
+            <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transform-gpu">
+              {/* BASE SHADOW (3D depth) */}
+              <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-700 via-green-600 to-green-900 opacity-90 border-3 border-green-500/60 shadow-2xl" aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-green-600 via-green-500 to-green-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[5px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-green-500/30 via-green-600/30 to-green-700/30" style={{ boxShadow: 'inset 0 6px 16px rgba(255,255,255,0.12), inset 0 -6px 16px rgba(0,0,0,0.4)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[5px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
+              
+              {/* Content */}
+              <div className="relative z-10">
                 <p className="text-xs sm:text-sm md:text-base text-white/80 font-semibold mb-0.5 sm:mb-1">Helyes válaszok</p>
                 <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">{correctAnswers}/15</p>
               </div>
             </div>
 
-            {/* Coins earned */}
-            <div className="relative group" style={{ perspective: '1000px' }}>
-              <div 
-                className="absolute inset-0 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl"
-                style={{ 
-                  transform: 'translateZ(-8px)',
-                  filter: 'blur(8px)',
-                  opacity: 0.6
-                }}
-              />
-              <div 
-                className="relative bg-gradient-to-br from-yellow-500/30 to-orange-600/30 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 border-2 border-yellow-400/50 transition-transform hover:scale-105"
-                style={{
-                  transform: 'translateZ(0)',
-                  boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(255,215,0,0.3)'
-                }}
-              >
+            {/* Coins earned - Deep 3D */}
+            <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transform-gpu">
+              {/* BASE SHADOW (3D depth) */}
+              <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-700 via-orange-600 to-orange-900 opacity-90 border-3 border-yellow-500/60 shadow-2xl" aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-600 via-orange-500 to-orange-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[5px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-500/30 via-orange-600/30 to-orange-700/30" style={{ boxShadow: 'inset 0 6px 16px rgba(255,255,255,0.12), inset 0 -6px 16px rgba(0,0,0,0.4)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[5px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
+              
+              {/* Content */}
+              <div className="relative z-10">
                 <p className="text-xs sm:text-sm md:text-base text-white/80 font-semibold mb-0.5 sm:mb-1">Szerzett aranyérme</p>
                 <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg flex items-center justify-center gap-2">
                   +{coinsEarned} <span className="text-xl sm:text-2xl md:text-3xl">🪙</span>
@@ -1237,24 +1241,26 @@ const GamePreview = () => {
               </div>
             </div>
 
-            {/* Average response time */}
+            {/* Average response time - Deep 3D */}
             {responseTimes.length > 0 && (
-              <div className="relative group" style={{ perspective: '1000px' }}>
-                <div 
-                  className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl"
-                  style={{ 
-                    transform: 'translateZ(-8px)',
-                    filter: 'blur(8px)',
-                    opacity: 0.6
-                  }}
-                />
-                <div 
-                  className="relative bg-gradient-to-br from-blue-500/30 to-purple-600/30 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 border-2 border-blue-400/50 transition-transform hover:scale-105"
-                  style={{
-                    transform: 'translateZ(0)',
-                    boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(96,165,250,0.3)'
-                  }}
-                >
+              <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transform-gpu">
+                {/* BASE SHADOW (3D depth) */}
+                <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+                
+                {/* OUTER FRAME */}
+                <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-700 via-purple-600 to-purple-900 opacity-90 border-3 border-blue-500/60 shadow-2xl" aria-hidden />
+                
+                {/* MIDDLE FRAME */}
+                <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-blue-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25)' }} aria-hidden />
+                
+                {/* INNER LAYER */}
+                <div className="absolute inset-[5px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-blue-500/30 via-purple-600/30 to-purple-700/30" style={{ boxShadow: 'inset 0 6px 16px rgba(255,255,255,0.12), inset 0 -6px 16px rgba(0,0,0,0.4)' }} aria-hidden />
+                
+                {/* SPECULAR HIGHLIGHT */}
+                <div className="absolute inset-[5px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
+                
+                {/* Content */}
+                <div className="relative z-10">
                   <p className="text-xs sm:text-sm md:text-base text-white/80 font-semibold mb-0.5 sm:mb-1">Átlagos válaszidő</p>
                   <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">
                     {(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)}s
