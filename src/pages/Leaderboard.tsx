@@ -100,7 +100,7 @@ const Leaderboard = () => {
       {/* Casino lights animation at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)' }}>
         <div className="max-w-6xl mx-auto p-4 w-full">
           {/* Header with Back Button - 3D Box Style */}
           <div className="flex items-center mb-4 sm:mb-6 pt-safe">

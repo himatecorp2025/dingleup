@@ -168,7 +168,7 @@ const Profile = () => {
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="w-full flex flex-col px-3 py-4 max-w-screen-sm mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
+      <div className="w-full flex flex-col px-3 py-4 max-w-screen-sm mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 120px)' }}>
         {/* Header - Back button and Avatar in same line - HIGHER UP */}
         <div className="flex items-center justify-between mb-2 sm:mb-4 pt-safe">
           <button
