@@ -50,8 +50,66 @@ export const useGeniusAnalytics = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Realtime updates
   useEffect(() => {
     fetchGeniusAnalytics();
+
+    // Realtime subscriptions for instant updates
+    const profilesChannel = supabase
+      .channel('genius-profiles-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'profiles',
+        filter: 'is_subscribed=eq.true'
+      }, () => {
+        console.log('[GeniusAnalytics] Profile changed - realtime refresh');
+        fetchGeniusAnalytics();
+      })
+      .subscribe();
+
+    const purchasesChannel = supabase
+      .channel('genius-purchases-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'purchases'
+      }, () => {
+        console.log('[GeniusAnalytics] Purchase changed - realtime refresh');
+        fetchGeniusAnalytics();
+      })
+      .subscribe();
+
+    const gameResultsChannel = supabase
+      .channel('genius-game-results-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_results'
+      }, () => {
+        console.log('[GeniusAnalytics] Game result changed - realtime refresh');
+        fetchGeniusAnalytics();
+      })
+      .subscribe();
+
+    const sessionsChannel = supabase
+      .channel('genius-sessions-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'app_session_events'
+      }, () => {
+        console.log('[GeniusAnalytics] Session changed - realtime refresh');
+        fetchGeniusAnalytics();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(profilesChannel);
+      supabase.removeChannel(purchasesChannel);
+      supabase.removeChannel(gameResultsChannel);
+      supabase.removeChannel(sessionsChannel);
+    };
   }, []);
 
   const fetchGeniusAnalytics = async () => {

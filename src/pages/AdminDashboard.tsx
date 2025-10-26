@@ -47,16 +47,11 @@ const AdminDashboard = () => {
     checkAuth();
   }, []);
 
-  // PERFORMANCE OPTIMIZED: Single realtime channel + 30s polling instead of 5s
+  // REALTIME: Instant updates on any data change
   useEffect(() => {
-    // Reduced polling frequency - realtime handles most updates
-    const interval = setInterval(() => {
-      fetchData();
-    }, 30000); // 30 seconds instead of 5
-    
-    // OPTIMIZED: Single channel for all tables (much more efficient)
+    // Realtime channel for all admin tables
     const channel = supabase
-      .channel('admin-dashboard-optimized')
+      .channel('admin-dashboard-realtime')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
@@ -97,12 +92,19 @@ const AdminDashboard = () => {
         console.log('[Admin] Profiles changed - realtime update');
         fetchData();
       })
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_results'
+      }, () => {
+        console.log('[Admin] Game results changed - realtime update');
+        fetchData();
+      })
       .subscribe((status) => {
         console.log('[Admin] Realtime status:', status);
       });
 
     return () => {
-      clearInterval(interval);
       supabase.removeChannel(channel);
     };
   }, []);

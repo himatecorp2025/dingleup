@@ -43,21 +43,14 @@ export default function PlayerBehaviorsTab() {
   const [stats, setStats] = useState<CategoryStats[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Auto-refresh every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchStats();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [dateRange]);
-
   // Realtime subscription for instant updates
   useEffect(() => {
     console.log('[PlayerBehaviors] Setting up realtime subscriptions...');
     
+    fetchStats(); // Initial load
+
     const gameResultsChannel = supabase
-      .channel('player-behaviors-game-results-' + Date.now())
+      .channel('player-behaviors-game-results-realtime')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
@@ -71,7 +64,7 @@ export default function PlayerBehaviorsTab() {
       });
 
     const helpUsageChannel = supabase
-      .channel('player-behaviors-help-usage-' + Date.now())
+      .channel('player-behaviors-help-usage-realtime')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
@@ -89,10 +82,6 @@ export default function PlayerBehaviorsTab() {
       supabase.removeChannel(gameResultsChannel);
       supabase.removeChannel(helpUsageChannel);
     };
-  }, [dateRange]);
-
-  useEffect(() => {
-    fetchStats();
   }, [dateRange]);
 
   const getDateRange = () => {

@@ -7,8 +7,66 @@ export const useNormalUsersAnalytics = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Realtime updates
   useEffect(() => {
     fetchNormalUsersAnalytics();
+
+    // Realtime subscriptions for instant updates
+    const profilesChannel = supabase
+      .channel('normal-profiles-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'profiles',
+        filter: 'is_subscribed=eq.false'
+      }, () => {
+        console.log('[NormalUsersAnalytics] Profile changed - realtime refresh');
+        fetchNormalUsersAnalytics();
+      })
+      .subscribe();
+
+    const purchasesChannel = supabase
+      .channel('normal-purchases-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'purchases'
+      }, () => {
+        console.log('[NormalUsersAnalytics] Purchase changed - realtime refresh');
+        fetchNormalUsersAnalytics();
+      })
+      .subscribe();
+
+    const gameResultsChannel = supabase
+      .channel('normal-game-results-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_results'
+      }, () => {
+        console.log('[NormalUsersAnalytics] Game result changed - realtime refresh');
+        fetchNormalUsersAnalytics();
+      })
+      .subscribe();
+
+    const sessionsChannel = supabase
+      .channel('normal-sessions-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'app_session_events'
+      }, () => {
+        console.log('[NormalUsersAnalytics] Session changed - realtime refresh');
+        fetchNormalUsersAnalytics();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(profilesChannel);
+      supabase.removeChannel(purchasesChannel);
+      supabase.removeChannel(gameResultsChannel);
+      supabase.removeChannel(sessionsChannel);
+    };
   }, []);
 
   const fetchNormalUsersAnalytics = async () => {
