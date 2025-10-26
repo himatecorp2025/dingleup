@@ -43,7 +43,19 @@ serve(async (req) => {
 
     console.log('[GetWallet] Fetching wallet for user:', user.id);
 
-    // Get current balances with subscriber status and booster info
+    // First, automatically regenerate lives for this user (background job also does this)
+    const { data: regenResult, error: regenError } = await supabase.rpc(
+      'regenerate_lives_for_user',
+      { p_user_id: user.id }
+    );
+
+    if (regenError) {
+      console.error('[GetWallet] Error regenerating lives:', regenError);
+    } else if (regenResult) {
+      console.log('[GetWallet] Lives regeneration result:', regenResult);
+    }
+
+    // Get current balances with subscriber status and booster info (after regeneration)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate, is_subscribed, is_subscriber, speed_booster_active, speed_booster_multiplier')

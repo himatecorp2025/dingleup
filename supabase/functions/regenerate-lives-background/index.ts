@@ -26,22 +26,26 @@ serve(async (req) => {
       }
     )
 
-    // Call database function to regenerate lives
+    // Call the improved database function to regenerate lives for all users
     const { error } = await supabaseClient.rpc('regenerate_lives_background')
 
     if (error) {
-      console.error('[INTERNAL] Error regenerating lives:', error)
-      throw error
+      console.error('[CRON] Error regenerating lives:', error)
+      return new Response(
+        JSON.stringify({ success: false, error: error.message }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      )
     }
 
+    console.log('[CRON] Lives regenerated successfully for all users');
     return new Response(
-      JSON.stringify({ success: true, message: 'Lives regenerated successfully' }),
+      JSON.stringify({ success: true, message: 'Lives regenerated successfully for all users' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     )
   } catch (error) {
-    console.error('[INTERNAL] Error in regenerate-lives-background function:', error)
+    console.error('[CRON] Error in regenerate-lives-background function:', error)
     return new Response(
-      JSON.stringify({ error: 'An error occurred processing the request' }),
+      JSON.stringify({ success: false, error: 'An error occurred processing the request' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     )
   }

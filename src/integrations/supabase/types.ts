@@ -2816,6 +2816,7 @@ export type Database = {
       regenerate_invitation_code: { Args: never; Returns: string }
       regenerate_lives: { Args: never; Returns: undefined }
       regenerate_lives_background: { Args: never; Returns: undefined }
+      regenerate_lives_for_user: { Args: { p_user_id: string }; Returns: Json }
       reset_game_helps: { Args: never; Returns: undefined }
       search_users_by_name: {
         Args: {
