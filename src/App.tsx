@@ -104,16 +104,23 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
 
 // A3) Route allow-list - ONLY /game route (includes category selector + gameplay)
 // Topics selector IS PART OF /game, not a separate route
-// Admin routes are EXPLICITLY excluded
+// Admin routes are EXPLICITLY excluded - NO MUSIC on any admin page
 const MUSIC_ALLOWED_ROUTES = [/^\/game$/];
-const MUSIC_BLOCKED_ROUTES = [/^\/admin/];
+const MUSIC_BLOCKED_ROUTES = [
+  /^\/admin/,           // All admin routes including subpages
+  /^\/admin-/,          // Any admin-prefixed routes
+  /\/admin\//,          // Any path containing /admin/
+];
 
 function isMusicAllowed(pathname: string): boolean {
-  // Explicit block for admin routes
+  // Explicit block for admin routes - ALWAYS check first
   if (MUSIC_BLOCKED_ROUTES.some(pattern => pattern.test(pathname))) {
+    console.log('[AudioPolicy] BLOCKED - Admin route detected:', pathname);
     return false;
   }
-  return MUSIC_ALLOWED_ROUTES.some(pattern => pattern.test(pathname));
+  const allowed = MUSIC_ALLOWED_ROUTES.some(pattern => pattern.test(pathname));
+  console.log('[AudioPolicy] Music allowed:', allowed, 'for route:', pathname);
+  return allowed;
 }
 
 // Audio policy manager component
