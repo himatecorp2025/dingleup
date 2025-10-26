@@ -86,15 +86,15 @@ export const MillionaireAnswer = ({
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
-            {/* Complete hexagon: sharp left/right points, curved top/bottom */}
+            {/* Hexagon: sharp left/right tips, 120° rounded corners on top/bottom */}
             <path shapeRendering="crispEdges" d="
-              M 0.25,0 
-               L 0.75,0 
-               C 0.93,0 0.9995,0.47 1.00,0.50
-               C 0.9995,0.53 0.93,1.00 0.75,1.00
-               L 0.25,1.00
-               C 0.07,1.00 0.0005,0.53 0.00,0.50
-               C 0.0005,0.47 0.07,0.00 0.25,0.00
+              M 0.00,0.50
+               C 0.10,0.18 0.20,0.06 0.28,0.00
+               L 0.72,0.00
+               C 0.80,0.00 0.90,0.06 1.00,0.50
+               C 0.90,0.94 0.80,1.00 0.72,1.00
+               L 0.28,1.00
+               C 0.20,1.00 0.10,0.94 0.00,0.50
                Z
             " />
           </clipPath>
