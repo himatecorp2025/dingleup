@@ -17,13 +17,13 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
             {/* Complete hexagon: sharp left/right points, curved top/bottom */}
             <path shapeRendering="crispEdges" d="
-              M 0.10,0 
-               L 0.90,0 
-               C 0.97,0 0.995,0.28 1.00,0.50
-               C 0.995,0.72 0.97,1.00 0.90,1.00
-               L 0.10,1.00
-               C 0.03,1.00 0.005,0.72 0.00,0.50
-               C 0.005,0.28 0.03,0.00 0.10,0.00
+              M 0.15,0 
+               L 0.85,0 
+               C 0.92,0 0.998,0.38 1.00,0.50
+               C 0.998,0.62 0.92,1.00 0.85,1.00
+               L 0.15,1.00
+               C 0.08,1.00 0.002,0.62 0.00,0.50
+               C 0.002,0.38 0.08,0.00 0.15,0.00
                Z
             " />
           </clipPath>
