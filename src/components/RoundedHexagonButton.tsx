@@ -119,17 +119,13 @@ export const RoundedHexagonButton: React.FC<RoundedHexagonButtonProps> = ({
           <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
             {/* Complete hexagon: sharp left/right points, curved top/bottom */}
             <path d="
-              M 0.15,0 
-               L 0.85,0 
-               C 0.92,0 0.96,0.08 0.98,0.20
-               C 0.995,0.33 1.00,0.42 1.00,0.50
-               C 1.00,0.58 0.995,0.67 0.98,0.80
-               C 0.96,0.92 0.92,1.00 0.85,1.00
-               L 0.15,1.00
-               C 0.08,1.00 0.04,0.92 0.02,0.80
-               C 0.005,0.67 0.00,0.58 0.00,0.50
-               C 0.00,0.42 0.005,0.33 0.02,0.20
-               C 0.04,0.08 0.08,0.00 0.15,0.00
+              M 0.10,0 
+               L 0.90,0 
+               C 0.96,0 0.995,0.18 1.00,0.50
+               C 0.995,0.82 0.96,1.00 0.90,1.00
+               L 0.10,1.00
+               C 0.04,1.00 0.005,0.82 0.00,0.50
+               C 0.005,0.18 0.04,0.00 0.10,0.00
                Z
             " />
           </clipPath>
