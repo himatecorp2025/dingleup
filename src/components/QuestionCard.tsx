@@ -4,6 +4,7 @@ import { MillionaireAnswer } from "./MillionaireAnswer";
 import { TimerCircle } from "./TimerCircle";
 import { HexagonButton } from "./HexagonButton";
 import { Question, getSkipCost } from "@/types/game";
+import { ScreenshotProtection } from "./ScreenshotProtection";
 
 interface QuestionCardProps {
   question: Question;
@@ -64,8 +65,9 @@ export const QuestionCard = ({
   const skipCost = getSkipCost(questionNumber - 1); // Convert to 0-indexed
 
   return (
-    <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className}`}>
-      {/* Top section: Exit button, Lives, Coins - Moved higher */}
+    <ScreenshotProtection enabled={true}>
+      <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className}`}>
+        {/* Top section: Exit button, Lives, Coins - Moved higher */}
       <div className="flex justify-between items-start pt-2 sm:pt-3">
         {/* Back Button - 3D Round Style */}
         <div className="relative">
@@ -333,5 +335,6 @@ export const QuestionCard = ({
       </div>
       </div>
     </div>
+    </ScreenshotProtection>
   );
 };
