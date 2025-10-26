@@ -160,46 +160,15 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
 
               {/* Content */}
               <div className="absolute inset-0 flex items-center justify-center z-10" style={{ clipPath: `url(#${clipPathId})` }}>
-                style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }}
-                aria-hidden
-              />
+                {/* Sparkle dots around hexagon */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ top: '10%', left: '20%', animation: 'twinkle 1s ease-in-out infinite' }} />
+                  <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ top: '20%', right: '15%', animation: 'twinkle 1.3s ease-in-out infinite 0.2s' }} />
+                  <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ bottom: '25%', left: '15%', animation: 'twinkle 1.5s ease-in-out infinite 0.4s' }} />
+                  <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ bottom: '20%', right: '20%', animation: 'twinkle 1.2s ease-in-out infinite 0.6s' }} />
+                </div>
 
-              {/* INNER LAYER */}
-              <div
-                className="absolute clip-hexagon bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600"
-                style={{
-                  top: '5px',
-                  left: '5px',
-                  right: '5px',
-                  bottom: '5px',
-                  boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
-                }}
-                aria-hidden
-              />
-
-              {/* SPECULAR HIGHLIGHT */}
-              <div
-                className="absolute clip-hexagon pointer-events-none"
-                style={{
-                  top: '5px',
-                  left: '5px',
-                  right: '5px',
-                  bottom: '5px',
-                  background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
-                }}
-                aria-hidden
-              />
-
-              {/* Sparkle dots around hexagon */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ top: '10%', left: '20%', animation: 'twinkle 1s ease-in-out infinite' }} />
-                <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ top: '20%', right: '15%', animation: 'twinkle 1.3s ease-in-out infinite 0.2s' }} />
-                <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ bottom: '25%', left: '15%', animation: 'twinkle 1.5s ease-in-out infinite 0.4s' }} />
-                <div className="absolute w-1 h-1 bg-yellow-200 rounded-full" style={{ bottom: '20%', right: '20%', animation: 'twinkle 1.2s ease-in-out infinite 0.6s' }} />
-              </div>
-
-              {/* "G" Letter SVG centered - 75% size, perfectly centered horizontally AND vertically */}
-              <div className="absolute inset-0 clip-hexagon flex items-center justify-center z-10">
+                {/* "G" Letter SVG centered - 75% size, perfectly centered horizontally AND vertically */}
                 <div style={{ 
                   width: '75%', 
                   height: '75%', 

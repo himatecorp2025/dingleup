@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Crown } from 'lucide-react';
+import { HexClipPath } from '@/components/frames/HexClipPath';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -244,18 +245,6 @@ export const LeaderboardCarousel = () => {
             const rank = actualIndex + 1;
             const showCrown = actualIndex < 3;
             const clipPathId = `hexClip-leaderboard-${player.user_id}-${index}`;
-            return (
-              <div key={`${player.user_id}-${index}`} className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
-                <HexClipPath clipPathId={clipPathId} />
-                {/* BASE SHADOW */}
-                <div className="absolute" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)', clipPath: `url(#${clipPathId})` }} aria-hidden />
-                {/* OUTER FRAME */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${getHexagonColor(actualIndex)} border-2 shadow-xl`} style={{ borderColor: actualIndex === 0 ? '#fbbf24' : actualIndex === 1 ? '#d1d5db' : actualIndex === 2 ? '#fb923c' : '#a855f7', clipPath: `url(#${clipPathId})` }} aria-hidden />
-                {/* MIDDLE FRAME */}
-                <div className="absolute inset-[2px]" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)', clipPath: `url(#${clipPathId})` }} aria-hidden />
-                {/* INNER LAYER */}
-                <div className="absolute" style={{ top: '8px', left: '16px', right: '16px', bottom: '8px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)', clipPath: `url(#${clipPathId})` }} aria-hidden />
-            const clipPathId = `hexClip-leaderboard-${index}`;
             return (
               <div key={`${player.user_id}-${index}`} className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
                 <HexClipPath clipPathId={clipPathId} />
