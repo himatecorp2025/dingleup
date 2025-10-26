@@ -47,64 +47,58 @@ const AdminDashboard = () => {
     checkAuth();
   }, []);
 
-  // REALTIME: Instant updates on any data change
+  // REALTIME: Background data updates without page reload
   useEffect(() => {
-    // Realtime channel for all admin tables
+    let timeoutId: NodeJS.Timeout;
+    
+    const debouncedFetch = () => {
+      // Clear any pending fetch
+      if (timeoutId) clearTimeout(timeoutId);
+      // Wait 2 seconds before fetching to batch multiple changes
+      timeoutId = setTimeout(() => {
+        console.log('[Admin] Realtime triggered - background update');
+        fetchData();
+      }, 2000);
+    };
+
     const channel = supabase
       .channel('admin-dashboard-realtime')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'invitations'
-      }, () => {
-        console.log('[Admin] Invitations changed - realtime update');
-        fetchData();
-      })
+      }, debouncedFetch)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'reports'
-      }, () => {
-        console.log('[Admin] Reports changed - realtime update');
-        fetchData();
-      })
+      }, debouncedFetch)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'friendships'
-      }, () => {
-        console.log('[Admin] Friendships changed - realtime update');
-        fetchData();
-      })
+      }, debouncedFetch)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'purchases'
-      }, () => {
-        console.log('[Admin] Purchases changed - realtime update');
-        fetchData();
-      })
+      }, debouncedFetch)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'profiles'
-      }, () => {
-        console.log('[Admin] Profiles changed - realtime update');
-        fetchData();
-      })
+      }, debouncedFetch)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'game_results'
-      }, () => {
-        console.log('[Admin] Game results changed - realtime update');
-        fetchData();
-      })
+      }, debouncedFetch)
       .subscribe((status) => {
         console.log('[Admin] Realtime status:', status);
       });
 
     return () => {
+      if (timeoutId) clearTimeout(timeoutId);
       supabase.removeChannel(channel);
     };
   }, []);

@@ -265,8 +265,6 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     height: number, 
     size: number
   ) => {
-    setSelectedImage(null);
-    
     try {
       // Send message with image using new attachments format
       const attachments = [{
@@ -280,10 +278,12 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         h: height
       }];
       await sendMessage('', '', attachments);
-      toast.success('Kép sikeresen elküldve');
+      // Clear immediately after successful send
+      setSelectedImage(null);
     } catch (error) {
       console.error('Error sending image:', error);
       toast.error('Hiba a kép küldésekor');
+      // Keep selected image on error so user can retry
     }
   };
 
@@ -294,8 +294,6 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
     fileSize: number,
     mimeType: string
   ) => {
-    setSelectedFile(null);
-    
     try {
       // Send message with file using new attachments format
       const attachments = [{
@@ -307,10 +305,12 @@ export const ThreadView = ({ friendId, userId, onBack }: ThreadViewProps) => {
         mime: mimeType
       }];
       await sendMessage('', '', attachments);
-      toast.success('Fájl sikeresen elküldve');
+      // Clear immediately after successful send
+      setSelectedFile(null);
     } catch (error) {
       console.error('Error sending file:', error);
       toast.error('Hiba a fájl küldésekor');
+      // Keep selected file on error so user can retry
     }
   };
 
