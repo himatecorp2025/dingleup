@@ -278,11 +278,18 @@ const GamePreview = () => {
   };
 
   const handleSwipeDown = async () => {
+    console.log('[DEBUG] handleSwipeDown called - should show serleg');
+    console.log('[DEBUG] errorBannerVisible:', errorBannerVisible);
+    console.log('[DEBUG] showExitDialog:', showExitDialog);
+    
     // Swipe down always finishes the game and shows results (serleg ablak)
     if (errorBannerVisible) {
       setErrorBannerVisible(false);
     }
+    
+    console.log('[DEBUG] Calling finishGame()...');
     await finishGame();
+    console.log('[DEBUG] finishGame() completed');
   };
 
   const handleTimeout = () => {
