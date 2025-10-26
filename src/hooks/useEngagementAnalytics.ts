@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface EngagementAnalytics {
@@ -34,28 +34,30 @@ export const useEngagementAnalytics = () => {
   const [analytics, setAnalytics] = useState<EngagementAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialLoadRef = useRef(false);
 
-  const fetchEngagementAnalytics = async () => {
+  const fetchEngagementAnalytics = async (background = false) => {
     try {
-      setLoading(true);
-      setError(null);
+      if (!initialLoadRef.current && !background) setLoading(true);
+      if (!initialLoadRef.current) setError(null);
 
       const { data, error } = await supabase.functions.invoke('admin-engagement-analytics');
       if (error) throw error;
 
       setAnalytics(data || null);
     } catch (err) {
-      console.error('Error fetching engagement analytics:', err);
-      setError('Failed to load engagement analytics');
+      console.error('[Engagement] fetch error:', err);
+      if (!initialLoadRef.current) setError('Failed to load engagement analytics');
     } finally {
-      setLoading(false);
+      if (!initialLoadRef.current && !background) setLoading(false);
+      if (!initialLoadRef.current) initialLoadRef.current = true;
     }
   };
 
   useEffect(() => {
-    fetchEngagementAnalytics();
+    fetchEngagementAnalytics(false);
 
-    // Realtime subscriptions
+    // Realtime subscriptions (háttér frissítés)
     const sessionChannel = supabase
       .channel('admin-engagement-sessions')
       .on('postgres_changes', {
@@ -63,8 +65,8 @@ export const useEngagementAnalytics = () => {
         schema: 'public',
         table: 'app_session_events'
       }, () => {
-        console.log('[Engagement] Sessions changed, refreshing...');
-        fetchEngagementAnalytics();
+        console.log('[Engagement] Sessions changed, background refresh');
+        fetchEngagementAnalytics(true);
       })
       .subscribe();
 
@@ -75,14 +77,14 @@ export const useEngagementAnalytics = () => {
         schema: 'public',
         table: 'feature_usage_events'
       }, () => {
-        console.log('[Engagement] Features changed, refreshing...');
-        fetchEngagementAnalytics();
+        console.log('[Engagement] Features changed, background refresh');
+        fetchEngagementAnalytics(true);
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 30 seconds (háttérben)
     const interval = setInterval(() => {
-      fetchEngagementAnalytics();
+      fetchEngagementAnalytics(true);
     }, 30000);
 
     return () => {
@@ -92,5 +94,5 @@ export const useEngagementAnalytics = () => {
     };
   }, []);
 
-  return { analytics, loading, error, refetch: fetchEngagementAnalytics };
+  return { analytics, loading, error, refetch: () => fetchEngagementAnalytics(true) };
 };

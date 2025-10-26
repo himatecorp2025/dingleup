@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface PerformanceAnalytics {
@@ -43,28 +43,30 @@ export const usePerformanceAnalytics = () => {
   const [analytics, setAnalytics] = useState<PerformanceAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialLoadRef = useRef(false);
 
-  const fetchPerformanceAnalytics = async () => {
+  const fetchPerformanceAnalytics = async (background = false) => {
     try {
-      setLoading(true);
-      setError(null);
+      if (!initialLoadRef.current && !background) setLoading(true);
+      if (!initialLoadRef.current) setError(null);
 
       const { data, error } = await supabase.functions.invoke('admin-performance-analytics');
       if (error) throw error;
 
       setAnalytics(data || null);
     } catch (err) {
-      console.error('Error fetching performance analytics:', err);
-      setError('Failed to load performance analytics');
+      console.error('[Performance] fetch error:', err);
+      if (!initialLoadRef.current) setError('Failed to load performance analytics');
     } finally {
-      setLoading(false);
+      if (!initialLoadRef.current && !background) setLoading(false);
+      if (!initialLoadRef.current) initialLoadRef.current = true;
     }
   };
 
   useEffect(() => {
-    fetchPerformanceAnalytics();
+    fetchPerformanceAnalytics(false);
 
-    // Realtime subscriptions
+    // Realtime subscriptions (háttér frissítés)
     const metricsChannel = supabase
       .channel('admin-performance-metrics')
       .on('postgres_changes', {
@@ -72,8 +74,8 @@ export const usePerformanceAnalytics = () => {
         schema: 'public',
         table: 'performance_metrics'
       }, () => {
-        console.log('[Performance] Metrics changed, refreshing...');
-        fetchPerformanceAnalytics();
+        console.log('[Performance] Metrics changed, background refresh');
+        fetchPerformanceAnalytics(true);
       })
       .subscribe();
 
@@ -84,14 +86,14 @@ export const usePerformanceAnalytics = () => {
         schema: 'public',
         table: 'error_logs'
       }, () => {
-        console.log('[Performance] Errors changed, refreshing...');
-        fetchPerformanceAnalytics();
+        console.log('[Performance] Errors changed, background refresh');
+        fetchPerformanceAnalytics(true);
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 30 seconds (háttérben)
     const interval = setInterval(() => {
-      fetchPerformanceAnalytics();
+      fetchPerformanceAnalytics(true);
     }, 30000);
 
     return () => {
@@ -101,5 +103,5 @@ export const usePerformanceAnalytics = () => {
     };
   }, []);
 
-  return { analytics, loading, error, refetch: fetchPerformanceAnalytics };
+  return { analytics, loading, error, refetch: () => fetchPerformanceAnalytics(true) };
 };

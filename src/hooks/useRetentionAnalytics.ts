@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface RetentionAnalytics {
@@ -29,28 +29,30 @@ export const useRetentionAnalytics = () => {
   const [analytics, setAnalytics] = useState<RetentionAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialLoadRef = useRef(false);
 
-  const fetchRetentionAnalytics = async () => {
+  const fetchRetentionAnalytics = async (background = false) => {
     try {
-      setLoading(true);
-      setError(null);
+      if (!initialLoadRef.current && !background) setLoading(true);
+      if (!initialLoadRef.current) setError(null);
 
       const { data, error } = await supabase.functions.invoke('admin-retention-analytics');
       if (error) throw error;
 
       setAnalytics(data || null);
     } catch (err) {
-      console.error('Error fetching retention analytics:', err);
-      setError('Failed to load retention analytics');
+      console.error('[Retention] fetch error:', err);
+      if (!initialLoadRef.current) setError('Failed to load retention analytics');
     } finally {
-      setLoading(false);
+      if (!initialLoadRef.current && !background) setLoading(false);
+      if (!initialLoadRef.current) initialLoadRef.current = true;
     }
   };
 
   useEffect(() => {
-    fetchRetentionAnalytics();
+    fetchRetentionAnalytics(false);
 
-    // Realtime subscriptions
+    // Realtime subscriptions (háttér frissítés)
     const sessionChannel = supabase
       .channel('admin-retention-sessions')
       .on('postgres_changes', {
@@ -58,8 +60,8 @@ export const useRetentionAnalytics = () => {
         schema: 'public',
         table: 'app_session_events'
       }, () => {
-        console.log('[Retention] Sessions changed, refreshing...');
-        fetchRetentionAnalytics();
+        console.log('[Retention] Sessions changed, background refresh');
+        fetchRetentionAnalytics(true);
       })
       .subscribe();
 
@@ -70,14 +72,14 @@ export const useRetentionAnalytics = () => {
         schema: 'public',
         table: 'profiles'
       }, () => {
-        console.log('[Retention] Profiles changed, refreshing...');
-        fetchRetentionAnalytics();
+        console.log('[Retention] Profiles changed, background refresh');
+        fetchRetentionAnalytics(true);
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 30 seconds (háttérben)
     const interval = setInterval(() => {
-      fetchRetentionAnalytics();
+      fetchRetentionAnalytics(true);
     }, 30000);
 
     return () => {
@@ -87,5 +89,5 @@ export const useRetentionAnalytics = () => {
     };
   }, []);
 
-  return { analytics, loading, error, refetch: fetchRetentionAnalytics };
+  return { analytics, loading, error, refetch: () => fetchRetentionAnalytics(true) };
 };

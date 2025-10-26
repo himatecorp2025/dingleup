@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface UserJourneyStep {
@@ -25,28 +25,30 @@ export const useUserJourneyAnalytics = () => {
   const [analytics, setAnalytics] = useState<UserJourneyAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialLoadRef = useRef(false);
 
-  const fetchUserJourneyAnalytics = async () => {
+  const fetchUserJourneyAnalytics = async (background = false) => {
     try {
-      setLoading(true);
-      setError(null);
+      if (!initialLoadRef.current && !background) setLoading(true);
+      if (!initialLoadRef.current) setError(null);
 
       const { data, error } = await supabase.functions.invoke('admin-journey-analytics');
       if (error) throw error;
 
       setAnalytics(data || null);
     } catch (err) {
-      console.error('Error fetching user journey analytics:', err);
-      setError('Failed to load user journey analytics');
+      console.error('[UserJourney] fetch error:', err);
+      if (!initialLoadRef.current) setError('Failed to load user journey analytics');
     } finally {
-      setLoading(false);
+      if (!initialLoadRef.current && !background) setLoading(false);
+      if (!initialLoadRef.current) initialLoadRef.current = true;
     }
   };
 
   useEffect(() => {
-    fetchUserJourneyAnalytics();
+    fetchUserJourneyAnalytics(false);
 
-    // Realtime subscriptions
+    // Realtime subscriptions (háttér frissítés)
     const navChannel = supabase
       .channel('admin-journey-nav')
       .on('postgres_changes', {
@@ -54,8 +56,8 @@ export const useUserJourneyAnalytics = () => {
         schema: 'public',
         table: 'navigation_events'
       }, () => {
-        console.log('[UserJourney] Navigation changed, refreshing...');
-        fetchUserJourneyAnalytics();
+        console.log('[UserJourney] Navigation changed, background refresh');
+        fetchUserJourneyAnalytics(true);
       })
       .subscribe();
 
@@ -66,8 +68,8 @@ export const useUserJourneyAnalytics = () => {
         schema: 'public',
         table: 'conversion_events'
       }, () => {
-        console.log('[UserJourney] Conversion changed, refreshing...');
-        fetchUserJourneyAnalytics();
+        console.log('[UserJourney] Conversion changed, background refresh');
+        fetchUserJourneyAnalytics(true);
       })
       .subscribe();
 
@@ -78,14 +80,14 @@ export const useUserJourneyAnalytics = () => {
         schema: 'public',
         table: 'game_exit_events'
       }, () => {
-        console.log('[UserJourney] Game exits changed, refreshing...');
-        fetchUserJourneyAnalytics();
+        console.log('[UserJourney] Game exits changed, background refresh');
+        fetchUserJourneyAnalytics(true);
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 30 seconds (háttérben)
     const interval = setInterval(() => {
-      fetchUserJourneyAnalytics();
+      fetchUserJourneyAnalytics(true);
     }, 30000);
 
     return () => {
@@ -96,5 +98,5 @@ export const useUserJourneyAnalytics = () => {
     };
   }, []);
 
-  return { analytics, loading, error, refetch: fetchUserJourneyAnalytics };
+  return { analytics, loading, error, refetch: () => fetchUserJourneyAnalytics(true) };
 };

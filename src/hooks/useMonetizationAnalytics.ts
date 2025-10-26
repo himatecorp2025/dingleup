@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface MonetizationAnalytics {
@@ -32,28 +32,31 @@ export const useMonetizationAnalytics = () => {
   const [analytics, setAnalytics] = useState<MonetizationAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialLoadRef = useRef(false);
 
-  const fetchMonetizationAnalytics = async () => {
+  const fetchMonetizationAnalytics = async (background = false) => {
     try {
-      setLoading(true);
-      setError(null);
+      if (!initialLoadRef.current && !background) setLoading(true);
+      if (!initialLoadRef.current) setError(null);
 
       const { data, error } = await supabase.functions.invoke('admin-monetization-analytics');
       if (error) throw error;
 
       setAnalytics(data || null);
     } catch (err) {
-      console.error('Error fetching monetization analytics:', err);
-      setError('Failed to load monetization analytics');
+      console.error('[Monetization] fetch error:', err);
+      // Csak az első betöltésnél mutassunk hibát a teljes képernyőn
+      if (!initialLoadRef.current) setError('Failed to load monetization analytics');
     } finally {
-      setLoading(false);
+      if (!initialLoadRef.current && !background) setLoading(false);
+      if (!initialLoadRef.current) initialLoadRef.current = true;
     }
   };
 
   useEffect(() => {
-    fetchMonetizationAnalytics();
+    fetchMonetizationAnalytics(false);
 
-    // Realtime subscription for purchases
+    // Realtime subscription for purchases (háttér frissítés)
     const purchasesChannel = supabase
       .channel('admin-monetization-purchases')
       .on('postgres_changes', {
@@ -61,14 +64,14 @@ export const useMonetizationAnalytics = () => {
         schema: 'public',
         table: 'purchases'
       }, () => {
-        console.log('[Monetization] Purchases changed, refreshing...');
-        fetchMonetizationAnalytics();
+        console.log('[Monetization] Purchases changed, background refresh');
+        fetchMonetizationAnalytics(true);
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 30 seconds (háttérben)
     const interval = setInterval(() => {
-      fetchMonetizationAnalytics();
+      fetchMonetizationAnalytics(true);
     }, 30000);
 
     return () => {
@@ -77,5 +80,5 @@ export const useMonetizationAnalytics = () => {
     };
   }, []);
 
-  return { analytics, loading, error, refetch: fetchMonetizationAnalytics };
+  return { analytics, loading, error, refetch: () => fetchMonetizationAnalytics(true) };
 };
