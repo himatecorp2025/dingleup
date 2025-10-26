@@ -79,30 +79,12 @@ serve(async (req) => {
       );
     }
 
-    // Sign in with email and password using admin client
-    const { data: signInData, error: signInError } = await supabaseAdmin.auth.signInWithPassword({
-      email: user.email,
-      password: password,
-    });
+    console.log('[login-with-username] Username found, returning email for user:', username);
 
-    if (signInError) {
-      console.error('[login-with-username] Sign in error:', signInError);
-      return new Response(
-        JSON.stringify({ error: 'Helytelen felhasználónév vagy jelszó' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      );
-    }
-
-    console.log('[login-with-username] Login successful for user:', username);
-
-    // Return session data
+    // Return email so client can sign in
     return new Response(
       JSON.stringify({ 
-        session: signInData.session,
-        user: signInData.user
+        email: user.email
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

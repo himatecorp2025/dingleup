@@ -35,7 +35,7 @@ const LoginUsername = () => {
     try {
       const validated = loginSchema.parse(formData);
 
-      // Call the login-with-username edge function
+      // Call the login-with-username edge function to get email
       const { data, error } = await supabase.functions.invoke('login-with-username', {
         body: {
           username: validated.username,
@@ -43,7 +43,7 @@ const LoginUsername = () => {
         }
       });
 
-      if (error || data?.error) {
+      if (error || data?.error || !data?.email) {
         toast({
           title: "Bejelentkezési hiba",
           description: data?.error || "Helytelen felhasználónév vagy jelszó",
@@ -52,20 +52,27 @@ const LoginUsername = () => {
         return;
       }
 
-      if (data?.session) {
-        // Set the session in Supabase
-        await supabase.auth.setSession({
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token
-        });
+      // Sign in with email and password using the client
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: validated.password,
+      });
 
+      if (signInError) {
         toast({
-          title: "Sikeres bejelentkezés!",
-          description: "Átirányítunk...",
+          title: "Bejelentkezési hiba",
+          description: "Helytelen felhasználónév vagy jelszó",
+          variant: "destructive",
         });
-        
-        navigate("/intro?next=/dashboard");
+        return;
       }
+
+      toast({
+        title: "Sikeres bejelentkezés!",
+        description: "Átirányítunk...",
+      });
+      
+      navigate("/intro?next=/dashboard");
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof LoginForm, string>> = {};
