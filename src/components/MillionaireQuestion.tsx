@@ -19,11 +19,11 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
             <path shapeRendering="crispEdges" d="
               M 0.25,0 
                L 0.75,0 
-               C 0.94,0 0.9995,0.47 1.00,0.50
-               C 0.9995,0.53 0.94,1.00 0.75,1.00
+               C 0.97,0 0.9995,0.485 1.00,0.50
+               C 0.9995,0.515 0.97,1.00 0.75,1.00
                L 0.25,1.00
-               C 0.06,1.00 0.0005,0.53 0.00,0.50
-               C 0.0005,0.47 0.06,0.00 0.25,0.00
+               C 0.03,1.00 0.0005,0.515 0.00,0.50
+               C 0.0005,0.485 0.03,0.00 0.25,0.00
                Z
             " />
           </clipPath>
@@ -44,8 +44,8 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         {/* Question number badge */}
         {questionNumber && (
           <div 
-            className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 z-20"
-            style={{ perspective: '500px' }}
+            className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 z-50"
+            style={{ perspective: '500px', transform: 'translateY(-50%) translateZ(50px)' }}
           >
             <div className="absolute inset-0 rounded-full bg-black/60" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 border-2 border-cyan-300/80 shadow-lg" aria-hidden />
@@ -122,7 +122,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         />
         
         <div 
-          className="relative px-4 sm:px-6 md:px-8 py-[28px] sm:py-[35px] md:py-[43px] cursor-default"
+          className="relative px-4 sm:px-6 md:px-8 py-[32px] sm:py-[40px] md:py-[49px] cursor-default"
           style={{
             transform: 'translateZ(40px)',
             clipPath: `url(#${clipPathId})`
