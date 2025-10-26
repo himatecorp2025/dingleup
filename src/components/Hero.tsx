@@ -136,33 +136,31 @@ const Hero = () => {
           {/* CTA Buttons - Enhanced Deep 3D */}
           <div className="flex flex-col gap-4 justify-center items-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              {/* TESZTJÁTÉK INDÍTÁSA button with exact same deep 3D as feature pills */}
               <div className="relative group" style={{ perspective: '1000px' }}>
-                {/* BASE SHADOW - pontosan mint a feature pills-nél */}
-                <div className="absolute inset-0 bg-black/70" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
+                {/* BASE SHADOW - exactly like feature pills */}
+                <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
-                {/* OUTER FRAME - pontosan mint a feature pills-nél */}
-                <div className="absolute inset-0 bg-gradient-to-br from-green-700 via-green-600 to-green-900 opacity-90 border-3 border-green-500/60 shadow-2xl transition-all duration-300 group-hover:border-green-400/70" style={{ transform: 'translateZ(0px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
+                {/* OUTER FRAME - exactly like feature pills */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-700 via-green-600 to-green-900 opacity-90 border-2 border-green-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
-                {/* MIDDLE FRAME - pontosan mint a feature pills-nél */}
-                <div className="absolute inset-[4px] bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
+                {/* MIDDLE FRAME - exactly like feature pills */}
+                <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
-                {/* INNER LAYER - pontosan mint a feature pills-nél */}
-                <div className="absolute inset-[6px] bg-gradient-to-br from-black/80 to-black/90 backdrop-blur-sm" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.1), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
+                {/* INNER LAYER - exactly like feature pills */}
+                <div className="absolute inset-[5px] rounded-full bg-gradient-to-br from-white/20 via-white/10 to-black/20 backdrop-blur-sm" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
-                {/* SPECULAR HIGHLIGHT - pontosan mint a feature pills-nél */}
-                <div className="absolute inset-[6px] pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
+                {/* SPECULAR HIGHLIGHT - exactly like feature pills */}
+                <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }} aria-hidden />
                 
                 <button
                   onClick={() => navigate('/login')}
-                  className="relative w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white font-black text-lg overflow-hidden transition-all group-hover:scale-105"
-                  style={{ clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)', transform: 'translateZ(40px)' }}
+                  className="relative w-full sm:w-auto px-10 py-4 text-white font-black text-lg transition-all hover:scale-105"
+                  style={{ transform: 'translateZ(40px)', clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)' }}
                 >
-                  {/* Glow effect on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-green-400/10 to-green-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                  
-                  <div className="relative flex items-center justify-center gap-3 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                    <Play className="w-6 h-6 drop-shadow-lg" />
-                    <span className="tracking-wide">TESZTJÁTÉK INDÍTÁSA</span>
+                  <div className="relative flex items-center justify-center gap-3 drop-shadow-lg">
+                    <Play className="w-6 h-6 drop-shadow-lg flex-shrink-0" />
+                    <span className="drop-shadow-lg tracking-wide">TESZTJÁTÉK INDÍTÁSA</span>
                   </div>
                 </button>
               </div>
