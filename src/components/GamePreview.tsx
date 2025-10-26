@@ -14,6 +14,7 @@ import { QuestionCard } from "./QuestionCard";
 import { InsufficientResourcesDialog } from "./InsufficientResourcesDialog";
 import { ExitGameDialog } from "./ExitGameDialog";
 import { useBroadcastChannel } from "@/hooks/useBroadcastChannel";
+import { Trophy3D } from "./Trophy3D";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -1137,42 +1138,141 @@ const GamePreview = () => {
 
   if (gameState === 'finished') {
     return (
-      <div className="fixed inset-0 md:relative md:min-h-screen flex items-center justify-center p-4 relative">
+      <div className="fixed inset-0 w-screen h-screen overflow-hidden">
+        {/* Background with blur */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${gameBackground})` }}
         />
-        <div className="relative z-10 w-full flex items-center justify-center">
-          <div className="max-w-md w-full bg-black/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 text-center border-2 border-green-500/50">
-            <div className="text-8xl mb-6 animate-bounce">🏆</div>
-            <h1 className="text-3xl md:text-4xl font-black text-green-500 mb-6">Gratulálunk!</h1>
-            
-            <div className="space-y-3 mb-6">
-              <div className="bg-green-500/20 rounded-xl p-4 border border-green-500/30">
-                <p className="text-sm text-white/70">Helyes válaszok</p>
-                <p className="text-2xl md:text-3xl font-bold text-white">{correctAnswers}/15</p>
+        <div className="absolute inset-0 w-full h-full backdrop-blur-[10px] bg-black/10" />
+        
+        {/* Animated particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(40)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-yellow-400/30 animate-pulse"
+              style={{
+                width: `${Math.random() * 6 + 2}px`,
+                height: `${Math.random() * 6 + 2}px`,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${i * 0.1}s`,
+                animationDuration: `${Math.random() * 3 + 2}s`
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Main content - Centered */}
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4 sm:p-6">
+          {/* 3D Trophy */}
+          <Trophy3D className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mb-6" animate={true} />
+          
+          {/* Title */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-8 sm:mb-10 md:mb-12 relative">
+            <span 
+              className="relative inline-block"
+              style={{
+                background: 'linear-gradient(135deg, #00ff87, #60efff, #00ff87)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textShadow: '0 0 30px rgba(0,255,135,0.5)',
+                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                animation: 'pulse 2s ease-in-out infinite'
+              }}
+            >
+              Gratulálunk!
+            </span>
+          </h1>
+
+          {/* Stats cards with 3D effect */}
+          <div className="w-full max-w-md space-y-3 sm:space-y-4 mb-8 sm:mb-10">
+            {/* Correct answers */}
+            <div className="relative group" style={{ perspective: '1000px' }}>
+              <div 
+                className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-700 rounded-2xl"
+                style={{ 
+                  transform: 'translateZ(-8px)',
+                  filter: 'blur(8px)',
+                  opacity: 0.6
+                }}
+              />
+              <div 
+                className="relative bg-gradient-to-br from-green-500/30 to-green-700/30 backdrop-blur-md rounded-2xl p-4 sm:p-5 border-2 border-green-400/50 transition-transform hover:scale-105"
+                style={{
+                  transform: 'translateZ(0)',
+                  boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(0,255,0,0.3)'
+                }}
+              >
+                <p className="text-sm sm:text-base text-white/80 font-semibold mb-1">Helyes válaszok</p>
+                <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white drop-shadow-lg">{correctAnswers}/15</p>
               </div>
-              <div className="bg-yellow-500/20 rounded-xl p-4 border border-yellow-500/30">
-                <p className="text-sm text-white/70">Szerzett aranyérme</p>
-                <p className="text-2xl md:text-3xl font-bold text-white">+{coinsEarned} 🪙</p>
+            </div>
+
+            {/* Coins earned */}
+            <div className="relative group" style={{ perspective: '1000px' }}>
+              <div 
+                className="absolute inset-0 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl"
+                style={{ 
+                  transform: 'translateZ(-8px)',
+                  filter: 'blur(8px)',
+                  opacity: 0.6
+                }}
+              />
+              <div 
+                className="relative bg-gradient-to-br from-yellow-500/30 to-orange-600/30 backdrop-blur-md rounded-2xl p-4 sm:p-5 border-2 border-yellow-400/50 transition-transform hover:scale-105"
+                style={{
+                  transform: 'translateZ(0)',
+                  boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(255,215,0,0.3)'
+                }}
+              >
+                <p className="text-sm sm:text-base text-white/80 font-semibold mb-1">Szerzett aranyérme</p>
+                <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white drop-shadow-lg flex items-center justify-center gap-2">
+                  +{coinsEarned} <span className="text-2xl sm:text-3xl">🪙</span>
+                </p>
               </div>
-              {responseTimes.length > 0 && (
-                <div className="bg-blue-500/20 rounded-xl p-4 border border-blue-500/30">
-                  <p className="text-sm text-white/70">Átlagos válaszidő</p>
-                  <p className="text-2xl md:text-3xl font-bold text-white">
+            </div>
+
+            {/* Average response time */}
+            {responseTimes.length > 0 && (
+              <div className="relative group" style={{ perspective: '1000px' }}>
+                <div 
+                  className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl"
+                  style={{ 
+                    transform: 'translateZ(-8px)',
+                    filter: 'blur(8px)',
+                    opacity: 0.6
+                  }}
+                />
+                <div 
+                  className="relative bg-gradient-to-br from-blue-500/30 to-purple-600/30 backdrop-blur-md rounded-2xl p-4 sm:p-5 border-2 border-blue-400/50 transition-transform hover:scale-105"
+                  style={{
+                    transform: 'translateZ(0)',
+                    boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(96,165,250,0.3)'
+                  }}
+                >
+                  <p className="text-sm sm:text-base text-white/80 font-semibold mb-1">Átlagos válaszidő</p>
+                  <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white drop-shadow-lg">
                     {(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)}s
                   </p>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
 
+          {/* Buttons */}
+          <div className="w-full max-w-md space-y-3">
             <HexagonButton 
               variant="yellow" 
               size="lg" 
               onClick={() => {
                 setGameState('category-select');
               }}
-              className="w-full max-w-sm mx-auto mb-3"
+              className="w-full transform hover:scale-105 transition-all shadow-[0_8px_32px_rgba(255,215,0,0.4)]"
+              style={{
+                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+              }}
             >
               Új játék
             </HexagonButton>
@@ -1181,7 +1281,10 @@ const GamePreview = () => {
               onClick={() => {
                 navigate('/dashboard');
               }}
-              className="text-white text-sm hover:underline"
+              className="w-full text-white text-base sm:text-lg font-semibold py-3 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-white/20"
+              style={{
+                textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+              }}
             >
               Vissza a főoldalra
             </button>
