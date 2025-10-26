@@ -29,15 +29,11 @@ export const MillionaireAnswer = ({
     return (
       <div className="w-full flex justify-center mb-2 opacity-30">
       <div 
-        className="w-[90%] bg-gray-800/50 border-2 border-gray-600/50 px-3 sm:px-4 md:px-5 py-[18px] sm:py-[28px] md:py-[37px] text-gray-500"
-          style={{
-            clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
-          }}
+        className="w-[90%] bg-gray-800/50 border-2 border-gray-600/50 rounded-3xl px-3 sm:px-4 md:px-5 py-[18px] sm:py-[28px] md:py-[37px] text-gray-500"
         >
           <div className="flex items-center justify-center w-full">
             <div 
-              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gray-700 border-2 border-gray-600 flex items-center justify-center flex-shrink-0 text-sm sm:text-base font-bold font-poppins"
-              style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
+              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gray-700 border-2 border-gray-600 rounded-full flex items-center justify-center flex-shrink-0 text-sm sm:text-base font-bold font-poppins"
             >
               {letter}:
             </div>
@@ -105,28 +101,63 @@ export const MillionaireAnswer = ({
         className="w-[90%] touch-manipulation group relative"
         style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
       >
+      {/* Vízszintes vonalak - teljes szélesség */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 h-0"
+        style={{
+          width: '100vw',
+          borderTop: `4px solid ${
+            showCorrectPulse ? '#4ade80' :
+            isDoubleChoiceActive ? '#fb923c' :
+            isCorrect ? '#4ade80' :
+            isWrong ? '#f87171' :
+            '#fde047'
+          }`,
+          zIndex: 5,
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0"
+        style={{
+          width: '100vw',
+          borderTop: `4px solid ${
+            showCorrectPulse ? '#4ade80' :
+            isDoubleChoiceActive ? '#fb923c' :
+            isCorrect ? '#4ade80' :
+            isWrong ? '#f87171' :
+            '#fde047'
+          }`,
+          zIndex: 5,
+        }}
+      />
+
       {/* BASE SHADOW - Enhanced */}
       <div 
-        className="absolute inset-0 bg-black/80 rounded-2xl" 
+        className="absolute inset-0 rounded-3xl bg-black/80" 
         style={{ 
           transform: 'translate(8px, 8px) translateZ(-10px)', 
           filter: 'blur(12px)',
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)' 
         }} 
         aria-hidden 
       />
       
       {/* OUTER FRAME - Enhanced */}
       <div 
-        className={`absolute inset-0 bg-gradient-to-br opacity-95 border-4 shadow-2xl transition-all duration-300 ${
-          showCorrectPulse ? 'from-green-400 via-green-500 to-green-600 border-green-300/90 animate-pulse' :
-          isDoubleChoiceActive ? 'from-orange-400 via-orange-500 to-orange-600 border-orange-300/90' :
-          isCorrect ? 'from-green-400 via-green-500 to-green-600 border-green-300/90' :
-          isWrong ? 'from-red-400 via-red-500 to-red-600 border-red-300/90' :
-          'from-yellow-400 via-yellow-500 to-yellow-600 border-yellow-300/90'
+        className={`absolute inset-0 rounded-3xl bg-gradient-to-br opacity-95 shadow-2xl transition-all duration-300 ${
+          showCorrectPulse ? 'from-green-400 via-green-500 to-green-600 animate-pulse' :
+          isDoubleChoiceActive ? 'from-orange-400 via-orange-500 to-orange-600' :
+          isCorrect ? 'from-green-400 via-green-500 to-green-600' :
+          isWrong ? 'from-red-400 via-red-500 to-red-600' :
+          'from-yellow-400 via-yellow-500 to-yellow-600'
         }`}
         style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
+          border: `4px solid ${
+            showCorrectPulse ? '#4ade80' :
+            isDoubleChoiceActive ? '#fb923c' :
+            isCorrect ? '#4ade80' :
+            isWrong ? '#f87171' :
+            '#fde047'
+          }`,
           transform: 'translateZ(0px)',
           boxShadow: showCorrectPulse ? '0 0 30px rgba(74, 222, 128, 0.8), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
                      isCorrect ? '0 0 30px rgba(74, 222, 128, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' :
@@ -138,9 +169,8 @@ export const MillionaireAnswer = ({
       
       {/* MIDDLE FRAME - Enhanced */}
       <div 
-        className="absolute inset-[5px] bg-gradient-to-b from-black/60 via-transparent to-black/80"
+        className="absolute inset-[5px] rounded-3xl bg-gradient-to-b from-black/60 via-transparent to-black/80"
         style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           boxShadow: 'inset 0 3px 6px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6)',
           transform: 'translateZ(15px)'
         }}
@@ -149,7 +179,7 @@ export const MillionaireAnswer = ({
       
       {/* INNER LAYER - Enhanced */}
       <div 
-        className={`absolute inset-[7px] bg-gradient-to-br transition-all duration-300 ${
+        className={`absolute inset-[7px] rounded-3xl bg-gradient-to-br transition-all duration-300 ${
           showCorrectPulse ? 'from-green-500/90 to-green-700/90' :
           isDoubleChoiceActive ? 'from-orange-500/90 to-orange-700/90' :
           isCorrect ? 'from-green-500/90 to-green-700/90' :
@@ -157,7 +187,6 @@ export const MillionaireAnswer = ({
           'from-slate-900/90 to-slate-950/90'
         }`}
         style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
           transform: 'translateZ(25px)'
         }}
@@ -166,9 +195,8 @@ export const MillionaireAnswer = ({
       
       {/* SPECULAR HIGHLIGHT - Enhanced */}
       <div 
-        className="absolute inset-[7px] pointer-events-none"
+        className="absolute inset-[7px] rounded-3xl pointer-events-none"
         style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
           transform: 'translateZ(35px)'
         }}
@@ -178,18 +206,16 @@ export const MillionaireAnswer = ({
       <div 
         className={`relative px-3 sm:px-4 md:px-5 py-[18px] sm:py-[28px] md:py-[37px] transition-all duration-300 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}`}
         style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
           transform: 'translateZ(40px)'
         }}
       >
         <div className="flex items-center justify-center w-full">
           <div 
             className={`relative w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 text-xs sm:text-sm font-black`}
-            style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
           >
             {/* Letter badge 3D */}
             <div 
-              className={`absolute inset-0 border-2 transition-all duration-300 ${
+              className={`absolute inset-0 rounded-full border-2 transition-all duration-300 ${
                 showCorrectPulse ? 'bg-gradient-to-br from-green-300 to-green-400 border-green-200' :
                 isDoubleChoiceActive ? 'bg-gradient-to-br from-orange-300 to-orange-400 border-orange-200' :
                 isCorrect ? 'bg-gradient-to-br from-green-300 to-green-400 border-green-200' :
@@ -197,7 +223,6 @@ export const MillionaireAnswer = ({
                 'bg-gradient-to-br from-yellow-400 to-yellow-500 border-yellow-300'
               }`}
               style={{ 
-                clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
                 boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.3)'
               }} 
               aria-hidden 

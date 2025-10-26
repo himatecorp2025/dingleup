@@ -6,77 +6,107 @@ interface MillionaireQuestionProps {
 }
 
 export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
+  const borderWidth = 4;
+  
   return (
-    <div className="relative w-full mb-3" style={{ perspective: '1200px', transformStyle: 'preserve-3d', minHeight: '100px' }}>
-      {/* BASE SHADOW - Enhanced */}
-      <div className="absolute inset-0 bg-black/80 rounded-2xl" style={{ transform: 'translate(8px, 8px) translateZ(-10px)', filter: 'blur(12px)', clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)' }} aria-hidden />
-      
-      {/* OUTER FRAME - Enhanced */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 opacity-95 border-4 border-cyan-300/90 shadow-2xl"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          transform: 'translateZ(0px)',
-          boxShadow: '0 0 30px rgba(34, 211, 238, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)'
-        }}
-        aria-hidden
-      />
-      
-      {/* MIDDLE FRAME - Enhanced */}
-      <div 
-        className="absolute inset-[4px] bg-gradient-to-b from-black/60 via-transparent to-black/80"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          boxShadow: 'inset 0 3px 6px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6)',
-          transform: 'translateZ(15px)'
-        }}
-        aria-hidden
-      />
-      
-      {/* INNER LAYER - Enhanced */}
-      <div 
-        className="absolute inset-[6px] bg-gradient-to-br from-slate-900/90 to-slate-950/90"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
-          transform: 'translateZ(25px)'
-        }}
-        aria-hidden
-      />
-      
-      {/* SPECULAR HIGHLIGHT - Enhanced */}
-      <div 
-        className="absolute inset-[6px] pointer-events-none"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
-          transform: 'translateZ(35px)'
-        }}
-        aria-hidden
-      />
-      
-      <div 
-        className="relative px-3 sm:px-4 md:px-5 py-[32px] sm:py-[40px] md:py-[48px] text-white"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          transform: 'translateZ(40px)'
-        }}
-      >
-        <div className="flex items-center justify-center w-full">
+    <div className="w-full flex justify-center mb-4">
+      <div className="w-[95%] sm:w-[90%] relative group" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
+        {/* Vízszintes vonalak - teljes szélesség */}
+        {/* Felső vonal */}
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 h-0"
+          style={{
+            width: '100vw',
+            borderTop: `${borderWidth}px solid #22d3ee`,
+            zIndex: 5,
+          }}
+        />
+        {/* Alsó vonal */}
+        <div
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0"
+          style={{
+            width: '100vw',
+            borderTop: `${borderWidth}px solid #22d3ee`,
+            zIndex: 5,
+          }}
+        />
+
+        {/* Question number badge - left side */}
+        {questionNumber && (
           <div 
-            className="relative w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center"
-            style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
+            className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 z-20"
+            style={{ perspective: '500px' }}
           >
-            {/* Number badge 3D */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 border-2 border-cyan-300" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.3)' }} aria-hidden />
-            {typeof questionNumber === 'number' && (
-              <span className="relative z-10 text-white font-bold text-xs sm:text-sm leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>{questionNumber}</span>
-            )}
+            <div className="absolute inset-0 rounded-full bg-black/60" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 border-2 border-cyan-300/80 shadow-lg" aria-hidden />
+            <div className="absolute inset-[2px] rounded-full bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)' }} aria-hidden />
+            <div className="absolute inset-[2px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)' }} aria-hidden />
+            <div className="absolute inset-0 flex items-center justify-center text-white font-black text-sm sm:text-base z-10 drop-shadow-lg">
+              {questionNumber}
+            </div>
           </div>
-          <p className="text-sm sm:text-base md:text-lg font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins px-2 sm:px-3 md:px-4" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
+        )}
+
+        {/* BASE SHADOW */}
+        <div 
+          className="absolute inset-0 rounded-3xl bg-black/80" 
+          style={{ 
+            transform: 'translate(8px, 8px) translateZ(-10px)', 
+            filter: 'blur(12px)',
+          }} 
+          aria-hidden 
+        />
+        
+        {/* OUTER FRAME */}
+        <div 
+          className="absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-400 via-cyan-500 to-cyan-600 shadow-2xl opacity-95"
+          style={{
+            border: `${borderWidth}px solid #22d3ee`,
+            transform: 'translateZ(0px)',
+            boxShadow: '0 0 30px rgba(34, 211, 238, 0.6), 0 15px 40px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)'
+          }}
+          aria-hidden
+        />
+        
+        {/* MIDDLE FRAME */}
+        <div 
+          className="absolute inset-[5px] rounded-3xl bg-gradient-to-b from-black/60 via-transparent to-black/80"
+          style={{
+            boxShadow: 'inset 0 3px 6px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6)',
+            transform: 'translateZ(15px)'
+          }}
+          aria-hidden
+        />
+        
+        {/* INNER LAYER */}
+        <div 
+          className="absolute inset-[7px] rounded-3xl bg-gradient-to-br from-slate-900/90 to-slate-950/90"
+          style={{
+            boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
+            transform: 'translateZ(25px)'
+          }}
+          aria-hidden
+        />
+        
+        {/* SPECULAR HIGHLIGHT */}
+        <div 
+          className="absolute inset-[7px] rounded-3xl pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
+            transform: 'translateZ(35px)'
+          }}
+          aria-hidden
+        />
+        
+        <div 
+          className="relative px-4 sm:px-6 md:px-8 py-[24px] sm:py-[30px] md:py-[37px] cursor-default"
+          style={{
+            transform: 'translateZ(40px)'
+          }}
+        >
+          <div className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-center text-white drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
             {children}
-          </p>
-          <div className="w-8 sm:w-9 md:w-10 flex-shrink-0" aria-hidden />
+          </div>
         </div>
       </div>
     </div>
