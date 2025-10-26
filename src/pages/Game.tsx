@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Smartphone } from "lucide-react";
 import gameBackground from "@/assets/game-background.jpg";
 import { useAudioStore } from "@/stores/audioStore";
+import { ScreenshotProtection } from "@/components/ScreenshotProtection";
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
@@ -55,9 +56,11 @@ const Game = () => {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden">
-      <GamePreview />
-    </div>
+    <ScreenshotProtection enabled={true}>
+      <div className="min-h-screen overflow-hidden">
+        <GamePreview />
+      </div>
+    </ScreenshotProtection>
   );
 };
 

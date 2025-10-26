@@ -278,15 +278,9 @@ const GamePreview = () => {
   };
 
   const handleSwipeDown = async () => {
-    // If error banner visible, finish game
-    if (errorBannerVisible) {
-      setErrorBannerVisible(false);
-      await finishGame();
-      return;
-    }
-
-    // Normal state - show exit confirmation
-    if (!selectedAnswer && !showExitDialog) {
+    // Always show exit confirmation when swiping down
+    // User must explicitly confirm to exit and see results
+    if (!showExitDialog) {
       setShowExitDialog(true);
     }
   };
