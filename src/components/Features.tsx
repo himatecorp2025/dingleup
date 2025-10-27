@@ -58,10 +58,10 @@ const Features = () => {
             <Zap className="w-4 h-4 text-accent animate-pulse" />
             <span className="text-sm font-semibold text-accent">Miért válaszd ezt?</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-white">
-            Játék <span className="text-white">Funkciók</span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-white text-with-stroke">
+            Játék <span className="text-white text-with-stroke">Funkciók</span>
           </h2>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">
+          <p className="text-xl text-white/80 max-w-2xl mx-auto text-with-stroke">
             Fedezd fel a Milliomos Quiz egyedi lehetőségeit
           </p>
         </div>
@@ -110,11 +110,11 @@ const Features = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-6 bg-black/70 backdrop-blur-sm">
-                  <h3 className="text-2xl font-bold mb-3 font-poppins text-white drop-shadow-lg">
+                <div className="p-6 bg-black/70 backdrop-blur-sm flex flex-col justify-center">
+                  <h3 className="text-2xl font-bold mb-3 font-poppins text-white drop-shadow-lg text-with-stroke">
                     {feature.title}
                   </h3>
-                  <p className="text-white/80 leading-relaxed drop-shadow">
+                  <p className="text-white/80 leading-relaxed drop-shadow text-with-stroke">
                     {feature.description}
                   </p>
 
@@ -158,11 +158,11 @@ const Features = () => {
                       <feature.icon className={`w-6 h-6 ${feature.color} drop-shadow-lg`} />
                     </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold mb-2 font-poppins text-white group-hover:text-accent transition-colors duration-300 drop-shadow-lg">
+                  <div className="flex flex-col justify-center">
+                    <h3 className="text-lg font-bold mb-2 font-poppins text-white group-hover:text-accent transition-colors duration-300 drop-shadow-lg text-with-stroke">
                       {feature.title}
                     </h3>
-                    <p className="text-sm text-white/70 leading-relaxed drop-shadow">
+                    <p className="text-sm text-white/70 leading-relaxed drop-shadow text-with-stroke">
                       {feature.description}
                     </p>
                   </div>

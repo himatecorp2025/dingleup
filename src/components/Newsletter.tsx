@@ -72,10 +72,10 @@ const Newsletter = () => {
                 </div>
               </div>
               
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins text-white text-with-stroke drop-shadow-lg">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins text-white text-with-stroke drop-shadow-lg flex items-center justify-center">
                 Légy az Elsők Között!
               </h2>
-              <p className="text-lg text-white/90 mb-8 drop-shadow">
+              <p className="text-lg text-white/90 mb-8 drop-shadow text-with-stroke">
                 Iratkozz fel és értesülj azonnal, amikor a Dingle UP! elérhető lesz. Plusz exkluzív Welcome Bonusz: 2500 arany + 50 élet!
               </p>
 
@@ -98,7 +98,7 @@ const Newsletter = () => {
                 </Button>
               </div>
 
-              <p className="text-sm text-white/70 mt-4">
+              <p className="text-sm text-white/70 mt-4 text-with-stroke">
                 Nem küldünk spam-et. Bármikor leiratkozhatsz.
               </p>
             </div>

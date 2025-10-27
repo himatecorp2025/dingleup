@@ -1159,39 +1159,40 @@ const GamePreview = () => {
           ))}
         </div>
 
-        {/* Main content - Full screen optimized */}
-        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 py-6 overflow-y-auto">
-          {/* 3D Trophy - Responsive DOUBLE SIZE with max-width */}
-          <div className="relative flex items-center justify-center mb-6 flex-shrink-0">
-            {/* Multiple glow layers for maximum emphasis */}
-            <div className="absolute inset-0 bg-yellow-400/50 rounded-full blur-[100px] scale-[2.5] animate-pulse" />
-            <div className="absolute inset-0 bg-orange-500/40 rounded-full blur-[80px] scale-[2.2] animate-pulse" style={{ animationDelay: '0.5s' }} />
-            <div className="absolute inset-0 bg-yellow-300/30 rounded-full blur-[60px] scale-[2] animate-pulse" style={{ animationDelay: '1s' }} />
-            <Trophy3D 
-              className="relative w-[50vw] h-[50vw] max-w-[384px] max-h-[384px] sm:max-w-[512px] sm:max-h-[512px]" 
-              animate={true} 
-            />
-          </div>
-          
-          {/* Title */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6 relative text-center px-4 flex-shrink-0">
-            <span 
-              className="relative inline-block"
-              style={{
-                background: 'linear-gradient(135deg, #00ff87, #60efff, #00ff87)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                textShadow: '0 0 30px rgba(0,255,135,0.5)',
-                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
-                animation: 'pulse 2s ease-in-out infinite'
-              }}
-            >
-              Gratulálunk!
-            </span>
-          </h1>
+        {/* Main content - Full screen optimized with proper centering */}
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 py-6 overflow-y-auto scrollbar-hide">
+          <div className="w-full max-w-md flex flex-col items-center justify-center min-h-full py-6">
+            {/* 3D Trophy - Responsive DOUBLE SIZE with max-width */}
+            <div className="relative flex items-center justify-center mb-6 flex-shrink-0">
+              {/* Multiple glow layers for maximum emphasis */}
+              <div className="absolute inset-0 bg-yellow-400/50 rounded-full blur-[100px] scale-[2.5] animate-pulse" />
+              <div className="absolute inset-0 bg-orange-500/40 rounded-full blur-[80px] scale-[2.2] animate-pulse" style={{ animationDelay: '0.5s' }} />
+              <div className="absolute inset-0 bg-yellow-300/30 rounded-full blur-[60px] scale-[2] animate-pulse" style={{ animationDelay: '1s' }} />
+              <Trophy3D 
+                className="relative w-[45vw] h-[45vw] max-w-[300px] max-h-[300px] sm:max-w-[350px] sm:max-h-[350px]" 
+                animate={true} 
+              />
+            </div>
+            
+            {/* Title */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6 relative text-center px-4 flex-shrink-0">
+              <span 
+                className="relative inline-block"
+                style={{
+                  background: 'linear-gradient(135deg, #00ff87, #60efff, #00ff87)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  textShadow: '0 0 30px rgba(0,255,135,0.5)',
+                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                  animation: 'pulse 2s ease-in-out infinite'
+                }}
+              >
+                Gratulálunk!
+              </span>
+            </h1>
 
-          {/* Stats cards with DEEP 3D effect like Profile page */}
-          <div className="w-full max-w-md space-y-3 mb-6 flex-shrink-0">
+            {/* Stats cards with DEEP 3D effect like Profile page */}
+            <div className="w-full space-y-3 mb-6 flex-shrink-0">
             {/* Correct answers - Deep 3D */}
             <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transform-gpu">
               {/* BASE SHADOW (3D depth) */}
@@ -1210,7 +1211,7 @@ const GamePreview = () => {
               <div className="absolute inset-[5px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
               
               {/* Content */}
-              <div className="relative z-10">
+              <div className="relative z-10 flex flex-col items-center justify-center text-center">
                 <p className="text-xs sm:text-sm md:text-base text-white/80 font-semibold mb-0.5 sm:mb-1">Helyes válaszok</p>
                 <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">{correctAnswers}/15</p>
               </div>
@@ -1234,7 +1235,7 @@ const GamePreview = () => {
               <div className="absolute inset-[5px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
               
               {/* Content */}
-              <div className="relative z-10">
+              <div className="relative z-10 flex flex-col items-center justify-center text-center">
                 <p className="text-xs sm:text-sm md:text-base text-white/80 font-semibold mb-0.5 sm:mb-1">Szerzett aranyérme</p>
                 <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg flex items-center justify-center gap-2">
                   +{coinsEarned} <span className="text-xl sm:text-2xl md:text-3xl">🪙</span>
@@ -1261,7 +1262,7 @@ const GamePreview = () => {
                 <div className="absolute inset-[5px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)' }} aria-hidden />
                 
                 {/* Content */}
-                <div className="relative z-10">
+                <div className="relative z-10 flex flex-col items-center justify-center text-center">
                   <p className="text-xs sm:text-sm md:text-base text-white/80 font-semibold mb-0.5 sm:mb-1">Átlagos válaszidő</p>
                   <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-lg">
                     {(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)}s
@@ -1271,32 +1272,33 @@ const GamePreview = () => {
             )}
           </div>
 
-          {/* Buttons - Full width */}
-          <div className="w-full max-w-md space-y-3 flex-shrink-0">
-            <DiamondButton 
-              variant="booster" 
-              size="lg" 
-              onClick={() => {
-                resetGameState();
-              }}
-              className="!py-5 sm:!py-6"
-            >
-              <span className="font-black text-base sm:text-xl md:text-2xl">
-                ÚJ JÁTÉK
-              </span>
-            </DiamondButton>
-            
-            <button 
-              onClick={() => {
-                navigate('/dashboard');
-              }}
-              className="w-full text-white text-base sm:text-lg font-semibold py-3 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-white/20"
-              style={{
-                textShadow: '0 2px 4px rgba(0,0,0,0.5)'
-              }}
-            >
-              Vissza a főoldalra
-            </button>
+            {/* Buttons - Full width */}
+            <div className="w-full space-y-3 flex-shrink-0">
+              <DiamondButton 
+                variant="booster" 
+                size="lg" 
+                onClick={() => {
+                  resetGameState();
+                }}
+                className="!py-5 sm:!py-6 flex items-center justify-center"
+              >
+                <span className="font-black text-base sm:text-xl md:text-2xl">
+                  ÚJ JÁTÉK
+                </span>
+              </DiamondButton>
+              
+              <button 
+                onClick={() => {
+                  navigate('/dashboard');
+                }}
+                className="w-full text-white text-base sm:text-lg font-semibold py-3 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-white/20 flex items-center justify-center"
+                style={{
+                  textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                }}
+              >
+                Vissza a főoldalra
+              </button>
+            </div>
           </div>
         </div>
       </div>

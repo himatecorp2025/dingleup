@@ -11,7 +11,7 @@ const Footer = () => {
           {/* Logo & Description */}
           <div className="md:col-span-2">
             <img src={logo} alt="Dingle UP! Logo" className="w-24 h-24 mb-4" />
-            <p className="text-white/80 mb-4 max-w-md">
+            <p className="text-white/80 mb-4 max-w-md text-with-stroke">
               A Dingle UP! egy modern kvízjáték, ahol tesztelheted tudásod, versenyezhetsz barátaiddal és nyerhetsz értékes jutalmakat.
             </p>
             <div className="flex gap-4">
@@ -72,25 +72,25 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-lg mb-4 text-accent">Gyors Linkek</h3>
+            <h3 className="font-semibold text-lg mb-4 text-accent text-with-stroke">Gyors Linkek</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-white/70 hover:text-accent transition-colors">
+                <a href="#" className="text-white/70 hover:text-accent transition-colors text-with-stroke">
                   Kezdőlap
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-accent transition-colors">
+                <a href="#" className="text-white/70 hover:text-accent transition-colors text-with-stroke">
                   Funkciók
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-accent transition-colors">
+                <a href="#" className="text-white/70 hover:text-accent transition-colors text-with-stroke">
                   Hogyan működik?
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-accent transition-colors">
+                <a href="#" className="text-white/70 hover:text-accent transition-colors text-with-stroke">
                   GYIK
                 </a>
               </li>
@@ -99,30 +99,30 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h3 className="font-semibold text-lg mb-4 text-accent">Jogi Információk</h3>
+            <h3 className="font-semibold text-lg mb-4 text-accent text-with-stroke">Jogi Információk</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-white/70 hover:text-accent transition-colors">
+                <a href="#" className="text-white/70 hover:text-accent transition-colors text-with-stroke">
                   Adatvédelem
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-accent transition-colors">
+                <a href="#" className="text-white/70 hover:text-accent transition-colors text-with-stroke">
                   Felhasználási Feltételek
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-accent transition-colors">
+                <a href="#" className="text-white/70 hover:text-accent transition-colors text-with-stroke">
                   Cookie Szabályzat
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 hover:text-accent transition-colors">
+                <a href="#" className="text-white/70 hover:text-accent transition-colors text-with-stroke">
                   Kapcsolat
                 </a>
               </li>
               <li>
-                <a href="/admin/login" className="text-white/70 hover:text-accent transition-colors">
+                <a href="/admin/login" className="text-white/70 hover:text-accent transition-colors text-with-stroke">
                   Admin felület
                 </a>
               </li>
@@ -131,8 +131,8 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border/50 pt-8 text-center text-white/70 text-sm">
-          <p>© {currentYear} Dingle UP! Minden jog fenntartva.</p>
-          <p className="mt-2">
+          <p className="text-with-stroke">© {currentYear} Dingle UP! Minden jog fenntartva.</p>
+          <p className="mt-2 text-with-stroke">
             Készítve ❤️-tel | Játék fejlesztés alatt
           </p>
         </div>
