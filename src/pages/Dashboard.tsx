@@ -176,17 +176,8 @@ const Dashboard = () => {
     }
   }, [canMountModals, canClaimWelcome, userId]);
 
-  // Show Daily Gift dialog SECOND (after welcome bonus) - only on handheld, not during gameplay
-  useEffect(() => {
-    if (isHandheld && canMountModals && canClaim && !canClaimWelcome && !showWeeklyWinners && userId) {
-      // Wait 3 seconds after daily gift might have appeared
-      const timer = setTimeout(() => {
-        setShowDailyGift(true);
-        setShowPromo(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isHandheld, canMountModals, canClaim, canClaimWelcome, showWeeklyWinners, userId]);
+  // Daily Gift is now MANUAL - user clicks button to open
+  // Auto-open removed to prevent automatic popups
 
   // Show Genius Promo THIRD (after welcome and daily, with scheduler) - only on handheld, not during gameplay
   useEffect(() => {
@@ -505,6 +496,19 @@ return (
                 <span className="text-[10px] sm:text-xs md:text-sm">SHARE</span>
               </DiamondButton>
               
+              {/* Daily Gift Button - only show if can claim */}
+              {canClaim && (
+                <DiamondButton
+                  onClick={() => setShowDailyGift(true)}
+                  variant="shop"
+                  size="sm"
+                  className="relative animate-pulse"
+                >
+                  <span className="text-lg sm:text-xl mr-1">🎁</span>
+                  <span className="text-[10px] sm:text-xs md:text-sm font-black">NAPI JUTALOM</span>
+                </DiamondButton>
+              )}
+              
               <DiamondButton
                 onClick={() => navigate('/leaderboard')}
                 variant="leaderboard"
@@ -647,20 +651,22 @@ return (
           claiming={claimingWelcome}
         />
 
-      {/* Daily gift dialog - SECOND */}
-      <DailyGiftDialog
-        open={showDailyGift && !showWelcomeBonus}
-        onClaim={handleClaimDailyGift}
-        onClaimSuccess={() => {
-          setDailyGiftJustClaimed(true);
-          setTimeout(() => setDailyGiftJustClaimed(false), 2000);
-        }}
-        onLater={handleCloseDailyGift}
-        weeklyEntryCount={weeklyEntryCount}
-        nextReward={nextReward}
-        canClaim={canClaim}
-        isPremium={profile?.is_subscribed || false}
-      />
+      {/* Daily gift dialog - MANUAL open via button click only */}
+      {showDailyGift && (
+        <DailyGiftDialog
+          open={showDailyGift}
+          onClaim={handleClaimDailyGift}
+          onClaimSuccess={() => {
+            setDailyGiftJustClaimed(true);
+            setTimeout(() => setDailyGiftJustClaimed(false), 2000);
+          }}
+          onLater={handleCloseDailyGift}
+          weeklyEntryCount={weeklyEntryCount}
+          nextReward={nextReward}
+          canClaim={canClaim}
+          isPremium={profile?.is_subscribed || false}
+        />
+      )}
 
       {/* Genius Promo dialog - THIRD */}
       <GeniusPromoDialog
