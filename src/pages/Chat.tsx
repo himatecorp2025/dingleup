@@ -157,8 +157,8 @@ export default function Chat() {
   }));
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <header className="flex items-center justify-between p-4 border-b border-border bg-card">
+    <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-background fixed inset-0">
+      <header className="flex-shrink-0 flex items-center justify-between p-4 border-b border-border bg-card">
         <h1 className="text-2xl font-bold text-foreground">Üzenetek</h1>
         <button
           onClick={() => setShowUserSearch(true)}
@@ -168,11 +168,11 @@ export default function Chat() {
         </button>
       </header>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Threads List */}
-        <div className="w-full md:w-96 flex flex-col border-r border-border">
+        <div className="w-full md:w-96 flex flex-col border-r border-border overflow-hidden">
           {/* Search Bar */}
-          <div className="p-4 border-b border-border/40">
+          <div className="flex-shrink-0 p-4 border-b border-border/40">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -222,7 +222,9 @@ export default function Chat() {
         )}
       </div>
 
-      <BottomNav />
+      <div className="flex-shrink-0">
+        <BottomNav />
+      </div>
 
       {showUserSearch && (
         <UserSearchDialog

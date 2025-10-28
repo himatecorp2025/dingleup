@@ -333,7 +333,7 @@ return (
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-3 py-2 max-w-screen-lg mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)' }}>
+      <div className="h-full w-full flex flex-col overflow-hidden px-3 py-2 max-w-screen-lg mx-auto relative z-10">
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3">
           {/* First Row: Username and Stats */}
@@ -524,15 +524,15 @@ return (
           </div>
         </div>
 
-        {/* Logo - 10%-kal megnövelt méret, vertikálisan 65%-al feljebb */}
-        <div className="flex-1 flex items-center justify-center mb-1 sm:mb-2">
-          <div className="relative w-40 h-40 sm:w-52 sm:h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 transform -translate-y-[65%]">
+        {/* Logo - reszponzív méret minden képernyőhöz */}
+        <div className="flex-1 flex items-center justify-center mb-1 sm:mb-2 min-h-0">
+          <div className="relative w-[30vw] h-[30vw] sm:w-[28vw] sm:h-[28vw] md:w-[25vw] md:h-[25vw] lg:w-[22vw] lg:h-[22vw] max-w-[320px] max-h-[320px] transform -translate-y-[40%]">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
         </div>
 
-        {/* Play Button - 3D Diamond - fixált pozíció a booster gomb felett, 2.5vh távolságra */}
+        {/* Play Button - 3D Diamond - reszponzív pozíció és méret */}
         <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh + 3.5rem + 2.5vh)' }}>
           <div className="w-full max-w-screen-lg">
             <DiamondButton
@@ -540,17 +540,17 @@ return (
               onClick={() => navigate('/game')}
               variant="play"
               size="lg"
-              className="!py-5 sm:!py-6"
+              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
               style={{
                 animation: 'play-pulse 0.8s ease-in-out infinite'
               }}
             >
               {/* Play SVG Icon */}
-              <svg className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 5.14v14l11-7-11-7z"/>
               </svg>
               <span 
-                className="font-black text-base sm:text-xl md:text-2xl lg:text-3xl" 
+                className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
                 style={{ 
                   textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
                 }}
@@ -574,7 +574,7 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - Fixált a TOP 100 cím felett, 2.5vh távolságra */}
+        {/* Booster Button - Reszponzív pozíció és méret */}
         <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh)' }}>
           <div className="w-full max-w-screen-lg">
             <DiamondButton
@@ -598,7 +598,7 @@ return (
               variant="booster"
               size="lg"
               active={hasActiveBooster}
-              className="!py-5 sm:!py-6"
+              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
               badge={
                 hasActiveBooster ? (
                   <span className="flex h-3 w-3">
@@ -609,18 +609,18 @@ return (
               }
             >
               {/* Lightning SVG Icon */}
-              <svg className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
               </svg>
               {hasActiveBooster ? (
-                <span className="text-base sm:text-xl md:text-2xl font-black">AKTÍV BOOSTER ({timeRemaining})</span>
+                <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">AKTÍV BOOSTER ({timeRemaining})</span>
               ) : availableBoosters.length > 0 ? (
-                <span className="text-base sm:text-xl md:text-2xl font-black">
+                <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">
                   BOOSTER AKTIVÁLÁS
-                  <span className="block text-xs sm:text-sm md:text-base mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
+                  <span className="block text-[clamp(0.625rem,2.5vw,1rem)] sm:text-[clamp(0.75rem,3vw,1.25rem)] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
                 </span>
               ) : (
-                <span className="font-black text-base sm:text-xl md:text-2xl">BOOSTERS</span>
+                <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">BOOSTERS</span>
               )}
             </DiamondButton>
           </div>
