@@ -300,14 +300,21 @@ if (!profile) {
 }
 
 return (
-  <div className="h-screen w-screen overflow-hidden fixed inset-0" style={{
+  <div className="h-screen max-h-screen w-screen overflow-hidden fixed inset-0" style={{
     paddingTop: 'env(safe-area-inset-top)',
-    paddingBottom: 'env(safe-area-inset-bottom)'
+    paddingBottom: 'env(safe-area-inset-bottom)',
+    background: '#000000'
   }}>
-    {/* Háttérkép - mobilra optimalizálva */}
+    {/* Háttérkép - teljes képernyő kitöltése */}
     <div 
       className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${gameBackground})` }}
+      style={{ 
+        backgroundImage: `url(${gameBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        minHeight: '100vh',
+        minWidth: '100vw'
+      }}
     />
     {/* Áttetsző kék overlay - 50% opacity */}
     <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] opacity-50" />
@@ -333,9 +340,13 @@ return (
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="h-full w-full flex flex-col overflow-hidden px-3 py-2 max-w-screen-lg mx-auto relative z-10">
+      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" 
+           style={{ 
+             paddingTop: '2.5vh',
+             paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 24px)'
+           }}>
         {/* Top Section */}
-        <div className="flex flex-col gap-3 mb-3">
+        <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}
           <div className="flex items-center justify-between">
             {/* Left: Greeting - vertically centered with hexagons */}
@@ -524,16 +535,16 @@ return (
           </div>
         </div>
 
-        {/* Logo - reszponzív méret minden képernyőhöz */}
-        <div className="flex-1 flex items-center justify-center mb-1 sm:mb-2 min-h-0">
-          <div className="relative w-[30vw] h-[30vw] sm:w-[28vw] sm:h-[28vw] md:w-[25vw] md:h-[25vw] lg:w-[22vw] lg:h-[22vw] max-w-[320px] max-h-[320px] transform -translate-y-[40%]">
+        {/* Logo - reszponzív méret, mindig látható a Play Now gomb felett */}
+        <div className="flex-1 flex items-center justify-center my-[5vh] min-h-0 flex-shrink-0">
+          <div className="relative w-[clamp(200px,40vw,320px)] h-[clamp(200px,40vw,320px)]">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
         </div>
 
-        {/* Play Button - 3D Diamond - reszponzív pozíció és méret */}
-        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh + 3.5rem + 2.5vh)' }}>
+        {/* Play Button - 3D Diamond - responsive position */}
+        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 4.5vh + 6.5rem + 4.5vh + 3.5rem + 4.5vh)' }}>
           <div className="w-full max-w-screen-lg">
             <DiamondButton
               data-tutorial="play-button"
@@ -574,8 +585,8 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - Reszponzív pozíció és méret */}
-        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh + 6.5rem + 2.5vh)' }}>
+        {/* Booster Button - responsive position */}
+        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 4.5vh + 6.5rem + 4.5vh)' }}>
           <div className="w-full max-w-screen-lg">
             <DiamondButton
               data-tutorial="booster-button"
@@ -626,8 +637,8 @@ return (
           </div>
         </div>
 
-        {/* Leaderboard Carousel - Top 100 players - Fixált az alsó menüsáv fölé 2.5vh távolsággal */}
-        <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2.5vh)' }}>
+        {/* Leaderboard Carousel - Top 100 players - fixed above bottom nav */}
+        <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 4.5vh)' }}>
           <LeaderboardCarousel />
         </div>
 

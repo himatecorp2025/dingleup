@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-// Fixed routes that should NOT scroll
-const FIXED_ROUTES = ['/dashboard', '/topics', '/categories', '/chat'];
+// Fixed routes that should NOT scroll - minden oldal legyen fixed
+const FIXED_ROUTES = ['/dashboard', '/topics', '/categories', '/chat', '/profil', '/leaderboard', '/bolt'];
 
 // Game routes where modals should NOT appear
 const GAME_ROUTES = ['/game', '/play'];

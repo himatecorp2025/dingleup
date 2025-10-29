@@ -157,8 +157,12 @@ export default function Chat() {
   }));
 
   return (
-    <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-background fixed inset-0">
-      <header className="flex-shrink-0 flex items-center justify-between p-4 border-b border-border bg-card">
+    <div className="flex flex-col h-screen max-h-screen overflow-hidden fixed inset-0" style={{
+      background: 'hsl(var(--background))',
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: 'env(safe-area-inset-bottom)'
+    }}>
+      <header className="flex-shrink-0 flex items-center justify-between p-4 border-b border-border" style={{ background: 'hsl(var(--card))' }}>
         <h1 className="text-2xl font-bold text-foreground">Üzenetek</h1>
         <button
           onClick={() => setShowUserSearch(true)}

@@ -14,7 +14,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
 
     try {
-      // Check localStorage for today's view
+      // Check localStorage for today's view - popup bezárás követése
       const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
       const seenToday = localStorage.getItem(todayKey) === 'true';
       setHasSeenToday(seenToday);
@@ -44,11 +44,11 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setWeeklyEntryCount(entryCount);
       setNextReward(isPremium ? reward * 2 : reward);
       
-      // Can claim ONLY if not claimed today (removed seenToday check to prevent auto-claim)
-      setCanClaim(!isToday);
+      // Popup akkor jelenik meg, ha nem claimed ma ÉS nem zárta be még ma
+      setCanClaim(!isToday && !seenToday);
 
-      // Track impression if showing (only if not claimed today)
-      if (!isToday) {
+      // Track impression if showing (only if not claimed today and not seen)
+      if (!isToday && !seenToday) {
         trackEvent('popup_impression', 'daily');
       }
     } catch (error) {
@@ -145,11 +145,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     checkDailyGift();
   }, [userId, isPremium]);
 
-  // Ne ugorjon fel ha már látta ma (bezárta vagy elfogadta)
-  const shouldShowPopup = canClaim && !hasSeenToday;
-
   return {
-    canClaim: shouldShowPopup,
+    canClaim, // A popup megjelenését a hook belsőleg kezeli
     weeklyEntryCount,
     nextReward,
     claimDailyGift,
