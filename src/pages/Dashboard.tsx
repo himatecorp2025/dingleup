@@ -176,17 +176,17 @@ const Dashboard = () => {
     }
   }, [canMountModals, canClaimWelcome, userId]);
 
-  // Show Daily Gift dialog SECOND (after welcome bonus) - only on handheld, not during gameplay
+  // Show Daily Gift dialog SECOND (after welcome bonus) - AUTOMATIC on all devices
   useEffect(() => {
-    if (isHandheld && canMountModals && canClaim && !canClaimWelcome && !showWeeklyWinners && userId) {
-      // Wait 3 seconds after daily gift might have appeared
+    if (canMountModals && canClaim && !canClaimWelcome && !showWeeklyWinners && userId) {
+      // Wait 2 seconds for automatic popup
       const timer = setTimeout(() => {
         setShowDailyGift(true);
         setShowPromo(false);
-      }, 3000);
+      }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [isHandheld, canMountModals, canClaim, canClaimWelcome, showWeeklyWinners, userId]);
+  }, [canMountModals, canClaim, canClaimWelcome, showWeeklyWinners, userId]);
 
   // Show Genius Promo THIRD (after welcome and daily, with scheduler) - only on handheld, not during gameplay
   useEffect(() => {
@@ -302,7 +302,7 @@ if (!profile) {
 return (
   <div className="h-screen max-h-screen w-screen overflow-hidden fixed inset-0" style={{
     paddingTop: 'env(safe-area-inset-top)',
-    paddingBottom: 'env(safe-area-inset-bottom)',
+    paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))',
     background: '#000000'
   }}>
     {/* Háttérkép - teljes képernyő kitöltése */}
@@ -340,11 +340,11 @@ return (
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" 
-           style={{ 
-             paddingTop: '2.5vh',
-             paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 24px)'
-           }}>
+        <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" 
+             style={{ 
+               paddingTop: '5vh',
+               paddingBottom: '5vh'
+             }}>
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}

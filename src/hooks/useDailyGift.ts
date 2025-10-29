@@ -44,11 +44,11 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setWeeklyEntryCount(entryCount);
       setNextReward(isPremium ? reward * 2 : reward);
       
-      // Popup akkor jelenik meg, ha nem claimed ma ÉS nem zárta be még ma
-      setCanClaim(!isToday && !seenToday);
+      // ALWAYS show popup if not claimed today (remove seen check for automatic display)
+      setCanClaim(!isToday);
 
-      // Track impression if showing (only if not claimed today and not seen)
-      if (!isToday && !seenToday) {
+      // Track impression if showing (only if not claimed today)
+      if (!isToday) {
         trackEvent('popup_impression', 'daily');
       }
     } catch (error) {
