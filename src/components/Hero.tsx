@@ -134,7 +134,7 @@ const Hero = () => {
           </div>
 
           {/* CTA Buttons - Enhanced Deep 3D */}
-          <div className="flex flex-col gap-4 justify-center items-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
+          <div className="flex flex-col gap-4 justify-center items-center animate-fade-in" style={{ animationDelay: '0.6s', marginTop: '5vh' }}>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               {/* TESZTJÁTÉK INDÍTÁSA button with exact same deep 3D as feature pills */}
               <div className="relative group" style={{ perspective: '1000px' }}>

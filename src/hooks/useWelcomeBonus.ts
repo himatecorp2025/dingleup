@@ -81,7 +81,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
         setCanClaim(false);
         
         // Show success toast AFTER server confirmed the claim
-        toast.success('🎉 Üdvözlő bónusz felvéve! +2500 arany és +50 élet!');
+        toast.success('🎉 Üdvözlő bónusz felvéve! Jutalmad jóváírva a pénztárcádban.');
         
         return true;
       } else {

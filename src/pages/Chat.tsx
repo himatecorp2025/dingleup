@@ -31,6 +31,7 @@ export default function Chat() {
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserSearch, setShowUserSearch] = useState(false);
+  const [friends, setFriends] = useState<Array<{id:string, display_name:string, avatar_url:string|null, is_online:boolean}>>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -58,25 +59,28 @@ export default function Chat() {
     if (!session?.user?.id) return;
     
     loadThreads();
+    loadFriends();
     
-    // Real-time subscriptions - reload threads on any change
+    // Real-time subscriptions - reload threads and friends on any change
     const channel = supabase
       .channel('chat-updates')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, () => {
-        console.log('[Chat] dm_threads changed, reloading threads');
+        console.log('[Chat] dm_threads changed, reloading threads & friends');
         loadThreads();
+        loadFriends();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, () => {
-        console.log('[Chat] dm_messages changed, reloading threads');
+        console.log('[Chat] dm_messages changed, reloading threads & friends');
         loadThreads();
+        loadFriends();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'user_presence' }, () => {
-        console.log('[Chat] user_presence changed, reloading threads');
-        loadThreads();
+        console.log('[Chat] user_presence changed, reloading friends');
+        loadFriends();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, () => {
-        console.log('[Chat] friendships changed, reloading threads');
-        loadThreads();
+        console.log('[Chat] friendships changed, reloading friends');
+        loadFriends();
       })
       .subscribe();
 
@@ -117,13 +121,24 @@ export default function Chat() {
         setSelectedFriendId(null);
         setSelectedFriendUsername('');
       }
-      
-      await loadThreads();
+  const loadFriends = async () => {
+    if (!session?.user?.id) return;
+    try {
+      console.log('[Chat] Loading friends for user:', session.user.id);
+      const { data, error } = await supabase.functions.invoke('get-friends');
+      if (error) throw error;
+      const fr = (data?.friends || []).map((f: any) => ({
+        id: f.id,
+        display_name: f.display_name,
+        avatar_url: f.avatar_url,
+        is_online: !!f.is_online,
+      }));
+      setFriends(fr);
     } catch (error) {
-      console.error('[Chat] Error deleting thread:', error);
+      console.error('[Chat] Error loading friends:', error);
+      setFriends([]);
     }
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -136,13 +151,9 @@ export default function Chat() {
     return null;
   }
 
-  // Get friends from threads for avatar bar
-  const friends = threads.map(t => ({
-    id: t.other_user_id,
-    display_name: t.other_user_name,
-    avatar_url: t.other_user_avatar,
-    is_online: t.online_status === 'online'
-  }));
+  // friends are loaded from edge function to include all active friendships (not only threads)
+  // already in state: friends
+
 
   // Convert ChatThread to Thread format expected by ThreadsList
   const threadsForList = threads.map(t => ({
@@ -159,8 +170,8 @@ export default function Chat() {
   return (
     <div className="flex flex-col h-screen max-h-screen overflow-hidden fixed inset-0" style={{
       background: 'hsl(var(--background))',
-      paddingTop: 'env(safe-area-inset-top)',
-      paddingBottom: 'env(safe-area-inset-bottom)'
+      paddingTop: 'calc(env(safe-area-inset-top) + 10vh)',
+      paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))'
     }}>
       <header className="flex-shrink-0 flex items-center justify-between p-4 border-b border-border" style={{ background: 'hsl(var(--card))' }}>
         <h1 className="text-2xl font-bold text-foreground">Üzenetek</h1>
