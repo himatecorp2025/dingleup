@@ -535,58 +535,13 @@ return (
           </div>
         </div>
 
-        {/* Logo - 5%-al a Play Now gomb felett */}
-        <div className="flex-1 flex items-center justify-center min-h-0 flex-shrink-0" style={{ marginBottom: '5vh' }}>
-          <div className="relative w-[clamp(200px,40vw,320px)] h-[clamp(200px,40vw,320px)]">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
-            <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
-          </div>
+        {/* Leaderboard Carousel - 10vh a bottom nav felett (TOP 100 JÁTÉKOS) */}
+        <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh)' }}>
+          <LeaderboardCarousel />
         </div>
 
-        {/* Play Button - 3D Diamond - 10vh a Leaderboard felett, Logo 5vh felette */}
-        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh + 6.5rem + 5vh)' }}>
-          <div className="w-full max-w-screen-lg">
-            <DiamondButton
-              data-tutorial="play-button"
-              onClick={() => navigate('/game')}
-              variant="play"
-              size="lg"
-              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
-              style={{
-                animation: 'play-pulse 0.8s ease-in-out infinite'
-              }}
-            >
-              {/* Play SVG Icon */}
-              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 5.14v14l11-7-11-7z"/>
-              </svg>
-              <span 
-                className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
-                style={{ 
-                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
-                }}
-              >
-                PLAY NOW
-              </span>
-            </DiamondButton>
-          </div>
-        </div>
-
-        <style>{`
-          @keyframes play-pulse {
-            0%, 100% { 
-              transform: scale(1);
-              filter: brightness(1) drop-shadow(0 0 8px rgba(34,197,94,0.4));
-            }
-            50% { 
-              transform: scale(1.02);
-              filter: brightness(1.1) drop-shadow(0 0 16px rgba(34,197,94,0.7));
-            }
-          }
-        `}</style>
-
-        {/* Booster Button - 5vh a Play Now felett */}
-        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh + 6.5rem + 5vh + 3.5rem + 5vh)' }}>
+        {/* Boosters Button - 10vh a Leaderboard felett */}
+        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh + 6.5rem + 10vh)' }}>
           <div className="w-full max-w-screen-lg">
             <DiamondButton
               data-tutorial="booster-button"
@@ -637,9 +592,54 @@ return (
           </div>
         </div>
 
-        {/* Leaderboard Carousel - 10vh a bottom nav felett */}
-        <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh)' }}>
-          <LeaderboardCarousel />
+        {/* Play Now Button - 10vh a Boosters felett */}
+        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh + 6.5rem + 10vh + 3.5rem + 10vh)' }}>
+          <div className="w-full max-w-screen-lg">
+            <DiamondButton
+              data-tutorial="play-button"
+              onClick={() => navigate('/game')}
+              variant="play"
+              size="lg"
+              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
+              style={{
+                animation: 'play-pulse 0.8s ease-in-out infinite'
+              }}
+            >
+              {/* Play SVG Icon */}
+              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5.14v14l11-7-11-7z"/>
+              </svg>
+              <span 
+                className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
+                style={{ 
+                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
+                }}
+              >
+                PLAY NOW
+              </span>
+            </DiamondButton>
+          </div>
+        </div>
+
+        <style>{`
+          @keyframes play-pulse {
+            0%, 100% { 
+              transform: scale(1);
+              filter: brightness(1) drop-shadow(0 0 8px rgba(34,197,94,0.4));
+            }
+            50% { 
+              transform: scale(1.02);
+              filter: brightness(1.1) drop-shadow(0 0 16px rgba(34,197,94,0.7));
+            }
+          }
+        `}</style>
+
+        {/* Logo - 10vh a Play Now gomb felett */}
+        <div className="fixed left-0 right-0 z-[9003] flex justify-center" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh + 6.5rem + 10vh + 3.5rem + 10vh + 6.5rem + 10vh)', pointerEvents: 'none' }}>
+          <div className="relative w-[clamp(200px,40vw,320px)] h-[clamp(200px,40vw,320px)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+            <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
+          </div>
         </div>
 
           {/* Life Regeneration Timer - removed from here, now at hexagon */}
