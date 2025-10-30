@@ -535,16 +535,16 @@ return (
           </div>
         </div>
 
-        {/* Logo - reszponzív méret, mindig látható a Play Now gomb felett */}
-        <div className="flex-1 flex items-center justify-center my-[5vh] min-h-0 flex-shrink-0">
+        {/* Logo - 5%-al a Play Now gomb felett */}
+        <div className="flex-1 flex items-center justify-center min-h-0 flex-shrink-0" style={{ marginBottom: '5vh' }}>
           <div className="relative w-[clamp(200px,40vw,320px)] h-[clamp(200px,40vw,320px)]">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
           </div>
         </div>
 
-        {/* Play Button - 3D Diamond - responsive position */}
-        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 4.5vh + 6.5rem + 4.5vh + 3.5rem + 4.5vh)' }}>
+        {/* Play Button - 3D Diamond - 10vh a Leaderboard felett, Logo 5vh felette */}
+        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh + 6.5rem + 5vh)' }}>
           <div className="w-full max-w-screen-lg">
             <DiamondButton
               data-tutorial="play-button"
@@ -585,8 +585,8 @@ return (
           }
         `}</style>
 
-        {/* Booster Button - responsive position */}
-        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 4.5vh + 6.5rem + 4.5vh)' }}>
+        {/* Booster Button - 5vh a Play Now felett */}
+        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh + 6.5rem + 5vh + 3.5rem + 5vh)' }}>
           <div className="w-full max-w-screen-lg">
             <DiamondButton
               data-tutorial="booster-button"
@@ -637,8 +637,8 @@ return (
           </div>
         </div>
 
-        {/* Leaderboard Carousel - Top 100 players - fixed above bottom nav */}
-        <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 4.5vh)' }}>
+        {/* Leaderboard Carousel - 10vh a bottom nav felett */}
+        <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 10vh)' }}>
           <LeaderboardCarousel />
         </div>
 

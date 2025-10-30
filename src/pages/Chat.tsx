@@ -21,6 +21,13 @@ interface ChatThread {
   online_status: 'online' | 'away' | 'offline';
 }
 
+interface Friend {
+  id: string;
+  display_name: string;
+  avatar_url: string | null;
+  is_online: boolean;
+}
+
 export default function Chat() {
   const navigate = useNavigate();
   const [session, setSession] = useState<any>(null);
@@ -29,9 +36,9 @@ export default function Chat() {
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
   const [selectedFriendUsername, setSelectedFriendUsername] = useState<string>('');
   const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [friends, setFriends] = useState<Friend[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserSearch, setShowUserSearch] = useState(false);
-  const [friends, setFriends] = useState<Array<{id:string, display_name:string, avatar_url:string|null, is_online:boolean}>>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -89,6 +96,25 @@ export default function Chat() {
     };
   }, [session?.user?.id]);
 
+  const loadFriends = async () => {
+    if (!session?.user?.id) return;
+    try {
+      console.log('[Chat] Loading friends for user:', session.user.id);
+      const { data, error } = await supabase.functions.invoke('get-friends');
+      if (error) throw error;
+      const fr = (data?.friends || []).map((f: any) => ({
+        id: f.id,
+        display_name: f.display_name,
+        avatar_url: f.avatar_url,
+        is_online: !!f.is_online,
+      }));
+      setFriends(fr);
+    } catch (error) {
+      console.error('[Chat] Error loading friends:', error);
+      setFriends([]);
+    }
+  };
+
   const loadThreads = async () => {
     if (!session?.user?.id) return;
 
@@ -121,24 +147,13 @@ export default function Chat() {
         setSelectedFriendId(null);
         setSelectedFriendUsername('');
       }
-  const loadFriends = async () => {
-    if (!session?.user?.id) return;
-    try {
-      console.log('[Chat] Loading friends for user:', session.user.id);
-      const { data, error } = await supabase.functions.invoke('get-friends');
-      if (error) throw error;
-      const fr = (data?.friends || []).map((f: any) => ({
-        id: f.id,
-        display_name: f.display_name,
-        avatar_url: f.avatar_url,
-        is_online: !!f.is_online,
-      }));
-      setFriends(fr);
+      
+      await loadThreads();
     } catch (error) {
-      console.error('[Chat] Error loading friends:', error);
-      setFriends([]);
+      console.error('[Chat] Error deleting thread:', error);
     }
   };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -150,10 +165,6 @@ export default function Chat() {
   if (!session?.user?.id) {
     return null;
   }
-
-  // friends are loaded from edge function to include all active friendships (not only threads)
-  // already in state: friends
-
 
   // Convert ChatThread to Thread format expected by ThreadsList
   const threadsForList = threads.map(t => ({
