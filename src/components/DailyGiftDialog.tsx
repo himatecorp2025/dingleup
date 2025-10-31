@@ -134,7 +134,7 @@ const DailyGiftDialog = ({
     }
   };
 
-  if (!isHandheld || !open) return null;
+  if (!open) return null;
   
   return (
     <Dialog open={open} onOpenChange={onLater}>

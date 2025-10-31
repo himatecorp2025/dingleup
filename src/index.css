@@ -21,7 +21,9 @@ html, body {
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
   box-sizing: border-box;
-  /* Fix mobile keyboard white background issue */
+  /* Fullscreen on mobile (avoid white bars) */
+  min-height: 100svh;
+  min-height: -webkit-fill-available;
   background: #000000;
   background-attachment: fixed;
 }
@@ -64,6 +66,7 @@ html, body {
   padding-top: env(safe-area-inset-top);
   min-height: 100vh;
   min-height: 100dvh;
+  min-height: 100svh;
 }
 
 body {

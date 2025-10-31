@@ -299,12 +299,12 @@ if (!profile) {
   );
 }
 
-return (
-  <div className="h-screen max-h-screen w-screen overflow-hidden fixed inset-0" style={{
-    paddingTop: 'env(safe-area-inset-top)',
-    paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))',
-    background: '#000000'
-  }}>
+  return (
+    <div className="h-[100svh] max-h-[100svh] w-screen overflow-hidden fixed inset-0" style={{
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))',
+      background: '#000000'
+    }}>
     {/* Háttérkép - teljes képernyő kitöltése */}
     <div 
       className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -535,55 +535,13 @@ return (
           </div>
         </div>
 
-        {/* Leaderboard Carousel - 5vh a bottom nav felett (TOP 100 JÁTÉKOS) */}
-        <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 5vh)' }}>
+        {/* Leaderboard Carousel - 2vh a bottom nav felett (TOP 100 JÁTÉKOS) */}
+        <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2vh)' }}>
           <LeaderboardCarousel />
         </div>
 
-        {/* Play Now Button - 5vh a Leaderboard felett */}
-        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 5vh + 6.5rem + 5vh)' }}>
-          <div className="w-full max-w-screen-lg">
-            <DiamondButton
-              data-tutorial="play-button"
-              onClick={() => navigate('/game')}
-              variant="play"
-              size="lg"
-              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
-              style={{
-                animation: 'play-pulse 0.8s ease-in-out infinite'
-              }}
-            >
-              {/* Play SVG Icon */}
-              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 5.14v14l11-7-11-7z"/>
-              </svg>
-              <span 
-                className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
-                style={{ 
-                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
-                }}
-              >
-                PLAY NOW
-              </span>
-            </DiamondButton>
-          </div>
-        </div>
-
-        <style>{`
-          @keyframes play-pulse {
-            0%, 100% { 
-              transform: scale(1);
-              filter: brightness(1) drop-shadow(0 0 8px rgba(34,197,94,0.4));
-            }
-            50% { 
-              transform: scale(1.02);
-              filter: brightness(1.1) drop-shadow(0 0 16px rgba(34,197,94,0.7));
-            }
-          }
-        `}</style>
-
-        {/* Boosters Button - 5vh a Play Now felett */}
-        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 5vh + 6.5rem + 5vh + 3.5rem + 5vh)' }}>
+        {/* Boosters Button - 2vh a Leaderboard felett */}
+        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2vh + 6.5rem + 2vh)' }}>
           <div className="w-full max-w-screen-lg">
             <DiamondButton
               data-tutorial="booster-button"
@@ -634,8 +592,50 @@ return (
           </div>
         </div>
 
-        {/* Logo - 5vh a Boosters gomb felett */}
-        <div className="fixed left-0 right-0 z-[9003] flex justify-center" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 5vh + 6.5rem + 5vh + 3.5rem + 5vh + 6.5rem + 5vh)', pointerEvents: 'none' }}>
+        {/* Play Now Button - 2vh a Boosters felett */}
+        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2vh + 6.5rem + 2vh + 3.5rem + 2vh)' }}>
+          <div className="w-full max-w-screen-lg">
+            <DiamondButton
+              data-tutorial="play-button"
+              onClick={() => navigate('/game')}
+              variant="play"
+              size="lg"
+              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
+              style={{
+                animation: 'play-pulse 0.8s ease-in-out infinite'
+              }}
+            >
+              {/* Play SVG Icon */}
+              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5.14v14l11-7-11-7z"/>
+              </svg>
+              <span 
+                className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
+                style={{ 
+                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
+                }}
+              >
+                PLAY NOW
+              </span>
+            </DiamondButton>
+          </div>
+        </div>
+
+        <style>{`
+          @keyframes play-pulse {
+            0%, 100% { 
+              transform: scale(1);
+              filter: brightness(1) drop-shadow(0 0 8px rgba(34,197,94,0.4));
+            }
+            50% { 
+              transform: scale(1.02);
+              filter: brightness(1.1) drop-shadow(0 0 16px rgba(34,197,94,0.7));
+            }
+          }
+        `}</style>
+
+        {/* Logo - 2vh a Play Now felett */}
+        <div className="fixed left-0 right-0 z-[9003] flex justify-center" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2vh + 6.5rem + 2vh + 3.5rem + 2vh + 6.5rem + 2vh)', pointerEvents: 'none' }}>
           <div className="relative w-[clamp(200px,40vw,320px)] h-[clamp(200px,40vw,320px)]">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
             <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
