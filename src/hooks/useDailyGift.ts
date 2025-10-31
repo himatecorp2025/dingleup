@@ -14,11 +14,6 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
 
     try {
-      // Check localStorage for today's view - popup bezárás követése
-      const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
-      const seenToday = localStorage.getItem(todayKey) === 'true';
-      setHasSeenToday(seenToday);
-
       const { data: profile } = await supabase
         .from('profiles')
         .select('daily_gift_streak, daily_gift_last_claimed')
@@ -44,12 +39,13 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setWeeklyEntryCount(entryCount);
       setNextReward(isPremium ? reward * 2 : reward);
       
-      // ALWAYS show popup if not claimed today (remove seen check for automatic display)
+      // Show popup if not claimed today (megjelenik automatikusan)
       setCanClaim(!isToday);
 
       // Track impression if showing (only if not claimed today)
       if (!isToday) {
         trackEvent('popup_impression', 'daily');
+        console.log('[DailyGift] Showing popup for day', entryCount + 1, 'reward:', isPremium ? reward * 2 : reward);
       }
     } catch (error) {
       if (import.meta.env.DEV) {
@@ -131,10 +127,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
   const handleLater = () => {
     if (!userId) return;
     
-    // Mark as seen today when user closes
-    const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
-    localStorage.setItem(todayKey, 'true');
-    setHasSeenToday(true);
+    // Just close the dialog without marking as seen
+    // User can come back later same day and claim
     setCanClaim(false);
     
     // Track later action

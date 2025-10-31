@@ -32,7 +32,7 @@ const Index = () => {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-x-hidden overflow-y-auto relative">
+    <main className="min-h-dvh bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-x-hidden overflow-y-auto relative">
       <div data-tutorial="hero">
         <Hero />
       </div>
