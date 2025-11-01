@@ -8,6 +8,11 @@
   --composer-h: 68px;
   --bottom-nav-h: 72px; /* Fixed: unified value */
 }
+.app-bottom-nav{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  /* ha kell 6–10px érintési puffer: padding-bottom: 6px; */
+}
 
 /* Mobile & touch optimizations */
 html, body {
@@ -21,19 +26,18 @@ html, body {
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
   box-sizing: border-box;
-  /* Fullscreen on mobile (avoid white bars) */
-  min-height: 100svh;
-  min-height: -webkit-fill-available;
-  background: #000000;
-  background-attachment: fixed;
-}
++   -webkit-tap-highlight-color: transparent;
++   -webkit-touch-callout: none;
++   -webkit-user-select: none;
++   user-select: none;
++   background: transparent;              /* ne írja felül a képet */
++ }
 
 /* Extra layer for chat pages to prevent white background on keyboard */
-.chat-container {
-  background: #000000 !important;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-}
++ .chat-container {
++   background: transparent !important;   /* a body::before adja a képet */
++   min-height: 100dvh;
++ }
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -50,24 +54,19 @@ html, body {
 
 /* Page scroll wrapper for mobile layouts */
 .page-scroll {
-  height: 100dvh;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 32px);
-  scroll-padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px);
-}
++   min-height: 100dvh;
++   overflow: auto;
++   -webkit-overflow-scrolling: touch;
++   overscroll-behavior: contain;
++   /* NINCS env(...) – az alsó csíkot a háttér tölti ki */
++   padding-bottom: calc(var(--bottom-nav-h) + 16px);
++   scroll-padding-bottom: calc(var(--bottom-nav-h) + 16px);
++ }
 
 .page-scroll > :last-child {
   margin-bottom: 24px;
 }
 
-#root {
-  padding-top: env(safe-area-inset-top);
-  min-height: 100vh;
-  min-height: 100dvh;
-  min-height: 100svh;
-}
 
 body {
   -webkit-tap-highlight-color: transparent;
