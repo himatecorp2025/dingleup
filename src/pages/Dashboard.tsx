@@ -300,24 +300,9 @@ if (!profile) {
 }
 
   return (
-    <div className="h-[100svh] max-h-[100svh] w-screen overflow-hidden fixed inset-0" style={{
-      paddingTop: 'env(safe-area-inset-top)',
-      paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))',
-      background: '#000000'
+    <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden" style={{
+      background: 'transparent'
     }}>
-    {/* Háttérkép - teljes képernyő kitöltése */}
-    <div 
-      className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-      style={{ 
-        backgroundImage: `url(${gameBackground})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        minHeight: '100vh',
-        minWidth: '100vw'
-      }}
-    />
-    {/* Áttetsző kék overlay - 50% opacity */}
-    <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] opacity-50" />
     {/* Idle warning (60s countdown before logout) */}
     <IdleWarning 
       show={showWarning} 
@@ -340,11 +325,7 @@ if (!profile) {
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-        <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" 
-             style={{ 
-               paddingTop: '5vh',
-               paddingBottom: '5vh'
-             }}>
+        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10">
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}
@@ -535,13 +516,45 @@ if (!profile) {
           </div>
         </div>
 
-        {/* Leaderboard Carousel - 2vh a bottom nav felett (TOP 100 JÁTÉKOS) */}
-        <div className="fixed left-0 right-0 z-[9000]" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2vh)' }}>
-          <LeaderboardCarousel />
+        {/* Logo - Always at top */}
+        <div className="flex justify-center z-[9003]" style={{ marginTop: '2vh', marginBottom: '2vh', pointerEvents: 'none' }}>
+          <div className="relative w-[clamp(200px,40vw,320px)] h-[clamp(200px,40vw,320px)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+            <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
+          </div>
         </div>
 
-        {/* Boosters Button - 2vh a Leaderboard felett */}
-        <div className="fixed left-0 right-0 z-[9001] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2vh + 6.5rem + 2vh)' }}>
+        {/* Play Now Button - 2vh below Logo */}
+        <div className="flex justify-center z-[9002] px-3" style={{ marginBottom: '2vh' }}>
+          <div className="w-full max-w-screen-lg">
+            <DiamondButton
+              data-tutorial="play-button"
+              onClick={() => navigate('/game')}
+              variant="play"
+              size="lg"
+              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
+              style={{
+                animation: 'play-pulse 0.8s ease-in-out infinite'
+              }}
+            >
+              {/* Play SVG Icon */}
+              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5.14v14l11-7-11-7z"/>
+              </svg>
+              <span 
+                className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
+                style={{ 
+                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
+                }}
+              >
+                PLAY NOW
+              </span>
+            </DiamondButton>
+          </div>
+        </div>
+
+        {/* Boosters Button - 2vh below Play Now */}
+        <div className="flex justify-center z-[9001] px-3" style={{ marginBottom: '2vh' }}>
           <div className="w-full max-w-screen-lg">
             <DiamondButton
               data-tutorial="booster-button"
@@ -592,33 +605,9 @@ if (!profile) {
           </div>
         </div>
 
-        {/* Play Now Button - 2vh a Boosters felett */}
-        <div className="fixed left-0 right-0 z-[9002] flex justify-center px-3" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2vh + 6.5rem + 2vh + 3.5rem + 2vh)' }}>
-          <div className="w-full max-w-screen-lg">
-            <DiamondButton
-              data-tutorial="play-button"
-              onClick={() => navigate('/game')}
-              variant="play"
-              size="lg"
-              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
-              style={{
-                animation: 'play-pulse 0.8s ease-in-out infinite'
-              }}
-            >
-              {/* Play SVG Icon */}
-              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 5.14v14l11-7-11-7z"/>
-              </svg>
-              <span 
-                className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
-                style={{ 
-                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
-                }}
-              >
-                PLAY NOW
-              </span>
-            </DiamondButton>
-          </div>
+        {/* Leaderboard Carousel - 2vh below Boosters (TOP 100 JÁTÉKOS) */}
+        <div className="z-[9000]" style={{ marginBottom: '2vh' }}>
+          <LeaderboardCarousel />
         </div>
 
         <style>{`
@@ -633,14 +622,6 @@ if (!profile) {
             }
           }
         `}</style>
-
-        {/* Logo - 2vh a Play Now felett */}
-        <div className="fixed left-0 right-0 z-[9003] flex justify-center" style={{ bottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2vh + 6.5rem + 2vh + 3.5rem + 2vh + 6.5rem + 2vh)', pointerEvents: 'none' }}>
-          <div className="relative w-[clamp(200px,40vw,320px)] h-[clamp(200px,40vw,320px)]">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
-            <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
-          </div>
-        </div>
 
           {/* Life Regeneration Timer - removed from here, now at hexagon */}
 

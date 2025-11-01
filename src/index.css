@@ -26,18 +26,13 @@ html, body {
   -webkit-overflow-scrolling: touch;
   touch-action: manipulation;
   box-sizing: border-box;
-+   -webkit-tap-highlight-color: transparent;
-+   -webkit-touch-callout: none;
-+   -webkit-user-select: none;
-+   user-select: none;
-+   background: transparent;              /* ne írja felül a képet */
-+ }
+}
 
 /* Extra layer for chat pages to prevent white background on keyboard */
-+ .chat-container {
-+   background: transparent !important;   /* a body::before adja a képet */
-+   min-height: 100dvh;
-+ }
+.chat-container {
+  background: transparent !important;   /* a body::before adja a képet */
+  min-height: 100dvh;
+}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -54,14 +49,14 @@ html, body {
 
 /* Page scroll wrapper for mobile layouts */
 .page-scroll {
-+   min-height: 100dvh;
-+   overflow: auto;
-+   -webkit-overflow-scrolling: touch;
-+   overscroll-behavior: contain;
-+   /* NINCS env(...) – az alsó csíkot a háttér tölti ki */
-+   padding-bottom: calc(var(--bottom-nav-h) + 16px);
-+   scroll-padding-bottom: calc(var(--bottom-nav-h) + 16px);
-+ }
+  min-height: 100dvh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  /* NINCS env(...) – az alsó csíkot a háttér tölti ki */
+  padding-bottom: calc(var(--bottom-nav-h) + 16px);
+  scroll-padding-bottom: calc(var(--bottom-nav-h) + 16px);
+}
 
 .page-scroll > :last-child {
   margin-bottom: 24px;
