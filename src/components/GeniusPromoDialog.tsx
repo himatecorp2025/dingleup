@@ -88,8 +88,8 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
         className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
         style={{ 
           margin: 0,
-          maxHeight: '100vh',
-          minHeight: '100vh',
+          maxHeight: '100dvh',
+          minHeight: '100dvh',
           borderRadius: 0
         }}
       >
@@ -97,7 +97,7 @@ export const GeniusPromoDialog = ({ open, onClose, onSubscribe, onLater }: Geniu
         <div 
           className="fixed inset-0 flex flex-col items-center overflow-hidden"
           style={{ 
-            minHeight: '100vh', 
+            minHeight: '100dvh', 
             minWidth: '100vw',
             justifyContent: 'center',
             paddingTop: '0'

@@ -196,7 +196,7 @@ const ChatEnhanced = () => {
   };
 
   return (
-    <div className="chat-container bg-[#000000] flex flex-col overflow-hidden" style={{ height: 'calc(var(--vh, 1vh) * 100)', minHeight: '100vh', background: '#000000' }}>
+    <div className="chat-container bg-[#000000] flex flex-col overflow-hidden" style={{ height: 'calc(var(--vh, 1vh) * 100)', minHeight: '100dvh', background: '#000000' }}>
       <div className="sticky top-0 z-[10000] bg-[#1a1a1a] border-b border-[#D4AF37]/10" style={{ height: 'var(--appbar-h)' }}>
         <div className="flex items-center justify-between h-full px-3">
           {/* Left: Chat icon (acts as back to list when a beszélgetés van nyitva) */}

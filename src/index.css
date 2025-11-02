@@ -553,7 +553,7 @@ body {
     opacity: 0.3;
   }
   100% {
-    transform: translateY(calc(100vh + 100px)) rotate(360deg);
+    transform: translateY(calc(100dvh + 100px)) rotate(360deg);
     opacity: 0;
   }
 }
