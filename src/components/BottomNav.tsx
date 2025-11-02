@@ -142,7 +142,7 @@ const BottomNav = () => {
   }
 
   return (
-    <div ref={containerRef} className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-black/90 border-t-2 border-yellow-500/50 backdrop-blur-sm z-[9999] shadow-[0_-5px_20px_rgba(255,215,0,0.3)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div ref={containerRef} className="fixed bottom-0 left-0 right-0 bg-transparent border-t-2 border-yellow-500/50 backdrop-blur-sm z-[9999] shadow-[0_-5px_20px_rgba(255,215,0,0.3)]">
       <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-60"></div>
       <div className="grid grid-cols-6 gap-1 p-2 max-w-screen-sm mx-auto">
         {navItems.map((item, index) => {
