@@ -156,7 +156,7 @@ export default function Chat() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-dvh min-h-svh">
         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -179,7 +179,7 @@ export default function Chat() {
   }));
 
   return (
-    <div className="flex flex-col h-screen max-h-screen overflow-hidden fixed inset-0" style={{
+    <div className="flex flex-col h-dvh h-svh max-h-dvh max-h-svh overflow-hidden fixed inset-0" style={{
       background: 'hsl(var(--background))',
       paddingTop: 'calc(env(safe-area-inset-top) + 10vh)',
       paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))'

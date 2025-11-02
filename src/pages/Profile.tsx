@@ -161,7 +161,7 @@ const Profile = () => {
   );
 
   return (
-    <div className="profile-container min-h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] fixed inset-0 overflow-y-auto" style={{
+    <div className="profile-container min-h-dvh min-h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] fixed inset-0 overflow-y-auto" style={{
       paddingTop: 'env(safe-area-inset-top)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>

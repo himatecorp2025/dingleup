@@ -49,7 +49,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center p-4">
+    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-purple-500/50 rounded-2xl p-8 shadow-2xl">
           {/* Logo */}

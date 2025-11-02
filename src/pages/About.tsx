@@ -9,7 +9,7 @@ const About = () => {
   // Only show on mobile/tablet
   if (!isHandheld) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
         <div className="text-center px-6 max-w-md">
           <h1 className="text-3xl font-black text-white mb-4">📱 Csak mobilon elérhető</h1>
           <p className="text-white/80 mb-6">
@@ -21,7 +21,7 @@ const About = () => {
   }
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+    <div className="h-dvh h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
       paddingTop: 'env(safe-area-inset-top)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>

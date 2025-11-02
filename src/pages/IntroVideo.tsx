@@ -40,7 +40,7 @@ const IntroVideo = () => {
   }, [navigate, nextPage]);
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black z-50 flex items-center justify-center min-h-dvh min-h-svh">
       <video
         ref={videoRef}
         className="w-full h-full object-cover"

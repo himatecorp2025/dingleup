@@ -887,7 +887,7 @@ const GamePreview = () => {
 
   if (profileLoading || !userId) {
     return (
-      <div className="min-h-screen flex items-center justify-center relative">
+      <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: `url(${gameBackground})` }}
@@ -899,7 +899,7 @@ const GamePreview = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center relative">
+      <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: `url(${gameBackground})` }}

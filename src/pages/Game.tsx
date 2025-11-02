@@ -23,7 +23,7 @@ const Game = () => {
   // Wait for audio store to load before rendering game
   if (!loaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
         <div className="text-white text-lg">Betöltés...</div>
       </div>
     );
@@ -31,7 +31,7 @@ const Game = () => {
 
   if (!isMobile) {
     return (
-      <div className="min-h-screen relative flex items-center justify-center p-4">
+      <div className="min-h-dvh min-h-svh relative flex items-center justify-center p-4">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${gameBackground})` }}
@@ -57,7 +57,7 @@ const Game = () => {
 
   return (
     <ScreenshotProtection enabled={true}>
-      <div className="min-h-screen overflow-hidden">
+      <div className="min-h-dvh min-h-svh overflow-hidden">
         <GamePreview />
       </div>
     </ScreenshotProtection>

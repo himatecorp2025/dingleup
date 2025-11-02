@@ -247,7 +247,7 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center">
+      <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center">
         <p className="text-white text-lg">Betöltés...</p>
       </div>
     );
@@ -379,7 +379,7 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex flex-col lg:flex-row">
+    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex flex-col lg:flex-row">
       {/* Desktop Sidebar - Tablet+ Shown */}
       <div className="hidden lg:flex lg:w-64 bg-[#0a0a1e] border-r border-purple-500/30 p-4 xl:p-6 flex-col">
         <SidebarMenu />

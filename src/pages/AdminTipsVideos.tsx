@@ -242,7 +242,7 @@ const AdminTipsVideos = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] text-white p-6">
+    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] text-white p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">

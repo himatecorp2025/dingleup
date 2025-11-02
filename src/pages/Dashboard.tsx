@@ -285,7 +285,7 @@ const Dashboard = () => {
 
   if (loading) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+    <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
       <p className="text-lg text-white">Betöltés...</p>
     </div>
   );
@@ -293,7 +293,7 @@ const Dashboard = () => {
 
 if (!profile) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+    <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
       <p className="text-lg text-white">Betöltés...</p>
     </div>
   );
