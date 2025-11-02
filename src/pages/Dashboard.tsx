@@ -300,9 +300,19 @@ if (!profile) {
 }
 
   return (
-    <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden" style={{
+    <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
       background: 'transparent'
     }}>
+      {/* Background image - edge to edge */}
+      <div 
+        className="fixed inset-0 z-0" 
+        style={{
+          backgroundImage: `url(${gameBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      />
     {/* Idle warning (60s countdown before logout) */}
     <IdleWarning 
       show={showWarning} 
@@ -516,98 +526,101 @@ if (!profile) {
           </div>
         </div>
 
-        {/* Logo - Always at top */}
-        <div className="flex justify-center z-[9003]" style={{ marginTop: '2vh', marginBottom: '2vh', pointerEvents: 'none' }}>
-          <div className="relative w-[clamp(200px,40vw,320px)] h-[clamp(200px,40vw,320px)]">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
-            <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
+        {/* Fixed bottom section - Leaderboard at bottom, Logo/Buttons stacked above */}
+        <div className="fixed bottom-0 left-0 right-0 z-[9000] flex flex-col items-center pb-[calc(var(--bottom-nav-h)+1rem)]">
+          {/* Leaderboard Carousel - Fixed at bottom */}
+          <div className="w-full">
+            <LeaderboardCarousel />
           </div>
-        </div>
+          
+          {/* Boosters Button - 2vh above Leaderboard */}
+          <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
+            <div className="w-full max-w-screen-lg">
+              <DiamondButton
+                data-tutorial="booster-button"
+                onClick={async () => {
+                  if (hasActiveBooster) {
+                    setShowBoosterActivation(true);
+                    return;
+                  }
+                  if (availableBoosters.length === 0) {
+                    toast.error('Nincs elérhető booster! Vásárolj egyet a boltban.');
+                    navigate('/shop');
+                    return;
+                  }
+                  const firstBooster = availableBoosters[0];
+                  const success = await activateBooster(firstBooster.id);
+                  if (success) {
+                    window.location.reload();
+                  }
+                }}
+                variant="booster"
+                size="lg"
+                active={hasActiveBooster}
+                className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
+                badge={
+                  hasActiveBooster ? (
+                    <span className="flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+                    </span>
+                  ) : undefined
+                }
+              >
+                {/* Lightning SVG Icon */}
+                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
+                </svg>
+                {hasActiveBooster ? (
+                  <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">AKTÍV BOOSTER ({timeRemaining})</span>
+                ) : availableBoosters.length > 0 ? (
+                  <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">
+                    BOOSTER AKTIVÁLÁS
+                    <span className="block text-[clamp(0.625rem,2.5vw,1rem)] sm:text-[clamp(0.75rem,3vw,1.25rem)] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
+                  </span>
+                ) : (
+                  <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">BOOSTERS</span>
+                )}
+              </DiamondButton>
+            </div>
+          </div>
 
-        {/* Play Now Button - 2vh below Logo */}
-        <div className="flex justify-center z-[9002] px-3" style={{ marginBottom: '2vh' }}>
-          <div className="w-full max-w-screen-lg">
-            <DiamondButton
-              data-tutorial="play-button"
-              onClick={() => navigate('/game')}
-              variant="play"
-              size="lg"
-              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
-              style={{
-                animation: 'play-pulse 0.8s ease-in-out infinite'
-              }}
-            >
-              {/* Play SVG Icon */}
-              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 5.14v14l11-7-11-7z"/>
-              </svg>
-              <span 
-                className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
-                style={{ 
-                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
+          {/* Play Now Button - 2vh above Boosters */}
+          <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
+            <div className="w-full max-w-screen-lg">
+              <DiamondButton
+                data-tutorial="play-button"
+                onClick={() => navigate('/game')}
+                variant="play"
+                size="lg"
+                className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
+                style={{
+                  animation: 'play-pulse 0.8s ease-in-out infinite'
                 }}
               >
-                PLAY NOW
-              </span>
-            </DiamondButton>
-          </div>
-        </div>
-
-        {/* Boosters Button - 2vh below Play Now */}
-        <div className="flex justify-center z-[9001] px-3" style={{ marginBottom: '2vh' }}>
-          <div className="w-full max-w-screen-lg">
-            <DiamondButton
-              data-tutorial="booster-button"
-              onClick={async () => {
-                if (hasActiveBooster) {
-                  setShowBoosterActivation(true);
-                  return;
-                }
-                if (availableBoosters.length === 0) {
-                  toast.error('Nincs elérhető booster! Vásárolj egyet a boltban.');
-                  navigate('/shop');
-                  return;
-                }
-                const firstBooster = availableBoosters[0];
-                const success = await activateBooster(firstBooster.id);
-                if (success) {
-                  window.location.reload();
-                }
-              }}
-              variant="booster"
-              size="lg"
-              active={hasActiveBooster}
-              className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
-              badge={
-                hasActiveBooster ? (
-                  <span className="flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
-                  </span>
-                ) : undefined
-              }
-            >
-              {/* Lightning SVG Icon */}
-              <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
-              </svg>
-              {hasActiveBooster ? (
-                <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">AKTÍV BOOSTER ({timeRemaining})</span>
-              ) : availableBoosters.length > 0 ? (
-                <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">
-                  BOOSTER AKTIVÁLÁS
-                  <span className="block text-[clamp(0.625rem,2.5vw,1rem)] sm:text-[clamp(0.75rem,3vw,1.25rem)] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
+                {/* Play SVG Icon */}
+                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 5.14v14l11-7-11-7z"/>
+                </svg>
+                <span 
+                  className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
+                  style={{ 
+                    textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
+                  }}
+                >
+                  PLAY NOW
                 </span>
-              ) : (
-                <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">BOOSTERS</span>
-              )}
-            </DiamondButton>
+              </DiamondButton>
+            </div>
           </div>
-        </div>
 
-        {/* Leaderboard Carousel - 2vh below Boosters (TOP 100 JÁTÉKOS) */}
-        <div className="z-[9000]" style={{ marginBottom: '2vh' }}>
-          <LeaderboardCarousel />
+          {/* Logo - 2vh above Play Now, responsive size */}
+          <div className="flex justify-center w-full" style={{ marginBottom: '2vh', pointerEvents: 'none' }}>
+            <div className="relative w-[clamp(120px,25vw,200px)] h-[clamp(120px,25vw,200px)]">
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+              <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
+            </div>
+          </div>
         </div>
 
         <style>{`
