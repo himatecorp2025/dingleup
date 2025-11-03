@@ -335,7 +335,7 @@ if (!profile) {
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10">
+        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: '10vh' }}>
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}

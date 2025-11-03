@@ -27,7 +27,6 @@ const RegistrationSuccess = lazy(() => import("./pages/RegistrationSuccess"));
 const InstallApp = lazy(() => import("./pages/InstallApp"));
 const Invitation = lazy(() => import("./pages/Invitation"));
 const IntroVideo = lazy(() => import("./pages/IntroVideo"));
-const ChatEnhanced = lazy(() => import("./pages/ChatEnhanced"));
 const About = lazy(() => import("./pages/About"));
 
 // Lazy load admin pages
@@ -272,7 +271,6 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/chat" element={<ChatEnhanced />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/leaderboard" element={<Leaderboard />} />

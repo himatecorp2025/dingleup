@@ -96,15 +96,23 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen min-h-dvh fixed inset-0 flex justify-center items-start sm:items-center px-4 pt-3 pb-4 sm:py-12 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+    <div className="min-h-screen min-h-dvh fixed inset-0 flex justify-center items-start sm:items-center px-4 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
+      paddingTop: 'calc(10vh + 0.75rem)',
+      paddingBottom: '1rem'
+    }}>
       {/* Overlay gradients */}
       <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10 pointer-events-none"></div>
 
-      {/* Floating elements - hidden on mobile */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
-        <div className="absolute top-20 left-10 w-20 h-20 bg-accent rounded-full opacity-20 animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary rounded-full opacity-20 animate-float" style={{ animationDelay: '1s' }}></div>
+      {/* Floating elements - animated particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-500 rounded-full opacity-20 animate-float blur-xl"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-500 rounded-full opacity-20 animate-float blur-xl" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-red-500 rounded-full opacity-15 animate-float blur-xl" style={{ animationDelay: '2s' }}></div>
       </div>
+
+      {/* Animated border lights */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 animate-pulse"></div>
+      <div className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-red-500 to-yellow-500 animate-pulse"></div>
 
       <div className="w-full max-w-md relative z-10">
         <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 sm:mb-8 transition-colors drop-shadow-lg">

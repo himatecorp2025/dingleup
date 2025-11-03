@@ -43,7 +43,7 @@ const ShopPage = () => {
 
   return (
     <div className="shop-container h-dvh h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
-      paddingTop: 'env(safe-area-inset-top)',
+      paddingTop: 'calc(10vh + env(safe-area-inset-top))',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)' }}>

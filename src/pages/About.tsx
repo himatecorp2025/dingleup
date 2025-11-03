@@ -1,10 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { Building2 } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
+import { ReportDialog } from '@/components/ReportDialog';
 
 const About = () => {
   const isHandheld = usePlatformDetection();
+  const [showReportDialog, setShowReportDialog] = useState(false);
 
   // Only show on mobile/tablet
   if (!isHandheld) {
@@ -22,16 +24,27 @@ const About = () => {
 
   return (
     <div className="h-dvh h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
-      paddingTop: 'env(safe-area-inset-top)',
+      paddingTop: 'calc(10vh + env(safe-area-inset-top))',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-6 py-4 max-w-4xl mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
-        {/* Header */}
-        <div className="text-center mb-12 pt-safe">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-600 to-yellow-900 rounded-2xl mb-6 border-4 border-yellow-400/50 shadow-xl">
+      {/* Header */}
+      <div className="text-center mb-12 pt-safe">
+        {/* Report Button - Top Right */}
+        <button
+          onClick={() => setShowReportDialog(true)}
+          className="absolute top-4 right-4 p-2 bg-red-600/80 hover:bg-red-700 rounded-lg transition-colors border border-red-400/50 shadow-lg z-10"
+          title="Jelentés küldése"
+        >
+          <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+        
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-600 to-yellow-900 rounded-2xl mb-6 border-4 border-yellow-400/50 shadow-xl">
             <Building2 className="w-10 h-10 text-yellow-200" />
           </div>
           <h1 className="text-4xl font-black text-center mb-4 bg-gradient-to-r from-yellow-400 via-white to-yellow-400 bg-clip-text text-transparent">
@@ -117,6 +130,12 @@ const About = () => {
       </div>
 
       <BottomNav />
+      
+      {/* Report Dialog */}
+      <ReportDialog 
+        open={showReportDialog} 
+        onOpenChange={setShowReportDialog}
+      />
     </div>
   );
 };

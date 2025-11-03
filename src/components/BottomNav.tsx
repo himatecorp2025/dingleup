@@ -88,15 +88,6 @@ const BottomNav = () => {
     { 
       icon: () => (
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      ),
-      label: 'Chat', 
-      path: '/chat' 
-    },
-    { 
-      icon: () => (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
@@ -144,7 +135,7 @@ const BottomNav = () => {
   return (
     <div ref={containerRef} className="fixed bottom-0 left-0 right-0 bg-transparent border-t-2 border-yellow-500/50 backdrop-blur-sm z-[9999] shadow-[0_-5px_20px_rgba(255,215,0,0.3)]">
       <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-60"></div>
-      <div className="grid grid-cols-6 gap-1 p-2 max-w-screen-sm mx-auto">
+      <div className="grid grid-cols-5 gap-1 p-2 max-w-screen-sm mx-auto">
         {navItems.map((item, index) => {
           const IconComponent = item.icon;
           const isActive = location.pathname === item.path;

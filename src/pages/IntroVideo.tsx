@@ -7,7 +7,7 @@ const IntroVideo = () => {
   const [searchParams] = useSearchParams();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const nextPage = searchParams.get('next') || '/dashboard';
+  const nextPage = searchParams.get('next') || '/login';
 
   useEffect(() => {
     const video = videoRef.current;
