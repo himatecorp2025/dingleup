@@ -22,6 +22,7 @@ const IntroVideo = () => {
     // Ensure video is loaded and ready
     const handleCanPlay = () => {
       setVideoLoaded(true);
+      try { sessionStorage.setItem('app_intro_shown', '1'); } catch {}
       video.play().catch(() => {
         // Force play even if autoplay is blocked
         video.play();

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { useAudioStore } from "@/stores/audioStore";
@@ -54,21 +54,43 @@ const PageLoader = () => (
 
 const queryClient = new QueryClient();
 
-// Platform korlátozás: csak landing page és admin elérhető asztali nézetben
+// Platform korlátozás és standalone Intro-first guard
 const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
   const location = useLocation();
 
+  // Detect device type
   useEffect(() => {
     const checkDevice = () => {
       const width = window.innerWidth;
-      // Tablet és mobil: <= 1024px szélesség
       setIsMobileOrTablet(width <= 1024);
     };
     checkDevice();
     window.addEventListener('resize', checkDevice);
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
+
+  // Standalone intro-first guard (no landing page in app)
+  const isStandalone = (() => {
+    try {
+      return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        (window.navigator as any).standalone === true ||
+        document.referrer.includes('android-app://')
+      );
+    } catch {
+      return false;
+    }
+  })();
+
+  const introShown = typeof window !== 'undefined' 
+    ? sessionStorage.getItem('app_intro_shown') === '1' 
+    : false;
+
+  // Redirect any route to /intro until intro is shown (standalone only)
+  if (isStandalone && !introShown && location.pathname !== '/intro') {
+    return <Navigate to="/intro" replace />;
+  }
 
   // Landing page és admin oldalak mindig elérhetőek
   if (location.pathname === '/' || location.pathname === '/desktop' || 

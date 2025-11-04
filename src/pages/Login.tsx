@@ -81,7 +81,7 @@ const Login = () => {
       }
 
       if (signInData.user) {
-        navigate("/intro?next=/dashboard");
+        navigate("/dashboard");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
