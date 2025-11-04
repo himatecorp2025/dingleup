@@ -15,24 +15,36 @@ const Index = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Standalone (PWA) módban átirányít az intro videóra
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                         (window.navigator as any).standalone === true ||
-                         document.referrer.includes('android-app://');
-    
-    if (isStandalone) {
-      navigate('/intro');
-      return;
-    }
-
-    // Check device type
+    // Check device type first
     const handleResize = () => {
       const width = window.innerWidth;
       setIsMobileOrTablet(width <= 1024);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    
+    // Standalone (PWA) módban átirányít az intro videóra
+    const checkStandalone = () => {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                           (window.navigator as any).standalone === true ||
+                           document.referrer.includes('android-app://');
+      
+      console.log('[Index] Standalone check:', isStandalone);
+      
+      if (isStandalone) {
+        console.log('[Index] Navigating to /intro from Index');
+        navigate('/intro');
+      }
+    };
+    
+    // Check immediately and also after a short delay
+    checkStandalone();
+    const timer = setTimeout(checkStandalone, 100);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
+    };
   }, [navigate]);
 
   useEffect(() => {

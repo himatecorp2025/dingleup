@@ -139,12 +139,13 @@ const DailyGiftDialog = ({
   return (
     <Dialog open={open} onOpenChange={onLater}>
       <DialogContent 
-        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
+        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden z-[99999]"
         style={{
           margin: 0,
           maxHeight: '100dvh',
           minHeight: '100dvh',
-          borderRadius: 0
+          borderRadius: 0,
+          zIndex: 99999
         }}
       >
         {/* Középre igazító, teljes képernyős konténer (fix + flex) */}

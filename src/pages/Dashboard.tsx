@@ -526,14 +526,14 @@ if (!profile) {
           </div>
         </div>
 
-        {/* Fixed bottom section - Leaderboard at bottom, Logo/Buttons stacked above */}
-        <div className="fixed bottom-0 left-0 right-0 z-[9000] flex flex-col items-center pb-[calc(var(--bottom-nav-h)+1rem)]">
-          {/* Leaderboard Carousel - Fixed at bottom */}
-          <div className="w-full">
+        {/* Fixed bottom section - CORRECT ORDER from bottom to top: BottomNav -> Logo -> Play Now -> Boosters -> Top 100 */}
+        <div className="fixed bottom-0 left-0 right-0 z-[9000] flex flex-col-reverse items-center pb-[calc(var(--bottom-nav-h)+1rem)]">
+          {/* Top 100 Leaderboard Carousel - HIGHEST (felül) */}
+          <div className="w-full" style={{ marginBottom: '2vh' }}>
             <LeaderboardCarousel />
           </div>
           
-          {/* Boosters Button - 2vh above Leaderboard */}
+          {/* Boosters Button - below Top 100 */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
             <div className="w-full max-w-screen-lg">
               <DiamondButton
@@ -585,7 +585,7 @@ if (!profile) {
             </div>
           </div>
 
-          {/* Play Now Button - 2vh above Boosters */}
+          {/* Play Now Button - below Boosters */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
             <div className="w-full max-w-screen-lg">
               <DiamondButton
@@ -614,7 +614,7 @@ if (!profile) {
             </div>
           </div>
 
-          {/* Logo - 2vh above Play Now, responsive size */}
+          {/* Logo - below Play Now, above BottomNav */}
           <div className="flex justify-center w-full" style={{ marginBottom: '2vh', pointerEvents: 'none' }}>
             <div className="relative w-[clamp(120px,25vw,200px)] h-[clamp(120px,25vw,200px)]">
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
