@@ -66,7 +66,7 @@ const NormalUsersAnalytics = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
-      paddingTop: 'calc(10vh + env(safe-area-inset-top))',
+      paddingTop: 'env(safe-area-inset-top)',
       paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)'
     }}>
       <div className="h-full w-full overflow-y-auto overflow-x-hidden">

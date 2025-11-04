@@ -50,6 +50,19 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
+  // Platform detection for conditional padding
+  const [isStandalone, setIsStandalone] = useState(false);
+  
+  useEffect(() => {
+    const checkStandalone = () => {
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
+                    (window.navigator as any).standalone === true ||
+                    document.referrer.includes('android-app://');
+      setIsStandalone(isPWA);
+    };
+    checkStandalone();
+  }, []);
   const [inviterCode, setInviterCode] = useState(invitationCode);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,7 +183,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen min-h-dvh fixed inset-0 flex justify-center items-start sm:items-center px-4 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
-      paddingTop: 'calc(10vh + 0.75rem)',
+      paddingTop: isStandalone ? 'calc(10vh + 0.75rem)' : '0.75rem',
       paddingBottom: '1rem'
     }}>
       {/* Overlay gradients */}

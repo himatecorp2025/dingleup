@@ -45,7 +45,7 @@ import { useBroadcastChannel } from '@/hooks/useBroadcastChannel';
 const Dashboard = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
-  const isHandheld = usePlatformDetection();
+  const { isHandheld, isStandalone } = usePlatformDetection();
   const { canMountModals } = useScrollBehavior();
   const { markActive } = useActivityTracker('route_view');
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
@@ -335,9 +335,9 @@ if (!profile) {
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: '10vh' }}>
+        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: isStandalone ? '10vh' : '0' }}>
         {/* Top Section */}
-        <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
+        <div className="flex flex-col gap-3 mb-3 flex-shrink-0" style={{ marginTop: isStandalone ? '0' : '2vh' }}>
           {/* First Row: Username and Stats */}
           <div className="flex items-center justify-between">
             {/* Left: Greeting - vertically centered with hexagons */}

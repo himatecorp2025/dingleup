@@ -21,6 +21,19 @@ const Profile = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
   
+  // Platform detection for conditional padding
+  const [isStandalone, setIsStandalone] = useState(false);
+  
+  useEffect(() => {
+    const checkStandalone = () => {
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
+                    (window.navigator as any).standalone === true ||
+                    document.referrer.includes('android-app://');
+      setIsStandalone(isPWA);
+    };
+    checkStandalone();
+  }, []);
+  
   // Auto logout on inactivity
   useAutoLogout();
 
@@ -162,7 +175,7 @@ const Profile = () => {
 
   return (
     <div className="profile-container min-h-dvh min-h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] fixed inset-0 overflow-y-auto" style={{
-      paddingTop: 'calc(10vh + env(safe-area-inset-top))',
+      paddingTop: isStandalone ? 'calc(10vh + env(safe-area-inset-top))' : 'env(safe-area-inset-top)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
       {/* Casino lights at top */}

@@ -7,7 +7,13 @@ const IntroVideo = () => {
   const [searchParams] = useSearchParams();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const nextPage = searchParams.get('next') || '/login';
+  
+  // Standalone (PWA) módban mindig loginra navigál
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                       (window.navigator as any).standalone === true ||
+                       document.referrer.includes('android-app://');
+  
+  const nextPage = isStandalone ? '/login' : (searchParams.get('next') || '/login');
 
   useEffect(() => {
     const video = videoRef.current;

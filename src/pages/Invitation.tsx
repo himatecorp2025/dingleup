@@ -27,6 +27,19 @@ const Invitation = () => {
   const [invitationLink, setInvitationLink] = useState('');
   const [invitedCount, setInvitedCount] = useState(0);
   const [invitedFriends, setInvitedFriends] = useState<InvitedFriend[]>([]);
+  
+  // Platform detection for conditional padding
+  const [isStandalone, setIsStandalone] = useState(false);
+  
+  useEffect(() => {
+    const checkStandalone = () => {
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
+                    (window.navigator as any).standalone === true ||
+                    document.referrer.includes('android-app://');
+      setIsStandalone(isPWA);
+    };
+    checkStandalone();
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -114,7 +127,7 @@ const Invitation = () => {
 
   return (
     <div className="h-dvh h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
-      paddingTop: 'calc(10vh + env(safe-area-inset-top))',
+      paddingTop: isStandalone ? 'calc(10vh + env(safe-area-inset-top))' : 'env(safe-area-inset-top)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
       {/* Back Button - 3D Round Style */}

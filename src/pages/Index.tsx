@@ -15,6 +15,16 @@ const Index = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Standalone (PWA) módban átirányít az intro videóra
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         (window.navigator as any).standalone === true ||
+                         document.referrer.includes('android-app://');
+    
+    if (isStandalone) {
+      navigate('/intro');
+      return;
+    }
+
     // Check device type
     const handleResize = () => {
       const width = window.innerWidth;

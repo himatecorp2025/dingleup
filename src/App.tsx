@@ -7,7 +7,6 @@ import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { useAudioStore } from "@/stores/audioStore";
 import AudioManager from "@/lib/audioManager";
-import { usePlatformDetection } from "@/hooks/usePlatformDetection";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { lazy, Suspense } from "react";
 
@@ -125,7 +124,25 @@ function isMusicAllowed(pathname: string): boolean {
 // Audio policy manager component
 const AudioPolicyManager = () => {
   const location = useLocation();
-  const isHandheld = usePlatformDetection();
+  const [isHandheld, setIsHandheld] = useState(false);
+
+  useEffect(() => {
+    const checkHandheld = () => {
+      const isNarrowViewport = window.matchMedia('(max-width: 1024px)').matches;
+      const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+      setIsHandheld(isNarrowViewport && hasCoarsePointer);
+    };
+    checkHandheld();
+    const viewportMedia = window.matchMedia('(max-width: 1024px)');
+    const pointerMedia = window.matchMedia('(pointer: coarse)');
+    const handleChange = () => checkHandheld();
+    viewportMedia.addEventListener('change', handleChange);
+    pointerMedia.addEventListener('change', handleChange);
+    return () => {
+      viewportMedia.removeEventListener('change', handleChange);
+      pointerMedia.removeEventListener('change', handleChange);
+    };
+  }, []);
 
   useEffect(() => {
     const applyAudioPolicy = () => {
