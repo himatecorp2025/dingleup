@@ -9,6 +9,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
   const [weeklyEntryCount, setWeeklyEntryCount] = useState(0);
   const [nextReward, setNextReward] = useState(0);
   const [hasSeenToday, setHasSeenToday] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const checkDailyGift = async () => {
     if (!userId) return;
@@ -39,18 +40,25 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setWeeklyEntryCount(entryCount);
       setNextReward(isPremium ? reward * 2 : reward);
       
-      // Show popup if not claimed today (megjelenik automatikusan)
+      // NE jelenítse meg automatikusan, csak jelezze hogy claimelhető
       setCanClaim(!isToday);
 
-      // Track impression if showing (only if not claimed today)
-      if (!isToday) {
-        trackEvent('popup_impression', 'daily');
-        console.log('[DailyGift] Showing popup for day', entryCount + 1, 'reward:', isPremium ? reward * 2 : reward);
+      // NE mutassuk automatikusan a popupot
+      if (import.meta.env.DEV) {
+        console.log('[DailyGift] Can claim:', !isToday, 'day', entryCount + 1, 'reward:', isPremium ? reward * 2 : reward);
       }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error checking daily gift:', error);
       }
+    }
+  };
+
+  const showDailyGiftPopup = () => {
+    if (canClaim) {
+      setShowPopup(true);
+      trackEvent('popup_impression', 'daily');
+      console.log('[DailyGift] Manually showing popup for day', weeklyEntryCount + 1, 'reward:', nextReward);
     }
   };
 
@@ -128,8 +136,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
     
     // Just close the dialog without marking as seen
-    // User can come back later same day and claim
-    setCanClaim(false);
+    setShowPopup(false);
     
     // Track later action
     trackEvent('popup_cta_click', 'daily', 'later');
@@ -140,13 +147,15 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
   }, [userId, isPremium]);
 
   return {
-    canClaim, // A popup megjelenését a hook belsőleg kezeli
+    canClaim, // Jelzi, hogy claimelhető-e
+    showPopup, // Popup láthatósága
     weeklyEntryCount,
     nextReward,
     claimDailyGift,
     checkDailyGift,
     handleLater,
-    setCanClaim
+    showDailyGiftPopup, // Manuális megjelenítés
+    setShowPopup
   };
 };
 

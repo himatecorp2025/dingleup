@@ -54,12 +54,44 @@ export const useWallet = (userId: string | undefined) => {
   useEffect(() => {
     fetchWallet();
 
-    // Refresh every 3 seconds for immediate updates
+    // Real-time subscription for wallet changes
+    const channel = supabase
+      .channel('wallet_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${userId}`
+        },
+        () => {
+          fetchWallet();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'wallet_ledger',
+          filter: `user_id=eq.${userId}`
+        },
+        () => {
+          fetchWallet();
+        }
+      )
+      .subscribe();
+
+    // Refresh every 1 second for immediate updates
     const intervalId = setInterval(() => {
       fetchWallet();
-    }, 3000);
+    }, 1000);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+      supabase.removeChannel(channel);
+    };
   }, [userId]);
 
   return {

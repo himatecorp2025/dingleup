@@ -182,9 +182,10 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen min-h-dvh fixed inset-0 flex justify-center items-start sm:items-center px-4 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
-      paddingTop: isStandalone ? 'calc(10vh + 0.75rem)' : '0.75rem',
-      paddingBottom: '1rem'
+    <div className="min-h-screen min-h-dvh fixed inset-0 flex justify-center px-4 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
+      paddingTop: isStandalone ? '10vh' : '1rem',
+      paddingBottom: '1rem',
+      alignItems: 'flex-start'
     }}>
       {/* Overlay gradients */}
       <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10 pointer-events-none"></div>

@@ -63,12 +63,11 @@ const Dashboard = () => {
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
-  const { canClaim, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater } = useDailyGift(userId, profile?.is_subscribed || false);
+  const { canClaim, showPopup: showDailyGiftPopup, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater, showDailyGiftPopup: triggerDailyGift, setShowPopup: setShowDailyGift } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
   const { showPopup: showWeeklyWinnersPopup, triggerPopup: triggerWeeklyWinnersPopup, closePopup: closeWeeklyWinnersPopup, canShowThisWeek: canShowWeeklyPopup } = useWeeklyWinnersPopup(userId);
   const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
-  const [showDailyGift, setShowDailyGift] = useState(false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   const [showBoosterActivation, setShowBoosterActivation] = useState(false);
   const [showPromo, setShowPromo] = useState(false);
@@ -89,7 +88,7 @@ const Dashboard = () => {
   
   // Promo scheduler with time intelligence
   const canShowPromo = usePromoScheduler(userId);
-  const hasOtherDialogs = showWelcomeBonus || showDailyGift;
+  const hasOtherDialogs = showWelcomeBonus || showDailyGiftPopup;
   const { shouldShow: shouldShowGeniusPromo, closePromo, handleSubscribe, handleLater: handlePromoLater } = useGeniusPromo(
     userId,
     profile?.is_subscribed || false,
@@ -267,7 +266,7 @@ const Dashboard = () => {
   };
 
   const handleCloseDailyGift = () => {
-    setShowDailyGift(false);
+    handleDailyLater();
     // Trigger weekly winners popup 3 seconds after dismissing
     triggerWeeklyWinnersPopup();
   };
@@ -335,9 +334,9 @@ if (!profile) {
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: isStandalone ? '10vh' : '0' }}>
+        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: isStandalone ? '10vh' : '1rem' }}>
         {/* Top Section */}
-        <div className="flex flex-col gap-3 mb-3 flex-shrink-0" style={{ marginTop: isStandalone ? '0' : '2vh' }}>
+        <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}
           <div className="flex items-center justify-between">
             {/* Left: Greeting - vertically centered with hexagons */}
@@ -614,9 +613,9 @@ if (!profile) {
             </div>
           </div>
 
-          {/* Logo - below Play Now, above BottomNav */}
+          {/* Logo - below Play Now, above BottomNav - DUPLA MÉRET */}
           <div className="flex justify-center w-full" style={{ marginBottom: '2vh', pointerEvents: 'none' }}>
-            <div className="relative w-[clamp(120px,25vw,200px)] h-[clamp(120px,25vw,200px)]">
+            <div className="relative w-[clamp(240px,50vw,400px)] h-[clamp(240px,50vw,400px)]">
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
               <img src={logoImage} alt="Logo" className="relative w-full h-full object-contain drop-shadow-2xl gold-glow" />
             </div>
@@ -652,9 +651,9 @@ if (!profile) {
           claiming={claimingWelcome}
         />
 
-      {/* Daily gift dialog - SECOND - automatic popup */}
+      {/* Daily gift dialog - SECOND - manual trigger */}
       <DailyGiftDialog
-        open={showDailyGift && !showWelcomeBonus}
+        open={showDailyGiftPopup && !showWelcomeBonus}
         onClaim={handleClaimDailyGift}
         onClaimSuccess={() => {
           setDailyGiftJustClaimed(true);
@@ -669,7 +668,7 @@ if (!profile) {
 
       {/* Genius Promo dialog - THIRD */}
       <GeniusPromoDialog
-        open={showPromo && !showWelcomeBonus && !showDailyGift}
+        open={showPromo && !showWelcomeBonus && !showDailyGiftPopup}
         onClose={() => {
           closePromo();
           setShowPromo(false);
