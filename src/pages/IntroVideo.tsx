@@ -19,13 +19,13 @@ const IntroVideo = () => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Ensure video is loaded and ready
+    // Ensure video is loaded and ready - instant playback
     const handleCanPlay = () => {
       setVideoLoaded(true);
       try { sessionStorage.setItem('app_intro_shown', '1'); } catch {}
-      video.play().catch(() => {
-        // Force play even if autoplay is blocked
-        video.play();
+      // Use requestAnimationFrame for smoother start
+      requestAnimationFrame(() => {
+        video.play().catch(() => video.play());
       });
     };
 
@@ -55,6 +55,7 @@ const IntroVideo = () => {
         playsInline
         preload="auto"
         src={introVideo}
+        style={{ willChange: 'transform' }}
       />
       {!videoLoaded && (
         <div className="absolute inset-0 bg-black flex items-center justify-center">

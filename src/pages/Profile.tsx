@@ -181,9 +181,9 @@ const Profile = () => {
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-      <div className="w-full flex flex-col px-3 py-4 max-w-screen-sm mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 120px)' }}>
+      <div className="w-full flex flex-col px-3 py-2 max-w-screen-sm mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 120px)' }}>
         {/* Header - Back button and Avatar in same line - HIGHER UP */}
-        <div className="flex items-center justify-between mb-2 sm:mb-4 pt-safe">
+        <div className="flex items-center justify-between mb-2">
           <button
             onClick={() => navigate('/dashboard')}
             className="relative p-3 rounded-full hover:scale-110 transition-all"
@@ -252,7 +252,7 @@ const Profile = () => {
         </div>
 
         {/* User Info */}
-        <div className="text-center mb-4 sm:mb-6">
+        <div className="text-center mb-2">
           <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 mb-1 flex items-center justify-center gap-2">
             {profile.username}
             {profile.is_subscribed && <GeniusCrownBadge size="md" />}
@@ -336,7 +336,7 @@ const Profile = () => {
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6" data-tutorial="stats">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-2" data-tutorial="stats">
           {/* Lives - Deep 3D */}
           <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu" style={{ perspective: '1000px' }}>
             {/* BASE SHADOW */}

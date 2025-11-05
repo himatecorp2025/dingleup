@@ -32,7 +32,7 @@ const About = () => {
       
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-6 py-4 max-w-4xl mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
       {/* Header */}
-      <div className="text-center mb-12 pt-safe">
+      <div className="text-center mb-4">
         {/* Report Button - Top Right */}
         <button
           onClick={() => setShowReportDialog(true)}
@@ -44,22 +44,22 @@ const About = () => {
           </svg>
         </button>
         
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-600 to-yellow-900 rounded-2xl mb-6 border-4 border-yellow-400/50 shadow-xl">
-            <Building2 className="w-10 h-10 text-yellow-200" />
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-600 to-yellow-900 rounded-2xl mb-3 border-4 border-yellow-400/50 shadow-xl">
+            <Building2 className="w-8 h-8 text-yellow-200" />
           </div>
-          <h1 className="text-4xl font-black text-center mb-4 bg-gradient-to-r from-yellow-400 via-white to-yellow-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-black text-center mb-2 bg-gradient-to-r from-yellow-400 via-white to-yellow-400 bg-clip-text text-transparent">
             Rólunk
           </h1>
-          <p className="text-xl text-white/90 font-bold">
+          <p className="text-lg text-white/90 font-bold">
             DingleUP! - Ahol a tudás találkozik a szórakozással
           </p>
         </div>
 
         {/* Main Content */}
-        <div className="space-y-8">
+        <div className="space-y-4">
           {/* Mission Section */}
-          <div className="bg-black/60 border-2 border-yellow-500/30 rounded-2xl p-6 backdrop-blur-sm">
-            <h2 className="text-2xl font-black text-yellow-400 mb-4">Küldetésünk</h2>
+          <div className="bg-black/60 border-2 border-yellow-500/30 rounded-2xl p-4 backdrop-blur-sm">
+            <h2 className="text-xl font-black text-yellow-400 mb-2">Küldetésünk</h2>
             <p className="text-white/90 leading-relaxed">
               A DingleUP! egy innovatív kérdés-válasz játék, amely ötvözi a kvízjátékok izgalmát 
               a modern mobil gaming élményével. Célunk, hogy szórakoztató és versengő környezetet 
@@ -69,8 +69,8 @@ const About = () => {
           </div>
 
           {/* Features Section */}
-          <div className="bg-black/60 border-2 border-purple-500/30 rounded-2xl p-6 backdrop-blur-sm">
-            <h2 className="text-2xl font-black text-purple-400 mb-4">Miért játssz velünk?</h2>
+          <div className="bg-black/60 border-2 border-purple-500/30 rounded-2xl p-4 backdrop-blur-sm">
+            <h2 className="text-xl font-black text-purple-400 mb-2">Miért játssz velünk?</h2>
             <ul className="space-y-3 text-white/90">
               <li className="flex items-start gap-3">
                 <span className="text-yellow-400 text-xl">✓</span>
@@ -96,8 +96,8 @@ const About = () => {
           </div>
 
           {/* Team Section */}
-          <div className="bg-black/60 border-2 border-green-500/30 rounded-2xl p-6 backdrop-blur-sm">
-            <h2 className="text-2xl font-black text-green-400 mb-4">Csapatunk</h2>
+          <div className="bg-black/60 border-2 border-green-500/30 rounded-2xl p-4 backdrop-blur-sm">
+            <h2 className="text-xl font-black text-green-400 mb-2">Csapatunk</h2>
             <p className="text-white/90 leading-relaxed">
               A DingleUP!-ot szenvedélyes fejlesztők és játékrajongók csapata készítette, akik hisznek 
               abban, hogy a tanulás és a szórakozás kéz a kézben járhat. Folyamatosan dolgozunk új 
@@ -106,8 +106,8 @@ const About = () => {
           </div>
 
           {/* Contact Section */}
-          <div className="bg-black/60 border-2 border-blue-500/30 rounded-2xl p-6 backdrop-blur-sm">
-            <h2 className="text-2xl font-black text-blue-400 mb-4">Kapcsolat</h2>
+          <div className="bg-black/60 border-2 border-blue-500/30 rounded-2xl p-4 backdrop-blur-sm">
+            <h2 className="text-xl font-black text-blue-400 mb-2">Kapcsolat</h2>
             <p className="text-white/90 leading-relaxed mb-4">
               Kérdésed van? Szeretnél visszajelzést adni? Lépj kapcsolatba velünk!
             </p>

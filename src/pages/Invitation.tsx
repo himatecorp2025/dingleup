@@ -158,9 +158,9 @@ const Invitation = () => {
       </div>
 
       <div className="h-full w-full overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)' }}>
-        <div className="max-w-2xl mx-auto px-4 pt-20">
+        <div className="max-w-2xl mx-auto px-4 pt-16">
         {/* Header */}
-        <div className="text-center mb-6 pt-safe">
+        <div className="text-center mb-3">
           <div className="flex items-center justify-center gap-3 mb-2">
             <svg className="w-8 h-8 text-purple-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

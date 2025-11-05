@@ -116,7 +116,7 @@ const Leaderboard = () => {
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)' }}>
         <div className="max-w-6xl mx-auto p-4 w-full">
           {/* Header with Back Button - 3D Box Style */}
-          <div className="flex items-center mb-4 sm:mb-6 pt-safe">
+          <div className="flex items-center mb-2">
             <button
               onClick={() => navigate('/dashboard')}
               className="relative p-3 rounded-full hover:scale-110 transition-all"
@@ -145,12 +145,12 @@ const Leaderboard = () => {
         <div className="max-w-4xl mx-auto w-full">
 
         {/* Title */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-3 sm:mb-4 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent pt-safe px-2">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-2 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent px-2">
           🏆 Ranglista 🏆
         </h1>
 
         {/* Countdown Timer - below title */}
-        <div className="flex justify-center mb-4 sm:mb-6 px-2">
+        <div className="flex justify-center mb-2 px-2">
           <WeeklyRankingsCountdown compact={false} />
         </div>
 

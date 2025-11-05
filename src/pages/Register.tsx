@@ -182,10 +182,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen min-h-dvh fixed inset-0 flex justify-center px-4 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
-      paddingTop: isStandalone ? '10vh' : '1rem',
-      paddingBottom: '1rem',
-      alignItems: 'flex-start'
+    <div className="min-h-screen min-h-dvh fixed inset-0 flex items-center justify-center px-4 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
+      paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 8vh)' : 'calc(env(safe-area-inset-top) + 1rem)',
+      paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)'
     }}>
       {/* Overlay gradients */}
       <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10 pointer-events-none"></div>
@@ -201,8 +200,8 @@ const Register = () => {
       <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 animate-pulse"></div>
       <div className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-red-500 to-yellow-500 animate-pulse"></div>
 
-      <div className="w-full max-w-md relative z-10">
-        <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 sm:mb-8 transition-colors drop-shadow-lg">
+      <div className="w-full max-w-md my-auto relative z-10">
+        <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-3 transition-colors drop-shadow-lg text-sm">
           <ArrowLeft className="w-4 h-4" />
           Vissza a főoldalra
         </Link>
@@ -223,8 +222,8 @@ const Register = () => {
           {/* SPECULAR HIGHLIGHT */}
           <div className="absolute inset-[8px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
           
-          <div className="relative p-6 sm:p-8 max-h-[calc(100svh-6rem)] sm:max-h-none overflow-y-auto rounded-2xl" style={{ transform: 'translateZ(60px)' }}>
-            <div className="text-center mb-6 sm:mb-8">
+          <div className="relative p-4 sm:p-6 overflow-y-auto rounded-2xl" style={{ transform: 'translateZ(60px)' }}>
+            <div className="text-center mb-4">
               <img src={logo} alt="Dingle UP!" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 drop-shadow-2xl" />
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 font-poppins px-2">
                 <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">Regisztráció</span>
