@@ -47,18 +47,26 @@ const IntroVideo = () => {
   }, [navigate, nextPage]);
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex items-center justify-center min-h-dvh min-h-svh">
+    <div className="fixed inset-0 bg-black z-50 overflow-hidden" style={{ 
+      minHeight: '100dvh',
+      height: '100dvh'
+    }}>
       <video
         ref={videoRef}
-        className="w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full"
+        style={{ 
+          objectFit: 'cover',
+          willChange: 'transform',
+          minHeight: '100%',
+          minWidth: '100%'
+        }}
         muted
         playsInline
         preload="auto"
         src={introVideo}
-        style={{ willChange: 'transform' }}
       />
       {!videoLoaded && (
-        <div className="absolute inset-0 bg-black flex items-center justify-center">
+        <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
           <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin" />
         </div>
       )}

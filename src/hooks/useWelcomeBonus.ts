@@ -87,19 +87,21 @@ export const useWelcomeBonus = (userId: string | undefined) => {
       
       if (error) {
         console.error('[WelcomeBonus] RPC Error:', error);
-        throw error;
+        const errorMsg = error.message || 'Hiba történt a bónusz felvételekor';
+        toast.error(errorMsg);
+        return false;
       }
       
-      const result = data as { success: boolean; coins: number; error?: string };
+      const result = data as { success: boolean; coins: number; lives: number; error?: string };
       if (result.success) {
         // Track claim BEFORE showing success message
         trackEvent('popup_cta_click', 'welcome', 'claim');
         
         setCanClaim(false);
         
-        // Show success toast AFTER server confirmed the claim
-        toast.success('🎉 Üdvözlő bónusz felvéve! Jutalmad jóváírva a pénztárcádban.');
-        console.log('[WelcomeBonus] Claim successful, coins:', result.coins);
+        // Show success toast with actual amounts
+        toast.success(`🎉 Üdvözlő bónusz felvéve! +${result.coins} aranyérme, +${result.lives} élet`);
+        console.log('[WelcomeBonus] Claim successful:', result);
         
         return true;
       } else {
@@ -107,12 +109,10 @@ export const useWelcomeBonus = (userId: string | undefined) => {
         toast.error(result.error || 'Hiba történt a bónusz felvételekor');
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('[WelcomeBonus] Exception during claim:', error);
-      if (import.meta.env.DEV) {
-        console.error('Error claiming welcome bonus:', error);
-      }
-      toast.error('Hiba történt a bónusz felvételekor');
+      const errorMsg = error?.message || 'Hiba történt a bónusz felvételekor';
+      toast.error(errorMsg);
       return false;
     } finally {
       setClaiming(false);

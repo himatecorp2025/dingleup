@@ -63,7 +63,7 @@ const Dashboard = () => {
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
-  const { canClaim, showPopup: showDailyGiftPopup, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater: handleDailyLater, showDailyGiftPopup: triggerDailyGift, setShowPopup: setShowDailyGift } = useDailyGift(userId, profile?.is_subscribed || false);
+  const { canClaim, showPopup, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater, showDailyGiftPopup, setShowPopup } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
   const { showPopup: showWeeklyWinnersPopup, triggerPopup: triggerWeeklyWinnersPopup, closePopup: closeWeeklyWinnersPopup, canShowThisWeek: canShowWeeklyPopup } = useWeeklyWinnersPopup(userId);
@@ -88,7 +88,7 @@ const Dashboard = () => {
   
   // Promo scheduler with time intelligence
   const canShowPromo = usePromoScheduler(userId);
-  const hasOtherDialogs = showWelcomeBonus || showDailyGiftPopup;
+  const hasOtherDialogs = showWelcomeBonus || showPopup;
   const { shouldShow: shouldShowGeniusPromo, closePromo, handleSubscribe, handleLater: handlePromoLater } = useGeniusPromo(
     userId,
     profile?.is_subscribed || false,
@@ -168,7 +168,7 @@ const Dashboard = () => {
     if (canMountModals && canClaimWelcome && userId) {
       const t = setTimeout(() => {
         setShowWelcomeBonus(true);
-        setShowDailyGift(false);
+        setShowPopup(false);
         setShowPromo(false);
       }, 1000);
       return () => clearTimeout(t);
@@ -180,7 +180,7 @@ const Dashboard = () => {
     if (canMountModals && canClaim && !canClaimWelcome && !showWeeklyWinners && userId) {
       // Wait 2 seconds for automatic popup
       const timer = setTimeout(() => {
-        setShowDailyGift(true);
+        setShowPopup(true);
         setShowPromo(false);
       }, 2000);
       return () => clearTimeout(timer);
@@ -257,7 +257,7 @@ const Dashboard = () => {
     if (success) {
       await checkDailyGift();
       await refreshProfile();
-      setShowDailyGift(false);
+      setShowPopup(false);
       setDailyGiftJustClaimed(true);
       
       // Trigger weekly winners popup 3 seconds after claiming
@@ -266,7 +266,8 @@ const Dashboard = () => {
   };
 
   const handleCloseDailyGift = () => {
-    handleDailyLater();
+    handleLater();
+    setShowPopup(false);
     // Trigger weekly winners popup 3 seconds after dismissing
     triggerWeeklyWinnersPopup();
   };
@@ -653,7 +654,7 @@ if (!profile) {
 
       {/* Daily gift dialog - SECOND - manual trigger */}
       <DailyGiftDialog
-        open={showDailyGiftPopup && !showWelcomeBonus}
+        open={showPopup && !showWelcomeBonus}
         onClaim={handleClaimDailyGift}
         onClaimSuccess={() => {
           setDailyGiftJustClaimed(true);
@@ -668,7 +669,7 @@ if (!profile) {
 
       {/* Genius Promo dialog - THIRD */}
       <GeniusPromoDialog
-        open={showPromo && !showWelcomeBonus && !showDailyGiftPopup}
+        open={showPromo && !showWelcomeBonus && !showPopup}
         onClose={() => {
           closePromo();
           setShowPromo(false);
