@@ -183,7 +183,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen min-h-dvh fixed inset-0 flex items-center justify-center px-4 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
-      paddingTop: 'calc(env(safe-area-inset-top) + 5vh)',
+      paddingTop: 'calc(env(safe-area-inset-top) + 2vh)',
       paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)'
     }}>
       {/* Overlay gradients */}

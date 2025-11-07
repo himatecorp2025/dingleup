@@ -15,37 +15,47 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
 
     try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('daily_gift_streak, daily_gift_last_claimed')
-        .eq('id', userId)
+      // Get current week start
+      const { data: weekData, error: weekError } = await supabase
+        .rpc('get_current_week_start');
+      
+      if (weekError) throw weekError;
+      const weekStart = weekData as string;
+
+      // Get weekly login state
+      const { data: loginState } = await supabase
+        .from('weekly_login_state')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('week_start', weekStart)
         .single();
 
-      if (!profile) return;
-
-      const now = new Date();
-      const lastClaimed = profile.daily_gift_last_claimed 
-        ? new Date(profile.daily_gift_last_claimed)
-        : null;
+      const currentIndex = loginState?.awarded_login_index || 0;
       
-      // Check if already claimed today
-      const isToday = lastClaimed && 
-        lastClaimed.getDate() === now.getDate() &&
-        lastClaimed.getMonth() === now.getMonth() &&
-        lastClaimed.getFullYear() === now.getFullYear();
+      // Check if can claim (24h throttle)
+      let canClaimNow = true;
+      if (loginState?.last_counted_at) {
+        const lastCounted = new Date(loginState.last_counted_at);
+        const now = new Date();
+        const hoursSince = (now.getTime() - lastCounted.getTime()) / (1000 * 60 * 60);
+        canClaimNow = hoursSince >= 24;
+      }
 
-      const entryCount = profile.daily_gift_streak || 0;
-      const reward = DAILY_GIFT_REWARDS[entryCount % 7];
+      // Get reward configuration for next day
+      const { data: rewardConfig } = await supabase
+        .from('weekly_login_rewards')
+        .select('*')
+        .eq('reward_index', currentIndex + 1)
+        .single();
 
-      setWeeklyEntryCount(entryCount);
-      setNextReward(isPremium ? reward * 2 : reward);
+      const baseReward = rewardConfig?.gold_amount || 0;
       
-      // NE jelenítse meg automatikusan, csak jelezze hogy claimelhető
-      setCanClaim(!isToday);
+      setWeeklyEntryCount(currentIndex);
+      setNextReward(baseReward);
+      setCanClaim(canClaimNow && baseReward > 0);
 
-      // NE mutassuk automatikusan a popupot
       if (import.meta.env.DEV) {
-        console.log('[DailyGift] Can claim:', !isToday, 'day', entryCount + 1, 'reward:', isPremium ? reward * 2 : reward);
+        console.log('[DailyGift] Can claim:', canClaimNow, 'day', currentIndex + 1, 'reward:', baseReward);
       }
     } catch (error) {
       if (import.meta.env.DEV) {
@@ -66,55 +76,46 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId || !canClaim) return false;
 
     try {
-      const { data, error } = await supabase.rpc('claim_daily_gift');
+      // Call weekly-login-reward edge function
+      const { data, error } = await supabase.functions.invoke('weekly-login-reward', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
       
       if (error) throw error;
       
-      const result = data as { 
-        success: boolean; 
-        isSubscriber?: boolean;
-        baseCoins?: number;
-        grantedCoins?: number;
-        walletBalance?: number;
-        streak: number; 
-        error?: string 
-      };
-      
-      if (result.success) {
-        // Server-authoritative message
-        const isGenius = result.isSubscriber || false;
-        const baseAmount = result.baseCoins || 0;
-        const grantedAmount = result.grantedCoins || 0;
-        
+      if (data.success) {
         toast({
-          title: '🎁 Napi ajándék',
-          description: isGenius 
-            ? `Jutalmad: ${baseAmount} → ${grantedAmount} érme (Genius dupla!)` 
-            : `Jutalmad: +${grantedAmount} érme`,
+          title: '🎁 Napi bejelentkezési jutalom',
+          description: `${data.login_index}. nap: +${data.gold_awarded} arany${data.lives_awarded > 0 ? ` és +${data.lives_awarded} élet` : ''}`,
         });
 
         setCanClaim(false);
-        setWeeklyEntryCount(result.streak);
-        const nextBase = DAILY_GIFT_REWARDS[result.streak % 7];
-        setNextReward(isGenius ? nextBase * 2 : nextBase);
+        setWeeklyEntryCount(data.login_index);
         
-        // Mark as seen today
-        const todayKey = `daily_gift_seen_${userId}_${new Date().toDateString()}`;
-        localStorage.setItem(todayKey, 'true');
-
         // Refetch wallet to update balance
         if (refetchWallet) {
           await refetchWallet();
         }
 
+        // Check daily gift again to update state
+        await checkDailyGift();
+
         // Track claim
         trackEvent('popup_cta_click', 'daily', 'claim');
         
         return true;
+      } else if (data.throttled) {
+        toast({
+          title: 'Már igényelted',
+          description: data.message || 'Ma már igényelted a belépési jutalmat',
+        });
+        return false;
       } else {
         toast({
           title: 'Hiba',
-          description: result.error || 'Nem sikerült az ajándék átvétele',
+          description: data.error || 'Nem sikerült az ajándék átvétele',
           variant: 'destructive'
         });
         return false;

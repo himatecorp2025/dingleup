@@ -47,18 +47,19 @@ const IntroVideo = () => {
   }, [navigate, nextPage]);
 
   return (
-    <div className="fixed inset-0 bg-black z-50 overflow-hidden" style={{ 
-      minHeight: '100dvh',
-      height: '100dvh'
+    <div className="fixed inset-0 bg-black z-50" style={{ 
+      width: '100vw',
+      height: '100dvh',
+      overflow: 'hidden'
     }}>
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full"
         style={{ 
           objectFit: 'cover',
-          willChange: 'transform',
-          minHeight: '100%',
-          minWidth: '100%'
+          objectPosition: 'center',
+          width: '100%',
+          height: '100%'
         }}
         muted
         playsInline

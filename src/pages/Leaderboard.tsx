@@ -107,7 +107,7 @@ const Leaderboard = () => {
 
   return (
     <div className="h-dvh h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
-      paddingTop: 'calc(env(safe-area-inset-top) + 5vh)',
+      paddingTop: 'calc(env(safe-area-inset-top) + 2vh)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
       {/* Casino lights animation at top */}

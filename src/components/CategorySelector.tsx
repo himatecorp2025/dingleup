@@ -53,7 +53,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
   ];
 
   return (
-    <div className="category-selector h-dvh h-svh w-screen flex flex-col items-start justify-start p-4 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 5vh)' }}>
+    <div className="category-selector h-dvh h-svh w-screen flex flex-col items-start justify-start p-4 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 2vh)' }}>
       <div className="absolute inset-0 bg-gradient-to-tr from-yellow-600/10 via-red-600/10 to-purple-600/10 pointer-events-none"></div>
       
       {/* Casino lights animation */}
