@@ -67,7 +67,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
   const showDailyGiftPopup = () => {
     if (canClaim) {
       setShowPopup(true);
-      trackEvent('popup_impression', 'daily');
+      trackEvent('daily_gift_popup_shown', 'daily');
       console.log('[DailyGift] Manually showing popup for day', weeklyEntryCount + 1, 'reward:', nextReward);
     }
   };
@@ -102,8 +102,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         // Check daily gift again to update state
         await checkDailyGift();
 
-        // Track claim
-        trackEvent('popup_cta_click', 'daily', 'claim');
+        // Track claim success
+        trackEvent('daily_gift_claim_succeeded', 'daily');
         
         return true;
       } else if (data.throttled) {
@@ -111,6 +111,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
           title: 'Már igényelted',
           description: data.message || 'Ma már igényelted a belépési jutalmat',
         });
+        // Track failed (throttled)
+        trackEvent('daily_gift_claim_failed', 'daily');
         return false;
       } else {
         toast({
@@ -129,6 +131,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         description: 'Nem sikerült az ajándék átvétele',
         variant: 'destructive'
       });
+      trackEvent('daily_gift_claim_failed', 'daily');
       return false;
     }
   };
@@ -140,7 +143,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     setShowPopup(false);
     
     // Track later action
-    trackEvent('popup_cta_click', 'daily', 'later');
+    trackEvent('daily_gift_popup_shown', 'daily', 'later_dismiss');
   };
 
   useEffect(() => {

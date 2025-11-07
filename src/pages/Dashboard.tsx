@@ -175,15 +175,11 @@ const Dashboard = () => {
     }
   }, [canMountModals, canClaimWelcome, userId]);
 
-  // Show Daily Gift dialog SECOND (after welcome bonus) - AUTOMATIC on all devices
+  // Show Daily Gift dialog SECOND (after welcome bonus) - AUTOMATIC, no auto-claim
   useEffect(() => {
     if (canMountModals && canClaim && !canClaimWelcome && !showWeeklyWinners && userId) {
-      // Wait 2 seconds for automatic popup
-      const timer = setTimeout(() => {
-        setShowPopup(true);
-        setShowPromo(false);
-      }, 2000);
-      return () => clearTimeout(timer);
+      setShowPopup(true);
+      setShowPromo(false);
     }
   }, [canMountModals, canClaim, canClaimWelcome, showWeeklyWinners, userId]);
 

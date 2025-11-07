@@ -16,6 +16,7 @@ import { InsufficientResourcesDialog } from "./InsufficientResourcesDialog";
 import { ExitGameDialog } from "./ExitGameDialog";
 import { useBroadcastChannel } from "@/hooks/useBroadcastChannel";
 import { Trophy3D } from "./Trophy3D";
+import { getSessionId } from "@/lib/analytics";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -456,7 +457,7 @@ const GamePreview = () => {
     }
   };
 
-  const handleCorrectAnswer = (responseTime: number, answerKey: string) => {
+  const handleCorrectAnswer = async (responseTime: number, answerKey: string) => {
     setResponseTimes([...responseTimes, responseTime]);
     setSelectedAnswer(answerKey);
     setCorrectAnswers(correctAnswers + 1);
@@ -471,11 +472,26 @@ const GamePreview = () => {
     } else if (currentQuestionIndex === 14) {
       reward = 55;
     }
+
+    try {
+      const sourceId = `${getSessionId()}-${currentQuestionIndex}`;
+      const { data, error } = await supabase.functions.invoke('credit-gameplay-reward', {
+        body: { amount: reward, sourceId, reason: 'correct_answer' },
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+      });
+      if (error) throw error;
+      // Optimistic local counter (UI), server is authoritative
+      setCoinsEarned(coinsEarned + reward);
+      // Notify other views to refresh wallet immediately
+      await broadcast('wallet:update', { source: 'correct_answer', coinsDelta: reward });
+    } catch (err) {
+      console.error('[Gameplay] Credit reward failed:', err);
+      toast.error('Nem sikerült a jutalom jóváírása, próbáld újra.');
+    }
     
-    // SECURITY: Local counter only - actual coins awarded by complete-game edge function
-    setCoinsEarned(coinsEarned + reward);
-    
-    // Nincs toast - a felhasználó látja a zöld választ
+    // Nincs külön toast siker esetén – a zöld válasz jelzi
   };
 
   const handleWrongAnswer = (responseTime: number, answerKey: string) => {
