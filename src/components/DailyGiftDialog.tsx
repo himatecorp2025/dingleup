@@ -8,12 +8,12 @@ import HexAcceptButton from './ui/HexAcceptButton';
 
 interface DailyGiftDialogProps {
   open: boolean;
-  onClaim: () => void;
-  onClaimSuccess?: () => void;
+  onClaim: () => Promise<boolean>;
   onLater: () => void;
   weeklyEntryCount: number;
   nextReward: number;
   canClaim: boolean;
+  claiming: boolean;
   isPremium?: boolean;
 }
 
@@ -22,11 +22,11 @@ const DAILY_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 const DailyGiftDialog = ({ 
   open, 
   onClaim,
-  onClaimSuccess,
   onLater,
   weeklyEntryCount, 
   nextReward, 
   canClaim,
+  claiming,
   isPremium = false 
 }: DailyGiftDialogProps) => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -125,13 +125,8 @@ const DailyGiftDialog = ({
       });
     }
 
-    // Execute the actual claim - wait for it to complete
+    // Execute the actual claim
     await onClaim();
-
-    // Only call success callback after server confirmation
-    if (onClaimSuccess) {
-      setTimeout(() => onClaimSuccess(), 500);
-    }
   };
 
   if (!open) return null;
@@ -405,11 +400,13 @@ const DailyGiftDialog = ({
                     maxWidth: '100%'
                   }}
                 >
-                  {canClaim ? (
-                    <HexAcceptButton onClick={handleClaim} style={{ width: 'var(--sync-width)' }} />
-                  ) : (
-                    <HexAcceptButton disabled style={{ width: 'var(--sync-width)' }} />
-                  )}
+                  <HexAcceptButton
+                    onClick={handleClaim}
+                    disabled={!canClaim || claiming}
+                    style={{ width: 'var(--sync-width)' }}
+                  >
+                    {claiming ? "FELDOLGOZÁS..." : "IGÉNYLEM"}
+                  </HexAcceptButton>
                 </div>
               </div>
             </HexShieldFrame>

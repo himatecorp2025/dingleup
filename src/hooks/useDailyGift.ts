@@ -4,17 +4,28 @@ import { toast } from '@/hooks/use-toast';
 
 const DAILY_GIFT_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 
+const DAILY_GIFT_SESSION_KEY = 'daily_gift_dismissed_';
+
 export const useDailyGift = (userId: string | undefined, isPremium: boolean = false) => {
   const [canClaim, setCanClaim] = useState(false);
   const [weeklyEntryCount, setWeeklyEntryCount] = useState(0);
   const [nextReward, setNextReward] = useState(0);
-  const [hasSeenToday, setHasSeenToday] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [claiming, setClaiming] = useState(false);
 
   const checkDailyGift = async () => {
     if (!userId) return;
 
     try {
+      // Check if user dismissed today's popup
+      const today = new Date().toDateString();
+      const dismissedDate = sessionStorage.getItem(DAILY_GIFT_SESSION_KEY + userId);
+      if (dismissedDate === today) {
+        setCanClaim(false);
+        setShowPopup(false);
+        return;
+      }
+
       // Get current week start
       const { data: weekData, error: weekError } = await supabase
         .rpc('get_current_week_start');
@@ -53,6 +64,11 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setWeeklyEntryCount(currentIndex);
       setNextReward(baseReward);
       setCanClaim(canClaimNow && baseReward > 0);
+      
+      // Show popup if can claim and not dismissed today
+      if (canClaimNow && baseReward > 0 && dismissedDate !== today) {
+        setShowPopup(true);
+      }
 
       if (import.meta.env.DEV) {
         console.log('[DailyGift] Can claim:', canClaimNow, 'day', currentIndex + 1, 'reward:', baseReward);
@@ -72,9 +88,10 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     }
   };
 
-  const claimDailyGift = async (refetchWallet?: () => Promise<void>) => {
-    if (!userId || !canClaim) return false;
+  const claimDailyGift = async (refetchWallet?: () => Promise<void>): Promise<boolean> => {
+    if (!userId || !canClaim || claiming) return false;
 
+    setClaiming(true);
     try {
       // Call weekly-login-reward edge function
       const { data, error } = await supabase.functions.invoke('weekly-login-reward', {
@@ -85,34 +102,38 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       
       if (error) throw error;
       
-      if (data.success) {
+      if (data.success && !data.throttled) {
         toast({
           title: '🎁 Napi bejelentkezési jutalom',
           description: `${data.login_index}. nap: +${data.gold_awarded} arany${data.lives_awarded > 0 ? ` és +${data.lives_awarded} élet` : ''}`,
         });
 
         setCanClaim(false);
+        setShowPopup(false);
         setWeeklyEntryCount(data.login_index);
+        
+        // Mark as dismissed for today
+        const today = new Date().toDateString();
+        sessionStorage.setItem(DAILY_GIFT_SESSION_KEY + userId, today);
         
         // Refetch wallet to update balance
         if (refetchWallet) {
           await refetchWallet();
         }
 
-        // Check daily gift again to update state
-        await checkDailyGift();
-
         // Track claim success
         trackEvent('daily_gift_claim_succeeded', 'daily');
         
+        setClaiming(false);
         return true;
       } else if (data.throttled) {
         toast({
           title: 'Már igényelted',
           description: data.message || 'Ma már igényelted a belépési jutalmat',
         });
-        // Track failed (throttled)
+        setShowPopup(false);
         trackEvent('daily_gift_claim_failed', 'daily');
+        setClaiming(false);
         return false;
       } else {
         toast({
@@ -120,6 +141,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
           description: data.error || 'Nem sikerült az ajándék átvétele',
           variant: 'destructive'
         });
+        setClaiming(false);
         return false;
       }
     } catch (error) {
@@ -128,10 +150,11 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       }
       toast({
         title: 'Hiba',
-        description: 'Nem sikerült az ajándék átvétele',
+        description: 'Nincs hálózati kapcsolat. Próbáld újra később.',
         variant: 'destructive'
       });
       trackEvent('daily_gift_claim_failed', 'daily');
+      setClaiming(false);
       return false;
     }
   };
@@ -139,7 +162,11 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
   const handleLater = () => {
     if (!userId) return;
     
-    // Just close the dialog without marking as seen
+    // Mark as dismissed for today
+    const today = new Date().toDateString();
+    sessionStorage.setItem(DAILY_GIFT_SESSION_KEY + userId, today);
+    
+    // Close popup
     setShowPopup(false);
     
     // Track later action
@@ -151,14 +178,15 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
   }, [userId, isPremium]);
 
   return {
-    canClaim, // Jelzi, hogy claimelhető-e
-    showPopup, // Popup láthatósága
+    canClaim,
+    showPopup,
     weeklyEntryCount,
     nextReward,
+    claiming,
     claimDailyGift,
     checkDailyGift,
     handleLater,
-    showDailyGiftPopup, // Manuális megjelenítés
+    showDailyGiftPopup,
     setShowPopup
   };
 };

@@ -248,17 +248,16 @@ const Dashboard = () => {
     };
   }, [userId]);
 
-  const handleClaimDailyGift = async () => {
+  const handleClaimDailyGift = async (): Promise<boolean> => {
     const success = await claimDailyGift(refetchWallet);
     if (success) {
       await checkDailyGift();
       await refreshProfile();
-      setShowPopup(false);
       setDailyGiftJustClaimed(true);
-      
-      // Trigger weekly winners popup 3 seconds after claiming
       triggerWeeklyWinnersPopup();
+      setTimeout(() => setDailyGiftJustClaimed(false), 2000);
     }
+    return success;
   };
 
   const handleCloseDailyGift = () => {
@@ -331,7 +330,7 @@ if (!profile) {
       {/* Casino lights at top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
       
-        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 2vh)' }}>
+        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)' }}>
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username, Daily Gift Button and Stats */}
@@ -662,16 +661,13 @@ if (!profile) {
 
       {/* Daily gift dialog - SECOND - manual trigger */}
       <DailyGiftDialog
-        open={showPopup && !showWelcomeBonus}
+        open={showDailyGiftPopup}
         onClaim={handleClaimDailyGift}
-        onClaimSuccess={() => {
-          setDailyGiftJustClaimed(true);
-          setTimeout(() => setDailyGiftJustClaimed(false), 2000);
-        }}
         onLater={handleCloseDailyGift}
         weeklyEntryCount={weeklyEntryCount}
         nextReward={nextReward}
         canClaim={canClaim}
+        claiming={claiming}
         isPremium={profile?.is_subscribed || false}
       />
 
