@@ -63,7 +63,7 @@ const Dashboard = () => {
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
-  const { canClaim, showPopup, weeklyEntryCount, nextReward, claimDailyGift, checkDailyGift, handleLater, showDailyGiftPopup, setShowPopup } = useDailyGift(userId, profile?.is_subscribed || false);
+  const { canClaim, showPopup, weeklyEntryCount, nextReward, claiming, claimDailyGift, checkDailyGift, handleLater, showDailyGiftPopup, setShowPopup } = useDailyGift(userId, profile?.is_subscribed || false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
   const { showPopup: showWeeklyWinnersPopup, triggerPopup: triggerWeeklyWinnersPopup, closePopup: closeWeeklyWinnersPopup, canShowThisWeek: canShowWeeklyPopup } = useWeeklyWinnersPopup(userId);
@@ -661,7 +661,7 @@ if (!profile) {
 
       {/* Daily gift dialog - SECOND - manual trigger */}
       <DailyGiftDialog
-        open={showDailyGiftPopup}
+        open={showPopup}
         onClaim={handleClaimDailyGift}
         onLater={handleCloseDailyGift}
         weeklyEntryCount={weeklyEntryCount}
