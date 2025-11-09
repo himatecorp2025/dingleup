@@ -15,17 +15,17 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
   const checkDailyGift = async () => {
     if (!userId) return;
+    
+    // Check sessionStorage for dismissal today
+    const dismissedToday = sessionStorage.getItem('daily_gift_dismissed_date');
+    const today = new Date().toISOString().split('T')[0];
+    if (dismissedToday === today) {
+      setCanClaim(false);
+      setShowPopup(false);
+      return;
+    }
 
     try {
-      // Check if user dismissed today's popup
-      const today = new Date().toDateString();
-      const dismissedDate = sessionStorage.getItem(DAILY_GIFT_SESSION_KEY + userId);
-      if (dismissedDate === today) {
-        setCanClaim(false);
-        setShowPopup(false);
-        return;
-      }
-
       // Get current week start
       const { data: weekData, error: weekError } = await supabase
         .rpc('get_current_week_start');
@@ -66,7 +66,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setCanClaim(canClaimNow && baseReward > 0);
       
       // Show popup if can claim and not dismissed today
-      if (canClaimNow && baseReward > 0 && dismissedDate !== today) {
+      if (canClaimNow && baseReward > 0 && dismissedToday !== today) {
         setShowPopup(true);
       }
 
@@ -90,6 +90,16 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
   const claimDailyGift = async (refetchWallet?: () => Promise<void>): Promise<boolean> => {
     if (!userId || !canClaim || claiming) return false;
+    
+    // Check for offline
+    if (!navigator.onLine) {
+      toast({
+        title: 'Nincs hálózat',
+        description: 'Próbáld újra később.',
+        variant: 'destructive'
+      });
+      return false;
+    }
 
     setClaiming(true);
     try {
@@ -163,14 +173,19 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
     
     // Mark as dismissed for today
-    const today = new Date().toDateString();
-    sessionStorage.setItem(DAILY_GIFT_SESSION_KEY + userId, today);
+    const today = new Date().toISOString().split('T')[0];
+    sessionStorage.setItem('daily_gift_dismissed_date', today);
     
     // Close popup
     setShowPopup(false);
     
-    // Track later action
-    trackEvent('daily_gift_popup_shown', 'daily', 'later_dismiss');
+    // Track analytics
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'popup_dismissed', {
+        event_category: 'daily_gift',
+        event_label: 'user_dismissed',
+      });
+    }
   };
 
   useEffect(() => {

@@ -57,7 +57,9 @@ const Game = () => {
 
   return (
     <ScreenshotProtection enabled={true}>
-      <div className="min-h-dvh min-h-svh overflow-hidden">
+      <div className="min-h-dvh min-h-svh overflow-hidden" style={{
+        paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)'
+      }}>
         <GamePreview />
       </div>
     </ScreenshotProtection>

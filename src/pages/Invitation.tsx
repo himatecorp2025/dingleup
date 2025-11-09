@@ -127,7 +127,7 @@ const Invitation = () => {
 
   return (
     <div className="h-dvh h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
-      paddingTop: isStandalone ? 'calc(10vh + env(safe-area-inset-top))' : 'env(safe-area-inset-top)',
+      paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
       {/* Back Button - 3D Round Style */}

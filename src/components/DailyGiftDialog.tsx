@@ -116,17 +116,28 @@ const DailyGiftDialog = ({
   }, [open, userId, nextReward, weeklyEntryCount, isPremium]);
 
   const handleClaim = async () => {
-    // Track the claim attempt
-    if (userId) {
-      trackBonusEvent(userId, 'daily_claimed', 'daily', {
-        coins_amount: nextReward,
-        streak_day: weeklyEntryCount + 1,
-        is_subscriber: isPremium
+    // Track claim attempt
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'reward_attempt', {
+        event_category: 'daily_gift',
+        event_label: 'click_claim',
+        value: nextReward
       });
     }
-
+    
     // Execute the actual claim
-    await onClaim();
+    const success = await onClaim();
+    
+    if (success) {
+      // Track successful claim
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'reward_granted', {
+          event_category: 'daily_gift',
+          event_label: `day_${weeklyEntryCount + 1}`,
+          value: nextReward
+        });
+      }
+    }
   };
 
   if (!open) return null;

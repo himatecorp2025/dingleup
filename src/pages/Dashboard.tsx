@@ -333,25 +333,13 @@ if (!profile) {
         <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)' }}>
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
-          {/* First Row: Username, Daily Gift Button and Stats */}
+          {/* First Row: Username and Stats */}
           <div className="flex items-center justify-between">
-            {/* Left: Greeting with Daily Gift button */}
+            {/* Left: Greeting */}
             <div className="flex items-center gap-3 h-12 sm:h-16 md:h-20">
               <h1 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
                 Szia, {profile.username}!
               </h1>
-              {canClaim && (
-                <button
-                  onClick={showDailyGiftPopup}
-                  className="relative animate-pulse flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg"
-                  title="Napi ajándék"
-                >
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                  </svg>
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping" />
-                </button>
-              )}
             </div>
 
             {/* Right: Stats & Avatar - including Genius Crown as first hexagon */}
