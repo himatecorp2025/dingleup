@@ -16,10 +16,12 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
   const checkDailyGift = async () => {
     if (!userId) return;
     
-    // Check sessionStorage for dismissal today
-    const dismissedToday = sessionStorage.getItem('daily_gift_dismissed_date');
+    // CRITICAL: Check sessionStorage using CONSISTENT key pattern
     const today = new Date().toISOString().split('T')[0];
-    if (dismissedToday === today) {
+    const dismissedToday = sessionStorage.getItem(`daily_gift_dismissed_${today}`);
+    
+    // If already dismissed OR claimed today, don't show
+    if (dismissedToday) {
       setCanClaim(false);
       setShowPopup(false);
       return;
@@ -65,9 +67,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setNextReward(baseReward);
       setCanClaim(canClaimNow && baseReward > 0);
       
-      // CRITICAL: Show popup EVERY day on first app start, regardless of claim status
-      // Only check if NOT dismissed today and reward exists
-      if (dismissedToday !== today && baseReward > 0) {
+      // CRITICAL: Show popup EVERY day on first app start, if NOT dismissed/claimed today
+      if (!dismissedToday && baseReward > 0) {
         setShowPopup(true);
       }
 
@@ -123,9 +124,9 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         setShowPopup(false);
         setWeeklyEntryCount(data.login_index);
         
-        // Mark as dismissed for today
-        const today = new Date().toDateString();
-        sessionStorage.setItem(DAILY_GIFT_SESSION_KEY + userId, today);
+        // Mark as claimed/dismissed for today (CONSISTENT KEY)
+        const today = new Date().toISOString().split('T')[0];
+        sessionStorage.setItem(`daily_gift_dismissed_${today}`, 'claimed');
         
         // Refetch wallet to update balance
         if (refetchWallet) {
@@ -173,9 +174,9 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
   const handleLater = () => {
     if (!userId) return;
     
-    // Mark as dismissed for today
+    // Mark as dismissed for today (CONSISTENT KEY)
     const today = new Date().toISOString().split('T')[0];
-    sessionStorage.setItem('daily_gift_dismissed_date', today);
+    sessionStorage.setItem(`daily_gift_dismissed_${today}`, 'dismissed');
     
     // Close popup
     setShowPopup(false);

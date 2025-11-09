@@ -327,8 +327,7 @@ if (!profile) {
     {/* Falling coins background */}
     <FallingCoins />
       
-      {/* Casino lights at top */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
+      {/* Casino lights removed per user requirement */}
       
         <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)' }}>
         {/* Top Section */}

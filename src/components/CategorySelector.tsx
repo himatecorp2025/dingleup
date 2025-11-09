@@ -56,8 +56,7 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
     <div className="category-selector h-dvh h-svh w-screen flex flex-col items-start justify-start p-4 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)' }}>
       <div className="absolute inset-0 bg-gradient-to-tr from-yellow-600/10 via-red-600/10 to-purple-600/10 pointer-events-none"></div>
       
-      {/* Casino lights animation */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-60 animate-pulse"></div>
+      {/* Casino lights removed per user requirement */}
       
       {/* Back Button - 3D Round Style */}
       <div className="fixed top-4 left-4 z-50">

@@ -27,8 +27,7 @@ const About = () => {
       paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
-      {/* Casino lights at top */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 opacity-80 animate-pulse z-50"></div>
+      {/* Casino lights removed per user requirement */}
       
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-6 py-4 max-w-4xl mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
       {/* Header */}
