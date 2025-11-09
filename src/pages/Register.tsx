@@ -196,9 +196,7 @@ const Register = () => {
         <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-red-500 rounded-full opacity-15 animate-float blur-xl" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      {/* Animated border lights */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 animate-pulse"></div>
-      <div className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-red-500 to-yellow-500 animate-pulse"></div>
+      {/* Animated border lights - REMOVED per user request (színes csík megszüntetése) */}
 
       <div className="w-full max-w-md my-auto relative z-10">
         <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-3 transition-colors drop-shadow-lg text-sm">

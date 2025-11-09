@@ -65,8 +65,9 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setNextReward(baseReward);
       setCanClaim(canClaimNow && baseReward > 0);
       
-      // Show popup if can claim and not dismissed today
-      if (canClaimNow && baseReward > 0 && dismissedToday !== today) {
+      // CRITICAL: Show popup EVERY day on first app start, regardless of claim status
+      // Only check if NOT dismissed today and reward exists
+      if (dismissedToday !== today && baseReward > 0) {
         setShowPopup(true);
       }
 
