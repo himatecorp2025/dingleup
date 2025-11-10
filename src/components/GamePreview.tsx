@@ -904,9 +904,16 @@ const GamePreview = () => {
   if (profileLoading || !userId) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
+        {/* Background extends beyond safe-area */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
-          style={{ backgroundImage: `url(${gameBackground})` }}
+          className="absolute bg-cover bg-center bg-no-repeat bg-fixed"
+          style={{ 
+            backgroundImage: `url(${gameBackground})`,
+            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))'
+          }}
         />
         <div className="relative z-10 text-white">Betöltés...</div>
       </div>
@@ -916,9 +923,16 @@ const GamePreview = () => {
   if (!profile) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
+        {/* Background extends beyond safe-area */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
-          style={{ backgroundImage: `url(${gameBackground})` }}
+          className="absolute bg-cover bg-center bg-no-repeat bg-fixed"
+          style={{ 
+            backgroundImage: `url(${gameBackground})`,
+            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))'
+          }}
         />
         <div className="relative z-10 text-white flex flex-col items-center gap-4">
           <p>Hiba a profil betöltésekor</p>
@@ -1034,10 +1048,16 @@ const GamePreview = () => {
     
     return (
       <>
-        {/* Fixed background */}
+        {/* Fixed background - extends beyond safe-area */}
         <div 
-          className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
-          style={{ backgroundImage: `url(${gameBackground})` }}
+          className="fixed bg-cover bg-center bg-no-repeat z-0"
+          style={{ 
+            backgroundImage: `url(${gameBackground})`,
+            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))'
+          }}
         />
         
         {/* Scrollable question container */}
@@ -1150,10 +1170,16 @@ const GamePreview = () => {
   if (gameState === 'finished') {
     return (
       <div className="fixed inset-0 w-full h-full flex items-center justify-center overflow-hidden">
-        {/* Background with only 10% blur - transparent */}
+        {/* Background extends beyond safe-area */}
         <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${gameBackground})` }}
+          className="absolute w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: `url(${gameBackground})`,
+            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))'
+          }}
         />
         <div className="absolute inset-0 w-full h-full backdrop-blur-[2px]" />
         

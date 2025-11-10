@@ -34,7 +34,6 @@ import { GeniusCrownBadge } from '@/components/GeniusCrownBadge';
 import { IdleWarning } from '@/components/IdleWarning';
 
 import { WeeklyWinnerPopup } from '@/components/WeeklyWinnerPopup';
-import { useWeeklyLogin } from '@/hooks/useWeeklyLogin';
 
 import BottomNav from '@/components/BottomNav';
 import logoImage from '@/assets/logo.png';
@@ -59,7 +58,6 @@ const Dashboard = () => {
     },
     enabled: !!userId,
   });
-  const { loginState } = useWeeklyLogin(userId);
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
@@ -298,14 +296,19 @@ if (!profile) {
     <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
       background: 'transparent'
     }}>
-      {/* Background image - edge to edge */}
+      {/* Background image - EXTENDS BEYOND safe-area to cover status bar */}
       <div 
-        className="fixed inset-0 z-0" 
+        className="fixed z-0" 
         style={{
           backgroundImage: `url(${gameBackground})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
+          backgroundAttachment: 'fixed',
+          left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+          right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+          top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          pointerEvents: 'none'
         }}
       />
     {/* Idle warning (60s countdown before logout) */}

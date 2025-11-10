@@ -49,52 +49,64 @@
   </head>
 
   <style>
-    /* Alap reset, teljes magasság */
+    /* TELJES IMMERSIVE MÓD - Safe-area kiterjesztéssel */
     html, body, #root {
       min-height: 100dvh;
       height: auto;
       margin: 0;
       padding: 0;
-      background-color: #0A0A0B; /* dark fallback to avoid white bars */
+      overflow-x: hidden;
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Látható viewport magasság mobilon */
-    #root {
-      min-height: 100svh;
-      min-height: 100dvh;
-      display: block;
-      width: 100%;
-    }
-
-    /* SAFE-AREA változók */
-    :root{
+    /* Safe-area változók */
+    :root {
       --sat: env(safe-area-inset-top, 0px);
       --sab: env(safe-area-inset-bottom, 0px);
       --sal: env(safe-area-inset-left, 0px);
       --sar: env(safe-area-inset-right, 0px);
     }
 
-    /* A HÁTTÉR KÉP a safe-area MÖGÉ festve – nem ad paddinget, nem tolja fel a tartalmat */
-    body{
-      background: transparent;                 /* a valódi háttér lejjebb jön */
-      overflow-x: hidden;
-      overscroll-behavior: none;
-      -webkit-overflow-scrolling: touch;
+    /* Háttér kiterjesztése a safe-area MÖGÉ (státuszsáv alá) */
+    body {
+      background: transparent;
+      position: relative;
       color-scheme: dark;
     }
-    body::before{
-      content:"";
+
+    body::before {
+      content: "";
       position: fixed;
       z-index: -1;
-      left:  calc(-1 * var(--sal));
+      /* Safe-area-t is fedni kell - negatív margin */
+      left: calc(-1 * var(--sal));
       right: calc(-1 * var(--sar));
-      top:   calc(-1 * var(--sat));
+      top: calc(-1 * var(--sat));
       bottom: calc(-1 * var(--sab));
-      /* IDE a játék háttérképe */
+      /* Háttér gradient */
       background: linear-gradient(180deg, #0b0d1a 0%, #0a0a0b 100%);
+      pointer-events: none;
     }
 
-    *,*::before,*::after{ box-sizing: border-box; }
+    /* PWA standalone mód - extra full-screen */
+    @media all and (display-mode: standalone) {
+      html, body {
+        height: 100vh;
+        height: 100dvh;
+      }
+    }
+
+    /* iOS Safari specific - teljes kijelző kitöltés */
+    @supports (-webkit-touch-callout: none) {
+      html, body {
+        height: -webkit-fill-available;
+      }
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
   </style>
 
   <body>

@@ -16,8 +16,7 @@ class AudioManager {
   private _volume: number = 0.03; // 3% default
 
   private constructor() {
-    // Note: Multiple audio systems can coexist (BackgroundMusic for DingleUP + AudioManager for game)
-    // Track only AudioManager instances, not all Audio elements
+    // Only ONE audio manager for the entire app (game music)
     if ((window as any).__AUDIO_MANAGER_INSTANCES__ >= 1) {
       console.warn('[AudioManager] AudioManager instance already exists, using existing instance');
       return;

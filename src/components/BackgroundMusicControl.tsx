@@ -1,8 +1,8 @@
 import { Volume2, VolumeX } from 'lucide-react';
-import { useBackgroundMusicStore } from '@/stores/backgroundMusicStore';
+import { useAudioStore } from '@/stores/audioStore';
 
 export const BackgroundMusicControl = () => {
-  const { enabled, volume, setEnabled, setVolume } = useBackgroundMusicStore();
+  const { musicEnabled, volume, setMusicEnabled, setVolume } = useAudioStore();
 
   return (
     <div className="background-music-control relative rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 transform-gpu">
@@ -23,8 +23,8 @@ export const BackgroundMusicControl = () => {
       {/* Content */}
       <div className="relative z-10">
         <h2 className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-300 mb-3 sm:mb-4 flex items-center gap-2">
-          {enabled ? <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" /> : <VolumeX className="w-5 h-5 sm:w-6 sm:h-6" />}
-          Háttérzene
+          {musicEnabled ? <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" /> : <VolumeX className="w-5 h-5 sm:w-6 sm:h-6" />}
+          Háttérzene (Játékban)
         </h2>
         
         <div className="space-y-4">
@@ -32,14 +32,14 @@ export const BackgroundMusicControl = () => {
           <div className="flex items-center justify-between">
             <span className="text-sm sm:text-base text-white/90">Zene be/ki</span>
             <button
-              onClick={() => setEnabled(!enabled)}
+              onClick={() => setMusicEnabled(!musicEnabled)}
               className={`relative w-14 h-7 rounded-full transition-all ${
-                enabled ? 'bg-green-500' : 'bg-gray-600'
+                musicEnabled ? 'bg-green-500' : 'bg-gray-600'
               }`}
             >
               <div
                 className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                  enabled ? 'translate-x-7' : 'translate-x-0'
+                  musicEnabled ? 'translate-x-7' : 'translate-x-0'
                 }`}
               />
             </button>
@@ -59,7 +59,7 @@ export const BackgroundMusicControl = () => {
               max="100"
               value={volume * 100}
               onChange={(e) => setVolume(parseInt(e.target.value) / 100)}
-              disabled={!enabled}
+              disabled={!musicEnabled}
               className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
                 [&::-webkit-slider-thumb]:appearance-none
                 [&::-webkit-slider-thumb]:w-4
@@ -84,7 +84,7 @@ export const BackgroundMusicControl = () => {
                 [&::-moz-range-thumb]:hover:scale-110
                 [&::-moz-range-thumb]:transition-transform"
               style={{
-                background: enabled 
+                background: musicEnabled 
                   ? `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${volume * 100}%, #374151 ${volume * 100}%, #374151 100%)`
                   : '#374151'
               }}

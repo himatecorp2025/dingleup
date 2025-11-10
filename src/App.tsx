@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
-import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { useAudioStore } from "@/stores/audioStore";
 import AudioManager from "@/lib/audioManager";
 import { useAnalytics } from "@/hooks/useAnalytics";
@@ -303,7 +302,6 @@ const App = () => {
         <AppWithAnalytics />
         <ScrollBehaviorManager />
         <AudioPolicyManager />
-        <BackgroundMusic />
         <AppRouteGuard>
           <Suspense fallback={<PageLoader />}>
             <Routes>
