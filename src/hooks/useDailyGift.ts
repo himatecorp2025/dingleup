@@ -15,19 +15,9 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
   const checkDailyGift = async () => {
     if (!userId) return;
-    
-    // CRITICAL: Check sessionStorage using CONSISTENT key pattern
-    const today = new Date().toISOString().split('T')[0];
-    const dismissedToday = sessionStorage.getItem(`daily_gift_dismissed_${today}`);
-    
-    // If already dismissed OR claimed today, don't show
-    if (dismissedToday) {
-      setCanClaim(false);
-      setShowPopup(false);
-      return;
-    }
 
     try {
+      // STEP 1: Check server-side state FIRST (like Welcome Bonus does)
       // Get current week start
       const { data: weekData, error: weekError } = await supabase
         .rpc('get_current_week_start');
@@ -66,18 +56,33 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setWeeklyEntryCount(currentIndex);
       setNextReward(baseReward);
       setCanClaim(canClaimNow && baseReward > 0);
+
+      // STEP 2: Now check sessionStorage (AFTER server check, like Welcome Bonus)
+      const today = new Date().toISOString().split('T')[0];
+      const dismissedToday = sessionStorage.getItem(`daily_gift_dismissed_${today}`);
       
-      // CRITICAL: Show popup EVERY day on first app start, if NOT dismissed/claimed today
-      if (!dismissedToday && baseReward > 0) {
+      // If user clicked "later" in this session, don't show (UX only)
+      if (dismissedToday) {
+        console.log('[DailyGift] User dismissed/claimed in this session');
+        setShowPopup(false);
+        return;
+      }
+
+      // STEP 3: User is eligible - show the dialog
+      if (canClaimNow && baseReward > 0) {
+        console.log('[DailyGift] User eligible, showing dialog - day', currentIndex + 1, 'reward:', baseReward);
         setShowPopup(true);
+        trackEvent('popup_impression', 'daily');
+      } else {
+        setShowPopup(false);
       }
 
       if (import.meta.env.DEV) {
-        console.log('[DailyGift] Can claim:', canClaimNow, 'day', currentIndex + 1, 'reward:', baseReward);
+        console.log('[DailyGift] Check complete:', { canClaimNow, day: currentIndex + 1, baseReward, dismissedToday });
       }
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Error checking daily gift:', error);
+        console.error('[DailyGift] Error checking daily gift:', error);
       }
     }
   };
