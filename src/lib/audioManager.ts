@@ -1,44 +1,51 @@
 import backMusic from '@/assets/backmusic.mp3';
+import gameMusic from '@/assets/DingleUP.mp3';
 
 /**
- * Singleton AudioManager - handles global background music
- * Ensures single source of truth for audio state
- * A1-A5 COMPLIANCE: Runtime detektor + singleton enforcement
+ * Singleton AudioManager - handles TWO background music tracks
+ * - generalBgm: plays on all pages EXCEPT CategorySelector/Game
+ * - gameBgm: plays ONLY on CategorySelector/Game
  * Uses Web Audio API for precise volume control
  */
 class AudioManager {
   private static _instance: AudioManager | null = null;
-  private bgm: HTMLAudioElement;
+  private generalBgm: HTMLAudioElement;
+  private gameBgm: HTMLAudioElement;
   private audioCtx: AudioContext | null = null;
-  private gainNode: GainNode | null = null;
-  private sourceNode: MediaElementAudioSourceNode | null = null;
+  private generalGain: GainNode | null = null;
+  private gameGain: GainNode | null = null;
+  private generalSource: MediaElementAudioSourceNode | null = null;
+  private gameSource: MediaElementAudioSourceNode | null = null;
   private _enabled: boolean = true;
   private _volume: number = 0.03; // 3% default
+  private currentTrack: 'general' | 'game' | null = null;
 
   private constructor() {
-    // Only ONE audio manager for the entire app (game music)
     if ((window as any).__AUDIO_MANAGER_INSTANCES__ >= 1) {
-      console.warn('[AudioManager] AudioManager instance already exists, using existing instance');
+      console.warn('[AudioManager] Instance already exists');
       return;
     }
     (window as any).__AUDIO_MANAGER_INSTANCES__ = ((window as any).__AUDIO_MANAGER_INSTANCES__ || 0) + 1;
 
-    this.bgm = new Audio(backMusic);
-    this.bgm.loop = true;
-    this.bgm.volume = 0; // Start silent, gain controls loudness
+    // Create TWO audio elements
+    this.generalBgm = new Audio(backMusic);
+    this.generalBgm.loop = true;
+    this.generalBgm.volume = 0;
 
-    // Initialize Web Audio API
+    this.gameBgm = new Audio(gameMusic);
+    this.gameBgm.loop = true;
+    this.gameBgm.volume = 0;
+
     this.initWebAudio();
 
-    // Store reference globally for debugging
     if (typeof window !== 'undefined') {
-      (window as any).__bgm = this.bgm;
+      (window as any).__generalBgm = this.generalBgm;
+      (window as any).__gameBgm = this.gameBgm;
     }
 
-    console.log('[AudioManager] Initialized with Web Audio API', { 
+    console.log('[AudioManager] Initialized with 2 tracks', { 
       volume: this._volume, 
-      enabled: this._enabled, 
-      instances: (window as any).__AUDIO_MANAGER_INSTANCES__,
+      enabled: this._enabled,
       percentage: `${Math.round(this._volume * 100)}%`
     });
   }
@@ -52,21 +59,30 @@ class AudioManager {
       }
 
       this.audioCtx = new AC();
-      this.gainNode = this.audioCtx.createGain();
-      this.gainNode.gain.value = this._volume;
+      
+      // Create gain nodes for BOTH tracks
+      this.generalGain = this.audioCtx.createGain();
+      this.generalGain.gain.value = this._volume;
+      
+      this.gameGain = this.audioCtx.createGain();
+      this.gameGain.gain.value = this._volume;
 
-      this.sourceNode = this.audioCtx.createMediaElementSource(this.bgm);
-      this.sourceNode.connect(this.gainNode);
-      this.gainNode.connect(this.audioCtx.destination);
+      // Connect BOTH audio elements
+      this.generalSource = this.audioCtx.createMediaElementSource(this.generalBgm);
+      this.generalSource.connect(this.generalGain);
+      this.generalGain.connect(this.audioCtx.destination);
 
-      // Unlock AudioContext on user interaction
+      this.gameSource = this.audioCtx.createMediaElementSource(this.gameBgm);
+      this.gameSource.connect(this.gameGain);
+      this.gameGain.connect(this.audioCtx.destination);
+
       const unlock = async () => {
         if (this.audioCtx?.state === 'suspended') {
           try {
             await this.audioCtx.resume();
             console.log('[AudioManager] AudioContext resumed');
           } catch (e) {
-            console.log('[AudioManager] Failed to resume AudioContext', e);
+            console.log('[AudioManager] Failed to resume', e);
           }
         }
       };
@@ -75,7 +91,7 @@ class AudioManager {
       document.addEventListener('touchstart', unlock, { once: true });
       document.addEventListener('click', unlock, { once: true });
 
-      console.log('[AudioManager] WebAudio graph initialized');
+      console.log('[AudioManager] WebAudio graph initialized (2 tracks)');
     } catch (err) {
       console.error('[AudioManager] WebAudio init failed', err);
     }
@@ -89,17 +105,47 @@ class AudioManager {
   }
 
   /**
+   * Switch to the appropriate track based on route
+   */
+  switchTrack(track: 'general' | 'game'): void {
+    if (this.currentTrack === track) return;
+
+    console.log('[AudioManager] Switching track:', this.currentTrack, '→', track);
+
+    // Stop current track
+    if (this.currentTrack === 'general') {
+      this.generalBgm.pause();
+      this.generalBgm.currentTime = 0;
+    } else if (this.currentTrack === 'game') {
+      this.gameBgm.pause();
+      this.gameBgm.currentTime = 0;
+    }
+
+    this.currentTrack = track;
+
+    // Start new track if enabled
+    if (this._enabled && this._volume > 0) {
+      if (track === 'general') {
+        this.safePlay(this.generalBgm);
+      } else {
+        this.safePlay(this.gameBgm);
+      }
+    }
+  }
+
+  /**
    * Apply settings from store
    */
   apply(enabled: boolean, volume: number): void {
     this._enabled = enabled;
     this._volume = Math.max(0, Math.min(1, volume));
     
-    // Update gain node instead of audio element volume
-    if (this.gainNode) {
-      this.gainNode.gain.value = this._volume;
-    }
-    this.bgm.volume = 1; // Keep element at full, gain controls loudness
+    // Update BOTH gain nodes
+    if (this.generalGain) this.generalGain.gain.value = this._volume;
+    if (this.gameGain) this.gameGain.gain.value = this._volume;
+    
+    this.generalBgm.volume = 1;
+    this.gameBgm.volume = 1;
 
     console.log('[AudioManager] Apply settings', { 
       enabled, 
@@ -107,30 +153,32 @@ class AudioManager {
       percentage: `${Math.round(this._volume * 100)}%`
     });
 
-    // Ensure AudioContext is running
     if (enabled && this._volume > 0 && this.audioCtx?.state === 'suspended') {
       this.audioCtx.resume().catch((e) => {
         console.log('[AudioManager] AudioContext resume blocked', e);
       });
     }
 
-    if (enabled && this._volume > 0) {
-      this.safePlay();
+    // Play/pause current track
+    if (enabled && this._volume > 0 && this.currentTrack) {
+      const audio = this.currentTrack === 'general' ? this.generalBgm : this.gameBgm;
+      this.safePlay(audio);
     } else {
-      this.bgm.pause();
+      this.generalBgm.pause();
+      this.gameBgm.pause();
     }
   }
 
   /**
    * Safe play with autoplay policy handling
    */
-  private async safePlay(): Promise<void> {
-    if (this.bgm.paused) {
+  private async safePlay(audio: HTMLAudioElement): Promise<void> {
+    if (audio.paused) {
       try {
-        await this.bgm.play();
-        console.log('[AudioManager] Playing');
+        await audio.play();
+        console.log('[AudioManager] Playing:', audio === this.generalBgm ? 'general' : 'game');
       } catch (err) {
-        console.log('[AudioManager] Play blocked (autoplay policy)', err);
+        console.log('[AudioManager] Play blocked', err);
       }
     }
   }
@@ -138,11 +186,14 @@ class AudioManager {
   /**
    * Get current state
    */
-  getState(): { enabled: boolean; volume: number; paused: boolean } {
+  getState(): { enabled: boolean; volume: number; paused: boolean; track: 'general' | 'game' | null } {
+    const currentAudio = this.currentTrack === 'general' ? this.generalBgm : 
+                         this.currentTrack === 'game' ? this.gameBgm : null;
     return {
       enabled: this._enabled,
       volume: this._volume,
-      paused: this.bgm.paused
+      paused: currentAudio?.paused ?? true,
+      track: this.currentTrack
     };
   }
 }

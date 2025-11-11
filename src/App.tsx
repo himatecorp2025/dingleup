@@ -170,25 +170,27 @@ const AudioPolicyManager = () => {
       const { musicEnabled, volume, loaded } = useAudioStore.getState();
       if (!loaded) return;
 
-      // Explicit check: admin routes NEVER play music regardless of settings
-      const isAdminRoute = location.pathname.startsWith('/admin');
-      const allowed = !isAdminRoute && isHandheld && isMusicAllowed(location.pathname);
       const audioManager = AudioManager.getInstance();
+      const isGameRoute = location.pathname === '/game' || location.pathname === '/category-selector';
+      
+      // Switch track based on route
+      if (isGameRoute) {
+        // CategorySelector + Game → game music (DingleUP.mp3)
+        audioManager.switchTrack('game');
+      } else {
+        // All other pages → general music (backmusic.mp3)
+        audioManager.switchTrack('general');
+      }
+
+      // Apply volume settings
+      audioManager.apply(musicEnabled, volume);
 
       console.log('[AudioPolicy]', { 
-        pathname: location.pathname, 
-        isAdminRoute,
-        allowed, 
-        isHandheld,
+        pathname: location.pathname,
+        track: isGameRoute ? 'game' : 'general',
         musicEnabled, 
         volume 
       });
-
-      if (allowed && musicEnabled) {
-        audioManager.apply(true, volume);
-      } else {
-        audioManager.apply(false, volume);
-      }
     };
 
     applyAudioPolicy();

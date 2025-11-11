@@ -311,16 +311,6 @@ if (!profile) {
           pointerEvents: 'none'
         }}
       />
-      
-      {/* Status bar mask - dark gradient covering device status icons */}
-      <div 
-        className="fixed left-0 right-0 pointer-events-none z-[5]"
-        style={{
-          top: 'calc(-1 * env(safe-area-inset-top, 0px))',
-          height: 'calc(env(safe-area-inset-top, 0px) + 12px)',
-          background: 'linear-gradient(180deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.85) 70%, transparent 100%)'
-        }}
-      />
     {/* Idle warning (60s countdown before logout) */}
     <IdleWarning 
       show={showWarning} 
