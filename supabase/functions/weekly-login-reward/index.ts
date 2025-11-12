@@ -89,10 +89,20 @@ serve(async (req) => {
       );
     }
 
-    const goldAmount = rewardConfig.gold_amount;
+    // Check if user is Genius subscriber
+    const { data: profile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('is_subscribed')
+      .eq('id', user.id)
+      .single();
+    
+    const isGenius = profile?.is_subscribed || false;
+    const multiplier = isGenius ? 2 : 1;
+    
+    const goldAmount = rewardConfig.gold_amount * multiplier;
     const livesBonus = rewardConfig.lives_bonus || 0;
 
-    console.log(`[WEEKLY-LOGIN] Awarding index ${newIndex}: ${goldAmount} gold, ${livesBonus} lives`);
+    console.log(`[WEEKLY-LOGIN] Awarding index ${newIndex}: ${goldAmount} gold (${multiplier}x), ${livesBonus} lives, Genius: ${isGenius}`);
 
     // Credit wallet (coins) idempotently
     const correlationId = `weekly-login:${user.id}:${weekStart}:${newIndex}`;

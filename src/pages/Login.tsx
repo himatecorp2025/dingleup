@@ -109,10 +109,22 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen min-h-dvh fixed inset-0 flex justify-center items-start sm:items-center px-4 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
+    <div className="min-h-screen min-h-dvh fixed inset-0 flex justify-center items-start sm:items-center px-4 overflow-y-auto" style={{
       paddingTop: isStandalone ? 'calc(10vh + 0.75rem)' : '0.75rem',
       paddingBottom: '1rem'
     }}>
+      {/* Full-screen background that covers status bar */}
+      <div 
+        className="absolute bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
+        style={{
+          left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+          right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+          top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          pointerEvents: 'none'
+        }}
+      />
+      
       {/* Overlay gradients */}
       <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10 pointer-events-none"></div>
 

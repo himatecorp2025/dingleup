@@ -3,8 +3,8 @@ import gameMusic from '@/assets/DingleUP.mp3';
 
 /**
  * Singleton AudioManager - handles TWO background music tracks
- * - generalBgm: plays on all pages EXCEPT CategorySelector/Game
- * - gameBgm: plays ONLY on CategorySelector/Game
+ * - generalBgm: plays on all pages EXCEPT CategorySelector/Game (DingleUP.mp3)
+ * - gameBgm: plays ONLY on CategorySelector/Game (backmusic.mp3)
  * Uses Web Audio API for precise volume control
  */
 class AudioManager {
@@ -27,12 +27,12 @@ class AudioManager {
     }
     (window as any).__AUDIO_MANAGER_INSTANCES__ = ((window as any).__AUDIO_MANAGER_INSTANCES__ || 0) + 1;
 
-    // Create TWO audio elements
-    this.generalBgm = new Audio(backMusic);
+    // Create TWO audio elements - SWAPPED per user request
+    this.generalBgm = new Audio(gameMusic); // DingleUP.mp3 for general pages
     this.generalBgm.loop = true;
     this.generalBgm.volume = 0;
 
-    this.gameBgm = new Audio(gameMusic);
+    this.gameBgm = new Audio(backMusic); // backmusic.mp3 for CategorySelector/Game
     this.gameBgm.loop = true;
     this.gameBgm.volume = 0;
 

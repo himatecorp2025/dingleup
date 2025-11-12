@@ -182,10 +182,22 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen min-h-dvh fixed inset-0 flex items-center justify-center px-4 overflow-y-auto bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" style={{
+    <div className="min-h-screen min-h-dvh fixed inset-0 flex items-center justify-center px-4 overflow-y-auto" style={{
       paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
-      paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)'
+      paddingBottom: 'max(calc(env(safe-area-inset-bottom) + 2vh), env(safe-area-inset-bottom) + 16px)'
     }}>
+      {/* Full-screen background that covers status bar */}
+      <div 
+        className="absolute bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
+        style={{
+          left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+          right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+          top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          pointerEvents: 'none'
+        }}
+      />
+      
       {/* Overlay gradients */}
       <div className="absolute inset-0 bg-gradient-to-tr from-accent/10 via-transparent to-secondary/10 pointer-events-none"></div>
 

@@ -174,10 +174,22 @@ const Profile = () => {
   );
 
   return (
-    <div className="profile-container min-h-dvh min-h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] fixed inset-0 overflow-y-auto" style={{
+    <div className="profile-container min-h-dvh min-h-svh w-screen fixed inset-0 overflow-y-auto" style={{
       paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
+      {/* Full-screen background that covers status bar */}
+      <div 
+        className="absolute bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
+        style={{
+          left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+          right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+          top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          pointerEvents: 'none'
+        }}
+      />
+      
       {/* Casino lights removed per user requirement */}
       
       <div className="w-full flex flex-col px-3 py-2 max-w-screen-sm mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 120px)' }}>

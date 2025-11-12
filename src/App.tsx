@@ -171,14 +171,26 @@ const AudioPolicyManager = () => {
       if (!loaded) return;
 
       const audioManager = AudioManager.getInstance();
+      
+      // Platform detection: music ONLY on mobile/tablet, NEVER on desktop
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                       window.matchMedia('(max-width: 1024px)').matches;
+      
+      if (!isMobile) {
+        // Desktop: disable music entirely
+        audioManager.apply(false, 0);
+        console.log('[AudioPolicy] Desktop detected - music disabled');
+        return;
+      }
+      
+      // Mobile/Tablet: Switch track based on route
       const isGameRoute = location.pathname === '/game' || location.pathname === '/category-selector';
       
-      // Switch track based on route
       if (isGameRoute) {
-        // CategorySelector + Game → game music (DingleUP.mp3)
+        // CategorySelector + Game → game music (backmusic.mp3)
         audioManager.switchTrack('game');
       } else {
-        // All other pages → general music (backmusic.mp3)
+        // All other pages → general music (DingleUP.mp3)
         audioManager.switchTrack('general');
       }
 
@@ -189,7 +201,8 @@ const AudioPolicyManager = () => {
         pathname: location.pathname,
         track: isGameRoute ? 'game' : 'general',
         musicEnabled, 
-        volume 
+        volume,
+        platform: 'mobile/tablet'
       });
     };
 

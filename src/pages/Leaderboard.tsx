@@ -106,10 +106,22 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="h-dvh h-svh w-screen bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-hidden fixed inset-0" style={{
+    <div className="h-dvh h-svh w-screen overflow-hidden fixed inset-0" style={{
       paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
       paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
+      {/* Full-screen background that covers status bar */}
+      <div 
+        className="absolute bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
+        style={{
+          left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+          right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+          top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          pointerEvents: 'none'
+        }}
+      />
+      
       {/* Casino lights removed per user requirement */}
       
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 100px)' }}>
