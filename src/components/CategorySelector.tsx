@@ -56,12 +56,14 @@ const CategorySelector = ({ onSelect }: CategorySelectorProps) => {
     <div className="category-selector h-dvh h-svh w-screen flex flex-col items-start justify-start p-4 overflow-hidden fixed inset-0" style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)' }}>
       {/* Full-screen background that covers status bar */}
       <div 
-        className="absolute bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
+        className="fixed bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
         style={{
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',
           top: 'calc(-1 * env(safe-area-inset-top, 0px))',
           bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          width: 'calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
+          height: 'calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
           pointerEvents: 'none'
         }}
       />

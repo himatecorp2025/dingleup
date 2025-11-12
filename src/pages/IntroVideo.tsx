@@ -90,36 +90,51 @@ const IntroVideo = () => {
   }, [navigate, nextPage, fallbackTriggered, videoLoaded]);
 
   return (
-    <div className="fixed z-50" style={{ 
-      left: 'calc(-1 * env(safe-area-inset-left, 0px))',
-      right: 'calc(-1 * env(safe-area-inset-right, 0px))',
-      top: 'calc(-1 * env(safe-area-inset-top, 0px))',
-      bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
-      width: 'calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
-      height: 'calc(100dvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
-      overflow: 'hidden',
-      backgroundColor: '#000'
-    }}>
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ 
-          objectFit: 'cover',
-          objectPosition: 'center',
-          width: '100%',
-          height: '100%'
+    <>
+      {/* Full-screen background that covers status bar */}
+      <div 
+        className="fixed bg-gradient-to-br from-[#1a0a4e] via-[#2d1b69] to-[#1a0a4e] z-40"
+        style={{
+          left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+          right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+          top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          width: 'calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
+          height: 'calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
+          pointerEvents: 'none'
         }}
-        muted
-        playsInline
-        preload="auto"
-        src={introVideo}
       />
-      {!videoLoaded && (
-        <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
-          <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-        </div>
-      )}
-    </div>
+      <div className="fixed z-50" style={{ 
+        left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+        right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+        top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+        bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+        width: 'calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
+        height: 'calc(100dvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
+        overflow: 'hidden',
+        backgroundColor: '#000'
+      }}>
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full"
+          style={{ 
+            objectFit: 'cover',
+            objectPosition: 'center',
+            width: '100%',
+            height: '100%'
+          }}
+          muted
+          playsInline
+          preload="auto"
+          src={introVideo}
+        />
+        {!videoLoaded && (
+          <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
+            <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

@@ -183,17 +183,19 @@ const Register = () => {
 
   return (
     <div className="min-h-screen min-h-dvh fixed inset-0 flex items-center justify-center px-4 overflow-y-auto" style={{
-      paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)',
+      paddingTop: 'max(calc(env(safe-area-inset-top) + 1vh), env(safe-area-inset-top) + 8px)',
       paddingBottom: 'max(calc(env(safe-area-inset-bottom) + 2vh), env(safe-area-inset-bottom) + 16px)'
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
-        className="absolute bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
+        className="fixed bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
         style={{
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',
           top: 'calc(-1 * env(safe-area-inset-top, 0px))',
           bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          width: 'calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
+          height: 'calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
           pointerEvents: 'none'
         }}
       />
@@ -232,30 +234,30 @@ const Register = () => {
           {/* SPECULAR HIGHLIGHT */}
           <div className="absolute inset-[8px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
           
-          <div className="relative p-4 sm:p-6 overflow-y-auto rounded-2xl" style={{ transform: 'translateZ(60px)' }}>
-            <div className="text-center mb-4">
-              <img src={logo} alt="Dingle UP!" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 drop-shadow-2xl" />
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 font-poppins px-2">
+          <div className="relative p-3 sm:p-4 overflow-y-auto rounded-2xl" style={{ transform: 'translateZ(60px)' }}>
+            <div className="text-center mb-3">
+              <img src={logo} alt="Dingle UP!" className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 drop-shadow-2xl" />
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 font-poppins px-2">
                 <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">Regisztráció</span>
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-white/80 drop-shadow px-2">Csatlakozz és kezdd el a játékot!</p>
+              <p className="text-xs sm:text-sm text-white/80 drop-shadow px-2">Csatlakozz és kezdd el a játékot!</p>
             </div>
 
-            <div className="space-y-3 mb-4">
+            <div className="space-y-2 mb-3">
               <div className="relative" style={{ perspective: '800px' }}>
-                <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+                <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-80 border-2 border-purple-500/50 shadow-lg" style={{ transform: 'translateZ(0px)' }} aria-hidden />
-                <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
-                <div className="absolute inset-[5px] rounded-xl bg-gradient-to-br from-white/10 to-black/20" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+                <div className="absolute inset-[2px] rounded-xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+                <div className="absolute inset-[3px] rounded-xl bg-gradient-to-br from-white/10 to-black/20" style={{ boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.1), inset 0 -6px 12px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
                 
                 <Button 
                   type="button" 
                   variant="outline" 
-                  className="relative w-full hover:scale-105 transition-all bg-white text-gray-900 border-0 hover:bg-white/90 text-xs sm:text-sm md:text-base py-2 sm:py-3" 
+                  className="relative w-full hover:scale-105 transition-all bg-white text-gray-900 border-0 hover:bg-white/90 text-xs sm:text-sm py-2" 
                   onClick={handleGoogleAuth}
-                  style={{ transform: 'translateZ(30px)' }}
+                  style={{ transform: 'translateZ(20px)' }}
                 >
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 mr-2 flex-shrink-0" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -271,7 +273,7 @@ const Register = () => {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
               <div>
                 <Label htmlFor="username" className="text-white drop-shadow">Felhasználónév</Label>
                 <div className="relative mt-1" style={{ perspective: '800px' }}>
