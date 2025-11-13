@@ -163,7 +163,38 @@ export const useGameProfile = (userId: string | undefined) => {
   };
 
   useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+    
     fetchProfile();
+
+    // Subscribe to profile changes with optimistic updates
+    const channel = supabase
+      .channel(`profile_optimized_${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${userId}`
+        },
+        (payload: any) => {
+          // Optimistic update
+          if (payload.new && typeof payload.new === 'object') {
+            setProfile(prev => prev ? { ...prev, ...(payload.new as Partial<UserProfile>) } : null);
+          }
+          // Full refetch as backup
+          fetchProfile();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [userId]);
 
   // Life regeneration is now handled by get-wallet edge function + realtime updates
