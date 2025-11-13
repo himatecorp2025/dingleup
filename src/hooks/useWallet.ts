@@ -67,15 +67,15 @@ export const useWallet = (userId: string | undefined) => {
           table: 'profiles',
           filter: `id=eq.${userId}`
         },
-        (payload) => {
+        (payload: any) => {
           // Optimistic update with payload data
-          if (payload.new) {
+          if (payload.new && typeof payload.new === 'object') {
             setWalletData(prev => prev ? {
               ...prev,
-              coinsCurrent: payload.new.coins || prev.coinsCurrent,
-              livesCurrent: payload.new.lives || prev.livesCurrent,
-              livesMax: payload.new.max_lives || prev.livesMax,
-              isSubscriber: payload.new.is_subscribed || payload.new.is_subscriber || prev.isSubscriber,
+              coinsCurrent: payload.new.coins ?? prev.coinsCurrent,
+              livesCurrent: payload.new.lives ?? prev.livesCurrent,
+              livesMax: payload.new.max_lives ?? prev.livesMax,
+              isSubscriber: payload.new.is_subscribed ?? payload.new.is_subscriber ?? prev.isSubscriber,
             } : null);
           }
           // Full refetch as fallback
