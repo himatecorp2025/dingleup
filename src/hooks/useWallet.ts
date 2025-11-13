@@ -52,11 +52,13 @@ export const useWallet = (userId: string | undefined) => {
   };
 
   useEffect(() => {
+    if (!userId) return;
+    
     fetchWallet();
 
-    // Real-time subscription for wallet changes
+    // Real-time subscription for instant wallet changes
     const channel = supabase
-      .channel('wallet_changes')
+      .channel(`wallet_optimized_${userId}`)
       .on(
         'postgres_changes',
         {
@@ -65,14 +67,25 @@ export const useWallet = (userId: string | undefined) => {
           table: 'profiles',
           filter: `id=eq.${userId}`
         },
-        () => {
+        (payload) => {
+          // Optimistic update with payload data
+          if (payload.new) {
+            setWalletData(prev => prev ? {
+              ...prev,
+              coinsCurrent: payload.new.coins || prev.coinsCurrent,
+              livesCurrent: payload.new.lives || prev.livesCurrent,
+              livesMax: payload.new.max_lives || prev.livesMax,
+              isSubscriber: payload.new.is_subscribed || payload.new.is_subscriber || prev.isSubscriber,
+            } : null);
+          }
+          // Full refetch as fallback
           fetchWallet();
         }
       )
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
           table: 'wallet_ledger',
           filter: `user_id=eq.${userId}`
@@ -83,10 +96,10 @@ export const useWallet = (userId: string | undefined) => {
       )
       .subscribe();
 
-    // Refresh every 1 second for immediate updates
+    // Refresh every 5 seconds only (reduced from 1s)
     const intervalId = setInterval(() => {
       fetchWallet();
-    }, 1000);
+    }, 5000);
 
     return () => {
       clearInterval(intervalId);

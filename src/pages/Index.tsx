@@ -15,7 +15,7 @@ const Index = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check device type first
+    // Check device type
     const handleResize = () => {
       const width = window.innerWidth;
       setIsMobileOrTablet(width <= 1024);
@@ -23,29 +23,10 @@ const Index = () => {
     handleResize();
     window.addEventListener('resize', handleResize);
     
-    // Standalone (PWA) módban átirányít az intro videóra
-    const checkStandalone = () => {
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                           (window.navigator as any).standalone === true ||
-                           document.referrer.includes('android-app://');
-      
-      console.log('[Index] Standalone check:', isStandalone);
-      
-      if (isStandalone) {
-        console.log('[Index] Navigating to /intro from Index');
-        navigate('/intro');
-      }
-    };
-    
-    // Check immediately and also after a short delay
-    checkStandalone();
-    const timer = setTimeout(checkStandalone, 100);
-    
     return () => {
       window.removeEventListener('resize', handleResize);
-      clearTimeout(timer);
     };
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -54,17 +35,32 @@ const Index = () => {
   }, []);
 
   return (
-    <main className="min-h-[100svh] min-h-dvh bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-x-hidden overflow-y-auto relative">
-      <div data-tutorial="hero">
-        <Hero />
-      </div>
-      <div data-tutorial="features">
-        <Features />
-      </div>
-      <DevelopmentStatus />
-      <Newsletter />
+    <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-x-hidden overflow-y-auto">
+      {/* Full-screen background extending behind status bar */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" 
+           style={{
+             top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+             left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+             right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+             bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+             width: 'calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
+             height: 'calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
+             zIndex: 0
+           }} 
+      />
       
-      <Footer />
+      <div className="relative z-10">
+        <div data-tutorial="hero">
+          <Hero />
+        </div>
+        <div data-tutorial="features">
+          <Features />
+        </div>
+        <DevelopmentStatus />
+        <Newsletter />
+        
+        <Footer />
+      </div>
     </main>
   );
 };
