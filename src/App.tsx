@@ -8,6 +8,7 @@ import { useAudioStore } from "@/stores/audioStore";
 import AudioManager from "@/lib/audioManager";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { lazy, Suspense } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -24,7 +25,7 @@ const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const RegistrationSuccess = lazy(() => import("./pages/RegistrationSuccess"));
 const InstallApp = lazy(() => import("./pages/InstallApp"));
 const Invitation = lazy(() => import("./pages/Invitation"));
-const IntroVideo = lazy(() => import("./pages/IntroVideo"));
+import IntroVideo from "./pages/IntroVideo";
 const About = lazy(() => import("./pages/About"));
 
 // Lazy load admin pages
@@ -309,9 +310,14 @@ const App = () => {
     };
   }, []);
 
-  // Preload IntroVideo chunk to avoid PWA cold-start freeze
+  // Reset intro flag on logout to ensure clean cold-start flow
   useEffect(() => {
-    import("./pages/IntroVideo");
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        try { sessionStorage.removeItem('app_intro_shown'); } catch {}
+      }
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
@@ -322,8 +328,8 @@ const App = () => {
         <AppWithAnalytics />
         <ScrollBehaviorManager />
         <AudioPolicyManager />
-        <AppRouteGuard>
-          <Suspense fallback={<PageLoader />}>
+        <Suspense fallback={<PageLoader />}>
+          <AppRouteGuard>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
@@ -354,8 +360,8 @@ const App = () => {
               <Route path="/admin/user-journey" element={<UserJourneyDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </Suspense>
-        </AppRouteGuard>
+          </AppRouteGuard>
+        </Suspense>
       </BrowserRouter>
     </QueryClientProvider>
   );
