@@ -41,14 +41,14 @@ serve(async (req) => {
       );
     }
 
-    const idempotencyKey = `gameplay:${user.id}:${String(sourceId)}`;
+    const idempotencyKey = `game_reward:${user.id}:${String(sourceId)}`;
 
     // Credit coins idempotently via trusted RPC
     const { data: creditRes, error: creditErr } = await supabaseClient.rpc('credit_wallet', {
       p_user_id: user.id,
       p_delta_coins: amt,
       p_delta_lives: 0,
-      p_source: 'gameplay',
+      p_source: 'game_reward',
       p_idempotency_key: idempotencyKey,
       p_metadata: {
         reason: reason || 'correct_answer',
