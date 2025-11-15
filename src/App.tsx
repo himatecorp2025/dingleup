@@ -309,6 +309,11 @@ const App = () => {
     };
   }, []);
 
+  // Preload IntroVideo chunk to avoid PWA cold-start freeze
+  useEffect(() => {
+    import("./pages/IntroVideo");
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
