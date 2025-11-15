@@ -93,6 +93,7 @@ const GamePreview = () => {
   const [showInsufficientDialog, setShowInsufficientDialog] = useState(false);
   const [insufficientType, setInsufficientType] = useState<'coins' | 'lives'>('coins');
   const [requiredAmount, setRequiredAmount] = useState(0);
+  const [gameInstanceId] = useState(() => crypto.randomUUID()); // Unique ID per game instance
   const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const [errorBannerMessage, setErrorBannerMessage] = useState('');
   const [questionVisible, setQuestionVisible] = useState(true);
@@ -474,7 +475,8 @@ const GamePreview = () => {
     }
 
     try {
-      const sourceId = `${getSessionId()}-${currentQuestionIndex}`;
+      // Use gameInstanceId to ensure unique sourceId per game, not session
+      const sourceId = `${gameInstanceId}-q${currentQuestionIndex}`;
       const { data, error } = await supabase.functions.invoke('credit-gameplay-reward', {
         body: { amount: reward, sourceId, reason: 'correct_answer' },
         headers: {

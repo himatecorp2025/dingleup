@@ -8,6 +8,7 @@ import { useAudioStore } from "@/stores/audioStore";
 import { ScreenshotProtection } from "@/components/ScreenshotProtection";
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [loadTimeout, setLoadTimeout] = useState(false);
   const navigate = useNavigate();
   const { loaded } = useAudioStore();
 
@@ -20,8 +21,16 @@ const Game = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Wait for audio store to load before rendering game
-  if (!loaded) {
+  // Safety timeout - if audio doesn't load within 2 seconds, continue anyway
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLoadTimeout(true);
+    }, 2000);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // Wait for audio store to load before rendering game (with timeout fallback)
+  if (!loaded && !loadTimeout) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
         <div className="text-white text-lg">Betöltés...</div>
