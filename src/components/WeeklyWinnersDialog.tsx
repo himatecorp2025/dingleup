@@ -57,8 +57,15 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
         setContentVisible(true);
         measureList();
       }, 10);
+      
+      // Auto-refresh every 60 seconds while dialog is open
+      const refreshInterval = setInterval(() => {
+        fetchTopPlayers();
+      }, 60000);
+      
       return () => {
         clearTimeout(t);
+        clearInterval(refreshInterval);
         setContentVisible(false);
       };
     } else {
@@ -73,30 +80,22 @@ export const WeeklyWinnersDialog = ({ open, onClose }: WeeklyWinnersDialogProps)
 
   const fetchTopPlayers = async () => {
     try {
-      // Use SAME logic as Leaderboard page - global_leaderboard table
+      // Use leaderboard_public_cache for consistency across all leaderboard components
       const { data, error } = await supabase
-        .from('global_leaderboard')
-        .select('user_id, username, total_correct_answers, avatar_url')
-        .order('total_correct_answers', { ascending: false })
-        .limit(20);
+        .from('leaderboard_public_cache')
+        .select('username, total_correct_answers, avatar_url, rank')
+        .order('rank', { ascending: true })
+        .limit(10);
 
       if (error) throw error;
 
-      // Remove duplicates by user_id and take top 10
-      const uniqueUsers = new Map();
-      (data || []).forEach(entry => {
-        if (!uniqueUsers.has(entry.user_id)) {
-          uniqueUsers.set(entry.user_id, entry);
-        }
-      });
-
-      // Add rank to each unique entry
-      const rankedData = Array.from(uniqueUsers.values())
-        .slice(0, 10)
-        .map((entry, index) => ({
-          ...entry,
-          rank: index + 1
-        }));
+      const rankedData = (data || []).map((entry) => ({
+        user_id: `rank-${entry.rank}`,
+        username: entry.username,
+        total_correct_answers: entry.total_correct_answers || 0,
+        avatar_url: entry.avatar_url,
+        rank: entry.rank
+      }));
 
       setTopPlayers(rankedData as TopPlayer[]);
     } catch (error) {
