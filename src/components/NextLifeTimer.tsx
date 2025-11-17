@@ -18,6 +18,7 @@ export const NextLifeTimer = ({
   const [remainingMs, setRemainingMs] = useState(0);
 
   useEffect(() => {
+    // If lives are at max, hide timer immediately
     if (!nextLifeAt || livesCurrent >= livesMax) {
       setRemainingMs(0);
       return;
@@ -42,7 +43,8 @@ export const NextLifeTimer = ({
     return () => clearInterval(intervalId);
   }, [nextLifeAt, livesCurrent, livesMax, serverDriftMs, onExpired]);
 
-  if (livesCurrent >= livesMax) {
+  // Hide timer when lives are at max
+  if (livesCurrent >= livesMax || remainingMs === 0) {
     return null;
   }
 

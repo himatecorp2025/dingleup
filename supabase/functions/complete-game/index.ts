@@ -24,13 +24,22 @@ Deno.serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      global: { headers: { Authorization: authHeader } }
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+    // Auth client for JWT verification ONLY
+    const supabaseAuth = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+      auth: { persistSession: false, autoRefreshToken: false }
+    });
+
+    // Admin client for DB operations (bypasses RLS)
+    const supabaseAdmin = createClient(supabaseUrl, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false }
     });
 
     // Authenticate user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
     if (userError || !user) {
       throw new Error('Unauthorized');
     }
@@ -87,8 +96,8 @@ Deno.serve(async (req) => {
 
     console.log('[CompleteGame] User:', user.id, 'Category:', body.category, 'Correct:', body.correctAnswers, 'Total Coins:', coinsEarned);
 
-    // Insert game result
-    const { error: insertError } = await supabase
+    // Insert game result using ADMIN client (bypasses RLS)
+    const { error: insertError } = await supabaseAdmin
       .from('game_results')
       .insert({
         user_id: user.id,
@@ -118,15 +127,15 @@ Deno.serve(async (req) => {
     monday.setUTCHours(0, 0, 0, 0);
     const weekStart = monday.toISOString().split('T')[0];
 
-    // Get user profile for username
-    const { data: userProfile } = await supabase
+    // Get user profile using ADMIN client
+    const { data: userProfile } = await supabaseAdmin
       .from('profiles')
-      .select('username')
+      .select('username, avatar_url')
       .eq('id', user.id)
       .single();
 
-    // Update weekly_rankings
-    const { data: existingWeekly, error: weeklySelectError } = await supabase
+    // Update weekly_rankings using ADMIN client (AGGREGATE PER USER+WEEK+CATEGORY)
+    const { data: existingWeekly } = await supabaseAdmin
       .from('weekly_rankings')
       .select('total_correct_answers')
       .eq('user_id', user.id)
@@ -136,7 +145,7 @@ Deno.serve(async (req) => {
 
     const newWeeklyTotal = (existingWeekly?.total_correct_answers || 0) + body.correctAnswers;
 
-    const { error: weeklyError } = await supabase
+    const { error: weeklyError } = await supabaseAdmin
       .from('weekly_rankings')
       .upsert({
         user_id: user.id,
@@ -155,12 +164,21 @@ Deno.serve(async (req) => {
       console.error('[CompleteGame] Weekly rankings update error:', weeklyError);
     }
 
-    // Update global_leaderboard
-    const { error: leaderboardError } = await supabase
+    // Update global_leaderboard using ADMIN client (AGGREGATE LIFETIME TOTAL)
+    const { data: existingGlobal } = await supabaseAdmin
+      .from('global_leaderboard')
+      .select('total_correct_answers, username')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const newGlobalTotal = (existingGlobal?.total_correct_answers || 0) + body.correctAnswers;
+
+    const { error: leaderboardError } = await supabaseAdmin
       .from('global_leaderboard')
       .upsert({
         user_id: user.id,
-        total_correct_answers: body.correctAnswers,
+        username: userProfile?.username || existingGlobal?.username || 'Player',
+        total_correct_answers: newGlobalTotal,
         updated_at: new Date().toISOString()
       }, {
         onConflict: 'user_id',
