@@ -94,8 +94,11 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
 
   return (
     <button
-      onClick={onClick}
+      type="button"
+      onClick={disabled ? undefined : onClick}
       disabled={disabled}
+      aria-disabled={disabled || undefined}
+      tabIndex={disabled ? -1 : undefined}
       className={`relative w-full ${sizeClasses[size]} font-black transition-all ${
         disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'
       } ${className}`}
