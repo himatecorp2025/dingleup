@@ -441,19 +441,6 @@ if (!profile) {
               </DiamondButton>
               
               <DiamondButton
-                onClick={() => toast.info('Booster funkció hamarosan!')}
-                variant="booster"
-                size="sm"
-                disabled={true}
-              >
-                {/* Zap/Lightning Bolt SVG Icon */}
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span className="text-[10px] sm:text-xs md:text-sm">BOOSTER</span>
-              </DiamondButton>
-              
-              <DiamondButton
                 onClick={() => navigate('/leaderboard')}
                 variant="leaderboard"
                 size="sm"
@@ -479,7 +466,7 @@ if (!profile) {
             <LeaderboardCarousel />
           </div>
 
-          {/* Play Now Button - below Boosters */}
+          {/* Play Now Button */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
             <div className="w-full max-w-screen-lg">
               <DiamondButton
@@ -489,10 +476,10 @@ if (!profile) {
                 size="lg"
                 className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
                 style={{
-                  animation: 'play-pulse 0.8s ease-in-out infinite'
+                  width: '100%',
+                  transform: 'scale(1)',
                 }}
               >
-                {/* Play SVG Icon */}
                 <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M8 5.14v14l11-7-11-7z"/>
                 </svg>
@@ -503,6 +490,35 @@ if (!profile) {
                   }}
                 >
                   PLAY NOW
+                </span>
+              </DiamondButton>
+            </div>
+          </div>
+
+          {/* Booster Button - below Play Now */}
+          <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
+            <div className="w-full max-w-screen-lg">
+              <DiamondButton
+                onClick={() => toast.info('Booster funkció hamarosan!')}
+                variant="booster"
+                size="lg"
+                disabled={true}
+                className="!py-[clamp(1rem,4vw,1.75rem)] sm:!py-[clamp(1.25rem,5vw,2rem)]"
+                style={{
+                  width: '100%',
+                }}
+              >
+                {/* Zap/Lightning Bolt SVG Icon */}
+                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span 
+                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)]" 
+                  style={{ 
+                    textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
+                  }}
+                >
+                  BOOSTERS
                 </span>
               </DiamondButton>
             </div>
