@@ -153,12 +153,14 @@ const Dashboard = () => {
         
         if (error) {
           console.error('Error fetching weekly rankings:', error);
-          setCurrentRank(null);
+          // Even on error, show rank as if user has 0 correct answers
+          setCurrentRank(1);
           return;
         }
         
         if (!data || data.length === 0) {
-          setCurrentRank(null);
+          // No data yet this week - user is rank 1 with 0 correct answers
+          setCurrentRank(1);
           return;
         }
 
@@ -169,11 +171,16 @@ const Dashboard = () => {
           userTotals.set(entry.user_id, currentTotal + entry.total_correct_answers);
         });
 
+        // Ensure current user is in the map (even if no games played this week)
+        if (userId && !userTotals.has(userId)) {
+          userTotals.set(userId, 0);
+        }
+
         // Sort by total correct answers (descending)
         const sortedUsers = Array.from(userTotals.entries())
           .sort((a, b) => b[1] - a[1]);
 
-        // Find current user's rank
+        // Find current user's rank - they will always be found now
         const userRank = sortedUsers.findIndex(([uid]) => uid === userId);
         if (userRank !== -1) {
           setCurrentRank(userRank + 1); // +1 because findIndex is 0-based

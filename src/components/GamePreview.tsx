@@ -5,6 +5,7 @@ import gameBackground from "@/assets/game-background.png";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
+import { useWallet } from "@/hooks/useWallet";
 import { supabase } from "@/integrations/supabase/client";
 import { GameCategory, Question, Answer, getSkipCost, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST, getCoinsForQuestion, START_GAME_REWARD } from "@/types/game";
 import CategorySelector from "./CategorySelector";
@@ -35,6 +36,7 @@ const GamePreview = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading: profileLoading, updateProfile, spendLife, refreshProfile } = useGameProfile(userId);
+  const { walletData, refetchWallet } = useWallet(userId);
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { broadcast } = useBroadcastChannel({ channelName: 'wallet', onMessage: () => {}, enabled: true });
@@ -342,8 +344,9 @@ const GamePreview = () => {
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
 
-    // Quick client-side lives check for a smoother UX
-    if (profile.lives < 1) {
+    // Quick client-side lives check using walletData for accurate regenerated lives
+    const currentLives = walletData?.livesCurrent ?? profile.lives;
+    if (currentLives < 1) {
       toast.error('Nincs elég életed a játék indításához!');
       setGameState('category-select');
       return;
@@ -365,7 +368,8 @@ const GamePreview = () => {
       return;
     }
     
-    // Azonnali wallet frissítés jelzés a Dashboard felé
+    // Azonnali wallet frissítés jelzés a Dashboard felé + refetch
+    await refetchWallet();
     await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
     
     // Start jutalom jóváírása (+1 aranyérme)
