@@ -43,9 +43,10 @@ const Game = () => {
       <div className="min-h-dvh min-h-svh relative flex items-center justify-center p-4">
         {/* Background extends beyond safe-area */}
         <div 
-          className="absolute bg-cover bg-center bg-no-repeat"
+          className="absolute bg-cover bg-no-repeat"
           style={{ 
             backgroundImage: `url(${gameBackground})`,
+            backgroundPosition: '50% 50%',
             left: 'calc(-1 * env(safe-area-inset-left, 0px))',
             right: 'calc(-1 * env(safe-area-inset-right, 0px))',
             top: 'calc(-1 * env(safe-area-inset-top, 0px))',

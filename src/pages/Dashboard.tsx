@@ -239,7 +239,7 @@ if (!profile) {
         style={{
           backgroundImage: `url(${gameBackground})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: '50% 50%',
           backgroundAttachment: 'fixed',
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',
