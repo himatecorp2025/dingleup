@@ -1,5 +1,4 @@
 import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
-import logo from "@/assets/logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -10,7 +9,22 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Logo & Description */}
           <div className="md:col-span-2">
-            <img src={logo} alt="Dingle UP! Logo" className="w-24 h-24 mb-4" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="96"
+              height="96"
+              viewBox="0 0 1024 1024"
+              className="mb-4"
+            >
+              <image
+                href="/logo.png"
+                x="0"
+                y="0"
+                width="1024"
+                height="1024"
+                preserveAspectRatio="xMidYMid meet"
+              />
+            </svg>
             <p className="text-white/80 mb-4 max-w-md text-with-stroke">
               A Dingle UP! egy modern kvízjáték, ahol tesztelheted tudásod, versenyezhetsz barátaiddal és nyerhetsz értékes jutalmakat.
             </p>

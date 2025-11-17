@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Play, Sparkles, Trophy, Zap, Smartphone } from "lucide-react";
-import logoImage from "@/assets/logo.png";
 import millionaireHero from "@/assets/millionaire-hero.jpg";
 
 const Hero = () => {
@@ -35,11 +34,22 @@ const Hero = () => {
           <div className="flex justify-center mb-4 animate-fade-in">
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-accent/30 to-secondary/30 rounded-full blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
-              <img 
-                src={logoImage} 
-                alt="Millionaire Quiz Logo" 
+              <svg 
+                xmlns="http://www.w3.org/2000/svg"
+                width="128"
+                height="128"
+                viewBox="0 0 1024 1024"
                 className="relative w-32 h-32 md:w-40 md:h-40 object-contain drop-shadow-2xl transform group-hover:scale-105 transition-transform duration-500"
-              />
+              >
+                <image
+                  href="/logo.png"
+                  x="0"
+                  y="0"
+                  width="1024"
+                  height="1024"
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              </svg>
             </div>
           </div>
 

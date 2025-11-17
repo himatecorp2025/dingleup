@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart, AlertTriangle, Star, Activity, Crown, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import logo from '@/assets/logo.png';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserGrowthChart } from '@/components/UserGrowthChart';
@@ -251,7 +250,22 @@ const AdminDashboard = () => {
   const SidebarMenu = ({ onItemClick }: { onItemClick?: () => void }) => (
     <>
       <div className="mb-6 xl:mb-8">
-        <img src={logo} alt="Logo" className="w-12 h-12 xl:w-16 xl:h-16 mb-2" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 1024 1024"
+          className="w-12 h-12 xl:w-16 xl:h-16 mb-2"
+        >
+          <image
+            href="/logo.png"
+            x="0"
+            y="0"
+            width="1024"
+            height="1024"
+            preserveAspectRatio="xMidYMid meet"
+          />
+        </svg>
         <h2 className="text-white font-bold text-xs xl:text-sm">Szia, {userName}! ✨</h2>
       </div>
 
@@ -396,7 +410,21 @@ const AdminDashboard = () => {
                 <SidebarMenu onItemClick={() => setMobileMenuOpen(false)} />
               </SheetContent>
             </Sheet>
-            <img src={logo} alt="Logo" className="w-10 h-10" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 1024 1024"
+            >
+              <image
+                href="/logo.png"
+                x="0"
+                y="0"
+                width="1024"
+                height="1024"
+                preserveAspectRatio="xMidYMid meet"
+              />
+            </svg>
             <h2 className="text-white font-bold text-sm">Szia, {userName}! ✨</h2>
           </div>
         </div>

@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, ArrowRight } from "lucide-react";
-import logo from "@/assets/logo.png";
 
 const RegistrationSuccess = () => {
   const navigate = useNavigate();
@@ -25,7 +24,22 @@ const RegistrationSuccess = () => {
       <div className="max-w-md w-full relative z-10">
         <div className="bg-gradient-card border border-border/50 rounded-2xl p-8 shadow-glow text-center animate-fade-in">
           <div className="mb-6">
-            <img src={logo} alt="Dingle UP!" className="w-24 h-24 mx-auto mb-4" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="96"
+              height="96"
+              viewBox="0 0 1024 1024"
+              className="mx-auto mb-4"
+            >
+              <image
+                href="/logo.png"
+                x="0"
+                y="0"
+                width="1024"
+                height="1024"
+                preserveAspectRatio="xMidYMid meet"
+              />
+            </svg>
             <div className="inline-flex items-center justify-center w-20 h-20 bg-accent/20 rounded-full mb-4">
               <CheckCircle className="w-12 h-12 text-accent" />
             </div>

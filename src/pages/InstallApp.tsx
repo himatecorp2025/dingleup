@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Download, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import logoImage from '@/assets/logo.png';
 
 const InstallApp = () => {
   const navigate = useNavigate();
@@ -76,7 +75,22 @@ const InstallApp = () => {
       </button>
 
       <div className="max-w-md mx-auto pt-20 text-center">
-        <img src={logoImage} alt="Dingle UP!" className="w-32 h-32 mx-auto mb-6" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="128"
+          height="128"
+          viewBox="0 0 1024 1024"
+          className="mx-auto mb-6"
+        >
+          <image
+            href="/logo.png"
+            x="0"
+            y="0"
+            width="1024"
+            height="1024"
+            preserveAspectRatio="xMidYMid meet"
+          />
+        </svg>
         
         <h1 className="text-3xl font-black text-white mb-4">
           Telepítsd az alkalmazást!
