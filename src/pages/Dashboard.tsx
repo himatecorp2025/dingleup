@@ -459,9 +459,42 @@ if (!profile) {
           </div>
         </div>
 
-        {/* Fixed bottom section - CORRECT ORDER from bottom to top: BottomNav -> Logo -> Top 100 -> Boosters -> Play Now */}
+        {/* Fixed bottom section - CORRECT ORDER from bottom to top: BottomNav -> Top 100 -> Boosters -> Play Now -> Logo */}
         <div className="fixed bottom-0 left-0 right-0 z-[9000] flex flex-col-reverse items-center pb-[calc(var(--bottom-nav-h)+1rem)]">
-          {/* Play Now Button - HIGHEST (felül) */}
+          {/* Top 100 Leaderboard Carousel - legalsó (közvetlenül BottomNav felett) */}
+          <div className="w-full" style={{ marginBottom: '2vh' }}>
+            <LeaderboardCarousel />
+          </div>
+
+          {/* Booster Button - Top 100 felett */}
+          <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
+            <div className="w-full max-w-screen-lg">
+              <DiamondButton
+                variant="booster"
+                size="lg"
+                disabled={true}
+                className="!py-[clamp(1rem,4vw,1.75rem)] sm:!py-[clamp(1.25rem,5vw,2rem)]"
+                style={{
+                  width: '100%',
+                }}
+              >
+                {/* Zap/Lightning Bolt SVG Icon */}
+                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span 
+                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)]" 
+                  style={{ 
+                    textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
+                  }}
+                >
+                  BOOSTERS
+                </span>
+              </DiamondButton>
+            </div>
+          </div>
+
+          {/* Play Now Button - Boosters felett */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
             <div className="w-full max-w-screen-lg">
               <DiamondButton
@@ -490,41 +523,7 @@ if (!profile) {
             </div>
           </div>
 
-          {/* Booster Button - between Play Now and Top 100 */}
-          <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
-            <div className="w-full max-w-screen-lg">
-              <DiamondButton
-                onClick={() => toast.info('Booster funkció hamarosan!')}
-                variant="booster"
-                size="lg"
-                disabled={true}
-                className="!py-[clamp(1rem,4vw,1.75rem)] sm:!py-[clamp(1.25rem,5vw,2rem)]"
-                style={{
-                  width: '100%',
-                }}
-              >
-                {/* Zap/Lightning Bolt SVG Icon */}
-                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span 
-                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)]" 
-                  style={{ 
-                    textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
-                  }}
-                >
-                  BOOSTERS
-                </span>
-              </DiamondButton>
-            </div>
-          </div>
-
-          {/* Top 100 Leaderboard Carousel */}
-          <div className="w-full" style={{ marginBottom: '2vh' }}>
-            <LeaderboardCarousel />
-          </div>
-
-          {/* Logo - below Play Now, above BottomNav - DUPLA MÉRET */}
+          {/* Logo - legfelső, Play Now felett */}
           <div className="flex justify-center w-full" style={{ marginBottom: '2vh', pointerEvents: 'none' }}>
             <div className="relative w-[clamp(240px,50vw,400px)] h-[clamp(240px,50vw,400px)]">
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
