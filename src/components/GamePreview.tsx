@@ -886,18 +886,6 @@ const GamePreview = () => {
   if (profileLoading || !userId) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
-        {/* Background extends beyond safe-area */}
-        <div 
-          className="absolute bg-cover bg-no-repeat bg-fixed z-0"
-          style={{ 
-            backgroundImage: `url(${gameBackground})`,
-            backgroundPosition: '50% 50%',
-            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
-            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
-            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
-            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))'
-          }}
-        />
         <div className="relative z-10 text-white">Betöltés...</div>
       </div>
     );
@@ -906,18 +894,6 @@ const GamePreview = () => {
   if (!profile) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
-        {/* Background extends beyond safe-area */}
-        <div 
-          className="absolute bg-cover bg-no-repeat bg-fixed z-0"
-          style={{ 
-            backgroundImage: `url(${gameBackground})`,
-            backgroundPosition: '50% 50%',
-            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
-            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
-            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
-            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))'
-          }}
-        />
         <div className="relative z-10 text-white flex flex-col items-center gap-4">
           <p>Hiba a profil betöltésekor</p>
           <Button onClick={() => navigate('/dashboard')} variant="outline">
@@ -955,20 +931,7 @@ const GamePreview = () => {
     
     return (
       <>
-        {/* Fixed background - extends beyond safe-area */}
-        <div 
-          className="fixed bg-cover bg-no-repeat z-0"
-          style={{ 
-            backgroundImage: `url(${gameBackground})`,
-            backgroundPosition: '50% 50%',
-            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
-            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
-            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
-            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))'
-          }}
-        />
-        
-        {/* Scrollable question container */}
+        {/* Scrollable question container - background is now in parent Game.tsx as fixed layer */}
         <div 
           ref={containerRef}
           className="fixed inset-0 z-10 overflow-hidden pb-16"
@@ -1062,18 +1025,7 @@ const GamePreview = () => {
   if (gameState === 'finished') {
     return (
       <div className="fixed inset-0 w-full h-full flex items-center justify-center overflow-hidden">
-        {/* Background extends beyond safe-area */}
-        <div 
-          className="absolute w-full h-full bg-cover bg-no-repeat z-0"
-          style={{ 
-            backgroundImage: `url(${gameBackground})`,
-            backgroundPosition: '50% 50%',
-            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
-            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
-            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
-            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))'
-          }}
-        />
+        {/* Background is now in parent Game.tsx as fixed layer */}
         <div className="absolute inset-0 w-full h-full backdrop-blur-[2px]" />
         
         {/* Animated particles */}
