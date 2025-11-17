@@ -1734,48 +1734,6 @@ export type Database = {
           },
         ]
       }
-      shop_interactions: {
-        Row: {
-          created_at: string
-          currency: string | null
-          event_type: string
-          id: string
-          metadata: Json | null
-          price_amount: number | null
-          product_id: string | null
-          product_name: string | null
-          product_type: string
-          session_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          currency?: string | null
-          event_type: string
-          id?: string
-          metadata?: Json | null
-          price_amount?: number | null
-          product_id?: string | null
-          product_name?: string | null
-          product_type: string
-          session_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          currency?: string | null
-          event_type?: string
-          id?: string
-          metadata?: Json | null
-          price_amount?: number | null
-          product_id?: string | null
-          product_name?: string | null
-          product_type?: string
-          session_id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       subscribers: {
         Row: {
           created_at: string
