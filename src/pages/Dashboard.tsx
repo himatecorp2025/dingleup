@@ -127,53 +127,81 @@ const Dashboard = () => {
 
 
 
-  // Realtime rank updates - same calculation as Leaderboard page
+  // Realtime weekly rank updates - aggregated across all categories for current week
   useEffect(() => {
     if (!userId) return;
 
-    const fetchUserRank = async () => {
+    const getWeekStartForRank = () => {
+      const now = new Date();
+      const dayOfWeek = now.getUTCDay();
+      const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const monday = new Date(now);
+      monday.setUTCDate(now.getUTCDate() - diff);
+      monday.setUTCHours(0, 0, 0, 0);
+      return monday.toISOString().split('T')[0];
+    };
+
+    const fetchUserWeeklyRank = async () => {
       try {
-        // Query global_leaderboard table - same as Leaderboard page
+        const weekStart = getWeekStartForRank();
+        
+        // Query weekly_rankings for current week - all categories
         const { data, error } = await supabase
-          .from('global_leaderboard')
+          .from('weekly_rankings')
           .select('user_id, total_correct_answers')
-          .order('total_correct_answers', { ascending: false });
+          .eq('week_start', weekStart);
         
         if (error) {
-          console.error('Error fetching leaderboard:', error);
+          console.error('Error fetching weekly rankings:', error);
           setCurrentRank(null);
           return;
         }
         
+        if (!data || data.length === 0) {
+          setCurrentRank(null);
+          return;
+        }
+
+        // Aggregate total_correct_answers per user across all categories
+        const userTotals = new Map<string, number>();
+        data.forEach(entry => {
+          const currentTotal = userTotals.get(entry.user_id) || 0;
+          userTotals.set(entry.user_id, currentTotal + entry.total_correct_answers);
+        });
+
+        // Sort by total correct answers (descending)
+        const sortedUsers = Array.from(userTotals.entries())
+          .sort((a, b) => b[1] - a[1]);
+
         // Find current user's rank
-        const userRank = data?.findIndex(entry => entry.user_id === userId);
-        if (userRank !== undefined && userRank !== -1) {
+        const userRank = sortedUsers.findIndex(([uid]) => uid === userId);
+        if (userRank !== -1) {
           setCurrentRank(userRank + 1); // +1 because findIndex is 0-based
         } else {
           setCurrentRank(null);
         }
       } catch (err) {
-        console.error('Exception fetching user rank:', err);
+        console.error('Exception fetching weekly user rank:', err);
         setCurrentRank(null);
       }
     };
     
     // Fetch immediately on mount
-    fetchUserRank();
+    fetchUserWeeklyRank();
     
-    // Subscribe to realtime changes in global_leaderboard
+    // Subscribe to realtime changes in weekly_rankings
     const leaderboardChannel = supabase
-      .channel('global-leaderboard-updates')
+      .channel('weekly-leaderboard-rank-updates')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'global_leaderboard'
+          table: 'weekly_rankings'
         },
         () => {
-          // Leaderboard changed -> recalculate rank
-          fetchUserRank();
+          // Weekly rankings changed -> recalculate rank
+          fetchUserWeeklyRank();
         }
       )
       .subscribe();
