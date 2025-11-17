@@ -62,12 +62,12 @@ const Profile = () => {
       .from('weekly_rankings')
       .select('total_correct_answers')
       .eq('user_id', userId)
-      .eq('week_start', weekStart)
-      .eq('category', 'all') // User has ONE row with all categories combined
-      .maybeSingle();
+      .eq('week_start', weekStart);
 
     if (!error && data) {
-      setWeeklyCorrectAnswers(data.total_correct_answers || 0);
+      // Sum all categories for this user in current week
+      const total = data.reduce((sum, row) => sum + (row.total_correct_answers || 0), 0);
+      setWeeklyCorrectAnswers(total);
     } else {
       setWeeklyCorrectAnswers(0);
     }

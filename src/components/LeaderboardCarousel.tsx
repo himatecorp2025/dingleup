@@ -66,19 +66,32 @@ export const LeaderboardCarousel = () => {
         .from('weekly_rankings')
         .select('user_id, total_correct_answers, profiles:profiles!inner(username, avatar_url)')
         .eq('week_start', weekStart)
-        .eq('category', 'all') // Public TOP 100 leaderboard - all categories combined
-        .order('total_correct_answers', { ascending: false })
-        .limit(100);
+        .order('total_correct_answers', { ascending: false });
       if (error) throw error;
 
-      // No aggregation needed - each user has ONE row with all categories combined
-      return (data || []).map((row: any, index: number) => ({
-        user_id: row.user_id,
-        username: row.profiles?.username ?? 'Player',
-        avatar_url: row.profiles?.avatar_url ?? null,
-        total_correct_answers: row.total_correct_answers || 0,
-        rank: index + 1
-      }));
+      // Aggregate by user_id - sum all categories for each user
+      const userMap = new Map<string, LeaderboardEntry>();
+      (data || []).forEach((row: any) => {
+        const uid = row.user_id;
+        const existing = userMap.get(uid);
+        const correctAnswers = row.total_correct_answers || 0;
+        
+        if (existing) {
+          existing.total_correct_answers += correctAnswers;
+        } else {
+          userMap.set(uid, {
+            user_id: uid,
+            username: row.profiles?.username ?? 'Player',
+            avatar_url: row.profiles?.avatar_url ?? null,
+            total_correct_answers: correctAnswers
+          });
+        }
+      });
+
+      // Sort by total_correct_answers and return TOP 100
+      return Array.from(userMap.values())
+        .sort((a, b) => b.total_correct_answers - a.total_correct_answers)
+        .slice(0, 100);
     } catch (e) {
       console.error('[LeaderboardCarousel] weekly_rankings error:', e);
       return [];
