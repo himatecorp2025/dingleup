@@ -188,20 +188,13 @@ Deno.serve(async (req) => {
 
     console.log('[AdminAllData] Processed invitations:', invitationsWithProfiles.length);
 
-    // Fetch genius count
-    const { count: geniusCount } = await serviceClient
-      .from('profiles')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_subscribed', true);
-
     return new Response(
       JSON.stringify({
         users: users || [],
         roles: rolesData || [],
         purchases: purchasesWithProfiles,
         reports: reportsWithProfiles,
-        invitations: invitationsWithProfiles,
-        geniusCount: geniusCount || 0
+        invitations: invitationsWithProfiles
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

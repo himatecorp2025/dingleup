@@ -1207,48 +1207,6 @@ export type Database = {
           },
         ]
       }
-      monetization_analytics: {
-        Row: {
-          arpu: number | null
-          conversion_rate: number | null
-          created_at: string | null
-          date: string
-          id: string
-          paying_users: number | null
-          revenue_by_product: Json | null
-          top_spenders: Json | null
-          total_revenue: number | null
-          total_users: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          arpu?: number | null
-          conversion_rate?: number | null
-          created_at?: string | null
-          date: string
-          id?: string
-          paying_users?: number | null
-          revenue_by_product?: Json | null
-          top_spenders?: Json | null
-          total_revenue?: number | null
-          total_users?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          arpu?: number | null
-          conversion_rate?: number | null
-          created_at?: string | null
-          date?: string
-          id?: string
-          paying_users?: number | null
-          revenue_by_product?: Json | null
-          top_spenders?: Json | null
-          total_revenue?: number | null
-          total_users?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       navigation_events: {
         Row: {
           created_at: string
@@ -1791,45 +1749,6 @@ export type Database = {
         }
         Relationships: []
       }
-      subscriptions: {
-        Row: {
-          cancel_at_period_end: boolean | null
-          created_at: string | null
-          current_period_end: string
-          id: string
-          product_id: string
-          status: string
-          stripe_customer_id: string
-          stripe_subscription_id: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          cancel_at_period_end?: boolean | null
-          created_at?: string | null
-          current_period_end: string
-          id?: string
-          product_id: string
-          status: string
-          stripe_customer_id: string
-          stripe_subscription_id: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          cancel_at_period_end?: boolean | null
-          created_at?: string | null
-          current_period_end?: string
-          id?: string
-          product_id?: string
-          status?: string
-          stripe_customer_id?: string
-          stripe_subscription_id?: string
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
       thread_participants: {
         Row: {
           can_send: boolean
@@ -1983,7 +1902,6 @@ export type Database = {
       }
       user_cohorts: {
         Row: {
-          became_genius_day: number | null
           churn_risk_score: number | null
           cohort_month: string
           cohort_week: string
@@ -2002,7 +1920,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          became_genius_day?: number | null
           churn_risk_score?: number | null
           cohort_month: string
           cohort_week: string
@@ -2021,7 +1938,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          became_genius_day?: number | null
           churn_risk_score?: number | null
           cohort_month?: string
           cohort_week?: string

@@ -306,13 +306,6 @@ const AdminDashboard = () => {
             <span className="font-medium">Játékos viselkedések</span>
           </button>
           <button
-            onClick={() => { navigate('/admin/genius'); onItemClick?.(); }}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
-          >
-            <Star className="w-4 h-4 xl:w-5 xl:h-5 text-[#ffd700]" />
-            <span className="font-medium">Genius Tagok</span>
-          </button>
-          <button
             onClick={() => { navigate('/admin/normal-users'); onItemClick?.(); }}
             className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
           >

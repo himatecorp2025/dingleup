@@ -146,7 +146,6 @@ export const trackBonusEvent = async (
     coins_amount?: number;
     lives_amount?: number;
     streak_day?: number;
-    is_subscriber?: boolean;
     metadata?: Record<string, any>;
   }
 ) => {
@@ -158,9 +157,8 @@ export const trackBonusEvent = async (
       coins_amount: bonusData?.coins_amount || 0,
       lives_amount: bonusData?.lives_amount || 0,
       streak_day: bonusData?.streak_day,
-      is_subscriber: bonusData?.is_subscriber || false,
       session_id: getSessionId(),
-      metadata: bonusData?.metadata || {},
+      metadata: bonusData?.metadata || {}
     });
   } catch (error) {
     console.error('[Analytics] Failed to track bonus event:', error);
@@ -280,7 +278,6 @@ export const trackFeatureUsage = async (
 
 interface AnalyticsData {
   userId?: string;
-  isSubscriber?: boolean;
   route?: string;
   itemType?: string;
   basePrice?: number;
