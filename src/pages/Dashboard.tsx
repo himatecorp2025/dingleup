@@ -525,7 +525,7 @@ if (!profile) {
 
           {/* Logo - legfelső, Play Now felett */}
           <div className="flex justify-center w-full" style={{ marginBottom: '2vh', pointerEvents: 'none' }}>
-            <div className="relative w-[clamp(162px,50.4vw,342px)] h-[clamp(162px,50.4vw,342px)]">
+            <div className="relative w-[clamp(146px,45.36vw,308px)] h-[clamp(146px,45.36vw,308px)]">
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
               <svg 
                 xmlns="http://www.w3.org/2000/svg"
