@@ -120,10 +120,10 @@ const Dashboard = () => {
 
   // Show Daily Gift dialog SECOND (after welcome bonus) - AUTOMATIC, no auto-claim
   useEffect(() => {
-    if (canMountModals && canClaim && !canClaimWelcome && !showWeeklyWinners && userId) {
+    if (canMountModals && canClaim && !showWelcomeBonus && !showWeeklyWinners && userId) {
       setShowPopup(true);
     }
-  }, [canMountModals, canClaim, canClaimWelcome, showWeeklyWinners, userId]);
+  }, [canMountModals, canClaim, showWelcomeBonus, showWeeklyWinners, userId]);
 
 
 
@@ -244,6 +244,10 @@ const Dashboard = () => {
       // Reload profile and wallet to show updated coins and lives
       await refreshProfile();
       await refetchWallet();
+      // Check if Daily Gift should appear after Welcome Bonus
+      setTimeout(async () => {
+        await checkDailyGift();
+      }, 500);
     }
     return success;
   };
