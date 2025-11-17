@@ -98,7 +98,7 @@ export const LeaderboardCarousel = () => {
     }
   };
 
-  // Auto-scroll logika - egyszerű lineáris scrolling
+  // Auto-scroll logika - infinite loop with seamless transition
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || topPlayers.length === 0) return;
@@ -109,8 +109,9 @@ export const LeaderboardCarousel = () => {
       if (!autoScrollPausedRef.current) {
         container.scrollLeft += scrollSpeed;
         
-        // Ha elérte a végét, visszaugrik az elejére
-        if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+        // Körköröz scroll: ha elértük a duplikált tartalom felét, visszaugrik az elejére (zökkenőmentes)
+        const halfWidth = container.scrollWidth / 2;
+        if (container.scrollLeft >= halfWidth) {
           container.scrollLeft = 0;
         }
       }
@@ -218,15 +219,16 @@ export const LeaderboardCarousel = () => {
       <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-white mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <div className="inline-flex gap-2 sm:gap-3 px-2">
-          {topPlayers.map((player, index) => {
-            const rank = index + 1;
-            const showCrown = index < 3;
+          {/* Dupla rendering: eredeti lista + másolat körköröz scrollhoz */}
+          {[...topPlayers, ...topPlayers].map((player, index) => {
+            const rank = (index % topPlayers.length) + 1;
+            const showCrown = (index % topPlayers.length) < 3;
             return (
-              <div key={player.user_id} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
+              <div key={`${player.user_id}-${index}`} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
                 {/* BASE SHADOW */}
                 <div className="absolute clip-hexagon" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} aria-hidden />
                 {/* OUTER FRAME */}
-                <div className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(index)} border-2 shadow-xl`} style={{ borderColor: index === 0 ? '#fbbf24' : index === 1 ? '#d1d5db' : index === 2 ? '#fb923c' : '#a855f7' }} aria-hidden />
+                <div className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(index % topPlayers.length)} border-2 shadow-xl`} style={{ borderColor: (index % topPlayers.length) === 0 ? '#fbbf24' : (index % topPlayers.length) === 1 ? '#d1d5db' : (index % topPlayers.length) === 2 ? '#fb923c' : '#a855f7' }} aria-hidden />
                 {/* MIDDLE FRAME */}
                 <div className="absolute inset-[2px] clip-hexagon" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)' }} aria-hidden />
                 {/* INNER LAYER */}
@@ -235,7 +237,7 @@ export const LeaderboardCarousel = () => {
                 <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
                   {/* Felső rész: korona + rang */}
                   <div className="flex flex-col items-center gap-0">
-                    {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ${getCrownColor(index)}`} />}
+                    {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ${getCrownColor(index % topPlayers.length)}`} />}
                     <p className="text-[9px] sm:text-[10px] md:text-xs font-black text-white drop-shadow-lg leading-none">{rank}.</p>
                   </div>
                   
