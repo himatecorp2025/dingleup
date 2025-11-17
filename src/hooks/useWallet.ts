@@ -37,9 +37,22 @@ export const useWallet = (userId: string | undefined) => {
         }
       }
 
+      // Get fresh session token for the request
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      
+      if (!currentSession?.access_token) {
+        console.error('[useWallet] No valid access token available');
+        setLoading(false);
+        return;
+      }
+
       const requestTime = Date.now();
       
-      const { data, error } = await supabase.functions.invoke('get-wallet');
+      const { data, error } = await supabase.functions.invoke('get-wallet', {
+        headers: {
+          Authorization: `Bearer ${currentSession.access_token}`
+        }
+      });
 
       if (error) {
         console.error('[useWallet] Error fetching wallet:', error);
