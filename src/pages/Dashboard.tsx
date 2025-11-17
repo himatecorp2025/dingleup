@@ -435,10 +435,23 @@ if (!profile) {
                 <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" strokeWidth="2"/>
                   <path d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M8.59 13.51L15.42 17.49M15.41 6.51L8.59 10.49" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M18 16C19.6569 16 21 17.3431 21 19C21 20.6569 19.6569 22 18 22C16.3431 22 15 20.6569 15 19C15 17.3431 16.3431 16 18 16Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M8.7 13.7L15.3 17.3M15.3 6.7L8.7 10.3" stroke="currentColor" strokeWidth="2"/>
                 </svg>
                 <span className="text-[10px] sm:text-xs md:text-sm">SHARE</span>
+              </DiamondButton>
+              
+              <DiamondButton
+                onClick={() => toast.info('Booster funkció hamarosan!')}
+                variant="booster"
+                size="sm"
+                disabled={true}
+              >
+                {/* Zap/Lightning Bolt SVG Icon */}
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span className="text-[10px] sm:text-xs md:text-sm">BOOSTER</span>
               </DiamondButton>
               
               <DiamondButton

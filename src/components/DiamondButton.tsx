@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 
 interface DiamondButtonProps {
   onClick?: () => void;
-  variant: 'play' | 'share' | 'leaderboard';
+  variant: 'play' | 'share' | 'leaderboard' | 'booster';
   children: ReactNode;
   className?: string;
   active?: boolean;
@@ -59,6 +59,17 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
       shadowColor: 'shadow-[0_0_20px_rgba(168,85,247,0.5),0_8px_25px_rgba(0,0,0,0.5)]',
       hoverShadow: 'hover:shadow-[0_0_30px_rgba(168,85,247,0.7),0_12px_30px_rgba(0,0,0,0.6)]',
       glowColor: 'rgba(168,85,247,0.3)',
+      textColor: 'text-white',
+      iconColor: '#ffffff',
+    },
+    booster: {
+      gradientOuter: 'from-orange-700 via-orange-600 to-orange-900',
+      gradientMiddle: 'from-orange-600 via-orange-500 to-orange-800',
+      gradientInner: 'from-orange-500 via-orange-600 to-orange-700',
+      borderColor: 'border-orange-400',
+      shadowColor: 'shadow-[0_0_20px_rgba(249,115,22,0.5),0_8px_25px_rgba(0,0,0,0.5)]',
+      hoverShadow: 'hover:shadow-[0_0_30px_rgba(249,115,22,0.7),0_12px_30px_rgba(0,0,0,0.6)]',
+      glowColor: 'rgba(249,115,22,0.3)',
       textColor: 'text-white',
       iconColor: '#ffffff',
     },
