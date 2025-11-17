@@ -12,7 +12,6 @@ import { HexagonButton } from "./HexagonButton";
 import { DiamondButton } from "./DiamondButton";
 import { GameStateScreen } from "./GameStateScreen";
 import { QuestionCard } from "./QuestionCard";
-import { InsufficientResourcesDialog } from "./InsufficientResourcesDialog";
 import { ExitGameDialog } from "./ExitGameDialog";
 import { useBroadcastChannel } from "@/hooks/useBroadcastChannel";
 import { Trophy3D } from "./Trophy3D";
@@ -90,9 +89,6 @@ const GamePreview = () => {
   // UI states
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [continueType, setContinueType] = useState<'timeout' | 'wrong' | 'out-of-lives'>('wrong');
-  const [showInsufficientDialog, setShowInsufficientDialog] = useState(false);
-  const [insufficientType, setInsufficientType] = useState<'coins' | 'lives'>('coins');
-  const [requiredAmount, setRequiredAmount] = useState(0);
   const [gameInstanceId] = useState(() => crypto.randomUUID()); // Unique ID per game instance
   const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const [errorBannerMessage, setErrorBannerMessage] = useState('');
@@ -253,15 +249,14 @@ const GamePreview = () => {
       
       // Check if user has enough coins NOW (when they try to continue)
       if (profile.coins < cost) {
-        // Not enough coins - show insufficient dialog with delay for dramatic effect
-        setInsufficientType('coins');
-        setRequiredAmount(cost);
+        // Not enough coins - show error
         setErrorBannerVisible(false);
+        toast.error('Nincs elég aranyérméd a folytatáshoz!');
         
-        // Delay before showing dialog (dramatic reveal)
+        // Exit game after delay
         setTimeout(() => {
-          setShowInsufficientDialog(true);
-        }, 2000); // 2 seconds delay
+          resetGameState();
+        }, 1500);
         return;
       }
       
@@ -347,14 +342,9 @@ const GamePreview = () => {
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
 
-    // Ensure any previous dialogs are closed
-    setShowInsufficientDialog(false);
-
     // Quick client-side lives check for a smoother UX
     if (profile.lives < 1) {
-      setInsufficientType('lives');
-      setRequiredAmount(1);
-      setShowInsufficientDialog(true);
+      toast.error('Nincs elég életed a játék indításához!');
       setGameState('category-select');
       return;
     }
@@ -369,10 +359,8 @@ const GamePreview = () => {
     
     const canPlay = await spendLife();
     if (!canPlay) {
-      // Show insufficient lives dialog (fallback if RPC failed)
-      setInsufficientType('lives');
-      setRequiredAmount(1);
-      setShowInsufficientDialog(true);
+      // Show error (fallback if RPC failed)
+      toast.error('Nincs elég életed a játék indításához!');
       setGameState('category-select');
       return;
     }
@@ -558,9 +546,7 @@ const GamePreview = () => {
     if (currentQuestionIndex >= 10) cost = 30;
     
     if (profile.coins < cost) {
-      setInsufficientType('coins');
-      setRequiredAmount(cost);
-      setShowInsufficientDialog(true);
+      toast.error(`Nincs elég aranyérméd! (${cost} szükséges)`);
       return;
     }
     
@@ -716,10 +702,7 @@ const GamePreview = () => {
     // Second usage - costs 15 coins
     if (help5050UsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        // Nincs toast - insufficient dialog fog megjelenni
-        setInsufficientType('coins');
-        setRequiredAmount(cost);
-        setShowInsufficientDialog(true);
+        toast.error(`Nincs elég aranyérméd! (${cost} szükséges)`);
         return;
       }
       
@@ -767,10 +750,7 @@ const GamePreview = () => {
     // Second usage - costs 20 coins
     if (help2xAnswerUsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        // Nincs toast - insufficient dialog fog megjelenni
-        setInsufficientType('coins');
-        setRequiredAmount(cost);
-        setShowInsufficientDialog(true);
+        toast.error(`Nincs elég aranyérméd! (${cost} szükséges)`);
         return;
       }
       
@@ -835,10 +815,7 @@ const GamePreview = () => {
     // Second usage - costs 30 coins
     if (helpAudienceUsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        // Nincs toast - insufficient dialog fog megjelenni
-        setInsufficientType('coins');
-        setRequiredAmount(cost);
-        setShowInsufficientDialog(true);
+        toast.error(`Nincs elég aranyérméd! (${cost} szükséges)`);
         return;
       }
       
@@ -861,10 +838,7 @@ const GamePreview = () => {
     
     // Check if user has enough coins
     if (!profile || profile.coins < skipCost) {
-      // Nincs toast - insufficient dialog fog megjelenni
-      setInsufficientType('coins');
-      setRequiredAmount(skipCost);
-      setShowInsufficientDialog(true);
+      toast.error(`Nincs elég aranyérméd! (${skipCost} szükséges)`);
       return;
     }
     
@@ -950,83 +924,6 @@ const GamePreview = () => {
     return (
       <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
         <CategorySelector onSelect={startGameWithCategory} />
-        
-        {/* Insufficient Resources Dialog for category selection */}
-        <InsufficientResourcesDialog
-          open={showInsufficientDialog}
-          onOpenChange={setShowInsufficientDialog}
-          type={insufficientType}
-          requiredAmount={requiredAmount}
-          currentAmount={insufficientType === 'coins' ? profile.coins : profile.lives}
-          onGoToShop={() => {
-            // Keep modal open for in-game purchase
-          }}
-          userId={userId}
-          onPurchaseComplete={async () => {
-            await refreshProfile();
-            setShowInsufficientDialog(false);
-          }}
-        />
-        
-        {/* Lives & Coins Display - 3D Design - Smaller & Responsive */}
-        <div className="fixed top-4 right-4 z-50">
-          <div className="relative rounded-lg p-2 md:p-2.5" style={{ perspective: '1000px' }}>
-            {/* BASE SHADOW */}
-            <div className="absolute inset-0 bg-black/60 rounded-lg" style={{ transform: 'translate(3px, 3px)', filter: 'blur(5px)' }} aria-hidden />
-            
-            {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-purple-700/80 via-purple-600/70 to-purple-900/80 border-2 border-purple-500/50 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
-            
-            {/* MIDDLE FRAME */}
-            <div className="absolute inset-[2px] rounded-lg bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,0.3), inset 0 -1.5px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
-            
-            {/* INNER LAYER */}
-            <div className="absolute inset-[4px] rounded-lg bg-gradient-to-br from-purple-900/40 to-purple-800/40 backdrop-blur-sm" style={{ boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.2), inset 0 -6px 12px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
-            
-            {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[4px] rounded-lg pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
-            
-            <div className="relative z-10 flex flex-col gap-1.5" style={{ transform: 'translateZ(40px)' }}>
-              {/* Lives */}
-              <div className="flex items-center gap-1.5">
-                <div className="relative p-1 rounded">
-                  {/* Heart icon base shadow */}
-                  <div className="absolute inset-0 bg-black/40 rounded" style={{ transform: 'translate(1px, 1px)', filter: 'blur(2px)' }} aria-hidden />
-                  
-                  {/* Heart icon outer frame */}
-                  <div className="absolute inset-0 rounded bg-gradient-to-br from-red-400 via-red-500 to-red-600 border border-red-300/50" aria-hidden />
-                  
-                  {/* Heart icon inner layer */}
-                  <div className="absolute inset-[1.5px] rounded bg-gradient-to-b from-red-400 via-red-500 to-red-600" style={{ boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.2), inset 0 -1.5px 3px rgba(0,0,0,0.3)' }} aria-hidden />
-                  
-                  <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 text-white relative z-10 drop-shadow-lg" />
-                </div>
-                <span className="font-black text-xs md:text-sm text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  {profile.lives}/{profile.max_lives}
-                </span>
-              </div>
-              
-              {/* Coins */}
-              <div className="flex items-center gap-1.5">
-                <div className="relative p-1 rounded">
-                  {/* Coins icon base shadow */}
-                  <div className="absolute inset-0 bg-black/40 rounded" style={{ transform: 'translate(1px, 1px)', filter: 'blur(2px)' }} aria-hidden />
-                  
-                  {/* Coins icon outer frame */}
-                  <div className="absolute inset-0 rounded bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 border border-yellow-300/50" aria-hidden />
-                  
-                  {/* Coins icon inner layer */}
-                  <div className="absolute inset-[1.5px] rounded bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600" style={{ boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.2), inset 0 -1.5px 3px rgba(0,0,0,0.3)' }} aria-hidden />
-                  
-                  <Coins className="w-3.5 h-3.5 md:w-4 md:h-4 text-white relative z-10 drop-shadow-lg" />
-                </div>
-                <span className="font-black text-xs md:text-sm text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  {profile.coins}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     );
   }
@@ -1147,22 +1044,6 @@ const GamePreview = () => {
           onOpenChange={setShowExitDialog}
           onConfirmExit={() => {
             resetGameState();
-          }}
-        />
-
-        <InsufficientResourcesDialog
-          open={showInsufficientDialog}
-          onOpenChange={setShowInsufficientDialog}
-          type={insufficientType}
-          requiredAmount={requiredAmount}
-          currentAmount={insufficientType === 'coins' ? profile.coins : profile.lives}
-          onGoToShop={() => {
-            // Keep modal open for in-game purchase
-          }}
-          userId={userId}
-          onPurchaseComplete={async () => {
-            await refreshProfile();
-            setShowInsufficientDialog(false);
           }}
         />
       </>
