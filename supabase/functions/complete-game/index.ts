@@ -109,7 +109,53 @@ Deno.serve(async (req) => {
     // MEGJEGYZÉS: A jutalmak már jóvá lettek írva minden helyes válasz után
     // a credit-gameplay-reward edge function által, ezért itt NEM írunk jóvá újra
 
-    // Update leaderboard
+    // Calculate current week start (Monday 00:00 UTC)
+    const now = new Date();
+    const dayOfWeek = now.getUTCDay();
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(now);
+    monday.setUTCDate(now.getUTCDate() - diff);
+    monday.setUTCHours(0, 0, 0, 0);
+    const weekStart = monday.toISOString().split('T')[0];
+
+    // Get user profile for username
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', user.id)
+      .single();
+
+    // Update weekly_rankings
+    const { data: existingWeekly, error: weeklySelectError } = await supabase
+      .from('weekly_rankings')
+      .select('total_correct_answers')
+      .eq('user_id', user.id)
+      .eq('week_start', weekStart)
+      .eq('category', body.category)
+      .maybeSingle();
+
+    const newWeeklyTotal = (existingWeekly?.total_correct_answers || 0) + body.correctAnswers;
+
+    const { error: weeklyError } = await supabase
+      .from('weekly_rankings')
+      .upsert({
+        user_id: user.id,
+        username: userProfile?.username || 'Player',
+        category: body.category,
+        week_start: weekStart,
+        total_correct_answers: newWeeklyTotal,
+        average_response_time: body.averageResponseTime,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id,week_start,category',
+        ignoreDuplicates: false
+      });
+
+    if (weeklyError) {
+      console.error('[CompleteGame] Weekly rankings update error:', weeklyError);
+    }
+
+    // Update global_leaderboard
     const { error: leaderboardError } = await supabase
       .from('global_leaderboard')
       .upsert({

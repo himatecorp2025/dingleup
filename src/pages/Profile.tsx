@@ -18,6 +18,7 @@ const Profile = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
+  const [weeklyCorrectAnswers, setWeeklyCorrectAnswers] = useState<number>(0);
   
   // Platform detection for conditional padding
   const [isStandalone, setIsStandalone] = useState(false);
@@ -44,6 +45,60 @@ const Profile = () => {
       }
     });
   }, [navigate]);
+
+  // Fetch weekly correct answers
+  const fetchWeeklyCorrectAnswers = async () => {
+    if (!userId) return;
+
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - diff);
+    monday.setHours(0, 0, 0, 0);
+    const weekStart = monday.toISOString().split('T')[0];
+
+    const { data, error } = await supabase
+      .from('weekly_rankings')
+      .select('total_correct_answers')
+      .eq('user_id', userId)
+      .eq('week_start', weekStart);
+
+    if (!error && data) {
+      const total = data.reduce((sum, row) => sum + (row.total_correct_answers || 0), 0);
+      setWeeklyCorrectAnswers(total);
+    } else {
+      setWeeklyCorrectAnswers(0);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchWeeklyCorrectAnswers();
+
+      // Real-time subscription for weekly_rankings updates
+      const channel = supabase
+        .channel('profile-weekly-rankings')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'weekly_rankings',
+            filter: `user_id=eq.${userId}`
+          },
+          () => {
+            console.log('[Profile] Real-time weekly rankings update received');
+            fetchWeeklyCorrectAnswers();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, [userId]);
 
   const handleManageSubscription = async () => {
     setIsManagingSubscription(true);
@@ -340,8 +395,8 @@ const Profile = () => {
             {/* Content */}
             <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <TrophyIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Helyes válaszok</p>
-              <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.total_correct_answers || 0}</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Aktuális Heti Helyes válaszok száma:</p>
+              <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{weeklyCorrectAnswers}</p>
             </div>
           </div>
 
