@@ -74,22 +74,18 @@ Deno.serve(async (req) => {
       );
     }
 
-    // SERVER-SIDE: Calculate coins based on performance
-    // Base coins per correct answer
-    const baseCoins = body.correctAnswers * 10;
-    
-    // Speed bonus (faster = more coins)
-    let speedBonus = 0;
-    if (body.averageResponseTime < 3000) speedBonus = body.correctAnswers * 5;
-    else if (body.averageResponseTime < 5000) speedBonus = body.correctAnswers * 3;
-    
-    // Perfect score bonus
-    let perfectBonus = 0;
-    if (body.correctAnswers === body.totalQuestions) perfectBonus = 50;
-    
-    const coinsEarned = baseCoins + speedBonus + perfectBonus;
+    // Összesített érmék számítása (már jóváírva lettek minden helyes válasz után)
+    // Ez csak statisztikai célokra kerül a game_results táblába
+    let totalCoinsEarned = 1; // Start jutalom
+    for (let i = 0; i < body.correctAnswers; i++) {
+      if (i >= 0 && i <= 3) totalCoinsEarned += 1;      // 1-4. kérdés
+      else if (i >= 4 && i <= 8) totalCoinsEarned += 3; // 5-9. kérdés
+      else if (i >= 9 && i <= 13) totalCoinsEarned += 5; // 10-14. kérdés
+      else if (i === 14) totalCoinsEarned += 55;         // 15. kérdés
+    }
+    const coinsEarned = totalCoinsEarned;
 
-    console.log('[CompleteGame] User:', user.id, 'Category:', body.category, 'Correct:', body.correctAnswers, 'Coins:', coinsEarned);
+    console.log('[CompleteGame] User:', user.id, 'Category:', body.category, 'Correct:', body.correctAnswers, 'Total Coins:', coinsEarned);
 
     // Insert game result
     const { error: insertError } = await supabase
@@ -110,17 +106,8 @@ Deno.serve(async (req) => {
       throw insertError;
     }
 
-    // Award coins using secure RPC
-    if (coinsEarned > 0) {
-      const { error: coinsError } = await supabase.rpc('award_coins', { 
-        amount: coinsEarned 
-      });
-
-      if (coinsError) {
-        console.error('[CompleteGame] Award coins error:', coinsError);
-        throw coinsError;
-      }
-    }
+    // MEGJEGYZÉS: A jutalmak már jóvá lettek írva minden helyes válasz után
+    // a credit-gameplay-reward edge function által, ezért itt NEM írunk jóvá újra
 
     // Update leaderboard
     const { error: leaderboardError } = await supabase
