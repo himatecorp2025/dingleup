@@ -104,39 +104,6 @@ export const trackPageExit = async (
 };
 
 // =====================================================
-// SHOP TRACKING
-// =====================================================
-
-export const trackShopInteraction = async (
-  userId: string,
-  eventType: 'product_view' | 'product_click' | 'purchase_initiated' | 'purchase_completed' | 'purchase_cancelled',
-  productType: string,
-  productData?: {
-    product_id?: string;
-    product_name?: string;
-    price_amount?: number;
-    currency?: string;
-    metadata?: Record<string, any>;
-  }
-) => {
-  try {
-    await supabase.from('shop_interactions').insert({
-      user_id: userId,
-      event_type: eventType,
-      product_type: productType,
-      product_id: productData?.product_id,
-      product_name: productData?.product_name,
-      price_amount: productData?.price_amount,
-      currency: productData?.currency || 'HUF',
-      session_id: getSessionId(),
-      metadata: productData?.metadata || {},
-    });
-  } catch (error) {
-    console.error('[Analytics] Failed to track shop interaction:', error);
-  }
-};
-
-// =====================================================
 // SUBSCRIPTION PROMO TRACKING
 // =====================================================
 
