@@ -17,8 +17,8 @@ export const LeaderboardCarousel = () => {
 
   useEffect(() => {
     refresh();
-    // Frissítés 5 mp-enként – egyezik a Ranglista oldal ritmusával
-    const interval = setInterval(refresh, 5000);
+    // Auto-refresh every 60 seconds
+    const interval = setInterval(refresh, 60000);
     return () => clearInterval(interval);
   }, []);
 
