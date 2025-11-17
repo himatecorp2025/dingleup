@@ -84,15 +84,40 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
     ? sessionStorage.getItem('app_intro_shown') === '1' 
     : false;
 
-  // Redirect any route to /intro until intro is shown (standalone only)
+  // Mobile/tablet: skip landing page, go directly to intro
+  if (isMobileOrTablet && location.pathname === '/' && !introShown) {
+    return <Navigate to="/intro" replace />;
+  }
+
+  // Standalone: redirect any route to /intro until intro is shown
   if (isStandalone && !introShown && location.pathname !== '/intro') {
     return <Navigate to="/intro" replace />;
   }
 
-  // Landing page és admin oldalak mindig elérhetőek
-  if (location.pathname === '/' || location.pathname === '/desktop' || 
-      location.pathname.startsWith('/admin')) {
+  // Admin pages always accessible
+  if (location.pathname.startsWith('/admin')) {
     return <>{children}</>;
+  }
+
+  // Desktop: only landing and admin pages accessible
+  if (!isMobileOrTablet && location.pathname !== '/' && location.pathname !== '/desktop' && !location.pathname.startsWith('/admin')) {
+    return (
+      <div className="h-dvh h-svh w-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+        <div className="text-center px-6 max-w-md">
+          <h1 className="text-3xl font-black text-white mb-4">📱 Csak mobilon és táblagépen elérhető</h1>
+          <p className="text-white/80 mb-6">
+            Ez az alkalmazás csak telefonon és táblagépen használható. 
+            Kérjük, nyisd meg mobil eszközön!
+          </p>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-800 text-white font-bold rounded-lg hover:from-purple-700 hover:to-purple-900 transition-all"
+          >
+            Vissza a főoldalra
+          </button>
+        </div>
+      </div>
+    );
   }
 
   // Minden más oldal csak mobile/tablet-en
