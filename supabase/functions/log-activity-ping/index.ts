@@ -26,7 +26,11 @@ serve(async (req) => {
     // Client for auth verification (with user's token)
     const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
 
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      throw new Error("Missing Authorization header");
+    }
+    
     const token = authHeader.replace("Bearer ", "");
     const { data } = await supabaseAuth.auth.getUser(token);
     const user = data.user;
