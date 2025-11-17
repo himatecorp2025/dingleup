@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 
 export type TutorialRoute = 
   | 'dashboard' 
-  | 'shop' 
   | 'chat' 
   | 'profile' 
   | 'play' 

@@ -2579,15 +2579,6 @@ export type Database = {
         Args: { invitation_code_input: string }
         Returns: Json
       }
-      activate_booster: {
-        Args: {
-          p_booster_type: string
-          p_cost: number
-          p_duration_hours?: number
-          p_multiplier?: number
-        }
-        Returns: Json
-      }
       archive_thread_for_user: { Args: { p_thread_id: string }; Returns: Json }
       award_coins: { Args: { amount: number }; Returns: undefined }
       check_rate_limit: {
