@@ -134,13 +134,13 @@ Deno.serve(async (req) => {
       .eq('id', user.id)
       .single();
 
-    // Update weekly_rankings using ADMIN client (AGGREGATE PER USER+WEEK - ALL CATEGORIES COMBINED)
+    // Update weekly_rankings using ADMIN client (PER CATEGORY FOR THIS WEEK)
     const { data: existingWeekly } = await supabaseAdmin
       .from('weekly_rankings')
       .select('total_correct_answers')
       .eq('user_id', user.id)
       .eq('week_start', weekStart)
-      .eq('category', 'all')
+      .eq('category', body.category)
       .maybeSingle();
 
     const newWeeklyTotal = (existingWeekly?.total_correct_answers || 0) + body.correctAnswers;
@@ -150,7 +150,7 @@ Deno.serve(async (req) => {
       .upsert({
         user_id: user.id,
         username: userProfile?.username || 'Player',
-        category: 'all', // All categories combined for public TOP 100 leaderboard
+        category: body.category,
         week_start: weekStart,
         total_correct_answers: newWeeklyTotal,
         average_response_time: body.averageResponseTime,
