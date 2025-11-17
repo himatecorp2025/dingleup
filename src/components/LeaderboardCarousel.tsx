@@ -17,9 +17,27 @@ export const LeaderboardCarousel = () => {
 
   useEffect(() => {
     refresh();
-    // Auto-refresh every 60 seconds
-    const interval = setInterval(refresh, 60000);
-    return () => clearInterval(interval);
+    
+    // Real-time subscription for weekly_rankings updates
+    const channel = supabase
+      .channel('weekly-rankings-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'weekly_rankings'
+        },
+        () => {
+          console.log('[LeaderboardCarousel] Real-time update received, refreshing...');
+          refresh();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const refresh = async () => {

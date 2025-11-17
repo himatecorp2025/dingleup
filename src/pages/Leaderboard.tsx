@@ -36,12 +36,26 @@ const Leaderboard = () => {
   useEffect(() => {
     fetchLeaderboard();
     
-    // Auto-refresh every 60 seconds
-    const interval = setInterval(() => {
-      fetchLeaderboard();
-    }, 60000);
+    // Real-time subscription for weekly_rankings updates
+    const channel = supabase
+      .channel('leaderboard-rankings-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'weekly_rankings'
+        },
+        () => {
+          console.log('[Leaderboard] Real-time update received, refreshing...');
+          fetchLeaderboard();
+        }
+      )
+      .subscribe();
     
-    return () => clearInterval(interval);
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const getWeekStart = () => {
