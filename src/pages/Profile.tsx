@@ -406,38 +406,6 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Booster Inventory */}
-        <div className="relative rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-sm mb-4 sm:mb-6 transform-gpu" data-tutorial="booster-section">
-          {/* Base shadow (3D depth) */}
-          <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
-          
-          {/* Outer frame */}
-          <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-600/40 via-yellow-500/30 to-yellow-800/40 border-2 border-yellow-500/50
-            shadow-[0_0_20px_rgba(234,179,8,0.6),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
-          
-          {/* Middle frame (bright highlight) */}
-          <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-500/30 via-yellow-400/20 to-yellow-700/30"
-            style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)' }} aria-hidden />
-          
-          {/* Inner crystal layer */}
-          <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/60 via-black/70 to-black/80"
-            style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.4)' }} aria-hidden />
-          
-          {/* Content */}
-          <div className="relative z-10">
-            <h2 className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200 mb-3 sm:mb-4 flex items-center gap-2">
-              <ZapIcon />
-              Booster készletem
-            </h2>
-            
-            <div className="grid grid-cols-2 gap-2 sm:gap-4">
-              <div className="text-center text-white/60 text-sm">
-                Nincs elérhető booster
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Background Music Control */}
         <BackgroundMusicControl />
 
