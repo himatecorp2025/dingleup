@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 
 serve(async (req) => {
@@ -20,13 +20,14 @@ serve(async (req) => {
     if (!authHeader) {
       throw new Error('No authorization header');
     }
-
     const token = authHeader.replace('Bearer ', '').trim();
 
-    // Client for auth verification with proper header passing
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
+    // Client for auth verification (no session persistence)
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: { persistSession: false, autoRefreshToken: false }
+    });
 
-    // Verify user authentication using the JWT directly to avoid session lookup
+    // Verify user authentication using the JWT directly
     const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
     if (authError) {
       console.error('[GetWallet] Auth error:', authError);
