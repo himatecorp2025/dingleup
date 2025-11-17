@@ -29,7 +29,7 @@ import { IdleWarning } from '@/components/IdleWarning';
 import { WeeklyWinnerPopup } from '@/components/WeeklyWinnerPopup';
 
 import BottomNav from '@/components/BottomNav';
-import gameBackground from '@/assets/game-background.jpg';
+import gameBackground from '@/assets/game-background.png';
 import { toast } from 'sonner';
 import { useBroadcastChannel } from '@/hooks/useBroadcastChannel';
 

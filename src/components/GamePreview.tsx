@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart, Coins } from "lucide-react";
-import gameBackground from "@/assets/game-background.jpg";
+import gameBackground from "@/assets/game-background.png";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
