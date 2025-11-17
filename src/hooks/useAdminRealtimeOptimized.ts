@@ -27,24 +27,17 @@ export const useAdminRealtimeOptimized = (initialData: AdminData) => {
         ...prev,
         users: [...prev.users, payload.new],
         totalUsers: prev.totalUsers + 1,
-        geniusCount: payload.new.is_subscriber ? prev.geniusCount + 1 : prev.geniusCount,
       }));
     } else if (payload.eventType === 'UPDATE') {
       setData(prev => ({
         ...prev,
         users: prev.users.map(u => u.id === payload.new.id ? payload.new : u),
-        geniusCount: payload.new.is_subscriber && !payload.old.is_subscriber
-          ? prev.geniusCount + 1
-          : !payload.new.is_subscriber && payload.old.is_subscriber
-          ? prev.geniusCount - 1
-          : prev.geniusCount,
       }));
     } else if (payload.eventType === 'DELETE') {
       setData(prev => ({
         ...prev,
         users: prev.users.filter(u => u.id !== payload.old.id),
         totalUsers: prev.totalUsers - 1,
-        geniusCount: payload.old.is_subscriber ? prev.geniusCount - 1 : prev.geniusCount,
       }));
     }
     
