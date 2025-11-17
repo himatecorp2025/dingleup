@@ -8,7 +8,6 @@ interface AdminData {
   invitations: any[];
   totalUsers: number;
   totalRevenue: string;
-  geniusCount: number;
 }
 
 /**
@@ -26,18 +25,18 @@ export const useAdminRealtimeOptimized = (initialData: AdminData) => {
       setData(prev => ({
         ...prev,
         users: [...prev.users, payload.new],
-        totalUsers: prev.totalUsers + 1,
+        totalUsers: prev.totalUsers + 1
       }));
     } else if (payload.eventType === 'UPDATE') {
       setData(prev => ({
         ...prev,
-        users: prev.users.map(u => u.id === payload.new.id ? payload.new : u),
+        users: prev.users.map(u => u.id === payload.new.id ? payload.new : u)
       }));
     } else if (payload.eventType === 'DELETE') {
       setData(prev => ({
         ...prev,
         users: prev.users.filter(u => u.id !== payload.old.id),
-        totalUsers: prev.totalUsers - 1,
+        totalUsers: prev.totalUsers - 1
       }));
     }
     

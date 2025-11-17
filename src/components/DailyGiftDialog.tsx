@@ -109,11 +109,10 @@ const DailyGiftDialog = ({
     if (open && userId) {
       trackBonusEvent(userId, 'daily_shown', 'daily', {
         coins_amount: nextReward,
-        streak_day: weeklyEntryCount + 1,
-        is_subscriber: isPremium
+        streak_day: weeklyEntryCount + 1
       });
     }
-  }, [open, userId, nextReward, weeklyEntryCount, isPremium]);
+  }, [open, userId, nextReward, weeklyEntryCount]);
 
   const handleClaim = async () => {
     // Track claim attempt
