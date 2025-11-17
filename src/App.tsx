@@ -20,7 +20,6 @@ import Register from "./pages/Register";
 // Lazy load secondary pages
 const Game = lazy(() => import("./pages/Game"));
 const Profile = lazy(() => import("./pages/Profile"));
-const ShopPage = lazy(() => import("./pages/ShopPage"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const RegistrationSuccess = lazy(() => import("./pages/RegistrationSuccess"));
 const InstallApp = lazy(() => import("./pages/InstallApp"));
@@ -333,7 +332,6 @@ const App = () => {
               <Route path="/desktop" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/shop" element={<ShopPage />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
