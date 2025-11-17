@@ -89,8 +89,9 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/intro" replace />;
   }
 
-  // Standalone: redirect any route to /intro until intro is shown
-  if (isStandalone && !introShown && location.pathname !== '/intro') {
+  // Mobile/tablet standalone: redirect any route to /intro until intro is shown
+  // Desktop (width > 1024): ALWAYS show landing page, never redirect to intro
+  if (isMobileOrTablet && isStandalone && !introShown && location.pathname !== '/intro') {
     return <Navigate to="/intro" replace />;
   }
 
