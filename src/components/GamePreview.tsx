@@ -882,9 +882,10 @@ const GamePreview = () => {
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
         {/* Background extends beyond safe-area */}
         <div 
-          className="absolute bg-cover bg-center bg-no-repeat bg-fixed z-0"
+          className="absolute bg-cover bg-no-repeat bg-fixed z-0"
           style={{ 
             backgroundImage: `url(${gameBackground})`,
+            backgroundPosition: '50% 50%',
             left: 'calc(-1 * env(safe-area-inset-left, 0px))',
             right: 'calc(-1 * env(safe-area-inset-right, 0px))',
             top: 'calc(-1 * env(safe-area-inset-top, 0px))',
@@ -901,9 +902,10 @@ const GamePreview = () => {
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
         {/* Background extends beyond safe-area */}
         <div 
-          className="absolute bg-cover bg-center bg-no-repeat bg-fixed z-0"
+          className="absolute bg-cover bg-no-repeat bg-fixed z-0"
           style={{ 
             backgroundImage: `url(${gameBackground})`,
+            backgroundPosition: '50% 50%',
             left: 'calc(-1 * env(safe-area-inset-left, 0px))',
             right: 'calc(-1 * env(safe-area-inset-right, 0px))',
             top: 'calc(-1 * env(safe-area-inset-top, 0px))',
@@ -949,9 +951,10 @@ const GamePreview = () => {
       <>
         {/* Fixed background - extends beyond safe-area */}
         <div 
-          className="fixed bg-cover bg-center bg-no-repeat z-0"
+          className="fixed bg-cover bg-no-repeat z-0"
           style={{ 
             backgroundImage: `url(${gameBackground})`,
+            backgroundPosition: '50% 50%',
             left: 'calc(-1 * env(safe-area-inset-left, 0px))',
             right: 'calc(-1 * env(safe-area-inset-right, 0px))',
             top: 'calc(-1 * env(safe-area-inset-top, 0px))',
@@ -1055,9 +1058,10 @@ const GamePreview = () => {
       <div className="fixed inset-0 w-full h-full flex items-center justify-center overflow-hidden">
         {/* Background extends beyond safe-area */}
         <div 
-          className="absolute w-full h-full bg-cover bg-center bg-no-repeat z-0"
+          className="absolute w-full h-full bg-cover bg-no-repeat z-0"
           style={{ 
             backgroundImage: `url(${gameBackground})`,
+            backgroundPosition: '50% 50%',
             left: 'calc(-1 * env(safe-area-inset-left, 0px))',
             right: 'calc(-1 * env(safe-area-inset-right, 0px))',
             top: 'calc(-1 * env(safe-area-inset-top, 0px))',
