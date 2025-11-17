@@ -131,6 +131,8 @@ const MUSIC_BLOCKED_ROUTES = [
   /^\/admin/,           // All admin routes including subpages
   /^\/admin-/,          // Any admin-prefixed routes
   /\/admin\//,          // Any path containing /admin/
+  /^\/login$/,          // Login page
+  /^\/register$/,       // Register page
 ];
 
 function isMusicAllowed(pathname: string): boolean {
