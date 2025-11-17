@@ -68,56 +68,6 @@ export const tutorialSteps = {
       position: 'top' as const
     }
   ],
-  shop: [
-    {
-      target: '.shop-container',
-      title: 'Üdvözöl a Bolt! 🛒',
-      description: 'Itt vásárolhatsz mindenféle hasznos dolgot: életeket, aranyérméket, boostereket és prémium előfizetést. Nézzük meg, mit kínálunk!',
-      position: 'bottom' as const
-    },
-    {
-      target: '[data-tutorial="genius-section"]',
-      title: 'Genius VIP Előfizetés 👑',
-      description: 'A Genius tagok dupla jutalmat kapnak minden játékért, extra életekkel és aranyérmékkel indulnak, valamint kedvezményeket kapnak minden vásárlásra!',
-      position: 'bottom' as const
-    },
-    {
-      target: '[data-tutorial="genius-section"]',
-      title: 'Genius előnyök',
-      description: 'Havi vagy éves előfizetést választhatsz. Az éves előfizetés jóval kedvezőbb! A Genius státusz prémium jelvénnyel és különleges exkluzív funkciókkal jár.',
-      position: 'bottom' as const
-    },
-    {
-      target: '[data-tutorial="boosters-section"]',
-      title: 'Speed Boosterek ⚡',
-      description: 'A Speed Boosterek felgyorsítják az életek újratöltését. Különböző sebességű boostereket vásárolhatsz: x1.5, x2, x3 és x5 sebességűeket!',
-      position: 'bottom' as const
-    },
-    {
-      target: '[data-tutorial="boosters-section"]',
-      title: 'Booster időtartamok',
-      description: 'Minden booster bizonyos ideig aktív: 1 óra, 8 óra, 1 nap vagy 7 nap. Minél hosszabb az időtartam, annál kedvezőbb az ár!',
-      position: 'bottom' as const
-    },
-    {
-      target: '[data-tutorial="coins-section"]',
-      title: 'Aranyérmék vásárlása 🪙',
-      description: 'Ha elfogyott az aranyérméd, itt tudsz újakat vásárolni. Különböző csomagok közül választhatsz, a nagyobb csomagok kedvezőbb áron!',
-      position: 'bottom' as const
-    },
-    {
-      target: '[data-tutorial="coins-section"]',
-      title: 'Fizetési módok 💳',
-      description: 'Biztonságos fizetési módokat kínálunk: bankkártya, Google Pay és Apple Pay. Az összes tranzakció titkosítva van.',
-      position: 'bottom' as const
-    },
-    {
-      target: '.shop-container',
-      title: 'Tippek és videók 📹',
-      description: 'Görgess lejjebb, és találsz hasznos tippeket és videókat, hogy még jobbá válj a játékban! Ezzel készen is vagy! 🎉',
-      position: 'top' as const
-    }
-  ],
   chat: [
     {
       target: '.chat-container',

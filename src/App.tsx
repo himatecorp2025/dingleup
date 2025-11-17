@@ -33,7 +33,6 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminTipsVideos = lazy(() => import("./pages/AdminTipsVideos"));
 const AdvancedAnalytics = lazy(() => import("./pages/AdvancedAnalytics"));
 const RetentionDashboard = lazy(() => import("./pages/RetentionDashboard"));
-const MonetizationDashboard = lazy(() => import("./pages/MonetizationDashboard"));
 const PerformanceDashboard = lazy(() => import("./pages/PerformanceDashboard"));
 const EngagementDashboard = lazy(() => import("./pages/EngagementDashboard"));
 const UserJourneyDashboard = lazy(() => import("./pages/UserJourneyDashboard"));
@@ -369,7 +368,6 @@ const App = () => {
               <Route path="/admin/tips" element={<AdminTipsVideos />} />
               <Route path="/admin/analytics" element={<AdvancedAnalytics />} />
               <Route path="/admin/retention" element={<RetentionDashboard />} />
-              <Route path="/admin/monetization" element={<MonetizationDashboard />} />
               <Route path="/admin/performance" element={<PerformanceDashboard />} />
               <Route path="/admin/engagement" element={<EngagementDashboard />} />
               <Route path="/admin/user-journey" element={<UserJourneyDashboard />} />
