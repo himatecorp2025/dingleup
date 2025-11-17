@@ -70,8 +70,10 @@ serve(async (req) => {
     }
 
     // Calculate next life time with proper regeneration tracking + future timestamp guard
+    let currentLives = Number(profile.lives ?? 0);
     let nextLifeAt = null;
-    if (profile.lives < effectiveMaxLives) {
+    
+    if (currentLives < effectiveMaxLives) {
       const nowMs = Date.now();
       let lastRegenMs = new Date(profile.last_life_regeneration).getTime();
       const regenIntervalMs = effectiveRegenMinutes * 60 * 1000;
@@ -92,16 +94,22 @@ serve(async (req) => {
 
       if (livesShouldBeAdded > 0) {
         const newLastRegen = lastRegenMs + (livesShouldBeAdded * regenIntervalMs);
-        const newLives = Math.min(profile.lives + livesShouldBeAdded, effectiveMaxLives);
+        const newLives = Math.min(currentLives + livesShouldBeAdded, effectiveMaxLives);
 
         // Update profile with new values
-        await supabase
+        const { error: updateErr } = await supabase
           .from('profiles')
           .update({
             lives: newLives,
             last_life_regeneration: new Date(newLastRegen).toISOString()
           })
           .eq('id', user.id);
+
+        if (updateErr) {
+          console.error('[GetWallet] Error updating regenerated lives:', updateErr);
+        } else {
+          currentLives = newLives;
+        }
 
         if (newLives < effectiveMaxLives) {
           nextLifeAt = new Date(newLastRegen + regenIntervalMs).toISOString();
@@ -130,14 +138,14 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        isSubscriber: isSubscriberEffective,
-        livesCurrent: profile.lives,
+        isSubscriber: false,
+        livesCurrent: currentLives,
         livesMax: effectiveMaxLives,
-        coinsCurrent: profile.coins,
+        coinsCurrent: Number(profile.coins ?? 0),
         nextLifeAt,
         regenIntervalSec: effectiveRegenMinutes * 60,
         regenMinutes: effectiveRegenMinutes,
-        subscriberRenewAt,
+        subscriberRenewAt: null,
         ledger: ledger || []
       }),
       {
