@@ -75,7 +75,6 @@ export const useWallet = (userId: string | undefined) => {
               coinsCurrent: payload.new.coins ?? prev.coinsCurrent,
               livesCurrent: payload.new.lives ?? prev.livesCurrent,
               livesMax: payload.new.max_lives ?? prev.livesMax,
-              isSubscriber: payload.new.is_subscribed ?? payload.new.is_subscriber ?? prev.isSubscriber,
             } : null);
           }
           // Full refetch as fallback
