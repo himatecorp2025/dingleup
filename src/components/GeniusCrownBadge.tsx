@@ -237,3 +237,5 @@ export const GeniusCrownBadge = ({ size = 'md', showTooltip = true, asHexagon = 
     </TooltipProvider>
   );
 };
+
+export default GeniusCrownBadge;
