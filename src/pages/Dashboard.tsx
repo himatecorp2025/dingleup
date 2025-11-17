@@ -459,14 +459,9 @@ if (!profile) {
           </div>
         </div>
 
-        {/* Fixed bottom section - CORRECT ORDER from bottom to top: BottomNav -> Logo -> Play Now -> Boosters -> Top 100 */}
+        {/* Fixed bottom section - CORRECT ORDER from bottom to top: BottomNav -> Logo -> Top 100 -> Boosters -> Play Now */}
         <div className="fixed bottom-0 left-0 right-0 z-[9000] flex flex-col-reverse items-center pb-[calc(var(--bottom-nav-h)+1rem)]">
-          {/* Top 100 Leaderboard Carousel - HIGHEST (felül) */}
-          <div className="w-full" style={{ marginBottom: '2vh' }}>
-            <LeaderboardCarousel />
-          </div>
-
-          {/* Play Now Button */}
+          {/* Play Now Button - HIGHEST (felül) */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
             <div className="w-full max-w-screen-lg">
               <DiamondButton
@@ -495,7 +490,7 @@ if (!profile) {
             </div>
           </div>
 
-          {/* Booster Button - below Play Now */}
+          {/* Booster Button - between Play Now and Top 100 */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
             <div className="w-full max-w-screen-lg">
               <DiamondButton
@@ -522,6 +517,11 @@ if (!profile) {
                 </span>
               </DiamondButton>
             </div>
+          </div>
+
+          {/* Top 100 Leaderboard Carousel */}
+          <div className="w-full" style={{ marginBottom: '2vh' }}>
+            <LeaderboardCarousel />
           </div>
 
           {/* Logo - below Play Now, above BottomNav - DUPLA MÉRET */}
