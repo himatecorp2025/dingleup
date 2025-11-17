@@ -61,18 +61,18 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       const today = new Date().toISOString().split('T')[0];
       const dismissedToday = sessionStorage.getItem(`daily_gift_dismissed_${today}`);
       
-      // If user clicked "later" in this session, don't show (UX only)
-      if (dismissedToday) {
-        console.log('[DailyGift] User dismissed/claimed in this session');
-        setShowPopup(false);
-        return;
-      }
-
-      // STEP 3: User is eligible - show the dialog
+      // STEP 3: User is eligible - show the dialog (even if dismissed in session, let parent component decide)
       if (canClaimNow && baseReward > 0) {
-        console.log('[DailyGift] User eligible, showing dialog - day', currentIndex + 1, 'reward:', baseReward);
-        setShowPopup(true);
-        trackEvent('popup_impression', 'daily');
+        console.log('[DailyGift] User eligible, setting canClaim=true - day', currentIndex + 1, 'reward:', baseReward);
+        
+        // Only auto-show if NOT dismissed in this session
+        if (!dismissedToday) {
+          setShowPopup(true);
+          trackEvent('popup_impression', 'daily');
+        } else {
+          console.log('[DailyGift] User dismissed/claimed in this session, not auto-showing');
+          setShowPopup(false);
+        }
       } else {
         setShowPopup(false);
       }
