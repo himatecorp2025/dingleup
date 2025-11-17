@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
 import { supabase } from "@/integrations/supabase/client";
-import { GameCategory, Question, Answer, getSkipCost, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from "@/types/game";
+import { GameCategory, Question, Answer, getSkipCost, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST, getCoinsForQuestion, START_GAME_REWARD } from "@/types/game";
 import CategorySelector from "./CategorySelector";
 import { HexagonButton } from "./HexagonButton";
 import { DiamondButton } from "./DiamondButton";
@@ -368,7 +368,21 @@ const GamePreview = () => {
     // Azonnali wallet frissítés jelzés a Dashboard felé
     await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
     
-    // SECURITY: Removed client-side award_coins - handled by complete-game edge function
+    // Start jutalom jóváírása (+1 aranyérme)
+    try {
+      const startSourceId = `${Date.now()}-start`;
+      await supabase.functions.invoke('credit-gameplay-reward', {
+        body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' },
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+      });
+      setCoinsEarned(START_GAME_REWARD);
+      await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
+    } catch (err) {
+      console.error('[GameStart] Start reward credit failed:', err);
+    }
+    
     await refreshProfile();
 
     setSelectedCategory(category);
@@ -451,16 +465,8 @@ const GamePreview = () => {
     setSelectedAnswer(answerKey);
     setCorrectAnswers(correctAnswers + 1);
     
-    let reward = 0;
-    if (currentQuestionIndex >= 0 && currentQuestionIndex <= 3) {
-      reward = 1;
-    } else if (currentQuestionIndex >= 4 && currentQuestionIndex <= 8) {
-      reward = 3;
-    } else if (currentQuestionIndex >= 9 && currentQuestionIndex <= 13) {
-      reward = 5;
-    } else if (currentQuestionIndex === 14) {
-      reward = 55;
-    }
+    // Használjuk a progresszív jutalom rendszert
+    const reward = getCoinsForQuestion(currentQuestionIndex);
 
     try {
       // Use gameInstanceId to ensure unique sourceId per game, not session

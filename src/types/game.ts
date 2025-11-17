@@ -72,18 +72,21 @@ export interface WeeklyRanking {
 
 // Speed Boosters removed - Genius functionality deleted
 
-export const COIN_REWARDS = {
-  per_correct_answer: 50
-};
+// Játék indítási jutalom (amikor egy élet levonódik)
+export const START_GAME_REWARD = 1;
 
-// Progresszív arany jutalom rendszer
+// Progresszív arany jutalom rendszer (0-indexed kérdések)
+// 1-4. kérdés (index 0-3): 1-1-1-1 = 4 érme
+// 5-9. kérdés (index 4-8): 3-3-3-3-3 = 15 érme
+// 10-14. kérdés (index 9-13): 5-5-5-5-5 = 25 érme
+// 15. kérdés (index 14): 55 érme
+// Összesen: 1 (start) + 4 + 15 + 25 + 55 = 100 érme
 export const getCoinsForQuestion = (questionIndex: number): number => {
-  if (questionIndex === 0) return 1; // Start
-  if (questionIndex >= 1 && questionIndex <= 4) return 1;
-  if (questionIndex >= 5 && questionIndex <= 9) return 3;
-  if (questionIndex >= 10 && questionIndex <= 14) return 5;
-  if (questionIndex === 15) return 55;
-  return 1; // fallback
+  if (questionIndex >= 0 && questionIndex <= 3) return 1;  // 1-4. kérdés
+  if (questionIndex >= 4 && questionIndex <= 8) return 3;  // 5-9. kérdés
+  if (questionIndex >= 9 && questionIndex <= 13) return 5; // 10-14. kérdés
+  if (questionIndex === 14) return 55; // 15. kérdés
+  return 0; // fallback
 };
 
 export const HELP_REACTIVATION_COSTS = {
