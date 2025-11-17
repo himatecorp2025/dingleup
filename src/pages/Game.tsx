@@ -3,7 +3,7 @@ import GamePreview from "@/components/GamePreview";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Smartphone } from "lucide-react";
-import gameBackground from "@/assets/game-background.jpg";
+import gameBackground from "@/assets/game-background.png";
 import { useAudioStore } from "@/stores/audioStore";
 import { ScreenshotProtection } from "@/components/ScreenshotProtection";
 const Game = () => {
