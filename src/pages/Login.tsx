@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
-import logo from "@/assets/logo.png";
 
 const loginSchema = z.object({
   username: z.string().trim().min(1, "A felhasználónév mező kötelező").max(100),
@@ -162,8 +161,23 @@ const Login = () => {
           <div className="absolute inset-[8px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
           
           <div className="relative p-6 sm:p-8 max-h-[calc(100svh-6rem)] sm:max-h-none overflow-y-auto rounded-2xl" style={{ transform: 'translateZ(60px)' }}>
-              <div className="text-center mb-6 sm:mb-8">
-              <img src={logo} alt="Dingle UP!" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 drop-shadow-2xl" />
+            <div className="text-center mb-6 sm:mb-8">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="64"
+                height="64"
+                viewBox="0 0 1024 1024"
+                className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 drop-shadow-2xl"
+              >
+                <image
+                  href="/logo.png"
+                  x="0"
+                  y="0"
+                  width="1024"
+                  height="1024"
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              </svg>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 font-poppins px-2">
                 <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">Bejelentkezés</span>
               </h1>

@@ -8,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
-import logo from "@/assets/logo.png";
 
 const registerSchema = z.object({
   username: z.string()
@@ -236,7 +235,22 @@ const Register = () => {
           
           <div className="relative p-3 sm:p-4 overflow-y-auto rounded-2xl" style={{ transform: 'translateZ(60px)' }}>
             <div className="text-center mb-3">
-              <img src={logo} alt="Dingle UP!" className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 drop-shadow-2xl" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="48"
+                height="48"
+                viewBox="0 0 1024 1024"
+                className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 drop-shadow-2xl"
+              >
+                <image
+                  href="/logo.png"
+                  x="0"
+                  y="0"
+                  width="1024"
+                  height="1024"
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              </svg>
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 font-poppins px-2">
                 <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">Regisztráció</span>
               </h1>

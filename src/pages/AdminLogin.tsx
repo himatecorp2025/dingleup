@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Lock, User } from 'lucide-react';
 import { toast } from 'sonner';
-import logo from '@/assets/logo.png';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -54,7 +53,21 @@ const AdminLogin = () => {
         <div className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-purple-500/50 rounded-2xl p-8 shadow-2xl">
           {/* Logo */}
           <div className="flex justify-center mb-6">
-            <img src={logo} alt="Logo" className="w-24 h-24" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="96"
+              height="96"
+              viewBox="0 0 1024 1024"
+            >
+              <image
+                href="/logo.png"
+                x="0"
+                y="0"
+                width="1024"
+                height="1024"
+                preserveAspectRatio="xMidYMid meet"
+              />
+            </svg>
           </div>
 
           {/* Title */}
