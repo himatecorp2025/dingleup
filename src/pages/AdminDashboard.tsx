@@ -32,7 +32,6 @@ const AdminDashboard = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState('0');
   const [totalPayouts, setTotalPayouts] = useState('0');
-  const [geniusCount, setGeniusCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<{ 
@@ -180,11 +179,6 @@ const AdminDashboard = () => {
         console.log('[Admin] ✓ Invitations:', adminData.invitations.length);
       }
 
-      // Set genius count
-      if (typeof adminData?.geniusCount === 'number') {
-        setGeniusCount(adminData.geniusCount);
-        console.log('[Admin] ✓ Genius:', adminData.geniusCount);
-      }
 
       console.log('[Admin] ✓✓✓ MINDEN ADAT BETÖLTVE (service role bypass)');
       setIsRefreshing(false);
@@ -435,17 +429,6 @@ const AdminDashboard = () => {
             <p className="text-white/50 text-xs mt-1">Stripe fizetésekből</p>
           </button>
 
-          <button
-            onClick={() => navigate('/admin/genius')}
-            className="bg-gradient-to-br from-[#0a1f14] via-[#0e4d2e] to-[#0a1f14] border-2 border-[#d4af37] rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:opacity-90 transition-all shadow-lg shadow-[#d4af37]/30"
-          >
-            <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-[#d4af37] text-xs lg:text-sm font-bold">Genius Users</h3>
-              <Star className="w-6 h-6 lg:w-8 lg:h-8 text-[#ffd700] bg-[#ffd700]/20 p-1.5 lg:p-2 rounded-lg animate-pulse" />
-            </div>
-            <p className="text-xl lg:text-3xl font-black text-white">{geniusCount.toLocaleString()}</p>
-            <p className="text-[#d4af37] text-xs mt-1 font-semibold">Prémium előfizetők</p>
-          </button>
         </div>
 
         {/* Content based on active tab */}
