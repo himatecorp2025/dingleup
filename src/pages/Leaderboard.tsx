@@ -73,42 +73,22 @@ const Leaderboard = () => {
       const weekStart = getWeekStart();
       const { data, error } = await supabase
         .from('weekly_rankings')
-        .select('user_id, total_correct_answers, rank, profiles:profiles!inner(username, avatar_url)')
+        .select('user_id, total_correct_answers, profiles:profiles!inner(username, avatar_url)')
         .eq('week_start', weekStart)
-        .order('rank', { ascending: true })
+        .eq('category', 'all') // Public TOP 100 leaderboard - all categories combined
+        .order('total_correct_answers', { ascending: false })
         .limit(100);
 
       if (error) throw error;
 
-      // Aggregate by user_id to avoid duplicates from multiple categories
-      const userMap = new Map<string, LeaderboardEntry>();
-      (data || []).forEach((row: any) => {
-        const uid = row.user_id;
-        const existing = userMap.get(uid);
-        const correctAnswers = row.total_correct_answers || 0;
-        
-        if (!existing || correctAnswers > existing.total_correct_answers) {
-          userMap.set(uid, {
-            user_id: uid,
-            username: row.profiles?.username || 'Player',
-            avatar_url: row.profiles?.avatar_url || null,
-            total_correct_answers: correctAnswers,
-            rank: row.rank || 0
-          });
-        }
-      });
-
-      const rankedData = Array.from(userMap.values())
-        .sort((a, b) => {
-          if (b.total_correct_answers !== a.total_correct_answers) {
-            return b.total_correct_answers - a.total_correct_answers;
-          }
-          return a.rank - b.rank;
-        })
-        .map((entry, index) => ({
-          ...entry,
-          rank: index + 1
-        }));
+      // No aggregation needed - each user has ONE row with all categories combined
+      const rankedData = (data || []).map((row: any, index: number) => ({
+        user_id: row.user_id,
+        username: row.profiles?.username || 'Player',
+        avatar_url: row.profiles?.avatar_url || null,
+        total_correct_answers: row.total_correct_answers || 0,
+        rank: index + 1
+      }));
 
       setTopPlayers(rankedData);
     } catch (error) {

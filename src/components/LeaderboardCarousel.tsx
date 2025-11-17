@@ -66,20 +66,19 @@ export const LeaderboardCarousel = () => {
         .from('weekly_rankings')
         .select('user_id, total_correct_answers, profiles:profiles!inner(username, avatar_url)')
         .eq('week_start', weekStart)
+        .eq('category', 'all') // Public TOP 100 leaderboard - all categories combined
         .order('total_correct_answers', { ascending: false })
-        .limit(200);
+        .limit(100);
       if (error) throw error;
 
-      const map = new Map<string, LeaderboardEntry>();
-      (data || []).forEach((row: any) => {
-        const uid = row.user_id;
-        const name = row.profiles?.username ?? 'Player';
-        const avatar = row.profiles?.avatar_url ?? null;
-        const prev = map.get(uid);
-        const total = (prev?.total_correct_answers || 0) + (row.total_correct_answers || 0);
-        map.set(uid, { user_id: uid, username: name, avatar_url: avatar, total_correct_answers: total });
-      });
-      return Array.from(map.values()).sort((a, b) => b.total_correct_answers - a.total_correct_answers);
+      // No aggregation needed - each user has ONE row with all categories combined
+      return (data || []).map((row: any, index: number) => ({
+        user_id: row.user_id,
+        username: row.profiles?.username ?? 'Player',
+        avatar_url: row.profiles?.avatar_url ?? null,
+        total_correct_answers: row.total_correct_answers || 0,
+        rank: index + 1
+      }));
     } catch (e) {
       console.error('[LeaderboardCarousel] weekly_rankings error:', e);
       return [];
