@@ -27,18 +27,6 @@ const roadmapItems = [
     ]
   },
   {
-    title: "Speed Shop & Boosters",
-    status: "completed",
-    date: "2025 Q1",
-    items: [
-      "Speed booster vásárlás",
-      "Extra életek megszerzése",
-      "Segítségek újraaktiválása",
-      "Kérdéscsere funkció",
-      "Dinamikus árazás"
-    ]
-  },
-  {
     title: "Tartalom Bővítés",
     status: "in-progress",
     date: "2025 Q2",

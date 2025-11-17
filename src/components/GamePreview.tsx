@@ -1319,7 +1319,7 @@ const GamePreview = () => {
             {/* Buttons - Full width */}
             <div className="w-full space-y-3 flex-shrink-0">
               <DiamondButton 
-                variant="booster" 
+                variant="play" 
                 size="lg" 
                 onClick={() => {
                   resetGameState();

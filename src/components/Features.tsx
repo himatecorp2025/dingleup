@@ -15,7 +15,7 @@ const features = [
   {
     icon: Trophy,
     title: "Izgalmas Jutalmak",
-    description: "Gyűjts aranyérméket és váltsd be őket hasznos segítségekre és boosterekre!",
+    description: "Gyűjts aranyérméket és válts be őket hasznos segítségekre!",
     image: featureTrophy,
     gradient: "from-yellow-500 to-orange-500"
   },

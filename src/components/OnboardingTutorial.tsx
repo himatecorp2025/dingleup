@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent } from './ui/dialog';
 import { Button } from './ui/button';
-import { X, ChevronRight, ChevronLeft, Play, ShoppingBag, Trophy, Share2, Gift, Zap } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Play, Trophy, Share2, Gift } from 'lucide-react';
 
 interface OnboardingStep {
   title: string;
@@ -25,21 +25,9 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     title: 'Életek és újratöltés ❤️',
-    description: 'Minden játékhoz szükséged van életre. Ha elfogy, ne aggódj - automatikusan újratöltődnek 12 percenként! Vagy vásárolhatsz többet a Boltban.',
+    description: 'Minden játékhoz szükséged van életre. Ha elfogy, ne aggódj - automatikusan újratöltődnek 12 percenként!',
     icon: Trophy,
     gradient: 'from-red-500 via-pink-500 to-red-500'
-  },
-  {
-    title: 'Speed Boosterek ⚡',
-    description: 'A Speed Boosterek felgyorsítják az életek újratöltését és növelik a maximális életeket! DoubleSpeed: 6 perc, MegaSpeed: 3 perc, GigaSpeed: 1 perc, DingleSpeed: 30 másodperc!',
-    icon: Zap,
-    gradient: 'from-purple-500 via-purple-400 to-purple-500'
-  },
-  {
-    title: 'Bolt és vásárlás 🛒',
-    description: 'A Boltban vásárolhatsz extra életeket, segítségeket és Speed Boostereket aranyérméért vagy valódi pénzért. Töltsd fel az egyenlegedet!',
-    icon: ShoppingBag,
-    gradient: 'from-yellow-600 via-yellow-500 to-yellow-600'
   },
   {
     title: 'Napi jutalmak 🎁',
