@@ -119,25 +119,25 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// A3) Route allow-list - ONLY /game route (includes category selector + gameplay)
-// Topics selector IS PART OF /game, not a separate route
-// Admin routes are EXPLICITLY excluded - NO MUSIC on any admin page
-const MUSIC_ALLOWED_ROUTES = [/^\/game$/];
+// A3) Routes where music should be BLOCKED
 const MUSIC_BLOCKED_ROUTES = [
+  /^\/$/,               // Landing page
+  /^\/desktop$/,        // Desktop landing page
   /^\/admin/,           // All admin routes including subpages
   /^\/admin-/,          // Any admin-prefixed routes
   /\/admin\//,          // Any path containing /admin/
 ];
 
 function isMusicAllowed(pathname: string): boolean {
-  // Explicit block for admin routes - ALWAYS check first
-  if (MUSIC_BLOCKED_ROUTES.some(pattern => pattern.test(pathname))) {
-    console.log('[AudioPolicy] BLOCKED - Admin route detected:', pathname);
+  // Block music on admin routes and landing page
+  const blocked = MUSIC_BLOCKED_ROUTES.some(pattern => pattern.test(pathname));
+  if (blocked) {
+    console.log('[AudioPolicy] BLOCKED - No music on:', pathname);
     return false;
   }
-  const allowed = MUSIC_ALLOWED_ROUTES.some(pattern => pattern.test(pathname));
-  console.log('[AudioPolicy] Music allowed:', allowed, 'for route:', pathname);
-  return allowed;
+  // Allow music on all other routes
+  console.log('[AudioPolicy] Music allowed on:', pathname);
+  return true;
 }
 
 // Audio policy manager component
@@ -181,14 +181,24 @@ const AudioPolicyManager = () => {
         return;
       }
       
-      // Mobile/Tablet: Switch track based on route
+      // Check if music is allowed on current route (blocks admin & landing page)
+      const musicAllowed = isMusicAllowed(location.pathname);
+      
+      if (!musicAllowed) {
+        // Admin or landing page: disable music
+        audioManager.apply(false, 0);
+        console.log('[AudioPolicy] Route blocked - music disabled');
+        return;
+      }
+      
+      // Mobile/Tablet on allowed routes: Switch track based on route
       const isGameRoute = location.pathname === '/game' || location.pathname === '/category-selector';
       
       if (isGameRoute) {
         // CategorySelector + Game → game music (backmusic.mp3)
         audioManager.switchTrack('game');
       } else {
-        // All other pages → general music (DingleUP.mp3)
+        // All other allowed pages → general music (DingleUP.mp3)
         audioManager.switchTrack('general');
       }
 
@@ -217,10 +227,12 @@ const AudioPolicyManager = () => {
       if (document.visibilityState !== 'visible') {
         audioManager.apply(false, volume);
       } else {
-        const isAdminRoute = location.pathname.startsWith('/admin');
-        const allowed = !isAdminRoute && isHandheld && isMusicAllowed(location.pathname);
-        if (allowed && musicEnabled) {
-          audioManager.apply(true, volume);
+        // Check if music is allowed on current route
+        const musicAllowed = isMusicAllowed(location.pathname);
+        if (!musicAllowed) {
+          audioManager.apply(false, 0);
+        } else {
+          audioManager.apply(musicEnabled, volume);
         }
       }
     };
@@ -232,9 +244,11 @@ const AudioPolicyManager = () => {
     const handleFocus = () => {
       const { musicEnabled, volume, loaded } = useAudioStore.getState();
       if (!loaded) return;
-      const isAdminRoute = location.pathname.startsWith('/admin');
-      const allowed = !isAdminRoute && isHandheld && isMusicAllowed(location.pathname);
-      if (allowed && musicEnabled) {
+      // Check if music is allowed on current route
+      const musicAllowed = isMusicAllowed(location.pathname);
+      if (!musicAllowed) {
+        AudioManager.getInstance().apply(false, 0);
+      } else if (musicEnabled) {
         AudioManager.getInstance().apply(true, volume);
       }
     };
