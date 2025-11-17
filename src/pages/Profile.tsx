@@ -2,21 +2,19 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
-import { useUserBoosters } from '@/hooks/useUserBoosters';
+
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
-import { GeniusCrownBadge } from '@/components/GeniusCrownBadge';
 import { BackgroundMusicControl } from '@/components/BackgroundMusicControl';
 
 const Profile = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading, updateProfile } = useGameProfile(userId);
-  const { boosters, getBoosterCounts } = useUserBoosters(userId);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
@@ -36,8 +34,6 @@ const Profile = () => {
   
   // Auto logout on inactivity
   useAutoLogout();
-
-  const boosterCounts = getBoosterCounts();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -268,85 +264,9 @@ const Profile = () => {
         <div className="text-center mb-2">
           <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 mb-1 flex items-center justify-center gap-2">
             {profile.username}
-            {profile.is_subscribed && <GeniusCrownBadge size="md" />}
           </h1>
           <p className="text-sm sm:text-base text-yellow-200/90">{profile.email}</p>
         </div>
-
-        {/* Genius Subscription Management - Only for subscribers */}
-        {profile.is_subscribed && (
-          <div className="relative rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 transform-gpu">
-            {/* Base shadow (3D depth) */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
-            
-            {/* Outer frame */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-600/30 via-yellow-500/20 to-yellow-900/30 border-2 border-yellow-500/60
-              shadow-[0_0_20px_rgba(234,179,8,0.6),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
-            
-            {/* Middle frame (bright highlight) */}
-            <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-500/20 via-yellow-400/15 to-yellow-700/20"
-              style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)' }} aria-hidden />
-            
-            {/* Inner crystal layer */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-400/10 via-yellow-500/15 to-yellow-600/10"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
-            
-            {/* Specular highlight */}
-            <div className="absolute rounded-xl sm:rounded-2xl pointer-events-none"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)' }} aria-hidden />
-            
-            {/* Content */}
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-3">
-                <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-                <div className="flex-1">
-                  <h2 className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
-                    Genius Előfizetés
-                  </h2>
-                  {profile.subscriber_type === 'comp' && (
-                    <p className="text-xs text-yellow-300/80">Ingyenes teszt előfizetés</p>
-                  )}
-                </div>
-              </div>
-              
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/80">Státusz:</span>
-                  <span className="text-green-400 font-bold">✓ Aktív</span>
-                </div>
-                {profile.subscriber_since && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-white/80">Aktiválva:</span>
-                    <span className="text-white font-bold">
-                      {new Date(profile.subscriber_since).toLocaleDateString('hu-HU')}
-                    </span>
-                  </div>
-                )}
-                {profile.subscriber_renew_at && profile.subscriber_type === 'paid' && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-white/80">Megújul:</span>
-                    <span className="text-white font-bold">
-                      {new Date(profile.subscriber_renew_at).toLocaleDateString('hu-HU')}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {profile.subscriber_type === 'paid' && (
-                <button
-                  onClick={handleManageSubscription}
-                  disabled={isManagingSubscription}
-                  className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-black py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50
-                    shadow-[0_4px_12px_rgba(234,179,8,0.6),inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-2px_8px_rgba(0,0,0,0.2)]
-                    hover:shadow-[0_6px_16px_rgba(234,179,8,0.7)] transform-gpu hover:-translate-y-0.5"
-                >
-                  <Settings className="w-4 h-4" />
-                  {isManagingSubscription ? 'Betöltés...' : 'Előfizetés Kezelése'}
-                </button>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-2" data-tutorial="stats">
@@ -511,34 +431,9 @@ const Profile = () => {
             </h2>
             
             <div className="grid grid-cols-2 gap-2 sm:gap-4">
-              {['DoubleSpeed', 'MegaSpeed', 'GigaSpeed', 'DingleSpeed'].map((boosterName) => (
-                <div key={boosterName} className="relative rounded-lg sm:rounded-xl p-3 sm:p-4 text-center transform-gpu">
-                  {/* Booster card base shadow */}
-                  <div className="absolute rounded-lg sm:rounded-xl bg-black/25 blur-sm" style={{ top: '2px', left: '2px', right: '-2px', bottom: '-2px' }} aria-hidden />
-                  
-                  {/* Booster outer frame */}
-                  <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-yellow-600/30 via-yellow-500/20 to-yellow-700/30 border border-yellow-500/50
-                    shadow-[0_0_12px_rgba(234,179,8,0.4),0_4px_12px_rgba(0,0,0,0.3)]" aria-hidden />
-                  
-                  {/* Booster middle layer */}
-                  <div className="absolute inset-[2px] rounded-lg sm:rounded-xl bg-gradient-to-b from-yellow-500/20 via-yellow-400/10 to-yellow-600/20"
-                    style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)' }} aria-hidden />
-                  
-                  {/* Booster inner layer */}
-                  <div className="absolute rounded-lg sm:rounded-xl bg-gradient-to-b from-yellow-400/10 via-yellow-500/15 to-yellow-600/10"
-                    style={{ top: '3px', left: '3px', right: '3px', bottom: '3px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.2)' }} aria-hidden />
-                  
-                  {/* Booster specular */}
-                  <div className="absolute rounded-lg sm:rounded-xl pointer-events-none"
-                    style={{ top: '3px', left: '3px', right: '3px', bottom: '3px', background: 'radial-gradient(ellipse 100% 50% at 30% 0%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)' }} aria-hidden />
-                  
-                  {/* Booster content */}
-                  <div className="relative z-10">
-                    <p className="text-xs sm:text-sm text-yellow-300 mb-1 font-semibold">{boosterName}</p>
-                    <p className="text-xl sm:text-2xl font-black text-yellow-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{boosterCounts[boosterName as keyof typeof boosterCounts] || 0}</p>
-                  </div>
-                </div>
-              ))}
+              <div className="text-center text-white/60 text-sm">
+                Nincs elérhető booster
+              </div>
             </div>
           </div>
         </div>
@@ -585,11 +480,6 @@ const Profile = () => {
                 <p className="text-xs sm:text-sm text-white/50 mb-1">Élet regeneráció</p>
                 <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                   {profile.lives_regeneration_rate} perc / 1 élet
-                  {profile.speed_booster_active && (
-                    <span className="ml-2 text-[10px] sm:text-xs bg-green-600/30 text-green-300 px-2 py-1 rounded shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
-                      Booster aktív (×{profile.speed_booster_multiplier})
-                    </span>
-                  )}
                 </p>
               </div>
               

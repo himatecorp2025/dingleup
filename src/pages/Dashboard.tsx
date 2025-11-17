@@ -7,10 +7,6 @@ import { useGameProfile } from '@/hooks/useGameProfile';
 import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { useWeeklyWinners } from '@/hooks/useWeeklyWinners';
-import { useUserBoosters } from '@/hooks/useUserBoosters';
-import { useBoosterTimer } from '@/hooks/useBoosterTimer';
-import { useGeniusPromo } from '@/hooks/useGeniusPromo';
-import { usePromoScheduler } from '@/hooks/usePromoScheduler';
 import { useScrollBehavior } from '@/hooks/useScrollBehavior';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useWallet } from '@/hooks/useWallet';
@@ -22,15 +18,12 @@ import { useWeeklyWinnersPopup } from '@/hooks/useWeeklyWinnersPopup';
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { WeeklyWinnersDialog } from '@/components/WeeklyWinnersDialog';
-import { GeniusPromoDialog } from '@/components/GeniusPromoDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
-import { BoosterActivationDialog } from '@/components/BoosterActivationDialog';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
 import { FallingCoins } from '@/components/FallingCoins';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
-import { GeniusCrownBadge } from '@/components/GeniusCrownBadge';
 import { IdleWarning } from '@/components/IdleWarning';
 
 import { WeeklyWinnerPopup } from '@/components/WeeklyWinnerPopup';
@@ -61,14 +54,11 @@ const Dashboard = () => {
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
-  const { canClaim, showPopup, weeklyEntryCount, nextReward, claiming, claimDailyGift, checkDailyGift, handleLater, showDailyGiftPopup, setShowPopup } = useDailyGift(userId, profile?.is_subscribed || false);
+  const { canClaim, showPopup, weeklyEntryCount, nextReward, claiming, claimDailyGift, checkDailyGift, handleLater, showDailyGiftPopup, setShowPopup } = useDailyGift(userId, false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
   const { showPopup: showWeeklyWinnersPopup, triggerPopup: triggerWeeklyWinnersPopup, closePopup: closeWeeklyWinnersPopup, canShowThisWeek: canShowWeeklyPopup } = useWeeklyWinnersPopup(userId);
-  const { boosters, activateBooster, refetchBoosters } = useUserBoosters(userId);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
-  const [showBoosterActivation, setShowBoosterActivation] = useState(false);
-  const [showPromo, setShowPromo] = useState(false);
   const [dailyGiftJustClaimed, setDailyGiftJustClaimed] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
@@ -84,19 +74,6 @@ const Dashboard = () => {
     enabled: true,
   });
   
-  // Promo scheduler with time intelligence
-  const canShowPromo = usePromoScheduler(userId);
-  const hasOtherDialogs = showWelcomeBonus || showPopup;
-  const { shouldShow: shouldShowGeniusPromo, closePromo, handleSubscribe, handleLater: handlePromoLater } = useGeniusPromo(
-    userId,
-    profile?.is_subscribed || false,
-    hasOtherDialogs,
-    dailyGiftJustClaimed
-  );
-  
-  const hasActiveBooster = profile?.speed_booster_active || false;
-  const availableBoosters = boosters.filter(b => !b.activated);
-  const timeRemaining = useBoosterTimer(profile?.speed_booster_expires_at || null);
 
   // Helper function
   const getInitials = (name: string) => {
@@ -125,41 +102,11 @@ const Dashboard = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUserId(session.user.id);
-        // Check subscription status on login
-        checkSubscriptionStatus(session.user.id);
       } else {
         navigate('/login');
       }
     });
   }, [navigate]);
-
-  // Check subscription status helper
-  const checkSubscriptionStatus = async (uid: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('check-subscription');
-      if (error) {
-        console.error('[Dashboard] Subscription check error:', error);
-        return;
-      }
-      console.log('[Dashboard] Subscription status updated:', data);
-      // Refresh profile to get updated is_subscribed, max_lives, lives_regeneration_rate
-      await refreshProfile();
-      await refetchWallet();
-    } catch (err) {
-      console.error('[Dashboard] Exception checking subscription:', err);
-    }
-  };
-
-  // Periodic subscription check (every 5 minutes)
-  useEffect(() => {
-    if (!userId) return;
-    
-    const interval = setInterval(() => {
-      checkSubscriptionStatus(userId);
-    }, 5 * 60 * 1000); // 5 minutes
-    
-    return () => clearInterval(interval);
-  }, [userId]);
 
   // Show Welcome Bonus dialog FIRST (highest priority) - TESTING MODE: show on desktop too, with 1s delay
   useEffect(() => {
@@ -167,7 +114,6 @@ const Dashboard = () => {
       const t = setTimeout(() => {
         setShowWelcomeBonus(true);
         setShowPopup(false);
-        setShowPromo(false);
       }, 1000);
       return () => clearTimeout(t);
     }
@@ -177,16 +123,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (canMountModals && canClaim && !canClaimWelcome && !showWeeklyWinners && userId) {
       setShowPopup(true);
-      setShowPromo(false);
     }
   }, [canMountModals, canClaim, canClaimWelcome, showWeeklyWinners, userId]);
-
-  // Show Genius Promo THIRD (after welcome and daily, with scheduler) - only on handheld, not during gameplay
-  useEffect(() => {
-    if (isHandheld && canMountModals && shouldShowGeniusPromo && canShowPromo && !canClaimWelcome && !canClaim) {
-      setShowPromo(true);
-    }
-  }, [isHandheld, canMountModals, shouldShowGeniusPromo, canShowPromo, canClaimWelcome, canClaim]);
 
 
 
@@ -346,11 +284,8 @@ if (!profile) {
               </h1>
             </div>
 
-            {/* Right: Stats & Avatar - including Genius Crown as first hexagon */}
+            {/* Right: Stats & Avatar */}
             <div className="flex items-center gap-1.5 sm:gap-2" data-tutorial="profile-header">
-              {/* Genius Crown Hexagon - only for subscribers */}
-              {profile.is_subscribed && <GeniusCrownBadge asHexagon showTooltip />}
-              
               {/* Rank Hexagon - 3D Diamond */}
               <DiamondHexagon type="rank" value={currentRank !== null ? currentRank : '...'} />
 
@@ -531,58 +466,6 @@ if (!profile) {
           <div className="w-full" style={{ marginBottom: '2vh' }}>
             <LeaderboardCarousel />
           </div>
-          
-          {/* Boosters Button - below Top 100 */}
-          <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
-            <div className="w-full max-w-screen-lg">
-              <DiamondButton
-                data-tutorial="booster-button"
-                onClick={async () => {
-                  if (hasActiveBooster) {
-                    setShowBoosterActivation(true);
-                    return;
-                  }
-                  if (availableBoosters.length === 0) {
-                    toast.error('Nincs elérhető booster! Vásárolj egyet a boltban.');
-                    navigate('/shop');
-                    return;
-                  }
-                  const firstBooster = availableBoosters[0];
-                  const success = await activateBooster(firstBooster.id);
-                  if (success) {
-                    window.location.reload();
-                  }
-                }}
-                variant="booster"
-                size="lg"
-                active={hasActiveBooster}
-                className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
-                badge={
-                  hasActiveBooster ? (
-                    <span className="flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
-                    </span>
-                  ) : undefined
-                }
-              >
-                {/* Lightning SVG Icon */}
-                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
-                </svg>
-                {hasActiveBooster ? (
-                  <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">AKTÍV BOOSTER ({timeRemaining})</span>
-                ) : availableBoosters.length > 0 ? (
-                  <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">
-                    BOOSTER AKTIVÁLÁS
-                    <span className="block text-[clamp(0.625rem,2.5vw,1rem)] sm:text-[clamp(0.75rem,3vw,1.25rem)] mt-0.5 font-bold">Következő: {availableBoosters[0].booster_type}</span>
-                  </span>
-                ) : (
-                  <span className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]">BOOSTERS</span>
-                )}
-              </DiamondButton>
-            </div>
-          </div>
 
           {/* Play Now Button - below Boosters */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
@@ -660,36 +543,6 @@ if (!profile) {
         nextReward={nextReward}
         canClaim={canClaim}
         claiming={claiming}
-        isPremium={profile?.is_subscribed || false}
-      />
-
-      {/* Genius Promo dialog - THIRD */}
-      <GeniusPromoDialog
-        open={showPromo && !showWelcomeBonus && !showPopup}
-        onClose={() => {
-          closePromo();
-          setShowPromo(false);
-        }}
-        onSubscribe={handleSubscribe}
-        onLater={handlePromoLater}
-      />
-
-      {/* Booster activation dialog */}
-      <BoosterActivationDialog
-        open={showBoosterActivation}
-        onClose={() => {
-          setShowBoosterActivation(false);
-          refetchBoosters();
-        }}
-        availableBoosters={availableBoosters}
-        hasActiveBooster={hasActiveBooster}
-        onActivate={async (boosterId) => {
-          const success = await activateBooster(boosterId);
-          if (success) {
-            setShowBoosterActivation(false);
-            window.location.reload();
-          }
-        }}
       />
 
       <div data-tutorial="bottom-nav">

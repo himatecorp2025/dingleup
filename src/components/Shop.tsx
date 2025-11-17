@@ -58,9 +58,9 @@ const Shop = ({ userId }: ShopProps) => {
       }
     } else {
       toast.error('Nincs elég aranyérméd!');
-      trackShopInteraction(userId, 'purchase_failed', 'life', {
+      trackShopInteraction(userId, 'purchase_cancelled', 'life', {
         product_id: 'extra_life',
-        reason: 'insufficient_coins'
+        metadata: { reason: 'insufficient_coins' }
       });
     }
     setLoading(null);
@@ -82,11 +82,12 @@ const Shop = ({ userId }: ShopProps) => {
       p_cost: cost
     });
 
-    if (error || !data?.success) {
-      toast.error(data?.error || 'Hiba történt a segítség újraaktiválása során');
-      trackShopInteraction(userId, 'purchase_failed', 'help', {
+    const resultData = data as any;
+    if (error || !resultData?.success) {
+      toast.error(resultData?.error || 'Hiba történt a segítség újraaktiválása során');
+      trackShopInteraction(userId, 'purchase_cancelled', 'help', {
         product_id: helpType,
-        reason: data?.error || 'unknown'
+        metadata: { reason: resultData?.error || 'unknown' }
       });
     } else {
       toast.success('Segítség újraaktiválva!');
