@@ -44,9 +44,6 @@ export interface UserProfile {
   max_lives: number;
   lives_regeneration_rate: number;
   last_life_regeneration: string;
-  speed_booster_active: boolean;
-  speed_booster_expires_at: string | null;
-  speed_booster_multiplier: number;
   help_third_active: boolean;
   help_2x_answer_active: boolean;
   help_audience_active: boolean;
@@ -57,10 +54,6 @@ export interface UserProfile {
   welcome_bonus_claimed: boolean;
   question_swaps_available: number;
   total_correct_answers: number;
-  is_subscribed: boolean;
-  subscriber_type: 'paid' | 'comp' | null;
-  subscriber_since: string | null;
-  subscriber_renew_at: string | null;
   country_code: string | null;
   created_at: string;
   updated_at: string;
@@ -77,22 +70,7 @@ export interface WeeklyRanking {
   username?: string;
 }
 
-export interface SpeedBooster {
-  name: string;
-  multiplier: number;
-  price: number;
-  priceUsd: number; // Price in USD cents
-  duration: number; // in minutes
-  lives_gained: number;
-  max_lives_bonus: number;
-}
-
-export const SPEED_BOOSTERS: SpeedBooster[] = [
-  { name: 'DoubleSpeed', multiplier: 2, price: 500, priceUsd: 1.49, duration: 60, lives_gained: 10, max_lives_bonus: 10 },
-  { name: 'MegaSpeed', multiplier: 4, price: 750, priceUsd: 1.99, duration: 60, lives_gained: 20, max_lives_bonus: 20 },
-  { name: 'GigaSpeed', multiplier: 12, price: 1000, priceUsd: 2.99, duration: 60, lives_gained: 60, max_lives_bonus: 60 },
-  { name: 'DingleSpeed', multiplier: 24, price: 1500, priceUsd: 4.49, duration: 60, lives_gained: 120, max_lives_bonus: 120 }
-];
+// Speed Boosters removed - Genius functionality deleted
 
 export const COIN_REWARDS = {
   per_correct_answer: 50
@@ -133,12 +111,4 @@ export const EXTRA_LIFE_COST = 100;
 export const INITIAL_LIVES = 15;
 export const LIVES_REGEN_MINUTES = 12;
 
-export interface UserBooster {
-  id: string;
-  user_id: string;
-  booster_type: 'DoubleSpeed' | 'MegaSpeed' | 'GigaSpeed' | 'DingleSpeed';
-  activated: boolean;
-  activated_at: string | null;
-  expires_at: string | null;
-  created_at: string;
-}
+// UserBooster interface removed - Genius functionality deleted
