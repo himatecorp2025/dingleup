@@ -23,62 +23,13 @@ export const LeaderboardCarousel = () => {
   }, []);
 
   const refresh = async () => {
-    console.log('[LeaderboardCarousel] Refreshing data...');
-    // TOP 100 (vagy ahány van) a leaderboard_public_cache táblából
-    const fromPublic = await fetchFromLeaderboardPublic();
-    console.log('[LeaderboardCarousel] fetchFromLeaderboardPublic result:', fromPublic.length, 'players');
-    if (fromPublic.length > 0) {
-      console.log('[LeaderboardCarousel] First 3 players:', fromPublic.slice(0, 3));
-      setTopPlayers(fromPublic.slice(0, 100)); // TOP 100
-      return;
-    }
-    // Fallback: global_leaderboard
-    const fromGlobal = await fetchFromGlobalLeaderboard();
-    console.log('[LeaderboardCarousel] fetchFromGlobalLeaderboard result:', fromGlobal.length, 'players');
-    if (fromGlobal.length > 0) {
-      setTopPlayers(fromGlobal.slice(0, 100));
-      return;
-    }
-    // További fallback: heti rangsor
-    const fromWeekly = await fetchFromWeeklyRankings();
-    console.log('[LeaderboardCarousel] fetchFromWeeklyRankings result:', fromWeekly.length, 'players');
-    setTopPlayers(fromWeekly.slice(0, 100));
+    console.log('[LeaderboardCarousel] Refreshing weekly rankings data...');
+    // Only show current week's rankings
+    const weeklyData = await fetchFromWeeklyRankings();
+    console.log('[LeaderboardCarousel] fetchFromWeeklyRankings result:', weeklyData.length, 'players');
+    setTopPlayers(weeklyData.slice(0, 100));
   };
 
-  const fetchFromLeaderboardPublic = async (): Promise<LeaderboardEntry[]> => {
-    try {
-      const { data, error } = await supabase
-        .from('leaderboard_public_cache')
-        .select('rank, username, avatar_url, total_correct_answers')
-        .order('rank', { ascending: true })
-        .limit(100);
-      if (error) throw error;
-      return (data || []).map((d) => ({
-        user_id: `rank-${d.rank}`, // egyedi azonosító RLS mentes módon
-        username: d.username ?? 'Player',
-        avatar_url: d.avatar_url ?? null,
-        total_correct_answers: d.total_correct_answers ?? 0,
-      }));
-    } catch (e) {
-      console.error('[LeaderboardCarousel] leaderboard_public_cache error:', e);
-      return [];
-    }
-  };
-
-  const fetchFromGlobalLeaderboard = async (): Promise<LeaderboardEntry[]> => {
-    try {
-      const { data, error } = await supabase
-        .from('global_leaderboard')
-        .select('user_id, username, total_correct_answers, avatar_url')
-        .order('total_correct_answers', { ascending: false })
-        .limit(100);
-      if (error) throw error;
-      return data || [];
-    } catch (e) {
-      console.error('[LeaderboardCarousel] global_leaderboard error:', e);
-      return [];
-    }
-  };
 
   const getWeekStart = () => {
     const now = new Date();

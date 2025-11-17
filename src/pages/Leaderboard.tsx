@@ -44,27 +44,61 @@ const Leaderboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const getWeekStart = () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday.toISOString().split('T')[0];
+  };
+
   const fetchLeaderboard = async () => {
     try {
+      const weekStart = getWeekStart();
       const { data, error } = await supabase
-        .from('leaderboard_public_cache')
-        .select('username, total_correct_answers, avatar_url, rank')
+        .from('weekly_rankings')
+        .select('user_id, total_correct_answers, rank, profiles:profiles!inner(username, avatar_url)')
+        .eq('week_start', weekStart)
         .order('rank', { ascending: true })
         .limit(100);
 
       if (error) throw error;
 
-      const rankedData = (data || []).map((entry) => ({
-        username: entry.username,
-        total_correct_answers: entry.total_correct_answers,
-        avatar_url: entry.avatar_url,
-        user_id: '',
-        rank: entry.rank
-      }));
+      // Aggregate by user_id to avoid duplicates from multiple categories
+      const userMap = new Map<string, LeaderboardEntry>();
+      (data || []).forEach((row: any) => {
+        const uid = row.user_id;
+        const existing = userMap.get(uid);
+        const correctAnswers = row.total_correct_answers || 0;
+        
+        if (!existing || correctAnswers > existing.total_correct_answers) {
+          userMap.set(uid, {
+            user_id: uid,
+            username: row.profiles?.username || 'Player',
+            avatar_url: row.profiles?.avatar_url || null,
+            total_correct_answers: correctAnswers,
+            rank: row.rank || 0
+          });
+        }
+      });
+
+      const rankedData = Array.from(userMap.values())
+        .sort((a, b) => {
+          if (b.total_correct_answers !== a.total_correct_answers) {
+            return b.total_correct_answers - a.total_correct_answers;
+          }
+          return a.rank - b.rank;
+        })
+        .map((entry, index) => ({
+          ...entry,
+          rank: index + 1
+        }));
 
       setTopPlayers(rankedData);
     } catch (error) {
-      console.error('Error fetching leaderboard:', error);
+      console.error('Error fetching weekly leaderboard:', error);
     } finally {
       setLoading(false);
     }
@@ -173,6 +207,10 @@ const Leaderboard = () => {
         {/* Leaderboard */}
         {loading ? (
           <p className="text-center text-white">Betöltés...</p>
+        ) : topPlayers.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-lg text-white">Eredmény még nem elérhető, gyere vissza később!</p>
+          </div>
         ) : (
           <div className="space-y-2 sm:space-y-3 px-2">
             {topPlayers.map((player) => (
@@ -298,7 +336,7 @@ const Leaderboard = () => {
             ))}
 
             {/* Placeholder if less than 100 */}
-            {topPlayers.length < 100 && (
+            {topPlayers.length > 0 && topPlayers.length < 100 && (
               <div className="text-center text-purple-300 mt-8">
                 <p className="text-sm">
                   További {100 - topPlayers.length} hely elérhető a ranglistán!
