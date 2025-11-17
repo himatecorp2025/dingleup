@@ -32,8 +32,6 @@ const About = lazy(() => import("./pages/About"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminTipsVideos = lazy(() => import("./pages/AdminTipsVideos"));
-const GeniusMembersEnhanced = lazy(() => import("./pages/GeniusMembersEnhanced"));
-const NormalUsersAnalytics = lazy(() => import("./pages/NormalUsersAnalytics"));
 const AdvancedAnalytics = lazy(() => import("./pages/AdvancedAnalytics"));
 const RetentionDashboard = lazy(() => import("./pages/RetentionDashboard"));
 const MonetizationDashboard = lazy(() => import("./pages/MonetizationDashboard"));
@@ -349,7 +347,6 @@ const App = () => {
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/genius" element={<GeniusMembersEnhanced />} />
               <Route path="/admin/normal-users" element={<NormalUsersAnalytics />} />
               <Route path="/admin/tips" element={<AdminTipsVideos />} />
               <Route path="/admin/analytics" element={<AdvancedAnalytics />} />

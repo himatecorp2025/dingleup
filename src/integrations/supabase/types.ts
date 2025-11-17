@@ -72,7 +72,6 @@ export type Database = {
           created_at: string
           event_type: string
           id: string
-          is_subscriber: boolean | null
           lives_amount: number | null
           metadata: Json | null
           session_id: string
@@ -85,7 +84,6 @@ export type Database = {
           created_at?: string
           event_type: string
           id?: string
-          is_subscriber?: boolean | null
           lives_amount?: number | null
           metadata?: Json | null
           session_id: string
@@ -98,7 +96,6 @@ export type Database = {
           created_at?: string
           event_type?: string
           id?: string
-          is_subscriber?: boolean | null
           lives_amount?: number | null
           metadata?: Json | null
           session_id?: string
@@ -286,7 +283,6 @@ export type Database = {
           downlink_mbps: number | null
           effective_connection_type: string | null
           id: string
-          is_genius_user: boolean | null
           is_touch_device: boolean | null
           os: string | null
           os_version: string | null
@@ -315,7 +311,6 @@ export type Database = {
           downlink_mbps?: number | null
           effective_connection_type?: string | null
           id?: string
-          is_genius_user?: boolean | null
           is_touch_device?: boolean | null
           os?: string | null
           os_version?: string | null
@@ -344,7 +339,6 @@ export type Database = {
           downlink_mbps?: number | null
           effective_connection_type?: string | null
           id?: string
-          is_genius_user?: boolean | null
           is_touch_device?: boolean | null
           os?: string | null
           os_version?: string | null
@@ -500,7 +494,6 @@ export type Database = {
           error_type: string
           id: string
           is_fatal: boolean | null
-          is_genius_user: boolean | null
           metadata: Json | null
           page_route: string
           session_id: string
@@ -518,7 +511,6 @@ export type Database = {
           error_type: string
           id?: string
           is_fatal?: boolean | null
-          is_genius_user?: boolean | null
           metadata?: Json | null
           page_route: string
           session_id: string
@@ -536,7 +528,6 @@ export type Database = {
           error_type?: string
           id?: string
           is_fatal?: boolean | null
-          is_genius_user?: boolean | null
           metadata?: Json | null
           page_route?: string
           session_id?: string
@@ -748,7 +739,6 @@ export type Database = {
           game_result_id: string | null
           help_used: string | null
           id: string
-          is_genius_user: boolean | null
           question_id: string | null
           question_index: number
           response_time_seconds: number
@@ -763,7 +753,6 @@ export type Database = {
           game_result_id?: string | null
           help_used?: string | null
           id?: string
-          is_genius_user?: boolean | null
           question_id?: string | null
           question_index: number
           response_time_seconds: number
@@ -778,7 +767,6 @@ export type Database = {
           game_result_id?: string | null
           help_used?: string | null
           id?: string
-          is_genius_user?: boolean | null
           question_id?: string | null
           question_index?: number
           response_time_seconds?: number
@@ -1432,26 +1420,12 @@ export type Database = {
           id: string
           invitation_code: string | null
           invitation_rewards_reset_at: string | null
-          is_subscribed: boolean | null
-          is_subscriber: boolean | null
           last_invitation_reward_reset: string | null
           last_life_regeneration: string | null
           lives: number | null
           lives_regeneration_rate: number | null
           max_lives: number | null
           question_swaps_available: number | null
-          speed_booster_active: boolean | null
-          speed_booster_expires_at: string | null
-          speed_booster_multiplier: number | null
-          speed_coins_per_tick: number | null
-          speed_lives_per_tick: number | null
-          speed_tick_interval_seconds: number | null
-          speed_tick_last_processed_at: string | null
-          sub_promo_last_shown: string | null
-          subscriber_renew_at: string | null
-          subscriber_since: string | null
-          subscriber_type: string | null
-          subscription_tier: string | null
           total_correct_answers: number
           updated_at: string | null
           username: string
@@ -1471,26 +1445,12 @@ export type Database = {
           id: string
           invitation_code?: string | null
           invitation_rewards_reset_at?: string | null
-          is_subscribed?: boolean | null
-          is_subscriber?: boolean | null
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
           question_swaps_available?: number | null
-          speed_booster_active?: boolean | null
-          speed_booster_expires_at?: string | null
-          speed_booster_multiplier?: number | null
-          speed_coins_per_tick?: number | null
-          speed_lives_per_tick?: number | null
-          speed_tick_interval_seconds?: number | null
-          speed_tick_last_processed_at?: string | null
-          sub_promo_last_shown?: string | null
-          subscriber_renew_at?: string | null
-          subscriber_since?: string | null
-          subscriber_type?: string | null
-          subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
           username: string
@@ -1510,26 +1470,12 @@ export type Database = {
           id?: string
           invitation_code?: string | null
           invitation_rewards_reset_at?: string | null
-          is_subscribed?: boolean | null
-          is_subscriber?: boolean | null
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
           question_swaps_available?: number | null
-          speed_booster_active?: boolean | null
-          speed_booster_expires_at?: string | null
-          speed_booster_multiplier?: number | null
-          speed_coins_per_tick?: number | null
-          speed_lives_per_tick?: number | null
-          speed_tick_interval_seconds?: number | null
-          speed_tick_last_processed_at?: string | null
-          sub_promo_last_shown?: string | null
-          subscriber_renew_at?: string | null
-          subscriber_since?: string | null
-          subscriber_type?: string | null
-          subscription_tier?: string | null
           total_correct_answers?: number
           updated_at?: string | null
           username?: string
@@ -1725,7 +1671,6 @@ export type Database = {
           duration_seconds: number | null
           games_played: number | null
           id: string
-          is_genius: boolean | null
           messages_sent: number | null
           os_version: string | null
           pages_visited: number | null
@@ -1744,7 +1689,6 @@ export type Database = {
           duration_seconds?: number | null
           games_played?: number | null
           id?: string
-          is_genius?: boolean | null
           messages_sent?: number | null
           os_version?: string | null
           pages_visited?: number | null
@@ -1763,7 +1707,6 @@ export type Database = {
           duration_seconds?: number | null
           games_played?: number | null
           id?: string
-          is_genius?: boolean | null
           messages_sent?: number | null
           os_version?: string | null
           pages_visited?: number | null
@@ -2732,7 +2675,6 @@ export type Database = {
         }
         Returns: Json
       }
-      activate_speed_booster: { Args: { booster_id: string }; Returns: boolean }
       archive_thread_for_user: { Args: { p_thread_id: string }; Returns: Json }
       award_coins: { Args: { amount: number }; Returns: undefined }
       check_rate_limit: {
@@ -2815,8 +2757,6 @@ export type Database = {
       refresh_leaderboard_public_cache: { Args: never; Returns: undefined }
       regenerate_invitation_code: { Args: never; Returns: string }
       regenerate_lives: { Args: never; Returns: undefined }
-      regenerate_lives_background: { Args: never; Returns: undefined }
-      regenerate_lives_for_user: { Args: { p_user_id: string }; Returns: Json }
       reset_game_helps: { Args: never; Returns: undefined }
       search_users_by_name: {
         Args: {
@@ -2831,10 +2771,6 @@ export type Database = {
         }[]
       }
       spend_coins: { Args: { amount: number }; Returns: boolean }
-      start_speed_booster: {
-        Args: { p_duration_minutes?: number; p_multiplier: number }
-        Returns: Json
-      }
       use_help: { Args: { p_help_type: string }; Returns: Json }
       use_life: { Args: never; Returns: boolean }
     }
