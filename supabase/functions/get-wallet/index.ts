@@ -43,22 +43,13 @@ serve(async (req) => {
 
     console.log('[GetWallet] Fetching wallet for user:', user.id);
 
-    // First, automatically regenerate lives for this user (background job also does this)
-    const { data: regenResult, error: regenError } = await supabase.rpc(
-      'regenerate_lives_for_user',
-      { p_user_id: user.id }
-    );
+    // Lives regeneration via DB RPC removed (non-existent RPC). We calculate below based on profile fields.
 
-    if (regenError) {
-      console.error('[GetWallet] Error regenerating lives:', regenError);
-    } else if (regenResult) {
-      console.log('[GetWallet] Lives regeneration result:', regenResult);
-    }
 
     // Get current balances with subscriber status and booster info (after regeneration)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate, is_subscribed, is_subscriber, speed_booster_active, speed_booster_multiplier')
+      .select('coins, lives, max_lives, last_life_regeneration, lives_regeneration_rate')
       .eq('id', user.id)
       .single();
 
@@ -67,43 +58,15 @@ serve(async (req) => {
       throw profileError;
     }
 
-    // Determine effective max lives and regen rate based on subscription and booster
-    let effectiveMaxLives = 15; // Default for non-subscribers
-    let effectiveRegenMinutes = 12; // Default for non-subscribers
+    // Determine effective max lives and regen rate from profile fields
+    let effectiveMaxLives = Number(profile.max_lives ?? 15);
+    let effectiveRegenMinutes = Number(profile.lives_regeneration_rate ?? 12);
 
-    const isSubscriberEffective = Boolean(profile.is_subscribed || profile.is_subscriber);
-    
-    // Genius subscription gives base bonuses
-    if (isSubscriberEffective) {
-      effectiveMaxLives = 30;
-      effectiveRegenMinutes = 6;
+    if (!Number.isFinite(effectiveMaxLives) || effectiveMaxLives <= 0) {
+      effectiveMaxLives = 15;
     }
-    
-    // Active speed booster overrides (adds to base max_lives)
-    if (profile.speed_booster_active && profile.speed_booster_multiplier) {
-      const multiplier = profile.speed_booster_multiplier;
-      const baseRegenMinutes = isSubscriberEffective ? 6 : 12;
-      // Avoid 0 minutes, align with background job logic (min 0.5 min)
-      effectiveRegenMinutes = Math.max(0.5, baseRegenMinutes / multiplier);
-      
-      // Booster adds extra lives on top of base
-      const baseMax = isSubscriberEffective ? 30 : 15;
-      switch (multiplier) {
-        case 2:
-          effectiveMaxLives = baseMax + 10;
-          break;
-        case 4:
-          effectiveMaxLives = baseMax + 20;
-          break;
-        case 12:
-          effectiveMaxLives = baseMax + 60;
-          break;
-        case 24:
-          effectiveMaxLives = baseMax + 120;
-          break;
-        default:
-          effectiveMaxLives = baseMax;
-      }
+    if (!Number.isFinite(effectiveRegenMinutes) || effectiveRegenMinutes <= 0) {
+      effectiveRegenMinutes = 12;
     }
 
     // Calculate next life time with proper regeneration tracking + future timestamp guard
@@ -149,20 +112,8 @@ serve(async (req) => {
       }
     }
 
-    // Get subscription renewal date if subscriber
-    let subscriberRenewAt = null;
-    if (isSubscriberEffective) {
-      const { data: subscription } = await supabase
-        .from('subscriptions')
-        .select('current_period_end')
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .single();
-      
-      if (subscription?.current_period_end) {
-        subscriberRenewAt = subscription.current_period_end;
-      }
-    }
+    // Subscription system removed
+    const subscriberRenewAt = null;
 
     // Get recent ledger entries (last 20)
     const { data: ledger, error: ledgerError } = await supabase
