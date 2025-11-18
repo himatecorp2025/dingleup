@@ -19,7 +19,7 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
         }, 2000);
       });
     }
-  }, []);
+  }, [onVideoEnd]);
 
   const handleVideoEnd = () => {
     setVideoEnded(true);
@@ -27,7 +27,7 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
+    <div className="fixed inset-0 w-full h-full bg-background z-[9999]">
       <video
         ref={videoRef}
         src={loadingVideo}

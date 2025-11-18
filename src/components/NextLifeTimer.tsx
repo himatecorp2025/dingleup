@@ -62,7 +62,7 @@ export const NextLifeTimer = ({
     >
       {/* DEEP BOTTOM SHADOW - Multiple layers for depth */}
       <div 
-        className="absolute inset-0 bg-black/70 rounded-md" 
+        className="absolute inset-0 bg-background/70 rounded-md" 
         style={{ 
           transform: 'translate(4px, 6px) rotateX(5deg)', 
           filter: 'blur(6px)' 
@@ -70,7 +70,7 @@ export const NextLifeTimer = ({
         aria-hidden 
       />
       <div 
-        className="absolute inset-0 bg-black/40 rounded-md" 
+        className="absolute inset-0 bg-background/40 rounded-md" 
         style={{ 
           transform: 'translate(2px, 4px) rotateX(3deg)', 
           filter: 'blur(4px)' 
@@ -81,7 +81,7 @@ export const NextLifeTimer = ({
       {/* DEEP 3D LAYERS - Bottom to top */}
       {/* Layer 5 - Deepest */}
       <div 
-        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-900 via-yellow-800 to-yellow-950 border-2 border-yellow-950/80" 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-accent-darker via-accent-dark to-accent-darkest border-2 border-accent-darkest/80" 
         style={{ 
           transform: 'translateZ(-20px) rotateX(2deg)',
           boxShadow: '0 8px 16px rgba(0,0,0,0.6)'
@@ -91,7 +91,7 @@ export const NextLifeTimer = ({
       
       {/* Layer 4 */}
       <div 
-        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-700 via-yellow-600 to-yellow-800 border-2 border-yellow-700/70" 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-accent-dark via-accent to-accent-dark border-2 border-accent-dark/70" 
         style={{ 
           transform: 'translateZ(-15px) rotateX(1.5deg)',
           boxShadow: '0 6px 12px rgba(0,0,0,0.5)'
@@ -101,7 +101,7 @@ export const NextLifeTimer = ({
       
       {/* Layer 3 */}
       <div 
-        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-500 via-yellow-400 to-yellow-600 border-2 border-yellow-600/60" 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-accent via-accent-glow to-accent border-2 border-accent/60" 
         style={{ 
           transform: 'translateZ(-10px) rotateX(1deg)',
           boxShadow: '0 4px 8px rgba(0,0,0,0.4)'
@@ -111,7 +111,7 @@ export const NextLifeTimer = ({
       
       {/* Layer 2 */}
       <div 
-        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-400 via-yellow-300 to-yellow-500 border-2 border-yellow-500/50" 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-accent-glow via-accent-light to-accent border-2 border-accent/50" 
         style={{ 
           transform: 'translateZ(-5px) rotateX(0.5deg)',
           boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4)'
@@ -121,10 +121,10 @@ export const NextLifeTimer = ({
       
       {/* TOP SURFACE - Brightest gold */}
       <div 
-        className="absolute inset-0 rounded-md bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-500 border-2 border-yellow-400/40" 
+        className="absolute inset-0 rounded-md bg-gradient-to-b from-accent-light via-accent-glow to-accent border-2 border-accent-glow/40" 
         style={{ 
           transform: 'translateZ(0px)',
-          boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(0,0,0,0.2), 0 0 20px rgba(255,215,0,0.5)'
+          boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(0,0,0,0.2), 0 0 20px hsl(var(--accent)/0.5)'
         }} 
         aria-hidden 
       />
@@ -141,7 +141,7 @@ export const NextLifeTimer = ({
       
       {/* TEXT - Clean black, no effects */}
       <span 
-        className="relative z-10 font-extrabold text-black leading-none block px-1.5 py-0.5" 
+        className="relative z-10 font-extrabold text-accent-foreground leading-none block px-1.5 py-0.5" 
         style={{ 
           transform: 'translateZ(10px)',
           textShadow: 'none'
