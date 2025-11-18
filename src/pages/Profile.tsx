@@ -89,7 +89,6 @@ const Profile = () => {
             filter: `user_id=eq.${userId}`
           },
           () => {
-            console.log('[Profile] Real-time weekly rankings update received');
             fetchWeeklyCorrectAnswers();
           }
         )

@@ -140,11 +140,8 @@ function isMusicAllowed(pathname: string): boolean {
   // Block music on admin routes and landing page
   const blocked = MUSIC_BLOCKED_ROUTES.some(pattern => pattern.test(pathname));
   if (blocked) {
-    console.log('[AudioPolicy] BLOCKED - No music on:', pathname);
     return false;
   }
-  // Allow music on all other routes
-  console.log('[AudioPolicy] Music allowed on:', pathname);
   return true;
 }
 
@@ -185,7 +182,6 @@ const AudioPolicyManager = () => {
       if (!isMobile) {
         // Desktop: disable music entirely
         audioManager.apply(false, 0);
-        console.log('[AudioPolicy] Desktop detected - music disabled');
         return;
       }
       
@@ -195,7 +191,6 @@ const AudioPolicyManager = () => {
       if (!musicAllowed) {
         // Admin or landing page: disable music
         audioManager.apply(false, 0);
-        console.log('[AudioPolicy] Route blocked - music disabled');
         return;
       }
       
@@ -212,123 +207,32 @@ const AudioPolicyManager = () => {
 
       // Apply volume settings
       audioManager.apply(musicEnabled, volume);
-
-      console.log('[AudioPolicy]', { 
-        pathname: location.pathname,
-        track: isGameRoute ? 'game' : 'general',
-        musicEnabled, 
-        volume,
-        platform: 'mobile/tablet'
-      });
     };
 
     applyAudioPolicy();
-  }, [location.pathname, isHandheld]);
-
-  // Visibility and focus guards
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      const audioManager = AudioManager.getInstance();
-      const { musicEnabled, volume, loaded } = useAudioStore.getState();
-      if (!loaded) return;
-
-      if (document.visibilityState !== 'visible') {
-        audioManager.apply(false, volume);
-      } else {
-        // Check if music is allowed on current route
-        const musicAllowed = isMusicAllowed(location.pathname);
-        if (!musicAllowed) {
-          audioManager.apply(false, 0);
-        } else {
-          audioManager.apply(musicEnabled, volume);
-        }
-      }
-    };
-
-    const handleBlur = () => {
-      AudioManager.getInstance().apply(false, useAudioStore.getState().volume);
-    };
-
-    const handleFocus = () => {
-      const { musicEnabled, volume, loaded } = useAudioStore.getState();
-      if (!loaded) return;
-      // Check if music is allowed on current route
-      const musicAllowed = isMusicAllowed(location.pathname);
-      if (!musicAllowed) {
-        AudioManager.getInstance().apply(false, 0);
-      } else if (musicEnabled) {
-        AudioManager.getInstance().apply(true, volume);
-      }
-    };
-
-    const handlePageHide = () => {
-      AudioManager.getInstance().apply(false, useAudioStore.getState().volume);
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('blur', handleBlur);
-    window.addEventListener('focus', handleFocus);
-    window.addEventListener('pagehide', handlePageHide);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('blur', handleBlur);
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('pagehide', handlePageHide);
-    };
-  }, [location.pathname, isHandheld]);
-
-  return null;
-};
-
-// Wrapper component that uses analytics (must be inside Router)
-const AppWithAnalytics = () => {
-  useAnalytics();
-  return null;
-};
-
-const App = () => {
-  // Initialize AudioManager singleton and subscribe to store
-  useEffect(() => {
-    console.log('[App] Initializing AudioManager');
-    const audioManager = AudioManager.getInstance();
     
-    // Load settings from localStorage
-    useAudioStore.getState().loadSettings();
-    
-    // Subscribe to store changes and apply audio policy with route checking
-    const unsubscribe = useAudioStore.subscribe((state, prevState) => {
-      if (!state.loaded) return;
-      
-      // Only apply when store values actually change
-      if (state.musicEnabled !== prevState?.musicEnabled || 
-          state.volume !== prevState?.volume) {
-        
-        const isAdminRoute = window.location.pathname.startsWith('/admin');
-        const isHandheld = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 1024;
-        const allowed = !isAdminRoute && isHandheld && isMusicAllowed(window.location.pathname);
-        
-        console.log('[App] Store changed, applying policy:', { 
-          musicEnabled: state.musicEnabled, 
-          volume: state.volume,
-          isAdminRoute,
-          allowed,
-          pathname: window.location.pathname
-        });
-        
-        if (allowed && state.musicEnabled) {
-          audioManager.apply(true, state.volume);
-        } else {
-          audioManager.apply(false, state.volume);
-        }
+    const unsubscribe = useAudioStore.subscribe((state) => {
+      if (state.loaded) {
+        applyAudioPolicy();
       }
     });
     
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [location.pathname]);
 
+  return null;
+};
+
+// Analytics wrapper component
+const AppWithAnalytics = () => {
+  useAnalytics();
+  return null;
+};
+
+// Main App component
+const App = () => {
   // Reset intro flag on logout to ensure clean cold-start flow
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {

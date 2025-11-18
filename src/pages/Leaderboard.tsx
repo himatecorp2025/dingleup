@@ -48,7 +48,6 @@ const Leaderboard = () => {
           table: 'weekly_rankings'
         },
         () => {
-          console.log('[Leaderboard] Real-time update received, refreshing...');
           fetchLeaderboard();
         }
       )
