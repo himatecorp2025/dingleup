@@ -119,7 +119,8 @@ const GamePreview = () => {
       setHasAutoStarted(true);
       startGame();
     }
-  }, [profile, profileLoading, hasAutoStarted, isStartingGame]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState]);
 
   const startGame = async () => {
     if (!profile || isStartingGame) return;
