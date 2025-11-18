@@ -87,40 +87,76 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
     setClaiming(true);
     try {
-      // Call new idempotent claim-daily-gift edge function
-      // Supabase automatically includes Authorization header
-      const { data, error } = await supabase.functions.invoke('claim-daily-gift');
+      // Get current session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (error) throw error;
-      
-      if (data.success) {
+      if (sessionError || !session) {
         toast({
-          title: `🎁 Napi ajándék átvéve!`,
-          description: `${data.grantedCoins} aranyérme a tiéd!`,
-        });
-        
-        setCanClaim(false);
-        setShowPopup(false);
-        
-        // Mark as dismissed in session storage
-        const today = new Date().toISOString().split('T')[0];
-        sessionStorage.setItem(`daily_gift_dismissed_${today}`, 'true');
-        
-        // Track successful claim
-        trackEvent('daily_gift_claimed', 'daily', data.grantedCoins);
-        
-        // Refetch wallet to update UI immediately
-        if (refetchWallet) await refetchWallet();
-        
-        return true;
-      } else {
-        toast({
-          title: 'Hiba',
-          description: data.error || 'Nem sikerült átvenni az ajándékot.',
+          title: 'Nincs bejelentkezve',
+          description: 'Jelentkezz be újra.',
           variant: 'destructive'
         });
+        setClaiming(false);
         return false;
       }
+
+      // Call idempotent claim-daily-gift edge function with explicit Authorization header
+      const { data, error } = await supabase.functions.invoke('claim-daily-gift', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+      
+      if (error) {
+        console.error('[DAILY-GIFT] Error claiming:', error);
+        toast({
+          title: 'Hiba',
+          description: 'Valami hiba történt. Próbáld újra később.',
+          variant: 'destructive'
+        });
+        setClaiming(false);
+        return false;
+      }
+      
+      if (!data || !data.success) {
+        // Handle specific error messages
+        if (data?.error === 'Már átvettél ma ajándékot') {
+          toast({
+            title: 'Már átvéve',
+            description: 'Már átvetted a mai ajándékot. Gyere vissza holnap!',
+            variant: 'default'
+          });
+        } else {
+          toast({
+            title: 'Hiba',
+            description: data?.error || 'Valami hiba történt. Próbáld újra később.',
+            variant: 'destructive'
+          });
+        }
+        setClaiming(false);
+        return false;
+      }
+
+      // Success - reward has been claimed
+      toast({
+        title: `🎁 Napi ajándék átvéve!`,
+        description: `${data.grantedCoins} aranyérme a tiéd!`,
+      });
+      
+      setCanClaim(false);
+      setShowPopup(false);
+      
+      // Mark as dismissed in session storage
+      const today = new Date().toISOString().split('T')[0];
+      sessionStorage.setItem(`daily_gift_dismissed_${today}`, 'true');
+      
+      // Track successful claim
+      trackEvent('daily_gift_claimed', 'daily', data.grantedCoins);
+      
+      // Refetch wallet to update UI immediately
+      if (refetchWallet) await refetchWallet();
+      
+      return true;
     } catch (error) {
       toast({
         title: 'Hiba',
