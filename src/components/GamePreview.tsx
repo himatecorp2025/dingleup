@@ -94,6 +94,10 @@ const GamePreview = () => {
   const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const [errorBannerMessage, setErrorBannerMessage] = useState('');
   const [questionVisible, setQuestionVisible] = useState(true);
+  
+  // Game start guard - prevents multiple simultaneous starts
+  const [isStartingGame, setIsStartingGame] = useState(false);
+  const [hasAutoStarted, setHasAutoStarted] = useState(false);
 
 
   // Auth check
@@ -107,16 +111,20 @@ const GamePreview = () => {
     });
   }, [navigate]);
 
-  // Auto-start game when profile is ready
+  // Auto-start game when profile is ready - ONCE only
   useEffect(() => {
-    if (profile && !profileLoading && questions.length === 0 && gameState === 'playing') {
+    if (profile && !profileLoading && questions.length === 0 && gameState === 'playing' && !hasAutoStarted && !isStartingGame) {
       console.log('[GamePreview] Auto-starting game with mixed questions');
+      setHasAutoStarted(true);
       startGame();
     }
-  }, [profile, profileLoading]);
+  }, [profile, profileLoading, hasAutoStarted, isStartingGame]);
 
   const startGame = async () => {
-    if (!profile) return;
+    if (!profile || isStartingGame) return;
+    
+    console.log('[GamePreview] Starting game - setting isStartingGame guard');
+    setIsStartingGame(true);
 
     try {
       await supabase.rpc('reset_game_helps');
@@ -127,6 +135,7 @@ const GamePreview = () => {
     const canPlay = await spendLife();
     if (!canPlay) {
       toast.error('Nincs elég életed a játék indításához!');
+      setIsStartingGame(false);
       navigate('/dashboard');
       return;
     }
@@ -175,6 +184,10 @@ const GamePreview = () => {
     setQuestionStartTime(Date.now());
     setCanSwipe(true);
     setIsAnimating(false);
+    
+    // Clear starting guard after game is fully initialized
+    setIsStartingGame(false);
+    console.log('[GamePreview] Game started successfully, guard cleared');
   };
 
   // Background detection - exit game if app goes to background
