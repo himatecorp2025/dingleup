@@ -232,6 +232,13 @@ export type Database = {
             foreignKeyName: "conversion_events_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "conversion_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -354,6 +361,13 @@ export type Database = {
           viewport_width?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "device_geo_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "device_geo_analytics_user_id_fkey"
             columns: ["user_id"]
@@ -536,6 +550,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "error_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "error_logs_user_id_fkey"
             columns: ["user_id"]
@@ -786,6 +807,13 @@ export type Database = {
             foreignKeyName: "game_question_analytics_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "game_question_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -836,6 +864,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "game_results_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "game_results_user_id_fkey"
             columns: ["user_id"]
@@ -963,6 +998,13 @@ export type Database = {
             foreignKeyName: "invitations_invited_user_id_fkey"
             columns: ["invited_user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "invitations_invited_user_id_fkey"
+            columns: ["invited_user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -972,6 +1014,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "public_profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_inviter_id_fkey"
+            columns: ["inviter_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "invitations_inviter_id_fkey"
@@ -1300,6 +1349,13 @@ export type Database = {
             foreignKeyName: "performance_metrics_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "performance_metrics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1521,6 +1577,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "questions"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "question_likes_user_id_fkey"
@@ -1763,6 +1826,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "session_details_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "session_details_user_id_fkey"
             columns: ["user_id"]
@@ -2068,6 +2138,13 @@ export type Database = {
             foreignKeyName: "user_cohorts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "user_cohorts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -2130,6 +2207,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_engagement_scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "user_engagement_scores_user_id_fkey"
             columns: ["user_id"]
@@ -2253,6 +2337,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "wallet_ledger_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "wallet_ledger_user_id_fkey"
             columns: ["user_id"]
@@ -2407,6 +2498,13 @@ export type Database = {
             foreignKeyName: "weekly_rankings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "leaderboard_cache"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "weekly_rankings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -2518,6 +2616,18 @@ export type Database = {
           error_type: string | null
           last_occurrence: string | null
           page_route: string | null
+        }
+        Relationships: []
+      }
+      leaderboard_cache: {
+        Row: {
+          avatar_url: string | null
+          avg_response_time: number | null
+          country_code: string | null
+          country_rank: number | null
+          total_correct_answers: number | null
+          user_id: string | null
+          username: string | null
         }
         Relationships: []
       }
@@ -2684,6 +2794,7 @@ export type Database = {
         Returns: Json
       }
       refresh_admin_stats: { Args: never; Returns: undefined }
+      refresh_leaderboard_cache: { Args: never; Returns: undefined }
       refresh_leaderboard_public_cache: { Args: never; Returns: undefined }
       regenerate_invitation_code: { Args: never; Returns: string }
       regenerate_lives: { Args: never; Returns: undefined }
