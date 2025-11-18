@@ -55,7 +55,6 @@ export const usePerformanceAnalytics = () => {
 
       setAnalytics(data || null);
     } catch (err) {
-      console.error('[Performance] fetch error:', err);
       if (!initialLoadRef.current) setError('Failed to load performance analytics');
     } finally {
       if (!initialLoadRef.current && !background) setLoading(false);
@@ -74,7 +73,6 @@ export const usePerformanceAnalytics = () => {
         schema: 'public',
         table: 'performance_metrics'
       }, () => {
-        console.log('[Performance] Metrics changed, background refresh');
         fetchPerformanceAnalytics(true);
       })
       .subscribe();
@@ -86,7 +84,6 @@ export const usePerformanceAnalytics = () => {
         schema: 'public',
         table: 'error_logs'
       }, () => {
-        console.log('[Performance] Errors changed, background refresh');
         fetchPerformanceAnalytics(true);
       })
       .subscribe();

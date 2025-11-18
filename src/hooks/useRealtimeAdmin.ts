@@ -30,8 +30,6 @@ export const useRealtimeAdmin = ({ onDataChange, enabled = true }: UseRealtimeAd
   useEffect(() => {
     if (!enabled) return;
 
-    console.log('[RealtimeAdmin] Setting up optimized realtime subscriptions...');
-
     // Single channel for all admin data - much more efficient
     channelRef.current = supabase
       .channel('admin-dashboard-all')
@@ -41,7 +39,6 @@ export const useRealtimeAdmin = ({ onDataChange, enabled = true }: UseRealtimeAd
         schema: 'public',
         table: 'profiles'
       }, (payload) => {
-        console.log('[RealtimeAdmin] Profile changed:', payload.eventType);
         throttledCallback();
       })
       // Purchases changes
@@ -50,7 +47,6 @@ export const useRealtimeAdmin = ({ onDataChange, enabled = true }: UseRealtimeAd
         schema: 'public',
         table: 'purchases'
       }, (payload) => {
-        console.log('[RealtimeAdmin] Purchase changed:', payload.eventType);
         throttledCallback();
       })
       // Invitations changes
@@ -59,7 +55,6 @@ export const useRealtimeAdmin = ({ onDataChange, enabled = true }: UseRealtimeAd
         schema: 'public',
         table: 'invitations'
       }, (payload) => {
-        console.log('[RealtimeAdmin] Invitation changed:', payload.eventType);
         throttledCallback();
       })
       // Reports changes
@@ -68,7 +63,6 @@ export const useRealtimeAdmin = ({ onDataChange, enabled = true }: UseRealtimeAd
         schema: 'public',
         table: 'reports'
       }, (payload) => {
-        console.log('[RealtimeAdmin] Report changed:', payload.eventType);
         throttledCallback();
       })
       // Friendships changes
@@ -77,15 +71,11 @@ export const useRealtimeAdmin = ({ onDataChange, enabled = true }: UseRealtimeAd
         schema: 'public',
         table: 'friendships'
       }, (payload) => {
-        console.log('[RealtimeAdmin] Friendship changed:', payload.eventType);
         throttledCallback();
       })
-      .subscribe((status) => {
-        console.log('[RealtimeAdmin] Subscription status:', status);
-      });
+      .subscribe();
 
     return () => {
-      console.log('[RealtimeAdmin] Cleaning up realtime subscriptions');
       if (throttleTimeoutRef.current) {
         clearTimeout(throttleTimeoutRef.current);
       }

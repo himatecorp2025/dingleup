@@ -27,24 +27,18 @@ export const useBroadcastChannel = ({
   const channelRef = useRef<RealtimeChannel | null>(null);
 
   const handleBroadcast = useCallback((payload: any) => {
-    console.log('[Broadcast] Received:', payload);
     onMessage(payload);
   }, [onMessage]);
 
   useEffect(() => {
     if (!enabled) return;
 
-    console.log('[Broadcast] Setting up channel:', channelName);
-
     channelRef.current = supabase
       .channel(channelName)
       .on('broadcast', { event: 'message' }, handleBroadcast)
-      .subscribe((status) => {
-        console.log('[Broadcast] Status:', status);
-      });
+      .subscribe();
 
     return () => {
-      console.log('[Broadcast] Cleaning up channel:', channelName);
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current);
       }
@@ -54,7 +48,6 @@ export const useBroadcastChannel = ({
   // Send broadcast message
   const broadcast = useCallback(async (type: string, payload: any) => {
     if (!channelRef.current) {
-      console.warn('[Broadcast] Channel not ready');
       return false;
     }
 
@@ -70,10 +63,8 @@ export const useBroadcastChannel = ({
         event: 'message',
         payload: message,
       });
-      console.log('[Broadcast] Sent:', message);
       return true;
     } catch (error) {
-      console.error('[Broadcast] Send failed:', error);
       return false;
     }
   }, []);

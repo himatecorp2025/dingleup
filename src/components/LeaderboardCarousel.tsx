@@ -33,7 +33,6 @@ export const LeaderboardCarousel = () => {
           table: 'weekly_rankings'
         },
         () => {
-          console.log('[LeaderboardCarousel] Real-time update received, refreshing...');
           refresh();
         }
       )
@@ -106,7 +105,6 @@ export const LeaderboardCarousel = () => {
       const { data: topRankings, error: rankingsError } = rankingsResult;
       
       if (rankingsError) {
-        console.error('[LeaderboardCarousel] rankings fetch error:', rankingsError);
         return [];
       }
       

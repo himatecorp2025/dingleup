@@ -10,7 +10,6 @@ export const ScrollInspector = () => {
       // Ctrl+Alt+S
       if (e.ctrlKey && e.altKey && e.key === 's') {
         setVisible(prev => !prev);
-        console.log('[ScrollInspector] Toggled:', !visible);
       }
     };
 

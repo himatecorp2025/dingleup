@@ -70,20 +70,13 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
           setShowPopup(true);
           trackEvent('popup_impression', 'daily');
         } else {
-          console.log('[DailyGift] User dismissed/claimed in this session, not auto-showing');
           setShowPopup(false);
         }
       } else {
         setShowPopup(false);
       }
-
-      if (import.meta.env.DEV) {
-        console.log('[DailyGift] Check complete:', { canClaimNow, day: currentIndex + 1, baseReward, dismissedToday });
-      }
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('[DailyGift] Error checking daily gift:', error);
-      }
+      // Silent fail
     }
   };
 
@@ -91,7 +84,6 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (canClaim) {
       setShowPopup(true);
       trackEvent('daily_gift_popup_shown', 'daily');
-      console.log('[DailyGift] Manually showing popup for day', weeklyEntryCount + 1, 'reward:', nextReward);
     }
   };
 

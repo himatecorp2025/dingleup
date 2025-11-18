@@ -26,9 +26,8 @@ export const useActivityTracker = (source: ActivitySource = 'route_view') => {
       
       try {
         // CRITICAL: Get fresh session with explicit token for authentication
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         if (sessionError || !session?.access_token) {
-          console.log('[ActivityTracker] No valid session, skipping ping');
           return;
         }
 
@@ -43,7 +42,7 @@ export const useActivityTracker = (source: ActivitySource = 'route_view') => {
           }
         });
       } catch (error) {
-        console.error('[ActivityTracker] Failed to send ping:', error);
+        // Silent fail
       }
     }
   };
