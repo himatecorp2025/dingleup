@@ -32,8 +32,8 @@ const Game = () => {
   // Wait for audio store to load before rendering game (with timeout fallback)
   if (!loaded && !loadTimeout) {
     return (
-      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-        <div className="text-white text-lg">Betöltés...</div>
+      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-primary-dark via-primary to-primary-darker">
+        <div className="text-foreground text-lg">Betöltés...</div>
       </div>
     );
   }
@@ -54,17 +54,17 @@ const Game = () => {
             pointerEvents: 'none'
           }}
         />
-        <div className="max-w-2xl w-full bg-black/80 backdrop-blur-sm rounded-2xl p-8 text-center border-2 border-blue-500/50 relative z-10">
-          <Smartphone className="w-24 h-24 mx-auto mb-6 text-blue-500" />
-          <h1 className="text-4xl font-black text-white mb-4">Mobil Játék</h1>
-          <p className="text-xl text-white/70 mb-8">
+        <div className="max-w-2xl w-full bg-background/80 backdrop-blur-sm rounded-2xl p-8 text-center border-2 border-primary/50 relative z-10">
+          <Smartphone className="w-24 h-24 mx-auto mb-6 text-primary" />
+          <h1 className="text-4xl font-black text-foreground mb-4">Mobil Játék</h1>
+          <p className="text-xl text-foreground/70 mb-8">
             Ez a játék kizárólag mobil nézetben érhető el. 
             Kérjük, nyissa meg telefonján vagy szűkítse le a böngésző ablakát!
           </p>
           <Button 
             onClick={() => navigate('/')}
             size="lg"
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-primary hover:bg-primary/90"
           >
             Vissza a főoldalra
           </Button>

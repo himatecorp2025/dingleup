@@ -14,31 +14,31 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
   // Color schemes per type
   const colorSchemes = {
     rank: {
-      gradientOuter: 'from-purple-700 via-purple-600 to-purple-900',
-      gradientMiddle: 'from-purple-600 via-purple-500 to-purple-800',
-      gradientInner: 'from-purple-500 via-purple-600 to-purple-700',
-      borderColor: 'border-yellow-400',
-      shadowColor: 'shadow-[0_0_20px_rgba(168,85,247,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
-      glowColor: 'rgba(168,85,247,0.4)',
-      iconColor: '#fbbf24', // yellow-400
+      gradientOuter: 'from-primary-dark via-primary to-primary-darker',
+      gradientMiddle: 'from-primary via-primary-glow to-primary-dark',
+      gradientInner: 'from-primary-glow via-primary to-primary-dark',
+      borderColor: 'border-accent',
+      shadowColor: 'shadow-[0_0_20px_hsl(var(--primary)/0.6),0_8px_25px_rgba(0,0,0,0.5)]',
+      glowColor: 'hsl(var(--primary) / 0.4)',
+      iconColor: 'hsl(var(--accent))',
     },
     coins: {
-      gradientOuter: 'from-yellow-600 via-yellow-500 to-yellow-800',
-      gradientMiddle: 'from-yellow-500 via-yellow-400 to-yellow-700',
-      gradientInner: 'from-yellow-400 via-yellow-500 to-yellow-600',
-      borderColor: 'border-yellow-300',
-      shadowColor: 'shadow-[0_0_20px_rgba(234,179,8,0.7),0_8px_25px_rgba(0,0,0,0.5)]',
-      glowColor: 'rgba(234,179,8,0.5)',
-      iconColor: '#ffffff',
+      gradientOuter: 'from-accent-dark via-accent to-accent-darker',
+      gradientMiddle: 'from-accent via-accent-glow to-accent-dark',
+      gradientInner: 'from-accent-glow via-accent to-accent-dark',
+      borderColor: 'border-accent-glow',
+      shadowColor: 'shadow-[0_0_20px_hsl(var(--accent)/0.7),0_8px_25px_rgba(0,0,0,0.5)]',
+      glowColor: 'hsl(var(--accent) / 0.5)',
+      iconColor: 'hsl(var(--foreground))',
     },
     lives: {
-      gradientOuter: 'from-red-700 via-red-600 to-red-900',
-      gradientMiddle: 'from-red-600 via-red-500 to-red-800',
-      gradientInner: 'from-red-500 via-red-600 to-red-700',
-      borderColor: 'border-red-400',
-      shadowColor: 'shadow-[0_0_20px_rgba(239,68,68,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
-      glowColor: 'rgba(239,68,68,0.4)',
-      iconColor: '#ffffff',
+      gradientOuter: 'from-destructive-dark via-destructive to-destructive-darker',
+      gradientMiddle: 'from-destructive via-destructive-glow to-destructive-dark',
+      gradientInner: 'from-destructive-glow via-destructive to-destructive-dark',
+      borderColor: 'border-destructive-glow',
+      shadowColor: 'shadow-[0_0_20px_hsl(var(--destructive)/0.6),0_8px_25px_rgba(0,0,0,0.5)]',
+      glowColor: 'hsl(var(--destructive) / 0.4)',
+      iconColor: 'hsl(var(--foreground))',
     },
   };
 
@@ -75,9 +75,9 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <circle cx="12" cy="12" r="9" fill={color} stroke="#d97706" strokeWidth="2"/>
-            <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
-            <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
+            <circle cx="12" cy="12" r="9" fill={color} stroke="hsl(var(--accent-dark))" strokeWidth="2"/>
+            <circle cx="12" cy="12" r="6" fill="none" stroke="hsl(var(--accent-dark))" strokeWidth="1.5" opacity="0.5"/>
+            <text x="12" y="16" textAnchor="middle" fill="hsl(var(--accent-dark))" fontSize="10" fontWeight="bold">$</text>
           </svg>
         );
       case 'lives':
@@ -91,7 +91,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
           >
             <path
               d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-              stroke="#dc2626"
+              stroke="hsl(var(--destructive))"
               strokeWidth="1.5"
             />
           </svg>

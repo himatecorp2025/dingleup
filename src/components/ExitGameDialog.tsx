@@ -43,13 +43,13 @@ export const ExitGameDialog = ({
             <div className="absolute inset-0 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(8px)', background: 'rgba(0,0,0,0.4)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-400/50 shadow-lg shadow-purple-500/30" aria-hidden />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-dark via-primary to-primary-darker border-2 border-primary-glow/50 shadow-lg shadow-primary/30" aria-hidden />
             
             {/* MIDDLE FRAME */}
-            <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-primary via-primary-glow to-primary-dark" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-purple-500/40 via-purple-600/40 to-purple-700/40" style={{ boxShadow: 'inset 0 10px 25px rgba(255,255,255,0.2), inset 0 -10px 25px rgba(0,0,0,0.5)' }} aria-hidden />
+            <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-primary-glow/40 via-primary/40 to-primary-dark/40" style={{ boxShadow: 'inset 0 10px 25px rgba(255,255,255,0.2), inset 0 -10px 25px rgba(0,0,0,0.5)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 70% at 30% 20%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 65%)' }} aria-hidden />
@@ -58,24 +58,24 @@ export const ExitGameDialog = ({
             <div className="absolute inset-[5px] flex items-center justify-center rounded-full overflow-hidden">
               <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                 {/* Face circle - transparent to show gradient behind */}
-                <circle cx="50" cy="50" r="40" fill="rgba(139, 92, 246, 0.3)" stroke="none"/>
+                <circle cx="50" cy="50" r="40" fill="hsl(var(--primary) / 0.3)" stroke="none"/>
                 
                 {/* Sad eyes with tears */}
-                <ellipse cx="35" cy="40" rx="4" ry="7" fill="#1f2937"/>
-                <ellipse cx="65" cy="40" rx="4" ry="7" fill="#1f2937"/>
+                <ellipse cx="35" cy="40" rx="4" ry="7" fill="hsl(var(--muted))"/>
+                <ellipse cx="65" cy="40" rx="4" ry="7" fill="hsl(var(--muted))"/>
                 
                 {/* Tears - animated with glow */}
                 <g filter="url(#tearGlow)">
-                  <path d="M 35 47 Q 34 53, 33 59 Q 32 63, 34 65 Q 36 63, 35 59 Q 34 53, 35 47 Z" fill="#60a5fa" opacity="0.8">
+                  <path d="M 35 47 Q 34 53, 33 59 Q 32 63, 34 65 Q 36 63, 35 59 Q 34 53, 35 47 Z" fill="hsl(var(--primary))" opacity="0.8">
                     <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
                   </path>
-                  <path d="M 65 47 Q 64 53, 63 59 Q 62 63, 64 65 Q 66 63, 65 59 Q 64 53, 65 47 Z" fill="#60a5fa" opacity="0.8">
+                  <path d="M 65 47 Q 64 53, 63 59 Q 62 63, 64 65 Q 66 63, 65 59 Q 64 53, 65 47 Z" fill="hsl(var(--primary))" opacity="0.8">
                     <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
                   </path>
                 </g>
                 
                 {/* Sad mouth - curved down with thicker stroke */}
-                <path d="M 30 68 Q 50 58, 70 68" stroke="#1f2937" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+                <path d="M 30 68 Q 50 58, 70 68" stroke="hsl(var(--muted))" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
                 
                 {/* Inner highlight on face for depth */}
                 <circle cx="38" cy="32" r="3" fill="rgba(255,255,255,0.3)"/>
