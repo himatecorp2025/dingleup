@@ -17,8 +17,6 @@ export const useGameRealtimeUpdates = (
     `wallet-updates-${userId}`,
     'wallet_changed',
     useCallback((payload: any) => {
-      console.log('[Game RT] Wallet update received:', payload);
-      
       if (payload.coins !== undefined) {
         onCoinsUpdate(payload.coins);
       }
@@ -50,8 +48,6 @@ export const useGameRealtimeUpdates = (
         table: 'profiles',
         filter: `id=eq.${userId}`
       }, (payload) => {
-        console.log('[Game RT] Profile DB update:', payload);
-        
         const newProfile = payload.new as any;
         
         if (newProfile.coins !== undefined) {
@@ -90,8 +86,6 @@ export const broadcastWalletChange = async (
         event: 'wallet_changed',
         payload: { coins, lives, source, timestamp: Date.now() }
       });
-      
-      console.log('[Game RT] Wallet change broadcasted:', { coins, lives, source });
     }
   });
 

@@ -31,17 +31,14 @@ export const useRealtimeWallet = ({
     // Only update changed fields
     if (payload.old?.coins !== payload.new?.coins) {
       update.coins = payload.new.coins;
-      console.log('[RealtimeWallet] Coins updated:', update.coins);
     }
     
     if (payload.old?.lives !== payload.new?.lives) {
       update.lives = payload.new.lives;
-      console.log('[RealtimeWallet] Lives updated:', update.lives);
     }
     
     if (payload.old?.max_lives !== payload.new?.max_lives) {
       update.maxLives = payload.new.max_lives;
-      console.log('[RealtimeWallet] Max lives updated:', update.maxLives);
     }
 
     if (Object.keys(update).length > 0) {
@@ -52,8 +49,6 @@ export const useRealtimeWallet = ({
   useEffect(() => {
     if (!userId || !enabled) return;
 
-    console.log('[RealtimeWallet] Setting up wallet realtime for user:', userId);
-
     const channel: RealtimeChannel = supabase
       .channel(`wallet-${userId}`)
       .on('postgres_changes', {
@@ -62,12 +57,9 @@ export const useRealtimeWallet = ({
         table: 'profiles',
         filter: `id=eq.${userId}`
       }, handleWalletChange)
-      .subscribe((status) => {
-        console.log('[RealtimeWallet] Subscription status:', status);
-      });
+      .subscribe();
 
     return () => {
-      console.log('[RealtimeWallet] Cleaning up');
       supabase.removeChannel(channel);
     };
   }, [userId, enabled, handleWalletChange]);
