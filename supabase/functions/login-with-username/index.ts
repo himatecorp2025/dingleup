@@ -46,7 +46,6 @@ serve(async (req) => {
       .maybeSingle();
 
     if (profileError) {
-      console.error('[login-with-username] Profile lookup error:', profileError);
       return new Response(
         JSON.stringify({ error: 'Hiba történt a bejelentkezés során' }),
         { 
@@ -57,7 +56,6 @@ serve(async (req) => {
     }
 
     if (!profile) {
-      console.log('[login-with-username] User not found:', username);
       return new Response(
         JSON.stringify({ error: 'Helytelen felhasználónév vagy jelszó' }),
         { 
@@ -71,7 +69,6 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseAdmin.auth.admin.getUserById(profile.id);
 
     if (userError || !user?.email) {
-      console.error('[login-with-username] User email lookup error:', userError);
       return new Response(
         JSON.stringify({ error: 'Hiba történt a bejelentkezés során' }),
         { 
@@ -80,8 +77,6 @@ serve(async (req) => {
         }
       );
     }
-
-    console.log('[login-with-username] Username found, returning email for user:', username);
 
     // Return email so client can sign in
     return new Response(
@@ -94,7 +89,6 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[login-with-username] Unexpected error:', error);
     return new Response(
       JSON.stringify({ error: 'Váratlan hiba történt' }),
       { 

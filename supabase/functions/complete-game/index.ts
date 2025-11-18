@@ -109,7 +109,6 @@ Deno.serve(async (req) => {
       });
 
     if (insertError) {
-      console.error('[CompleteGame] Insert error:', insertError);
       throw insertError;
     }
 
@@ -131,7 +130,7 @@ Deno.serve(async (req) => {
     });
 
     if (weeklyRankError) {
-      console.error('[CompleteGame] Weekly rankings instant update error:', weeklyRankError);
+      // Ranking update not critical, continue
     }
 
     // Update global_leaderboard using ADMIN client (AGGREGATE LIFETIME TOTAL)
@@ -156,8 +155,7 @@ Deno.serve(async (req) => {
       });
 
     if (leaderboardError) {
-      console.error('[CompleteGame] Leaderboard update warning:', leaderboardError);
-      // Don't throw - leaderboard is not critical
+      // Leaderboard update not critical, continue
     }
 
     return new Response(
@@ -170,7 +168,6 @@ Deno.serve(async (req) => {
     );
 
   } catch (error: any) {
-    console.error('[CompleteGame] Error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Unknown error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
