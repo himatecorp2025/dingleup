@@ -76,17 +76,17 @@ export const FriendsList = ({ userId, onSelectFriend, selectedFriendId }: Friend
 
   if (loading) {
     return (
-      <div className="w-16 flex items-center justify-center bg-black/30 backdrop-blur-sm border-r border-white/10">
-        <div className="w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
+      <div className="w-16 flex items-center justify-center bg-background/30 backdrop-blur-sm border-r border-border/10">
+        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="w-16 flex-shrink-0 bg-black/30 backdrop-blur-sm border-r border-white/10 overflow-y-auto" data-tutorial="friends-menu">
+    <div className="w-16 flex-shrink-0 bg-background/30 backdrop-blur-sm border-r border-border/10 overflow-y-auto" data-tutorial="friends-menu">
       <div className="flex flex-col items-center py-3 gap-3">
         {friends.length === 0 ? (
-          <div className="text-white/40 text-xs px-2 text-center">
+          <div className="text-foreground/40 text-xs px-2 text-center">
             Nincs
           </div>
         ) : (
@@ -97,27 +97,27 @@ export const FriendsList = ({ userId, onSelectFriend, selectedFriendId }: Friend
               className={`
                 relative flex-shrink-0 transition-all
                 ${selectedFriendId === friend.id 
-                  ? 'ring-2 ring-[#D4AF37] scale-110' 
+                  ? 'ring-2 ring-accent scale-110' 
                   : 'hover:scale-105'
                 }
               `}
               title={friend.display_name}
             >
-              <Avatar className="w-12 h-12 border-2 border-white/20">
+              <Avatar className="w-12 h-12 border-2 border-border/20">
                 <AvatarImage src={friend.avatar_url || undefined} />
-                <AvatarFallback className="bg-gradient-to-br from-purple-600 to-purple-800 text-white font-bold text-sm">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary-dark text-foreground font-bold text-sm">
                   {getInitials(friend.display_name)}
                 </AvatarFallback>
               </Avatar>
               
               {/* Online status indicator */}
               {friend.is_online && (
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-black/50 rounded-full" />
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-success border-2 border-background/50 rounded-full" />
               )}
               
               {/* Unread badge */}
               {friend.unread_count > 0 && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#D4AF37] text-black text-xs font-bold rounded-full flex items-center justify-center border-2 border-black/50">
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center border-2 border-background/50">
                   {friend.unread_count > 9 ? '9+' : friend.unread_count}
                 </div>
               )}

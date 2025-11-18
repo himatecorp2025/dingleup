@@ -29,14 +29,14 @@ export const MillionaireAnswer = ({
     return (
       <div className="w-full flex justify-center mb-2 opacity-30">
       <div 
-        className="w-[90%] bg-gray-800/50 border-2 border-gray-600/50 px-3 sm:px-4 md:px-5 py-[18px] sm:py-[28px] md:py-[37px] text-gray-500"
+        className="w-[90%] bg-muted/50 border-2 border-muted/50 px-3 sm:px-4 md:px-5 py-[18px] sm:py-[28px] md:py-[37px] text-muted-foreground"
           style={{
             clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
           }}
         >
           <div className="flex items-center justify-center w-full">
             <div 
-              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gray-700 border-2 border-gray-600 flex items-center justify-center flex-shrink-0 text-sm sm:text-base font-bold font-poppins"
+              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-muted/80 border-2 border-muted flex items-center justify-center flex-shrink-0 text-sm sm:text-base font-bold font-poppins"
               style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
             >
               {letter}:
@@ -49,52 +49,52 @@ export const MillionaireAnswer = ({
     );
   }
 
-  let bgColor = 'bg-slate-900';
-  let borderColor = 'border-yellow-500';
-  let textColor = 'text-white';
-  let letterBg = 'bg-yellow-500';
-  let letterBorder = 'border-yellow-400';
-  let letterText = 'text-gray-100';
+  let bgColor = 'bg-muted/90';
+  let borderColor = 'border-accent';
+  let textColor = 'text-foreground';
+  let letterBg = 'bg-accent';
+  let letterBorder = 'border-accent-dark';
+  let letterText = 'text-accent-foreground';
   
   // Green pulsing animation for correct answer when user selected wrong
   if (showCorrectPulse) {
-    bgColor = 'bg-green-600 animate-pulse';
-    borderColor = 'border-green-400';
-    textColor = 'text-white';
-    letterBg = 'bg-green-300';
-    letterBorder = 'border-green-200';
-    letterText = 'text-gray-900';
+    bgColor = 'bg-success animate-pulse';
+    borderColor = 'border-success/80';
+    textColor = 'text-foreground';
+    letterBg = 'bg-success/30';
+    letterBorder = 'border-success/20';
+    letterText = 'text-foreground';
   }
   
   // Double choice active state (orange background)
   if (isDoubleChoiceActive) {
-    bgColor = 'bg-orange-600';
-    borderColor = 'border-orange-400';
-    textColor = 'text-white';
-    letterBg = 'bg-orange-300';
-    letterBorder = 'border-orange-200';
-    letterText = 'text-gray-900';
+    bgColor = 'bg-accent/80';
+    borderColor = 'border-accent/60';
+    textColor = 'text-foreground';
+    letterBg = 'bg-accent/30';
+    letterBorder = 'border-accent/20';
+    letterText = 'text-foreground';
   }
   
   if (isSelected && !isCorrect && !isWrong) {
-    bgColor = 'bg-orange-600';
-    borderColor = 'border-orange-400';
-    letterBg = 'bg-orange-300';
-    letterBorder = 'border-orange-200';
+    bgColor = 'bg-accent/80';
+    borderColor = 'border-accent/60';
+    letterBg = 'bg-accent/30';
+    letterBorder = 'border-accent/20';
   }
   
   if (isCorrect) {
-    bgColor = 'bg-green-600';
-    borderColor = 'border-green-400';
-    letterBg = 'bg-green-300';
-    letterBorder = 'border-green-200';
+    bgColor = 'bg-success';
+    borderColor = 'border-success/80';
+    letterBg = 'bg-success/30';
+    letterBorder = 'border-success/20';
   }
   
   if (isWrong) {
-    bgColor = 'bg-red-600';
-    borderColor = 'border-red-400';
-    letterBg = 'bg-red-300';
-    letterBorder = 'border-red-200';
+    bgColor = 'bg-destructive';
+    borderColor = 'border-destructive/80';
+    letterBg = 'bg-destructive/30';
+    letterBorder = 'border-destructive/20';
   }
 
   return (
@@ -107,7 +107,7 @@ export const MillionaireAnswer = ({
       >
       {/* BASE SHADOW - Enhanced */}
       <div 
-        className="absolute inset-0 bg-black/80 rounded-2xl" 
+        className="absolute inset-0 bg-background/80 rounded-2xl" 
         style={{ 
           transform: 'translate(8px, 8px) translateZ(-10px)', 
           filter: 'blur(12px)',
