@@ -63,7 +63,6 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       
       // STEP 3: User is eligible - show the dialog (even if dismissed in session, let parent component decide)
       if (canClaimNow && baseReward > 0) {
-        console.log('[DailyGift] User eligible, setting canClaim=true - day', currentIndex + 1, 'reward:', baseReward);
         
         // Only auto-show if NOT dismissed in this session
         if (!dismissedToday) {
@@ -102,8 +101,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
     setClaiming(true);
     try {
-      // Call weekly-login-reward edge function
-      const { data, error } = await supabase.functions.invoke('weekly-login-reward', {
+      // Call new idempotent claim-daily-gift edge function
+      const { data, error } = await supabase.functions.invoke('claim-daily-gift', {
         headers: {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
         }
@@ -111,59 +110,45 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       
       if (error) throw error;
       
-      if (data.success && !data.throttled) {
+      if (data.success) {
         toast({
-          title: '🎁 Napi bejelentkezési jutalom',
-          description: `${data.login_index}. nap: +${data.gold_awarded} arany${data.lives_awarded > 0 ? ` és +${data.lives_awarded} élet` : ''}`,
+          title: `🎁 Napi ajándék átvéve!`,
+          description: `${data.grantedCoins} aranyérme a tiéd!`,
         });
-
+        
         setCanClaim(false);
         setShowPopup(false);
-        setWeeklyEntryCount(data.login_index);
         
-        // Mark as claimed/dismissed for today (CONSISTENT KEY)
+        // Mark as dismissed in session storage
         const today = new Date().toISOString().split('T')[0];
-        sessionStorage.setItem(`daily_gift_dismissed_${today}`, 'claimed');
+        sessionStorage.setItem(`daily_gift_dismissed_${today}`, 'true');
         
-        // Refetch wallet to update balance
-        if (refetchWallet) {
-          await refetchWallet();
-        }
-
-        // Track claim success
-        trackEvent('daily_gift_claim_succeeded', 'daily');
+        // Track successful claim
+        trackEvent('daily_gift_claimed', 'daily', data.grantedCoins);
         
-        setClaiming(false);
+        // Refetch wallet to update UI immediately
+        if (refetchWallet) await refetchWallet();
+        
         return true;
-      } else if (data.throttled) {
-        toast({
-          title: 'Már igényelted',
-          description: data.message || 'Ma már igényelted a belépési jutalmat',
-        });
-        setShowPopup(false);
-        trackEvent('daily_gift_claim_failed', 'daily');
-        setClaiming(false);
-        return false;
       } else {
         toast({
           title: 'Hiba',
-          description: data.error || 'Nem sikerült az ajándék átvétele',
+          description: data.error || 'Nem sikerült átvenni az ajándékot.',
           variant: 'destructive'
         });
-        setClaiming(false);
         return false;
       }
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error claiming daily gift:', error);
-      }
       toast({
         title: 'Hiba',
-        description: 'Nincs hálózati kapcsolat. Próbáld újra később.',
+        description: 'Valami hiba történt. Próbáld újra később.',
         variant: 'destructive'
       });
-      trackEvent('daily_gift_claim_failed', 'daily');
+      return false;
+    } finally {
       setClaiming(false);
+    }
+  };
       return false;
     }
   };
@@ -213,9 +198,6 @@ const trackEvent = (event: string, type: string, action?: string) => {
       action,
       timestamp: new Date().toISOString()
     });
-  }
   
-  if (import.meta.env.DEV) {
-    console.log(`[Analytics] ${event}`, { type, action });
-  }
-};
+  // Silent analytics tracking - no logging in production
+  };
