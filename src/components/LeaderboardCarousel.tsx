@@ -16,8 +16,10 @@ export const LeaderboardCarousel = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollPausedRef = useRef(false);
   const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countryCodeCacheRef = useRef<string | null>(null);
 
   useEffect(() => {
+    // Azonnal indítjuk a betöltést
     refresh();
     
     // Real-time subscription for weekly_rankings updates
@@ -43,10 +45,8 @@ export const LeaderboardCarousel = () => {
   }, []);
 
   const refresh = async () => {
-    console.log('[LeaderboardCarousel] Refreshing weekly rankings data...');
-    // Only show TOP 100 players from current week's rankings
+    // Azonnali betöltés cache-sel és párhuzamos lekérdezésekkel
     const weeklyData = await fetchFromWeeklyRankings();
-    console.log('[LeaderboardCarousel] fetchFromWeeklyRankings result:', weeklyData.length, 'players');
     setTopPlayers(weeklyData.slice(0, 100));
   };
 
@@ -54,40 +54,56 @@ export const LeaderboardCarousel = () => {
 
   const fetchFromWeeklyRankings = async (): Promise<LeaderboardEntry[]> => {
     try {
-      // Get current user's country code
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        return [];
+      // Cache country code - csak egyszer kérdezzük le
+      let countryCode = countryCodeCacheRef.current;
+      
+      if (!countryCode) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          return [];
+        }
+        
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('country_code')
+          .eq('id', user.id)
+          .single();
+        
+        countryCode = profile?.country_code || 'HU';
+        countryCodeCacheRef.current = countryCode;
       }
-      
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('country_code')
-        .eq('id', user.id)
-        .single();
-      
-      // Fallback to HU if country_code is missing
-      const countryCode = profile?.country_code || 'HU';
       
       const weekStart = getWeekStartInUserTimezone();
       
-      // Get TOP 100 from weekly_rankings with profile data (JOIN)
-      const { data: topRankings, error: rankingsError } = await supabase
-        .from('weekly_rankings')
-        .select(`
-          user_id,
-          total_correct_answers,
-          profiles!inner (
-            username,
-            avatar_url,
-            country_code
-          )
-        `)
-        .eq('week_start', weekStart)
-        .eq('category', 'mixed')
-        .eq('profiles.country_code', countryCode)
-        .order('total_correct_answers', { ascending: false })
-        .limit(100);
+      // Párhuzamos lekérdezések: TOP 100 és fill users egyszerre
+      const [rankingsResult, fillResult] = await Promise.all([
+        supabase
+          .from('weekly_rankings')
+          .select(`
+            user_id,
+            total_correct_answers,
+            profiles!inner (
+              username,
+              avatar_url,
+              country_code
+            )
+          `)
+          .eq('week_start', weekStart)
+          .eq('category', 'mixed')
+          .eq('profiles.country_code', countryCode)
+          .order('total_correct_answers', { ascending: false })
+          .limit(100),
+        
+        // Előre lekérdezzük a fill users-t is párhuzamosan
+        supabase
+          .from('profiles')
+          .select('id, username, avatar_url')
+          .eq('country_code', countryCode)
+          .order('created_at', { ascending: true })
+          .limit(100)
+      ]);
+      
+      const { data: topRankings, error: rankingsError } = rankingsResult;
       
       if (rankingsError) {
         console.error('[LeaderboardCarousel] rankings fetch error:', rankingsError);
@@ -101,21 +117,17 @@ export const LeaderboardCarousel = () => {
         total_correct_answers: row.total_correct_answers || 0
       }));
       
-      // If less than 100, fill with users who haven't played this week (0 points)
+      // Ha kevesebb mint 100, használjuk a párhuzamosan lekérdezett fill users-t
       if (entries.length < 100) {
         const existingUserIds = entries.map(e => e.user_id);
-        const needed = 100 - entries.length;
+        const { data: allFillUsers } = fillResult;
         
-        const { data: fillUsers } = await supabase
-          .from('profiles')
-          .select('id, username, avatar_url')
-          .eq('country_code', countryCode)
-          .not('id', 'in', `(${existingUserIds.join(',')})`)
-          .order('created_at', { ascending: true })
-          .limit(needed);
-        
-        if (fillUsers) {
-          fillUsers.forEach(u => {
+        if (allFillUsers) {
+          const filteredFillUsers = allFillUsers
+            .filter(u => !existingUserIds.includes(u.id))
+            .slice(0, 100 - entries.length);
+          
+          filteredFillUsers.forEach(u => {
             entries.push({
               user_id: u.id,
               username: u.username || 'Player',
