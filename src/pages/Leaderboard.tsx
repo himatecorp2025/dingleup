@@ -99,10 +99,9 @@ const Leaderboard = () => {
         }
       });
 
-      // Sort by total_correct_answers, assign ranks, and return TOP 100
+      // Sort by total_correct_answers, assign ranks, and return ALL players (no TOP 100 limit)
       const rankedData = Array.from(userMap.values())
         .sort((a, b) => b.total_correct_answers - a.total_correct_answers)
-        .slice(0, 100)
         .map((entry, index) => ({
           ...entry,
           rank: index + 1
