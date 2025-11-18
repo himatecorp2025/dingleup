@@ -99,6 +99,7 @@ const GamePreview = () => {
   // Game start guard - prevents multiple simultaneous starts
   const [isStartingGame, setIsStartingGame] = useState(false);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
+  const [videoEnded, setVideoEnded] = useState(false);
 
 
   // Auth check
@@ -909,9 +910,9 @@ const GamePreview = () => {
   }
 
   if (gameState === 'playing') {
-    // Guard: Don't render until questions are loaded
-    if (questions.length === 0) {
-      return <GameLoadingScreen />;
+    // Guard: Don't render until both questions are loaded AND video has ended
+    if (questions.length === 0 || !videoEnded) {
+      return <GameLoadingScreen onVideoEnd={() => setVideoEnded(true)} />;
     }
     
     const currentQuestion = questions[currentQuestionIndex];
