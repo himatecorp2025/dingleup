@@ -60,11 +60,23 @@ serve(async (req) => {
       .from('questions')
       .select('like_count')
       .eq('id', questionId)
-      .single();
+      .maybeSingle();
 
     if (questionError) {
       console.error('[get-question-like-status] Question fetch error:', questionError);
       throw questionError;
+    }
+
+    // If question doesn't exist, return default values
+    if (!question) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          liked: false,
+          question_like_count: 0,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     return new Response(
