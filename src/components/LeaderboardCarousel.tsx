@@ -67,12 +67,43 @@ export const LeaderboardCarousel = () => {
       const countryCode = profile?.country_code || 'HU';
       
       const weekStart = getWeekStartInUserTimezone();
-      const { data, error } = await supabase
+      
+      // First get all weekly_rankings for current week
+      const { data: rankingsData, error: rankingsError } = await supabase
         .from('weekly_rankings')
-        .select('user_id, total_correct_answers, public_profiles:public_profiles!inner(username, avatar_url, country_code)')
+        .select('user_id, total_correct_answers')
         .eq('week_start', weekStart)
-        .eq('public_profiles.country_code', countryCode)
         .order('total_correct_answers', { ascending: false });
+      
+      if (rankingsError) throw rankingsError;
+      if (!rankingsData || rankingsData.length === 0) return [];
+      
+      // Get unique user_ids
+      const uniqueUserIds = [...new Set(rankingsData.map(r => r.user_id))];
+      
+      // Fetch user profiles with country filter
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, username, avatar_url, country_code')
+        .in('id', uniqueUserIds)
+        .eq('country_code', countryCode);
+      
+      if (profilesError) throw profilesError;
+      if (!profilesData || profilesData.length === 0) return [];
+      
+      // Create a map of user profiles
+      const profilesMap = new Map(profilesData.map(p => [p.id, p]));
+      
+      // Combine data
+      const data = rankingsData
+        .filter(r => profilesMap.has(r.user_id))
+        .map(r => ({
+          user_id: r.user_id,
+          total_correct_answers: r.total_correct_answers,
+          public_profiles: profilesMap.get(r.user_id)
+        }));
+      
+      const error = null;
       if (error) throw error;
 
       // Aggregate by user_id - sum all categories for each user
