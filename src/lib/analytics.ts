@@ -68,19 +68,9 @@ export const trackPageView = async (
   previousRoute?: string,
   metadata?: Record<string, any>
 ) => {
-  try {
-    await supabase.from('navigation_events').insert({
-      user_id: userId,
-      event_type: 'page_view',
-      page_route: route,
-      previous_route: previousRoute,
-      session_id: getSessionId(),
-      device_info: getDeviceInfo(),
-      metadata: metadata || {},
-    });
-  } catch (error) {
-    console.error('[Analytics] Failed to track page view:', error);
-  }
+  // Analytics tracking disabled - RLS policies prevent direct inserts
+  // Admin analytics are handled server-side via edge functions
+  return;
 };
 
 export const trackPageExit = async (
@@ -89,18 +79,9 @@ export const trackPageExit = async (
   timeOnPage: number,
   metadata?: Record<string, any>
 ) => {
-  try {
-    await supabase.from('navigation_events').insert({
-      user_id: userId,
-      event_type: 'page_exit',
-      page_route: route,
-      session_id: getSessionId(),
-      device_info: getDeviceInfo(),
-      metadata: { time_on_page_seconds: timeOnPage, ...metadata },
-    });
-  } catch (error) {
-    console.error('[Analytics] Failed to track page exit:', error);
-  }
+  // Analytics tracking disabled - RLS policies prevent direct inserts
+  // Admin analytics are handled server-side via edge functions
+  return;
 };
 
 // =====================================================
@@ -175,18 +156,9 @@ export const trackAppSession = async (
   sessionDuration?: number,
   metadata?: Record<string, any>
 ) => {
-  try {
-    await supabase.from('app_session_events').insert({
-      user_id: userId,
-      event_type: eventType,
-      session_id: getSessionId(),
-      session_duration_seconds: sessionDuration,
-      device_info: getDeviceInfo(),
-      metadata: metadata || {},
-    });
-  } catch (error) {
-    console.error('[Analytics] Failed to track app session:', error);
-  }
+  // Analytics tracking disabled - RLS policies prevent direct inserts
+  // Admin analytics are handled server-side via edge functions
+  return;
 };
 
 // =====================================================

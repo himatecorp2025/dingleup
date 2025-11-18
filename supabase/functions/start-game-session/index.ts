@@ -37,27 +37,32 @@ serve(async (req) => {
       );
     }
 
-    const { category } = await req.json();
-
-    // Validate category
-    const validCategories = ['culture', 'finance', 'health', 'history', 'general'];
-    if (!validCategories.includes(category)) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid category' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Load questions from the appropriate file
+    // Category is always "mixed" - load all questions from all files
     let questions: Question[] = [];
     
     try {
-      const questionFile = category === 'general' 
-        ? '/var/task/questions1.json' 
-        : `/var/task/questions-${category}.json`;
+      const questionFiles = [
+        '/var/task/questions1.json',
+        '/var/task/questions-culture.json',
+        '/var/task/questions-finance.json',
+        '/var/task/questions-health.json',
+        '/var/task/questions-history.json'
+      ];
       
-      const fileContent = await Deno.readTextFile(questionFile);
-      questions = JSON.parse(fileContent);
+      for (const file of questionFiles) {
+        try {
+          const fileContent = await Deno.readTextFile(file);
+          const fileQuestions = JSON.parse(fileContent);
+          questions = questions.concat(fileQuestions);
+        } catch (fileError) {
+          // Continue loading other files if one fails
+          console.warn(`Warning: Could not load ${file}:`, fileError);
+        }
+      }
+
+      if (questions.length === 0) {
+        throw new Error('No questions loaded from any file');
+      }
     } catch (error) {
       console.error('Error loading questions:', error);
       return new Response(
@@ -75,7 +80,7 @@ serve(async (req) => {
     const sessionData = {
       user_id: user.id,
       session_id: sessionId,
-      category,
+      category: 'mixed', // Always use "mixed" category
       questions: selectedQuestions.map(q => ({
         question: q.question,
         correctAnswer: q.correctAnswer,

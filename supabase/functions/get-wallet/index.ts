@@ -78,18 +78,14 @@ serve(async (req) => {
       let lastRegenMs = new Date(profile.last_life_regeneration).getTime();
       const regenIntervalMs = effectiveRegenMinutes * 60 * 1000;
 
-      // Guard: if last_life_regeneration is in the future, normalize it to now (no tolerance)
-      if (lastRegenMs > nowMs) {
-        console.log('[GetWallet] Future timestamp detected, normalizing to now:', {
-          lastRegenMs: new Date(lastRegenMs).toISOString(),
-          nowMs: new Date(nowMs).toISOString()
-        });
-        lastRegenMs = nowMs;
-        await supabase
-          .from('profiles')
-          .update({ last_life_regeneration: new Date(lastRegenMs).toISOString() })
-          .eq('id', user.id);
-      }
+    // Guard: if last_life_regeneration is in the future, normalize it to now (no tolerance)
+    if (lastRegenMs > nowMs) {
+      lastRegenMs = nowMs;
+      await supabase
+        .from('profiles')
+        .update({ last_life_regeneration: new Date(lastRegenMs).toISOString() })
+        .eq('id', user.id);
+    }
 
       // Ensure timeSinceLastRegen is never negative
       const timeSinceLastRegen = Math.max(0, nowMs - lastRegenMs);
