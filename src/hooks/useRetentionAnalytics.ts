@@ -41,7 +41,6 @@ export const useRetentionAnalytics = () => {
 
       setAnalytics(data || null);
     } catch (err) {
-      console.error('[Retention] fetch error:', err);
       if (!initialLoadRef.current) setError('Failed to load retention analytics');
     } finally {
       if (!initialLoadRef.current && !background) setLoading(false);
@@ -60,7 +59,6 @@ export const useRetentionAnalytics = () => {
         schema: 'public',
         table: 'app_session_events'
       }, () => {
-        console.log('[Retention] Sessions changed, background refresh');
         fetchRetentionAnalytics(true);
       })
       .subscribe();
@@ -72,7 +70,6 @@ export const useRetentionAnalytics = () => {
         schema: 'public',
         table: 'profiles'
       }, () => {
-        console.log('[Retention] Profiles changed, background refresh');
         fetchRetentionAnalytics(true);
       })
       .subscribe();

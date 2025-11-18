@@ -45,8 +45,6 @@ export default function PlayerBehaviorsTab() {
 
   // Realtime subscription for instant updates
   useEffect(() => {
-    console.log('[PlayerBehaviors] Setting up realtime subscriptions...');
-    
     fetchStats(); // Initial load
 
     const gameResultsChannel = supabase
@@ -56,12 +54,9 @@ export default function PlayerBehaviorsTab() {
         schema: 'public',
         table: 'game_results'
       }, (payload) => {
-        console.log('[PlayerBehaviors] Game results changed:', payload);
         fetchStats();
       })
-      .subscribe((status) => {
-        console.log('[PlayerBehaviors] Game results channel status:', status);
-      });
+      .subscribe();
 
     const helpUsageChannel = supabase
       .channel('player-behaviors-help-usage-realtime')
@@ -70,15 +65,11 @@ export default function PlayerBehaviorsTab() {
         schema: 'public',
         table: 'game_help_usage'
       }, (payload) => {
-        console.log('[PlayerBehaviors] Help usage changed:', payload);
         fetchStats();
       })
-      .subscribe((status) => {
-        console.log('[PlayerBehaviors] Help usage channel status:', status);
-      });
+      .subscribe();
 
     return () => {
-      console.log('[PlayerBehaviors] Cleaning up realtime subscriptions');
       supabase.removeChannel(gameResultsChannel);
       supabase.removeChannel(helpUsageChannel);
     };
@@ -109,8 +100,6 @@ export default function PlayerBehaviorsTab() {
       const { start, end } = getDateRange();
       const startISO = start ? start.toISOString() : null;
       const endISO = end ? end.toISOString() : null;
-
-      console.log('[PlayerBehaviors] Fetching stats with range:', { startISO, endISO });
 
       const { data, error } = await supabase.functions.invoke('admin-player-behaviors', {
         body: { 

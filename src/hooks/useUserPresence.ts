@@ -22,7 +22,6 @@ export const useUserPresence = (userId: string | undefined) => {
         table: 'user_presence',
         filter: `user_id=eq.${userId}`
       }, (payload) => {
-        console.log('[useUserPresence] presence changed', payload);
         loadPresence();
       })
       .subscribe();
@@ -45,7 +44,6 @@ export const useUserPresence = (userId: string | undefined) => {
       if (error) throw error;
       setIsOnline(data?.is_online || false);
     } catch (error) {
-      console.error('Error loading presence:', error);
       setIsOnline(false);
     }
   };

@@ -46,7 +46,6 @@ export const useEngagementAnalytics = () => {
 
       setAnalytics(data || null);
     } catch (err) {
-      console.error('[Engagement] fetch error:', err);
       if (!initialLoadRef.current) setError('Failed to load engagement analytics');
     } finally {
       if (!initialLoadRef.current && !background) setLoading(false);
@@ -65,7 +64,6 @@ export const useEngagementAnalytics = () => {
         schema: 'public',
         table: 'app_session_events'
       }, () => {
-        console.log('[Engagement] Sessions changed, background refresh');
         fetchEngagementAnalytics(true);
       })
       .subscribe();
@@ -77,7 +75,6 @@ export const useEngagementAnalytics = () => {
         schema: 'public',
         table: 'feature_usage_events'
       }, () => {
-        console.log('[Engagement] Features changed, background refresh');
         fetchEngagementAnalytics(true);
       })
       .subscribe();

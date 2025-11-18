@@ -84,9 +84,4 @@ const trackPopupEvent = (event: string, type: PopupType, action?: string) => {
       timestamp: new Date().toISOString()
     });
   }
-  
-  // Console log for development
-  if (import.meta.env.DEV) {
-    console.log(`[Analytics] ${event}`, { type, action });
-  }
 };

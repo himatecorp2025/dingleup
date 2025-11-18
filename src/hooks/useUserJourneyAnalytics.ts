@@ -37,7 +37,6 @@ export const useUserJourneyAnalytics = () => {
 
       setAnalytics(data || null);
     } catch (err) {
-      console.error('[UserJourney] fetch error:', err);
       if (!initialLoadRef.current) setError('Failed to load user journey analytics');
     } finally {
       if (!initialLoadRef.current && !background) setLoading(false);
@@ -56,7 +55,6 @@ export const useUserJourneyAnalytics = () => {
         schema: 'public',
         table: 'navigation_events'
       }, () => {
-        console.log('[UserJourney] Navigation changed, background refresh');
         fetchUserJourneyAnalytics(true);
       })
       .subscribe();
@@ -68,7 +66,6 @@ export const useUserJourneyAnalytics = () => {
         schema: 'public',
         table: 'conversion_events'
       }, () => {
-        console.log('[UserJourney] Conversion changed, background refresh');
         fetchUserJourneyAnalytics(true);
       })
       .subscribe();
@@ -80,7 +77,6 @@ export const useUserJourneyAnalytics = () => {
         schema: 'public',
         table: 'game_exit_events'
       }, () => {
-        console.log('[UserJourney] Game exits changed, background refresh');
         fetchUserJourneyAnalytics(true);
       })
       .subscribe();

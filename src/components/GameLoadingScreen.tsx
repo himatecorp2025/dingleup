@@ -13,7 +13,6 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch((err) => {
-        console.error('Video autoplay failed:', err);
         // If autoplay fails, end after 2 seconds
         setTimeout(() => {
           onVideoEnd();
@@ -23,7 +22,6 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
   }, []);
 
   const handleVideoEnd = () => {
-    console.log('[GameLoadingScreen] Video ended');
     setVideoEnded(true);
     onVideoEnd();
   };

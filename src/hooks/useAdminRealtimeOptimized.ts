@@ -19,8 +19,6 @@ export const useAdminRealtimeOptimized = (initialData: AdminData) => {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   const handleProfileUpdate = useCallback((payload: any) => {
-    console.log('[Admin RT] Profile update:', payload);
-    
     if (payload.eventType === 'INSERT') {
       setData(prev => ({
         ...prev,
@@ -44,8 +42,6 @@ export const useAdminRealtimeOptimized = (initialData: AdminData) => {
   }, []);
 
   const handlePurchaseUpdate = useCallback((payload: any) => {
-    console.log('[Admin RT] Purchase update:', payload);
-    
     if (payload.eventType === 'INSERT') {
       const newPurchase = payload.new;
       setData(prev => ({
@@ -66,8 +62,6 @@ export const useAdminRealtimeOptimized = (initialData: AdminData) => {
   }, []);
 
   const handleReportUpdate = useCallback((payload: any) => {
-    console.log('[Admin RT] Report update:', payload);
-    
     if (payload.eventType === 'INSERT') {
       setData(prev => ({
         ...prev,
@@ -89,8 +83,6 @@ export const useAdminRealtimeOptimized = (initialData: AdminData) => {
   }, []);
 
   const handleInvitationUpdate = useCallback((payload: any) => {
-    console.log('[Admin RT] Invitation update:', payload);
-    
     if (payload.eventType === 'INSERT') {
       setData(prev => ({
         ...prev,

@@ -18,7 +18,6 @@ export const useWelcomeBonus = (userId: string | undefined) => {
       // Check if user is on mobile/tablet
       const isMobileOrTablet = window.innerWidth <= 1024;
       if (!isMobileOrTablet) {
-        console.log('[WelcomeBonus] Not mobile/tablet, skipping');
         setCanClaim(false);
         setLoading(false);
         return;
@@ -32,14 +31,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
         .eq('id', userId)
         .single();
 
-      console.log('[WelcomeBonus] Profile check:', { 
-        userId, 
-        claimed: profile?.welcome_bonus_claimed,
-        hasProfile: !!profile 
-      });
-
       if (!profile || profile.welcome_bonus_claimed) {
-        console.log('[WelcomeBonus] Already claimed or no profile');
         setCanClaim(false);
         setLoading(false);
         return;
@@ -49,21 +41,15 @@ export const useWelcomeBonus = (userId: string | undefined) => {
       const laterKey = `welcome_bonus_later_${userId}`;
       const clickedLater = sessionStorage.getItem(laterKey);
       if (clickedLater) {
-        console.log('[WelcomeBonus] User clicked later in this session');
         setCanClaim(false);
         setLoading(false);
         return;
       }
 
       // User is eligible - show the dialog
-      console.log('[WelcomeBonus] User eligible, showing dialog');
       setCanClaim(true);
       trackEvent('popup_impression', 'welcome');
     } catch (error) {
-      console.error('[WelcomeBonus] Error checking welcome bonus:', error);
-      if (import.meta.env.DEV) {
-        console.error('Error checking welcome bonus:', error);
-      }
       setCanClaim(false);
     } finally {
       setLoading(false);
@@ -78,15 +64,11 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     if (!userId || claiming) return false;
 
     setClaiming(true);
-    console.log('[WelcomeBonus] Claiming bonus for user:', userId);
 
     try {
       const { data, error } = await supabase.rpc('claim_welcome_bonus');
       
-      console.log('[WelcomeBonus] RPC Response:', { data, error });
-      
       if (error) {
-        console.error('[WelcomeBonus] RPC Error:', error);
         const errorMsg = error.message || 'Hiba történt a bónusz felvételekor';
         toast.error(errorMsg);
         return false;
@@ -101,16 +83,13 @@ export const useWelcomeBonus = (userId: string | undefined) => {
         
         // Show success toast with actual amounts
         toast.success(`🎉 Üdvözlő bónusz felvéve! +${result.coins} aranyérme, +${result.lives} élet`);
-        console.log('[WelcomeBonus] Claim successful:', result);
         
         return true;
       } else {
-        console.error('[WelcomeBonus] Claim failed:', result.error);
         toast.error(result.error || 'Hiba történt a bónusz felvételekor');
         return false;
       }
     } catch (error: any) {
-      console.error('[WelcomeBonus] Exception during claim:', error);
       const errorMsg = error?.message || 'Hiba történt a bónusz felvételekor';
       toast.error(errorMsg);
       return false;

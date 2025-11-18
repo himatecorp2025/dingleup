@@ -23,7 +23,6 @@ export const useFriendshipStatus = (userId: string | undefined, targetUserId: st
         schema: 'public', 
         table: 'friendships'
       }, (payload) => {
-        console.log('[useFriendshipStatus] friendships changed', payload);
         loadStatus();
       })
       .subscribe();
@@ -60,7 +59,6 @@ export const useFriendshipStatus = (userId: string | undefined, targetUserId: st
         setStatus('none');
       }
     } catch (error) {
-      console.error('Error loading friendship status:', error);
       setStatus('none');
     } finally {
       setLoading(false);
@@ -81,7 +79,6 @@ export const useFriendshipStatus = (userId: string | undefined, targetUserId: st
       if (error) throw error;
       await loadStatus();
     } catch (error) {
-      console.error('Error sending friend request:', error);
       throw error;
     }
   };

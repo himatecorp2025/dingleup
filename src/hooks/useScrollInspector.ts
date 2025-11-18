@@ -16,7 +16,6 @@ let globalLastScrollTime = Date.now();
 export const recordScrollToBottom = (source: string) => {
   globalLastScrollSource = source;
   globalLastScrollTime = Date.now();
-  console.log(`[SCROLL_EVT] scrollToBottom called from: ${source}`);
 };
 
 export const useScrollInspector = (enabled: boolean) => {
