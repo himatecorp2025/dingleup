@@ -1,18 +1,32 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import loadingVideo from '@/assets/loading-video.mp4';
 
-export const GameLoadingScreen = () => {
+interface GameLoadingScreenProps {
+  onVideoEnd: () => void;
+}
+
+export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoEnded, setVideoEnded] = useState(false);
 
   useEffect(() => {
     if (videoRef.current) {
-      // Force play from beginning
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch((err) => {
         console.error('Video autoplay failed:', err);
+        // If autoplay fails, end after 2 seconds
+        setTimeout(() => {
+          onVideoEnd();
+        }, 2000);
       });
     }
-  }, []);
+  }, [onVideoEnd]);
+
+  const handleVideoEnd = () => {
+    console.log('[GameLoadingScreen] Video ended');
+    setVideoEnded(true);
+    onVideoEnd();
+  };
 
   return (
     <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
@@ -23,6 +37,7 @@ export const GameLoadingScreen = () => {
         autoPlay
         muted
         playsInline
+        onEnded={handleVideoEnd}
       />
     </div>
   );
