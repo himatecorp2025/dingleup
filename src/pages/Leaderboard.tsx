@@ -92,38 +92,23 @@ const Leaderboard = () => {
       }
 
       // Aggregate total_correct_answers per user across ALL categories
-      const userMap = new Map<string, { user_id: string; total_correct_answers: number }>();
+      const totalsMap = new Map<string, number>();
       rankingsData.forEach(row => {
-        const existing = userMap.get(row.user_id);
-        if (existing) {
-          existing.total_correct_answers += row.total_correct_answers || 0;
-        } else {
-          userMap.set(row.user_id, {
-            user_id: row.user_id,
-            total_correct_answers: row.total_correct_answers || 0
-          });
-        }
+        const currentTotal = totalsMap.get(row.user_id) || 0;
+        totalsMap.set(row.user_id, currentTotal + (row.total_correct_answers || 0));
       });
 
-      const aggregatedUserIds = Array.from(userMap.keys());
+      const aggregatedUserIds = Array.from(totalsMap.keys());
       if (aggregatedUserIds.length === 0) {
         setLoading(false);
         return;
       }
       
-      if (!rankingsData || rankingsData.length === 0) {
-        setLoading(false);
-        return;
-      }
-      
-      // Get unique user_ids
-      const uniqueUserIds = [...new Set(rankingsData.map(r => r.user_id))];
-      
       // Fetch user profiles with country filter
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('id, username, avatar_url, country_code')
-        .in('id', uniqueUserIds)
+        .in('id', aggregatedUserIds)
         .eq('country_code', countryCode);
       
       if (profilesError) {
@@ -138,51 +123,30 @@ const Leaderboard = () => {
       }
       
       // Create a map of user profiles
-      const profilesMap = new Map(profilesData.map(p => [p.id, p]));
-      
-      // Combine data
-      const data = rankingsData
-        .filter(r => profilesMap.has(r.user_id))
-        .map(r => ({
-          user_id: r.user_id,
-          total_correct_answers: r.total_correct_answers,
-          public_profiles: profilesMap.get(r.user_id)
-        }));
-      
-      const error = null;
+      const profilesLookupMap = new Map(
+        profilesData.map(p => [p.id, { username: p.username, avatar_url: p.avatar_url }])
+      );
 
-      if (error) throw error;
-
-      // Aggregate by user_id - sum all categories for each user
-      const userMap = new Map<string, LeaderboardEntry>();
-      (data || []).forEach((row: any) => {
-        const uid = row.user_id;
-        const existing = userMap.get(uid);
-        const correctAnswers = row.total_correct_answers || 0;
-        
-        if (existing) {
-          existing.total_correct_answers += correctAnswers;
-        } else {
-          userMap.set(uid, {
-            user_id: uid,
-            username: row.public_profiles?.username || 'Player',
-            avatar_url: row.public_profiles?.avatar_url || null,
-            total_correct_answers: correctAnswers,
+      // Build ranked leaderboard entries
+      const rankedData: LeaderboardEntry[] = [];
+      for (const [userId, totalCorrectAnswers] of totalsMap.entries()) {
+        if (profilesLookupMap.has(userId)) {
+          const profile = profilesLookupMap.get(userId)!;
+          rankedData.push({
+            user_id: userId,
+            username: profile.username || 'Player',
+            avatar_url: profile.avatar_url || null,
+            total_correct_answers: totalCorrectAnswers,
             rank: 0
           });
         }
-      });
+      }
 
-      // Sort by total_correct_answers, assign ranks, and return TOP 100
-      const rankedData = Array.from(userMap.values())
+      rankedData
         .sort((a, b) => b.total_correct_answers - a.total_correct_answers)
-        .slice(0, 100)
-        .map((entry, index) => ({
-          ...entry,
-          rank: index + 1
-        }));
+        .forEach((entry, index) => { entry.rank = index + 1; });
 
-      setTopPlayers(rankedData);
+      setTopPlayers(rankedData.slice(0, 100));
     } catch (error) {
       console.error('Error fetching weekly leaderboard:', error);
     } finally {

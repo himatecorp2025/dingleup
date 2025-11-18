@@ -87,32 +87,28 @@ export const LeaderboardCarousel = () => {
       }
 
       // Aggregate total_correct_answers per user across ALL categories
-      const userMap = new Map<string, { user_id: string; total_correct_answers: number }>();
+      const aggregationMap = new Map<string, { user_id: string; total_correct_answers: number }>();
       rankingsData.forEach(row => {
-        const existing = userMap.get(row.user_id);
+        const existing = aggregationMap.get(row.user_id);
         if (existing) {
           existing.total_correct_answers += row.total_correct_answers || 0;
         } else {
-          userMap.set(row.user_id, {
+          aggregationMap.set(row.user_id, {
             user_id: row.user_id,
             total_correct_answers: row.total_correct_answers || 0
           });
         }
       });
 
-      const aggregatedUserIds = Array.from(userMap.keys());
+      const aggregatedUserIds = Array.from(totalsMap.keys());
       if (aggregatedUserIds.length === 0) return [];
-      console.log('[LeaderboardCarousel] Rankings data count:', rankingsData.length);
+      console.log('[LeaderboardCarousel] Aggregated user IDs:', aggregatedUserIds.length);
       
-      // Get unique user_ids
-      const uniqueUserIds = [...new Set(rankingsData.map(r => r.user_id))];
-      console.log('[LeaderboardCarousel] Unique user IDs:', uniqueUserIds.length);
-      
-      // Fetch user profiles with country filter
+      // Fetch user profiles filtered by country
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('id, username, avatar_url, country_code')
-        .in('id', uniqueUserIds)
+        .in('id', aggregatedUserIds)
         .eq('country_code', countryCode);
       
       if (profilesError) throw profilesError;
@@ -123,41 +119,25 @@ export const LeaderboardCarousel = () => {
       console.log('[LeaderboardCarousel] Profiles found:', profilesData.length);
       
       // Create a map of user profiles
-      const profilesMap = new Map(profilesData.map(p => [p.id, p]));
-      
-      // Combine data
-      const data = rankingsData
-        .filter(r => profilesMap.has(r.user_id))
-        .map(r => ({
-          user_id: r.user_id,
-          total_correct_answers: r.total_correct_answers,
-          public_profiles: profilesMap.get(r.user_id)
-        }));
-      
-      const error = null;
-      if (error) throw error;
+      const profilesLookupMap = new Map(
+        profilesData.map(p => [p.id, { username: p.username, avatar_url: p.avatar_url }])
+      );
 
-      // Aggregate by user_id - sum all categories for each user
-      const userMap = new Map<string, LeaderboardEntry>();
-      (data || []).forEach((row: any) => {
-        const uid = row.user_id;
-        const existing = userMap.get(uid);
-        const correctAnswers = row.total_correct_answers || 0;
-        
-        if (existing) {
-          existing.total_correct_answers += correctAnswers;
-        } else {
-          userMap.set(uid, {
-            user_id: uid,
-            username: row.public_profiles?.username ?? 'Player',
-            avatar_url: row.public_profiles?.avatar_url ?? null,
-            total_correct_answers: correctAnswers
+      // Build final leaderboard entries
+      const entries: LeaderboardEntry[] = [];
+      for (const [userId, totalCorrectAnswers] of totalsMap.entries()) {
+        if (profilesLookupMap.has(userId)) {
+          const profile = profilesLookupMap.get(userId)!;
+          entries.push({
+            user_id: userId,
+            username: profile.username ?? 'Player',
+            avatar_url: profile.avatar_url ?? null,
+            total_correct_answers: totalCorrectAnswers
           });
         }
-      });
+      }
 
-      // Sort by total_correct_answers and return TOP 100
-      return Array.from(userMap.values())
+      return entries
         .sort((a, b) => b.total_correct_answers - a.total_correct_answers)
         .slice(0, 100);
     } catch (e) {
