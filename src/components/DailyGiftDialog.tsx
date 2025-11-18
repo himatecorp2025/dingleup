@@ -275,7 +275,7 @@ const DailyGiftDialog = ({
                     background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
                   }} />
                   
-                  <h1 ref={flagRef} className="relative z-10 font-black text-white text-center drop-shadow-[0_0_18px_rgba(255,255,255,0.3),0_2px_8px_rgba(0,0,0,0.9)]"
+                  <h1 ref={flagRef} className="relative z-10 font-black text-foreground text-center drop-shadow-[0_0_18px_hsl(var(--foreground)/0.3),0_2px_8px_rgba(0,0,0,0.9)]"
                       style={{ 
                         fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
                         letterSpacing: '0.05em',

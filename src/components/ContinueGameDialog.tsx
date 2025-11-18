@@ -67,13 +67,13 @@ export const ContinueGameDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[90vw] sm:max-w-md bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-purple-500/50 text-white p-4 sm:p-6">
+      <DialogContent className="max-w-[90vw] sm:max-w-md bg-gradient-to-br from-[hsl(var(--primary-dark))] to-[hsl(var(--primary-darker))] border-2 border-primary/50 text-foreground p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl md:text-2xl">
             {getIcon()}
             {getTitle()}
           </DialogTitle>
-          <DialogDescription className="text-sm sm:text-base text-white/80 pt-2">
+          <DialogDescription className="text-sm sm:text-base text-foreground/80 pt-2">
             {getDescription()}
           </DialogDescription>
         </DialogHeader>
@@ -81,7 +81,7 @@ export const ContinueGameDialog = ({
           {canAfford ? (
             <Button 
               onClick={onContinue} 
-              className="w-full gap-1.5 sm:gap-2 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white text-sm sm:text-base py-2 sm:py-2.5"
+              className="w-full gap-1.5 sm:gap-2 bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70 text-foreground text-sm sm:text-base py-2 sm:py-2.5"
             >
               <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Folytatás ({cost} aranyérme)
@@ -89,7 +89,7 @@ export const ContinueGameDialog = ({
           ) : (
             <Button 
               onClick={() => onNeedCoins?.()} 
-              className="w-full gap-1.5 sm:gap-2 bg-gradient-to-r from-yellow-600 to-yellow-800 hover:from-yellow-700 hover:to-yellow-900 text-black font-bold text-sm sm:text-base py-2 sm:py-2.5"
+              className="w-full gap-1.5 sm:gap-2 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-accent-foreground font-bold text-sm sm:text-base py-2 sm:py-2.5"
             >
               🛒 Azonnali vásárlás
             </Button>
@@ -97,7 +97,7 @@ export const ContinueGameDialog = ({
           <Button 
             variant="outline" 
             onClick={onExit} 
-            className="w-full border-white/30 text-white hover:bg-white/10 text-sm sm:text-base py-2 sm:py-2.5"
+            className="w-full border-border/30 text-foreground hover:bg-accent/10 text-sm sm:text-base py-2 sm:py-2.5"
           >
             {canAfford ? 'Kilépés és mentés' : 'Vissza a főoldalra'}
           </Button>

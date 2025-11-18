@@ -30,15 +30,15 @@ export const BackgroundMusicControl = () => {
         <div className="space-y-4">
           {/* On/Off Toggle */}
           <div className="flex items-center justify-between">
-            <span className="text-sm sm:text-base text-white/90">Zene be/ki</span>
+            <span className="text-sm sm:text-base text-foreground/90">Zene be/ki</span>
             <button
               onClick={() => setMusicEnabled(!musicEnabled)}
               className={`relative w-14 h-7 rounded-full transition-all ${
-                musicEnabled ? 'bg-green-500' : 'bg-gray-600'
+                musicEnabled ? 'bg-success' : 'bg-muted'
               }`}
             >
               <div
-                className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                className={`absolute top-1 left-1 w-5 h-5 bg-background rounded-full transition-transform ${
                   musicEnabled ? 'translate-x-7' : 'translate-x-0'
                 }`}
               />
@@ -48,7 +48,7 @@ export const BackgroundMusicControl = () => {
           {/* Volume Slider */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm sm:text-base text-white/90">Hangerő</span>
+              <span className="text-sm sm:text-base text-foreground/90">Hangerő</span>
               <span className="text-sm sm:text-base text-blue-300 font-bold">
                 {Math.round(volume * 100)}%
               </span>

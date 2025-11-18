@@ -234,12 +234,12 @@ export const AdminReportActionDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-purple-900 to-purple-950 border-2 border-yellow-500/50 text-white z-[9999] p-4">
+      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-[hsl(var(--primary-dark))] to-[hsl(var(--primary-darker))] border-2 border-accent/50 text-foreground z-[9999] p-4">
         <DialogHeader className="space-y-1">
           <DialogTitle className="text-xl font-black text-yellow-400">
             {config.title}
           </DialogTitle>
-          <DialogDescription className="text-white/80 text-sm">
+          <DialogDescription className="text-foreground/80 text-sm">
             {config.description}
           </DialogDescription>
         </DialogHeader>
@@ -249,7 +249,7 @@ export const AdminReportActionDialog = ({
             <Label className="text-base text-yellow-400 mb-2 block font-bold">
               ⚠️ Indoklás (KÖTELEZŐ) - Miért {actionType === 'reviewing' ? 'van folyamatban' : actionType === 'resolved' ? 'lett megoldva' : 'lett elutasítva'}?
             </Label>
-            <p className="text-xs text-white/70 mb-2">
+            <p className="text-xs text-foreground/70 mb-2">
               Magyarázd el részletesen a döntésed okát. Ez az üzenet el lesz küldve a bejelentőnek.
             </p>
             <Textarea
@@ -262,11 +262,11 @@ export const AdminReportActionDialog = ({
                   ? 'A hibát javítottuk a legújabb frissítésben. Köszönjük a jelzést!'
                   : 'Ez a bejelentés nem igényel intézkedést, mert...'
               }`}
-              className="min-h-[140px] bg-gray-800 border-2 border-yellow-500/50 text-white text-sm resize-none focus:border-yellow-500"
+              className="min-h-[140px] bg-muted/80 border-2 border-accent/50 text-foreground text-sm resize-none focus:border-accent"
               maxLength={2000}
               autoFocus
             />
-            <p className="text-xs text-white/50 mt-1">
+            <p className="text-xs text-foreground/50 mt-1">
               {message.length} / 2000 karakter {message.length < 10 && message.length > 0 ? '(túl rövid, minimum 10 karakter)' : ''}
             </p>
           </div>
@@ -277,18 +277,18 @@ export const AdminReportActionDialog = ({
               <Label className="text-base text-yellow-400 mb-2 block font-bold">
                 ⚠️ {actionType === 'resolved' ? 'Megoldott probléma típusa' : 'Elutasítás oka'} (KÖTELEZŐ)
               </Label>
-              <p className="text-xs text-white/70 mb-2">
+              <p className="text-xs text-foreground/70 mb-2">
                 {actionType === 'resolved' 
                   ? 'Válaszd ki, milyen típusú problémát oldottál meg, vagy adj hozzá újat.'
                   : 'Válaszd ki az elutasítás okát, vagy adj hozzá újat.'}
               </p>
               <Select value={reasonType} onValueChange={setReasonType}>
-                <SelectTrigger className="bg-gray-800 border-2 border-yellow-500/50 text-white focus:border-yellow-500">
+                <SelectTrigger className="bg-muted/80 border-2 border-accent/50 text-foreground focus:border-accent">
                   <SelectValue placeholder={actionType === 'resolved' ? 'Válassz problématípust...' : 'Válassz elutasítási okot...'} />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-yellow-500/50 text-white max-h-[300px] z-[10000]">
+                <SelectContent className="bg-muted border-accent/50 text-foreground max-h-[300px] z-[10000]">
                   {availableReasonTypes.map((type) => (
-                    <SelectItem key={type} value={type} className="text-white hover:bg-gray-700">
+                    <SelectItem key={type} value={type} className="text-foreground hover:bg-accent/20">
                       {type}
                     </SelectItem>
                   ))}
@@ -296,8 +296,8 @@ export const AdminReportActionDialog = ({
               </Select>
 
               {/* Custom Reason Type Input */}
-              <div className="mt-3 p-3 bg-gray-900/50 border border-yellow-500/30 rounded-lg">
-                <Label className="text-sm text-white/90 mb-2 block">
+              <div className="mt-3 p-3 bg-muted/50 border border-accent/30 rounded-lg">
+                <Label className="text-sm text-foreground/90 mb-2 block">
                   ➕ {actionType === 'resolved' ? 'Új problématípus hozzáadása' : 'Új elutasítási ok hozzáadása'}
                 </Label>
                 <div className="flex gap-2">
@@ -305,7 +305,7 @@ export const AdminReportActionDialog = ({
                     value={customReasonType}
                     onChange={(e) => setCustomReasonType(e.target.value)}
                     placeholder={actionType === 'resolved' ? 'Írd be az új problématípust...' : 'Írd be az új elutasítási okot...'}
-                    className="flex-1 bg-gray-800 border-purple-500/50 text-white text-sm"
+                    className="flex-1 bg-muted/80 border-primary/50 text-foreground text-sm"
                     maxLength={100}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
@@ -318,7 +318,7 @@ export const AdminReportActionDialog = ({
                     type="button"
                     onClick={handleAddCustomReasonType}
                     disabled={!customReasonType.trim()}
-                    className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap text-sm"
+                    className="bg-success hover:bg-success/90 text-foreground whitespace-nowrap text-sm"
                   >
                     Hozzáad
                   </Button>
@@ -331,7 +331,7 @@ export const AdminReportActionDialog = ({
             <Button
               onClick={handleSubmit}
               disabled={submitting}
-              className={`flex-1 text-white font-bold h-9 text-sm ${config.buttonClass}`}
+              className={`flex-1 text-foreground font-bold h-9 text-sm ${config.buttonClass}`}
             >
               {submitting ? 'Küldés...' : config.buttonText}
             </Button>
@@ -339,7 +339,7 @@ export const AdminReportActionDialog = ({
               onClick={() => onOpenChange(false)}
               disabled={submitting}
               variant="outline"
-              className="bg-gray-700 hover:bg-gray-600 border-gray-600 text-white h-9 text-sm"
+              className="bg-muted hover:bg-muted/80 border-border text-foreground h-9 text-sm"
             >
               Mégse
             </Button>

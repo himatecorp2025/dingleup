@@ -162,14 +162,14 @@ const BottomNav = () => {
                 flex flex-col items-center justify-center py-2 sm:py-3 px-2 sm:px-3 rounded-lg
                 transition-all duration-200 relative overflow-hidden flex-1
                 ${isActive 
-                  ? 'bg-gradient-to-t from-yellow-600/40 to-yellow-500/30 text-yellow-300 shadow-[0_0_15px_rgba(255,215,0,0.4)]' 
-                  : 'text-white/70 hover:text-yellow-300 hover:bg-yellow-500/10'}
+                  ? 'bg-gradient-to-t from-primary/40 to-primary/30 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.4)]' 
+                  : 'text-foreground/70 hover:text-primary hover:bg-primary/10'}
               `}
             >
               {isActive && (
-                <div className="absolute inset-0 bg-gradient-to-t from-yellow-600/20 to-transparent animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent animate-pulse"></div>
               )}
-              <div className={`mb-0.5 sm:mb-1 relative z-10 ${isActive ? 'drop-shadow-[0_0_5px_rgba(255,215,0,0.8)]' : ''}`}>
+              <div className={`mb-0.5 sm:mb-1 relative z-10 ${isActive ? 'drop-shadow-[0_0_5px_hsl(var(--primary)/0.8)]' : ''}`}>
                 <IconComponent />
               </div>
               <span className="text-[9px] sm:text-[10px] font-bold relative z-10 leading-tight">{item.label}</span>
