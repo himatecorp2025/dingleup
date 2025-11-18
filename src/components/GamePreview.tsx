@@ -146,21 +146,10 @@ const GamePreview = () => {
     await refetchWallet();
     await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
     
-    // Get fresh session token
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      console.error('[Game] No active session');
-      navigate('/login');
-      return;
-    }
-    
     try {
       const startSourceId = `${Date.now()}-start`;
       await supabase.functions.invoke('credit-gameplay-reward', {
-        body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' }
       });
       setCoinsEarned(START_GAME_REWARD);
       await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
@@ -172,11 +161,7 @@ const GamePreview = () => {
 
     // Load 15 random questions from database via edge function
     try {
-      const { data, error } = await supabase.functions.invoke('start-game-session', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
+      const { data, error } = await supabase.functions.invoke('start-game-session');
 
       if (error) throw error;
       
