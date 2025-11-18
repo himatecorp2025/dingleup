@@ -344,25 +344,6 @@ const GamePreview = () => {
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
 
-    // Trigger data refresh but DON'T wait - real-time subscriptions will handle updates
-    refetchWallet();
-    refreshProfile();
-    
-    // Use current data immediately - real-time subscriptions keep it fresh
-    const currentLives = walletData?.livesCurrent ?? profile.lives ?? 0;
-    
-    console.log('[GamePreview] Starting game with lives:', { 
-      walletLives: walletData?.livesCurrent, 
-      profileLives: profile.lives,
-      currentLives 
-    });
-    
-    if (currentLives < 1) {
-      toast.error('Nincs elég életed a játék indításához!');
-      setGameState('category-select');
-      return;
-    }
-
     // Audio is managed by AudioManager singleton - no manual play() needed
     
     try {
@@ -371,9 +352,9 @@ const GamePreview = () => {
       console.error('Error resetting helps:', error);
     }
     
+    // Atomically spend life via improved use_life() RPC (handles regeneration + normalization internally)
     const canPlay = await spendLife();
     if (!canPlay) {
-      // Show error (fallback if RPC failed)
       toast.error('Nincs elég életed a játék indításához!');
       setGameState('category-select');
       return;
