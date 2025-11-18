@@ -24,6 +24,9 @@ verify_jwt = false
 [functions.regenerate-lives-background]
 verify_jwt = false
 
+[functions.cleanup-analytics]
+verify_jwt = false
+
 [functions.create-payment]
 verify_jwt = true
 
@@ -59,9 +62,6 @@ verify_jwt = true
 
 [functions.get-friend-requests]
 verify_jwt = true
-
-[functions.process-speed-ticks]
-verify_jwt = false
 
 [functions.log-activity-ping]
 verify_jwt = true

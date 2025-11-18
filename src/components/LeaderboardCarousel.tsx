@@ -57,7 +57,6 @@ export const LeaderboardCarousel = () => {
       // Get current user's country code
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        console.log('[LeaderboardCarousel] No user logged in');
         return [];
       }
       
@@ -69,10 +68,8 @@ export const LeaderboardCarousel = () => {
       
       // Fallback to HU if country_code is missing
       const countryCode = profile?.country_code || 'HU';
-      console.log('[LeaderboardCarousel] User country code:', countryCode);
       
       const weekStart = getWeekStartInUserTimezone();
-      console.log('[LeaderboardCarousel] Week start:', weekStart);
       
       // Get ALL users from same country (not just those with rankings)
       const { data: allCountryProfiles, error: profilesError } = await supabase
@@ -81,7 +78,6 @@ export const LeaderboardCarousel = () => {
         .eq('country_code', countryCode);
       
       if (profilesError || !allCountryProfiles || allCountryProfiles.length === 0) {
-        console.error('[LeaderboardCarousel] Error fetching profiles:', profilesError);
         return [];
       }
       

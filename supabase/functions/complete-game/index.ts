@@ -54,10 +54,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    const validCategories = ['health', 'history', 'culture', 'finance', 'mixed'];
+    const validCategories = ['mixed'];
     if (!validCategories.includes(body.category)) {
       return new Response(
-        JSON.stringify({ error: `Category must be one of: ${validCategories.join(', ')}` }),
+        JSON.stringify({ error: 'Category must be "mixed"' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -116,16 +116,7 @@ Deno.serve(async (req) => {
     // MEGJEGYZÉS: A jutalmak már jóvá lettek írva minden helyes válasz után
     // a credit-gameplay-reward edge function által, ezért itt NEM írunk jóvá újra
 
-    // Calculate current week start (Monday 00:00 UTC)
-    const now = new Date();
-    const dayOfWeek = now.getUTCDay();
-    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    const monday = new Date(now);
-    monday.setUTCDate(now.getUTCDate() - diff);
-    monday.setUTCHours(0, 0, 0, 0);
-    const weekStart = monday.toISOString().split('T')[0];
-
-    // Get user profile using ADMIN client
+    // Get user profile for leaderboard display
     const { data: userProfile } = await supabaseAdmin
       .from('profiles')
       .select('username, avatar_url')
@@ -133,14 +124,14 @@ Deno.serve(async (req) => {
       .single();
 
     // Update weekly_rankings INSTANTLY via RPC (aggregated "mixed" category)
-    const { error: weeklyError } = await supabaseAdmin.rpc('update_weekly_ranking_for_user', {
+    const { error: weeklyRankError } = await supabaseAdmin.rpc('update_weekly_ranking_for_user', {
       p_user_id: user.id,
       p_correct_answers: body.correctAnswers,
       p_average_response_time: body.averageResponseTime
     });
 
-    if (weeklyError) {
-      console.error('[CompleteGame] Weekly rankings instant update error:', weeklyError);
+    if (weeklyRankError) {
+      console.error('[CompleteGame] Weekly rankings instant update error:', weeklyRankError);
     }
 
     // Update global_leaderboard using ADMIN client (AGGREGATE LIFETIME TOTAL)
