@@ -162,10 +162,31 @@ const GamePreview = () => {
     
     await refreshProfile();
 
-    // Select 15 random questions from ALL categories (mixed)
-    const shuffled = [...ALL_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 15);
-    const shuffledWithVariety = shuffleAnswers(shuffled);
-    setQuestions(shuffledWithVariety);
+    // Load 15 random questions from database via edge function
+    try {
+      const { data, error } = await supabase.functions.invoke('start-game-session', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+      
+      if (!data?.questions || data.questions.length === 0) {
+        throw new Error('No questions received from backend');
+      }
+
+      console.log('[GamePreview] Loaded questions from database:', data.questions.length);
+      const shuffledWithVariety = shuffleAnswers(data.questions);
+      setQuestions(shuffledWithVariety);
+    } catch (error) {
+      console.error('[GamePreview] Failed to load questions:', error);
+      toast.error('Hiba történt a kérdések betöltésekor');
+      setIsStartingGame(false);
+      navigate('/dashboard');
+      return;
+    }
+
     setGameState('playing');
     setCurrentQuestionIndex(0);
     setTimeLeft(10);
