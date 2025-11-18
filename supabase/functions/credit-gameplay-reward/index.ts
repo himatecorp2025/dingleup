@@ -57,7 +57,6 @@ serve(async (req) => {
     });
 
     if (creditErr) {
-      console.error('[CREDIT-GAMEPLAY] credit_wallet error', creditErr);
       return new Response(
         JSON.stringify({ error: 'Failed to credit reward' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -74,7 +73,6 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (e) {
-    console.error('[CREDIT-GAMEPLAY] Unexpected error', e);
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

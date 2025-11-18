@@ -38,8 +38,6 @@ serve(async (req) => {
 
     const { recipientId, body, mediaUrl, mediaPath, attachments, clientMessageId } = await req.json();
 
-    console.log('[SendDM] Request:', { recipientId, bodyLength: body?.length, attachmentsCount: attachments?.length });
-
     // Validate input
     if (!recipientId) {
       return new Response(
@@ -54,19 +52,11 @@ serve(async (req) => {
     const hasMedia = mediaUrl && mediaPath;
     
     if (!hasBody && !hasAttachments && !hasMedia) {
-      console.log('[SendDM] Rejected: No content provided');
       return new Response(
         JSON.stringify({ error: 'Message must have text or attachments' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('[SendDM] Message content check:', { 
-      hasBody, 
-      hasAttachments, 
-      attachmentsCount: attachments?.length || 0,
-      hasMedia 
-    });
 
     // Check idempotency
     const checkKey = idempotencyKey || clientMessageId;
@@ -83,7 +73,6 @@ serve(async (req) => {
         const bodyToCheck = body || '';
         const match = existing.find(m => m.body === bodyToCheck);
         if (match) {
-          console.log('[SendDM] Duplicate message detected via idempotency check');
           return new Response(
             JSON.stringify({ success: true, message: match, duplicate: true }),
             { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -29,19 +29,12 @@ serve(async (req) => {
 
     // Verify user authentication using the JWT directly
     const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
-    if (authError) {
-      console.error('[GetWallet] Auth error:', authError);
-      throw new Error('Unauthorized');
-    }
-    if (!user) {
-      console.error('[GetWallet] No user found');
+    if (authError || !user) {
       throw new Error('Unauthorized');
     }
 
     // Client for database operations (bypasses RLS)
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    console.log('[GetWallet] Fetching wallet for user:', user.id);
 
     // Lives regeneration via DB RPC removed (non-existent RPC). We calculate below based on profile fields.
 
@@ -54,7 +47,6 @@ serve(async (req) => {
       .single();
 
     if (profileError) {
-      console.error('[GetWallet] Error fetching profile:', profileError);
       throw profileError;
     }
 

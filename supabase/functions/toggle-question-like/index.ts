@@ -42,8 +42,6 @@ serve(async (req) => {
       );
     }
 
-    console.log(`[toggle-question-like] User ${user.id} toggling like for question ${questionId}`);
-
     // Check if user already liked this question
     const { data: existingLike, error: checkError } = await supabaseClient
       .from('question_likes')
@@ -53,7 +51,6 @@ serve(async (req) => {
       .maybeSingle();
 
     if (checkError) {
-      console.error('[toggle-question-like] Check error:', checkError);
       throw checkError;
     }
 
@@ -67,12 +64,10 @@ serve(async (req) => {
         .eq('id', existingLike.id);
 
       if (deleteError) {
-        console.error('[toggle-question-like] Delete error:', deleteError);
         throw deleteError;
       }
 
       liked = false;
-      console.log(`[toggle-question-like] User ${user.id} unliked question ${questionId}`);
     } else {
       // Like: Insert new like
       const { error: insertError } = await supabaseClient
@@ -83,12 +78,10 @@ serve(async (req) => {
         });
 
       if (insertError) {
-        console.error('[toggle-question-like] Insert error:', insertError);
         throw insertError;
       }
 
       liked = true;
-      console.log(`[toggle-question-like] User ${user.id} liked question ${questionId}`);
     }
 
     // Get updated question like count
@@ -99,7 +92,6 @@ serve(async (req) => {
       .single();
 
     if (questionError) {
-      console.error('[toggle-question-like] Question fetch error:', questionError);
       throw questionError;
     }
 
@@ -110,7 +102,6 @@ serve(async (req) => {
       .eq('topic_id', question.topic_id);
 
     if (topicError) {
-      console.error('[toggle-question-like] Topic stats error:', topicError);
       throw topicError;
     }
 
@@ -127,7 +118,6 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[toggle-question-like] Error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'An error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
