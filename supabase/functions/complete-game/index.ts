@@ -94,8 +94,6 @@ Deno.serve(async (req) => {
     }
     const coinsEarned = totalCoinsEarned;
 
-    console.log('[CompleteGame] User:', user.id, 'Category:', body.category, 'Correct:', body.correctAnswers, 'Total Coins:', coinsEarned);
-
     // Insert game result using ADMIN client (bypasses RLS)
     const { error: insertError } = await supabaseAdmin
       .from('game_results')

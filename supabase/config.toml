@@ -80,11 +80,6 @@ verify_jwt = true
 schedule = "* * * * *"
 function = "regenerate-lives-background"
 
-# Cron job for speed tick processing every 30 seconds
-[[edge_runtime.cron]]
-schedule = "*/30 * * * * *"
-function = "process-speed-ticks"
-
 # Cron job for daily activity aggregation every day at 2 AM
 [[edge_runtime.cron]]
 schedule = "0 2 * * *"

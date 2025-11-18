@@ -18,9 +18,18 @@ export const useWeeklyWinners = (userId: string | undefined) => {
           return;
         }
 
-        // TESTING MODE: Always show on every refresh
-        // TODO: Implement weekly check when testing is complete
-        setShowDialog(true);
+        // Check if user has already seen the weekly winners dialog this week
+        const lastShownKey = `weekly-winners-last-shown-${userId}`;
+        const lastShown = localStorage.getItem(lastShownKey);
+        const now = Date.now();
+        const oneWeek = 7 * 24 * 60 * 60 * 1000;
+
+        if (!lastShown || now - parseInt(lastShown) > oneWeek) {
+          setShowDialog(true);
+          localStorage.setItem(lastShownKey, now.toString());
+        } else {
+          setShowDialog(false);
+        }
       } catch (error) {
         console.error('[WEEKLY-WINNERS] Error checking:', error);
         setShowDialog(false);
