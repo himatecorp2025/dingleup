@@ -130,7 +130,7 @@ const Leaderboard = () => {
 
   const getMedalIcon = (rank: number) => {
     if (rank === 1) return (
-      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-accent" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
         <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke="currentColor" strokeWidth="2"/>
         <circle cx="12" cy="9" r="1.5" fill="currentColor"/>
@@ -139,7 +139,7 @@ const Leaderboard = () => {
       </svg>
     );
     if (rank === 2) return (
-      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-muted" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
         <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke="currentColor" strokeWidth="2"/>
         <circle cx="12" cy="9" r="1.5" fill="currentColor"/>
@@ -148,7 +148,7 @@ const Leaderboard = () => {
       </svg>
     );
     if (rank === 3) return (
-      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-accent-dark" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
         <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke="currentColor" strokeWidth="2"/>
         <circle cx="12" cy="9" r="1.5" fill="currentColor"/>
@@ -170,7 +170,7 @@ const Leaderboard = () => {
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
-        className="fixed bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
+        className="fixed bg-gradient-to-b from-primary-dark via-primary to-primary-darker"
         style={{
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',

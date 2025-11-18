@@ -14,14 +14,14 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] py-8">
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary-dark via-primary to-primary-darker py-8">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{ backgroundImage: `url(${millionaireHero})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a2e]/80 via-[#16213e]/70 to-[#0f0f3d]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-dark/80 via-primary/70 to-primary-darker" />
       </div>
 
       {/* Animated gradient orbs */}
@@ -61,16 +61,16 @@ const Hero = () => {
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 leading-tight">
-              <span className="text-white text-with-stroke">Legyen Ön is</span>
+              <span className="text-foreground text-with-stroke">Legyen Ön is</span>
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-gold animate-pulse text-with-stroke" style={{ WebkitTextStroke: '1px #000' }}>
                 Milliomos
               </span>
             </h1>
             
-            <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed font-light px-2 text-with-stroke">
+            <p className="text-base sm:text-lg md:text-xl text-foreground/90 max-w-3xl mx-auto leading-relaxed font-light px-2 text-with-stroke">
               Teszteld tudásod <span className="font-bold text-accent text-with-stroke">15 izgalmas kérdésben</span>, 
-              versenyezz a ranglistán, és nyerj <span className="font-bold text-yellow-400 text-with-stroke">értékes jutalmakat</span>!
+              versenyezz a ranglistán, és nyerj <span className="font-bold text-accent text-with-stroke">értékes jutalmakat</span>!
             </p>
           </div>
 

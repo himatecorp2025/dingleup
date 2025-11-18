@@ -10,21 +10,21 @@ const features = [
     title: "Változatos Témakörök",
     description: "Egészség, Történelem, Kultúra és Pénzügy területeken mérd össze tudásod!",
     image: featureCategories,
-    gradient: "from-purple-500 to-pink-500"
+    gradient: "from-primary to-primary-glow"
   },
   {
     icon: Trophy,
     title: "Izgalmas Jutalmak",
     description: "Gyűjts aranyérméket és válts be őket hasznos segítségekre!",
     image: featureTrophy,
-    gradient: "from-yellow-500 to-orange-500"
+    gradient: "from-accent to-accent-dark"
   },
   {
     icon: Users,
     title: "Heti Rangsor",
     description: "Versenyezz más játékosokkal a heti ranglistán és légy te a legjobb!",
     image: featureLeaderboard,
-    gradient: "from-blue-500 to-cyan-500"
+    gradient: "from-primary to-primary-glow"
   }
 ];
 
@@ -33,35 +33,35 @@ const additionalFeatures = [
     icon: Zap,
     title: "Segítségek",
     description: "1/3, 2× válasz, és közönség segítség minden játékban",
-    color: "text-yellow-500"
+    color: "text-accent"
   },
   {
     icon: Gift,
     title: "Napi Ajándék",
     description: "Jelentkezz be naponta és kapj értékes jutalmakat!",
-    color: "text-pink-500"
+    color: "text-primary"
   },
   {
     icon: Target,
     title: "15 Kihívás",
     description: "15 fokozatosan nehezedő kérdés minden menetben",
-    color: "text-green-500"
+    color: "text-success"
   }
 ];
 
 const Features = () => {
   return (
-    <section id="features" className="py-24 px-4 relative bg-gradient-to-b from-[#0f0f3d] via-[#0a0a2e] to-[#16213e]">
+    <section id="features" className="py-24 px-4 relative bg-gradient-to-b from-primary-darker via-primary-dark to-primary">
       <div className="container mx-auto">
         <div className="text-center mb-16 animate-fade-in">
           <div className="inline-flex items-center gap-2 bg-accent/10 border border-accent/30 rounded-full px-4 py-2 mb-4">
             <Zap className="w-4 h-4 text-accent animate-pulse" />
             <span className="text-sm font-semibold text-accent">Miért válaszd ezt?</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-white text-with-stroke">
-            Játék <span className="text-white text-with-stroke">Funkciók</span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-foreground text-with-stroke">
+            Játék <span className="text-foreground text-with-stroke">Funkciók</span>
           </h2>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto text-with-stroke">
+          <p className="text-xl text-foreground/80 max-w-2xl mx-auto text-with-stroke">
             Fedezd fel a Milliomos Quiz egyedi lehetőségeit
           </p>
         </div>
@@ -78,13 +78,13 @@ const Features = () => {
               <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
               
               {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-95 border-4 border-purple-500/60 shadow-2xl transition-all duration-500 group-hover:border-accent/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-darker opacity-95 border-4 border-primary/60 shadow-2xl transition-all duration-500 group-hover:border-accent/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
-              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
+              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-b from-background/50 via-transparent to-background/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
               
               {/* INNER LAYER */}
-              <div className="absolute inset-[8px] rounded-2xl bg-gradient-to-br from-black/80 to-black/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.1), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
+              <div className="absolute inset-[8px] rounded-2xl bg-gradient-to-br from-background/80 to-background/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.1), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
               
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[8px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
