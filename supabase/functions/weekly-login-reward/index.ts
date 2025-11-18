@@ -137,8 +137,6 @@ serve(async (req) => {
 
     if (updateError) throw updateError;
 
-    console.log(`[WEEKLY-LOGIN] Success - awarded ${goldAmount} gold to user ${user.id}`);
-
     return new Response(
       JSON.stringify({
         success: true,

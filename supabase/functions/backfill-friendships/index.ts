@@ -104,8 +104,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`[Backfill] Completed: ${successCount} successful, ${errorCount} errors`);
-
     return new Response(
       JSON.stringify({
         success: true,

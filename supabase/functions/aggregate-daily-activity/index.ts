@@ -134,8 +134,6 @@ Deno.serve(async (req) => {
       console.error('Error fetching pings:', pingsError);
     }
 
-    console.log(`Successfully aggregated ${aggregated} user-date records`);
-
     return new Response(
       JSON.stringify({ 
         success: true, 

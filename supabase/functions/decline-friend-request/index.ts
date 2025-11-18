@@ -125,8 +125,6 @@ Deno.serve(async (req) => {
         ], { onConflict: 'thread_id,user_id' });
     }
 
-    console.log(`Friend request declined: ${requesterUserId} -> ${user.id}`);
-
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

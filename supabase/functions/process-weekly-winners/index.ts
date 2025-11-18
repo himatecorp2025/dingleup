@@ -160,8 +160,6 @@ serve(async (req) => {
       processedCount++;
     }
 
-    console.log(`[WEEKLY-WINNERS] Processed ${processedCount} winners successfully`);
-
     return new Response(
       JSON.stringify({
         success: true,

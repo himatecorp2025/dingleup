@@ -147,7 +147,6 @@ serve(async (req) => {
       const isCorrect = normalizedAnswer === normalizedCorrect;
 
       session.answers.push({ questionId, answer, responseTime, isCorrect });
-      console.log('Answer validated:', { sessionId, questionId, isCorrect });
 
       return new Response(
         JSON.stringify({ success: true, isCorrect }),
@@ -197,7 +196,6 @@ serve(async (req) => {
 
       // Clean up
       activeSessions.delete(sessionId);
-      console.log('Game completed:', { sessionId, correctAnswers, coinsEarned });
 
       return new Response(
         JSON.stringify({ success: true, correctAnswers, totalQuestions, totalTime, coinsEarned }),

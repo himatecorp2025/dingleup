@@ -120,8 +120,6 @@ serve(async (req) => {
       );
     }
 
-    console.log('[SendDM] Sending message from', user.id, 'to', recipientId);
-
     // Check if friendship exists and status allows messaging
     const normalizedIds = [user.id, recipientId].sort();
     const { data: friendship, error: friendshipError } = await supabase
@@ -212,8 +210,6 @@ serve(async (req) => {
       throw messageError;
     }
 
-    console.log('[SendDM] Message inserted:', message.id);
-
     // Handle old-style mediaUrl/mediaPath
     if (hasMedia) {
       const { error: mediaError } = await supabase
@@ -256,8 +252,6 @@ serve(async (req) => {
         };
       });
 
-      console.log('[SendDM] Inserting', mediaRecords.length, 'media records');
-
       const { error: mediaError } = await supabase
         .from('message_media')
         .insert(mediaRecords);
@@ -265,8 +259,6 @@ serve(async (req) => {
       if (mediaError) {
         console.error('[SendDM] Error inserting attachments:', mediaError);
         // Don't throw - message is already created
-      } else {
-        console.log('[SendDM] Media records inserted successfully');
       }
     }
 
@@ -340,8 +332,6 @@ serve(async (req) => {
       ...message,
       media: mediaWithSignedUrls
     };
-
-    console.log('[SendDM] Message sent successfully with', mediaWithSignedUrls.length, 'media items');
 
     return new Response(
       JSON.stringify({ success: true, message: messageResponse }),

@@ -194,9 +194,7 @@ Deno.serve(async (req) => {
         onConflict: 'user_id,target_user_id'
       });
 
-    console.log(`Friend request sent from ${user.id} to ${targetUserId}`);
-
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: true, 
       status: 'pending',
       threadId 

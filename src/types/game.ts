@@ -70,8 +70,6 @@ export interface WeeklyRanking {
   username?: string;
 }
 
-// Speed Boosters removed - Genius functionality deleted
-
 // Játék indítási jutalom (amikor egy élet levonódik)
 export const START_GAME_REWARD = 1;
 
@@ -113,5 +111,3 @@ export const TIMEOUT_CONTINUE_COST = 150;
 export const EXTRA_LIFE_COST = 100;
 export const INITIAL_LIVES = 15;
 export const LIVES_REGEN_MINUTES = 12;
-
-// UserBooster interface removed - Genius functionality deleted
