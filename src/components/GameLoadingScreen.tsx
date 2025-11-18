@@ -6,6 +6,8 @@ export const GameLoadingScreen = () => {
 
   useEffect(() => {
     if (videoRef.current) {
+      // Force play from beginning
+      videoRef.current.currentTime = 0;
       videoRef.current.play().catch((err) => {
         console.error('Video autoplay failed:', err);
       });
@@ -13,14 +15,13 @@ export const GameLoadingScreen = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-black z-50">
+    <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
       <video
         ref={videoRef}
         src={loadingVideo}
         className="w-full h-full object-cover"
         autoPlay
         muted
-        loop
         playsInline
       />
     </div>
