@@ -1,7 +1,8 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 
-Deno.serve(async (req) => {
+serve(async (req) => {
   const origin = req.headers.get('origin');
   
   if (req.method === 'OPTIONS') {
@@ -222,44 +223,36 @@ Deno.serve(async (req) => {
       throw messageError;
     }
 
-    // If media, insert media records (backwards compatible)
-    if (mediaUrl && mediaPath) {
+    console.log('[SendDM] Message inserted:', message.id);
+
+    // Handle old-style mediaUrl/mediaPath
+    if (hasMedia) {
       const { error: mediaError } = await supabase
         .from('message_media')
         .insert({
           message_id: message.id,
-          media_type: 'image',
-          media_url: mediaUrl,
-          file_name: mediaPath.split('/').pop() || 'image'
+          media_type: 'media',
+          media_url: mediaPath,
+          file_name: null,
+          file_size: null,
+          mime_type: null,
+          thumbnail_url: null,
+          width: null,
+          height: null,
+          duration_ms: null
         });
 
       if (mediaError) {
-        console.error('[SendDM] Error inserting media:', mediaError);
+        console.error('[SendDM] Error inserting legacy media:', mediaError);
+        // Don't throw - message is already created
       }
     }
 
-    // If attachments array, insert all media records with extended metadata
-    if (attachments && Array.isArray(attachments) && attachments.length > 0) {
-      const toStoragePath = (u: string | undefined, key: string | undefined) => {
-        if (key) return key;
-        if (!u) return null;
-        if (!u.startsWith('http')) return u; // already a path
-        const publicMarker = '/storage/v1/object/public/chat-media/';
-        const signedMarker = '/storage/v1/object/sign/chat-media/';
-        if (u.includes(publicMarker)) return u.substring(u.indexOf(publicMarker) + publicMarker.length);
-        if (u.includes(signedMarker)) return u.substring(u.indexOf(signedMarker) + signedMarker.length).split('?')[0];
-        return null;
-      };
-
+    // Handle new-style attachments array
+    if (hasAttachments) {
       const mediaRecords = attachments.map((att: any) => {
-        const path = toStoragePath(att.url, att.key);
-        console.log('[SendDM] Processing attachment:', {
-          kind: att.kind,
-          name: att.name,
-          size: att.bytes,
-          path,
-          mime: att.mime
-        });
+        const path = att.path || att.storagePath || att.mediaUrl || att.key || att.url;
+        
         return {
           message_id: message.id,
           media_type: att.kind || 'file',
