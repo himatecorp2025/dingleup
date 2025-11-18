@@ -80,9 +80,9 @@ export const useWallet = (userId: string | undefined) => {
     
     fetchWallet();
 
-    // Real-time subscription for instant wallet changes
+    // Real-time subscription for instant wallet changes (SINGLE subscription)
     const channel = supabase
-      .channel(`wallet_optimized_${userId}`)
+      .channel(`wallet_changes_${userId}`)
       .on(
         'postgres_changes',
         {
@@ -92,7 +92,6 @@ export const useWallet = (userId: string | undefined) => {
           filter: `id=eq.${userId}`
         },
         (payload: any) => {
-          // Optimistic update ONLY - no refetch (eliminates duplicate)
           if (payload.new && typeof payload.new === 'object') {
             setWalletData(prev => prev ? {
               ...prev,
@@ -103,24 +102,12 @@ export const useWallet = (userId: string | undefined) => {
           }
         }
       )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'wallet_ledger',
-          filter: `user_id=eq.${userId}`
-        },
-        () => {
-          fetchWallet();
-        }
-      )
       .subscribe();
 
-    // Refresh every 5 seconds only (reduced from 1s)
+    // Polling fallback every 10 seconds (reduced from 5s)
     const intervalId = setInterval(() => {
       fetchWallet();
-    }, 5000);
+    }, 10000);
 
     return () => {
       clearInterval(intervalId);

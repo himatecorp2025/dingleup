@@ -1,5 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
+import { checkRateLimit, RATE_LIMITS } from '../_shared/rateLimit.ts';
+import { validateUUID } from '../_shared/validation.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -47,11 +49,23 @@ serve(async (req) => {
       );
     }
 
+    // SECURITY: Rate limiting check
+    const rateLimitResult = await checkRateLimit(supabaseClient, 'toggle-question-like', RATE_LIMITS.SOCIAL);
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ error: 'Túl sok kérés. Próbáld újra később.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { questionId } = await req.json();
 
-    if (!questionId || typeof questionId !== 'string') {
+    // SECURITY: Enhanced validation
+    try {
+      validateUUID(questionId, 'questionId');
+    } catch (error) {
       return new Response(
-        JSON.stringify({ error: 'Invalid question ID' }),
+        JSON.stringify({ error: error instanceof Error ? error.message : 'Invalid question ID' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

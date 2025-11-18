@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
+import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
 
 serve(async (req) => {
   const origin = req.headers.get('origin');
@@ -36,12 +37,10 @@ serve(async (req) => {
       }
     );
 
-    console.log('[DAILY-GIFT] Attempting to get user from token');
     // Use the JWT token directly with auth.getUser()
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
     
     if (userError) {
-      console.error('[DAILY-GIFT] User error:', userError);
       return new Response(
         JSON.stringify({ success: false, error: 'Érvénytelen felhasználó', details: userError.message }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
@@ -49,14 +48,17 @@ serve(async (req) => {
     }
     
     if (!user) {
-      console.error('[DAILY-GIFT] No user returned from auth.getUser()');
       return new Response(
         JSON.stringify({ success: false, error: 'Érvénytelen felhasználó' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
       );
     }
 
-    console.log('[DAILY-GIFT] User authenticated:', user.id);
+    // SECURITY: Rate limiting check
+    const rateLimitResult = await checkRateLimit(supabaseClient, 'claim-daily-gift', RATE_LIMITS.WALLET);
+    if (!rateLimitResult.allowed) {
+      return rateLimitExceeded(corsHeaders);
+    }
 
     // Idempotency: check if already claimed today (UTC date)
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD in UTC

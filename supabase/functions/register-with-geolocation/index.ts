@@ -25,8 +25,6 @@ Deno.serve(async (req) => {
                      req.headers.get('x-real-ip') || 
                      'unknown';
 
-    console.log(`[register-with-geolocation] User ${userId}, IP: ${clientIp}`);
-
     let countryCode = 'HU'; // Default fallback
 
     // Only attempt geolocation if we have a real IP
@@ -43,11 +41,9 @@ Deno.serve(async (req) => {
           const geoData = await geoResponse.json();
           if (geoData.status === 'success' && geoData.countryCode) {
             countryCode = geoData.countryCode;
-            console.log(`[register-with-geolocation] Detected country: ${countryCode} for IP ${clientIp}`);
           }
         }
       } catch (geoError) {
-        console.error('[register-with-geolocation] Geolocation API error:', geoError);
         // Continue with default country code
       }
     }
@@ -64,14 +60,11 @@ Deno.serve(async (req) => {
       .eq('id', userId);
 
     if (updateError) {
-      console.error('[register-with-geolocation] Profile update error:', updateError);
       return new Response(
         JSON.stringify({ error: 'Failed to update country code' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log(`[register-with-geolocation] Successfully set country_code to ${countryCode} for user ${userId}`);
 
     return new Response(
       JSON.stringify({ 
@@ -83,7 +76,6 @@ Deno.serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[register-with-geolocation] Unexpected error:', error);
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

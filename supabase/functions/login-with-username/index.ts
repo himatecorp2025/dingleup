@@ -26,8 +26,6 @@ serve(async (req) => {
     }
 
     const normalizedUsername = typeof username === 'string' ? username.trim() : '';
-    
-    console.log('[LOGIN] Attempting login for username:', normalizedUsername);
 
     // Create Supabase client with service role key for admin operations
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -46,11 +44,8 @@ serve(async (req) => {
       .select('id, username')
       .ilike('username', normalizedUsername)
       .maybeSingle();
-    
-    console.log('[LOGIN] Profile lookup result:', profile ? `Found user ${profile.username}` : 'No profile found');
 
     if (profileError) {
-      console.error('[LOGIN] Profile lookup error:', profileError);
       return new Response(
         JSON.stringify({ error: 'Hiba történt a bejelentkezés során' }),
         { 
@@ -61,7 +56,6 @@ serve(async (req) => {
     }
 
     if (!profile) {
-      console.log('[LOGIN] Username not found:', normalizedUsername);
       return new Response(
         JSON.stringify({ error: 'Helytelen felhasználónév vagy jelszó' }),
         { 
@@ -70,8 +64,6 @@ serve(async (req) => {
         }
       );
     }
-
-    console.log('[LOGIN] Fetching user email for profile ID:', profile.id);
 
     // Get user email from auth.users
     const { data: { user }, error: userError } = await supabaseAdmin.auth.admin.getUserById(profile.id);
