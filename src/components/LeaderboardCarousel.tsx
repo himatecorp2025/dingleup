@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Crown } from 'lucide-react';
 import { getWeekStartInUserTimezone } from '@/lib/utils';
+import { WeeklyRankingsCountdown } from './WeeklyRankingsCountdown';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -268,6 +269,12 @@ export const LeaderboardCarousel = () => {
   return (
     <div className="w-full py-1">
       <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-white mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
+      
+      {/* Weekly Rankings Countdown moved here from top section */}
+      <div className="flex justify-center mb-2">
+        <WeeklyRankingsCountdown compact={false} />
+      </div>
+      
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <div className="inline-flex gap-2 sm:gap-3 px-2">
           {/* Dupla rendering: eredeti lista + másolat körköröz scrollhoz */}

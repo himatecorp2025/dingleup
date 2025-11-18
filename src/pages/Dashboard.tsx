@@ -436,15 +436,10 @@ if (!profile) {
             </div>
           </div>
 
-          {/* Second Row: Weekly Countdown + Action Buttons */}
-          <div className="flex items-stretch justify-between gap-2 sm:gap-3">
-            {/* Left: Weekly Rankings Countdown - Casino style, same height as buttons */}
-            <div className="flex-shrink-0">
-              <WeeklyRankingsCountdown compact={false} />
-            </div>
-            
-            {/* Right: Action Buttons - Match width from Rank hexagon to Avatar hexagon (always 4 hexagons) */}
-            <div 
+          {/* Second Row: Action Buttons (Weekly Countdown moved below TOP 100 title) */}
+          <div className="flex items-stretch justify-end gap-2 sm:gap-3">
+            {/* Action Buttons - Match width from Rank hexagon to Avatar hexagon (always 4 hexagons) */}
+            <div
               className="flex flex-col gap-2"
               style={{
                 width: 'calc(4 * (3rem) + 3 * 0.375rem)' // 4 hexagons mobile: rank + coins + lives + avatar
