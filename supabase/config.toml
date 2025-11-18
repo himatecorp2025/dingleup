@@ -75,6 +75,12 @@ verify_jwt = false
 [functions.complete-game]
 verify_jwt = true
 
+[functions.start-game-session]
+verify_jwt = true
+
+[functions.credit-gameplay-reward]
+verify_jwt = true
+
 # Cron job for automatic life regeneration every minute
 [[edge_runtime.cron]]
 schedule = "* * * * *"
