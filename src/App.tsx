@@ -84,9 +84,14 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
     ? sessionStorage.getItem('app_intro_shown') === '1' 
     : false;
 
-  // Mobile/tablet: skip landing page, go directly to intro
-  if (isMobileOrTablet && location.pathname === '/' && !introShown) {
-    return <Navigate to="/intro" replace />;
+  // Mobile/tablet: skip landing page, go directly to intro or dashboard
+  if (isMobileOrTablet && location.pathname === '/') {
+    if (!introShown) {
+      return <Navigate to="/intro" replace />;
+    } else {
+      // If intro was already shown, redirect to dashboard instead of staying on landing page
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   // Mobile/tablet standalone: redirect any route to /intro until intro is shown
