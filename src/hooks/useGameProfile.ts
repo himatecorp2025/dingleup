@@ -142,22 +142,20 @@ export const useGameProfile = (userId: string | undefined) => {
   };
 
   const spendLife = async (): Promise<boolean> => {
-    if (!profile || profile.lives < 1) {
-      // Nincs toast - a game UI kezeli a hibaüzenetet
-      return false;
-    }
-
     try {
       const { data, error } = await supabase.rpc('use_life');
-      
-      if (error || !data) {
+      if (error) {
+        if (import.meta.env.DEV) console.error('[useGameProfile] use_life error:', error);
         return false;
       }
-      
-      setProfile({ ...profile, lives: profile.lives - 1 });
-      // Nincs toast - azonnali UI frissítés van
-      return true;
-    } catch {
+      if (data) {
+        // Backend is authoritative; refetch to sync instantly
+        await fetchProfile();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      if (import.meta.env.DEV) console.error('[useGameProfile] use_life exception:', e);
       return false;
     }
   };
