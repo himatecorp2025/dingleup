@@ -15,7 +15,7 @@ export const useQuestionLike = (questionId: string | null) => {
     loading: true,
   });
 
-  // Fetch initial like status
+  // Fetch initial like status and setup realtime subscription
   useEffect(() => {
     if (!questionId) {
       setStatus({ liked: false, likeCount: 0, loading: false });
@@ -51,6 +51,32 @@ export const useQuestionLike = (questionId: string | null) => {
     };
 
     fetchLikeStatus();
+
+    // Setup realtime subscription for like count updates
+    const channel = supabase
+      .channel(`question-likes-${questionId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'questions',
+          filter: `id=eq.${questionId}`,
+        },
+        (payload) => {
+          if (payload.new && 'like_count' in payload.new) {
+            setStatus(prev => ({
+              ...prev,
+              likeCount: payload.new.like_count as number,
+            }));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [questionId]);
 
   // Toggle like
