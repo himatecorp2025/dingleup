@@ -42,10 +42,10 @@ export const LeaderboardCarousel = () => {
 
   const refresh = async () => {
     console.log('[LeaderboardCarousel] Refreshing weekly rankings data...');
-    // Only show current week's rankings
+    // Show ALL players from current week's rankings (no TOP 100 limit)
     const weeklyData = await fetchFromWeeklyRankings();
     console.log('[LeaderboardCarousel] fetchFromWeeklyRankings result:', weeklyData.length, 'players');
-    setTopPlayers(weeklyData.slice(0, 100));
+    setTopPlayers(weeklyData);
   };
 
 
@@ -88,10 +88,9 @@ export const LeaderboardCarousel = () => {
         }
       });
 
-      // Sort by total_correct_answers and return TOP 100
+      // Sort by total_correct_answers and return ALL players (no TOP 100 limit)
       return Array.from(userMap.values())
-        .sort((a, b) => b.total_correct_answers - a.total_correct_answers)
-        .slice(0, 100);
+        .sort((a, b) => b.total_correct_answers - a.total_correct_answers);
     } catch (e) {
       console.error('[LeaderboardCarousel] weekly_rankings error:', e);
       return [];
