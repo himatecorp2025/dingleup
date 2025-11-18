@@ -20,7 +20,7 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
         }, 2000);
       });
     }
-  }, [onVideoEnd]);
+  }, []);
 
   const handleVideoEnd = () => {
     console.log('[GameLoadingScreen] Video ended');
@@ -37,6 +37,7 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
         autoPlay
         muted
         playsInline
+        preload="auto"
         onEnded={handleVideoEnd}
       />
     </div>
