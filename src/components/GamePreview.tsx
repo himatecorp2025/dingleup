@@ -127,6 +127,7 @@ const GamePreview = () => {
     
     console.log('[GamePreview] Starting game - setting isStartingGame guard');
     setIsStartingGame(true);
+    setVideoEnded(false); // Reset video state - video must play every time
 
     try {
       await supabase.rpc('reset_game_helps');
@@ -910,9 +911,21 @@ const GamePreview = () => {
   }
 
   if (gameState === 'playing') {
-    // Guard: Don't render until both questions are loaded AND video has ended
-    if (questions.length === 0 || !videoEnded) {
-      return <GameLoadingScreen onVideoEnd={() => setVideoEnded(true)} />;
+    // Show loading video until it ends, regardless of question loading state
+    if (!videoEnded) {
+      return <GameLoadingScreen onVideoEnd={() => {
+        console.log('[GamePreview] Video ended, showing first question');
+        setVideoEnded(true);
+      }} />;
+    }
+    
+    // Guard: Don't render until questions are loaded
+    if (questions.length === 0) {
+      return (
+        <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-black">
+          <div className="relative z-10 text-white text-lg">Kérdések betöltése...</div>
+        </div>
+      );
     }
     
     const currentQuestion = questions[currentQuestionIndex];
