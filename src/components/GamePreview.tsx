@@ -146,6 +146,15 @@ const GamePreview = () => {
     await refetchWallet();
     await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
     
+    // Ensure fresh auth session before invoking edge functions
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      console.error('[Game] Session error:', sessionError);
+      toast.error('Munkamenet lejárt, kérlek jelentkezz be újra');
+      navigate('/login');
+      return;
+    }
+    
     try {
       const startSourceId = `${Date.now()}-start`;
       await supabase.functions.invoke('credit-gameplay-reward', {
