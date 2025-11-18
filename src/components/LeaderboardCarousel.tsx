@@ -63,14 +63,15 @@ export const LeaderboardCarousel = () => {
         .eq('id', user.id)
         .single();
       
-      if (!profile?.country_code) return [];
+      // Fallback to HU if country_code is missing
+      const countryCode = profile?.country_code || 'HU';
       
       const weekStart = getWeekStartInUserTimezone();
       const { data, error } = await supabase
         .from('weekly_rankings')
         .select('user_id, total_correct_answers, public_profiles:public_profiles!inner(username, avatar_url, country_code)')
         .eq('week_start', weekStart)
-        .eq('public_profiles.country_code', profile.country_code)
+        .eq('public_profiles.country_code', countryCode)
         .order('total_correct_answers', { ascending: false });
       if (error) throw error;
 
