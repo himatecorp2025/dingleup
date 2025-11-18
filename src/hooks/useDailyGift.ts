@@ -17,54 +17,40 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
 
     try {
-      // STEP 1: Check server-side state FIRST (like Welcome Bonus does)
-      // Get current week start
-      const { data: weekData, error: weekError } = await supabase
-        .rpc('get_current_week_start');
-      
-      if (weekError) throw weekError;
-      const weekStart = weekData as string;
-
-      // Get weekly login state
-      const { data: loginState } = await supabase
-        .from('weekly_login_state')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('week_start', weekStart)
+      // Check server-side profile data (aligned with claim-daily-gift edge function)
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('daily_gift_streak, daily_gift_last_claimed')
+        .eq('id', userId)
         .single();
 
-      const currentIndex = loginState?.awarded_login_index || 0;
+      if (profileError) throw profileError;
+
+      const currentStreak = profile?.daily_gift_streak ?? 0;
       
-      // Check if can claim (24h throttle)
+      // Check if can claim (24h throttle based on daily_gift_last_claimed)
       let canClaimNow = true;
-      if (loginState?.last_counted_at) {
-        const lastCounted = new Date(loginState.last_counted_at);
+      if (profile?.daily_gift_last_claimed) {
+        const lastClaimed = new Date(profile.daily_gift_last_claimed);
         const now = new Date();
-        const hoursSince = (now.getTime() - lastCounted.getTime()) / (1000 * 60 * 60);
+        const hoursSince = (now.getTime() - lastClaimed.getTime()) / (1000 * 60 * 60);
         canClaimNow = hoursSince >= 24;
       }
 
-      // Get reward configuration for next day
-      const { data: rewardConfig } = await supabase
-        .from('weekly_login_rewards')
-        .select('*')
-        .eq('reward_index', currentIndex + 1)
-        .single();
-
-      const baseReward = rewardConfig?.gold_amount || 0;
+      // Calculate reward based on cycle position (0-6) - matches edge function logic
+      const cyclePosition = currentStreak % 7;
+      const rewardCoins = DAILY_GIFT_REWARDS[cyclePosition];
       
-      setWeeklyEntryCount(currentIndex);
-      setNextReward(baseReward);
-      setCanClaim(canClaimNow && baseReward > 0);
+      setWeeklyEntryCount(currentStreak);
+      setNextReward(rewardCoins);
+      setCanClaim(canClaimNow);
 
-      // STEP 2: Now check sessionStorage (AFTER server check, like Welcome Bonus)
+      // Check sessionStorage (AFTER server check)
       const today = new Date().toISOString().split('T')[0];
-      const dismissedToday = sessionStorage.getItem(`daily_gift_dismissed_${today}`);
+      const dismissedToday = sessionStorage.getItem(`${DAILY_GIFT_SESSION_KEY}${today}`);
       
-      // STEP 3: User is eligible - show the dialog (even if dismissed in session, let parent component decide)
-      if (canClaimNow && baseReward > 0) {
-        
-        // Only auto-show if NOT dismissed in this session
+      // User is eligible - show the dialog if not dismissed in session
+      if (canClaimNow) {
         if (!dismissedToday) {
           setShowPopup(true);
           trackEvent('popup_impression', 'daily');
