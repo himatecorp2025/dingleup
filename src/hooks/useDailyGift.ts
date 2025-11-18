@@ -149,9 +149,6 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       setClaiming(false);
     }
   };
-      return false;
-    }
-  };
 
   const handleLater = () => {
     if (!userId) return;
@@ -198,6 +195,5 @@ const trackEvent = (event: string, type: string, action?: string) => {
       action,
       timestamp: new Date().toISOString()
     });
-  
-  // Silent analytics tracking - no logging in production
-  };
+  }
+};
