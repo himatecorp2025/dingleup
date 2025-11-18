@@ -101,10 +101,10 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
   };
 
   const getRankBadgeColor = (rank: number) => {
-    if (rank === 1) return 'from-yellow-400 to-yellow-600';
-    if (rank === 2) return 'from-gray-300 to-gray-500';
-    if (rank === 3) return 'from-orange-400 to-orange-600';
-    return 'from-purple-400 to-purple-600';
+    if (rank === 1) return 'from-accent to-accent-dark';
+    if (rank === 2) return 'from-muted to-muted-foreground';
+    if (rank === 3) return 'from-accent/80 to-accent';
+    return 'from-primary to-primary-dark';
   };
 
   return (
@@ -117,7 +117,7 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
         }}
       >
         <div 
-          className="relative w-full flex flex-col items-center justify-center p-[4vw] bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900"
+          className="relative w-full flex flex-col items-center justify-center p-[4vw] bg-gradient-to-br from-primary-darker via-primary-dark to-primary"
           style={{ 
             minHeight: '80vh',
             aspectRatio: '0.65',
