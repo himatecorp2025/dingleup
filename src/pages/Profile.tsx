@@ -17,7 +17,6 @@ const Profile = () => {
   const { profile, loading, updateProfile } = useGameProfile(userId);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isManagingSubscription, setIsManagingSubscription] = useState(false);
   const [weeklyCorrectAnswers, setWeeklyCorrectAnswers] = useState<number>(0);
   
   // Platform detection for conditional padding
@@ -99,25 +98,6 @@ const Profile = () => {
       };
     }
   }, [userId]);
-
-  const handleManageSubscription = async () => {
-    setIsManagingSubscription(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
-      
-      if (error) throw error;
-      
-      if (data.url) {
-        window.open(data.url, '_blank');
-        toast.info('Átirányítás a Stripe kezelő felületre...');
-      }
-    } catch (error: any) {
-      console.error('Error opening customer portal:', error);
-      toast.error('Hiba történt az előfizetés kezelő felület megnyitásakor');
-    } finally {
-      setIsManagingSubscription(false);
-    }
-  };
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {

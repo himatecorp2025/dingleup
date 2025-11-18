@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, ShoppingCart, AlertTriangle, Star, Activity, Crown, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Crown, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import PlayerBehaviorsTab from '@/components/admin/PlayerBehaviorsTab';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { AdminReportActionDialog } from '@/components/AdminReportActionDialog';
 
-type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'purchases' | 'invitations' | 'reports' | 'player-behaviors' | 'popular-content';
+type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'invitations' | 'reports' | 'player-behaviors' | 'popular-content';
 type ReportsSubTab = 'development' | 'support';
 
 const AdminDashboard = () => {
@@ -22,7 +22,6 @@ const AdminDashboard = () => {
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [purchases, setPurchases] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
   const [invitations, setInvitations] = useState<any[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -74,11 +73,6 @@ const AdminDashboard = () => {
         event: '*',
         schema: 'public',
         table: 'friendships'
-      }, debouncedFetch)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'purchases'
       }, debouncedFetch)
       .on('postgres_changes', {
         event: '*',
@@ -144,15 +138,6 @@ const AdminDashboard = () => {
         const merged = adminData.users.map((u: any) => ({ ...u, role: roleMap.get(u.id) || 'user' }));
         setAllUsers(merged);
         setTotalUsers(adminData.users.length);
-      }
-
-      // Process purchases
-      if (adminData?.purchases) {
-        setPurchases(adminData.purchases);
-        const revenue = adminData.purchases
-          .filter((p: any) => p.status === 'completed' && p.amount_usd)
-          .reduce((sum: number, p: any) => sum + Number(p.amount_usd), 0);
-        setTotalRevenue(revenue.toFixed(2));
       }
 
       // Process reports
@@ -305,17 +290,6 @@ const AdminDashboard = () => {
             <span className="font-medium">Tippek & Trükkök</span>
           </button>
           <button
-            onClick={() => { setActiveTab('purchases'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-              activeTab === 'purchases'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
-            }`}
-          >
-            <ShoppingCart className="w-4 h-4 xl:w-5 xl:h-5" />
-            <span className="font-medium">Vásárlások</span>
-          </button>
-          <button
             onClick={() => { setActiveTab('invitations'); onItemClick?.(); }}
             className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
               activeTab === 'invitations'
@@ -435,7 +409,7 @@ const AdminDashboard = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab('purchases')}
+            onClick={() => setActiveTab('revenue')}
             className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-[#1a1a3e]/70 transition-colors"
           >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
@@ -477,7 +451,7 @@ const AdminDashboard = () => {
                   <p className="text-white/60 text-xs lg:text-sm">Összes felhasználó megtekintése</p>
                 </button>
                 <button
-                  onClick={() => setActiveTab('purchases')}
+                  onClick={() => setActiveTab('revenue')}
                   className="bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 rounded-lg p-3 lg:p-4 text-left transition-colors"
                 >
                   <DollarSign className="w-5 h-5 lg:w-6 lg:h-6 text-green-400 mb-2" />
@@ -543,61 +517,6 @@ const AdminDashboard = () => {
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{user.total_correct_answers}</td>
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
                         {new Date(user.created_at).toLocaleDateString('hu-HU')}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'purchases' && (
-          <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">Összes vásárlás ({purchases.length})</h2>
-            <div className="overflow-x-auto -mx-4 lg:mx-0">
-              <table className="w-full min-w-[1000px]">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Dátum</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Felhasználó</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Termék</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Összeg</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Fizetési mód</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Ország</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Státusz</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Tranzakció ID</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {purchases.map((purchase) => (
-                    <tr key={purchase.id} className="border-b border-white/5 hover:bg-white/5">
-                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
-                        {new Date(purchase.created_at).toLocaleString('hu-HU')}
-                      </td>
-                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
-                        {purchase.profiles?.username || 'N/A'}
-                      </td>
-                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{purchase.product_type}</td>
-                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
-                        {purchase.payment_method === 'stripe' 
-                          ? `$${purchase.amount_usd}` 
-                          : `${purchase.amount_coins} coins`}
-                      </td>
-                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm capitalize">{purchase.payment_method}</td>
-                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{purchase.country || 'N/A'}</td>
-                      <td className="py-3 lg:py-4 px-2 lg:px-4">
-                        <span className={`px-2 lg:px-3 py-1 rounded-full text-xs font-medium ${
-                          purchase.status === 'completed' ? 'bg-green-500/20 text-green-400' :
-                          purchase.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                          purchase.status === 'failed' ? 'bg-red-500/20 text-red-400' :
-                          'bg-gray-500/20 text-gray-400'
-                        }`}>
-                          {purchase.status}
-                        </span>
-                      </td>
-                      <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs font-mono">
-                        {purchase.stripe_payment_intent_id?.slice(0, 20) || 'N/A'}...
                       </td>
                     </tr>
                   ))}

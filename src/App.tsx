@@ -44,7 +44,7 @@ const PageLoader = () => (
   <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center">
     <div className="flex flex-col items-center gap-4">
       <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-      <p className="text-lg text-white/70">Betöltés...</p>
+      <p className="text-lg text-foreground/70">Betöltés...</p>
     </div>
   </div>
 );
@@ -110,14 +110,14 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className="h-dvh h-svh w-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
         <div className="text-center px-6 max-w-md">
-          <h1 className="text-3xl font-black text-white mb-4">📱 Csak mobilon és táblagépen elérhető</h1>
-          <p className="text-white/80 mb-6">
+          <h1 className="text-3xl font-black text-foreground mb-4">📱 Csak mobilon és táblagépen elérhető</h1>
+          <p className="text-foreground/80 mb-6">
             Ez az alkalmazás csak telefonon és táblagépen használható. 
             Kérjük, nyisd meg mobil eszközön!
           </p>
           <button
             onClick={() => window.location.href = '/'}
-            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-800 text-white font-bold rounded-lg hover:from-purple-700 hover:to-purple-900 transition-all"
+            className="px-8 py-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-bold rounded-lg hover:brightness-110 transition-all"
           >
             Vissza a főoldalra
           </button>
