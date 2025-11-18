@@ -25,10 +25,17 @@ export const useActivityTracker = (source: ActivitySource = 'route_view') => {
       const bucketStart = new Date(bucket).toISOString();
       
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
+        // CRITICAL: Get fresh session with explicit token for authentication
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !session?.access_token) {
+          console.log('[ActivityTracker] No valid session, skipping ping');
+          return;
+        }
 
         await supabase.functions.invoke('log-activity-ping', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`
+          },
           body: {
             bucketStart,
             source,

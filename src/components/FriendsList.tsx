@@ -52,7 +52,14 @@ export const FriendsList = ({ userId, onSelectFriend, selectedFriendId }: Friend
   const loadFriends = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase.functions.invoke('get-friends');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('No session');
+
+      const { data, error } = await supabase.functions.invoke('get-friends', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
       if (error) throw error;
       setFriends(data?.friends || []);
     } catch (error) {

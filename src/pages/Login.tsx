@@ -48,6 +48,7 @@ const Login = () => {
       const validated = loginSchema.parse(formData);
 
       // Kérjük le az email címet felhasználónév alapján az edge functionből
+      // Note: This function is PUBLIC (no auth required) - login-with-username has verify_jwt = false
       const { data: fnData, error: fnError } = await supabase.functions.invoke('login-with-username', {
         body: {
           username: validated.username,
