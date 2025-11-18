@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 
 interface Question {
@@ -96,15 +96,15 @@ serve(async (req) => {
       );
     }
 
-    // Return questions with Answer objects (key, text, correct fields)
+    // Return questions with Answer objects - use DB structure directly
     const clientQuestions = selectedQuestions.map(q => ({
       id: q.id,
       question: q.question,
-      answers: q.answers.map((ans: any, idx: number) => ({
-        key: ['A', 'B', 'C'][idx] as 'A' | 'B' | 'C',
+      answers: Array.isArray(q.answers) ? q.answers.map((ans: any) => ({
+        key: ans.key || 'A',
         text: ans.text || '',
-        correct: ans.correct || false
-      })),
+        correct: false // Never send correct flag to client
+      })) : [],
       topic: 'mixed'
       // correctAnswer intentionally omitted
     }));
