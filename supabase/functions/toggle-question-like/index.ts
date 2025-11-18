@@ -1,0 +1,136 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: req.headers.get('Authorization')! },
+        },
+      }
+    );
+
+    // Authenticate user
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { questionId } = await req.json();
+
+    if (!questionId || typeof questionId !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid question ID' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`[toggle-question-like] User ${user.id} toggling like for question ${questionId}`);
+
+    // Check if user already liked this question
+    const { data: existingLike, error: checkError } = await supabaseClient
+      .from('question_likes')
+      .select('id')
+      .eq('question_id', questionId)
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (checkError) {
+      console.error('[toggle-question-like] Check error:', checkError);
+      throw checkError;
+    }
+
+    let liked = false;
+
+    if (existingLike) {
+      // Unlike: Remove the like
+      const { error: deleteError } = await supabaseClient
+        .from('question_likes')
+        .delete()
+        .eq('id', existingLike.id);
+
+      if (deleteError) {
+        console.error('[toggle-question-like] Delete error:', deleteError);
+        throw deleteError;
+      }
+
+      liked = false;
+      console.log(`[toggle-question-like] User ${user.id} unliked question ${questionId}`);
+    } else {
+      // Like: Insert new like
+      const { error: insertError } = await supabaseClient
+        .from('question_likes')
+        .insert({
+          question_id: questionId,
+          user_id: user.id,
+        });
+
+      if (insertError) {
+        console.error('[toggle-question-like] Insert error:', insertError);
+        throw insertError;
+      }
+
+      liked = true;
+      console.log(`[toggle-question-like] User ${user.id} liked question ${questionId}`);
+    }
+
+    // Get updated question like count
+    const { data: question, error: questionError } = await supabaseClient
+      .from('questions')
+      .select('like_count, topic_id')
+      .eq('id', questionId)
+      .single();
+
+    if (questionError) {
+      console.error('[toggle-question-like] Question fetch error:', questionError);
+      throw questionError;
+    }
+
+    // Calculate topic total likes
+    const { data: topicStats, error: topicError } = await supabaseClient
+      .from('questions')
+      .select('like_count')
+      .eq('topic_id', question.topic_id);
+
+    if (topicError) {
+      console.error('[toggle-question-like] Topic stats error:', topicError);
+      throw topicError;
+    }
+
+    const topicTotalLikes = topicStats?.reduce((sum, q) => sum + (q.like_count || 0), 0) || 0;
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        liked,
+        question_like_count: question.like_count || 0,
+        topic_total_likes: topicTotalLikes,
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+
+  } catch (error) {
+    console.error('[toggle-question-like] Error:', error);
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : 'An error occurred' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+});
