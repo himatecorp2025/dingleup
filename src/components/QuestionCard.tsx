@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Users } from "lucide-react";
 import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
 import { Question, getSkipCost } from "@/types/game";
@@ -123,77 +124,13 @@ export const QuestionCard = ({
       />
       
       <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className} relative`}>
-        {/* Top section: Exit button, Lives, Coins - Moved higher */}
-      <div className="flex justify-between items-start pt-2 sm:pt-3">
-        {/* Back Button - 3D Round Style */}
-        <div className="relative">
-          <button
-            onClick={onExit}
-            className="relative p-3 rounded-full hover:scale-110 transition-all"
-            title="Vissza a témakategóriára"
-          >
-            {/* BASE SHADOW */}
-            <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
-            
-            {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
-            
-            {/* MIDDLE FRAME */}
-            <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
-            
-            {/* INNER LAYER */}
-            <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
-            
-            {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
-            
-            {/* Icon */}
-            <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
-          </button>
-        </div>
-
-        <div className="flex gap-1.5 sm:gap-2 md:gap-4">
-          {/* Lives indicator with deep 3D */}
-          <div className="relative rounded-full" style={{ perspective: '500px' }}>
-            {/* BASE SHADOW */}
-            <div className="absolute inset-0 bg-black/60 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
-            
-            {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border border-red-400/50 shadow-lg" aria-hidden />
-            
-            {/* MIDDLE FRAME */}
-            <div className="absolute inset-[2px] rounded-full bg-gradient-to-b from-black/60 via-black/40 to-black/80" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.4)' }} aria-hidden />
-            
-            {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[2px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)' }} aria-hidden />
-            
-            <div className="relative flex items-center gap-1 sm:gap-1.5 md:gap-2 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 z-10">
-              <span className="text-red-500 text-base sm:text-lg md:text-xl">❤️</span>
-              <span className="text-white font-bold text-xs sm:text-sm md:text-base drop-shadow-lg">{lives}/{maxLives}</span>
-            </div>
-          </div>
-          
-          {/* Coins indicator with deep 3D */}
-          <div className="relative rounded-full" style={{ perspective: '500px' }}>
-            {/* BASE SHADOW */}
-            <div className="absolute inset-0 bg-black/60 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
-            
-            {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 border border-yellow-400/50 shadow-lg" aria-hidden />
-            
-            {/* MIDDLE FRAME */}
-            <div className="absolute inset-[2px] rounded-full bg-gradient-to-b from-black/60 via-black/40 to-black/80" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.4)' }} aria-hidden />
-            
-            {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[2px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)' }} aria-hidden />
-            
-            <div className="relative flex items-center gap-1 sm:gap-1.5 md:gap-2 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 z-10">
-              <span className="text-yellow-500 text-base sm:text-lg md:text-xl">🪙</span>
-              <span className="text-white font-bold text-xs sm:text-sm md:text-base drop-shadow-lg">{coins}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+        {/* Top section: Exit button, Lives, Coins */}
+        <GameHeader
+          lives={lives}
+          maxLives={maxLives}
+          coins={coins}
+          onExit={onExit}
+        />
 
       {/* Wrapper for Timer + Question + Answers + Help - Vertically centered on mobile/tablet */}
       <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 pt-[7.2rem] sm:pt-[9rem] pb-[7.2rem] sm:pb-[9rem] md:pt-0 md:pb-0 md:mt-[5.5vh]">
@@ -206,7 +143,7 @@ export const QuestionCard = ({
             style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
           >
             <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
-              <TimerCircle timeLeft={timeLeft} />
+              <GameTimer timeLeft={timeLeft} maxTime={30} />
             </div>
 
             <div className="-mt-[0.1rem] sm:-mt-[0.2rem] md:-mt-[0.3rem] pb-10 sm:pb-12 md:pb-16">
@@ -265,142 +202,22 @@ export const QuestionCard = ({
           </div>
         </div>
 
-        {/* Bottom section: Help buttons - hexagon shaped with deep 3D */}
-        <div className="grid grid-cols-4 gap-1 sm:gap-2 md:gap-3 mt-0">
-        {/* 1/3 Help Button */}
-        <div className="relative" style={{ perspective: '600px' }}>
-          <button
-            onClick={onUseHelp5050}
-            disabled={disabled || help5050UsageCount >= 2}
-            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 transition-all ${help5050UsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
-          >
-            {/* BASE SHADOW */}
-            <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
-            
-            {/* OUTER FRAME */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 border-2 border-blue-300/80 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
-            
-            {/* MIDDLE FRAME */}
-            <div className="absolute inset-[3px] bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ clipPath: 'inherit', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)', transform: 'translateZ(8px)' }} aria-hidden />
-            
-            {/* INNER LAYER */}
-            <div className="absolute inset-[4px] bg-gradient-to-br from-blue-500/80 to-blue-700/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
-            
-            {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
-            
-            <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
-              <span className="font-bold text-base sm:text-lg">1/3</span>
-              {help5050UsageCount === 1 && (
-                <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
-                  <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-                  15
-                </span>
-              )}
-            </div>
-          </button>
-        </div>
-        
-        {/* 2x Help Button */}
-        <div className="relative" style={{ perspective: '600px' }}>
-          <button
-            onClick={onUseHelp2xAnswer}
-            disabled={disabled || help2xAnswerUsageCount >= 2}
-            className={`relative w-full clip-hexagon-tall text-white font-bold text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 transition-all ${help2xAnswerUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
-          >
-            {/* BASE SHADOW */}
-            <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
-            
-            {/* OUTER FRAME */}
-            <div className="absolute inset-0 bg-gradient-to-br from-green-400 via-green-500 to-green-600 border-2 border-green-300/80 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
-            
-            {/* MIDDLE FRAME */}
-            <div className="absolute inset-[3px] bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ clipPath: 'inherit', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)', transform: 'translateZ(8px)' }} aria-hidden />
-            
-            {/* INNER LAYER */}
-            <div className="absolute inset-[4px] bg-gradient-to-br from-green-500/80 to-green-700/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
-            
-            {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
-            
-            <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
-              <span className="font-bold text-base sm:text-lg">2x</span>
-              {help2xAnswerUsageCount === 1 && (
-                <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
-                  <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-                  20
-                </span>
-              )}
-            </div>
-          </button>
-        </div>
-        
-        {/* Audience Help Button */}
-        <div className="relative" style={{ perspective: '600px' }}>
-          <button
-            onClick={onUseHelpAudience}
-            disabled={disabled || helpAudienceUsageCount >= 2}
-            className={`relative w-full clip-hexagon-tall text-white text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 transition-all ${helpAudienceUsageCount >= 2 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
-          >
-            {/* BASE SHADOW */}
-            <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
-            
-            {/* OUTER FRAME */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 border-2 border-purple-300/80 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
-            
-            {/* MIDDLE FRAME */}
-            <div className="absolute inset-[3px] bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ clipPath: 'inherit', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)', transform: 'translateZ(8px)' }} aria-hidden />
-            
-            {/* INNER LAYER */}
-            <div className="absolute inset-[4px] bg-gradient-to-br from-purple-500/80 to-purple-700/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
-            
-            {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
-            
-            <div className="relative z-10 font-poppins" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
-              <Users className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-              {helpAudienceUsageCount === 1 && (
-                <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
-                  <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-                  30
-                </span>
-              )}
-            </div>
-          </button>
-        </div>
-        
-        {/* Skip Question Button */}
-        <div className="relative" style={{ perspective: '600px' }}>
-          <button
-            onClick={onUseQuestionSwap}
-            disabled={disabled || usedQuestionSwap}
-            className={`relative w-full clip-hexagon-tall text-white text-[10px] sm:text-xs md:text-sm flex flex-col items-center justify-center gap-0.5 transition-all ${usedQuestionSwap ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
-          >
-            {/* BASE SHADOW */}
-            <div className="absolute inset-0 bg-black/60" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)', clipPath: 'inherit' }} aria-hidden />
-            
-            {/* OUTER FRAME */}
-            <div className="absolute inset-0 bg-gradient-to-br from-red-400 via-red-500 to-red-600 border-2 border-red-300/80 shadow-lg" style={{ clipPath: 'inherit', transform: 'translateZ(0px)' }} aria-hidden />
-            
-            {/* MIDDLE FRAME */}
-            <div className="absolute inset-[3px] bg-gradient-to-b from-black/40 via-transparent to-black/60" style={{ clipPath: 'inherit', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4)', transform: 'translateZ(8px)' }} aria-hidden />
-            
-            {/* INNER LAYER */}
-            <div className="absolute inset-[4px] bg-gradient-to-br from-red-500/80 to-red-700/80" style={{ clipPath: 'inherit', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
-            
-            {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[4px] pointer-events-none" style={{ clipPath: 'inherit', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(20px)' }} aria-hidden />
-            
-            <div className="relative z-10 font-poppins flex flex-col items-center gap-0.5" style={{ transform: 'translateZ(25px)', textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)' }}>
-              <SkipForward className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-              <span className="text-xs sm:text-sm flex items-center gap-1 font-bold">
-                <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.8))' }} />
-                {skipCost}
-              </span>
-            </div>
-          </button>
-        </div>
-      </div>
+        {/* Bottom section: Help buttons */}
+        <GameLifelines
+          help5050UsageCount={help5050UsageCount}
+          help2xAnswerUsageCount={help2xAnswerUsageCount}
+          helpAudienceUsageCount={helpAudienceUsageCount}
+          isHelp5050ActiveThisQuestion={isHelp5050ActiveThisQuestion}
+          isDoubleAnswerActiveThisQuestion={isDoubleAnswerActiveThisQuestion}
+          isAudienceActiveThisQuestion={isAudienceActiveThisQuestion}
+          usedQuestionSwap={usedQuestionSwap}
+          skipCost={skipCost}
+          coins={coins}
+          onUseHelp5050={onUseHelp5050}
+          onUseHelp2xAnswer={onUseHelp2xAnswer}
+          onUseHelpAudience={onUseHelpAudience}
+          onUseQuestionSwap={onUseQuestionSwap}
+        />
       </div>
     </div>
     </ScreenshotProtection>
