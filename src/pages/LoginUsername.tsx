@@ -35,6 +35,7 @@ const LoginUsername = () => {
       const validated = loginSchema.parse(formData);
 
       // Call the login-with-username edge function to get email
+      // Note: This function is PUBLIC (no auth required) - login-with-username has verify_jwt = false
       const { data, error } = await supabase.functions.invoke('login-with-username', {
         body: {
           username: validated.username,

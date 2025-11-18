@@ -105,6 +105,7 @@ const Register = () => {
         if (inviterCode) {
           try {
             // Validate invitation using edge function
+            // Note: This function is PUBLIC (no auth required) - validate-invitation has verify_jwt = false
             const { data: validationData, error: validationError } = await supabase.functions.invoke(
               'validate-invitation',
               {
@@ -123,15 +124,25 @@ const Register = () => {
               });
             } else {
               // Accept invitation using edge function
+              // Note: Get fresh session after successful registration
+              const { data: { session: freshSession } } = await supabase.auth.getSession();
+              if (!freshSession?.access_token) {
+                console.error('[Register] No session after registration');
+                throw new Error('Registration successful but session invalid');
+              }
+
               const { data: acceptData, error: acceptError } = await supabase.functions.invoke(
                 'accept-invitation',
                 {
+                  headers: {
+                    Authorization: `Bearer ${freshSession.access_token}`
+                  },
                   body: {
                     inviterId: validationData.inviterId,
                     invitedUserId: authData.user.id,
                     invitedEmail: validated.email,
                     invitationCode: inviterCode,
-                  },
+                  }
                 }
               );
 

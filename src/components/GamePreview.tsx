@@ -638,7 +638,16 @@ const GamePreview = () => {
     try {
       // SECURITY: Use secure edge function for game completion
       // Server calculates and validates all rewards
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        toast.error('Munkamenet lejárt. Jelentkezz be újra!');
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('complete-game', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        },
         body: {
           category: selectedCategory,
           correctAnswers: correctAnswers,

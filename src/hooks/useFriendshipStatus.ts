@@ -69,7 +69,13 @@ export const useFriendshipStatus = (userId: string | undefined, targetUserId: st
 
   const sendRequest = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('No session');
+
       const { error } = await supabase.functions.invoke('send-friend-request', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        },
         body: { userId: targetUserId }
       });
       if (error) throw error;
