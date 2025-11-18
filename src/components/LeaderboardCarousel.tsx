@@ -74,18 +74,34 @@ export const LeaderboardCarousel = () => {
       const weekStart = getWeekStartInUserTimezone();
       console.log('[LeaderboardCarousel] Week start:', weekStart);
       
-      // First get all weekly_rankings for current week
+      // First get all weekly_rankings for current week (aggregate across all categories)
       const { data: rankingsData, error: rankingsError } = await supabase
         .from('weekly_rankings')
-        .select('user_id, total_correct_answers')
-        .eq('week_start', weekStart)
-        .order('total_correct_answers', { ascending: false });
+        .select('user_id, total_correct_answers, category')
+        .eq('week_start', weekStart);
       
       if (rankingsError) throw rankingsError;
       if (!rankingsData || rankingsData.length === 0) {
         console.log('[LeaderboardCarousel] No rankings data for week:', weekStart);
         return [];
       }
+
+      // Aggregate total_correct_answers per user across ALL categories
+      const userMap = new Map<string, { user_id: string; total_correct_answers: number }>();
+      rankingsData.forEach(row => {
+        const existing = userMap.get(row.user_id);
+        if (existing) {
+          existing.total_correct_answers += row.total_correct_answers || 0;
+        } else {
+          userMap.set(row.user_id, {
+            user_id: row.user_id,
+            total_correct_answers: row.total_correct_answers || 0
+          });
+        }
+      });
+
+      const aggregatedUserIds = Array.from(userMap.keys());
+      if (aggregatedUserIds.length === 0) return [];
       console.log('[LeaderboardCarousel] Rankings data count:', rankingsData.length);
       
       // Get unique user_ids

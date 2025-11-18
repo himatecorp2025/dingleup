@@ -8,7 +8,6 @@ import { useGameProfile } from "@/hooks/useGameProfile";
 import { useWallet } from "@/hooks/useWallet";
 import { supabase } from "@/integrations/supabase/client";
 import { GameCategory, Question, Answer, getSkipCost, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST, getCoinsForQuestion, START_GAME_REWARD } from "@/types/game";
-import CategorySelector from "./CategorySelector";
 import { HexagonButton } from "./HexagonButton";
 import { DiamondButton } from "./DiamondButton";
 import { GameStateScreen } from "./GameStateScreen";
@@ -23,14 +22,15 @@ import historyQuestions from "@/data/questions-history.json";
 import cultureQuestions from "@/data/questions-culture.json";
 import financeQuestions from "@/data/questions-finance.json";
 
-type GameState = 'category-select' | 'playing' | 'finished' | 'out-of-lives';
+type GameState = 'playing' | 'finished' | 'out-of-lives';
 
-const QUESTION_BANKS: Record<GameCategory, Question[]> = {
-  health: healthQuestions as Question[],
-  history: historyQuestions as Question[],
-  culture: cultureQuestions as Question[],
-  finance: financeQuestions as Question[]
-};
+// All questions from all categories combined
+const ALL_QUESTIONS: Question[] = [
+  ...(healthQuestions as Question[]),
+  ...(historyQuestions as Question[]),
+  ...(cultureQuestions as Question[]),
+  ...(financeQuestions as Question[])
+];
 
 const GamePreview = () => {
   const navigate = useNavigate();
@@ -41,8 +41,7 @@ const GamePreview = () => {
   
   const { broadcast } = useBroadcastChannel({ channelName: 'wallet', onMessage: () => {}, enabled: true });
   
-  const [gameState, setGameState] = useState<GameState>('category-select');
-  const [selectedCategory, setSelectedCategory] = useState<GameCategory | null>(null);
+  const [gameState, setGameState] = useState<GameState>('playing');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
@@ -56,12 +55,12 @@ const GamePreview = () => {
   
   // Helper function to log help usage
   const logHelpUsage = async (helpType: 'third' | 'skip' | 'audience' | '2x_answer') => {
-    if (!userId || !selectedCategory) return;
+    if (!userId) return;
     
     try {
       await supabase.from('game_help_usage').insert({
         user_id: userId,
-        category: selectedCategory,
+        category: 'mixed', // All categories mixed
         help_type: helpType,
         question_index: currentQuestionIndex
       });
@@ -107,6 +106,76 @@ const GamePreview = () => {
       }
     });
   }, [navigate]);
+
+  // Auto-start game when profile is ready
+  useEffect(() => {
+    if (profile && !profileLoading && questions.length === 0 && gameState === 'playing') {
+      console.log('[GamePreview] Auto-starting game with mixed questions');
+      startGame();
+    }
+  }, [profile, profileLoading]);
+
+  const startGame = async () => {
+    if (!profile) return;
+
+    try {
+      await supabase.rpc('reset_game_helps');
+    } catch (error) {
+      console.error('Error resetting helps:', error);
+    }
+    
+    const canPlay = await spendLife();
+    if (!canPlay) {
+      toast.error('Nincs elég életed a játék indításához!');
+      navigate('/dashboard');
+      return;
+    }
+    
+    await refetchWallet();
+    await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
+    
+    try {
+      const startSourceId = `${Date.now()}-start`;
+      await supabase.functions.invoke('credit-gameplay-reward', {
+        body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' },
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+      });
+      setCoinsEarned(START_GAME_REWARD);
+      await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
+    } catch (err) {
+      console.error('[GameStart] Start reward credit failed:', err);
+    }
+    
+    await refreshProfile();
+
+    // Select 15 random questions from ALL categories (mixed)
+    const shuffled = [...ALL_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 15);
+    const shuffledWithVariety = shuffleAnswers(shuffled);
+    setQuestions(shuffledWithVariety);
+    setGameState('playing');
+    setCurrentQuestionIndex(0);
+    setTimeLeft(10);
+    
+    setCorrectAnswers(0);
+    setResponseTimes([]);
+    setSelectedAnswer(null);
+    setHelp5050UsageCount(0);
+    setHelp2xAnswerUsageCount(0);
+    setHelpAudienceUsageCount(0);
+    setIsHelp5050ActiveThisQuestion(false);
+    setIsDoubleAnswerActiveThisQuestion(false);
+    setIsAudienceActiveThisQuestion(false);
+    setUsedQuestionSwap(false);
+    setFirstAttempt(null);
+    setSecondAttempt(null);
+    setRemovedAnswer(null);
+    setAudienceVotes({});
+    setQuestionStartTime(Date.now());
+    setCanSwipe(true);
+    setIsAnimating(false);
+  };
 
   // Background detection - exit game if app goes to background
   useEffect(() => {
@@ -341,74 +410,6 @@ const GamePreview = () => {
     });
   };
 
-  const startGameWithCategory = async (category: GameCategory) => {
-    if (!profile) return;
-
-    // Audio is managed by AudioManager singleton - no manual play() needed
-    
-    try {
-      await supabase.rpc('reset_game_helps');
-    } catch (error) {
-      console.error('Error resetting helps:', error);
-    }
-    
-    // Atomically spend life via improved use_life() RPC (handles regeneration + normalization internally)
-    const canPlay = await spendLife();
-    if (!canPlay) {
-      toast.error('Nincs elég életed a játék indításához!');
-      setGameState('category-select');
-      return;
-    }
-    
-    // Azonnali wallet frissítés jelzés a Dashboard felé + refetch
-    await refetchWallet();
-    await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
-    
-    // Start jutalom jóváírása (+1 aranyérme)
-    try {
-      const startSourceId = `${Date.now()}-start`;
-      await supabase.functions.invoke('credit-gameplay-reward', {
-        body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' },
-        headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-        },
-      });
-      setCoinsEarned(START_GAME_REWARD);
-      await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
-    } catch (err) {
-      console.error('[GameStart] Start reward credit failed:', err);
-    }
-    
-    await refreshProfile();
-
-    setSelectedCategory(category);
-    const questionBank = QUESTION_BANKS[category];
-    const shuffled = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 15);
-    const shuffledWithVariety = shuffleAnswers(shuffled);
-    setQuestions(shuffledWithVariety);
-    setGameState('playing');
-    setCurrentQuestionIndex(0);
-    setTimeLeft(10);
-    
-    setCorrectAnswers(0);
-    setResponseTimes([]);
-    setSelectedAnswer(null);
-    // Reset ALL game-level usage counters on new game
-    setHelp5050UsageCount(0);
-    setHelp2xAnswerUsageCount(0);
-    setHelpAudienceUsageCount(0);
-    setIsHelp5050ActiveThisQuestion(false);
-    setIsDoubleAnswerActiveThisQuestion(false);
-    setIsAudienceActiveThisQuestion(false);
-    setUsedQuestionSwap(false);
-    setFirstAttempt(null);
-    setSecondAttempt(null);
-    setRemovedAnswer(null);
-    setAudienceVotes({});
-    setQuestionStartTime(Date.now());
-    setCanSwipe(true);
-    setIsAnimating(false);
-  };
 
   const handleAnswer = (answerKey: string) => {
     if (selectedAnswer || isAnimating) return;
@@ -583,43 +584,12 @@ const GamePreview = () => {
   };
 
   const resetGameState = () => {
-    // Reset ALL game states to initial values
-    setGameState('category-select');
-    setSelectedCategory(null);
-    setQuestions([]);
-    setCurrentQuestionIndex(0);
-    setTimeLeft(10);
-    setSelectedAnswer(null);
-    setCorrectAnswers(0);
-    setCoinsEarned(0);
-    setResponseTimes([]);
-    setQuestionStartTime(Date.now());
-    
-    // Reset help counters
-    setHelp5050UsageCount(0);
-    setHelp2xAnswerUsageCount(0);
-    setHelpAudienceUsageCount(0);
-    setIsHelp5050ActiveThisQuestion(false);
-    setIsDoubleAnswerActiveThisQuestion(false);
-    setIsAudienceActiveThisQuestion(false);
-    setUsedQuestionSwap(false);
-    setFirstAttempt(null);
-    setSecondAttempt(null);
-    setRemovedAnswer(null);
-    setAudienceVotes({});
-    
-    // Reset UI states
-    setShowExitDialog(false);
-    setErrorBannerVisible(false);
-    setErrorBannerMessage('');
-    setQuestionVisible(true);
-    setCanSwipe(true);
-    setIsAnimating(false);
-    setTranslateY(0);
+    // Exit to dashboard instead of category select
+    navigate('/dashboard');
   };
 
   const finishGame = async () => {
-    if (!profile || !selectedCategory) return;
+    if (!profile) return;
 
     setGameState('finished');
 
@@ -641,7 +611,7 @@ const GamePreview = () => {
           Authorization: `Bearer ${session.access_token}`
         },
         body: {
-          category: selectedCategory,
+          category: 'mixed', // All categories mixed together
           correctAnswers: correctAnswers,
           totalQuestions: questions.length,
           averageResponseTime: avgResponseTime
@@ -860,9 +830,9 @@ const GamePreview = () => {
       return;
     }
     
-    const questionBank = QUESTION_BANKS[selectedCategory!];
+    // Select from ALL questions pool (not category-specific)
     const currentIds = questions.map(q => q.id);
-    const availableQuestions = questionBank.filter(q => !currentIds.includes(q.id));
+    const availableQuestions = ALL_QUESTIONS.filter(q => !currentIds.includes(q.id));
     
     if (availableQuestions.length === 0) {
       // Nincs toast - nincs több kérdés
@@ -909,13 +879,6 @@ const GamePreview = () => {
     );
   }
 
-  if (gameState === 'category-select') {
-    return (
-      <div className="fixed inset-0 md:relative md:min-h-auto overflow-y-auto">
-        <CategorySelector onSelect={startGameWithCategory} />
-      </div>
-    );
-  }
 
   if (gameState === 'out-of-lives') {
     return (

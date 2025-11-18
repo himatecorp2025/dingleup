@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const validCategories = ['health', 'history', 'culture', 'finance'];
+    const validCategories = ['health', 'history', 'culture', 'finance', 'mixed'];
     if (!validCategories.includes(body.category)) {
       return new Response(
         JSON.stringify({ error: `Category must be one of: ${validCategories.join(', ')}` }),
