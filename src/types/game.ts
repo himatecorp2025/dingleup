@@ -1,4 +1,4 @@
-export type GameCategory = 'health' | 'history' | 'culture' | 'finance';
+export type GameCategory = 'mixed';
 
 export interface Answer {
   key: 'A' | 'B' | 'C';
