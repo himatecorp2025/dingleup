@@ -244,22 +244,22 @@ export const LeaderboardCarousel = () => {
   }, []);
 
   const getHexagonColor = (index: number) => {
-    if (index === 0) return 'from-yellow-400 via-yellow-500 to-yellow-600'; // Arany
-    if (index === 1) return 'from-gray-300 via-gray-400 to-gray-500'; // Ezüst
-    if (index === 2) return 'from-orange-400 via-orange-500 to-orange-600'; // Bronz
-    return 'from-purple-500 via-purple-600 to-purple-700'; // Lila
+    if (index === 0) return 'from-gold via-gold to-gold-dark'; // Arany
+    if (index === 1) return 'from-muted via-muted-foreground to-muted'; // Ezüst
+    if (index === 2) return 'from-gold-dark via-gold-dark to-gold'; // Bronz
+    return 'from-primary via-primary to-primary'; // Lila
   };
 
   const getCrownColor = (index: number) => {
-    if (index === 0) return 'text-yellow-300';
-    if (index === 1) return 'text-gray-200';
-    if (index === 2) return 'text-orange-300';
+    if (index === 0) return 'text-gold';
+    if (index === 1) return 'text-muted';
+    if (index === 2) return 'text-gold-dark';
     return '';
   };
 
   return (
     <div className="w-full py-1">
-      <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-white mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
+      <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-foreground mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
       
       {/* Weekly Rankings Countdown moved here from top section */}
       <div className="flex justify-center mb-2">
@@ -269,7 +269,7 @@ export const LeaderboardCarousel = () => {
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {topPlayers.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-white/60 text-xs sm:text-sm">Ranglista betöltése...</p>
+            <p className="text-muted-foreground text-xs sm:text-sm">Ranglista betöltése...</p>
           </div>
         ) : (
           <div className="inline-flex gap-2 sm:gap-3 px-2">
@@ -282,24 +282,24 @@ export const LeaderboardCarousel = () => {
                   {/* BASE SHADOW */}
                   <div className="absolute clip-hexagon" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} aria-hidden />
                   {/* OUTER FRAME */}
-                  <div className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(index % topPlayers.length)} border-2 shadow-xl`} style={{ borderColor: (index % topPlayers.length) === 0 ? '#fbbf24' : (index % topPlayers.length) === 1 ? '#d1d5db' : (index % topPlayers.length) === 2 ? '#fb923c' : '#a855f7' }} aria-hidden />
+                  <div className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(index % topPlayers.length)} border-2 shadow-xl`} style={{ borderColor: (index % topPlayers.length) === 0 ? 'hsl(var(--gold))' : (index % topPlayers.length) === 1 ? 'hsl(var(--muted))' : (index % topPlayers.length) === 2 ? 'hsl(var(--gold-dark))' : 'hsl(var(--primary))' }} aria-hidden />
                   {/* MIDDLE FRAME */}
-                  <div className="absolute inset-[2px] clip-hexagon" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)' }} aria-hidden />
+                  <div className="absolute inset-[2px] clip-hexagon" style={{ background: 'linear-gradient(180deg, hsl(var(--primary-foreground) / 0.3), hsl(var(--primary-foreground) / 0.1))', boxShadow: 'inset 0 2px 0 hsl(var(--primary-foreground) / 0.4)' }} aria-hidden />
                   {/* INNER LAYER */}
-                  <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+                  <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px hsl(var(--primary-foreground) / 0.3), inset 0 -4px 8px hsl(var(--background) / 0.3)' }} aria-hidden />
                   {/* Content */}
                   <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
                     {/* Felső rész: korona + rang */}
                     <div className="flex flex-col items-center gap-0">
                       {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ${getCrownColor(index % topPlayers.length)}`} />}
-                      <p className="text-[9px] sm:text-[10px] md:text-xs font-black text-white drop-shadow-lg leading-none">{rank}.</p>
+                      <p className="text-[9px] sm:text-[10px] md:text-xs font-black text-primary-foreground drop-shadow-lg leading-none">{rank}.</p>
                     </div>
                     
                     {/* Középső rész: felhasználónév */}
-                    <p className="text-[9px] sm:text-[10px] md:text-xs font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
+                    <p className="text-[9px] sm:text-[10px] md:text-xs font-bold text-primary-foreground text-center truncate w-full drop-shadow-lg">{player.username}</p>
                     
                     {/* Alsó rész: helyes válaszok */}
-                    <p className="text-[8px] sm:text-[9px] md:text-[10px] font-semibold text-white/90 drop-shadow-lg leading-none">{player.total_correct_answers}</p>
+                    <p className="text-[8px] sm:text-[9px] md:text-[10px] font-semibold text-primary-foreground/90 drop-shadow-lg leading-none">{player.total_correct_answers}</p>
                   </div>
                 </div>
               );
