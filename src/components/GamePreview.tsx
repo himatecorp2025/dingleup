@@ -66,7 +66,7 @@ const GamePreview = () => {
         question_index: currentQuestionIndex
       });
     } catch (error) {
-      console.error('Error logging help usage:', error);
+      // Silent fail - non-critical logging
     }
   };
   const [help5050UsageCount, setHelp5050UsageCount] = useState(0); // 0=first free, 1=second paid, 2=disabled
@@ -521,7 +521,6 @@ const GamePreview = () => {
       // Notify other views to refresh wallet immediately
       await broadcast('wallet:update', { source: 'correct_answer', coinsDelta: reward });
     } catch (err) {
-      console.error('[Gameplay] Credit reward failed:', err);
       toast.error('Nem sikerült a jutalom jóváírása, próbáld újra.');
     }
     
