@@ -193,9 +193,10 @@ const GamePreview = () => {
     console.log('[GamePreview] Game started successfully, guard cleared');
   };
 
-  // Background detection - exit game if app goes to background
+  // Background detection - exit game if app goes to background (only after video ended)
   useEffect(() => {
-    if (gameState !== 'playing') return;
+    // Do not activate background detection while the intro/loading video is playing
+    if (gameState !== 'playing' || !videoEnded) return;
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -206,6 +207,7 @@ const GamePreview = () => {
     };
 
     const handleBlur = () => {
+      // Some mobile browsers emit blur during media autoplay; we only act after videoEnded
       console.log('[GameSecurity] Window lost focus - exiting game');
       toast.error('A játék megszakadt, mert elhagytad az alkalmazást');
       navigate('/dashboard');
@@ -218,7 +220,7 @@ const GamePreview = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('blur', handleBlur);
     };
-  }, [gameState, navigate]);
+  }, [gameState, navigate, videoEnded]);
 
   // Check for in-game payment success
   useEffect(() => {
