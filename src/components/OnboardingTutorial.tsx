@@ -15,37 +15,37 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     title: 'Üdvözlünk a DingleUp-ban! 🎉',
     description: 'Ez egy kvízjáték, ahol aranyérméket szerezhetsz a helyes válaszokért! Haladj végig a lépéseken, hogy megismerd az alkalmazás funkcióit.',
     icon: Gift,
-    gradient: 'from-yellow-500 via-orange-500 to-yellow-500'
+    gradient: 'from-accent via-accent-dark to-accent'
   },
   {
     title: 'Kezdd el a játékot! 🎮',
     description: 'A PLAY NOW gombbal indíthatsz új játékot. Válassz kategóriát és válaszolj a kérdésekre! Minden helyes válaszért aranyérméket és pontokat kapsz.',
     icon: Play,
-    gradient: 'from-green-500 via-green-400 to-green-500'
+    gradient: 'from-success via-success/80 to-success'
   },
   {
     title: 'Életek és újratöltés ❤️',
     description: 'Minden játékhoz szükséged van életre. Ha elfogy, ne aggódj - automatikusan újratöltődnek 12 percenként!',
     icon: Trophy,
-    gradient: 'from-red-500 via-pink-500 to-red-500'
+    gradient: 'from-destructive via-destructive/80 to-destructive'
   },
   {
     title: 'Napi jutalmak 🎁',
     description: 'Jelentkezz be minden nap, és szerezz ingyenes aranyérméket! A sorozat folytatásával egyre több érmét kapsz. 7 nap után újraindul a ciklus.',
     icon: Gift,
-    gradient: 'from-orange-500 via-red-500 to-orange-500'
+    gradient: 'from-accent-dark via-destructive to-accent-dark'
   },
   {
     title: 'Ranglista és versenyek 🏆',
     description: 'Versenyezz másokkal a ranglistán! Heti és globális rangsorban is részt vehetsz. A legjobb játékosok különleges jutalmakat nyernek!',
     icon: Trophy,
-    gradient: 'from-purple-600 via-purple-500 to-purple-600'
+    gradient: 'from-primary via-primary-glow to-primary'
   },
   {
     title: 'Barátok meghívása 🤝',
     description: 'Hívd meg barátaidat és szerezz bónuszokat! Minden meghívott barát után extra aranyérméket és életeket kapsz. Oszd meg a meghívó kódodat!',
     icon: Share2,
-    gradient: 'from-blue-500 via-blue-400 to-blue-500'
+    gradient: 'from-primary-glow via-primary to-primary-glow'
   }
 ];
 
@@ -100,13 +100,13 @@ export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-[95vw] max-w-md bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-purple-500/50 shadow-2xl shadow-purple-500/30">
+      <DialogContent className="w-[95vw] max-w-md bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker border-2 border-primary/50 shadow-2xl shadow-primary/30">
         {/* Close button */}
         <button
           onClick={handleSkip}
-          className="absolute top-4 right-4 p-2 rounded-full bg-red-600/80 hover:bg-red-700 transition-colors z-50"
+          className="absolute top-4 right-4 p-2 rounded-full bg-destructive/80 hover:bg-destructive transition-colors z-50"
         >
-          <X className="w-4 h-4 text-white" />
+          <X className="w-4 h-4 text-foreground" />
         </button>
 
         {/* Progress indicator */}
@@ -115,7 +115,7 @@ export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
             <div
               key={index}
               className={`h-1 flex-1 rounded-full transition-all ${
-                index <= currentStep ? 'bg-yellow-500' : 'bg-white/20'
+                index <= currentStep ? 'bg-accent' : 'bg-background/20'
               }`}
             />
           ))}
@@ -127,7 +127,7 @@ export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
           <div className="relative">
             <div className={`absolute inset-0 bg-gradient-to-r ${step.gradient} blur-2xl opacity-50 animate-pulse`}></div>
             <div className={`relative p-6 rounded-full bg-gradient-to-r ${step.gradient} shadow-2xl`}>
-              <Icon className="w-12 h-12 text-white" strokeWidth={2.5} />
+              <Icon className="w-12 h-12 text-foreground" strokeWidth={2.5} />
             </div>
           </div>
 
@@ -137,12 +137,12 @@ export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
           </h2>
 
           {/* Description */}
-          <p className="text-white/90 text-sm leading-relaxed px-4">
+          <p className="text-foreground/90 text-sm leading-relaxed px-4">
             {step.description}
           </p>
 
           {/* Step counter */}
-          <p className="text-xs text-white/50">
+          <p className="text-xs text-foreground/50">
             {currentStep + 1} / {ONBOARDING_STEPS.length}
           </p>
         </div>
@@ -153,7 +153,7 @@ export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
             <Button
               onClick={handlePrevious}
               variant="outline"
-              className="flex-1 bg-white/10 border-white/20 hover:bg-white/20"
+              className="flex-1 bg-background/10 border-border/20 hover:bg-background/20"
             >
               <ChevronLeft className="w-4 h-4 mr-1" />
               Vissza
@@ -161,7 +161,7 @@ export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
           )}
           <Button
             onClick={handleNext}
-            className={`flex-1 bg-gradient-to-r ${step.gradient} text-white font-bold hover:opacity-90`}
+            className={`flex-1 bg-gradient-to-r ${step.gradient} text-foreground font-bold hover:opacity-90`}
           >
             {currentStep === ONBOARDING_STEPS.length - 1 ? 'Befejezés' : 'Következő'}
             {currentStep < ONBOARDING_STEPS.length - 1 && <ChevronRight className="w-4 h-4 ml-1" />}
