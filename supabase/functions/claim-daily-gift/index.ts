@@ -112,7 +112,7 @@ serve(async (req) => {
         user_id: user.id,
         delta_coins: rewardCoins,
         delta_lives: 0,
-        source: 'daily_gift',
+        source: 'daily',
         idempotency_key: idempotencyKey,
         metadata: {
           streak: newStreak,
