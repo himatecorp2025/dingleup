@@ -19,8 +19,6 @@ serve(async (req) => {
 
     const { invitationCode, invitedEmail } = await req.json();
 
-    console.log('Validating invitation code:', invitationCode);
-
     // Validate invitation code format
     if (!invitationCode || typeof invitationCode !== 'string' || invitationCode.length < 8) {
       return new Response(
@@ -53,7 +51,6 @@ serve(async (req) => {
       .single();
 
     if (profileError || !inviterProfile) {
-      console.log('Invitation code not found:', invitationCode);
       return new Response(
         JSON.stringify({ 
           valid: false, 
@@ -94,7 +91,6 @@ serve(async (req) => {
       .gte('accepted_at', oneHourAgo);
 
     if (count && count > 10) {
-      console.log('Rate limit exceeded for inviter:', inviterProfile.id);
       return new Response(
         JSON.stringify({ 
           valid: false, 
@@ -103,8 +99,6 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('Invitation code validated successfully');
 
     // SECURITY: Only return minimal info pre-registration
     // Full inviter details shown after successful registration

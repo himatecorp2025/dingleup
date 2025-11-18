@@ -88,12 +88,8 @@ Deno.serve(async (req) => {
       .createSignedUploadUrl(filePath);
 
     if (signedError) {
-      console.error('Error creating signed URL:', signedError);
       throw signedError;
     }
-
-    // SECURITY FIX: Never log tokens or sensitive data
-    console.log('Signed upload URL created for path:', filePath);
 
     return new Response(
       JSON.stringify({
@@ -104,7 +100,6 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in upload-chat-image:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: errorMessage }),
