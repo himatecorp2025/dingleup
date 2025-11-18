@@ -1495,6 +1495,47 @@ export type Database = {
         }
         Relationships: []
       }
+      questions: {
+        Row: {
+          answers: Json
+          audience: Json
+          created_at: string | null
+          id: string
+          question: string
+          source_category: string
+          third: string
+          topic_id: number | null
+        }
+        Insert: {
+          answers: Json
+          audience: Json
+          created_at?: string | null
+          id: string
+          question: string
+          source_category: string
+          third: string
+          topic_id?: number | null
+        }
+        Update: {
+          answers?: Json
+          audience?: Json
+          created_at?: string | null
+          id?: string
+          question?: string
+          source_category?: string
+          third?: string
+          topic_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reports: {
         Row: {
           admin_notes: string | null
@@ -1817,6 +1858,27 @@ export type Database = {
           title?: string
           updated_at?: string | null
           video_url?: string
+        }
+        Relationships: []
+      }
+      topics: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          name?: string
         }
         Relationships: []
       }

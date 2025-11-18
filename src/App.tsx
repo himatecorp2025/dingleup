@@ -199,7 +199,7 @@ const AudioPolicyManager = () => {
       }
       
       // Mobile/Tablet on allowed routes: Switch track based on route
-      const isGameRoute = location.pathname === '/game' || location.pathname === '/category-selector';
+      const isGameRoute = location.pathname === '/game';
       
       if (isGameRoute) {
         // CategorySelector + Game → game music (backmusic.mp3)
