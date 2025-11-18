@@ -37,7 +37,7 @@ export const FallingCoins = () => {
           }}
         >
           <Coins
-            className="text-yellow-500 drop-shadow-[0_0_8px_rgba(255,215,0,0.6)]"
+            className="text-accent drop-shadow-[0_0_8px_hsl(var(--accent)/0.6)]"
             style={{ width: `${coin.size}px`, height: `${coin.size}px` }}
           />
         </div>

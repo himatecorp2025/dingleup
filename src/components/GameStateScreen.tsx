@@ -22,12 +22,12 @@ export const GameStateScreen = ({
   const config = {
     'out-of-lives': {
       title: 'YOU LOSE!',
-      bgColor: 'from-red-600 to-red-800',
-      titleColor: 'from-white to-red-100',
-      borderColor: 'border-gray-400',
+      bgColor: 'from-destructive to-destructive-dark',
+      titleColor: 'from-foreground to-destructive-glow',
+      borderColor: 'border-muted',
       stars: [false, false, false],
       buttonText: 'Vásárolj +5 életet',
-      buttonColor: 'from-green-500 to-green-700'
+      buttonColor: 'from-success to-success/90'
     }
   };
 
@@ -36,10 +36,10 @@ export const GameStateScreen = ({
   if (!isHandheld) {
     // Fallback for desktop
     return (
-      <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-black/80">
+      <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-background/80">
         <div className="text-center space-y-6 max-w-md w-full">
-          <h1 className="text-4xl font-black text-white">{title}</h1>
-          <button onClick={onContinue} className="px-8 py-4 bg-purple-600 text-white rounded-lg font-bold">
+          <h1 className="text-4xl font-black text-foreground">{title}</h1>
+          <button onClick={onContinue} className="px-8 py-4 bg-primary text-primary-foreground rounded-lg font-bold">
             {buttonText}
           </button>
         </div>
@@ -48,7 +48,7 @@ export const GameStateScreen = ({
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-gradient-to-br from-primary via-primary-dark to-primary-darker">
       <div 
         className="relative w-full h-full flex items-center justify-center p-[4vw]"
       >
@@ -57,7 +57,7 @@ export const GameStateScreen = ({
           {[...Array(30)].map((_, i) => (
             <div
               key={i}
-              className="absolute rounded-full bg-white/20 animate-pulse"
+              className="absolute rounded-full bg-foreground/20 animate-pulse"
               style={{
                 width: `${Math.random() * 4 + 2}px`,
                 height: `${Math.random() * 4 + 2}px`,
@@ -78,7 +78,7 @@ export const GameStateScreen = ({
           }}
         >
           {/* Inner border effect */}
-          <div className="absolute inset-[12px] bg-gradient-to-b from-purple-400/20 to-transparent rounded-2xl"
+          <div className="absolute inset-[12px] bg-gradient-to-b from-primary-glow/20 to-transparent rounded-2xl"
                style={{
                  clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)'
                }}
@@ -87,7 +87,7 @@ export const GameStateScreen = ({
           {/* Content */}
           <div className="relative z-10 flex flex-col items-center justify-between h-full">
             {/* Title banner */}
-            <div className="bg-gradient-to-b from-red-700 to-red-900 px-[8vw] py-[2vh] rounded-2xl border-4 border-gray-400 -mt-[2vh] shadow-xl"
+            <div className="bg-gradient-to-b from-destructive-dark to-destructive-darker px-[8vw] py-[2vh] rounded-2xl border-4 border-muted -mt-[2vh] shadow-xl"
                  style={{
                    clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)'
                  }}>
