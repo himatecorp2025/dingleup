@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface WalletData {
@@ -16,7 +16,7 @@ export const useWallet = (userId: string | undefined) => {
   const [loading, setLoading] = useState(true);
   const [serverDriftMs, setServerDriftMs] = useState(0);
 
-  const fetchWallet = async () => {
+  const fetchWallet = useCallback(async () => {
     if (!userId) {
       setLoading(false);
       return;
@@ -28,7 +28,6 @@ export const useWallet = (userId: string | undefined) => {
       
       // If no valid session, try to refresh it
       if (sessionError || !session) {
-        console.log('[useWallet] Refreshing session...');
         const { error: refreshError } = await supabase.auth.refreshSession();
         if (refreshError) {
           console.error('[useWallet] Session refresh failed:', refreshError);
@@ -74,7 +73,7 @@ export const useWallet = (userId: string | undefined) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     if (!userId) return;
@@ -127,7 +126,7 @@ export const useWallet = (userId: string | undefined) => {
       clearInterval(intervalId);
       supabase.removeChannel(channel);
     };
-  }, [userId]);
+  }, [userId, fetchWallet]);
 
   return {
     walletData,
