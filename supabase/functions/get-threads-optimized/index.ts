@@ -43,19 +43,14 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('[GetThreads-Optimized] Fetching threads for user:', user.id);
-
     // OPTIMIZATION 1: Single query with JOINs instead of N+1 queries
     // Get threads with profiles and presence in one query
     const { data: threads, error: threadsError } = await supabase
       .rpc('get_user_threads_optimized', { p_user_id: user.id });
 
     if (threadsError) {
-      console.error('[GetThreads-Optimized] Error:', threadsError);
       throw threadsError;
     }
-
-    console.log('[GetThreads-Optimized] Found threads:', threads?.length || 0);
 
     // OPTIMIZATION 2: Batch fetch all last messages and unread counts
     const threadIds = (threads || []).map((t: any) => t.thread_id);
@@ -146,7 +141,6 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[GetThreads-Optimized] Error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }

@@ -67,20 +67,12 @@ Deno.serve(async (req) => {
       if (endISO) resultsQuery = resultsQuery.lte('created_at', endISO);
 
       const { data: results, error: resultsError } = await resultsQuery;
-      
-      if (resultsError) {
-        console.error(`[admin-player-behaviors] Error fetching ${cat} results:`, resultsError);
-      }
-      
-      console.log(`[admin-player-behaviors] ${cat}: fetched ${results?.length || 0} game results from DB`);
 
       // Filter out "instant quit" games (no answer AND no timeout)
       const validGames = (results || []).filter(r => 
         (r.correct_answers != null && r.correct_answers > 0) || 
         (r.average_response_time != null && r.average_response_time > 0)
       );
-      
-      console.log(`[admin-player-behaviors] ${cat}: ${validGames.length} valid games (filtered out instant quits)`);
 
       const totalGames = validGames.length;
       const completedGames = validGames.filter(r => r.completed === true).length;
@@ -105,12 +97,6 @@ Deno.serve(async (req) => {
       if (endISO) helpQuery = helpQuery.lte('used_at', endISO);
       
       const { data: helps, error: helpsError } = await helpQuery;
-      
-      if (helpsError) {
-        console.error(`[admin-player-behaviors] Error fetching ${cat} help usage:`, helpsError);
-      }
-      
-      console.log(`[admin-player-behaviors] ${cat}: fetched ${helps?.length || 0} help usage records from DB`);
 
       const helpUsage = {
         third: (helps || []).filter(h => h.help_type === 'third').length,
@@ -131,12 +117,9 @@ Deno.serve(async (req) => {
         helpUsage,
       };
       
-      console.log(`[admin-player-behaviors] ${cat} stats:`, categoryStats);
       stats.push(categoryStats);
     }
     
-    console.log('[admin-player-behaviors] Returning all stats:', stats);
-
     return new Response(JSON.stringify({ stats }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

@@ -151,15 +151,12 @@ Deno.serve(async (req) => {
       return new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime();
     });
 
-    console.log(`[GetFriends] Returning ${friendsData.length} friends`);
-
     return new Response(
       JSON.stringify({ friends: friendsData }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error: any) {
-    console.error('[GetFriends] Error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Unknown error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

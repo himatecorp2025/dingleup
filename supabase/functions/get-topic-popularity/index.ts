@@ -48,15 +48,12 @@ serve(async (req) => {
       );
     }
 
-    console.log('[get-topic-popularity] Admin user requesting topic popularity data');
-
     // Get all topics with their aggregated like counts
     const { data: topics, error: topicsError } = await supabaseClient
       .from('topics')
       .select('id, name, description');
 
     if (topicsError) {
-      console.error('[get-topic-popularity] Topics fetch error:', topicsError);
       throw topicsError;
     }
 
@@ -66,7 +63,6 @@ serve(async (req) => {
       .select('topic_id, like_count');
 
     if (questionsError) {
-      console.error('[get-topic-popularity] Questions fetch error:', questionsError);
       throw questionsError;
     }
 
@@ -109,7 +105,6 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[get-topic-popularity] Error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'An error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
