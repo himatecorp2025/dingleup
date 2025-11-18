@@ -20,6 +20,9 @@ serve(async (req) => {
       );
     }
 
+    // Extract JWT token from Bearer header
+    const token = authHeader.replace('Bearer ', '');
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -33,13 +36,27 @@ serve(async (req) => {
       }
     );
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !user) {
+    console.log('[DAILY-GIFT] Attempting to get user from token');
+    // Use the JWT token directly with auth.getUser()
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    
+    if (userError) {
+      console.error('[DAILY-GIFT] User error:', userError);
+      return new Response(
+        JSON.stringify({ success: false, error: 'Érvénytelen felhasználó', details: userError.message }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      );
+    }
+    
+    if (!user) {
+      console.error('[DAILY-GIFT] No user returned from auth.getUser()');
       return new Response(
         JSON.stringify({ success: false, error: 'Érvénytelen felhasználó' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
       );
     }
+
+    console.log('[DAILY-GIFT] User authenticated:', user.id);
 
     // Idempotency: check if already claimed today (UTC date)
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD in UTC

@@ -87,7 +87,34 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
     setClaiming(true);
     try {
-      // Supabase client automatically includes auth header from active session
+      // Get current session with explicit check
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('[DAILY-GIFT] Session error:', sessionError);
+        toast({
+          title: 'Hiba',
+          description: 'Nincs aktív munkamenet.',
+          variant: 'destructive'
+        });
+        setClaiming(false);
+        return false;
+      }
+
+      if (!session?.access_token) {
+        console.error('[DAILY-GIFT] No access token in session');
+        toast({
+          title: 'Hiba',
+          description: 'Jelentkezz be újra.',
+          variant: 'destructive'
+        });
+        setClaiming(false);
+        return false;
+      }
+
+      console.log('[DAILY-GIFT] Calling edge function with valid token');
+      
+      // Call edge function - the client automatically includes auth from session
       const { data, error } = await supabase.functions.invoke('claim-daily-gift');
       
       if (error) {
