@@ -80,68 +80,43 @@ const Leaderboard = () => {
       
       const weekStart = getWeekStartInUserTimezone();
       
-      // First get all weekly_rankings for current week (aggregate across all categories)
-      const { data: rankingsData, error: rankingsError } = await supabase
-        .from('weekly_rankings')
-        .select('user_id, total_correct_answers, category')
-        .eq('week_start', weekStart);
-      
-      if (!rankingsData || rankingsData.length === 0) {
-        setLoading(false);
-        return;
-      }
-
-      // Aggregate total_correct_answers per user across ALL categories
-      const totalsMap = new Map<string, number>();
-      rankingsData.forEach(row => {
-        const currentTotal = totalsMap.get(row.user_id) || 0;
-        totalsMap.set(row.user_id, currentTotal + (row.total_correct_answers || 0));
-      });
-
-      const aggregatedUserIds = Array.from(totalsMap.keys());
-      if (aggregatedUserIds.length === 0) {
-        setLoading(false);
-        return;
-      }
-      
-      // Fetch user profiles with country filter
-      const { data: profilesData, error: profilesError } = await supabase
+      // Get ALL users from same country (not just those with rankings)
+      const { data: allCountryProfiles, error: profilesError } = await supabase
         .from('profiles')
         .select('id, username, avatar_url, country_code')
-        .in('id', aggregatedUserIds)
         .eq('country_code', countryCode);
       
-      if (profilesError) {
+      if (profilesError || !allCountryProfiles || allCountryProfiles.length === 0) {
         console.error('[Leaderboard] Error fetching profiles:', profilesError);
         setLoading(false);
         return;
       }
       
-      if (!profilesData || profilesData.length === 0) {
-        setLoading(false);
-        return;
+      // Get weekly rankings for current week (mixed category only)
+      const { data: rankingsData } = await supabase
+        .from('weekly_rankings')
+        .select('user_id, total_correct_answers')
+        .eq('week_start', weekStart)
+        .eq('category', 'mixed');
+      
+      // Create rankings map (defaults to 0 if no data)
+      const rankingsMap = new Map<string, number>();
+      if (rankingsData) {
+        rankingsData.forEach(row => {
+          rankingsMap.set(row.user_id, row.total_correct_answers || 0);
+        });
       }
       
-      // Create a map of user profiles
-      const profilesLookupMap = new Map(
-        profilesData.map(p => [p.id, { username: p.username, avatar_url: p.avatar_url }])
-      );
+      // Build leaderboard with ALL users (0 scores included)
+      const rankedData: LeaderboardEntry[] = allCountryProfiles.map(profile => ({
+        user_id: profile.id,
+        username: profile.username || 'Player',
+        avatar_url: profile.avatar_url || null,
+        total_correct_answers: rankingsMap.get(profile.id) || 0,
+        rank: 0
+      }));
 
-      // Build ranked leaderboard entries
-      const rankedData: LeaderboardEntry[] = [];
-      for (const [userId, totalCorrectAnswers] of totalsMap.entries()) {
-        if (profilesLookupMap.has(userId)) {
-          const profile = profilesLookupMap.get(userId)!;
-          rankedData.push({
-            user_id: userId,
-            username: profile.username || 'Player',
-            avatar_url: profile.avatar_url || null,
-            total_correct_answers: totalCorrectAnswers,
-            rank: 0
-          });
-        }
-      }
-
+      // Sort and assign ranks
       rankedData
         .sort((a, b) => b.total_correct_answers - a.total_correct_answers)
         .forEach((entry, index) => { entry.rank = index + 1; });
