@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Crown } from 'lucide-react';
+import { getWeekStartInUserTimezone } from '@/lib/utils';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -49,23 +50,13 @@ export const LeaderboardCarousel = () => {
   };
 
 
-  // Use user's local timezone for week calculation (based on IP/country at registration)
-  const getWeekStart = () => {
-    const now = new Date();
-    const dayOfWeek = now.getDay();
-    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    const monday = new Date(now);
-    monday.setDate(now.getDate() - diff);
-    monday.setHours(0, 0, 0, 0);
-    return monday.toISOString().split('T')[0];
-  };
 
   const fetchFromWeeklyRankings = async (): Promise<LeaderboardEntry[]> => {
     try {
-      const weekStart = getWeekStart();
+      const weekStart = getWeekStartInUserTimezone();
       const { data, error } = await supabase
         .from('weekly_rankings')
-        .select('user_id, total_correct_answers, profiles:profiles!inner(username, avatar_url)')
+        .select('user_id, total_correct_answers, public_profiles:public_profiles!inner(username, avatar_url)')
         .eq('week_start', weekStart)
         .order('total_correct_answers', { ascending: false });
       if (error) throw error;
@@ -82,8 +73,8 @@ export const LeaderboardCarousel = () => {
         } else {
           userMap.set(uid, {
             user_id: uid,
-            username: row.profiles?.username ?? 'Player',
-            avatar_url: row.profiles?.avatar_url ?? null,
+            username: row.public_profiles?.username ?? 'Player',
+            avatar_url: row.public_profiles?.avatar_url ?? null,
             total_correct_answers: correctAnswers
           });
         }
