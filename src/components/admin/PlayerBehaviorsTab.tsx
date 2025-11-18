@@ -115,7 +115,6 @@ export default function PlayerBehaviorsTab() {
       }
 
       const incoming = (data?.stats || []) as CategoryStats[];
-      console.log('[PlayerBehaviors] Received stats:', incoming);
       
       // Force state update by creating new array reference
       setStats([...incoming]);

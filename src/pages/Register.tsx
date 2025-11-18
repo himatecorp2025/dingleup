@@ -152,9 +152,6 @@ const Register = () => {
                 }
               } else if (acceptData) {
                 // Show reward information to the inviter
-                if (import.meta.env.DEV) {
-                  console.log('Invitation accepted, inviter rewarded:', acceptData);
-                }
               }
             }
           } catch (error) {

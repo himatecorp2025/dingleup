@@ -175,12 +175,6 @@ export const AdminReportActionDialog = ({
     setSubmitting(true);
 
     try {
-      console.log('[AdminAction] Sending notification:', {
-        reportId: report.id,
-        reporterId: report.reporter_id,
-        actionType,
-        messageLength: message.length
-      });
 
       const { data, error } = await supabase.functions.invoke('admin-send-report-notification', {
         body: {
@@ -207,7 +201,6 @@ export const AdminReportActionDialog = ({
         throw error;
       }
 
-      console.log('[AdminAction] Success:', data);
 
       const actionLabel = {
         reviewing: 'folyamatba helyezve',

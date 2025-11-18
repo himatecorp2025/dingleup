@@ -116,7 +116,6 @@ const GamePreview = () => {
   // Auto-start game when profile is ready - ONCE only
   useEffect(() => {
     if (profile && !profileLoading && questions.length === 0 && gameState === 'playing' && !hasAutoStarted && !isStartingGame) {
-      console.log('[GamePreview] Auto-starting game with mixed questions');
       setHasAutoStarted(true);
       startGame();
     }
@@ -125,7 +124,6 @@ const GamePreview = () => {
   const startGame = async () => {
     if (!profile || isStartingGame) return;
     
-    console.log('[GamePreview] Starting game - setting isStartingGame guard');
     setIsStartingGame(true);
     setVideoEnded(false); // Reset video state - video must play every time
 
@@ -178,7 +176,6 @@ const GamePreview = () => {
         throw new Error('No questions received from backend');
       }
 
-      console.log('[GamePreview] Loaded questions from database:', data.questions.length);
       const shuffledWithVariety = shuffleAnswers(data.questions);
       setQuestions(shuffledWithVariety);
     } catch (error) {
@@ -213,7 +210,6 @@ const GamePreview = () => {
     
     // Clear starting guard after game is fully initialized
     setIsStartingGame(false);
-    console.log('[GamePreview] Game started successfully, guard cleared');
   };
 
   // Background detection - exit game if app goes to background (only after video ended)
@@ -223,15 +219,12 @@ const GamePreview = () => {
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        console.log('[GameSecurity] App went to background - exiting game');
         toast.error('A játék megszakadt, mert elhagytad az alkalmazást');
         navigate('/dashboard');
       }
     };
 
     const handleBlur = () => {
-      // Some mobile browsers emit blur during media autoplay; we only act after videoEnded
-      console.log('[GameSecurity] Window lost focus - exiting game');
       toast.error('A játék megszakadt, mert elhagytad az alkalmazást');
       navigate('/dashboard');
     };
@@ -938,7 +931,6 @@ const GamePreview = () => {
     // Show loading video until it ends, regardless of question loading state
     if (!videoEnded) {
       return <GameLoadingScreen onVideoEnd={() => {
-        console.log('[GamePreview] Video ended, showing first question');
         setVideoEnded(true);
       }} />;
     }

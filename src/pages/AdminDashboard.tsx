@@ -54,7 +54,6 @@ const AdminDashboard = () => {
       if (timeoutId) clearTimeout(timeoutId);
       // Wait 2 seconds before fetching to batch multiple changes
       timeoutId = setTimeout(() => {
-        console.log('[Admin] Realtime triggered - background update');
         fetchData();
       }, 2000);
     };
@@ -91,9 +90,7 @@ const AdminDashboard = () => {
         schema: 'public',
         table: 'game_results'
       }, debouncedFetch)
-      .subscribe((status) => {
-        console.log('[Admin] Realtime status:', status);
-      });
+      .subscribe();
 
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
@@ -128,7 +125,6 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       setIsRefreshing(true);
-      console.log('[Admin] Adatok frissítése SERVICE ROLE-al...');
       
       // Use admin edge function with service role to bypass RLS
       const { data: adminData, error: adminError } = await supabase.functions.invoke('admin-all-data');
@@ -140,12 +136,7 @@ const AdminDashboard = () => {
         return;
       }
 
-      console.log('[Admin] Raw admin data:', {
-        users: adminData?.users?.length,
-        invitations: adminData?.invitations?.length,
-        reports: adminData?.reports?.length,
-        purchases: adminData?.purchases?.length
-      });
+
 
       // Process users with roles
       if (adminData?.users) {
@@ -153,7 +144,6 @@ const AdminDashboard = () => {
         const merged = adminData.users.map((u: any) => ({ ...u, role: roleMap.get(u.id) || 'user' }));
         setAllUsers(merged);
         setTotalUsers(adminData.users.length);
-        console.log('[Admin] ✓ Users:', adminData.users.length);
       }
 
       // Process purchases
@@ -163,23 +153,18 @@ const AdminDashboard = () => {
           .filter((p: any) => p.status === 'completed' && p.amount_usd)
           .reduce((sum: number, p: any) => sum + Number(p.amount_usd), 0);
         setTotalRevenue(revenue.toFixed(2));
-        console.log('[Admin] ✓ Purchases:', adminData.purchases.length);
       }
 
       // Process reports
       if (adminData?.reports) {
         setReports(adminData.reports);
-        console.log('[Admin] ✓ Reports:', adminData.reports.length);
       }
 
       // Process invitations
       if (adminData?.invitations) {
         setInvitations(adminData.invitations);
-        console.log('[Admin] ✓ Invitations:', adminData.invitations.length);
       }
 
-
-      console.log('[Admin] ✓✓✓ MINDEN ADAT BETÖLTVE (service role bypass)');
       setIsRefreshing(false);
     } catch (error) {
       console.error('[Admin] Fatal fetch error:', error);
