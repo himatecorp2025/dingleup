@@ -58,11 +58,11 @@ serve(async (req) => {
     // Select 15 random questions
     const shuffled = questions.sort(() => 0.5 - Math.random());
     const selectedQuestions = shuffled.slice(0, 15).map((q: any) => ({
-      id: q.id, // Include question ID
+      id: q.id,
       question: q.question,
-      answers: Array.isArray(q.answers) ? q.answers.map((a: any) => a.text || a) : [],
+      answers: Array.isArray(q.answers) ? q.answers : [],
       correctAnswer: Array.isArray(q.answers) ? q.answers.findIndex((a: any) => a.correct === true) : 0,
-      difficulty: 'medium' // Default difficulty
+      difficulty: 'medium'
     }));
 
     // Create game session with encrypted answers
@@ -96,11 +96,16 @@ serve(async (req) => {
       );
     }
 
-    // Return only questions and answers (NOT correct answer indices)
+    // Return questions with Answer objects (key, text, correct fields)
     const clientQuestions = selectedQuestions.map(q => ({
-      id: q.id, // Include question ID for likes
+      id: q.id,
       question: q.question,
-      answers: q.answers
+      answers: q.answers.map((ans: any, idx: number) => ({
+        key: ['A', 'B', 'C'][idx] as 'A' | 'B' | 'C',
+        text: ans.text || '',
+        correct: ans.correct || false
+      })),
+      topic: 'mixed'
       // correctAnswer intentionally omitted
     }));
 
