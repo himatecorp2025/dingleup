@@ -118,6 +118,14 @@ const GamePreview = () => {
   const startGame = async () => {
     if (!profile) return;
 
+    console.log('[GameStart] Starting game - refetching wallet & profile first');
+    
+    // CRITICAL: Refetch wallet AND profile BEFORE attempting to spend life
+    // This ensures backend sees most current data
+    await Promise.all([refetchWallet(), refreshProfile()]);
+    
+    console.log('[GameStart] Wallet/profile refetched, now calling use_life RPC');
+
     try {
       await supabase.rpc('reset_game_helps');
     } catch (error) {
@@ -126,11 +134,13 @@ const GamePreview = () => {
     
     const canPlay = await spendLife();
     if (!canPlay) {
+      console.error('[GameStart] use_life returned false - backend rejected life spend');
       toast.error('Nincs elég életed a játék indításához!');
       navigate('/dashboard');
       return;
     }
     
+    console.log('[GameStart] use_life succeeded, broadcasting wallet update');
     await refetchWallet();
     await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
     
