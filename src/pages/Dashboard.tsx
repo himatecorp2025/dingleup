@@ -463,37 +463,7 @@ if (!profile) {
                   }
                 }
               `}</style>
-              <div data-buttons-container className="flex flex-col gap-2 w-full">
-              <DiamondButton
-                onClick={() => navigate('/invitation')}
-                variant="share"
-                size="sm"
-              >
-                {/* Share SVG Icon */}
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M18 16C19.6569 16 21 17.3431 21 19C21 20.6569 19.6569 22 18 22C16.3431 22 15 20.6569 15 19C15 17.3431 16.3431 16 18 16Z" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M8.7 13.7L15.3 17.3M15.3 6.7L8.7 10.3" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-                <span className="text-[10px] sm:text-xs md:text-sm">SHARE</span>
-              </DiamondButton>
-              
-              <DiamondButton
-                onClick={() => navigate('/leaderboard')}
-                variant="leaderboard"
-                size="sm"
-              >
-                {/* Trophy SVG Icon */}
-                <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 inline mr-1 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V5C3 4.44772 3.44772 4 4 4H6" stroke="currentColor" strokeWidth="2" fill="none"/>
-                  <path d="M18 9H19.5C20.3284 9 21 8.32843 21 7.5V5C21 4.44772 20.5523 4 20 4H18" stroke="currentColor" strokeWidth="2" fill="none"/>
-                  <path d="M8 4H16V10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10V4Z" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 14V17M8 20H16M10 17H14V20H10V17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-                <span className="text-[10px] sm:text-xs md:text-sm">RANGLISTA</span>
-              </DiamondButton>
-            </div>
+              {/* Share and Leaderboard buttons moved to BottomNav */}
             </div>
           </div>
         </div>
