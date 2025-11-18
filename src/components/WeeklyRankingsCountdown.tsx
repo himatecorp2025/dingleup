@@ -45,10 +45,10 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
   if (compact) {
     return (
       <div 
-        className={`bg-purple-600 border border-purple-400 rounded px-1 py-0.5 shadow-[0_0_8px_rgba(168,85,247,0.6)] ${className}`}
+        className={`bg-primary border border-primary/60 rounded px-1 py-0.5 shadow-[0_0_8px_hsl(var(--primary)/0.6)] ${className}`}
         title="Heti verseny vége"
       >
-        <span className="text-[8px] font-extrabold text-white drop-shadow leading-none whitespace-nowrap">
+        <span className="text-[8px] font-extrabold text-foreground drop-shadow leading-none whitespace-nowrap">
           {timeRemaining}
         </span>
       </div>

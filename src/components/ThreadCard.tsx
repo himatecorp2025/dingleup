@@ -77,28 +77,28 @@ export const ThreadCard = ({
     <>
       <article
         onClick={onClick}
-        className="thread-card border border-[hsl(var(--dup-gold-600)/0.25)] rounded-[10px] p-3 grid grid-cols-[auto_1fr_auto] gap-3 bg-[rgba(19,143,94,0.06)] hover:outline hover:outline-2 hover:outline-[hsl(var(--dup-gold-600)/0.35)] cursor-pointer transition-all"
+        className="thread-card border border-accent/25 rounded-[10px] p-3 grid grid-cols-[auto_1fr_auto] gap-3 bg-success/5 hover:outline hover:outline-2 hover:outline-accent/35 cursor-pointer transition-all"
       >
         {/* Avatar with online status */}
         <div className="relative flex-shrink-0">
-          <Avatar className="w-12 h-12 border-2 border-[hsl(var(--dup-gold-500))]">
+          <Avatar className="w-12 h-12 border-2 border-accent">
             <AvatarImage src={avatarUrl || undefined} />
-            <AvatarFallback className="bg-[hsl(var(--dup-gold-600))] text-white font-bold">
+            <AvatarFallback className="bg-accent text-accent-foreground font-bold">
               {getInitials(displayName)}
             </AvatarFallback>
           </Avatar>
           {onlineStatus === 'online' && (
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-[hsl(var(--dup-green-500))] border-2 border-[#0F1116] rounded-full" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-success border-2 border-background rounded-full" />
           )}
         </div>
 
         {/* Content */}
         <div className="min-w-0">
-          <div className="thread-title font-bold text-[hsl(var(--dup-gold-300))] truncate">
+          <div className="thread-title font-bold text-accent truncate">
             {displayName}
           </div>
           {lastMessageSnippet && (
-            <div className="thread-snippet text-[hsl(var(--dup-text-300))] text-[0.95rem] truncate mt-1">
+            <div className="thread-snippet text-muted-foreground text-[0.95rem] truncate mt-1">
               {lastMessageSnippet}
             </div>
           )}
@@ -108,25 +108,25 @@ export const ThreadCard = ({
         <div className="flex flex-col items-end gap-2 justify-between">
           <div className="flex items-center gap-2">
             {lastMessageAt && (
-              <span className="thread-time text-xs text-[hsl(var(--dup-text-300))]">
+              <span className="thread-time text-xs text-muted-foreground">
                 {formatTime(lastMessageAt)}
               </span>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger
                 onClick={(e) => e.stopPropagation()}
-                className="text-[hsl(var(--dup-text-300))] hover:text-[hsl(var(--dup-gold-300))] transition-colors p-1"
+                className="text-muted-foreground hover:text-accent transition-colors p-1"
                 aria-label="További műveletek"
               >
                 <MoreVertical className="w-4 h-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="bg-[#0F1116] border-[hsl(var(--dup-gold-600)/0.4)]"
+                className="bg-background border-border/40"
               >
                 <DropdownMenuItem
                   onClick={handleDelete}
-                  className="text-[hsl(var(--dup-crimson-400))] hover:text-[hsl(var(--dup-crimson-300))] hover:bg-[hsl(var(--dup-crimson-500)/0.1)] cursor-pointer"
+                  className="text-destructive hover:text-destructive/80 hover:bg-destructive/10 cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Beszélgetés törlése
@@ -136,7 +136,7 @@ export const ThreadCard = ({
           </div>
 
           {unreadCount > 0 && (
-            <Badge className="badge-unread bg-[hsl(var(--dup-green-500))] text-white font-bold border-none rounded-full px-2 py-0 text-xs">
+            <Badge className="badge-unread bg-success text-foreground font-bold border-none rounded-full px-2 py-0 text-xs">
               {unreadCount > 9 ? '9+' : unreadCount}
             </Badge>
           )}
@@ -144,22 +144,22 @@ export const ThreadCard = ({
       </article>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent className="bg-[#0F1116] border-[hsl(var(--dup-gold-600)/0.4)]">
+        <AlertDialogContent className="bg-background border-border/40">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-[hsl(var(--dup-gold-300))]">
+            <AlertDialogTitle className="text-accent">
               Beszélgetés törlése
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-[hsl(var(--dup-text-300))]">
+            <AlertDialogDescription className="text-muted-foreground">
               Biztosan törölni szeretnéd ezt a beszélgetést? Ez csak neked fogja elrejteni, az üzenetek megmaradnak.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-[hsl(var(--dup-ui-bg-700))] text-[hsl(var(--dup-text-200))] border-[hsl(var(--dup-gold-600)/0.3)] hover:bg-[hsl(var(--dup-ui-bg-600))]">
+            <AlertDialogCancel className="bg-muted text-foreground border-border/30 hover:bg-muted/80">
               Mégse
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className="bg-[hsl(var(--dup-crimson-500))] text-white hover:bg-[hsl(var(--dup-crimson-600))] border border-[hsl(var(--dup-crimson-700))]"
+              className="bg-destructive text-foreground hover:bg-destructive/90 border border-destructive/70"
             >
               Törlés
             </AlertDialogAction>

@@ -6,9 +6,9 @@ interface TimerCircleProps {
 export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
   // Green: 10-8s, Orange: 7-4s, Red: 3-0s
   const getTimerColor = () => {
-    if (timeLeft >= 8) return "#16A34A"; // Green
-    if (timeLeft >= 4) return "#F59E0B"; // Orange
-    return "#DC2626"; // Red
+    if (timeLeft >= 8) return "hsl(var(--success))"; // Green
+    if (timeLeft >= 4) return "hsl(var(--accent))"; // Orange
+    return "hsl(var(--destructive))"; // Red
   };
   
   // Determine if blinking animation should be active (3 seconds or less)
@@ -21,7 +21,7 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
   return (
     <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
       {/* BASE SHADOW - Enhanced */}
-      <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(6px, 6px) translateZ(-20px)', filter: 'blur(10px)' }} aria-hidden />
+      <div className="absolute inset-0 bg-background/70 rounded-full" style={{ transform: 'translate(6px, 6px) translateZ(-20px)', filter: 'blur(10px)' }} aria-hidden />
       
       {/* OUTER DECORATIVE RING - Animated based on time with enhanced 3D */}
       <div 
