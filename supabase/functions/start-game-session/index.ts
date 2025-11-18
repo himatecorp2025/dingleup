@@ -37,43 +37,32 @@ serve(async (req) => {
       );
     }
 
-    // Category is always "mixed" - load all questions from all files
-    let questions: Question[] = [];
+    // Load questions from database
+    console.log('[start-game-session] Loading questions from database...');
     
-    try {
-      const questionFiles = [
-        '/var/task/questions1.json',
-        '/var/task/questions-culture.json',
-        '/var/task/questions-finance.json',
-        '/var/task/questions-health.json',
-        '/var/task/questions-history.json'
-      ];
-      
-      for (const file of questionFiles) {
-        try {
-          const fileContent = await Deno.readTextFile(file);
-          const fileQuestions = JSON.parse(fileContent);
-          questions = questions.concat(fileQuestions);
-        } catch (fileError) {
-          // Continue loading other files if one fails
-          console.warn(`Warning: Could not load ${file}:`, fileError);
-        }
-      }
+    const { data: questions, error: questionsError } = await supabaseClient
+      .from('questions')
+      .select('id, question, answers, audience, third, source_category')
+      .limit(1000); // Get all available questions
 
-      if (questions.length === 0) {
-        throw new Error('No questions loaded from any file');
-      }
-    } catch (error) {
-      console.error('Error loading questions:', error);
+    if (questionsError || !questions || questions.length === 0) {
+      console.error('[start-game-session] Error loading questions:', questionsError);
       return new Response(
-        JSON.stringify({ error: 'Failed to load questions' }),
+        JSON.stringify({ error: 'Failed to load questions from database' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    console.log(`[start-game-session] Loaded ${questions.length} questions from database`);
+
     // Select 15 random questions
     const shuffled = questions.sort(() => 0.5 - Math.random());
-    const selectedQuestions = shuffled.slice(0, 15);
+    const selectedQuestions = shuffled.slice(0, 15).map((q: any) => ({
+      question: q.question,
+      answers: Array.isArray(q.answers) ? q.answers.map((a: any) => a.text || a) : [],
+      correctAnswer: Array.isArray(q.answers) ? q.answers.findIndex((a: any) => a.correct === true) : 0,
+      difficulty: 'medium' // Default difficulty
+    }));
 
     // Create game session with encrypted answers
     const sessionId = crypto.randomUUID();
@@ -108,7 +97,7 @@ serve(async (req) => {
     // Return only questions and answers (NOT correct answer indices)
     const clientQuestions = selectedQuestions.map(q => ({
       question: q.question,
-      answers: q.answers,
+      answers: q.answers
       // correctAnswer intentionally omitted
     }));
 
