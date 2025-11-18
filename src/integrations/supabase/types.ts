@@ -1495,12 +1495,56 @@ export type Database = {
         }
         Relationships: []
       }
+      question_likes: {
+        Row: {
+          created_at: string
+          id: string
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          question_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          question_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_likes_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       questions: {
         Row: {
           answers: Json
           audience: Json
           created_at: string | null
           id: string
+          like_count: number
           question: string
           source_category: string
           third: string
@@ -1511,6 +1555,7 @@ export type Database = {
           audience: Json
           created_at?: string | null
           id: string
+          like_count?: number
           question: string
           source_category: string
           third: string
@@ -1521,6 +1566,7 @@ export type Database = {
           audience?: Json
           created_at?: string | null
           id?: string
+          like_count?: number
           question?: string
           source_category?: string
           third?: string
