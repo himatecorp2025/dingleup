@@ -895,6 +895,15 @@ const GamePreview = () => {
   }
 
   if (gameState === 'playing') {
+    // Guard: Don't render until questions are loaded
+    if (questions.length === 0) {
+      return (
+        <div className="fixed inset-0 w-full h-full flex items-center justify-center">
+          <div className="relative z-10 text-white text-lg">Játék indítása...</div>
+        </div>
+      );
+    }
+    
     const currentQuestion = questions[currentQuestionIndex];
     
     return (
