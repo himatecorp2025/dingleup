@@ -140,7 +140,6 @@ Deno.serve(async (req) => {
       });
 
     if (upsertError) {
-      console.error('Error creating friendship request:', upsertError);
       return new Response(JSON.stringify({ error: 'Failed to create request' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -168,7 +167,7 @@ Deno.serve(async (req) => {
         .single();
 
       if (threadError) {
-        console.error('Error creating thread:', threadError);
+        // Thread creation failed
       } else {
         threadId = newThread.id;
       }
@@ -207,7 +206,6 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in send-friend-request:', error);
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

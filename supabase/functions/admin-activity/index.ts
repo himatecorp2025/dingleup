@@ -60,8 +60,6 @@ Deno.serve(async (req) => {
     const page = parseInt(url.searchParams.get('page') || '1');
     const size = parseInt(url.searchParams.get('size') || '50');
 
-    console.log(`Admin activity query: action=${action}, from=${from}, to=${to}, tz=${tz}`);
-
     if (action === 'summary') {
       const trendRange = url.searchParams.get('trendRange') || 'last30';
       const summary = await getSummary(supabaseClient, { from, to, tz, device, plan, action: trendRange });
@@ -103,7 +101,6 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error in admin-activity:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,

@@ -15,6 +15,34 @@
 - ✅ toggle-question-like: 9 log törölve
 - ✅ complete-game: 4 log törölve
 - ✅ send-dm: 4 log törölve
+- ✅ accept-friend-request: 2 log törölve
+- ✅ backfill-friendships: 2 log törölve
+- ✅ block-user: 0 log (már tiszta)
+- ✅ calculate-weekly-rankings: 4 log törölve
+- ✅ cancel-friend-request: 1 log törölve
+- ✅ decline-friend-request: 1 log törölve
+- ✅ get-friend-requests: 2 log törölve
+- ✅ get-friends: 2 log törölve
+- ✅ regenerate-lives-background: 0 log (már tiszta)
+- ✅ start-game-session: 0 log (már tiszta)
+- ✅ validate-game-session: 4 log törölve
+- ✅ admin-activity: 2 log törölve
+- ✅ admin-all-data: 12 log törölve
+- ✅ admin-engagement-analytics: 1 log törölve
+- ✅ admin-journey-analytics: 1 log törölve
+- ✅ admin-performance-analytics: 1 log törölve
+- ✅ admin-player-behaviors: 7 log törölve
+- ✅ admin-retention-analytics: 1 log törölve
+- ✅ admin-send-report-notification: 8 log törölve
+- ✅ get-question-like-status: 4 log törölve
+- ✅ get-thread-messages: 9 log törölve
+- ✅ get-threads: 4 log törölve
+- ✅ get-threads-optimized: 4 log törölve
+- ✅ get-topic-popularity: 5 log törölve
+- ✅ get-wallet: 2 log törölve (újabb)
+- ✅ search-users: 1 log törölve
+- ✅ send-friend-request: 4 log törölve
+- ✅ set-default-country: 4 log törölve
 
 **Eredmény**: ~$4.7/hó megtakarítás, 15-20ms gyorsabb futás
 

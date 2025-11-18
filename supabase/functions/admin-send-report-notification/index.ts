@@ -65,8 +65,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('[AdminReportNotification] Sending notification from admin', user.id, 'to reporter', reporterId);
-
     // Use service role to bypass RLS
     const serviceClient = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -92,7 +90,6 @@ Deno.serve(async (req) => {
       });
 
       if (authError || !authUser.user) {
-        console.error('[AdminReportNotification] System user creation error:', authError);
         throw new Error('Failed to create system user');
       }
 
@@ -133,7 +130,6 @@ Deno.serve(async (req) => {
         .single();
 
       if (threadError) {
-        console.error('[AdminReportNotification] Thread creation error:', threadError);
         throw threadError;
       }
 
@@ -153,7 +149,7 @@ Deno.serve(async (req) => {
         .single();
 
       if (friendshipError && friendshipError.code !== '23505') { // Ignore duplicate error
-        console.error('[AdminReportNotification] Friendship error:', friendshipError);
+        // Friendship creation failed
       }
     }
 
@@ -212,7 +208,6 @@ Köszönjük türelmedet!
       .single();
 
     if (messageError) {
-      console.error('[AdminReportNotification] Message error:', messageError);
       throw messageError;
     }
 
@@ -234,11 +229,8 @@ Köszönjük türelmedet!
       .eq('id', reportId);
 
     if (updateError) {
-      console.error('[AdminReportNotification] Report update error:', updateError);
       throw updateError;
     }
-
-    console.log('[AdminReportNotification] Notification sent successfully');
 
     return new Response(
       JSON.stringify({ success: true, messageId: dmMessage.id }),
@@ -246,7 +238,6 @@ Köszönjük türelmedet!
     );
 
   } catch (error: any) {
-    console.error('[AdminReportNotification] Error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

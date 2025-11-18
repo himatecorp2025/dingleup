@@ -30,7 +30,6 @@ Deno.serve(async (req) => {
     const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
     
     if (authError || !user) {
-      console.error('[AdminAllData] Auth failed:', authError);
       return new Response(
         JSON.stringify({ error: 'Invalid token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -44,14 +43,11 @@ Deno.serve(async (req) => {
     });
 
     if (!hasAdminRole) {
-      console.error('[AdminAllData] User is not admin:', user.id);
       return new Response(
         JSON.stringify({ error: 'Forbidden: Admin required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('[AdminAllData] Admin verified, fetching all data with service role...');
 
     // Now use SERVICE ROLE to bypass RLS
     const serviceClient = createClient(supabaseUrl, supabaseServiceKey);
@@ -61,10 +57,6 @@ Deno.serve(async (req) => {
       .from('profiles')
       .select('id, username, email, lives, max_lives, coins, total_correct_answers, created_at')
       .order('created_at', { ascending: false });
-
-    if (usersError) {
-      console.error('[AdminAllData] Users error:', usersError);
-    }
 
     // Fetch user roles
     const userIds = users?.map(u => u.id) || [];
@@ -78,10 +70,6 @@ Deno.serve(async (req) => {
       .from('purchases')
       .select('*')
       .order('created_at', { ascending: false });
-
-    if (purchasesError) {
-      console.error('[AdminAllData] Purchases error:', purchasesError);
-    }
 
     // Fetch user profiles for purchases (manual join)
     const purchaseUserIds = [...new Set(purchases?.map(p => p.user_id) || [])];
@@ -101,10 +89,6 @@ Deno.serve(async (req) => {
       .from('reports')
       .select('*')
       .order('created_at', { ascending: false });
-
-    if (reportsError) {
-      console.error('[AdminAllData] Reports error:', reportsError);
-    }
 
     // Fetch profiles for reports (manual join)
     const reportUserIds = [...new Set([
@@ -136,13 +120,11 @@ Deno.serve(async (req) => {
                 .createSignedUrl(path, 3600); // 1 hour expiry
               
               if (signedError) {
-                console.error('[AdminAllData] Signed URL error:', signedError, 'for path:', path);
                 return url; // fallback to original URL
               }
               
               return signedData.signedUrl;
             } catch (err) {
-              console.error('[AdminAllData] Screenshot URL processing error:', err);
               return url;
             }
           })
@@ -163,12 +145,6 @@ Deno.serve(async (req) => {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (invitationsError) {
-      console.error('[AdminAllData] Invitations error:', invitationsError);
-    }
-
-    console.log('[AdminAllData] Raw invitations from DB:', invitations?.length);
-
     // Fetch profiles for invitations (manual join)
     const invitationUserIds = [...new Set([
       ...(invitations?.map(i => i.inviter_id) || []),
@@ -186,8 +162,6 @@ Deno.serve(async (req) => {
       invited: i.invited_user_id ? invitationProfileMap.get(i.invited_user_id) : null
     })) || [];
 
-    console.log('[AdminAllData] Processed invitations:', invitationsWithProfiles.length);
-
     return new Response(
       JSON.stringify({
         users: users || [],
@@ -200,7 +174,6 @@ Deno.serve(async (req) => {
     );
 
   } catch (error: any) {
-    console.error('[AdminAllData] Fatal error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

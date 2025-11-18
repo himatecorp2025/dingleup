@@ -129,7 +129,6 @@ Deno.serve(async (req) => {
       churningUsers,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (error: any) {
-    console.error('[admin-retention-analytics] Fatal', error);
     return new Response(JSON.stringify({ error: error?.message || 'Unknown error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

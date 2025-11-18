@@ -70,8 +70,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('[GetThreadMessages] Fetching messages for', user.id, '<->', otherUserId);
-
     // Get thread
     const normalizedIds = [user.id, otherUserId].sort();
     const { data: thread, error: threadError } = await supabase
@@ -82,7 +80,6 @@ Deno.serve(async (req) => {
       .single();
 
     if (threadError) {
-      console.log('[GetThreadMessages] Thread not found, returning empty');
       return new Response(
         JSON.stringify({ messages: [], threadId: null }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -118,7 +115,6 @@ Deno.serve(async (req) => {
     const { data: messages, error: messagesError } = await query;
 
     if (messagesError) {
-      console.error('[GetThreadMessages] Error fetching messages:', messagesError);
       throw messagesError;
     }
 
@@ -131,12 +127,8 @@ Deno.serve(async (req) => {
         last_read_at: new Date().toISOString()
       });
 
-    console.log(`[GetThreadMessages] Returning ${messages?.length || 0} messages`);
-
     // Transform messages to include media array with signed URLs
     const transformedMessages = await Promise.all((messages || []).map(async (msg: any) => {
-      console.log(`[GetThreadMessages] Processing message ${msg.id}, has ${msg.message_media?.length || 0} media items`);
-      
       const mediaWithSignedUrls = await Promise.all((msg.message_media || []).map(async (media: any) => {
         // Generate signed URLs for private storage (valid for 1 hour)
         let signedMediaUrl = media.media_url;
@@ -159,8 +151,6 @@ Deno.serve(async (req) => {
             .createSignedUrl(mediaPath, 600); // 10 perc
           if (!mediaError && mediaData?.signedUrl) {
             signedMediaUrl = mediaData.signedUrl;
-          } else {
-            console.error('[GetThreadMessages] Signed URL error for media:', mediaError?.message, 'path:', mediaPath);
           }
         }
 
@@ -171,8 +161,6 @@ Deno.serve(async (req) => {
             .createSignedUrl(thumbPath, 600);
           if (!thumbError && thumbData?.signedUrl) {
             signedThumbnailUrl = thumbData.signedUrl;
-          } else {
-            console.error('[GetThreadMessages] Signed URL error for thumbnail:', thumbError?.message, 'path:', thumbPath);
           }
         }
 
@@ -189,8 +177,6 @@ Deno.serve(async (req) => {
       };
     }));
 
-    console.log(`[GetThreadMessages] Transformed ${transformedMessages.length} messages, first has ${transformedMessages[0]?.media?.length || 0} media`);
-
     return new Response(
       JSON.stringify({ 
         messages: transformedMessages.reverse(), // Return in chronological order
@@ -200,7 +186,6 @@ Deno.serve(async (req) => {
     );
 
   } catch (error: any) {
-    console.error('[GetThreadMessages] Error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Unknown error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

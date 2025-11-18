@@ -99,7 +99,7 @@ serve(async (req) => {
           .eq('id', user.id);
 
         if (updateErr) {
-          console.error('[GetWallet] Error updating regenerated lives:', updateErr);
+          // Non-critical error
         } else {
           currentLives = newLives;
         }
@@ -125,7 +125,6 @@ serve(async (req) => {
       .limit(20);
 
     if (ledgerError) {
-      console.error('[GetWallet] Error fetching ledger:', ledgerError);
       // Non-critical, continue without ledger
     }
 
@@ -148,7 +147,6 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[GetWallet] Error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       {

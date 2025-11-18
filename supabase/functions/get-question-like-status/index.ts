@@ -51,7 +51,6 @@ serve(async (req) => {
       .maybeSingle();
 
     if (likeError) {
-      console.error('[get-question-like-status] Like check error:', likeError);
       throw likeError;
     }
 
@@ -63,7 +62,6 @@ serve(async (req) => {
       .maybeSingle();
 
     if (questionError) {
-      console.error('[get-question-like-status] Question fetch error:', questionError);
       throw questionError;
     }
 
@@ -89,7 +87,6 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[get-question-like-status] Error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'An error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

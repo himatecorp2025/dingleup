@@ -36,8 +36,6 @@ serve(async (req) => {
     // DB client with service role for queries
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('[GetThreads] Fetching threads for user:', user.id);
-
     // Get all threads where user is participant and not archived
     const { data: threads, error: threadsError } = await supabase
       .from('dm_threads')
@@ -46,11 +44,8 @@ serve(async (req) => {
       .order('last_message_at', { ascending: false, nullsFirst: false });
 
     if (threadsError) {
-      console.error('[GetThreads] Error fetching threads:', threadsError);
       throw threadsError;
     }
-
-    console.log('[GetThreads] Found threads:', threads?.length);
 
     // Filter out archived threads for this user
     const activeThreads = (threads || []).filter(thread => {
@@ -140,7 +135,6 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[GetThreads] Error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { 

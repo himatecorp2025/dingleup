@@ -23,7 +23,6 @@ Deno.serve(async (req) => {
       .is('country_code', null)
 
     if (fetchError) {
-      console.error('Error fetching users without country:', fetchError)
       return new Response(
         JSON.stringify({ error: 'Failed to fetch users' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -40,7 +39,6 @@ Deno.serve(async (req) => {
         .is('country_code', null)
 
       if (updateError) {
-        console.error('Error updating country codes:', updateError)
         return new Response(
           JSON.stringify({ error: 'Failed to update country codes' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -60,7 +58,6 @@ Deno.serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Unexpected error:', error)
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
