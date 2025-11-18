@@ -88,11 +88,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     setClaiming(true);
     try {
       // Call new idempotent claim-daily-gift edge function
-      const { data, error } = await supabase.functions.invoke('claim-daily-gift', {
-        headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        }
-      });
+      // Supabase automatically includes Authorization header
+      const { data, error } = await supabase.functions.invoke('claim-daily-gift');
       
       if (error) throw error;
       
