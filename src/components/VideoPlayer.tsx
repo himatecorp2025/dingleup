@@ -24,7 +24,9 @@ export const VideoPlayer = ({ videoUrl, title, videoId, userId, onClose }: Video
       }
       setHasTrackedPlay(true);
     }
+  }, [hasTrackedPlay, userId, videoId, title]);
 
+  useEffect(() => {
     // Enter fullscreen on mount
     const enterFullscreen = async () => {
       try {
@@ -57,7 +59,7 @@ export const VideoPlayer = ({ videoUrl, title, videoId, userId, onClose }: Video
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
     };
-  }, [onClose, hasTrackedPlay, userId, videoId, title]);
+  }, [onClose]);
 
   const handleVideoEnded = () => {
     // Track video complete
@@ -77,13 +79,13 @@ export const VideoPlayer = ({ videoUrl, title, videoId, userId, onClose }: Video
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] bg-background flex items-center justify-center">
       {/* Close button - top right */}
       <Button
         onClick={handleClose}
         variant="ghost"
         size="icon"
-        className="absolute top-4 right-4 z-[10000] w-12 h-12 rounded-full bg-black/60 hover:bg-black/80 text-white"
+        className="absolute top-4 right-4 z-[10000] w-12 h-12 rounded-full bg-background/60 hover:bg-background/80 text-foreground"
       >
         <X className="w-6 h-6" />
       </Button>
@@ -105,7 +107,7 @@ export const VideoPlayer = ({ videoUrl, title, videoId, userId, onClose }: Video
 
       {/* Title overlay (optional) */}
       <div className="absolute bottom-20 left-0 right-0 text-center pointer-events-none">
-        <p className="text-white text-lg font-bold drop-shadow-lg px-4 py-2 bg-black/40 inline-block rounded-lg">
+        <p className="text-foreground text-lg font-bold drop-shadow-lg px-4 py-2 bg-background/40 inline-block rounded-lg">
           {title}
         </p>
       </div>
