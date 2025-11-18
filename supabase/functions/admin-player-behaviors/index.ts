@@ -1,8 +1,8 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 
-// Categories we support in the dashboard
-const CATEGORIES = ['health', 'history', 'culture', 'finance'] as const;
+// Only 'mixed' category is used now
+const CATEGORIES = ['mixed'] as const;
 
 Deno.serve(async (req) => {
   const origin = req.headers.get('origin');
