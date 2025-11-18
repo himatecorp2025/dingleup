@@ -96,3 +96,6 @@ verify_jwt = false
 [functions.process-weekly-winners]
 verify_jwt = false
 
+[functions.load-questions-from-json]
+verify_jwt = false
+
