@@ -58,6 +58,7 @@ serve(async (req) => {
     // Select 15 random questions
     const shuffled = questions.sort(() => 0.5 - Math.random());
     const selectedQuestions = shuffled.slice(0, 15).map((q: any) => ({
+      id: q.id, // Include question ID
       question: q.question,
       answers: Array.isArray(q.answers) ? q.answers.map((a: any) => a.text || a) : [],
       correctAnswer: Array.isArray(q.answers) ? q.answers.findIndex((a: any) => a.correct === true) : 0,
@@ -71,6 +72,7 @@ serve(async (req) => {
       session_id: sessionId,
       category: 'mixed', // Always use "mixed" category
       questions: selectedQuestions.map(q => ({
+        id: q.id, // Include question ID
         question: q.question,
         correctAnswer: q.correctAnswer,
         difficulty: q.difficulty
@@ -96,6 +98,7 @@ serve(async (req) => {
 
     // Return only questions and answers (NOT correct answer indices)
     const clientQuestions = selectedQuestions.map(q => ({
+      id: q.id, // Include question ID for likes
       question: q.question,
       answers: q.answers
       // correctAnswer intentionally omitted
