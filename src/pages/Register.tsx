@@ -101,6 +101,16 @@ const Register = () => {
       }
 
       if (authData.user) {
+        // Set country code based on IP geolocation immediately after registration
+        try {
+          await supabase.functions.invoke('register-with-geolocation', {
+            body: { userId: authData.user.id }
+          });
+        } catch (geoError) {
+          console.error('[Register] Geolocation error:', geoError);
+          // Continue even if geolocation fails (will use default HU)
+        }
+
         // Handle invitation if code exists
         if (inviterCode) {
           try {
