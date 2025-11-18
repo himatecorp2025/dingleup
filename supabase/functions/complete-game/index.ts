@@ -1,5 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
+import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
+import { validateInteger, validateEnum, validateString } from '../_shared/validation.ts';
 
 interface GameCompletion {
   category: string;
@@ -45,6 +47,12 @@ Deno.serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseAuth.auth.getUser(token);
     if (userError || !user) {
       throw new Error('Unauthorized');
+    }
+
+    // SECURITY: Rate limiting check
+    const rateLimitResult = await checkRateLimit(supabaseAuth, 'complete-game', RATE_LIMITS.GAME);
+    if (!rateLimitResult.allowed) {
+      return rateLimitExceeded(corsHeaders);
     }
 
     const body: GameCompletion = await req.json();

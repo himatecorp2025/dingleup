@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
+import { validateInteger } from '../_shared/validation.ts';
 
 serve(async (req) => {
   const origin = req.headers.get('origin');
@@ -46,13 +48,19 @@ serve(async (req) => {
       );
     }
 
+    // SECURITY: Rate limiting check
+    const rateLimitResult = await checkRateLimit(supabaseClient, 'credit-gameplay-reward', RATE_LIMITS.GAME);
+    if (!rateLimitResult.allowed) {
+      return rateLimitExceeded(corsHeaders);
+    }
+
     const { amount, sourceId, reason } = await req.json();
 
-    // Basic validation
-    const amt = Number(amount);
-    if (!sourceId || !Number.isFinite(amt) || amt <= 0 || amt > 1000) {
+    // SECURITY: Enhanced validation
+    const amt = validateInteger(amount, 'amount', { min: 1, max: 1000 });
+    if (!sourceId || typeof sourceId !== 'string') {
       return new Response(
-        JSON.stringify({ error: 'Invalid payload' }),
+        JSON.stringify({ error: 'Invalid sourceId' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
