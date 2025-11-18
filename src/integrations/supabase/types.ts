@@ -1367,7 +1367,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           coins: number | null
-          country_code: string | null
+          country_code: string
           created_at: string | null
           daily_gift_last_claimed: string | null
           daily_gift_streak: number | null
@@ -1392,7 +1392,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           coins?: number | null
-          country_code?: string | null
+          country_code?: string
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
@@ -1417,7 +1417,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           coins?: number | null
-          country_code?: string | null
+          country_code?: string
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
