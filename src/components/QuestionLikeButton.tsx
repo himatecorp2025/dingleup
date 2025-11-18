@@ -11,7 +11,8 @@ export const QuestionLikeButton = ({ questionId }: QuestionLikeButtonProps) => {
   const { liked, likeCount, toggleLike } = useQuestionLike(questionId);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const handleLike = async () => {
+  const handleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent double-tap detection on parent
     const newLikedState = await toggleLike();
     
     // Trigger animation on like (not unlike)
