@@ -39,7 +39,7 @@ const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionPro
   if (status === 'active') return null;
   if (status === 'blocked') {
     return (
-      <div className="px-2 py-1 bg-red-500/20 border border-red-500/50 rounded text-xs text-red-300 flex items-center gap-1">
+      <div className="px-2 py-1 bg-destructive/20 border border-destructive/50 rounded text-xs text-destructive flex items-center gap-1">
         <Info className="w-3 h-3" />
         Nem elérhető
       </div>
@@ -48,7 +48,7 @@ const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionPro
 
   if (status === 'pending_sent') {
     return (
-      <div className="px-2 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded text-xs text-yellow-300">
+      <div className="px-2 py-1 bg-accent/20 border border-accent/50 rounded text-xs text-accent-foreground">
         Folyamatban
       </div>
     );
@@ -56,7 +56,7 @@ const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionPro
 
   if (status === 'pending_received') {
     return (
-      <div className="px-2 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded text-xs text-yellow-300">
+      <div className="px-2 py-1 bg-accent/20 border border-accent/50 rounded text-xs text-accent-foreground">
         Várakozik jóváhagyásra
       </div>
     );
@@ -73,7 +73,7 @@ const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionPro
         }
       }}
       size="sm"
-      className="bg-gradient-to-r from-green-600 to-green-800"
+      className="bg-gradient-to-r from-success to-success/80"
       disabled={loading}
     >
       <UserPlus className="w-4 h-4 mr-1" />
@@ -153,9 +153,9 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-purple-900 to-purple-950 border-2 border-yellow-500/50 text-white">
+      <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-primary-dark to-primary-darker border-2 border-accent/50 text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black text-yellow-400">
+          <DialogTitle className="text-2xl font-black text-accent">
             Felhasználó keresése
           </DialogTitle>
         </DialogHeader>
@@ -166,20 +166,20 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Felhasználónév vagy meghívókód..."
-              className="bg-gray-800 border-purple-500/50 text-white pr-10"
+              className="bg-muted border-primary/50 text-foreground pr-10"
             />
-            <Search className="w-5 h-5 text-purple-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-5 h-5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
           <div className="space-y-2 max-h-[300px] overflow-y-auto">
             {searching && (
-              <div className="text-center text-purple-300 py-4">
+              <div className="text-center text-muted-foreground py-4">
                 Keresés...
               </div>
             )}
             
             {!searching && searchTerm && results.length === 0 && (
-              <div className="text-center text-purple-300 py-4">
+              <div className="text-center text-muted-foreground py-4">
                 Nincs találat
               </div>
             )}
@@ -187,7 +187,7 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
             {!searching && results.map((user) => (
               <div
                 key={user.id}
-                className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-purple-500/30 hover:bg-gray-800/80 transition-colors"
+                className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-primary/30 hover:bg-muted/80 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="relative">
@@ -198,17 +198,17 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
                         className="w-10 h-10 rounded-full"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-foreground font-bold">
                         {user.username.charAt(0).toUpperCase()}
                       </div>
                     )}
                     {user.is_online && (
-                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></span>
+                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-success rounded-full border-2 border-background"></span>
                     )}
                   </div>
                   <div>
-                    <p className="text-white font-semibold">{user.username}</p>
-                    <p className="text-xs text-purple-300">
+                    <p className="text-foreground font-semibold">{user.username}</p>
+                    <p className="text-xs text-muted-foreground">
                       {user.is_online ? 'Online' : 'Offline'}
                     </p>
                   </div>
@@ -221,7 +221,7 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
                       onOpenChange(false);
                     }}
                     size="sm"
-                    className="bg-gradient-to-r from-green-600 to-green-800"
+                    className="bg-gradient-to-r from-success to-success/80"
                   >
                     <MessageCircle className="w-4 h-4 mr-1" />
                     Üzenet

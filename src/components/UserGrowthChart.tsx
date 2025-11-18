@@ -100,69 +100,69 @@ export const UserGrowthChart = () => {
 
   if (loading) {
     return (
-      <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+      <div className="bg-primary-darker/50 border border-primary/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
         <div className="flex items-center gap-3 mb-4">
-          <TrendingUp className="w-6 h-6 text-blue-400" />
-          <h3 className="text-lg lg:text-xl font-bold text-white">Felhasználók & Költés Trend</h3>
+          <TrendingUp className="w-6 h-6 text-primary-glow" />
+          <h3 className="text-lg lg:text-xl font-bold text-foreground">Felhasználók & Költés Trend</h3>
         </div>
         <div className="h-64 lg:h-80 flex items-center justify-center">
-          <p className="text-white/50">Adatok betöltése...</p>
+          <p className="text-muted-foreground">Adatok betöltése...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+    <div className="bg-primary-darker/50 border border-primary/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
       <div className="flex items-center gap-3 mb-4 lg:mb-6">
-        <TrendingUp className="w-6 h-6 lg:w-7 lg:h-7 text-blue-400" />
-        <h3 className="text-lg lg:text-xl font-bold text-white">Felhasználók & Költés Trend (30 nap)</h3>
+        <TrendingUp className="w-6 h-6 lg:w-7 lg:h-7 text-primary-glow" />
+        <h3 className="text-lg lg:text-xl font-bold text-foreground">Felhasználók & Költés Trend (30 nap)</h3>
       </div>
       
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
           <XAxis 
             dataKey="date" 
-            stroke="#9CA3AF"
-            tick={{ fill: '#9CA3AF', fontSize: 12 }}
+            stroke="hsl(var(--muted-foreground))"
+            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
             angle={-45}
             textAnchor="end"
             height={80}
           />
           <YAxis 
             yAxisId="left"
-            stroke="#60A5FA"
-            tick={{ fill: '#60A5FA', fontSize: 12 }}
-            label={{ value: 'Felhasználók', angle: -90, position: 'insideLeft', fill: '#60A5FA' }}
+            stroke="hsl(var(--primary-glow))"
+            tick={{ fill: 'hsl(var(--primary-glow))', fontSize: 12 }}
+            label={{ value: 'Felhasználók', angle: -90, position: 'insideLeft', fill: 'hsl(var(--primary-glow))' }}
           />
           <YAxis 
             yAxisId="right"
             orientation="right"
-            stroke="#34D399"
-            tick={{ fill: '#34D399', fontSize: 12 }}
-            label={{ value: 'Átlag költés ($)', angle: 90, position: 'insideRight', fill: '#34D399' }}
+            stroke="hsl(var(--success))"
+            tick={{ fill: 'hsl(var(--success))', fontSize: 12 }}
+            label={{ value: 'Átlag költés ($)', angle: 90, position: 'insideRight', fill: 'hsl(var(--success))' }}
           />
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: '#1F2937', 
-              border: '1px solid #374151',
+              backgroundColor: 'hsl(var(--background))', 
+              border: '1px solid hsl(var(--border))',
               borderRadius: '8px',
-              color: '#fff'
+              color: 'hsl(var(--foreground))'
             }}
-            labelStyle={{ color: '#9CA3AF' }}
+            labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
           />
           <Legend 
-            wrapperStyle={{ color: '#9CA3AF' }}
+            wrapperStyle={{ color: 'hsl(var(--muted-foreground))' }}
             iconType="line"
           />
           <Line 
             yAxisId="left"
             type="monotone" 
             dataKey="users" 
-            stroke="#60A5FA" 
+            stroke="hsl(var(--primary-glow))" 
             strokeWidth={3}
-            dot={{ fill: '#60A5FA', r: 4 }}
+            dot={{ fill: 'hsl(var(--primary-glow))', r: 4 }}
             activeDot={{ r: 6 }}
             name="Összes felhasználó"
           />
@@ -170,9 +170,9 @@ export const UserGrowthChart = () => {
             yAxisId="right"
             type="monotone" 
             dataKey="avgSpend" 
-            stroke="#34D399" 
+            stroke="hsl(var(--success))" 
             strokeWidth={3}
-            dot={{ fill: '#34D399', r: 4 }}
+            dot={{ fill: 'hsl(var(--success))', r: 4 }}
             activeDot={{ r: 6 }}
             name="Átlag költés/fő ($)"
           />
@@ -180,15 +180,15 @@ export const UserGrowthChart = () => {
       </ResponsiveContainer>
 
       <div className="grid grid-cols-2 gap-4 mt-6">
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
-          <p className="text-blue-400 text-xs font-semibold mb-1">Jelenlegi felhasználók</p>
-          <p className="text-white text-xl font-bold">
+        <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+          <p className="text-primary-glow text-xs font-semibold mb-1">Jelenlegi felhasználók</p>
+          <p className="text-foreground text-xl font-bold">
             {chartData.length > 0 ? chartData[chartData.length - 1].users : 0}
           </p>
         </div>
-        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
-          <p className="text-green-400 text-xs font-semibold mb-1">Átlag költés/fő</p>
-          <p className="text-white text-xl font-bold">
+        <div className="bg-success/10 border border-success/30 rounded-lg p-3">
+          <p className="text-success text-xs font-semibold mb-1">Átlag költés/fő</p>
+          <p className="text-foreground text-xl font-bold">
             ${chartData.length > 0 ? chartData[chartData.length - 1].avgSpend.toFixed(2) : '0.00'}
           </p>
         </div>
