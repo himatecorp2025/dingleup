@@ -247,8 +247,6 @@ export const LeaderboardCarousel = () => {
     return '';
   };
 
-  if (topPlayers.length === 0) return null;
-
   return (
     <div className="w-full py-1">
       <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-white mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
@@ -259,39 +257,45 @@ export const LeaderboardCarousel = () => {
       </div>
       
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        <div className="inline-flex gap-2 sm:gap-3 px-2">
-          {/* Dupla rendering: eredeti lista + másolat körköröz scrollhoz */}
-          {[...topPlayers, ...topPlayers].map((player, index) => {
-            const rank = (index % topPlayers.length) + 1;
-            const showCrown = (index % topPlayers.length) < 3;
-            return (
-              <div key={`${player.user_id}-${index}`} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
-                {/* BASE SHADOW */}
-                <div className="absolute clip-hexagon" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} aria-hidden />
-                {/* OUTER FRAME */}
-                <div className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(index % topPlayers.length)} border-2 shadow-xl`} style={{ borderColor: (index % topPlayers.length) === 0 ? '#fbbf24' : (index % topPlayers.length) === 1 ? '#d1d5db' : (index % topPlayers.length) === 2 ? '#fb923c' : '#a855f7' }} aria-hidden />
-                {/* MIDDLE FRAME */}
-                <div className="absolute inset-[2px] clip-hexagon" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)' }} aria-hidden />
-                {/* INNER LAYER */}
-                <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
-                {/* Content */}
-                <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
-                  {/* Felső rész: korona + rang */}
-                  <div className="flex flex-col items-center gap-0">
-                    {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ${getCrownColor(index % topPlayers.length)}`} />}
-                    <p className="text-[9px] sm:text-[10px] md:text-xs font-black text-white drop-shadow-lg leading-none">{rank}.</p>
+        {topPlayers.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-white/60 text-xs sm:text-sm">Ranglista betöltése...</p>
+          </div>
+        ) : (
+          <div className="inline-flex gap-2 sm:gap-3 px-2">
+            {/* Dupla rendering: eredeti lista + másolat körköröz scrollhoz */}
+            {[...topPlayers, ...topPlayers].map((player, index) => {
+              const rank = (index % topPlayers.length) + 1;
+              const showCrown = (index % topPlayers.length) < 3;
+              return (
+                <div key={`${player.user_id}-${index}`} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
+                  {/* BASE SHADOW */}
+                  <div className="absolute clip-hexagon" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} aria-hidden />
+                  {/* OUTER FRAME */}
+                  <div className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(index % topPlayers.length)} border-2 shadow-xl`} style={{ borderColor: (index % topPlayers.length) === 0 ? '#fbbf24' : (index % topPlayers.length) === 1 ? '#d1d5db' : (index % topPlayers.length) === 2 ? '#fb923c' : '#a855f7' }} aria-hidden />
+                  {/* MIDDLE FRAME */}
+                  <div className="absolute inset-[2px] clip-hexagon" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)' }} aria-hidden />
+                  {/* INNER LAYER */}
+                  <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
+                  {/* Content */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
+                    {/* Felső rész: korona + rang */}
+                    <div className="flex flex-col items-center gap-0">
+                      {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ${getCrownColor(index % topPlayers.length)}`} />}
+                      <p className="text-[9px] sm:text-[10px] md:text-xs font-black text-white drop-shadow-lg leading-none">{rank}.</p>
+                    </div>
+                    
+                    {/* Középső rész: felhasználónév */}
+                    <p className="text-[9px] sm:text-[10px] md:text-xs font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
+                    
+                    {/* Alsó rész: helyes válaszok */}
+                    <p className="text-[8px] sm:text-[9px] md:text-[10px] font-semibold text-white/90 drop-shadow-lg leading-none">{player.total_correct_answers}</p>
                   </div>
-                  
-                  {/* Középső rész: felhasználónév */}
-                  <p className="text-[9px] sm:text-[10px] md:text-xs font-bold text-white text-center truncate w-full drop-shadow-lg">{player.username}</p>
-                  
-                  {/* Alsó rész: helyes válaszok */}
-                  <p className="text-[8px] sm:text-[9px] md:text-[10px] font-semibold text-white/90 drop-shadow-lg leading-none">{player.total_correct_answers}</p>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
