@@ -32,7 +32,7 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       
       setTimeRemaining(
-        `${days}n ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+        `${days} nap ${hours} óra ${minutes} perc ${seconds} másodperc`
       );
     };
     
@@ -183,9 +183,9 @@ export const WeeklyRankingsCountdown = ({ compact = false, className = '' }: Wee
       <div className="relative z-10 text-center w-full px-4">
         <div className="flex items-center justify-center gap-1.5 mb-0.5">
           <Trophy className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] animate-pulse" />
-          <p className="text-xs sm:text-sm md:text-base text-black font-black drop-shadow-[0_2px_4px_rgba(255,215,0,0.5)]">DÍJAZÁSIG</p>
+          <p className="text-xs sm:text-sm md:text-base text-black font-black drop-shadow-[0_2px_4px_rgba(255,215,0,0.5)]">A JUTALOMIG MÉG:</p>
         </div>
-        <p className="text-sm sm:text-base md:text-lg font-black text-black drop-shadow-[0_3px_6px_rgba(255,215,0,0.6)] leading-tight tracking-wider">
+        <p className="text-[10px] sm:text-xs md:text-sm font-black text-black drop-shadow-[0_3px_6px_rgba(255,215,0,0.6)] leading-tight">
           {timeRemaining}
         </p>
       </div>
