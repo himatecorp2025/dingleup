@@ -2536,6 +2536,7 @@ export type Database = {
       }
       distribute_weekly_rewards: { Args: never; Returns: undefined }
       generate_invitation_code: { Args: never; Returns: string }
+      get_country_from_request: { Args: never; Returns: string }
       get_current_week_reward: { Args: never; Returns: Json }
       get_current_week_start: { Args: never; Returns: string }
       get_invitation_tier_reward: {
