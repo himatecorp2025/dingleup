@@ -55,7 +55,6 @@ Deno.serve(async (req) => {
       .limit(50);
 
     if (receivedError) {
-      console.error('Error fetching received requests:', receivedError);
       return new Response(JSON.stringify({ error: 'Failed to fetch requests' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -104,7 +103,7 @@ Deno.serve(async (req) => {
       .limit(50);
 
     if (sentError) {
-      console.error('Error fetching sent requests:', sentError);
+      // Continue without sent requests
     }
 
     // Get profiles for sent requests
@@ -137,7 +136,6 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in get-friend-requests:', error);
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

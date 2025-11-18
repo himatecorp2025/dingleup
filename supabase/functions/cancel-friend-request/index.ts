@@ -109,7 +109,6 @@ serve(async (req) => {
       .eq('status', 'pending');
 
     if (updateError) {
-      console.error('Error canceling friendship:', updateError);
       return new Response(JSON.stringify({ error: 'Failed to cancel friend request' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -139,7 +138,6 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error:', error);
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

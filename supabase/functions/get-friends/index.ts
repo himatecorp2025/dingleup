@@ -32,12 +32,9 @@ Deno.serve(async (req) => {
     // Use service role for DB operations (bypasses RLS safely)
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('[GetFriends] Fetching friends for user:', user.id);
-
     // SECURITY: Validate user ID format
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(user.id)) {
-      console.error('[GetFriends] Invalid user ID format');
       return new Response(
         JSON.stringify({ error: 'Invalid user ID format' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -52,7 +49,6 @@ Deno.serve(async (req) => {
       .eq('status', 'active');
 
     if (friendshipsError) {
-      console.error('[GetFriends] Error fetching friendships:', friendshipsError);
       throw friendshipsError;
     }
 
@@ -75,7 +71,6 @@ Deno.serve(async (req) => {
       .in('id', friendIds);
 
     if (profilesError) {
-      console.error('[GetFriends] Error fetching profiles:', profilesError);
       throw profilesError;
     }
 

@@ -38,22 +38,17 @@ serve(async (req) => {
     }
 
     // Load questions from database
-    console.log('[start-game-session] Loading questions from database...');
-    
     const { data: questions, error: questionsError } = await supabaseClient
       .from('questions')
       .select('id, question, answers, audience, third, source_category')
       .limit(1000); // Get all available questions
 
     if (questionsError || !questions || questions.length === 0) {
-      console.error('[start-game-session] Error loading questions:', questionsError);
       return new Response(
         JSON.stringify({ error: 'Failed to load questions from database' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log(`[start-game-session] Loaded ${questions.length} questions from database`);
 
     // Select 15 random questions
     const shuffled = questions.sort(() => 0.5 - Math.random());
@@ -89,7 +84,6 @@ serve(async (req) => {
       .insert(sessionData);
 
     if (insertError) {
-      console.error('Error creating session:', insertError);
       return new Response(
         JSON.stringify({ error: 'Failed to create game session' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -118,7 +112,6 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[INTERNAL] Error in start-game-session:', error);
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

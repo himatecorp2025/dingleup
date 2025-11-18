@@ -96,7 +96,6 @@ serve(async (req) => {
       };
 
       activeSessions.set(sessionId, session);
-      console.log('Game session started:', { sessionId, userId: user.id });
 
       // Return questions without correct answers
       return new Response(
