@@ -53,11 +53,24 @@ export const LeaderboardCarousel = () => {
 
   const fetchFromWeeklyRankings = async (): Promise<LeaderboardEntry[]> => {
     try {
+      // Get current user's country code
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('country_code')
+        .eq('id', user.id)
+        .single();
+      
+      if (!profile?.country_code) return [];
+      
       const weekStart = getWeekStartInUserTimezone();
       const { data, error } = await supabase
         .from('weekly_rankings')
-        .select('user_id, total_correct_answers, public_profiles:public_profiles!inner(username, avatar_url)')
+        .select('user_id, total_correct_answers, public_profiles:public_profiles!inner(username, avatar_url, country_code)')
         .eq('week_start', weekStart)
+        .eq('public_profiles.country_code', profile.country_code)
         .order('total_correct_answers', { ascending: false });
       if (error) throw error;
 
