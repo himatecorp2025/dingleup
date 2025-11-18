@@ -66,7 +66,6 @@ Deno.serve(async (req) => {
           });
 
         if (uploadError) {
-          console.error('Presigned URL error:', uploadError);
           return { error: uploadError.message, filename: file.filename };
         }
 
@@ -77,7 +76,6 @@ Deno.serve(async (req) => {
           token: uploadData.token,
         };
       } catch (error) {
-        console.error('Error generating URL:', error);
         return { error: 'Failed to generate upload URL', filename: file.filename };
       }
     });
@@ -86,9 +84,6 @@ Deno.serve(async (req) => {
 
     // Check for any errors
     const errors = results.filter(r => 'error' in r);
-    if (errors.length > 0) {
-      console.error('Some uploads failed:', errors);
-    }
 
     return new Response(JSON.stringify({ uploads: results }), {
       status: 200,
@@ -96,7 +91,6 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Batch upload error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,

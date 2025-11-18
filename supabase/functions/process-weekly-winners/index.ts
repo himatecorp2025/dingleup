@@ -16,7 +16,6 @@ serve(async (req) => {
   const expectedSecret = Deno.env.get('CRON_SECRET');
   
   if (!cronSecret || cronSecret !== expectedSecret) {
-    console.error('[WEEKLY-WINNERS] Invalid or missing cron secret');
     return new Response(
       JSON.stringify({ error: 'Unauthorized' }), 
       { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -30,8 +29,6 @@ serve(async (req) => {
   );
 
   try {
-    console.log('[WEEKLY-WINNERS] Starting weekly winner processing');
-
     // Calculate last week's start date (previous Monday)
     const now = new Date();
     const budapestTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Budapest' }));
@@ -41,8 +38,6 @@ serve(async (req) => {
     lastWeekStart.setDate(budapestTime.getDate() - daysToSubtract);
     lastWeekStart.setHours(0, 0, 0, 0);
     const weekStart = lastWeekStart.toISOString().split('T')[0];
-
-    console.log(`[WEEKLY-WINNERS] Processing for week: ${weekStart}`);
 
     // Get top 10 from last week's rankings
     const { data: topRankings, error: rankError } = await supabaseClient
@@ -55,14 +50,11 @@ serve(async (req) => {
     if (rankError) throw rankError;
 
     if (!topRankings || topRankings.length === 0) {
-      console.log('[WEEKLY-WINNERS] No rankings found for this week');
       return new Response(
         JSON.stringify({ success: true, message: 'No rankings to process' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log(`[WEEKLY-WINNERS] Found ${topRankings.length} winners`);
 
     // Create snapshot
     for (const ranking of topRankings) {
@@ -93,7 +85,6 @@ serve(async (req) => {
         .single();
 
       if (existing) {
-        console.log(`[WEEKLY-WINNERS] User ${user_id} already awarded for week ${weekStart}`);
         continue;
       }
 
@@ -105,12 +96,10 @@ serve(async (req) => {
         .single();
 
       if (prizeError || !prize) {
-        console.log(`[WEEKLY-WINNERS] No prize config for rank ${rank}`);
         continue;
       }
 
       const { gold, lives } = prize;
-      console.log(`[WEEKLY-WINNERS] Awarding rank ${rank} to user ${user_id}: ${gold} gold, ${lives} lives`);
 
       // Credit wallet (coins)
       const correlationId = `weekly-top10:${user_id}:${weekStart}:${rank}`;

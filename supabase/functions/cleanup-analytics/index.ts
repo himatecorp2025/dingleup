@@ -15,7 +15,6 @@ serve(async (req) => {
     // Security: Verify this is a legitimate cron request using secret
     const cronSecret = req.headers.get('x-supabase-cron-secret');
     if (cronSecret !== Deno.env.get('CRON_SECRET')) {
-      console.warn('[CLEANUP] Unauthorized access attempt to cron endpoint');
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
@@ -33,26 +32,21 @@ serve(async (req) => {
       }
     );
 
-    console.log('[CLEANUP] Starting analytics cleanup job');
-
     // Call the cleanup function
     const { error } = await supabaseClient.rpc('cleanup_old_analytics');
 
     if (error) {
-      console.error('[CLEANUP] Error cleaning analytics:', error);
       return new Response(
         JSON.stringify({ success: false, error: error.message }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
 
-    console.log('[CLEANUP] Analytics cleaned successfully (90+ day old data removed)');
     return new Response(
       JSON.stringify({ success: true, message: 'Old analytics data cleaned successfully' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
   } catch (error) {
-    console.error('[CLEANUP] Error in cleanup-analytics function:', error);
     return new Response(
       JSON.stringify({ success: false, error: 'An error occurred processing the request' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }

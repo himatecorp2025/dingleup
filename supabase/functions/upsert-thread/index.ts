@@ -102,7 +102,6 @@ Deno.serve(async (req) => {
           { thread_id: existingThread.id, user_id: targetUserId, can_send: true }
         ], { onConflict: 'thread_id,user_id' });
 
-      console.log(`Thread already exists: ${existingThread.id} (permissions ensured)`);
       return new Response(JSON.stringify({ threadId: existingThread.id }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

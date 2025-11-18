@@ -14,14 +14,11 @@ Deno.serve(async (req) => {
     // Security: Verify this is a legitimate cron request using secret
     const cronSecret = req.headers.get('x-supabase-cron-secret');
     if (cronSecret !== Deno.env.get('SUPABASE_CRON_SECRET')) {
-      console.warn('[SECURITY] Unauthorized access attempt to cron endpoint');
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
       );
     }
-
-    console.log('Starting daily activity aggregation...');
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -36,7 +33,6 @@ Deno.serve(async (req) => {
       .limit(10000);
 
     if (datesError) {
-      console.error('Error fetching dates:', datesError);
       throw datesError;
     }
 
@@ -62,8 +58,6 @@ Deno.serve(async (req) => {
         }
       }
     }
-
-    console.log(`Processing ${userDateMap.size} user-date combinations...`);
 
     let aggregated = 0;
     const uniqueUserDates = new Set<string>();

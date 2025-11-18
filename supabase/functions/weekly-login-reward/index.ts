@@ -25,16 +25,12 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
     if (authError || !user) throw new Error('User not authenticated');
 
-    console.log(`[WEEKLY-LOGIN] Processing for user: ${user.id}`);
-
     // Get current week start (Europe/Budapest timezone)
     const { data: weekData, error: weekError } = await supabaseClient
       .rpc('get_current_week_start');
     
     if (weekError) throw weekError;
     const weekStart = weekData as string;
-
-    console.log(`[WEEKLY-LOGIN] Week start: ${weekStart}`);
 
     // Get or create weekly login state
     const { data: loginState, error: stateError } = await supabaseClient
@@ -55,7 +51,6 @@ serve(async (req) => {
         const hoursSince = (now.getTime() - lastCounted.getTime()) / (1000 * 60 * 60);
         
         if (hoursSince < 24) {
-          console.log(`[WEEKLY-LOGIN] Throttled - last counted ${hoursSince.toFixed(1)}h ago`);
           return new Response(
             JSON.stringify({ 
               success: true, 
@@ -79,7 +74,6 @@ serve(async (req) => {
       .single();
 
     if (rewardError || !rewardConfig) {
-      console.log(`[WEEKLY-LOGIN] No reward config for index ${newIndex}`);
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -92,8 +86,6 @@ serve(async (req) => {
     // All users get standard rewards (no multiplier)
     const goldAmount = rewardConfig.gold_amount;
     const livesBonus = rewardConfig.lives_bonus || 0;
-
-    console.log(`[WEEKLY-LOGIN] Awarding index ${newIndex}: ${goldAmount} gold, ${livesBonus} lives`);
 
     // Credit wallet (coins) idempotently
     const correlationId = `weekly-login:${user.id}:${weekStart}:${newIndex}`;
