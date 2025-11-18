@@ -71,42 +71,62 @@ export const LeaderboardCarousel = () => {
       
       const weekStart = getWeekStartInUserTimezone();
       
-      // Get ALL users from same country (not just those with rankings)
-      const { data: allCountryProfiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, username, avatar_url, country_code')
-        .eq('country_code', countryCode);
+      // Get TOP 100 from weekly_rankings with profile data (JOIN)
+      const { data: topRankings, error: rankingsError } = await supabase
+        .from('weekly_rankings')
+        .select(`
+          user_id,
+          total_correct_answers,
+          profiles!inner (
+            username,
+            avatar_url,
+            country_code
+          )
+        `)
+        .eq('week_start', weekStart)
+        .eq('category', 'mixed')
+        .eq('profiles.country_code', countryCode)
+        .order('total_correct_answers', { ascending: false })
+        .limit(100);
       
-      if (profilesError || !allCountryProfiles || allCountryProfiles.length === 0) {
+      if (rankingsError) {
+        console.error('[LeaderboardCarousel] rankings fetch error:', rankingsError);
         return [];
       }
       
-      // Get weekly rankings for current week (mixed category only)
-      const { data: rankingsData } = await supabase
-        .from('weekly_rankings')
-        .select('user_id, total_correct_answers')
-        .eq('week_start', weekStart)
-        .eq('category', 'mixed');
-      
-      // Create rankings map (defaults to 0 if no data)
-      const rankingsMap = new Map<string, number>();
-      if (rankingsData) {
-        rankingsData.forEach(row => {
-          rankingsMap.set(row.user_id, row.total_correct_answers || 0);
-        });
-      }
-      
-      // Build leaderboard with ALL users (0 scores included)
-      const entries: LeaderboardEntry[] = allCountryProfiles.map(profile => ({
-        user_id: profile.id,
-        username: profile.username || 'Player',
-        avatar_url: profile.avatar_url || null,
-        total_correct_answers: rankingsMap.get(profile.id) || 0
+      const entries: LeaderboardEntry[] = (topRankings || []).map(row => ({
+        user_id: row.user_id,
+        username: (row.profiles as any)?.username || 'Player',
+        avatar_url: (row.profiles as any)?.avatar_url || null,
+        total_correct_answers: row.total_correct_answers || 0
       }));
+      
+      // If less than 100, fill with users who haven't played this week (0 points)
+      if (entries.length < 100) {
+        const existingUserIds = entries.map(e => e.user_id);
+        const needed = 100 - entries.length;
+        
+        const { data: fillUsers } = await supabase
+          .from('profiles')
+          .select('id, username, avatar_url')
+          .eq('country_code', countryCode)
+          .not('id', 'in', `(${existingUserIds.join(',')})`)
+          .order('created_at', { ascending: true })
+          .limit(needed);
+        
+        if (fillUsers) {
+          fillUsers.forEach(u => {
+            entries.push({
+              user_id: u.id,
+              username: u.username || 'Player',
+              avatar_url: u.avatar_url || null,
+              total_correct_answers: 0
+            });
+          });
+        }
+      }
 
-      return entries
-        .sort((a, b) => b.total_correct_answers - a.total_correct_answers)
-        .slice(0, 100);
+      return entries;
     } catch (e) {
       console.error('[LeaderboardCarousel] weekly_rankings error:', e);
       return [];
