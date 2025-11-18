@@ -66,13 +66,13 @@ const roadmapItems = [
 
 const Roadmap = () => {
   const getStatusIcon = (status: string) => {
-    if (status === "completed") return <CheckCircle2 className="w-6 h-6 text-green-400" />;
+    if (status === "completed") return <CheckCircle2 className="w-6 h-6 text-success" />;
     if (status === "in-progress") return <Clock className="w-6 h-6 text-accent animate-pulse" />;
     return <Circle className="w-6 h-6 text-muted-foreground" />;
   };
 
   const getStatusColor = (status: string) => {
-    if (status === "completed") return "border-green-400/50 bg-green-400/5";
+    if (status === "completed") return "border-success/50 bg-success/5";
     if (status === "in-progress") return "border-accent/50 bg-accent/5";
     return "border-border/50 bg-muted/20";
   };
@@ -97,7 +97,7 @@ const Roadmap = () => {
 
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-green-400 via-accent to-muted-foreground/30" />
+          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-success via-accent to-muted-foreground/30" />
 
           <div className="space-y-8">
             {roadmapItems.map((item, index) => (
