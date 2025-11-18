@@ -122,8 +122,9 @@ serve(async (req) => {
       });
 
     if (creditError) {
+      console.error('[DAILY-GIFT] Credit error:', creditError);
       return new Response(
-        JSON.stringify({ success: false, error: 'Nem sikerült a jutalom jóváírása' }),
+        JSON.stringify({ success: false, error: 'Nem sikerült a jutalom jóváírása', details: creditError.message }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
