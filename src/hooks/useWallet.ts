@@ -93,7 +93,7 @@ export const useWallet = (userId: string | undefined) => {
           filter: `id=eq.${userId}`
         },
         (payload: any) => {
-          // Optimistic update with payload data
+          // Optimistic update ONLY - no refetch (eliminates duplicate)
           if (payload.new && typeof payload.new === 'object') {
             setWalletData(prev => prev ? {
               ...prev,
@@ -102,8 +102,6 @@ export const useWallet = (userId: string | undefined) => {
               livesMax: payload.new.max_lives ?? prev.livesMax,
             } : null);
           }
-          // Full refetch as fallback
-          fetchWallet();
         }
       )
       .on(

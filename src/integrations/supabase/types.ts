@@ -2570,6 +2570,7 @@ export type Database = {
       claim_daily_gift: { Args: never; Returns: Json }
       claim_welcome_bonus: { Args: never; Returns: Json }
       cleanup_expired_game_sessions: { Args: never; Returns: undefined }
+      cleanup_old_analytics: { Args: never; Returns: undefined }
       cleanup_old_messages: { Args: never; Returns: undefined }
       create_friendship_from_invitation: {
         Args: { p_invitee_id: string; p_inviter_id: string }
@@ -2655,6 +2656,14 @@ export type Database = {
         }[]
       }
       spend_coins: { Args: { amount: number }; Returns: boolean }
+      update_weekly_ranking_for_user: {
+        Args: {
+          p_average_response_time: number
+          p_correct_answers: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       use_help: { Args: { p_help_type: string }; Returns: Json }
       use_life: { Args: never; Returns: boolean }
     }

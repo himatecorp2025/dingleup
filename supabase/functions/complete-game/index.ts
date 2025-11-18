@@ -132,34 +132,15 @@ Deno.serve(async (req) => {
       .eq('id', user.id)
       .single();
 
-    // Update weekly_rankings using ADMIN client (PER CATEGORY FOR THIS WEEK)
-    const { data: existingWeekly } = await supabaseAdmin
-      .from('weekly_rankings')
-      .select('total_correct_answers')
-      .eq('user_id', user.id)
-      .eq('week_start', weekStart)
-      .eq('category', body.category)
-      .maybeSingle();
-
-    const newWeeklyTotal = (existingWeekly?.total_correct_answers || 0) + body.correctAnswers;
-
-    const { error: weeklyError } = await supabaseAdmin
-      .from('weekly_rankings')
-      .upsert({
-        user_id: user.id,
-        username: userProfile?.username || 'Player',
-        category: body.category,
-        week_start: weekStart,
-        total_correct_answers: newWeeklyTotal,
-        average_response_time: body.averageResponseTime,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_id,week_start,category',
-        ignoreDuplicates: false
-      });
+    // Update weekly_rankings INSTANTLY via RPC (aggregated "mixed" category)
+    const { error: weeklyError } = await supabaseAdmin.rpc('update_weekly_ranking_for_user', {
+      p_user_id: user.id,
+      p_correct_answers: body.correctAnswers,
+      p_average_response_time: body.averageResponseTime
+    });
 
     if (weeklyError) {
-      console.error('[CompleteGame] Weekly rankings update error:', weeklyError);
+      console.error('[CompleteGame] Weekly rankings instant update error:', weeklyError);
     }
 
     // Update global_leaderboard using ADMIN client (AGGREGATE LIFETIME TOTAL)
