@@ -117,6 +117,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       // Call edge function - the client automatically includes auth from session
       const { data, error } = await supabase.functions.invoke('claim-daily-gift');
       
+      console.log('[DAILY-GIFT] Response:', { data, error });
+      
       if (error) {
         console.error('[DAILY-GIFT] Error claiming:', error);
         toast({

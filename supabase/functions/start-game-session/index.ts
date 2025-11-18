@@ -90,17 +90,16 @@ serve(async (req) => {
       );
     }
 
-    // Return questions with Answer objects - use DB structure directly
+    // Return questions with Answer objects - preserve correct flags for frontend game logic
     const clientQuestions = selectedQuestions.map(q => ({
       id: q.id,
       question: q.question,
       answers: Array.isArray(q.answers) ? q.answers.map((ans: any) => ({
         key: ans.key || 'A',
         text: ans.text || '',
-        correct: false // Never send correct flag to client
+        correct: ans.correct || false // Preserve correct flag for frontend
       })) : [],
       topic: 'mixed'
-      // correctAnswer intentionally omitted
     }));
 
     return new Response(
