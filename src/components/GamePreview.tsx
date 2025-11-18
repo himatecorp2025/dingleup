@@ -344,12 +344,15 @@ const GamePreview = () => {
   const startGameWithCategory = async (category: GameCategory) => {
     if (!profile) return;
 
-    // CRITICAL FIX: Always refetch wallet data before game start to get accurate lives count
-    console.log('[GamePreview] Refetching wallet before game start...');
-    await refetchWallet();
+    // CRITICAL FIX: Always refetch BOTH wallet AND profile data before game start
+    console.log('[GamePreview] Refetching wallet and profile before game start...');
+    await Promise.all([
+      refetchWallet(),
+      refreshProfile()
+    ]);
     
-    // Wait a moment for wallet data to update
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Wait for data to propagate (increased timeout for reliability)
+    await new Promise(resolve => setTimeout(resolve, 300));
     
     // Quick client-side lives check using walletData for accurate regenerated lives
     // Use walletData if available, otherwise fallback to profile.lives
