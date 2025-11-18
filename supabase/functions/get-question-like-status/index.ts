@@ -13,18 +13,32 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Nincs bejelentkezve' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      );
+    }
+
+    // Extract JWT token from Bearer header
+    const token = authHeader.replace('Bearer ', '');
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
+          headers: { Authorization: authHeader },
         },
+        auth: {
+          persistSession: false,
+        }
       }
     );
 
-    // Authenticate user
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    // Use the JWT token directly with auth.getUser()
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
     
     if (authError || !user) {
       return new Response(
