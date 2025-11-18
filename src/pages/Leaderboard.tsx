@@ -58,13 +58,14 @@ const Leaderboard = () => {
     };
   }, []);
 
+  // Use user's local timezone for week calculation (based on IP/country at registration)
   const getWeekStart = () => {
     const now = new Date();
-    const dayOfWeek = now.getUTCDay();
+    const dayOfWeek = now.getDay();
     const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     const monday = new Date(now);
-    monday.setUTCDate(now.getUTCDate() - diff);
-    monday.setUTCHours(0, 0, 0, 0);
+    monday.setDate(now.getDate() - diff);
+    monday.setHours(0, 0, 0, 0);
     return monday.toISOString().split('T')[0];
   };
 
