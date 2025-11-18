@@ -72,15 +72,12 @@ export const useOptimizedRealtime = (configs: RealtimeConfig[], channelName: str
 
     // Subscribe with connection handling
     channel.subscribe((status) => {
-      console.log(`[Realtime] Channel ${channelName} status:`, status);
-      
       if (status === 'SUBSCRIBED') {
         reconnectAttemptsRef.current = 0;
       } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
         // Auto-reconnect on error
         if (reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
           reconnectAttemptsRef.current++;
-          console.log(`[Realtime] Reconnecting attempt ${reconnectAttemptsRef.current}...`);
           setTimeout(setupChannel, 1000 * reconnectAttemptsRef.current); // Exponential backoff
         }
       }
@@ -112,7 +109,6 @@ export const useBroadcastChannel = (
     const channel = supabase
       .channel(channelName)
       .on('broadcast', { event: eventName }, (payload) => {
-        console.log(`[Broadcast] ${eventName}:`, payload);
         onReceive(payload);
       })
       .subscribe();
@@ -133,7 +129,6 @@ export const useBroadcastChannel = (
       payload,
     });
 
-    console.log(`[Broadcast] Sent ${eventName}:`, result);
     return result;
   }, [eventName]);
 
@@ -154,7 +149,6 @@ export const usePresenceTracking = (userId: string | undefined, enabled = true) 
       .channel('online-users')
       .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState();
-        console.log('[Presence] Online users:', Object.keys(state).length);
       })
       .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {
