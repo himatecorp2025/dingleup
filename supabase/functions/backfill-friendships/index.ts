@@ -35,7 +35,6 @@ Deno.serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
     if (authError || !user) {
-      console.error('[Backfill] Authentication failed:', authError);
       return new Response(
         JSON.stringify({ error: 'Invalid authentication token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -51,14 +50,11 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (roleError || !roles) {
-      console.error('[Backfill] Admin check failed:', roleError);
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Admin access required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('[Backfill] Starting friendship backfill from accepted invitations...');
 
     // Get all accepted invitations
     const { data: invitations, error: invError } = await supabase
@@ -67,19 +63,15 @@ Deno.serve(async (req) => {
       .eq('accepted', true);
 
     if (invError) {
-      console.error('[Backfill] Error fetching invitations:', invError);
       throw invError;
     }
 
     if (!invitations || invitations.length === 0) {
-      console.log('[Backfill] No accepted invitations found');
       return new Response(
         JSON.stringify({ success: true, processed: 0, message: 'No invitations to backfill' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log(`[Backfill] Found ${invitations.length} accepted invitations to process`);
 
     let successCount = 0;
     let errorCount = 0;
@@ -99,11 +91,9 @@ Deno.serve(async (req) => {
           });
 
           if (error) {
-            console.error(`[Backfill] Error creating friendship for ${invitation.inviter_id} <-> ${invitation.invited_user_id}:`, error);
             errorCount++;
             errors.push({ invitation, error: error.message });
           } else {
-            console.log(`[Backfill] Created friendship: ${invitation.inviter_id} <-> ${invitation.invited_user_id}`);
             successCount++;
           }
         } catch (err) {
@@ -128,7 +118,6 @@ Deno.serve(async (req) => {
     );
 
   } catch (error: any) {
-    console.error('[Backfill] Fatal error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Unknown error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

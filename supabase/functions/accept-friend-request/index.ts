@@ -102,7 +102,6 @@ Deno.serve(async (req) => {
       .eq('user_id_b', userB);
 
     if (updateError) {
-      console.error('[INTERNAL] Error updating friendship:', updateError);
       return new Response(JSON.stringify({ error: 'Failed to accept request' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -130,7 +129,7 @@ Deno.serve(async (req) => {
         .single();
 
       if (threadError) {
-        console.error('[INTERNAL] Error creating thread:', threadError);
+        // Thread creation failed
       } else {
         threadId = newThread.id;
       }
@@ -156,9 +155,7 @@ Deno.serve(async (req) => {
         ], { onConflict: 'thread_id,user_id' });
     }
 
-    console.log(`Friend request accepted: ${requesterUserId} -> ${user.id}`);
-
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: true,
       threadId 
     }), {
@@ -167,7 +164,6 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('[INTERNAL] Error in accept-friend-request:', error);
     return new Response(JSON.stringify({ error: 'A kérés feldolgozása sikertelen' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -76,16 +76,13 @@ Deno.serve(async (req) => {
       });
 
     if (upsertError) {
-      console.error('[INTERNAL] Error updating friendship status:', upsertError);
       return new Response(JSON.stringify({ error: 'Failed to update status' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    console.log(`User ${user.id} ${action}ed user ${targetUserId}`);
-
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: true,
       status: newStatus 
     }), {
@@ -94,7 +91,6 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('[INTERNAL] Error in block-user:', error);
     return new Response(JSON.stringify({ error: 'A kérés feldolgozása sikertelen' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

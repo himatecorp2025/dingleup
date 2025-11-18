@@ -102,7 +102,6 @@ Deno.serve(async (req) => {
       .eq('user_id_b', userB);
 
     if (updateError) {
-      console.error('[INTERNAL] Error updating friendship:', updateError);
       return new Response(JSON.stringify({ error: 'Failed to decline request' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -134,7 +133,6 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('[INTERNAL] Error in decline-friend-request:', error);
     return new Response(JSON.stringify({ error: 'A kérés feldolgozása sikertelen' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
