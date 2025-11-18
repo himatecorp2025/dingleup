@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['logo.png'],
       manifest: {
-        name: 'Dingle UP! - Kvízjáték',
-        short_name: 'Dingle UP',
+        name: 'DingleUP!',
+        short_name: 'DingleUP!',
         description: 'Teszteld tudásod 15 izgalmas kérdéssel! Gyűjts aranyérméket és versenyezz a ranglistán.',
         theme_color: '#0a0a2e',
         background_color: '#0a0a2e',
@@ -28,13 +28,13 @@ export default defineConfig(({ mode }) => ({
         scope: '/',
         icons: [
           {
-            src: '/logo.png',
+            src: '/dingleup-logo.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/logo.png',
+            src: '/dingleup-logo.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
