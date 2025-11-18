@@ -144,9 +144,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Unified search for "${query}": ${friends.length} friends, ${threads.length} threads, ${messages.length} messages`);
-
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       friends, 
       threads, 
       messages 

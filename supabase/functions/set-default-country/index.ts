@@ -29,8 +29,6 @@ Deno.serve(async (req) => {
       )
     }
 
-    console.log(`Found ${usersWithoutCountry?.length || 0} users without country_code`)
-
     // Set default country_code to 'HU' for all users without one
     if (usersWithoutCountry && usersWithoutCountry.length > 0) {
       const { error: updateError } = await supabase
@@ -44,10 +42,8 @@ Deno.serve(async (req) => {
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
-
-      console.log(`Updated ${usersWithoutCountry.length} users with default country_code: HU`)
     }
-
+  
     return new Response(
       JSON.stringify({ 
         success: true, 

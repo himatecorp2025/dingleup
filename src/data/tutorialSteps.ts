@@ -138,12 +138,6 @@ export const tutorialSteps = {
       position: 'bottom' as const
     },
     {
-      target: '[data-tutorial="stats"]',
-      title: 'Genius státusz 👑',
-      description: 'Ha Genius tag vagy, itt jelenik meg a státuszod és az előfizetésed részletei. Genius tagként különleges jelvényt is kapsz!',
-      position: 'bottom' as const
-    },
-    {
       target: '[data-tutorial="booster-section"]',
       title: 'Aktív boosterek ⚡',
       description: 'Ebben a blokkban látod az aktív boostereidet. Ha nincs aktív booster, itt tudsz újat vásárolni a boltból.',

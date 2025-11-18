@@ -143,8 +143,6 @@ Deno.serve(async (req) => {
         { thread_id: newThread.id, user_id: targetUserId, can_send: true }
       ], { onConflict: 'thread_id,user_id' });
 
-    console.log(`New thread created: ${newThread.id} between ${user.id} and ${targetUserId}`);
-
     return new Response(JSON.stringify({ threadId: newThread.id }), {
       status: 201,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

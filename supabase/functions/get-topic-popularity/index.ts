@@ -94,8 +94,6 @@ serve(async (req) => {
     // Sort by total likes descending
     popularityData.sort((a, b) => b.total_likes - a.total_likes);
 
-    console.log(`[get-topic-popularity] Returning ${popularityData.length} topics`);
-
     return new Response(
       JSON.stringify({
         success: true,
