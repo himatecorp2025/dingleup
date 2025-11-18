@@ -55,7 +55,10 @@ export const LeaderboardCarousel = () => {
     try {
       // Get current user's country code
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return [];
+      if (!user) {
+        console.log('[LeaderboardCarousel] No user logged in');
+        return [];
+      }
       
       const { data: profile } = await supabase
         .from('profiles')
@@ -65,8 +68,10 @@ export const LeaderboardCarousel = () => {
       
       // Fallback to HU if country_code is missing
       const countryCode = profile?.country_code || 'HU';
+      console.log('[LeaderboardCarousel] User country code:', countryCode);
       
       const weekStart = getWeekStartInUserTimezone();
+      console.log('[LeaderboardCarousel] Week start:', weekStart);
       
       // First get all weekly_rankings for current week
       const { data: rankingsData, error: rankingsError } = await supabase
@@ -76,10 +81,15 @@ export const LeaderboardCarousel = () => {
         .order('total_correct_answers', { ascending: false });
       
       if (rankingsError) throw rankingsError;
-      if (!rankingsData || rankingsData.length === 0) return [];
+      if (!rankingsData || rankingsData.length === 0) {
+        console.log('[LeaderboardCarousel] No rankings data for week:', weekStart);
+        return [];
+      }
+      console.log('[LeaderboardCarousel] Rankings data count:', rankingsData.length);
       
       // Get unique user_ids
       const uniqueUserIds = [...new Set(rankingsData.map(r => r.user_id))];
+      console.log('[LeaderboardCarousel] Unique user IDs:', uniqueUserIds.length);
       
       // Fetch user profiles with country filter
       const { data: profilesData, error: profilesError } = await supabase
@@ -89,7 +99,11 @@ export const LeaderboardCarousel = () => {
         .eq('country_code', countryCode);
       
       if (profilesError) throw profilesError;
-      if (!profilesData || profilesData.length === 0) return [];
+      if (!profilesData || profilesData.length === 0) {
+        console.log('[LeaderboardCarousel] No profiles found for country:', countryCode);
+        return [];
+      }
+      console.log('[LeaderboardCarousel] Profiles found:', profilesData.length);
       
       // Create a map of user profiles
       const profilesMap = new Map(profilesData.map(p => [p.id, p]));
