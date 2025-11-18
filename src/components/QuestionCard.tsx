@@ -61,7 +61,8 @@ export const QuestionCard = ({
   disabled = false,
   className = ""
 }: QuestionCardProps) => {
-  const correctAnswerKey = question.answers.find(a => a.correct)?.key || "";
+  const answers = Array.isArray(question.answers) ? question.answers : [];
+  const correctAnswerKey = answers.find(a => a.correct)?.key || "";
   const skipCost = getSkipCost(questionNumber - 1); // Convert to 0-indexed
 
   return (

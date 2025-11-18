@@ -87,17 +87,10 @@ export const LeaderboardCarousel = () => {
       }
 
       // Aggregate total_correct_answers per user across ALL categories
-      const aggregationMap = new Map<string, { user_id: string; total_correct_answers: number }>();
+      const totalsMap = new Map<string, number>();
       rankingsData.forEach(row => {
-        const existing = aggregationMap.get(row.user_id);
-        if (existing) {
-          existing.total_correct_answers += row.total_correct_answers || 0;
-        } else {
-          aggregationMap.set(row.user_id, {
-            user_id: row.user_id,
-            total_correct_answers: row.total_correct_answers || 0
-          });
-        }
+        const currentTotal = totalsMap.get(row.user_id) || 0;
+        totalsMap.set(row.user_id, currentTotal + (row.total_correct_answers || 0));
       });
 
       const aggregatedUserIds = Array.from(totalsMap.keys());
