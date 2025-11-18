@@ -1,14 +1,14 @@
-import { RefreshCw, LogOut, Users, SkipForward, Coins } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
-import { TimerCircle } from "./TimerCircle";
-import { HexagonButton } from "./HexagonButton";
 import { Question, getSkipCost } from "@/types/game";
 import { ScreenshotProtection } from "./ScreenshotProtection";
 import { QuestionLikeButton } from "./QuestionLikeButton";
 import { DoubleTapLikeOverlay } from "./DoubleTapLikeOverlay";
 import { useQuestionLike } from "@/hooks/useQuestionLike";
+import { GameHeader } from "./game/GameHeader";
+import { GameTimer } from "./game/GameTimer";
+import { GameLifelines } from "./game/GameLifelines";
 
 interface QuestionCardProps {
   question: Question;
