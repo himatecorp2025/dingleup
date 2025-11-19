@@ -248,7 +248,7 @@ const Register = () => {
             <div className="flex items-start space-x-2">
               <Checkbox id="terms" checked={formData.termsAccepted} onCheckedChange={(checked) => setFormData({ ...formData, termsAccepted: checked as boolean })} className="mt-1 border-white/20 data-[state=checked]:bg-yellow-400 data-[state=checked]:border-yellow-400" disabled={isLoading} />
               <label htmlFor="terms" className="text-sm text-white/70 leading-tight">
-                Elfogadom az <a href="/terms" target="_blank" className="text-yellow-400 hover:text-yellow-300 underline">ÁSZF-et</a> és az <a href="/privacy" target="_blank" className="text-yellow-400 hover:text-yellow-300 underline">Adatvédelmi Nyilatkozatot</a>
+                Elfogadom az <a href="/terms" target="_blank" className="text-yellow-400 hover:text-yellow-300 underline">ÁSZF-et</a> és az <a href="/privacy" target="_blank" className="text-yellow-400 hover:text-yellow-300 underline">Adatvédelmi Nyilatkozatot</a>. Kijelentem, hogy a megadott adataim a valóságnak megfelelnek, és elmúltam 16 éves.
               </label>
             </div>
             {errors.termsAccepted && <p className="text-sm text-red-400">{errors.termsAccepted}</p>}
