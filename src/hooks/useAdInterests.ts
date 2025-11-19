@@ -9,6 +9,11 @@ export interface AdInterestTopicSummary {
   userCount: number;
 }
 
+export interface TopicBasic {
+  topicId: string;
+  topicName: string;
+}
+
 export interface AdUserInterestRow {
   userIdHash: string;
   topTopics: {
@@ -40,6 +45,25 @@ export const useAdInterests = () => {
       throw error;
     } finally {
       setRecalculating(false);
+    }
+  };
+
+  const fetchAllTopics = async (): Promise<TopicBasic[]> => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-ad-interests-all-topics', {
+        method: 'GET',
+      });
+
+      if (error) throw error;
+
+      return data.topics || [];
+    } catch (error) {
+      console.error('Error fetching all topics:', error);
+      toast.error('Hiba az összes témakör betöltésekor');
+      return [];
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,6 +119,7 @@ export const useAdInterests = () => {
     loading,
     recalculating,
     recalculateInterests,
+    fetchAllTopics,
     fetchTopicSummary,
     fetchUserInterests,
   };

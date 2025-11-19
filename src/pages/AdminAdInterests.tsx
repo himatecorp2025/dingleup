@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { useAdInterests, AdInterestTopicSummary, AdUserInterestRow } from '@/hooks/useAdInterests';
+import { useAdInterests, AdInterestTopicSummary, AdUserInterestRow, TopicBasic } from '@/hooks/useAdInterests';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -12,8 +12,9 @@ import { supabase } from '@/integrations/supabase/client';
 
 const AdminAdInterests = () => {
   const navigate = useNavigate();
-  const { loading, recalculating, recalculateInterests, fetchTopicSummary, fetchUserInterests } = useAdInterests();
+  const { loading, recalculating, recalculateInterests, fetchAllTopics, fetchTopicSummary, fetchUserInterests } = useAdInterests();
   
+  const [allTopics, setAllTopics] = useState<TopicBasic[]>([]);
   const [topicSummary, setTopicSummary] = useState<AdInterestTopicSummary[]>([]);
   const [userInterests, setUserInterests] = useState<AdUserInterestRow[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -60,11 +61,13 @@ const AdminAdInterests = () => {
   };
 
   const loadData = async () => {
-    const [summaryData, userData] = await Promise.all([
+    const [allTopicsData, summaryData, userData] = await Promise.all([
+      fetchAllTopics(),
       fetchTopicSummary(),
       fetchUserInterests(currentPage, 50, selectedTopicFilter === 'all' ? undefined : selectedTopicFilter),
     ]);
 
+    setAllTopics(allTopicsData);
     setTopicSummary(summaryData);
     setUserInterests(userData.items || []);
     setTotalPages(userData.totalPages || 1);
@@ -204,8 +207,8 @@ const AdminAdInterests = () => {
                   <SelectValue placeholder="Összes témakör" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a0b2e] border-white/10">
-                  <SelectItem value="all" className="text-white">Összes témakör</SelectItem>
-                  {topicSummary.map(topic => (
+                  <SelectItem value="all" className="text-white">Összes témakör (27)</SelectItem>
+                  {allTopics.map(topic => (
                     <SelectItem key={topic.topicId} value={topic.topicId} className="text-white">
                       {topic.topicName}
                     </SelectItem>
