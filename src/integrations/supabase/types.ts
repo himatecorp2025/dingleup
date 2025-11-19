@@ -336,6 +336,147 @@ export type Database = {
           },
         ]
       }
+      daily_leaderboard_snapshot: {
+        Row: {
+          avatar_url: string | null
+          country_code: string | null
+          created_at: string | null
+          id: string
+          rank: number
+          snapshot_date: string
+          total_correct_answers: number
+          user_id: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          id?: string
+          rank: number
+          snapshot_date: string
+          total_correct_answers?: number
+          user_id: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          id?: string
+          rank?: number
+          snapshot_date?: string
+          total_correct_answers?: number
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      daily_prize_table: {
+        Row: {
+          created_at: string | null
+          gold: number
+          lives: number
+          rank: number
+        }
+        Insert: {
+          created_at?: string | null
+          gold?: number
+          lives?: number
+          rank: number
+        }
+        Update: {
+          created_at?: string | null
+          gold?: number
+          lives?: number
+          rank?: number
+        }
+        Relationships: []
+      }
+      daily_rankings: {
+        Row: {
+          average_response_time: number | null
+          category: string
+          created_at: string | null
+          day_date: string
+          id: string
+          rank: number | null
+          total_correct_answers: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          average_response_time?: number | null
+          category?: string
+          created_at?: string | null
+          day_date: string
+          id?: string
+          rank?: number | null
+          total_correct_answers?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          average_response_time?: number | null
+          category?: string
+          created_at?: string | null
+          day_date?: string
+          id?: string
+          rank?: number | null
+          total_correct_answers?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_winner_awarded: {
+        Row: {
+          awarded_at: string | null
+          day_date: string
+          gold_awarded: number
+          id: string
+          lives_awarded: number
+          rank: number
+          user_id: string
+        }
+        Insert: {
+          awarded_at?: string | null
+          day_date: string
+          gold_awarded?: number
+          id?: string
+          lives_awarded?: number
+          rank: number
+          user_id: string
+        }
+        Update: {
+          awarded_at?: string | null
+          day_date?: string
+          gold_awarded?: number
+          id?: string
+          lives_awarded?: number
+          rank?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_winner_popup_shown: {
+        Row: {
+          day_date: string
+          shown_at: string | null
+          user_id: string
+        }
+        Insert: {
+          day_date: string
+          shown_at?: string | null
+          user_id: string
+        }
+        Update: {
+          day_date?: string
+          shown_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_winners_popup_views: {
         Row: {
           created_at: string | null
@@ -3055,6 +3196,7 @@ export type Database = {
       distribute_weekly_rewards: { Args: never; Returns: undefined }
       generate_invitation_code: { Args: never; Returns: string }
       get_country_from_request: { Args: never; Returns: string }
+      get_current_day_date: { Args: never; Returns: string }
       get_current_week_reward: { Args: never; Returns: Json }
       get_current_week_start: { Args: never; Returns: string }
       get_invitation_tier_reward: {
@@ -3110,6 +3252,14 @@ export type Database = {
         }[]
       }
       spend_coins: { Args: { amount: number }; Returns: boolean }
+      update_daily_ranking_for_user: {
+        Args: {
+          p_average_response_time: number
+          p_correct_answers: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       update_weekly_ranking_for_user: {
         Args: {
           p_average_response_time: number
