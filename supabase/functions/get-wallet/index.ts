@@ -50,9 +50,28 @@ serve(async (req) => {
       throw profileError;
     }
 
+    // Check for active speed token
+    const { data: activeSpeedTokens, error: speedError } = await supabase
+      .from('speed_tokens')
+      .select('*')
+      .eq('user_id', user.id)
+      .not('used_at', 'is', null)
+      .gt('expires_at', new Date().toISOString())
+      .order('expires_at', { ascending: false })
+      .limit(1);
+
+    const hasActiveSpeed = !speedError && activeSpeedTokens && activeSpeedTokens.length > 0;
+    const activeSpeedToken = hasActiveSpeed ? activeSpeedTokens[0] : null;
+
     // Determine effective max lives and regen rate from profile fields
     let effectiveMaxLives = Number(profile.max_lives ?? 15);
     let effectiveRegenMinutes = Number(profile.lives_regeneration_rate ?? 12);
+
+    // Speed boost: 2x faster regeneration (6 minutes instead of 12)
+    if (hasActiveSpeed) {
+      effectiveRegenMinutes = effectiveRegenMinutes / 2;
+      console.log(`[get-wallet] Active speed boost detected, regen rate: ${effectiveRegenMinutes} min`);
+    }
 
     if (!Number.isFinite(effectiveMaxLives) || effectiveMaxLives <= 0) {
       effectiveMaxLives = 15;
@@ -138,7 +157,13 @@ serve(async (req) => {
         regenIntervalSec: effectiveRegenMinutes * 60,
         regenMinutes: effectiveRegenMinutes,
         subscriberRenewAt: null,
-        ledger: ledger || []
+        ledger: ledger || [],
+        activeSpeedToken: activeSpeedToken ? {
+          id: activeSpeedToken.id,
+          expiresAt: activeSpeedToken.expires_at,
+          durationMinutes: activeSpeedToken.duration_minutes,
+          source: activeSpeedToken.source
+        } : null
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -201,7 +201,7 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
     console.error("[FREE] Purchase log error:", purchaseError);
   }
 
-  // Create Speed tokens
+  // Create Speed tokens (but don't activate them yet - user must click "Aktiválom")
   console.log(`[FREE] Creating ${rewardSpeedCount} Speed tokens of ${rewardSpeedDuration} minutes each`);
   
   const speedTokens = [];
@@ -209,19 +209,21 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
     speedTokens.push({
       user_id: userId,
       duration_minutes: rewardSpeedDuration,
-      expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year expiry
       source: 'FREE_BOOSTER'
+      // used_at and expires_at are NULL - token is pending activation
     });
   }
 
-  const { error: speedError } = await supabaseAdmin
-    .from("speed_tokens")
-    .insert(speedTokens);
+  if (speedTokens.length > 0) {
+    const { error: speedError } = await supabaseAdmin
+      .from("speed_tokens")
+      .insert(speedTokens);
 
-  if (speedError) {
-    console.error("[FREE] Speed tokens creation error:", speedError);
-  } else {
-    console.log(`[FREE] Successfully created ${rewardSpeedCount} Speed tokens`);
+    if (speedError) {
+      console.error("[FREE] Speed tokens creation error:", speedError);
+    } else {
+      console.log(`[FREE] Successfully created ${rewardSpeedCount} speed tokens (pending activation)`);
+    }
   }
 
   const response: BoosterPurchaseResponse = {
