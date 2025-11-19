@@ -128,7 +128,10 @@ const Register = () => {
           description: "Üdvözlünk a DingleUP!-ban!",
         });
         
-        navigate("/intro");
+        // Wait briefly for session to be established, then navigate to dashboard
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 500);
       }
   } catch (error) {
     if (error instanceof z.ZodError) {
