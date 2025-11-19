@@ -11,7 +11,8 @@ import {
   X,
   LogOut,
   AlertTriangle,
-  Activity
+  Activity,
+  Target
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -58,6 +59,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
     { path: '/admin/dashboard?tab=users', label: 'Összes felhasználó', icon: Users },
     { path: '/admin/game-profiles', label: 'Játékos Profilozás', icon: Brain },
+    { path: '/admin/ad-interests', label: 'Reklámprofilok (Előkészítés)', icon: Target },
     { path: '/admin/dashboard?tab=invitations', label: 'Meghívások', icon: Users, badge: 'invitations' },
     { path: '/admin/dashboard?tab=reports', label: 'Jelentések', icon: AlertTriangle, badge: 'reports' },
     { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: TrendingUp },

@@ -299,6 +299,17 @@ const AdminDashboard = () => {
             <span className="font-medium">Játékos Profilozás</span>
           </button>
           <button
+            onClick={() => { navigate('/admin/ad-interests'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
+              window.location.pathname === '/admin/ad-interests'
+                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
+                : 'text-white/60 hover:bg-white/5'
+            }`}
+          >
+            <Target className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
+            <span className="font-medium">Reklámprofilok (Előkészítés)</span>
+          </button>
+          <button
             onClick={() => { setActiveTab('invitations'); onItemClick?.(); }}
             className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
               activeTab === 'invitations'
