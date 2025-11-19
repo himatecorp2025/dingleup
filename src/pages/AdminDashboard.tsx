@@ -210,8 +210,8 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center">
-        <p className="text-white text-lg">Betöltés...</p>
+      <div className="min-h-dvh min-h-svh bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker flex items-center justify-center">
+        <p className="text-foreground text-lg">Betöltés...</p>
       </div>
     );
   }
@@ -236,18 +236,18 @@ const AdminDashboard = () => {
             preserveAspectRatio="xMidYMid meet"
           />
         </svg>
-        <h2 className="text-white font-bold text-xs xl:text-sm">Szia, {userName}! ✨</h2>
+        <h2 className="text-foreground font-bold text-xs xl:text-sm">Szia, {userName}! ✨</h2>
       </div>
 
       <div className="mb-6 xl:mb-8">
-        <h3 className="text-white/60 text-xs font-bold mb-3 xl:mb-4 uppercase">Főmenü</h3>
+        <h3 className="text-muted-foreground text-xs font-bold mb-3 xl:mb-4 uppercase">Főmenü</h3>
         <nav className="space-y-2">
           <button
             onClick={() => { setActiveTab('dashboard'); onItemClick?.(); }}
             className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
               activeTab === 'dashboard'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
+                ? 'bg-primary-glow/20 text-primary-glow'
+                : 'text-muted-foreground hover:bg-foreground/5'
             }`}
           >
             <Home className="w-4 h-4 xl:w-5 xl:h-5" />
@@ -257,8 +257,8 @@ const AdminDashboard = () => {
             onClick={() => { setActiveTab('users'); onItemClick?.(); }}
             className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
               activeTab === 'users'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
+                ? 'bg-primary-glow/20 text-primary-glow'
+                : 'text-muted-foreground hover:bg-foreground/5'
             }`}
           >
             <Users className="w-4 h-4 xl:w-5 xl:h-5" />
@@ -357,7 +357,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Mobile Header with Hamburger Menu */}
-      <div className="lg:hidden bg-[#0a0a1e] border-b border-purple-500/30 p-4">
+      <div className="lg:hidden bg-primary-darker border-b border-primary/30 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -368,7 +368,7 @@ const AdminDashboard = () => {
               </SheetTrigger>
               <SheetContent 
                 side="left" 
-                className="w-72 bg-[#0a0a1e] border-r border-purple-500/30 p-4"
+                className="w-72 bg-primary-darker border-r border-primary/30 p-4"
               >
                 <SidebarMenu onItemClick={() => setMobileMenuOpen(false)} />
               </SheetContent>
@@ -399,25 +399,25 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
           <button
             onClick={() => setActiveTab('users')}
-            className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-[#1a1a3e]/70 transition-colors"
+            className="bg-primary-dark/50 border border-primary-glow/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-primary-dark/70 transition-colors"
           >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-white/70 text-xs lg:text-sm">Összes felhasználó</h3>
-              <Users className="w-6 h-6 lg:w-8 lg:h-8 text-blue-500 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
+              <h3 className="text-muted-foreground text-xs lg:text-sm">Összes felhasználó</h3>
+              <Users className="w-6 h-6 lg:w-8 lg:h-8 text-primary-glow bg-primary-glow/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
-            <p className="text-xl lg:text-3xl font-bold text-white">{totalUsers.toLocaleString()}</p>
+            <p className="text-xl lg:text-3xl font-bold text-foreground">{totalUsers.toLocaleString()}</p>
           </button>
 
           <button
             onClick={() => setActiveTab('revenue')}
-            className="bg-[#1a1a3e]/50 border border-blue-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-[#1a1a3e]/70 transition-colors"
+            className="bg-primary-dark/50 border border-primary-glow/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-primary-dark/70 transition-colors"
           >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-white/70 text-xs lg:text-sm">Teljes Bevétel (USD)</h3>
-              <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-blue-500 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
+              <h3 className="text-muted-foreground text-xs lg:text-sm">Teljes Bevétel (USD)</h3>
+              <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-primary-glow bg-primary-glow/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
-            <p className="text-xl lg:text-3xl font-bold text-white">${totalRevenue}</p>
-            <p className="text-white/50 text-xs mt-1">Stripe fizetésekből</p>
+            <p className="text-xl lg:text-3xl font-bold text-foreground">${totalRevenue}</p>
+            <p className="text-muted-foreground text-xs mt-1">Stripe fizetésekből</p>
           </button>
 
         </div>

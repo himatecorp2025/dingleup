@@ -11,10 +11,10 @@ const About = () => {
   // Only show on mobile/tablet
   if (!isHandheld) {
     return (
-      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker">
         <div className="text-center px-6 max-w-md">
-          <h1 className="text-3xl font-black text-white mb-4">📱 Csak mobilon elérhető</h1>
-          <p className="text-white/80 mb-6">
+          <h1 className="text-3xl font-black text-foreground mb-4">📱 Csak mobilon elérhető</h1>
+          <p className="text-muted-foreground mb-6">
             Ez az oldal csak telefonon és táblagépen használható.
           </p>
         </div>
@@ -29,7 +29,7 @@ const About = () => {
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
-        className="fixed bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
+        className="fixed bg-gradient-to-b from-primary-darker via-primary-dark to-primary-darker"
         style={{
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',
@@ -49,7 +49,7 @@ const About = () => {
         {/* Report Button - Top Right */}
         <button
           onClick={() => setShowReportDialog(true)}
-          className="absolute top-4 right-4 p-2 bg-red-600/80 hover:bg-red-700 rounded-lg transition-colors border border-red-400/50 shadow-lg z-10"
+          className="absolute top-4 right-4 p-2 bg-destructive/80 hover:bg-destructive rounded-lg transition-colors border border-destructive/50 shadow-lg z-10"
           title="Jelentés küldése"
         >
           <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,13 +57,13 @@ const About = () => {
           </svg>
         </button>
         
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-600 to-yellow-900 rounded-2xl mb-3 border-4 border-yellow-400/50 shadow-xl">
-            <Building2 className="w-8 h-8 text-yellow-200" />
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent to-accent/80 rounded-2xl mb-3 border-4 border-accent/50 shadow-xl">
+            <Building2 className="w-8 h-8 text-accent-foreground" />
           </div>
-          <h1 className="text-3xl font-black text-center mb-2 bg-gradient-to-r from-yellow-400 via-white to-yellow-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-black text-center mb-2 bg-gradient-to-r from-accent via-foreground to-accent bg-clip-text text-transparent">
             Rólunk
           </h1>
-          <p className="text-lg text-white/90 font-bold">
+          <p className="text-lg text-foreground/90 font-bold">
             DingleUP! - Ahol a tudás találkozik a szórakozással
           </p>
         </div>
@@ -71,9 +71,9 @@ const About = () => {
         {/* Main Content */}
         <div className="space-y-4">
           {/* Mission Section */}
-          <div className="bg-black/60 border-2 border-yellow-500/30 rounded-2xl p-4 backdrop-blur-sm">
-            <h2 className="text-xl font-black text-yellow-400 mb-2">Küldetésünk</h2>
-            <p className="text-white/90 leading-relaxed">
+          <div className="bg-background/60 border-2 border-accent/30 rounded-2xl p-4 backdrop-blur-sm">
+            <h2 className="text-xl font-black text-accent mb-2">Küldetésünk</h2>
+            <p className="text-foreground/90 leading-relaxed">
               A DingleUP! egy innovatív kérdés-válasz játék, amely ötvözi a kvízjátékok izgalmát 
               a modern mobil gaming élményével. Célunk, hogy szórakoztató és versengő környezetet 
               teremtsünk, ahol a játékosok fejleszthetik tudásukat, miközben kitartó kihívásokkal 
@@ -82,36 +82,36 @@ const About = () => {
           </div>
 
           {/* Features Section */}
-          <div className="bg-black/60 border-2 border-purple-500/30 rounded-2xl p-4 backdrop-blur-sm">
-            <h2 className="text-xl font-black text-purple-400 mb-2">Miért játssz velünk?</h2>
-            <ul className="space-y-3 text-white/90">
+          <div className="bg-background/60 border-2 border-primary/30 rounded-2xl p-4 backdrop-blur-sm">
+            <h2 className="text-xl font-black text-primary-glow mb-2">Miért játssz velünk?</h2>
+            <ul className="space-y-3 text-foreground/90">
               <li className="flex items-start gap-3">
-                <span className="text-yellow-400 text-xl">✓</span>
-                <span><strong className="text-white">Változatos témák:</strong> Történelem, kultúra, egészség és még sok más</span>
+                <span className="text-accent text-xl">✓</span>
+                <span><strong className="text-foreground">Változatos témák:</strong> Történelem, kultúra, egészség és még sok más</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-yellow-400 text-xl">✓</span>
-                <span><strong className="text-white">Ranglisták:</strong> Versenyezz más játékosokkal és mutasd meg tudásod</span>
+                <span className="text-accent text-xl">✓</span>
+                <span><strong className="text-foreground">Ranglisták:</strong> Versenyezz más játékosokkal és mutasd meg tudásod</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-yellow-400 text-xl">✓</span>
-                <span><strong className="text-white">Speed Boosterek:</strong> Gyorsítsd fel fejlődésed különleges erősítőkkel</span>
+                <span className="text-accent text-xl">✓</span>
+                <span><strong className="text-foreground">Speed Boosterek:</strong> Gyorsítsd fel fejlődésed különleges erősítőkkel</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-yellow-400 text-xl">✓</span>
-                <span><strong className="text-white">Közösség:</strong> Csevegj barátaiddal és hívd meg őket</span>
+                <span className="text-accent text-xl">✓</span>
+                <span><strong className="text-foreground">Közösség:</strong> Csevegj barátaiddal és hívd meg őket</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-yellow-400 text-xl">✓</span>
-                <span><strong className="text-white">Napi jutalmak:</strong> Gyűjts aranyérméket és életeket</span>
+                <span className="text-accent text-xl">✓</span>
+                <span><strong className="text-foreground">Napi jutalmak:</strong> Gyűjts aranyérméket és életeket</span>
               </li>
             </ul>
           </div>
 
           {/* Team Section */}
-          <div className="bg-black/60 border-2 border-green-500/30 rounded-2xl p-4 backdrop-blur-sm">
-            <h2 className="text-xl font-black text-green-400 mb-2">Csapatunk</h2>
-            <p className="text-white/90 leading-relaxed">
+          <div className="bg-background/60 border-2 border-success/30 rounded-2xl p-4 backdrop-blur-sm">
+            <h2 className="text-xl font-black text-success mb-2">Csapatunk</h2>
+            <p className="text-foreground/90 leading-relaxed">
               A DingleUP!-ot szenvedélyes fejlesztők és játékrajongók csapata készítette, akik hisznek 
               abban, hogy a tanulás és a szórakozás kéz a kézben járhat. Folyamatosan dolgozunk új 
               funkciók fejlesztésén és a játékélmény javításán.
@@ -119,19 +119,19 @@ const About = () => {
           </div>
 
           {/* Contact Section */}
-          <div className="bg-black/60 border-2 border-blue-500/30 rounded-2xl p-4 backdrop-blur-sm">
-            <h2 className="text-xl font-black text-blue-400 mb-2">Kapcsolat</h2>
-            <p className="text-white/90 leading-relaxed mb-4">
+          <div className="bg-background/60 border-2 border-primary-glow/30 rounded-2xl p-4 backdrop-blur-sm">
+            <h2 className="text-xl font-black text-primary-glow mb-2">Kapcsolat</h2>
+            <p className="text-foreground/90 leading-relaxed mb-4">
               Kérdésed van? Szeretnél visszajelzést adni? Lépj kapcsolatba velünk!
             </p>
-            <div className="space-y-2 text-white/80">
+            <div className="space-y-2 text-foreground/80">
               <p>📧 Email: info@dingleup.com</p>
               <p>🌐 Web: www.dingleup.com</p>
             </div>
           </div>
 
           {/* Footer/Impressum */}
-          <div className="text-center text-white/60 text-sm space-y-2 pt-6 border-t border-white/10">
+          <div className="text-center text-muted-foreground text-sm space-y-2 pt-6 border-t border-border">
             <p>&copy; 2025 DingleUP! Minden jog fenntartva.</p>
             <p>Verzió 1.0.0</p>
             <p className="text-xs">

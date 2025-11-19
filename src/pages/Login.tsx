@@ -132,22 +132,22 @@ const Login = () => {
 
       {/* Floating elements - animated particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-500 rounded-full opacity-20 animate-float blur-xl"></div>
-        <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-500 rounded-full opacity-20 animate-float blur-xl" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-red-500 rounded-full opacity-15 animate-float blur-xl" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-20 h-20 bg-accent rounded-full opacity-20 animate-float blur-xl"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-primary rounded-full opacity-20 animate-float blur-xl" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-destructive rounded-full opacity-15 animate-float blur-xl" style={{ animationDelay: '2s' }}></div>
       </div>
 
       {/* Animated border lights - REMOVED per user request (színes csík megszüntetése) */}
 
       <div className="w-full max-w-md relative z-10">
-        <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 sm:mb-8 transition-colors drop-shadow-lg">
+        <Link to="/" className="inline-flex items-center gap-2 text-foreground/80 hover:text-foreground mb-4 sm:mb-8 transition-colors drop-shadow-lg">
           <ArrowLeft className="w-4 h-4" />
           Vissza a főoldalra
         </Link>
 
         <div className="relative" style={{ perspective: '1200px' }}>
           {/* BASE SHADOW */}
-          <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
+          <div className="absolute inset-0 bg-background/70 rounded-2xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
           
           {/* OUTER FRAME */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-95 border-4 border-purple-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
@@ -182,12 +182,12 @@ const Login = () => {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 font-poppins px-2">
                 <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">Bejelentkezés</span>
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-white/80 drop-shadow px-2">Add meg felhasználóneved és jelszavad</p>
+              <p className="text-xs sm:text-sm md:text-base text-muted-foreground drop-shadow px-2">Add meg felhasználóneved és jelszavad</p>
             </div>
 
             <div className="space-y-3 mb-4">
               <div className="relative" style={{ perspective: '800px' }}>
-                <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+                <div className="absolute inset-0 bg-background/70 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-80 border-2 border-purple-500/50 shadow-lg" style={{ transform: 'translateZ(0px)' }} aria-hidden />
                 <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
                 <div className="absolute inset-[5px] rounded-xl bg-gradient-to-br from-white/10 to-black/20" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
@@ -195,7 +195,7 @@ const Login = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  className="relative w-full hover:scale-105 transition-all bg-white text-gray-900 border-0 hover:bg-white/90 text-xs sm:text-sm md:text-base py-2 sm:py-3" 
+                  className="relative w-full hover:scale-105 transition-all bg-accent-foreground text-primary-darker border-0 hover:bg-accent-foreground/90 text-xs sm:text-sm md:text-base py-2 sm:py-3" 
                   onClick={handleGoogleAuth}
                   style={{ transform: 'translateZ(30px)' }}
                 >
@@ -229,7 +229,7 @@ const Login = () => {
                     placeholder="pl: JohnDoe123"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className={`relative bg-black/60 border-0 ${errors.username ? "ring-2 ring-destructive" : ""}`}
+                    className={`relative bg-background/60 border-0 ${errors.username ? "ring-2 ring-destructive" : ""}`}
                     disabled={isLoading}
                     autoComplete="username"
                     style={{ transform: 'translateZ(10px)' }}
@@ -254,14 +254,14 @@ const Login = () => {
                       placeholder="Pl: Jelszó123!"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className={`bg-black/60 border-0 pr-10 ${errors.password ? "ring-2 ring-destructive" : ""}`}
+                      className={`bg-background/60 border-0 pr-10 ${errors.password ? "ring-2 ring-destructive" : ""}`}
                       disabled={isLoading}
                       autoComplete="current-password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -273,7 +273,7 @@ const Login = () => {
               </div>
 
               <div className="relative" style={{ perspective: '800px' }}>
-                <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
+                <div className="absolute inset-0 bg-background/70 rounded-xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 opacity-90 border-2 border-yellow-500/60 shadow-lg" style={{ transform: 'translateZ(0px)' }} aria-hidden />
                 <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
                 <div className="absolute inset-[5px] rounded-xl bg-gradient-to-br from-yellow-600/30 to-yellow-700/30" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
@@ -289,7 +289,7 @@ const Login = () => {
               </div>
             </form>
 
-            <p className="text-center text-xs sm:text-sm text-white/70 mt-4 sm:mt-6 drop-shadow px-2">
+            <p className="text-center text-xs sm:text-sm text-muted-foreground mt-4 sm:mt-6 drop-shadow px-2">
               Még nincs fiókod?{" "}
               <Link to="/register" className="text-accent hover:underline font-semibold whitespace-nowrap">
                 Regisztráció
