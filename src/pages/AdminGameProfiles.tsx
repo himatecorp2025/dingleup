@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { useAdminGameProfiles } from '@/hooks/useAdminGameProfiles';
-import { Brain, Search, TrendingUp, Info } from 'lucide-react';
+import { Brain, Search, TrendingUp, Info, ArrowLeft } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -67,6 +67,14 @@ export default function AdminGameProfiles() {
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/admin/dashboard')}
+            className="mb-4 gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Vissza az Admin Dashboard-ra
+          </Button>
           <h1 className="text-3xl font-bold text-foreground flex items-center gap-2 mb-2">
             <Brain className="h-8 w-8 text-primary" />
             Játékprofil Statisztika
