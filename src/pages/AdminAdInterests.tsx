@@ -18,7 +18,7 @@ const AdminAdInterests = () => {
   const [userInterests, setUserInterests] = useState<AdUserInterestRow[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedTopicFilter, setSelectedTopicFilter] = useState<string>('');
+  const [selectedTopicFilter, setSelectedTopicFilter] = useState<string>('all');
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const AdminAdInterests = () => {
   const loadData = async () => {
     const [summaryData, userData] = await Promise.all([
       fetchTopicSummary(),
-      fetchUserInterests(currentPage, 50, selectedTopicFilter || undefined),
+      fetchUserInterests(currentPage, 50, selectedTopicFilter === 'all' ? undefined : selectedTopicFilter),
     ]);
 
     setTopicSummary(summaryData);
@@ -204,7 +204,7 @@ const AdminAdInterests = () => {
                   <SelectValue placeholder="Összes témakör" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a0b2e] border-white/10">
-                  <SelectItem value="">Összes témakör</SelectItem>
+                  <SelectItem value="all" className="text-white">Összes témakör</SelectItem>
                   {topicSummary.map(topic => (
                     <SelectItem key={topic.topicId} value={topic.topicId} className="text-white">
                       {topic.topicName}
