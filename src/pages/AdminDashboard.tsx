@@ -219,34 +219,37 @@ const AdminDashboard = () => {
   const SidebarMenu = ({ onItemClick }: { onItemClick?: () => void }) => (
     <>
       <div className="mb-6 xl:mb-8">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="48"
-          height="48"
-          viewBox="0 0 1024 1024"
-          className="w-12 h-12 xl:w-16 xl:h-16 mb-2"
-        >
-          <image
-            href="/logo.png"
-            x="0"
-            y="0"
-            width="1024"
-            height="1024"
-            preserveAspectRatio="xMidYMid meet"
-          />
-        </svg>
-        <h2 className="text-foreground font-bold text-xs xl:text-sm">Szia, {userName}! ✨</h2>
+        <div className="relative inline-block">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-lg opacity-30"></div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 1024 1024"
+            className="w-12 h-12 xl:w-16 xl:h-16 mb-2 relative z-10"
+          >
+            <image
+              href="/logo.png"
+              x="0"
+              y="0"
+              width="1024"
+              height="1024"
+              preserveAspectRatio="xMidYMid meet"
+            />
+          </svg>
+        </div>
+        <h2 className="text-white font-bold text-xs xl:text-sm mt-2">Szia, {userName}! ✨</h2>
       </div>
 
       <div className="mb-6 xl:mb-8">
-        <h3 className="text-muted-foreground text-xs font-bold mb-3 xl:mb-4 uppercase">Főmenü</h3>
+        <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">Főmenü</h3>
         <nav className="space-y-2">
           <button
             onClick={() => { setActiveTab('dashboard'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
               activeTab === 'dashboard'
-                ? 'bg-primary-glow/20 text-primary-glow'
-                : 'text-muted-foreground hover:bg-foreground/5'
+                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
+                : 'text-white/60 hover:bg-white/5'
             }`}
           >
             <Home className="w-4 h-4 xl:w-5 xl:h-5" />
@@ -254,10 +257,10 @@ const AdminDashboard = () => {
           </button>
           <button
             onClick={() => { setActiveTab('users'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
               activeTab === 'users'
-                ? 'bg-primary-glow/20 text-primary-glow'
-                : 'text-muted-foreground hover:bg-foreground/5'
+                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
+                : 'text-white/60 hover:bg-white/5'
             }`}
           >
             <Users className="w-4 h-4 xl:w-5 xl:h-5" />
@@ -265,24 +268,17 @@ const AdminDashboard = () => {
           </button>
           <button
             onClick={() => { navigate('/admin/game-profiles'); onItemClick?.(); }}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
+            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm text-white/60 hover:bg-white/5"
           >
-            <Brain className="w-4 h-4 xl:w-5 xl:h-5 text-primary" />
+            <Brain className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
             <span className="font-medium">Játékos Profilozás</span>
           </button>
           <button
-            onClick={() => { navigate('/admin/normal-users'); onItemClick?.(); }}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
-          >
-            <Users className="w-4 h-4 xl:w-5 xl:h-5 text-blue-400" />
-            <span className="font-medium">Normál Felhasználók</span>
-          </button>
-          <button
             onClick={() => { setActiveTab('invitations'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
               activeTab === 'invitations'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
+                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
+                : 'text-white/60 hover:bg-white/5'
             }`}
           >
             <Users className="w-4 h-4 xl:w-5 xl:h-5" />
@@ -290,10 +286,10 @@ const AdminDashboard = () => {
           </button>
           <button
             onClick={() => { setActiveTab('reports'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
               activeTab === 'reports'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
+                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
+                : 'text-white/60 hover:bg-white/5'
             }`}
           >
             <AlertTriangle className="w-4 h-4 xl:w-5 xl:h-5" />
@@ -301,10 +297,10 @@ const AdminDashboard = () => {
           </button>
           <button
             onClick={() => { navigate('/admin/popular-content'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
               window.location.pathname === '/admin/popular-content'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
+                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
+                : 'text-white/60 hover:bg-white/5'
             }`}
           >
             <TrendingUp className="w-4 h-4 xl:w-5 xl:h-5" />
@@ -312,7 +308,7 @@ const AdminDashboard = () => {
           </button>
           <button
             onClick={() => { navigate('/admin/analytics'); onItemClick?.(); }}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
+            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm text-white/60 hover:bg-white/5"
           >
             <Activity className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
             <span className="font-medium">Fejlett Analitika</span>
@@ -321,14 +317,14 @@ const AdminDashboard = () => {
       </div>
 
       <div className="mt-auto">
-        <h3 className="text-white/60 text-xs font-bold mb-3 xl:mb-4 uppercase">Admin fiók szerkesztése</h3>
-        <button className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/70 hover:bg-white/5 transition-colors mb-2 text-sm">
+        <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">Admin fiók szerkesztése</h3>
+        <button className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all mb-2 text-sm">
           <Users className="w-4 h-4 xl:w-5 xl:h-5" />
           <span className="font-medium">Profil szerkesztése</span>
         </button>
         <button 
           onClick={() => { handleLogout(); onItemClick?.(); }}
-          className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/70 hover:bg-white/5 transition-colors text-sm"
+          className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
         >
           <LogOut className="w-4 h-4 xl:w-5 xl:h-5" />
           <span className="font-medium">Kijelentkezés</span>
@@ -338,14 +334,21 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex flex-col lg:flex-row">
+    <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#0f0a1f] flex flex-col lg:flex-row">
+      {/* Animated glowing orbs background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+      </div>
+
       {/* Desktop Sidebar - Tablet+ Shown */}
-      <div className="hidden lg:flex lg:w-64 bg-[#0a0a1e] border-r border-purple-500/30 p-4 xl:p-6 flex-col">
+      <div className="hidden lg:flex lg:w-64 backdrop-blur-xl bg-white/5 border-r border-white/10 p-4 xl:p-6 flex-col relative z-10">
         <SidebarMenu />
       </div>
 
       {/* Mobile Header with Hamburger Menu */}
-      <div className="lg:hidden bg-primary-darker border-b border-primary/30 p-4">
+      <div className="lg:hidden backdrop-blur-xl bg-white/5 border-b border-white/10 p-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -356,7 +359,7 @@ const AdminDashboard = () => {
               </SheetTrigger>
               <SheetContent 
                 side="left" 
-                className="w-72 bg-primary-darker border-r border-primary/30 p-4"
+                className="w-72 backdrop-blur-xl bg-white/5 border-r border-white/10 p-4"
               >
                 <SidebarMenu onItemClick={() => setMobileMenuOpen(false)} />
               </SheetContent>
@@ -382,30 +385,30 @@ const AdminDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto relative z-10">
         {/* Top Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
           <button
             onClick={() => setActiveTab('users')}
-            className="bg-primary-dark/50 border border-primary-glow/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-primary-dark/70 transition-colors"
+            className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-white/10 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-muted-foreground text-xs lg:text-sm">Összes felhasználó</h3>
-              <Users className="w-6 h-6 lg:w-8 lg:h-8 text-primary-glow bg-primary-glow/20 p-1.5 lg:p-2 rounded-lg" />
+              <h3 className="text-white/70 text-xs lg:text-sm">Összes felhasználó</h3>
+              <Users className="w-6 h-6 lg:w-8 lg:h-8 text-purple-400 bg-purple-500/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
-            <p className="text-xl lg:text-3xl font-bold text-foreground">{totalUsers.toLocaleString()}</p>
+            <p className="text-xl lg:text-3xl font-bold text-white">{totalUsers.toLocaleString()}</p>
           </button>
 
           <button
             onClick={() => setActiveTab('revenue')}
-            className="bg-primary-dark/50 border border-primary-glow/30 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-primary-dark/70 transition-colors"
+            className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-muted-foreground text-xs lg:text-sm">Teljes Bevétel (USD)</h3>
-              <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-primary-glow bg-primary-glow/20 p-1.5 lg:p-2 rounded-lg" />
+              <h3 className="text-white/70 text-xs lg:text-sm">Teljes Bevétel (USD)</h3>
+              <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-blue-400 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
-            <p className="text-xl lg:text-3xl font-bold text-foreground">${totalRevenue}</p>
-            <p className="text-muted-foreground text-xs mt-1">Stripe fizetésekből</p>
+            <p className="text-xl lg:text-3xl font-bold text-white">${totalRevenue}</p>
+            <p className="text-white/50 text-xs mt-1">Stripe fizetésekből</p>
           </button>
 
         </div>
@@ -413,12 +416,12 @@ const AdminDashboard = () => {
         {/* Content based on active tab */}
         {activeTab === 'dashboard' && (
           <div className="space-y-4 lg:space-y-6">
-            <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-              <h2 className="text-xl lg:text-2xl font-bold text-white mb-3 lg:mb-6">Üdvözöllek az Admin Felületen!</h2>
+            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+              <h2 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-3 lg:mb-6">Üdvözöllek az Admin Felületen!</h2>
               <p className="text-white/70 text-sm lg:text-base mb-3 lg:mb-4">
                 Itt kezelheted a platform működését, megtekintheted a statisztikákat és a felhasználókat.
               </p>
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 lg:p-4 mt-3 lg:mt-4">
+              <div className="backdrop-blur-xl bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 lg:p-4 mt-3 lg:mt-4">
                 <p className="text-blue-300 text-xs lg:text-sm">
                   💡 <strong>Tipp:</strong> Használd a <span className="lg:hidden">felső</span><span className="hidden lg:inline">bal oldali</span> menüt a különböző funkciók eléréséhez.
                 </p>
@@ -427,12 +430,12 @@ const AdminDashboard = () => {
 
             <UserGrowthChart />
 
-            <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
               <h3 className="text-lg lg:text-xl font-bold text-white mb-3 lg:mb-4">Gyors elérési útvonalak</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
                 <button
                   onClick={() => setActiveTab('users')}
-                  className="bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg p-3 lg:p-4 text-left transition-colors"
+                  className="backdrop-blur-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg p-3 lg:p-4 text-left transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
                 >
                   <Users className="w-5 h-5 lg:w-6 lg:h-6 text-blue-400 mb-2" />
                   <h4 className="text-white font-semibold text-sm lg:text-base">Felhasználók</h4>
@@ -440,7 +443,7 @@ const AdminDashboard = () => {
                 </button>
                 <button
                   onClick={() => setActiveTab('revenue')}
-                  className="bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 rounded-lg p-3 lg:p-4 text-left transition-colors"
+                  className="backdrop-blur-xl bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 rounded-lg p-3 lg:p-4 text-left transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20"
                 >
                   <DollarSign className="w-5 h-5 lg:w-6 lg:h-6 text-green-400 mb-2" />
                   <h4 className="text-white font-semibold text-sm lg:text-base">Bevételek</h4>
@@ -451,7 +454,7 @@ const AdminDashboard = () => {
 
             <button
               onClick={() => navigate('/admin/analytics')}
-              className="bg-[#1a1a3e]/50 hover:bg-[#1a1a3e]/70 border border-purple-500/30 rounded-xl lg:rounded-2xl p-6 lg:p-8 text-left transition-all hover:scale-[1.02]"
+              className="w-full backdrop-blur-xl bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl lg:rounded-2xl p-6 lg:p-8 text-left transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 hover:scale-[1.02]"
             >
               <div className="flex items-center gap-4">
                 <Activity className="w-10 h-10 lg:w-12 lg:h-12 text-purple-400" />
@@ -465,7 +468,7 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'users' && (
-          <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 lg:mb-6">
               <h2 className="text-xl lg:text-2xl font-bold text-white">Összes felhasználó ({filteredUsers.length})</h2>
               <div className="relative max-w-md">
@@ -475,7 +478,7 @@ const AdminDashboard = () => {
                   placeholder="Keresés (ID, név, email, szerepkör, életek, érmék...)"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-black/30 border-white/10 text-white placeholder:text-white/50"
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/50"
                 />
               </div>
             </div>
@@ -515,7 +518,7 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'revenue' && (
-          <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
             <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">Teljes árbevétel</h2>
             <div className="overflow-x-auto -mx-4 lg:mx-0">
               <table className="w-full min-w-[600px]">
@@ -560,7 +563,7 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'invitations' && (
-          <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
             <div className="flex items-start justify-between gap-3 mb-4 lg:mb-6">
               <h2 className="text-xl lg:text-2xl font-bold text-white">
                 Meghívások ({invitations.length})
@@ -663,7 +666,7 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'reports' && (
-          <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
             <div className="flex items-start justify-between gap-3 mb-4 lg:mb-6">
               <h2 className="text-xl lg:text-2xl font-bold text-white">
                 Jelentések ({reports.length})
@@ -674,7 +677,7 @@ const AdminDashboard = () => {
             </div>
             
             {/* Sub-tabs for Development and Support */}
-            <div className="flex gap-2 mb-6 border-b border-purple-500/30 pb-2">
+            <div className="flex gap-2 mb-6 border-b border-white/10 pb-2">
               <button
                 onClick={() => setReportsSubTab('development')}
                 className={`px-4 py-2 rounded-t-lg transition-colors font-semibold ${
@@ -703,7 +706,7 @@ const AdminDashboard = () => {
               ).map((report) => (
                 <div
                   key={report.id}
-                  className="bg-black/30 border border-purple-500/20 rounded-lg p-4"
+                  className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-4 hover:bg-white/10 transition-all duration-300"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
