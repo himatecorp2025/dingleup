@@ -242,6 +242,34 @@ const Dashboard = () => {
     return success;
   };
 
+  const handleSpeedBoost = async () => {
+    if (!userId) {
+      toast.error('Kérlek jelentkezz be a vásárláshoz');
+      return;
+    }
+
+    try {
+      toast.loading('Fizetési oldal betöltése...', { id: 'speed-boost-payment' });
+      
+      const { data, error } = await supabase.functions.invoke('create-speed-boost-payment', {
+        body: {}
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Open payment in new tab
+        window.open(data.url, '_blank');
+        toast.success('Fizetési oldal megnyitva új lapon', { id: 'speed-boost-payment' });
+      } else {
+        throw new Error('No payment URL received');
+      }
+    } catch (error) {
+      console.error('Speed boost payment error:', error);
+      toast.error('Hiba történt a fizetési oldal megnyitásakor', { id: 'speed-boost-payment' });
+    }
+  };
+
   if (loading) {
   return (
     <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
@@ -466,23 +494,26 @@ if (!profile) {
               <DiamondButton
                 variant="booster"
                 size="lg"
-                disabled={true}
-                className="!py-[clamp(1rem,4vw,1.75rem)] sm:!py-[clamp(1.25rem,5vw,2rem)]"
+                onClick={handleSpeedBoost}
+                disabled={!profile}
+                className="!py-[clamp(1rem,4vw,1.75rem)] sm:!py-[clamp(1.25rem,5vw,2rem)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(234,179,8,0.6)] active:scale-95"
                 style={{
                   width: '100%',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #eab308 50%, #f59e0b 100%)',
+                  boxShadow: '0 0 30px rgba(234,179,8,0.4), inset 0 0 20px rgba(255,255,255,0.2)',
                 }}
               >
-                {/* Zap/Lightning Bolt SVG Icon */}
-                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                {/* Zap/Lightning Bolt SVG Icon with animation */}
+                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg animate-pulse" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <span 
-                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)]" 
+                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)] animate-pulse" 
                   style={{ 
-                    textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
+                    textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(234,179,8,0.8)'
                   }}
                 >
-                  BOOSTERS
+                  SPEED BOOSTER ⚡
                 </span>
               </DiamondButton>
             </div>
