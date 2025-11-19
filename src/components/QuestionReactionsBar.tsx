@@ -38,7 +38,7 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
         <div className="relative">
           <Heart
             className={cn(
-              "w-12 h-12 transition-all",
+              "w-10 h-10 transition-all",
               liked 
                 ? "fill-red-500 text-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.6)]" 
                 : "text-gray-400 hover:text-red-400"
@@ -46,7 +46,7 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
           />
           {liked && (
             <div className="absolute inset-0 animate-ping">
-              <Heart className="w-12 h-12 fill-red-500 text-red-500 opacity-20" />
+              <Heart className="w-10 h-10 fill-red-500 text-red-500 opacity-20" />
             </div>
           )}
         </div>
@@ -73,7 +73,7 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
         <div className="relative">
           <ThumbsDown
             className={cn(
-              "w-12 h-12 transition-all",
+              "w-10 h-10 transition-all",
               disliked 
                 ? "fill-orange-500 text-orange-500 drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]" 
                 : "text-gray-400 hover:text-orange-400"
@@ -81,7 +81,7 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
           />
           {disliked && (
             <div className="absolute inset-0 animate-ping">
-              <ThumbsDown className="w-12 h-12 fill-orange-500 text-orange-500 opacity-20" />
+              <ThumbsDown className="w-10 h-10 fill-orange-500 text-orange-500 opacity-20" />
             </div>
           )}
         </div>

@@ -101,8 +101,20 @@ const GamePreview = () => {
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
 
+  // Game initialization promise - runs in background while video plays
+  const gameInitPromiseRef = useRef<Promise<void> | null>(null);
+
   // Stable callback for video end - prevents re-render loop
-  const handleVideoEnd = useCallback(() => {
+  const handleVideoEnd = useCallback(async () => {
+    // Wait for game initialization to complete if still running
+    if (gameInitPromiseRef.current) {
+      try {
+        await gameInitPromiseRef.current;
+      } catch (error) {
+        // Error already handled in gameInitPromise
+        return;
+      }
+    }
     setVideoEnded(true);
   }, []);
 
@@ -129,115 +141,119 @@ const GamePreview = () => {
   const startGame = async () => {
     if (!profile || isStartingGame) return;
     
-    // CRITICAL: Set loading state FIRST - triggers video to appear IMMEDIATELY
+    // CRITICAL: Show video IMMEDIATELY - no delays, no waiting
     setIsStartingGame(true);
     setVideoEnded(false);
-
-    try {
-      await supabase.rpc('reset_game_helps');
-    } catch (error) {
-      console.error('Error resetting helps:', error);
-    }
     
-    const canPlay = await spendLife();
-    if (!canPlay) {
-      toast.error('Nincs elég életed a játék indításához!');
-      setIsStartingGame(false);
-      navigate('/dashboard');
-      return;
-    }
-    
-    // Run wallet/profile updates in parallel while video plays
-    const walletUpdate = refetchWallet();
-    const broadcast1 = broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
-    
-    // Ensure fresh auth session before invoking edge functions
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError || !session) {
-      console.error('[Game] Session error:', sessionError);
-      toast.error('Munkamenet lejárt, kérlek jelentkezz be újra');
-      navigate('/login');
-      return;
-    }
-    
-    // Get session for edge function calls
-    const { data: { session: authSession } } = await supabase.auth.getSession();
-    if (!authSession) {
-      toast.error('Nem vagy bejelentkezve');
-      navigate('/login');
-      return;
-    }
-    
-    // Run start reward and session in parallel
-    const rewardPromise = (async () => {
+    // Start all backend operations in parallel IMMEDIATELY while video plays
+    // Store promise in ref so handleVideoEnd can wait for it
+    gameInitPromiseRef.current = (async () => {
       try {
-        const startSourceId = `${Date.now()}-start`;
-        await supabase.functions.invoke('credit-gameplay-reward', {
-          body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' },
-          headers: { Authorization: `Bearer ${authSession.access_token}` }
-        });
-        setCoinsEarned(START_GAME_REWARD);
-        await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
-      } catch (err) {
-        console.error('[GameStart] Start reward credit failed:', err);
-      }
-    })();
-
-    const questionsPromise = (async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke('start-game-session', {
-          headers: { Authorization: `Bearer ${authSession.access_token}` }
-        });
-
-        if (error) throw error;
-        
-        if (!data?.questions || data.questions.length === 0) {
-          throw new Error('No questions received from backend');
-        }
-
-        const shuffledWithVariety = shuffleAnswers(data.questions);
-        setQuestions(shuffledWithVariety);
+        // Reset helps
+        await supabase.rpc('reset_game_helps');
       } catch (error) {
-        console.error('[GamePreview] Failed to load questions:', error);
-        toast.error('Hiba történt a kérdések betöltésekor');
+        console.error('Error resetting helps:', error);
+      }
+      
+      // Spend life
+      const canPlay = await spendLife();
+      if (!canPlay) {
+        toast.error('Nincs elég életed a játék indításához!');
         setIsStartingGame(false);
         navigate('/dashboard');
-        throw error;
+        throw new Error('Insufficient lives');
       }
+      
+      // Run wallet/profile updates in parallel
+      await refetchWallet();
+      await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
+      
+      // Ensure fresh auth session before invoking edge functions
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        console.error('[Game] Session error:', sessionError);
+        toast.error('Munkamenet lejárt, kérlek jelentkezz be újra');
+        navigate('/login');
+        throw new Error('Session error');
+      }
+      
+      // Get session for edge function calls
+      const { data: { session: authSession } } = await supabase.auth.getSession();
+      if (!authSession) {
+        toast.error('Nem vagy bejelentkezve');
+        navigate('/login');
+        throw new Error('Not authenticated');
+      }
+      
+      // Run start reward and questions in parallel
+      await Promise.all([
+        (async () => {
+          try {
+            const startSourceId = `${Date.now()}-start`;
+            await supabase.functions.invoke('credit-gameplay-reward', {
+              body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' },
+              headers: { Authorization: `Bearer ${authSession.access_token}` }
+            });
+            setCoinsEarned(START_GAME_REWARD);
+            await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
+          } catch (err) {
+            console.error('[GameStart] Start reward credit failed:', err);
+          }
+        })(),
+        (async () => {
+          try {
+            const { data, error } = await supabase.functions.invoke('start-game-session', {
+              headers: { Authorization: `Bearer ${authSession.access_token}` }
+            });
+
+            if (error) throw error;
+            
+            if (!data?.questions || data.questions.length === 0) {
+              throw new Error('No questions received from backend');
+            }
+
+            const shuffledWithVariety = shuffleAnswers(data.questions);
+            setQuestions(shuffledWithVariety);
+          } catch (error) {
+            console.error('[GamePreview] Failed to load questions:', error);
+            toast.error('Hiba történt a kérdések betöltésekor');
+            setIsStartingGame(false);
+            navigate('/dashboard');
+            throw error;
+          }
+        })(),
+        refreshProfile()
+      ]);
+
+      // Initialize game state
+      setGameState('playing');
+      setCurrentQuestionIndex(0);
+      setTimeLeft(10);
+      
+      setCorrectAnswers(0);
+      setResponseTimes([]);
+      setSelectedAnswer(null);
+      setHelp5050UsageCount(0);
+      setHelp2xAnswerUsageCount(0);
+      setHelpAudienceUsageCount(0);
+      setIsHelp5050ActiveThisQuestion(false);
+      setIsDoubleAnswerActiveThisQuestion(false);
+      setIsAudienceActiveThisQuestion(false);
+      setUsedQuestionSwap(false);
+      setFirstAttempt(null);
+      setSecondAttempt(null);
+      setRemovedAnswer(null);
+      setAudienceVotes({});
+      setQuestionStartTime(Date.now());
+      setCanSwipe(true);
+      setIsAnimating(false);
+      
+      // Clear starting guard after game is fully initialized
+      setIsStartingGame(false);
+      gameInitPromiseRef.current = null;
     })();
 
-    // Wait for all parallel operations
-    try {
-      await Promise.all([walletUpdate, broadcast1, rewardPromise, questionsPromise, refreshProfile()]);
-    } catch (error) {
-      // Error already handled in individual promises
-      return;
-    }
-
-    setGameState('playing');
-    setCurrentQuestionIndex(0);
-    setTimeLeft(10);
-    
-    setCorrectAnswers(0);
-    setResponseTimes([]);
-    setSelectedAnswer(null);
-    setHelp5050UsageCount(0);
-    setHelp2xAnswerUsageCount(0);
-    setHelpAudienceUsageCount(0);
-    setIsHelp5050ActiveThisQuestion(false);
-    setIsDoubleAnswerActiveThisQuestion(false);
-    setIsAudienceActiveThisQuestion(false);
-    setUsedQuestionSwap(false);
-    setFirstAttempt(null);
-    setSecondAttempt(null);
-    setRemovedAnswer(null);
-    setAudienceVotes({});
-    setQuestionStartTime(Date.now());
-    setCanSwipe(true);
-    setIsAnimating(false);
-    
-    // Clear starting guard after game is fully initialized
-    setIsStartingGame(false);
+    // DO NOT AWAIT - let it run in background while video plays
   };
 
   // Background detection - exit game if app goes to background (only after video ended)
