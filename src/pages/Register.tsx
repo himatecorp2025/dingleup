@@ -153,15 +153,15 @@ const Register = () => {
 
       <div className="w-full max-w-md relative z-10 my-4">
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative max-h-[85vh] overflow-y-auto">
-          <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group" aria-label="Vissza">
+          <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10" aria-label="Vissza">
             <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
           </button>
 
           {/* Logo inside box */}
-          <div className="flex justify-center mb-6 mt-8">
+          <div className="flex justify-center mb-4 mt-2">
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
-              <img src="/logo.png" alt="DingleUP! Logo" className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 transform group-hover:scale-110 transition-transform duration-300" />
+              <img src="/logo.png" alt="DingleUP! Logo" className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 transform group-hover:scale-110 transition-transform duration-300" />
             </div>
           </div>
 
