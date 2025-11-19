@@ -138,11 +138,9 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
 const MUSIC_BLOCKED_ROUTES = [
   /^\/$/,               // Landing page
   /^\/desktop$/,        // Desktop landing page
-  /^\/admin/,           // All admin routes including subpages
+  /^\/admin/,           // All admin routes including subpages (including admin login)
   /^\/admin-/,          // Any admin-prefixed routes
   /\/admin\//,          // Any path containing /admin/
-  /^\/login$/,          // Login page
-  /^\/register$/,       // Register page
 ];
 
 function isMusicAllowed(pathname: string): boolean {
