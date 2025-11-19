@@ -40,65 +40,49 @@ const Newsletter = () => {
   };
 
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-primary-darker via-primary-dark to-primary-darker">
-      <div className="container mx-auto">
-        <div className="max-w-3xl mx-auto relative animate-fade-in" style={{ perspective: '1200px' }}>
-          {/* BASE SHADOW */}
-          <div className="absolute inset-0 bg-black/70 rounded-3xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
-          
-          {/* OUTER FRAME */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary/90 via-primary to-primary opacity-95 border-4 border-primary/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
-          
-          {/* MIDDLE FRAME */}
-          <div className="absolute inset-[6px] rounded-3xl bg-gradient-to-b from-background/50 via-transparent to-background/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
-          
-          {/* INNER LAYER */}
-          <div className="absolute inset-[8px] rounded-3xl bg-gradient-to-br from-background/80 to-background/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.1), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
-          
-          {/* SPECULAR HIGHLIGHT */}
-          <div className="absolute inset-[8px] rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
-          
-          <div className="relative p-12 text-center overflow-hidden rounded-3xl" style={{ transform: 'translateZ(60px)' }}>
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl"></div>
+    <section className="py-24 px-4 bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] relative">
+      {/* Glow effects */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-yellow-500/20 rounded-full blur-[120px] animate-pulse"></div>
+      
+      <div className="container mx-auto relative z-10">
+        <div className="max-w-3xl mx-auto relative animate-fade-in">
+          <div className="relative p-12 text-center overflow-hidden rounded-3xl bg-gradient-to-br from-purple-600/30 to-pink-600/30 backdrop-blur-md border-2 border-white/20 shadow-2xl">
+            {/* Decorative sparkles */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/30 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/30 rounded-full blur-3xl"></div>
             
             <div className="relative z-10">
-              <div className="relative mx-auto mb-6 w-16 h-16" style={{ perspective: '500px' }}>
-                <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/30 shadow-lg" aria-hidden />
-                <div className="relative w-16 h-16 rounded-full flex items-center justify-center">
-                  <Bell className="w-8 h-8 text-accent drop-shadow-lg" />
-                </div>
+              <div className="relative mx-auto mb-6 w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-lg shadow-yellow-500/50">
+                <Bell className="w-10 h-10 text-white drop-shadow-lg" />
               </div>
               
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins text-foreground text-with-stroke drop-shadow-lg flex items-center justify-center">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]">
                 Légy az Elsők Között!
               </h2>
-              <p className="text-lg text-foreground/90 mb-8 drop-shadow text-with-stroke">
-                Iratkozz fel és értesülj azonnal, amikor a Dingle UP! elérhető lesz. Plusz exkluzív Welcome Bonusz: 2500 arany + 50 élet!
+              <p className="text-base sm:text-lg text-white/90 mb-8 drop-shadow-lg">
+                Értesítést kapsz az új funkciókról és exkluzív ajánlatokról!
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                <Input 
-                  type="email" 
-                  placeholder="Add meg az email címed" 
+              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <Input
+                  type="email"
+                  placeholder="Email címed"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
+                  className="flex-1 bg-white/10 border-white/30 focus:border-pink-400 text-white placeholder:text-white/60 backdrop-blur-sm"
                   disabled={loading}
-                  className="bg-background/50 border-border/50 text-white placeholder:text-white/60 flex-1"
                 />
-                <Button 
+                <Button
                   onClick={handleSubscribe}
                   disabled={loading}
-                  className="bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 whitespace-nowrap"
+                  className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-8 font-bold whitespace-nowrap shadow-lg shadow-pink-500/50 hover:shadow-pink-500/80 transition-all"
                 >
-                  {loading ? "Feliratkozás..." : "Feliratkozás"}
+                  {loading ? "Feldolgozás..." : "Feliratkozom"}
                 </Button>
               </div>
 
-              <p className="text-sm text-white/70 mt-4 text-with-stroke">
+              <p className="text-sm text-white/70 mt-4 drop-shadow">
                 Nem küldünk spam-et. Bármikor leiratkozhatsz.
               </p>
             </div>

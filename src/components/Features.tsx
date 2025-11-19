@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { Brain, Trophy, Users, Gift, Zap, Target } from "lucide-react";
 import featureTrophy from "@/assets/feature-trophy.jpg";
 import featureCategories from "@/assets/feature-categories.jpg";
@@ -10,21 +9,18 @@ const features = [
     title: "Változatos Témakörök",
     description: "Egészség, Történelem, Kultúra és Pénzügy területeken mérd össze tudásod!",
     image: featureCategories,
-    gradient: "from-primary to-primary-glow"
   },
   {
     icon: Trophy,
     title: "Izgalmas Jutalmak",
     description: "Gyűjts aranyérméket és válts be őket hasznos segítségekre!",
     image: featureTrophy,
-    gradient: "from-accent to-accent-dark"
   },
   {
     icon: Users,
     title: "Heti Rangsor",
     description: "Versenyezz más játékosokkal a heti ranglistán és légy te a legjobb!",
     image: featureLeaderboard,
-    gradient: "from-primary to-primary-glow"
   }
 ];
 
@@ -33,140 +29,92 @@ const additionalFeatures = [
     icon: Zap,
     title: "Segítségek",
     description: "1/3, 2× válasz, és közönség segítség minden játékban",
-    color: "text-accent"
   },
   {
     icon: Gift,
     title: "Napi Ajándék",
     description: "Jelentkezz be naponta és kapj értékes jutalmakat!",
-    color: "text-primary"
   },
   {
     icon: Target,
     title: "15 Kihívás",
     description: "15 fokozatosan nehezedő kérdés minden menetben",
-    color: "text-success"
   }
 ];
 
 const Features = () => {
   return (
-    <section id="features" className="py-24 px-4 relative bg-gradient-to-b from-primary-darker via-primary-dark to-primary">
-      <div className="container mx-auto">
+    <section id="features" className="py-24 px-4 relative bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033]">
+      {/* Animated glowing orbs */}
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-[120px] animate-pulse"></div>
+      <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+      
+      <div className="container mx-auto relative z-10">
         <div className="text-center mb-16 animate-fade-in">
-          <div className="inline-flex items-center gap-2 bg-accent/10 border border-accent/30 rounded-full px-4 py-2 mb-4">
-            <Zap className="w-4 h-4 text-accent animate-pulse" />
-            <span className="text-sm font-semibold text-accent">Miért válaszd ezt?</span>
+          <div className="inline-flex items-center gap-2 bg-pink-500/10 border border-pink-500/30 rounded-full px-6 py-3 mb-6 backdrop-blur-sm">
+            <Zap className="w-5 h-5 text-pink-400 animate-pulse" />
+            <span className="text-sm sm:text-base font-bold text-pink-300">Miért válaszd ezt?</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-foreground text-with-stroke">
-            Játék <span className="text-foreground text-with-stroke">Funkciók</span>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+            Játék <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">Funkciók</span>
           </h2>
-          <p className="text-xl text-foreground/80 max-w-2xl mx-auto text-with-stroke">
+          <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto drop-shadow-lg">
             Fedezd fel a Milliomos Quiz egyedi lehetőségeit
           </p>
         </div>
 
-        {/* Main Features with Images - Deep 3D */}
+        {/* Main Features with Images */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           {features.map((feature, index) => (
             <div 
               key={index}
               className="group relative animate-fade-in"
-              style={{ animationDelay: `${index * 0.1}s`, perspective: '1200px' }}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* BASE SHADOW */}
-              <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
-              
-              {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-darker opacity-95 border-4 border-primary/60 shadow-2xl transition-all duration-500 group-hover:border-accent/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
-              
-              {/* MIDDLE FRAME */}
-              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-b from-background/50 via-transparent to-background/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
-              
-              {/* INNER LAYER */}
-              <div className="absolute inset-[8px] rounded-2xl bg-gradient-to-br from-background/80 to-background/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.1), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
-              
-              {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute inset-[8px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
-              
-              <div className="relative overflow-hidden rounded-2xl transition-all duration-500 group-hover:scale-105" style={{ transform: 'translateZ(60px)' }}>
-                {/* Image Background */}
+              <div className="relative bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-3xl border-2 border-white/10 overflow-hidden hover:border-yellow-400/50 transition-all duration-500 transform hover:scale-105 shadow-2xl">
+                {/* Image */}
                 <div className="relative h-48 overflow-hidden">
                   <img 
                     src={feature.image} 
                     alt={feature.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
                   />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${feature.gradient} opacity-60 group-hover:opacity-40 transition-opacity duration-500`}></div>
-                  
-                  {/* Icon with 3D */}
-                  <div className="absolute top-4 left-4 relative" style={{ perspective: '500px' }}>
-                    <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-md border border-white/20 shadow-lg" aria-hidden />
-                    <div className="relative p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                      <feature.icon className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]" />
-                    </div>
-                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 to-transparent"></div>
                 </div>
-
+                
                 {/* Content */}
-                <div className="p-6 bg-black/70 backdrop-blur-sm flex flex-col justify-center">
-                  <h3 className="text-2xl font-bold mb-3 font-poppins text-white drop-shadow-lg text-with-stroke">
-                    {feature.title}
-                  </h3>
-                  <p className="text-white/80 leading-relaxed drop-shadow text-with-stroke">
+                <div className="relative p-6 bg-gradient-to-br from-purple-900/40 to-blue-900/40 backdrop-blur-md">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-lg shadow-yellow-500/50">
+                      <feature.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-black text-white drop-shadow-lg">{feature.title}</h3>
+                  </div>
+                  <p className="text-white/90 leading-relaxed drop-shadow">
                     {feature.description}
                   </p>
-
-                  {/* Glow effect */}
-                  <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500 pointer-events-none rounded-2xl`}></div>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Additional Features - Deep 3D */}
+        {/* Additional Features Grid */}
         <div className="grid md:grid-cols-3 gap-6">
           {additionalFeatures.map((feature, index) => (
             <div 
               key={index}
-              className="group relative animate-fade-in"
-              style={{ animationDelay: `${0.4 + index * 0.1}s`, perspective: '1000px' }}
+              className="relative group animate-fade-in"
+              style={{ animationDelay: `${(index + 3) * 0.1}s` }}
             >
-              {/* BASE SHADOW */}
-              <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
-              
-              {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-3 border-purple-500/60 shadow-2xl transition-all duration-300 group-hover:border-accent/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
-              
-              {/* MIDDLE FRAME */}
-              <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
-              
-              {/* INNER LAYER */}
-              <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-br from-black/80 to-black/90 backdrop-blur-sm" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.1), inset 0 -12px 24px rgba(0,0,0,0.4)', transform: 'translateZ(20px)' }} aria-hidden />
-              
-              {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute inset-[6px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)', transform: 'translateZ(30px)' }} aria-hidden />
-              
-              <div className="relative p-6 transition-all duration-300 group-hover:scale-105" style={{ transform: 'translateZ(40px)' }}>
-                <div className="flex items-start gap-4">
-                  <div className="relative" style={{ perspective: '500px' }}>
-                    <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
-                    <div className={`absolute inset-0 rounded-xl bg-gradient-to-br from-accent/20 to-secondary/20 border border-accent/30 shadow-lg`} aria-hidden />
-                    <div className="relative p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                      <feature.icon className={`w-6 h-6 ${feature.color} drop-shadow-lg`} />
-                    </div>
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <h3 className="text-lg font-bold mb-2 font-poppins text-white group-hover:text-accent transition-colors duration-300 drop-shadow-lg text-with-stroke">
-                      {feature.title}
-                    </h3>
-                    <p className="text-sm text-white/70 leading-relaxed drop-shadow text-with-stroke">
-                      {feature.description}
-                    </p>
-                  </div>
+              <div className="relative p-8 rounded-2xl bg-gradient-to-br from-blue-600/20 to-purple-600/20 backdrop-blur-sm border-2 border-white/10 hover:border-pink-400/50 transition-all duration-300 transform hover:scale-105 shadow-xl">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center mb-5 shadow-lg shadow-pink-500/50 group-hover:shadow-pink-500/80 transition-all">
+                  <feature.icon className="w-7 h-7 text-white" />
                 </div>
+                <h3 className="text-xl font-bold text-white mb-3 drop-shadow-lg">{feature.title}</h3>
+                <p className="text-white/80 leading-relaxed drop-shadow">
+                  {feature.description}
+                </p>
               </div>
             </div>
           ))}
