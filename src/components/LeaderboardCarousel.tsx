@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Crown } from 'lucide-react';
-import { getWeekStartInUserTimezone } from '@/lib/utils';
-import { WeeklyRankingsCountdown } from './WeeklyRankingsCountdown';
+import { DailyRankingsCountdown } from './DailyRankingsCountdown';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -20,22 +19,22 @@ export const LeaderboardCarousel = () => {
   useEffect(() => {
     const refresh = async () => {
       // MINDIG friss adatot kérdezünk le, NINCS cache
-      const weeklyData = await fetchFromWeeklyRankings();
-      setTopPlayers(weeklyData.slice(0, 100));
+      const dailyData = await fetchFromDailyRankings();
+      setTopPlayers(dailyData.slice(0, 100));
     };
 
     // Azonnal indítjuk a betöltést
     refresh();
     
-    // Real-time subscription for weekly_rankings updates
+    // Real-time subscription for daily_rankings updates
     const channel = supabase
-      .channel('weekly-rankings-changes')
+      .channel('daily-rankings-changes')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'weekly_rankings'
+          table: 'daily_rankings'
         },
         () => {
           refresh();
@@ -51,13 +50,11 @@ export const LeaderboardCarousel = () => {
 
   const refresh = async () => {
     // Azonnali betöltés cache-sel és párhuzamos lekérdezésekkel
-    const weeklyData = await fetchFromWeeklyRankings();
-    setTopPlayers(weeklyData.slice(0, 100));
+    const dailyData = await fetchFromDailyRankings();
+    setTopPlayers(dailyData.slice(0, 100));
   };
 
-
-
-  const fetchFromWeeklyRankings = async (): Promise<LeaderboardEntry[]> => {
+  const fetchFromDailyRankings = async (): Promise<LeaderboardEntry[]> => {
     try {
       // Ensure session is valid before calling edge function
       const { data: sessionData } = await supabase.auth.getSession();
@@ -66,8 +63,8 @@ export const LeaderboardCarousel = () => {
         return [];
       }
 
-      // Call Edge Function for country-specific leaderboard
-      const { data, error } = await supabase.functions.invoke('get-weekly-leaderboard-by-country', {
+      // Call Edge Function for country-specific daily leaderboard
+      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country', {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionData.session.access_token}` }
       });
@@ -208,9 +205,9 @@ export const LeaderboardCarousel = () => {
     <div className="w-full py-1">
       <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-foreground mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
       
-      {/* Weekly Rankings Countdown moved here from top section */}
+      {/* Daily Rankings Countdown moved here from top section */}
       <div className="flex justify-center mb-2">
-        <WeeklyRankingsCountdown compact={false} />
+        <DailyRankingsCountdown compact={false} />
       </div>
       
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>

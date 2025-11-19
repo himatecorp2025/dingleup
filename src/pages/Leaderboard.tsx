@@ -5,7 +5,7 @@ import { LogOut } from 'lucide-react';
 import { getWeekStartInUserTimezone } from '@/lib/utils';
 
 import WeeklyRewards from '@/components/WeeklyRewards';
-import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
+import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import BottomNav from '@/components/BottomNav';
 
 interface LeaderboardEntry {
@@ -37,7 +37,7 @@ const Leaderboard = () => {
   useEffect(() => {
     fetchLeaderboard();
     
-    // Real-time subscription for weekly_rankings updates
+    // Real-time subscription for daily_rankings updates
     const channel = supabase
       .channel('leaderboard-rankings-changes')
       .on(
@@ -45,7 +45,7 @@ const Leaderboard = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'weekly_rankings'
+          table: 'daily_rankings'
         },
         () => {
           fetchLeaderboard();
@@ -69,8 +69,8 @@ const Leaderboard = () => {
         return;
       }
 
-      // Call Edge Function for country-specific leaderboard
-      const { data, error } = await supabase.functions.invoke('get-weekly-leaderboard-by-country', {
+      // Call Edge Function for country-specific daily leaderboard
+      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country', {
         method: 'POST',
         headers: { Authorization: `Bearer ${sessionData.session.access_token}` }
       });
@@ -90,7 +90,7 @@ const Leaderboard = () => {
       console.log('[Leaderboard] Loaded', data.leaderboard.length, 'players from country:', data.countryCode);
       setTopPlayers(data.leaderboard);
     } catch (error) {
-      console.error('[Leaderboard] Error fetching weekly leaderboard:', error);
+      console.error('[Leaderboard] Error fetching daily leaderboard:', error);
     } finally {
       setLoading(false);
     }
@@ -190,7 +190,7 @@ const Leaderboard = () => {
 
         {/* Countdown Timer - below title */}
         <div className="flex justify-center mb-2 px-2">
-          <WeeklyRankingsCountdown compact={false} />
+          <DailyRankingsCountdown compact={false} />
         </div>
 
         {/* Weekly Rewards Section */}

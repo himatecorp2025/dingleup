@@ -20,7 +20,7 @@ import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { DailyWinnersDialog } from '@/components/DailyWinnersDialog';
 import { PremiumBoosterConfirmDialog } from '@/components/PremiumBoosterConfirmDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
-import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
+import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
 import { FallingCoins } from '@/components/FallingCoins';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
