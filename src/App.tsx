@@ -42,6 +42,8 @@ const ProfileGame = lazy(() => import("./pages/ProfileGame"));
 const AdminGameProfiles = lazy(() => import("./pages/AdminGameProfiles"));
 const AdminGameProfileDetail = lazy(() => import("./pages/AdminGameProfileDetail"));
 const AdminAdInterests = lazy(() => import("./pages/AdminAdInterests"));
+const AdminBoosterTypes = lazy(() => import("./pages/AdminBoosterTypes"));
+const AdminBoosterPurchases = lazy(() => import("./pages/AdminBoosterPurchases"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading fallback component
@@ -293,6 +295,8 @@ const App = () => {
               <Route path="/admin/game-profiles" element={<AdminGameProfiles />} />
               <Route path="/admin/game-profiles/:userId" element={<AdminGameProfileDetail />} />
               <Route path="/admin/ad-interests" element={<AdminAdInterests />} />
+              <Route path="/admin/booster-types" element={<AdminBoosterTypes />} />
+              <Route path="/admin/booster-purchases" element={<AdminBoosterPurchases />} />
               <Route path="/popular-content" element={<PopularContent />} />
               <Route path="/profile/game" element={<ProfileGame />} />
               <Route path="*" element={<NotFound />} />
