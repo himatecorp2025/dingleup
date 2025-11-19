@@ -22,6 +22,7 @@ const Game = lazy(() => import("./pages/Game"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const RegistrationSuccess = lazy(() => import("./pages/RegistrationSuccess"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const InstallApp = lazy(() => import("./pages/InstallApp"));
 const Invitation = lazy(() => import("./pages/Invitation"));
 import IntroVideo from "./pages/IntroVideo";
@@ -277,6 +278,7 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/login-username" element={<LoginUsername />} />
               <Route path="/registration-success" element={<RegistrationSuccess />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/install" element={<InstallApp />} />
               <Route path="/invitation" element={<Invitation />} />
               <Route path="/intro" element={<IntroVideo />} />
