@@ -83,8 +83,15 @@ export const QuestionCard = ({
 
   return (
     <ScreenshotProtection enabled={true}>
+      {/* Full-screen double-tap overlay */}
+      <DoubleTapLikeReaction 
+        onDoubleTap={toggleLike}
+        className="w-full h-full absolute inset-0 z-0"
+      >
+        <div className="w-full h-full pointer-events-none" />
+      </DoubleTapLikeReaction>
       
-      <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className} relative`}>
+      <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className} relative z-10`}>
         {/* Top section: Exit button, Lives, Coins */}
         <GameHeader
           lives={lives}
@@ -97,11 +104,8 @@ export const QuestionCard = ({
       <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 pt-[7.2rem] sm:pt-[9rem] pb-[7.2rem] sm:pb-[9rem] md:pt-0 md:pb-0 md:mt-[5.5vh]">
         {/* Middle section: Question and Answers with Reaction Bar */}
         <div className="relative flex">
-          {/* Question and Answers - wrapped with double tap detection */}
-          <DoubleTapLikeReaction 
-            onDoubleTap={toggleLike}
-            className="flex-1 flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2"
-          >
+          {/* Question and Answers */}
+          <div className="flex-1 flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2">
             <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
               <GameTimer timeLeft={timeLeft} maxTime={30} />
             </div>
@@ -154,10 +158,10 @@ export const QuestionCard = ({
               })}
               </div>
             </div>
-          </DoubleTapLikeReaction>
+          </div>
 
           {/* TikTok-style Reactions Bar - Right side with LIKE + DISLIKE */}
-          <QuestionReactionsBar 
+          <QuestionReactionsBar
             liked={liked}
             disliked={disliked}
             likeCount={likeCount}
