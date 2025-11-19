@@ -23,10 +23,10 @@ interface CategoryStats {
 }
 
 const CATEGORIES = [
-  { id: 'health', name: 'Egészség', color: 'from-purple-500 to-violet-500' },
-  { id: 'history', name: 'Történelem', color: 'from-blue-500 to-indigo-500' },
-  { id: 'culture', name: 'Kultúra', color: 'from-purple-500 to-pink-500' },
-  { id: 'finance', name: 'Pénzügyek', color: 'from-orange-500 to-red-500' }
+  { id: 'health', name: 'Egészség', color: 'from-primary to-primary/80' },
+  { id: 'history', name: 'Történelem', color: 'from-primary-glow to-primary' },
+  { id: 'culture', name: 'Kultúra', color: 'from-primary to-accent' },
+  { id: 'finance', name: 'Pénzügyek', color: 'from-accent to-destructive' }
 ];
 
 const HELP_TYPES = [
