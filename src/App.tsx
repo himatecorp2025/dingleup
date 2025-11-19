@@ -30,7 +30,7 @@ const About = lazy(() => import("./pages/About"));
 // Lazy load admin pages
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const AdminTipsVideos = lazy(() => import("./pages/AdminTipsVideos"));
+
 const AdvancedAnalytics = lazy(() => import("./pages/AdvancedAnalytics"));
 const RetentionDashboard = lazy(() => import("./pages/RetentionDashboard"));
 const PerformanceDashboard = lazy(() => import("./pages/PerformanceDashboard"));
@@ -285,7 +285,6 @@ const App = () => {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin" element={<AdminDashboard />} />
               
-              <Route path="/admin/tips" element={<AdminTipsVideos />} />
               <Route path="/admin/analytics" element={<AdvancedAnalytics />} />
               <Route path="/admin/retention" element={<RetentionDashboard />} />
               <Route path="/admin/performance" element={<PerformanceDashboard />} />

@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Crown, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon, Brain } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon, Brain } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserGrowthChart } from '@/components/UserGrowthChart';
-import PlayerBehaviorsTab from '@/components/admin/PlayerBehaviorsTab';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { AdminReportActionDialog } from '@/components/AdminReportActionDialog';
 
-type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'invitations' | 'reports' | 'player-behaviors' | 'popular-content';
+type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'invitations' | 'reports' | 'popular-content';
 type ReportsSubTab = 'development' | 'support';
 
 const AdminDashboard = () => {
@@ -265,17 +264,6 @@ const AdminDashboard = () => {
             <span className="font-medium">Összes felhasználó</span>
           </button>
           <button
-            onClick={() => { setActiveTab('player-behaviors'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-              activeTab === 'player-behaviors'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4 xl:w-5 xl:h-5" />
-            <span className="font-medium">Játékos viselkedések</span>
-          </button>
-          <button
             onClick={() => { navigate('/admin/game-profiles'); onItemClick?.(); }}
             className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
           >
@@ -288,13 +276,6 @@ const AdminDashboard = () => {
           >
             <Users className="w-4 h-4 xl:w-5 xl:h-5 text-blue-400" />
             <span className="font-medium">Normál Felhasználók</span>
-          </button>
-          <button
-            onClick={() => { navigate('/admin/tips'); onItemClick?.(); }}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
-          >
-            <Crown className="w-4 h-4 xl:w-5 xl:h-5 text-yellow-400" />
-            <span className="font-medium">Tippek & Trükkök</span>
           </button>
           <button
             onClick={() => { setActiveTab('invitations'); onItemClick?.(); }}
@@ -874,10 +855,6 @@ const AdminDashboard = () => {
           </div>
         )}
 
-
-        {activeTab === 'player-behaviors' && (
-          <PlayerBehaviorsTab />
-        )}
       </div>
 
       {/* Action Dialog */}
