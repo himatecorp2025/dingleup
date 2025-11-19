@@ -503,16 +503,20 @@ if (!profile) {
                   boxShadow: '0 0 30px rgba(234,179,8,0.4), inset 0 0 20px rgba(255,255,255,0.2)',
                 }}
               >
-                <span className="animate-pulse text-[clamp(1rem,3vw,1.5rem)] sm:text-[clamp(1.25rem,3.5vw,2rem)]">⚡</span>
+                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
+                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
                 <span 
-                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)] animate-pulse mx-2" 
+                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)] animate-pulse" 
                   style={{ 
                     textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(234,179,8,0.8)'
                   }}
                 >
                   SPEED BOOSTER
                 </span>
-                <span className="animate-pulse text-[clamp(1rem,3vw,1.5rem)] sm:text-[clamp(1.25rem,3.5vw,2rem)]">⚡</span>
+                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] ml-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
+                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </DiamondButton>
             </div>
           </div>
@@ -531,8 +535,9 @@ if (!profile) {
                   transform: 'scale(1)',
                 }}
               >
-                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 5.14v14l11-7-11-7z"/>
+                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
+                  <circle cx="12" cy="12" r="10" fill="white"/>
+                  <path d="M10 8l6 4-6 4V8z" fill="currentColor"/>
                 </svg>
                 <span 
                   className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
