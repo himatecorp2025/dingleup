@@ -31,8 +31,23 @@ export const useWallet = (userId: string | undefined) => {
     try {
       const requestTime = Date.now();
       
-      // supabase.functions.invoke automatically includes the current session token
-      const { data, error } = await supabase.functions.invoke('get-wallet');
+      // Get current session explicitly
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !sessionData?.session) {
+        console.error('[useWallet] No valid session, forcing logout...');
+        await supabase.auth.signOut();
+        localStorage.clear();
+        window.location.href = '/login';
+        return;
+      }
+      
+      // Call edge function with explicit session token
+      const { data, error } = await supabase.functions.invoke('get-wallet', {
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`
+        }
+      });
 
       if (error) {
         console.error('[useWallet] Error fetching wallet:', error);
@@ -41,7 +56,6 @@ export const useWallet = (userId: string | undefined) => {
         if (error.message?.includes('Unauthorized') || error.message?.includes('401')) {
           console.error('[useWallet] Session expired, forcing logout...');
           await supabase.auth.signOut();
-          // Clear local storage to ensure clean state
           localStorage.clear();
           window.location.href = '/login';
           return;
