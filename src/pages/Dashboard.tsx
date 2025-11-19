@@ -6,7 +6,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
-import { useWeeklyWinners } from '@/hooks/useWeeklyWinners';
 import { useScrollBehavior } from '@/hooks/useScrollBehavior';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useWallet } from '@/hooks/useWallet';
@@ -48,7 +47,6 @@ const Dashboard = () => {
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
   const { canClaim, showPopup, weeklyEntryCount, nextReward, claiming, claimDailyGift, checkDailyGift, handleLater, showDailyGiftPopup, setShowPopup } = useDailyGift(userId, false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
-  const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
   const { showPopup: showDailyWinnersPopup, triggerPopup: triggerDailyWinnersPopup, closePopup: closeDailyWinnersPopup, canShowToday: canShowDailyPopup } = useDailyWinnersPopup(userId);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   const boosterState = useBoosterState(userId);
@@ -134,17 +132,17 @@ const Dashboard = () => {
 
   // Show Daily Gift dialog SECOND (after welcome bonus) - AUTOMATIC, no auto-claim
   useEffect(() => {
-    if (canMountModals && canClaim && !showWelcomeBonus && !showWeeklyWinners && userId) {
+    if (canMountModals && canClaim && !showWelcomeBonus && userId) {
       setShowPopup(true);
     }
-  }, [canMountModals, canClaim, showWelcomeBonus, showWeeklyWinners, userId]);
+  }, [canMountModals, canClaim, showWelcomeBonus, userId]);
 
   // Show Daily Winners popup THIRD (after Daily Gift is handled)
   useEffect(() => {
-    if (canMountModals && canShowDailyPopup && !showWelcomeBonus && !showPopup && !showWeeklyWinners && userId && dailyGiftJustClaimed) {
+    if (canMountModals && canShowDailyPopup && !showWelcomeBonus && !showPopup && userId && dailyGiftJustClaimed) {
       triggerDailyWinnersPopup();
     }
-  }, [canMountModals, canShowDailyPopup, showWelcomeBonus, showPopup, showWeeklyWinners, userId, dailyGiftJustClaimed, triggerDailyWinnersPopup]);
+  }, [canMountModals, canShowDailyPopup, showWelcomeBonus, showPopup, userId, dailyGiftJustClaimed, triggerDailyWinnersPopup]);
 
 
 
