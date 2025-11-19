@@ -81,69 +81,46 @@ export const LeaderboardCarousel = () => {
       
       const weekStart = getWeekStartInUserTimezone();
       
-      // Párhuzamos lekérdezések: TOP 100 és fill users egyszerre
-      const [rankingsResult, fillResult] = await Promise.all([
-        supabase
-          .from('weekly_rankings')
-          .select(`
-            user_id,
-            total_correct_answers,
-            profiles!inner (
-              username,
-              avatar_url,
-              country_code
-            )
-          `)
-          .eq('week_start', weekStart)
-          .eq('category', 'mixed')
-          .eq('profiles.country_code', countryCode)
-          .order('total_correct_answers', { ascending: false })
-          .limit(100),
-        
-        // Előre lekérdezzük a fill users-t is párhuzamosan
-        supabase
-          .from('profiles')
-          .select('id, username, avatar_url')
-          .eq('country_code', countryCode)
-          .order('created_at', { ascending: true })
-          .limit(100)
-      ]);
+      // Ugyanaz a logika mint Leaderboard.tsx: MINDEN felhasználót lekérdezünk
+      const { data: allCountryProfiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, username, avatar_url, country_code')
+        .eq('country_code', countryCode)
+        .order('created_at', { ascending: true });
       
-      const { data: topRankings, error: rankingsError } = rankingsResult;
-      
-      if (rankingsError) {
+      if (profilesError || !allCountryProfiles || allCountryProfiles.length === 0) {
+        console.error('[LeaderboardCarousel] Error fetching profiles:', profilesError);
         return [];
       }
       
-      const entries: LeaderboardEntry[] = (topRankings || []).map(row => ({
-        user_id: row.user_id,
-        username: (row.profiles as any)?.username || 'Player',
-        avatar_url: (row.profiles as any)?.avatar_url || null,
-        total_correct_answers: row.total_correct_answers || 0
-      }));
+      // Weekly rankings az aktuális hétre
+      const { data: rankingsData } = await supabase
+        .from('weekly_rankings')
+        .select('user_id, total_correct_answers')
+        .eq('week_start', weekStart)
+        .eq('category', 'mixed');
       
-      // Ha kevesebb mint 100, használjuk a párhuzamosan lekérdezett fill users-t
-      if (entries.length < 100) {
-        const existingUserIds = entries.map(e => e.user_id);
-        const { data: allFillUsers } = fillResult;
-        
-        if (allFillUsers) {
-          const filteredFillUsers = allFillUsers
-            .filter(u => !existingUserIds.includes(u.id))
-            .slice(0, 100 - entries.length);
-          
-          filteredFillUsers.forEach(u => {
-            entries.push({
-              user_id: u.id,
-              username: u.username || 'Player',
-              avatar_url: u.avatar_url || null,
-              total_correct_answers: 0
-            });
-          });
-        }
+      // Ranking map létrehozása (alapértelmezett 0 ponttal)
+      const rankingsMap = new Map<string, number>();
+      if (rankingsData) {
+        rankingsData.forEach(row => {
+          rankingsMap.set(row.user_id, row.total_correct_answers || 0);
+        });
       }
+      
+      // Ranglista építése MINDEN felhasználóval (0 pontosak is benne vannak)
+      const entries: LeaderboardEntry[] = allCountryProfiles.map(profile => ({
+        user_id: profile.id,
+        username: profile.username || 'Player',
+        avatar_url: profile.avatar_url || null,
+        total_correct_answers: rankingsMap.get(profile.id) || 0
+      }));
 
-      return entries;
+      // Rendezés helyes válaszok szerint (csökkenő)
+      entries.sort((a, b) => b.total_correct_answers - a.total_correct_answers);
+      
+      // TOP 100-ra vágás
+      return entries.slice(0, 100);
     } catch (e) {
       console.error('[LeaderboardCarousel] weekly_rankings error:', e);
       return [];
