@@ -1387,6 +1387,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          birth_date: string
           coins: number | null
           country_code: string
           created_at: string | null
@@ -1413,6 +1414,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          birth_date: string
           coins?: number | null
           country_code?: string
           created_at?: string | null
@@ -1439,6 +1441,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          birth_date?: string
           coins?: number | null
           country_code?: string
           created_at?: string | null
