@@ -13,6 +13,7 @@ import { useWallet } from '@/hooks/useWallet';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useWeeklyWinnersPopup } from '@/hooks/useWeeklyWinnersPopup';
+import { MusicControls } from '@/components/MusicControls';
 
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
@@ -450,6 +451,11 @@ if (!profile) {
               `}</style>
               {/* Share and Leaderboard buttons moved to BottomNav */}
             </div>
+          </div>
+          
+          {/* Music Controls - Fixed top-left corner */}
+          <div className="fixed top-4 left-4 z-[9999] w-64 max-w-[calc(100vw-2rem)]">
+            <MusicControls />
           </div>
         </div>
 
