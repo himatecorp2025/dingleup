@@ -131,7 +131,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                           : 'text-white/60 hover:bg-white/5'
                       }`}
                     >
-                      <Icon className="w-4 h-4 xl:w-5 xl:h-5" />
+                      <Icon className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
                       <span className="font-medium">{item.label}</span>
                     </button>
                   );
