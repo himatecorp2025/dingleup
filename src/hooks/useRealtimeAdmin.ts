@@ -73,6 +73,14 @@ export const useRealtimeAdmin = ({ onDataChange, enabled = true }: UseRealtimeAd
       }, (payload) => {
         throttledCallback();
       })
+      // Booster purchases changes
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'booster_purchases'
+      }, (payload) => {
+        throttledCallback();
+      })
       .subscribe();
 
     return () => {
