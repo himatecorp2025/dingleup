@@ -313,7 +313,11 @@ const AdminDashboard = () => {
           </button>
           <button
             onClick={() => { navigate('/admin/popular-content'); onItemClick?.(); }}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
+              window.location.pathname === '/admin/popular-content'
+                ? 'bg-blue-600/20 text-blue-400'
+                : 'text-white/70 hover:bg-white/5'
+            }`}
           >
             <TrendingUp className="w-4 h-4 xl:w-5 xl:h-5" />
             <span className="font-medium">Népszerű tartalmak</span>
