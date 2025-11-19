@@ -5,9 +5,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { useAdminGameProfiles } from '@/hooks/useAdminGameProfiles';
-import { Brain, Search, TrendingUp, Info, ArrowLeft } from 'lucide-react';
+import { Brain, Search, Info } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 export default function AdminGameProfiles() {
   const navigate = useNavigate();
@@ -18,7 +19,6 @@ export default function AdminGameProfiles() {
   const filteredAndSorted = useMemo(() => {
     let result = [...profiles];
 
-    // Search filter
     if (search) {
       const searchLower = search.toLowerCase();
       result = result.filter(
@@ -28,7 +28,6 @@ export default function AdminGameProfiles() {
       );
     }
 
-    // Sort
     result.sort((a, b) => {
       if (sortBy === 'answered') return b.totalAnswered - a.totalAnswered;
       if (sortBy === 'correctness') return b.overallCorrectRatio - a.overallCorrectRatio;
@@ -41,61 +40,50 @@ export default function AdminGameProfiles() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <AdminLayout>
         <div className="container mx-auto max-w-7xl">
           <Skeleton className="h-10 w-64 mb-6" />
           <Skeleton className="h-96" />
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <AdminLayout>
         <div className="container mx-auto max-w-7xl">
           <Alert variant="destructive">
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <AdminLayout>
       <div className="container mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/admin/dashboard')}
-            className="mb-4 gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Vissza az Admin Dashboard-ra
-          </Button>
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-2 mb-2">
-            <Brain className="h-8 w-8 text-primary" />
+        <div className="mb-8">
+          <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-3 mb-2">
+            <Brain className="h-8 w-8 text-purple-400" />
             Játékprofil Statisztika
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-white/60">
             Játékosok profilozási adatai és személyre szabási státuszok
           </p>
         </div>
 
-        {/* Jogi info */}
-        <Alert className="mb-6 bg-blue-500/10 border-blue-500/30">
-          <Info className="h-4 w-4 text-blue-600" />
-          <AlertDescription>
+        <Alert className="mb-6 backdrop-blur-xl bg-blue-500/10 border-blue-500/30">
+          <Info className="h-4 w-4 text-blue-400" />
+          <AlertDescription className="text-white/80">
             Ez a nézet a játékosok játékprofil-statisztikáit mutatja. Az adatok nem tartalmaznak érzékeny személyes adatot, és kizárólag a játékmechanika személyre szabásához és a rendszer fejlesztéséhez használjuk őket. Nem reklámcélú profilozás.
           </AlertDescription>
         </Alert>
 
-        {/* Filters */}
-        <Card className="mb-6">
+        <Card className="mb-6 backdrop-blur-xl bg-white/5 border border-white/10">
           <CardHeader>
-            <CardTitle>Szűrés és Rendezés</CardTitle>
+            <CardTitle className="text-white">Szűrés és Rendezés</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col md:flex-row gap-4">
@@ -209,6 +197,6 @@ export default function AdminGameProfiles() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
