@@ -1243,6 +1243,27 @@ export type Database = {
         }
         Relationships: []
       }
+      password_history: {
+        Row: {
+          created_at: string
+          id: string
+          password_hash: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          password_hash: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          password_hash?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       performance_metrics: {
         Row: {
           browser: string | null
@@ -1380,6 +1401,7 @@ export type Database = {
           invitation_rewards_reset_at: string | null
           last_invitation_reward_reset: string | null
           last_life_regeneration: string | null
+          last_username_change: string | null
           lives: number | null
           lives_regeneration_rate: number | null
           max_lives: number | null
@@ -1405,6 +1427,7 @@ export type Database = {
           invitation_rewards_reset_at?: string | null
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
+          last_username_change?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
@@ -1430,6 +1453,7 @@ export type Database = {
           invitation_rewards_reset_at?: string | null
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
+          last_username_change?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null

@@ -5,7 +5,8 @@ import { useGameProfile } from '@/hooks/useGameProfile';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings, Globe } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings, Globe, Edit2, Eye, EyeOff, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
@@ -219,6 +220,19 @@ const Profile = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [weeklyCorrectAnswers, setWeeklyCorrectAnswers] = useState<number>(0);
   
+  // Username editing
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  
+  // Password fields
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  
   // Platform detection for conditional padding
   const [isStandalone, setIsStandalone] = useState(false);
   
@@ -339,6 +353,103 @@ const Profile = () => {
     } catch (error) {
       console.error('Failed to update country:', error);
       toast.error('Hiba történt az ország módosítása során.');
+    }
+  };
+
+  const handleUsernameEdit = () => {
+    setNewUsername(profile.username);
+    setIsEditingUsername(true);
+  };
+
+  const handleUsernameSave = async () => {
+    if (!newUsername.trim()) {
+      toast.error('A felhasználónév nem lehet üres');
+      return;
+    }
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Nincs bejelentkezve');
+        return;
+      }
+
+      const response = await supabase.functions.invoke('update-username', {
+        body: { newUsername }
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || 'Felhasználónév frissítése sikertelen');
+      }
+
+      await updateProfile({ username: newUsername });
+      setIsEditingUsername(false);
+      toast.success('Felhasználónév sikeresen módosítva');
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const validatePassword = (password: string): string | null => {
+    if (password.length < 8) {
+      return 'A jelszónak legalább 8 karakterből kell állnia';
+    }
+    if (!/[a-z]/.test(password)) {
+      return 'A jelszónak tartalmaznia kell kisbetűt';
+    }
+    if (!/[A-Z]/.test(password)) {
+      return 'A jelszónak tartalmaznia kell nagybetűt';
+    }
+    if (!/\d/.test(password)) {
+      return 'A jelszónak tartalmaznia kell számot';
+    }
+    if (!/[@$!%*?&.]/.test(password)) {
+      return 'A jelszónak tartalmaznia kell speciális karaktert (@$!%*?&.)';
+    }
+    return null;
+  };
+
+  const handlePasswordSave = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error('Minden jelszó mező kitöltése kötelező');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error('Az új jelszavak nem egyeznek');
+      return;
+    }
+
+    const validationError = validatePassword(newPassword);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Nincs bejelentkezve');
+        return;
+      }
+
+      const response = await supabase.functions.invoke('update-password', {
+        body: { currentPassword, newPassword }
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || 'Jelszó frissítése sikertelen');
+      }
+
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      toast.success('Jelszó sikeresen módosítva');
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -653,9 +764,6 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Background Music Control */}
-        <BackgroundMusicControl />
-
         {/* Account Info */}
         <div className="relative rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-sm transform-gpu">
           {/* Base shadow (3D depth) */}
@@ -681,16 +789,108 @@ const Profile = () => {
             </h2>
             
             <div className="space-y-3 sm:space-y-4">
+              {/* Username with edit */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-1">Felhasználónév</p>
-                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{profile.username}</p>
+                {isEditingUsername ? (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      className="bg-black/30 border-purple-500/30 text-white"
+                      maxLength={30}
+                    />
+                    <Button
+                      size="sm"
+                      onClick={handleUsernameSave}
+                      className="bg-accent hover:bg-accent/90"
+                    >
+                      <Save className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{profile.username}</p>
+                    <button
+                      onClick={handleUsernameEdit}
+                      className="text-purple-400 hover:text-purple-300 transition-colors"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
               
+              {/* Email */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-1">E-mail cím</p>
                 <p className="text-sm sm:text-base text-white font-bold break-all drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{profile.email}</p>
               </div>
 
+              {/* Current Password (masked) */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-1">Jelenlegi jelszó</p>
+                <div className="relative">
+                  <Input
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Írd be a jelenlegi jelszavad"
+                    className="bg-black/30 border-purple-500/30 text-white pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+                  >
+                    {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-1">Új jelszó</p>
+                <div className="relative">
+                  <Input
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Min. 8 karakter, kis/nagybetű, szám, spec. karakter"
+                    className="bg-black/30 border-purple-500/30 text-white pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+                  >
+                    {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm Password */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-1">Jelszó megerősítése</p>
+                <div className="relative">
+                  <Input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Írd be újra az új jelszavad"
+                    className="bg-black/30 border-purple-500/30 text-white pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Country */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-2 flex items-center gap-2">
                   <Globe className="w-4 h-4" />
@@ -700,7 +900,7 @@ const Profile = () => {
                   <SelectTrigger className="bg-black/30 border-purple-500/30 text-white hover:border-purple-400/50 focus:border-purple-400">
                     <SelectValue placeholder="Válassz országot" />
                   </SelectTrigger>
-                  <SelectContent className="bg-background border-purple-500/30">
+                  <SelectContent className="bg-background border-purple-500/30 max-h-[300px] z-50">
                     {COUNTRIES.map((country) => (
                       <SelectItem 
                         key={country.code} 
@@ -724,45 +924,42 @@ const Profile = () => {
                 </p>
               </div>
               
-              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+              <div>
                 <p className="text-xs sm:text-sm text-white/50 mb-1">Regisztráció dátuma</p>
                 <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                   {new Date(profile.created_at).toLocaleDateString('hu-HU')}
                 </p>
               </div>
-              
-              <div>
-                <p className="text-xs sm:text-sm text-white/50 mb-1">Regisztrált országom</p>
-                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {profile.country_code ? 
-                    (() => {
-                      const countryNames: Record<string, string> = {
-                        'HU': 'Magyarország',
-                        'DE': 'Németország',
-                        'AT': 'Ausztria',
-                        'RO': 'Románia',
-                        'SK': 'Szlovákia',
-                        'HR': 'Horvátország',
-                        'SI': 'Szlovénia',
-                        'RS': 'Szerbia',
-                        'UA': 'Ukrajna',
-                        'PL': 'Lengyelország',
-                        'CZ': 'Csehország',
-                        'IT': 'Olaszország',
-                        'FR': 'Franciaország',
-                        'ES': 'Spanyolország',
-                        'GB': 'Egyesült Királyság',
-                        'US': 'Amerikai Egyesült Államok',
-                      };
-                      return countryNames[profile.country_code] || profile.country_code;
-                    })()
-                    : 'Nincs megadva'
-                  }
-                </p>
+
+              {/* Save Button */}
+              <div className="pt-2">
+                <Button
+                  onClick={handlePasswordSave}
+                  disabled={isSaving}
+                  className="w-full bg-accent hover:bg-accent/90 text-white font-bold py-3 px-6 rounded-lg
+                    shadow-[0_4px_12px_hsl(var(--accent)/0.6),0_0_24px_hsl(var(--accent)/0.4)]
+                    hover:shadow-[0_6px_16px_hsl(var(--accent)/0.7),0_0_32px_hsl(var(--accent)/0.5)]
+                    transition-all transform-gpu hover:scale-[1.02]"
+                >
+                  {isSaving ? (
+                    <span className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Mentés...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Save className="w-4 h-4" />
+                      Változtatások mentése
+                    </span>
+                  )}
+                </Button>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Background Music Control - Moved below Account Info */}
+        <BackgroundMusicControl />
       </div>
 
       <BottomNav />
