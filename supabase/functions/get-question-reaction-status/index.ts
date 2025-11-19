@@ -52,12 +52,12 @@ serve(async (req) => {
     }
 
     const url = new URL(req.url);
-    const pathParts = url.pathname.split('/');
-    const questionId = pathParts[pathParts.length - 2]; // /api/questions/:questionId/reaction
+    const body = await req.json();
+    const questionId = body.questionId;
 
-    if (!questionId) {
+    if (!questionId || typeof questionId !== 'string' || questionId.trim() === '') {
       return new Response(
-        JSON.stringify({ error: 'Question ID required' }),
+        JSON.stringify({ error: 'Valid question ID required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -67,9 +67,17 @@ serve(async (req) => {
       .from('questions')
       .select('like_count, dislike_count')
       .eq('id', questionId)
-      .single();
+      .maybeSingle();
 
-    if (questionError || !question) {
+    if (questionError) {
+      console.error('[get-question-reaction-status] Question query error:', questionError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch question' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!question) {
       return new Response(
         JSON.stringify({ error: 'Question not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
