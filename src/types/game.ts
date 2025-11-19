@@ -45,6 +45,7 @@ export interface UserProfile {
   max_lives: number;
   lives_regeneration_rate: number;
   last_life_regeneration: string;
+  last_username_change: string | null;
   help_third_active: boolean;
   help_2x_answer_active: boolean;
   help_audience_active: boolean;

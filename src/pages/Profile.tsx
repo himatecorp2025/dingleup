@@ -367,6 +367,20 @@ const Profile = () => {
       return;
     }
 
+    // Check 7-day cooldown
+    if (profile.last_username_change) {
+      const lastChange = new Date(profile.last_username_change);
+      const now = new Date();
+      const daysSinceLastChange = (now.getTime() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
+      
+      if (daysSinceLastChange < 7) {
+        const daysRemaining = Math.ceil(7 - daysSinceLastChange);
+        toast.error(`A felhasználónév módosítása csak 7 naponta lehetséges. Még ${daysRemaining} nap múlva próbálkozz újra.`);
+        setIsEditingUsername(false);
+        return;
+      }
+    }
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -819,6 +833,7 @@ const Profile = () => {
                     </button>
                   </div>
                 )}
+                <p className="text-xs text-white/40 mt-1">A felhasználónév 7 naponta csak 1x módosítható</p>
               </div>
               
               {/* Email */}
