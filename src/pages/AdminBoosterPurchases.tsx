@@ -24,6 +24,8 @@ interface BoosterPurchase {
 interface PurchaseSummary {
   total_free: number;
   total_premium: number;
+  total_gold_saver: number;
+  total_instant_rescue: number;
   total_gold_spent: number;
   total_usd_revenue: number;
 }
@@ -33,6 +35,8 @@ export default function AdminBoosterPurchases() {
   const [summary, setSummary] = useState<PurchaseSummary>({
     total_free: 0,
     total_premium: 0,
+    total_gold_saver: 0,
+    total_instant_rescue: 0,
     total_gold_spent: 0,
     total_usd_revenue: 0
   });
@@ -81,6 +85,8 @@ export default function AdminBoosterPurchases() {
       setSummary({
         total_free: summaryResponse.totalFreePurchases || 0,
         total_premium: summaryResponse.totalPremiumPurchases || 0,
+        total_gold_saver: summaryResponse.totalGoldSaverPurchases || 0,
+        total_instant_rescue: summaryResponse.totalInstantRescuePurchases || 0,
         total_gold_spent: summaryResponse.totalGoldSpent || 0,
         total_usd_revenue: summaryResponse.totalUsdRevenue || 0,
       });
@@ -127,7 +133,7 @@ export default function AdminBoosterPurchases() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid gap-6 md:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-3">
           <Card className="p-6">
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Free Booster</p>
@@ -140,6 +146,20 @@ export default function AdminBoosterPurchases() {
               <p className="text-sm text-muted-foreground">Premium Booster</p>
               <p className="text-3xl font-bold text-green-400">{summary.total_premium}</p>
               <p className="text-xs text-muted-foreground">IAP vásárlás</p>
+            </div>
+          </Card>
+          <Card className="p-6">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Gold Saver Booster</p>
+              <p className="text-3xl font-bold text-orange-400">{summary.total_gold_saver}</p>
+              <p className="text-xs text-muted-foreground">játék közben</p>
+            </div>
+          </Card>
+          <Card className="p-6">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Instant Rescue</p>
+              <p className="text-3xl font-bold text-purple-400">{summary.total_instant_rescue}</p>
+              <p className="text-xs text-muted-foreground">mentés IAP-pal</p>
             </div>
           </Card>
           <Card className="p-6">
