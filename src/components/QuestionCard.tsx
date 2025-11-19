@@ -70,8 +70,16 @@ export const QuestionCard = ({
   const correctAnswerKey = answers.find(a => a.correct)?.key || "";
   const skipCost = getSkipCost(questionNumber - 1); // Convert to 0-indexed
 
-  // Double tap detection for like - delegated to DoubleTapLikeReaction
-  const { toggleLike } = useQuestionReactions(question.id);
+  // Double tap detection + shared reaction state for this question
+  const {
+    liked,
+    disliked,
+    likeCount,
+    dislikeCount,
+    toggleLike,
+    toggleDislike,
+    loading: reactionsLoading,
+  } = useQuestionReactions(question.id);
 
   return (
     <ScreenshotProtection enabled={true}>
@@ -149,7 +157,15 @@ export const QuestionCard = ({
           </DoubleTapLikeReaction>
 
           {/* TikTok-style Reactions Bar - Right side with LIKE + DISLIKE */}
-          <QuestionReactionsBar questionId={question.id} />
+          <QuestionReactionsBar 
+            liked={liked}
+            disliked={disliked}
+            likeCount={likeCount}
+            dislikeCount={dislikeCount}
+            loading={reactionsLoading}
+            onToggleLike={toggleLike}
+            onToggleDislike={toggleDislike}
+          />
         </div>
 
         {/* Bottom section: Help buttons */}
