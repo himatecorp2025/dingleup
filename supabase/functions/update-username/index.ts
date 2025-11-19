@@ -89,6 +89,12 @@ serve(async (req) => {
       throw new Error('Felhasználónév frissítése sikertelen');
     }
 
+    // Also update global_leaderboard if user has entry there
+    await supabase
+      .from('global_leaderboard')
+      .update({ username: trimmedUsername })
+      .eq('user_id', user.id);
+
     return new Response(
       JSON.stringify({ success: true, message: 'Felhasználónév sikeresen frissítve' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
