@@ -336,6 +336,30 @@ export type Database = {
           },
         ]
       }
+      daily_winners_popup_views: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_shown_day: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_shown_day: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_shown_day?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       data_collection_metadata: {
         Row: {
           collection_start_date: string
@@ -2864,30 +2888,6 @@ export type Database = {
           shown_at?: string | null
           user_id?: string
           week_start?: string
-        }
-        Relationships: []
-      }
-      weekly_winners_popup_views: {
-        Row: {
-          created_at: string | null
-          id: string
-          last_shown_week: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          last_shown_week: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          last_shown_week?: string
-          updated_at?: string | null
-          user_id?: string
         }
         Relationships: []
       }
