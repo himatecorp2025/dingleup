@@ -19,7 +19,7 @@ const statusItems = [
     category: "Szociális Funkciók",
     progress: 60,
     color: "from-accent to-accent-dark",
-    description: "Heti rangsor rendszer fejlesztése, meghívó rendszer kidolgozása, social share funkciók és barátok kezelésének implementálása."
+    description: "Napi rangsor rendszer fejlesztése, meghívó rendszer kidolgozása, social share funkciók és barátok kezelésének implementálása."
   },
   {
     category: "Tesztelés & Biztonság",

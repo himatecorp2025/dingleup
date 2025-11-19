@@ -19,7 +19,7 @@ const roadmapItems = [
     status: "completed",
     date: "2025 Q1",
     items: [
-      "Heti rangsor kategóriánként",
+      "Napi rangsor rendszer",
       "Meghívó rendszer",
       "Napi ajándék streak",
       "Üdvözlő bónusz",

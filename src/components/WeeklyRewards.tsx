@@ -75,7 +75,7 @@ const WeeklyRewards = () => {
             <path d="M12 3L6 9H18L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M12 9V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          <span className="text-accent font-black text-base sm:text-lg drop-shadow-lg">HETI JUTALMAK</span>
+          <span className="text-accent font-black text-base sm:text-lg drop-shadow-lg">NAPI JUTALMAK</span>
           <svg className="w-5 h-5 sm:w-6 sm:h-6 text-accent drop-shadow-lg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6 9H4.5C4.10218 9 3.72064 9.15804 3.43934 9.43934C3.15804 9.72064 3 10.1022 3 10.5V19.5C3 19.8978 3.15804 20.2794 3.43934 20.5607C3.72064 20.842 4.10218 21 4.5 21H19.5C19.8978 21 20.2794 20.842 20.5607 20.5607C20.842 20.2794 21 19.8978 21 19.5V10.5C21 10.1022 20.842 9.72064 20.5607 9.43934C20.2794 9.15804 19.8978 9 19.5 9H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M12 3L6 9H18L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

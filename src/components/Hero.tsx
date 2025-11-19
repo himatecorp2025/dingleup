@@ -131,7 +131,7 @@ const Hero = () => {
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4 animate-fade-in px-4" style={{ animationDelay: '0.8s' }}>
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 sm:px-6 py-2 sm:py-3">
               <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
-              <span className="text-white font-semibold text-sm sm:text-base">Heti Rangsor</span>
+              <span className="text-white font-semibold text-sm sm:text-base">Napi Rangsor</span>
             </div>
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 sm:px-6 py-2 sm:py-3">
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-pink-400" />
