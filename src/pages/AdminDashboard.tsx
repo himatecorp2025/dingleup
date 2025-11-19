@@ -226,8 +226,16 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-dvh min-h-svh bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker flex items-center justify-center">
-        <p className="text-foreground text-lg">Betöltés...</p>
+      <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#0f0a1f] flex items-center justify-center">
+        {/* Animated glowing orbs background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        </div>
+        <div className="relative z-10">
+          <p className="text-white/70 text-lg">Betöltés...</p>
+        </div>
       </div>
     );
   }
