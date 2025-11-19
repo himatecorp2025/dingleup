@@ -64,19 +64,19 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       >
         <div className="flex items-center justify-center w-full">
           <div 
-            className="relative w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center"
-            style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
+            className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
+            style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
           >
             {/* Number badge 3D */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary border-2 border-primary" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)', boxShadow: 'inset 0 2px 4px hsl(var(--primary-foreground) / 0.3), inset 0 -2px 4px hsl(var(--background) / 0.3)' }} aria-hidden />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary border-2 border-primary" style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)', boxShadow: 'inset 0 2px 4px hsl(var(--primary-foreground) / 0.3), inset 0 -2px 4px hsl(var(--background) / 0.3)' }} aria-hidden />
             {typeof questionNumber === 'number' && (
-              <span className="relative z-10 text-primary-foreground font-bold text-xs sm:text-sm leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{questionNumber}</span>
+              <span className="relative z-10 text-primary-foreground font-bold text-[10px] sm:text-xs leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{questionNumber}/15</span>
             )}
           </div>
           <p className="text-sm sm:text-base md:text-lg font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins px-2 sm:px-3 md:px-4" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>
             {children}
           </p>
-          <div className="w-8 sm:w-9 md:w-10 flex-shrink-0" aria-hidden />
+          <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />
         </div>
       </div>
     </div>
