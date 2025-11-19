@@ -89,7 +89,12 @@ const Register = () => {
       if (authData.user) {
         try {
           await supabase.functions.invoke('register-with-geolocation', {
-            body: { userId: authData.user.id, birthDate: validated.birthDate }
+            body: { 
+              userId: authData.user.id, 
+              birthDate: validated.birthDate,
+              email: validated.email,
+              username: validated.username
+            }
           });
         } catch (geoError) {
           console.error('Geolocation failed:', geoError);
