@@ -24,6 +24,9 @@ export default {
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
+          dark: "hsl(var(--primary-dark))",
+          darker: "hsl(var(--primary-darker))",
+          glow: "hsl(var(--primary-glow))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -57,6 +60,10 @@ export default {
         success: {
           DEFAULT: "hsl(var(--success))",
           dark: "hsl(var(--success-dark))",
+        },
+        cyan: {
+          DEFAULT: "hsl(var(--cyan))",
+          dark: "hsl(var(--cyan-dark))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -162,6 +169,9 @@ export default {
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
         'gradient-gold': 'var(--gradient-gold)',
+        'gradient-purple': 'var(--gradient-purple)',
+        'gradient-pink': 'var(--gradient-pink)',
+        'gradient-cyan': 'var(--gradient-cyan)',
         'gradient-card': 'var(--gradient-card)',
       },
       spacing: {
