@@ -18,8 +18,8 @@ const features = [
   },
   {
     icon: Users,
-    title: "Heti Rangsor",
-    description: "Versenyezz más játékosokkal a heti ranglistán és légy te a legjobb!",
+    title: "Napi Rangsor",
+    description: "Versenyezz más játékosokkal a napi ranglistán és légy te a legjobb!",
     image: featureLeaderboard,
   }
 ];

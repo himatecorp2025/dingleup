@@ -37,7 +37,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     title: 'Ranglista és versenyek 🏆',
-    description: 'Versenyezz másokkal a ranglistán! Heti és globális rangsorban is részt vehetsz. A legjobb játékosok különleges jutalmakat nyernek!',
+    description: 'Versenyezz másokkal a ranglistán! Napi rangsorban versenyezhetsz más játékosokkal. A legjobb játékosok különleges jutalmakat nyernek!',
     icon: Trophy,
     gradient: 'from-primary via-primary-glow to-primary'
   },
