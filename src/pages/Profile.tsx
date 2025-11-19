@@ -132,7 +132,7 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
         <p className="text-lg text-white">Betöltés...</p>
       </div>
     );
@@ -140,7 +140,7 @@ const Profile = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
         <p className="text-lg text-white">Hiba a profil betöltésekor</p>
       </div>
     );
@@ -211,7 +211,7 @@ const Profile = () => {
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
-        className="fixed bg-gradient-to-b from-primary-darker via-primary-dark to-primary-darker"
+        className="fixed bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
         style={{
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',

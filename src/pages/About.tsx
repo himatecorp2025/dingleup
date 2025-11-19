@@ -11,7 +11,7 @@ const About = () => {
   // Only show on mobile/tablet
   if (!isHandheld) {
     return (
-      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker">
+      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
         <div className="text-center px-6 max-w-md">
           <h1 className="text-3xl font-black text-foreground mb-4">📱 Csak mobilon elérhető</h1>
           <p className="text-muted-foreground mb-6">
@@ -29,7 +29,7 @@ const About = () => {
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
-        className="fixed bg-gradient-to-b from-primary-darker via-primary-dark to-primary-darker"
+        className="fixed bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
         style={{
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',
