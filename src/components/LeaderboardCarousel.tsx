@@ -19,6 +19,12 @@ export const LeaderboardCarousel = () => {
   const countryCodeCacheRef = useRef<string | null>(null);
 
   useEffect(() => {
+    const refresh = async () => {
+      // Azonnali betöltés cache-sel és párhuzamos lekérdezésekkel
+      const weeklyData = await fetchFromWeeklyRankings();
+      setTopPlayers(weeklyData.slice(0, 100));
+    };
+
     // Azonnal indítjuk a betöltést
     refresh();
     
@@ -41,6 +47,7 @@ export const LeaderboardCarousel = () => {
     return () => {
       supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const refresh = async () => {
