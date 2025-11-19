@@ -429,11 +429,55 @@ const GamePreview = () => {
   };
 
   const handleSwipeDown = async () => {
-    // Swipe down always finishes the game and shows results (serleg ablak)
+    // Swipe down restarts game immediately without showing results
     if (errorBannerVisible) {
       setErrorBannerVisible(false);
     }
-    await finishGame();
+    await restartGameImmediately();
+  };
+
+  const restartGameImmediately = async () => {
+    if (!profile || isStartingGame) return;
+    
+    // Show toast notification about restart FIRST
+    toast.error('Új játék indítása: -1 élet, +1 arany', {
+      duration: 2000,
+      style: {
+        background: 'hsl(var(--destructive))',
+        color: 'hsl(var(--destructive-foreground))',
+        border: '1px solid hsl(var(--destructive))',
+      }
+    });
+    
+    // Wait briefly so user sees the toast
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Reset all game state without finishing
+    setGameState('playing');
+    setQuestions([]);
+    setCurrentQuestionIndex(0);
+    setTimeLeft(10);
+    setSelectedAnswer(null);
+    setCorrectAnswers(0);
+    setCoinsEarned(0);
+    setResponseTimes([]);
+    setHelp5050UsageCount(0);
+    setHelp2xAnswerUsageCount(0);
+    setHelpAudienceUsageCount(0);
+    setIsHelp5050ActiveThisQuestion(false);
+    setIsDoubleAnswerActiveThisQuestion(false);
+    setIsAudienceActiveThisQuestion(false);
+    setUsedQuestionSwap(false);
+    setFirstAttempt(null);
+    setSecondAttempt(null);
+    setRemovedAnswer(null);
+    setAudienceVotes({});
+    setErrorBannerVisible(false);
+    setCanSwipe(true);
+    setIsAnimating(false);
+    
+    // Start new game immediately (will spend life and add 1 coin)
+    await startGame();
   };
 
   const handleTimeout = () => {
