@@ -91,12 +91,20 @@ function = "regenerate-lives-background"
 schedule = "0 2 * * *"
 function = "aggregate-daily-activity"
 
+# Cron job for daily winners processing every day at 00:00 Budapest time (23:00 UTC)
+[[edge_runtime.cron]]
+schedule = "0 23 * * *"
+function = "process-daily-winners"
+
 # Cron job for weekly winners processing every Monday at 00:00 Budapest time (23:00 UTC Sunday)
 [[edge_runtime.cron]]
 schedule = "0 23 * * 0"
 function = "process-weekly-winners"
 
 [functions.set-default-country]
+verify_jwt = false
+
+[functions.process-daily-winners]
 verify_jwt = false
 
 [functions.process-weekly-winners]
