@@ -8,6 +8,7 @@ interface GameLoadingScreenProps {
 export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasStarted = useRef(false);
+  const hasEnded = useRef(false);
 
   useEffect(() => {
     if (!hasStarted.current && videoRef.current) {
@@ -19,13 +20,24 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
       if (playPromise !== undefined) {
         playPromise.catch((err) => {
           console.warn('[GameLoadingScreen] Autoplay failed:', err);
-          setTimeout(() => {
-            onVideoEnd();
-          }, 2000);
+          // Only call onVideoEnd if video truly failed, not on abort
+          if (err.name !== 'AbortError') {
+            setTimeout(() => {
+              onVideoEnd();
+            }, 2000);
+          }
         });
       }
     }
   }, [onVideoEnd]);
+
+  const handleVideoEnd = () => {
+    // Ensure onVideoEnd is called only once when video truly completes
+    if (!hasEnded.current) {
+      hasEnded.current = true;
+      onVideoEnd();
+    }
+  };
 
   return (
     <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
@@ -37,7 +49,13 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
         muted
         playsInline
         preload="auto"
-        onEnded={onVideoEnd}
+        onEnded={handleVideoEnd}
+        onPause={(e) => {
+          // Prevent accidental pause - keep playing until end
+          if (videoRef.current && !hasEnded.current && videoRef.current.currentTime < videoRef.current.duration) {
+            videoRef.current.play().catch(() => {});
+          }
+        }}
       />
     </div>
   );

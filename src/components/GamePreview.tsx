@@ -945,8 +945,8 @@ const GamePreview = () => {
   }
 
   // Show loading video IMMEDIATELY when game start begins (even before backend completes)
-  // Keep video visible until questions are ready - prevents any loading screen flash
-  if (isStartingGame || (gameState === 'playing' && questions.length === 0)) {
+  // Keep video visible until BOTH video ends AND questions are ready
+  if (isStartingGame || !videoEnded || (gameState === 'playing' && questions.length === 0)) {
     return (
       <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
         <GameLoadingScreen onVideoEnd={handleVideoEnd} />
