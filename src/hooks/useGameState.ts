@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { GameCategory, Question } from '@/types/game';
 
 type GameState = 'playing' | 'finished' | 'out-of-lives';
@@ -10,24 +10,51 @@ export const useGameState = () => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [coinsEarned, setCoinsEarned] = useState(0);
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
+  
+  // Prevent race conditions with state update guards
+  const isUpdatingRef = useRef(false);
 
   const incrementCorrectAnswers = useCallback(() => {
-    setCorrectAnswers(prev => prev + 1);
+    if (isUpdatingRef.current) return;
+    isUpdatingRef.current = true;
+    setCorrectAnswers(prev => {
+      const newValue = prev + 1;
+      isUpdatingRef.current = false;
+      return newValue;
+    });
   }, []);
 
   const addResponseTime = useCallback((time: number) => {
+    if (time < 0 || time > 60) {
+      console.warn('[useGameState] Invalid response time:', time);
+      return;
+    }
     setResponseTimes(prev => [...prev, time]);
   }, []);
 
   const addCoins = useCallback((amount: number) => {
-    setCoinsEarned(prev => prev + amount);
+    if (amount < 0 || amount > 10000) {
+      console.warn('[useGameState] Invalid coin amount:', amount);
+      return;
+    }
+    setCoinsEarned(prev => {
+      const newValue = prev + amount;
+      console.log(`[useGameState] Coins earned updated: ${prev} + ${amount} = ${newValue}`);
+      return newValue;
+    });
   }, []);
 
   const nextQuestion = useCallback(() => {
-    setCurrentQuestionIndex(prev => prev + 1);
+    setCurrentQuestionIndex(prev => {
+      const newIndex = prev + 1;
+      console.log(`[useGameState] Next question: ${prev} -> ${newIndex}`);
+      return newIndex;
+    });
   }, []);
 
   const resetGameState = useCallback(() => {
+    console.log('[useGameState] Resetting game state');
+    isUpdatingRef.current = false;
     setGameState('playing');
     setCurrentQuestionIndex(0);
     setCorrectAnswers(0);

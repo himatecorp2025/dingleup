@@ -73,8 +73,21 @@ serve(async (req) => {
       );
     }
 
-    // Select 15 random questions
-    const shuffled = questions.sort(() => 0.5 - Math.random());
+    // Cryptographically secure shuffle using Fisher-Yates
+    const shuffleArray = <T,>(array: T[]): T[] => {
+      const shuffled = [...array];
+      const randomBytes = new Uint32Array(shuffled.length);
+      crypto.getRandomValues(randomBytes);
+      
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = randomBytes[i] % (i + 1);
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    };
+
+    // Select 15 random questions using cryptographic shuffle
+    const shuffled = shuffleArray(questions);
     const selectedQuestions = shuffled.slice(0, 15).map((q: any) => ({
       id: q.id,
       question: q.question,
@@ -83,7 +96,34 @@ serve(async (req) => {
       difficulty: 'medium'
     }));
 
-    // Create game session with encrypted answers
+    // Idempotency: check for recent active session (< 5 min old)
+    const { data: recentSession } = await supabaseClient
+      .from('game_sessions')
+      .select('session_id, questions, started_at')
+      .eq('user_id', user.id)
+      .gte('started_at', new Date(Date.now() - 5 * 60 * 1000).toISOString())
+      .order('started_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    // If recent session exists (< 5 min), return it instead of creating duplicate
+    if (recentSession) {
+      console.log(`[start-game-session] Returning existing recent session for user ${user.id}`);
+      return new Response(
+        JSON.stringify({
+          sessionId: recentSession.session_id,
+          questions: selectedQuestions.map(q => ({
+            id: q.id,
+            question: q.question,
+            answers: q.answers,
+            difficulty: q.difficulty
+          }))
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Create new game session with encrypted answers
     const sessionId = crypto.randomUUID();
     const sessionData = {
       user_id: user.id,
@@ -107,11 +147,14 @@ serve(async (req) => {
       .insert(sessionData);
 
     if (insertError) {
+      console.error('[start-game-session] Insert error:', insertError);
       return new Response(
         JSON.stringify({ error: 'Failed to create game session' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    console.log(`[start-game-session] Created new session ${sessionId} for user ${user.id}`);
 
     // Return questions with Answer objects - preserve correct flags for frontend game logic
     const clientQuestions = selectedQuestions.map(q => ({

@@ -105,8 +105,38 @@ Deno.serve(async (req) => {
     }
     const coinsEarned = totalCoinsEarned;
 
-    // Insert game result using ADMIN client (bypasses RLS)
-    const { error: insertError } = await supabaseAdmin
+    // Idempotency check: prevent duplicate game result insertion
+    const idempotencyKey = `game_complete:${user.id}:${Date.now()}`;
+    
+    // Check if game was already completed recently (within last 10 seconds) with same stats
+    const { data: recentCompletion } = await supabaseAdmin
+      .from('game_results')
+      .select('id, completed_at')
+      .eq('user_id', user.id)
+      .eq('correct_answers', body.correctAnswers)
+      .eq('total_questions', body.totalQuestions)
+      .gte('completed_at', new Date(Date.now() - 10000).toISOString())
+      .order('completed_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (recentCompletion) {
+      console.log(`[complete-game] Duplicate completion detected for user ${user.id}, returning cached result`);
+      
+      // Return success without re-inserting
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          coinsEarned,
+          message: 'Játék sikeresen befejezve!',
+          cached: true
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Insert game result using ADMIN client (bypasses RLS) - TRANSACTION START
+    const { data: gameResult, error: insertError } = await supabaseAdmin
       .from('game_results')
       .insert({
         user_id: user.id,
@@ -117,56 +147,77 @@ Deno.serve(async (req) => {
         average_response_time: body.averageResponseTime,
         completed: true,
         completed_at: new Date().toISOString()
-      });
+      })
+      .select('id')
+      .single();
 
     if (insertError) {
-      throw insertError;
+      console.error('[complete-game] Insert game result error:', insertError);
+      throw new Error('Failed to save game result');
     }
+
+    console.log(`[complete-game] Game result ${gameResult.id} saved for user ${user.id}`);
 
     // MEGJEGYZÉS: A jutalmak már jóvá lettek írva minden helyes válasz után
     // a credit-gameplay-reward edge function által, ezért itt NEM írunk jóvá újra
 
     // Get user profile for leaderboard display
-    const { data: userProfile } = await supabaseAdmin
+    const { data: userProfile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('username, avatar_url')
       .eq('id', user.id)
       .single();
 
-    // Update weekly_rankings INSTANTLY via RPC (aggregated "mixed" category)
-    const { error: weeklyRankError } = await supabaseAdmin.rpc('update_weekly_ranking_for_user', {
-      p_user_id: user.id,
-      p_correct_answers: body.correctAnswers,
-      p_average_response_time: body.averageResponseTime
-    });
+    if (profileError) {
+      console.error('[complete-game] Profile fetch error:', profileError);
+      // Not critical, use default username
+    }
 
-    if (weeklyRankError) {
-      // Ranking update not critical, continue
+    // Update weekly_rankings INSTANTLY via RPC (aggregated "mixed" category)
+    try {
+      const { error: weeklyRankError } = await supabaseAdmin.rpc('update_weekly_ranking_for_user', {
+        p_user_id: user.id,
+        p_correct_answers: body.correctAnswers,
+        p_average_response_time: body.averageResponseTime
+      });
+
+      if (weeklyRankError) {
+        console.error('[complete-game] Weekly ranking update error:', weeklyRankError);
+        // Not critical, continue
+      }
+    } catch (rankErr) {
+      console.error('[complete-game] Weekly ranking RPC exception:', rankErr);
     }
 
     // Update global_leaderboard using ADMIN client (AGGREGATE LIFETIME TOTAL)
-    const { data: existingGlobal } = await supabaseAdmin
-      .from('global_leaderboard')
-      .select('total_correct_answers, username')
-      .eq('user_id', user.id)
-      .maybeSingle();
+    try {
+      const { data: existingGlobal } = await supabaseAdmin
+        .from('global_leaderboard')
+        .select('total_correct_answers, username')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-    const newGlobalTotal = (existingGlobal?.total_correct_answers || 0) + body.correctAnswers;
+      const newGlobalTotal = (existingGlobal?.total_correct_answers || 0) + body.correctAnswers;
 
-    const { error: leaderboardError } = await supabaseAdmin
-      .from('global_leaderboard')
-      .upsert({
-        user_id: user.id,
-        username: userProfile?.username || existingGlobal?.username || 'Player',
-        total_correct_answers: newGlobalTotal,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_id',
-        ignoreDuplicates: false
-      });
+      const { error: leaderboardError } = await supabaseAdmin
+        .from('global_leaderboard')
+        .upsert({
+          user_id: user.id,
+          username: userProfile?.username || existingGlobal?.username || 'Player',
+          total_correct_answers: newGlobalTotal,
+          avatar_url: userProfile?.avatar_url || null,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id',
+          ignoreDuplicates: false
+        });
 
-    if (leaderboardError) {
-      // Leaderboard update not critical, continue
+      if (leaderboardError) {
+        console.error('[complete-game] Global leaderboard update error:', leaderboardError);
+        // Not critical, continue
+      }
+    } catch (globalErr) {
+      console.error('[complete-game] Global leaderboard exception:', globalErr);
     }
 
     return new Response(
