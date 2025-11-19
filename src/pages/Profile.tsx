@@ -263,27 +263,23 @@ const Profile = () => {
     });
   }, [navigate]);
 
-  // Fetch weekly correct answers
-  const fetchWeeklyCorrectAnswers = async () => {
+  // Fetch daily correct answers
+  const fetchDailyCorrectAnswers = async () => {
     if (!userId) return;
 
+    // Calculate current day (YYYY-MM-DD UTC)
     const now = new Date();
-    const dayOfWeek = now.getUTCDay();
-    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    const monday = new Date(now);
-    monday.setUTCDate(now.getUTCDate() - diff);
-    monday.setUTCHours(0, 0, 0, 0);
-    const weekStart = monday.toISOString().split('T')[0];
+    const currentDay = now.toISOString().split('T')[0];
 
     const { data, error } = await supabase
-      .from('weekly_rankings')
+      .from('daily_rankings' as any)
       .select('total_correct_answers')
       .eq('user_id', userId)
-      .eq('week_start', weekStart);
+      .eq('day_date', currentDay);
 
     if (!error && data) {
-      // Sum all categories for this user in current week
-      const total = data.reduce((sum, row) => sum + (row.total_correct_answers || 0), 0);
+      // Sum all categories for this user in current day
+      const total = data.reduce((sum: number, row: any) => sum + (row.total_correct_answers || 0), 0);
       setWeeklyCorrectAnswers(total);
     } else {
       setWeeklyCorrectAnswers(0);
@@ -292,21 +288,21 @@ const Profile = () => {
 
   useEffect(() => {
     if (userId) {
-      fetchWeeklyCorrectAnswers();
+      fetchDailyCorrectAnswers();
 
-      // Real-time subscription for weekly_rankings updates
+      // Real-time subscription for daily_rankings updates
       const channel = supabase
-        .channel('profile-weekly-rankings')
+        .channel('profile-daily-rankings')
         .on(
           'postgres_changes',
           {
             event: '*',
             schema: 'public',
-            table: 'weekly_rankings',
+            table: 'daily_rankings',
             filter: `user_id=eq.${userId}`
           },
           () => {
-            fetchWeeklyCorrectAnswers();
+            fetchDailyCorrectAnswers();
           }
         )
         .subscribe();
@@ -722,7 +718,7 @@ const Profile = () => {
             {/* Content */}
             <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <TrophyIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Aktuális Heti Helyes válaszok száma:</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Aktuális Napi Helyes válaszok száma:</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{weeklyCorrectAnswers}</p>
             </div>
           </div>
