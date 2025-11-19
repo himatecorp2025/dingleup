@@ -46,13 +46,13 @@ export const ExitGameDialog = ({
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-dark via-primary to-primary-darker border-2 border-primary-glow/50 shadow-lg shadow-primary/30" aria-hidden />
             
             {/* MIDDLE FRAME */}
-            <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-primary via-primary-glow to-primary-dark" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-primary via-primary-glow to-primary-dark" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-primary-glow/40 via-primary/40 to-primary-dark/40" style={{ boxShadow: 'inset 0 10px 25px rgba(255,255,255,0.2), inset 0 -10px 25px rgba(0,0,0,0.5)' }} aria-hidden />
+            <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-primary-glow/40 via-primary/40 to-primary-dark/40" style={{ boxShadow: 'inset 0 5px 12px rgba(255,255,255,0.1), inset 0 -5px 12px rgba(0,0,0,0.25)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
-            <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 70% at 30% 20%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 65%)' }} aria-hidden />
+            <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 70% at 30% 20%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 35%, transparent 65%)' }} aria-hidden />
             
             {/* SVG Content */}
             <div className="absolute inset-[5px] flex items-center justify-center rounded-full overflow-hidden">
@@ -98,7 +98,7 @@ export const ExitGameDialog = ({
           {/* Title - centered with enhanced readability */}
           <div className="relative px-4 py-3 sm:py-4 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-500 delay-100">
             {/* Dark semi-transparent background for better readability */}
-            <div className="absolute inset-0 bg-black/60 rounded-2xl backdrop-blur-sm border-2 border-white/20" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 2px 8px rgba(255,255,255,0.1)' }} aria-hidden />
+            <div className="absolute inset-0 bg-black/60 rounded-2xl backdrop-blur-sm border-2 border-white/20" style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 4px rgba(255,255,255,0.05)' }} aria-hidden />
             
             <h2 className="relative z-10 text-xl sm:text-2xl md:text-3xl font-black text-center text-white" style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.9), 2px 2px 4px rgba(0,0,0,1), -2px -2px 4px rgba(0,0,0,1), 2px -2px 4px rgba(0,0,0,1), -2px 2px 4px rgba(0,0,0,1)' }}>
               Biztosan kilépsz?
@@ -129,10 +129,10 @@ export const ExitGameDialog = ({
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-destructive via-destructive to-destructive border-2 border-destructive/50 shadow-lg shadow-destructive/30" aria-hidden />
               
               {/* MIDDLE FRAME */}
-              <div className="absolute inset-[3px] rounded-2xl bg-gradient-to-b from-destructive via-destructive to-destructive" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              <div className="absolute inset-[3px] rounded-2xl bg-gradient-to-b from-destructive via-destructive to-destructive" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
               
               {/* INNER LAYER */}
-              <div className="absolute inset-[5px] rounded-2xl bg-gradient-to-b from-destructive/40 via-destructive/40 to-destructive/40" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+              <div className="absolute inset-[5px] rounded-2xl bg-gradient-to-b from-destructive/40 via-destructive/40 to-destructive/40" style={{ boxShadow: 'inset 0 4px 10px rgba(255,255,255,0.075), inset 0 -4px 10px rgba(0,0,0,0.2)' }} aria-hidden />
               
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />

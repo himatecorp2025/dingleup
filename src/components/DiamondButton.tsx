@@ -144,7 +144,7 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
         className={`absolute inset-[3px] bg-gradient-to-b ${colors.gradientMiddle}`}
         style={{
           clipPath: hexPath,
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
+          boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.15)',
         }}
         aria-hidden
       />
@@ -158,7 +158,7 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
           right: '5px',
           bottom: '5px',
           clipPath: hexInnerPath,
-          boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
+          boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.15)',
         }}
         aria-hidden
       />
@@ -172,7 +172,7 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
           right: '5px',
           bottom: '5px',
           clipPath: hexInnerPath,
-          background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
+          background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)',
         }}
         aria-hidden
       />
@@ -186,7 +186,7 @@ export const DiamondButton: React.FC<DiamondButtonProps> = ({
           right: '5px',
           bottom: '5px',
           clipPath: hexInnerPath,
-          boxShadow: 'inset 0 0 10px rgba(0,0,0,0.25)',
+          boxShadow: 'inset 0 0 5px rgba(0,0,0,0.125)',
         }}
         aria-hidden
       />
