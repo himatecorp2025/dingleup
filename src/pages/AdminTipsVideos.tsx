@@ -242,7 +242,7 @@ const AdminTipsVideos = () => {
   };
 
   return (
-    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a1a] via-[#0f0f2a] to-[#0a0a1a] text-white p-6">
+    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker text-foreground p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -250,7 +250,7 @@ const AdminTipsVideos = () => {
             <Button
               onClick={() => navigate('/admin')}
               variant="outline"
-              className="border-white/30 text-white hover:bg-white/10"
+              className="border-foreground/30 text-foreground hover:bg-foreground/10"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Vissza
@@ -260,55 +260,55 @@ const AdminTipsVideos = () => {
         </div>
 
         {/* Upload Form */}
-        <Card className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-purple-500/30">
+        <Card className="bg-gradient-to-br from-primary-dark/90 to-primary-darker/90 border-2 border-primary/30">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
+            <CardTitle className="text-foreground flex items-center gap-2">
               <Upload className="w-5 h-5" />
               Új Videó Feltöltése
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="title" className="text-white">Cím *</Label>
+              <Label htmlFor="title" className="text-foreground">Cím *</Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Pl.: Hogyan nyerj minden játékban"
-                className="bg-black/40 border-white/30 text-white"
+                className="bg-background/40 border-foreground/30 text-foreground"
               />
             </div>
 
             <div>
-              <Label htmlFor="description" className="text-white">Leírás (opcionális)</Label>
+              <Label htmlFor="description" className="text-foreground">Leírás (opcionális)</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Rövid leírás a videóról..."
-                className="bg-black/40 border-white/30 text-white"
+                className="bg-background/40 border-foreground/30 text-foreground"
               />
             </div>
 
             <div>
-              <Label htmlFor="thumbnail" className="text-white">Borítókép *</Label>
+              <Label htmlFor="thumbnail" className="text-foreground">Borítókép *</Label>
               <Input
                 id="thumbnail"
                 type="file"
                 accept="image/*"
                 onChange={(e) => setThumbFile(e.target.files?.[0] || null)}
-                className="bg-black/40 border-white/30 text-white"
+                className="bg-background/40 border-foreground/30 text-foreground"
               />
             </div>
 
             <div>
-              <Label htmlFor="video" className="text-white">Videó fájl *</Label>
+              <Label htmlFor="video" className="text-foreground">Videó fájl *</Label>
               <Input
                 id="video"
                 type="file"
                 accept="video/*"
                 onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
-                className="bg-black/40 border-white/30 text-white"
+                className="bg-background/40 border-foreground/30 text-foreground"
               />
             </div>
 
@@ -318,7 +318,7 @@ const AdminTipsVideos = () => {
                 checked={isActive}
                 onCheckedChange={setIsActive}
               />
-              <Label htmlFor="active" className="text-white">
+              <Label htmlFor="active" className="text-foreground">
                 Publikálva (látható a felhasználóknak)
               </Label>
             </div>
@@ -326,7 +326,7 @@ const AdminTipsVideos = () => {
             <Button
               onClick={handleUpload}
               disabled={uploading || !title || !thumbFile || !videoFile}
-              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
+              className="w-full bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70"
             >
               {uploading ? 'Feltöltés...' : 'Feltöltés'}
             </Button>
@@ -334,15 +334,15 @@ const AdminTipsVideos = () => {
         </Card>
 
         {/* Videos List */}
-        <Card className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-purple-500/30">
+        <Card className="bg-gradient-to-br from-primary-dark/90 to-primary-darker/90 border-2 border-primary/30">
           <CardHeader>
-            <CardTitle className="text-white">Feltöltött Videók ({videos.length})</CardTitle>
+            <CardTitle className="text-foreground">Feltöltött Videók ({videos.length})</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-white/60">Betöltés...</p>
+              <p className="text-muted-foreground">Betöltés...</p>
             ) : videos.length === 0 ? (
-              <p className="text-white/60">Még nincsenek feltöltött videók</p>
+              <p className="text-muted-foreground">Még nincsenek feltöltött videók</p>
             ) : (
               <div className="space-y-4">
                 {videos.map((video, index) => (

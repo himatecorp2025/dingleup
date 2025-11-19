@@ -48,9 +48,9 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center p-4">
+    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-purple-500/50 rounded-2xl p-8 shadow-2xl">
+        <div className="bg-gradient-to-br from-primary-dark/90 to-primary-darker/90 border-2 border-primary/50 rounded-2xl p-8 shadow-2xl">
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <svg
@@ -71,40 +71,40 @@ const AdminLogin = () => {
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl font-black text-center text-white mb-2">
+          <h1 className="text-3xl font-black text-center text-foreground mb-2">
             Admin Belépés
           </h1>
-          <p className="text-center text-white/60 mb-8">
+          <p className="text-center text-muted-foreground mb-8">
             Csak adminisztrátorok számára
           </p>
 
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Email</label>
+              <label className="text-sm font-medium text-foreground/80">Email</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@dingleup.hu"
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                  className="pl-10 bg-foreground/10 border-foreground/20 text-foreground placeholder:text-muted-foreground"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Jelszó</label>
+              <label className="text-sm font-medium text-foreground/80">Jelszó</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                  className="pl-10 bg-foreground/10 border-foreground/20 text-foreground placeholder:text-muted-foreground"
                   required
                 />
               </div>
@@ -113,7 +113,7 @@ const AdminLogin = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-bold py-3 text-lg"
+              className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-bold py-3 text-lg"
             >
               {loading ? 'Betöltés...' : 'Belépés'}
             </Button>
