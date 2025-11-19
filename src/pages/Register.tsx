@@ -128,10 +128,13 @@ const Register = () => {
           description: "Üdvözlünk a DingleUP!-ban!",
         });
         
-        // Wait briefly for session to be established, then navigate to dashboard
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 500);
+        // Listen for auth state change and navigate when session is ready
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_IN' && session) {
+            subscription.unsubscribe();
+            navigate("/dashboard");
+          }
+        });
       }
   } catch (error) {
     if (error instanceof z.ZodError) {
