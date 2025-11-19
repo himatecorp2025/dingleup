@@ -152,55 +152,55 @@ const Profile = () => {
 
   // SVG Icons
   const HeartIcon = () => (
-    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(248,113,113,0.8)]" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_hsl(var(--destructive)/0.8)]" viewBox="0 0 24 24" fill="hsl(var(--foreground))" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="hsl(var(--destructive))" strokeWidth="1.5"/>
     </svg>
   );
 
   const CoinsIcon = () => (
-    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="8" fill="#ffffff" stroke="#eab308" strokeWidth="2.5"/>
-      <circle cx="12" cy="12" r="5.5" fill="none" stroke="#eab308" strokeWidth="2" opacity="0.6"/>
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_hsl(var(--accent)/0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="8" fill="hsl(var(--foreground))" stroke="hsl(var(--accent))" strokeWidth="2.5"/>
+      <circle cx="12" cy="12" r="5.5" fill="none" stroke="hsl(var(--accent))" strokeWidth="2" opacity="0.6"/>
     </svg>
   );
 
   const TrophyIcon = () => (
-    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(34,197,94,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" fill="#ffffff" stroke="#22c55e" strokeWidth="2.5"/>
-      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"/>
-      <path d="M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"/>
-      <rect x="9" y="16" width="6" height="4.5" rx="1" fill="#ffffff" stroke="#22c55e" strokeWidth="2.5"/>
-      <line x1="7" y1="21" x2="17" y2="21" stroke="#22c55e" strokeWidth="3" strokeLinecap="round"/>
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_hsl(var(--success)/0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" fill="hsl(var(--foreground))" stroke="hsl(var(--success))" strokeWidth="2.5"/>
+      <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6" stroke="hsl(var(--success))" strokeWidth="2.5" strokeLinecap="round"/>
+      <path d="M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="hsl(var(--success))" strokeWidth="2.5" strokeLinecap="round"/>
+      <rect x="9" y="16" width="6" height="4.5" rx="1" fill="hsl(var(--foreground))" stroke="hsl(var(--success))" strokeWidth="2.5"/>
+      <line x1="7" y1="21" x2="17" y2="21" stroke="hsl(var(--success))" strokeWidth="3" strokeLinecap="round"/>
     </svg>
   );
 
   const CalendarIcon = () => (
-    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(59,130,246,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="6" width="18" height="16" rx="2" fill="#ffffff" stroke="#3b82f6" strokeWidth="2.5"/>
-      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" strokeWidth="2.5"/>
-      <line x1="7" y1="3" x2="7" y2="8" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
-      <line x1="17" y1="3" x2="17" y2="8" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
-      <rect x="7" y="13" width="3" height="3" fill="#3b82f6" rx="1"/>
-      <rect x="11" y="13" width="3" height="3" fill="#3b82f6" rx="1"/>
-      <rect x="15" y="13" width="3" height="3" fill="#3b82f6" rx="1"/>
-      <rect x="7" y="17" width="3" height="3" fill="#3b82f6" rx="1"/>
-      <rect x="11" y="17" width="3" height="3" fill="#3b82f6" rx="1"/>
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_hsl(var(--primary)/0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="6" width="18" height="16" rx="2" fill="hsl(var(--foreground))" stroke="hsl(var(--primary))" strokeWidth="2.5"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="hsl(var(--primary))" strokeWidth="2.5"/>
+      <line x1="7" y1="3" x2="7" y2="8" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="8" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round"/>
+      <rect x="7" y="13" width="3" height="3" fill="hsl(var(--primary))" rx="1"/>
+      <rect x="11" y="13" width="3" height="3" fill="hsl(var(--primary))" rx="1"/>
+      <rect x="15" y="13" width="3" height="3" fill="hsl(var(--primary))" rx="1"/>
+      <rect x="7" y="17" width="3" height="3" fill="hsl(var(--primary))" rx="1"/>
+      <rect x="11" y="17" width="3" height="3" fill="hsl(var(--primary))" rx="1"/>
     </svg>
   );
 
   const ShareIcon = () => (
-    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(168,85,247,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="18" cy="5" r="3" fill="#ffffff" stroke="#a855f7" strokeWidth="2.5"/>
-      <circle cx="6" cy="12" r="3" fill="#ffffff" stroke="#a855f7" strokeWidth="2.5"/>
-      <circle cx="18" cy="19" r="3" fill="#ffffff" stroke="#a855f7" strokeWidth="2.5"/>
-      <line x1="8.5" y1="10.5" x2="15.5" y2="6.5" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round"/>
-      <line x1="8.5" y1="13.5" x2="15.5" y2="17.5" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round"/>
+    <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_hsl(var(--primary-glow)/0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="5" r="3" fill="hsl(var(--foreground))" stroke="hsl(var(--primary-glow))" strokeWidth="2.5"/>
+      <circle cx="6" cy="12" r="3" fill="hsl(var(--foreground))" stroke="hsl(var(--primary-glow))" strokeWidth="2.5"/>
+      <circle cx="18" cy="19" r="3" fill="hsl(var(--foreground))" stroke="hsl(var(--primary-glow))" strokeWidth="2.5"/>
+      <line x1="8.5" y1="10.5" x2="15.5" y2="6.5" stroke="hsl(var(--primary-glow))" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="8.5" y1="13.5" x2="15.5" y2="17.5" stroke="hsl(var(--primary-glow))" strokeWidth="2.5" strokeLinecap="round"/>
     </svg>
   );
 
   const ZapIcon = () => (
-    <svg className="w-5 h-5 sm:w-6 sm:h-6 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]" viewBox="0 0 24 24" fill="#facc15" xmlns="http://www.w3.org/2000/svg">
-      <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="#d97706" strokeWidth="2" strokeLinejoin="round"/>
+    <svg className="w-5 h-5 sm:w-6 sm:h-6 drop-shadow-[0_2px_8px_hsl(var(--accent)/0.8)]" viewBox="0 0 24 24" fill="hsl(var(--accent))" xmlns="http://www.w3.org/2000/svg">
+      <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="hsl(var(--accent)/0.8)" strokeWidth="2" strokeLinejoin="round"/>
     </svg>
   );
 
@@ -211,7 +211,7 @@ const Profile = () => {
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
-        className="fixed bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
+        className="fixed bg-gradient-to-b from-primary-darker via-primary-dark to-primary-darker"
         style={{
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',
@@ -249,14 +249,14 @@ const Profile = () => {
             <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
             
             {/* Icon */}
-            <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
+            <LogOut className="w-6 h-6 text-foreground relative z-10 -scale-x-100" />
           </button>
 
           {/* Avatar on the same line as back button */}
           <div className="relative" data-tutorial="profile-pic">
             <div 
-              className="w-16 h-16 sm:w-20 sm:h-20 aspect-square clip-hexagon bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center border-2 sm:border-4 border-yellow-400 gold-glow
-                shadow-[0_8px_24px_rgba(234,179,8,0.6),0_0_32px_rgba(234,179,8,0.4),inset_0_2px_0_rgba(255,255,255,0.3),inset_0_-4px_12px_rgba(0,0,0,0.3)]
+              className="w-16 h-16 sm:w-20 sm:h-20 aspect-square clip-hexagon bg-gradient-to-br from-primary to-primary flex items-center justify-center border-2 sm:border-4 border-accent gold-glow
+                shadow-[0_8px_24px_hsl(var(--accent)/0.6),0_0_32px_hsl(var(--accent)/0.4),inset_0_2px_0_rgba(255,255,255,0.3),inset_0_-4px_12px_rgba(0,0,0,0.3)]
                 before:absolute before:inset-0 before:clip-hexagon before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none
                 after:absolute after:inset-[2px] after:clip-hexagon after:bg-gradient-to-b after:from-transparent after:to-black/20 after:pointer-events-none
                 relative transform-gpu"
@@ -268,7 +268,7 @@ const Profile = () => {
                   className="w-full h-full object-cover clip-hexagon"
                 />
               ) : (
-                <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-lg">
+                <span className="text-2xl sm:text-3xl font-black text-foreground drop-shadow-lg">
                   {getInitials(profile.username)}
                 </span>
               )}
@@ -276,8 +276,8 @@ const Profile = () => {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="absolute bottom-0 right-0 bg-yellow-600 hover:bg-yellow-700 p-1.5 sm:p-2 rounded-full border-2 border-yellow-400 transition-all gold-glow
-                shadow-[0_4px_12px_rgba(234,179,8,0.6),0_0_24px_rgba(234,179,8,0.4),inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-2px_6px_rgba(0,0,0,0.3)]
+              className="absolute bottom-0 right-0 bg-accent hover:bg-accent/90 p-1.5 sm:p-2 rounded-full border-2 border-accent transition-all gold-glow
+                shadow-[0_4px_12px_hsl(var(--accent)/0.6),0_0_24px_hsl(var(--accent)/0.4),inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-2px_6px_rgba(0,0,0,0.3)]
                 before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none
                 after:absolute after:inset-[1px] after:rounded-full after:bg-gradient-to-b after:from-transparent after:to-black/20 after:pointer-events-none
                 hover:shadow-[0_6px_16px_rgba(234,179,8,0.7),0_0_32px_rgba(234,179,8,0.5)]
@@ -297,10 +297,10 @@ const Profile = () => {
 
         {/* User Info */}
         <div className="text-center mb-2">
-          <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 mb-1 flex items-center justify-center gap-2">
+          <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-accent via-foreground to-accent mb-1 flex items-center justify-center gap-2">
             {profile.username}
           </h1>
-          <p className="text-sm sm:text-base text-yellow-200/90">{profile.email}</p>
+          <p className="text-sm sm:text-base text-accent-light/90">{profile.email}</p>
         </div>
 
         {/* Stats Grid */}
@@ -311,13 +311,13 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-red-700 via-red-600 to-red-900 opacity-90 border-3 border-red-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-destructive/90 via-destructive to-destructive opacity-90 border-3 border-destructive/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
-            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-background/50 via-transparent to-background/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-destructive/90 via-destructive to-destructive" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
@@ -325,8 +325,8 @@ const Profile = () => {
             {/* Content */}
             <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <HeartIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Életek</p>
-              <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.lives}/{profile.max_lives}</p>
+              <p className="text-xs sm:text-sm text-foreground/90 mb-1 font-semibold drop-shadow-lg">Életek</p>
+              <p className="text-xl sm:text-2xl font-black text-foreground drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.lives}/{profile.max_lives}</p>
             </div>
           </div>
 
@@ -336,13 +336,13 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 opacity-90 border-3 border-yellow-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-accent/90 via-accent to-accent-dark opacity-90 border-3 border-accent/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
-            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-background/50 via-transparent to-background/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-accent via-accent/90 to-accent-dark" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />

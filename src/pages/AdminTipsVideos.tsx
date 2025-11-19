@@ -348,7 +348,7 @@ const AdminTipsVideos = () => {
                 {videos.map((video, index) => (
                   <div
                     key={video.id}
-                    className="flex items-center gap-4 p-4 bg-black/40 rounded-lg border border-white/10"
+                    className="flex items-center gap-4 p-4 bg-background/40 rounded-lg border border-foreground/10"
                   >
                     {/* Thumbnail */}
                     <img
@@ -359,14 +359,14 @@ const AdminTipsVideos = () => {
 
                     {/* Info */}
                     <div className="flex-1">
-                      <h3 className="text-white font-bold">{video.title}</h3>
+                      <h3 className="text-foreground font-bold">{video.title}</h3>
                       {video.description && (
-                        <p className="text-white/60 text-sm">{video.description}</p>
+                        <p className="text-muted-foreground text-sm">{video.description}</p>
                       )}
-                      <div className="flex items-center gap-4 text-xs text-white/40 mt-1">
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
                         <span>Időtartam: {formatDuration(video.duration_sec)}</span>
                         <span>Publikálva: {formatDate(video.published_at)}</span>
-                        <span className={video.is_active ? 'text-green-400' : 'text-red-400'}>
+                        <span className={video.is_active ? 'text-success' : 'text-destructive'}>
                           {video.is_active ? 'Aktív' : 'Inaktív'}
                         </span>
                       </div>
@@ -379,7 +379,7 @@ const AdminTipsVideos = () => {
                         variant="ghost"
                         onClick={() => handleMove(video, 'up')}
                         disabled={index === 0}
-                        className="text-white hover:bg-white/10"
+                        className="text-foreground hover:bg-foreground/10"
                       >
                         <MoveUp className="w-4 h-4" />
                       </Button>
@@ -388,7 +388,7 @@ const AdminTipsVideos = () => {
                         variant="ghost"
                         onClick={() => handleMove(video, 'down')}
                         disabled={index === videos.length - 1}
-                        className="text-white hover:bg-white/10"
+                        className="text-foreground hover:bg-foreground/10"
                       >
                         <MoveDown className="w-4 h-4" />
                       </Button>
@@ -396,7 +396,7 @@ const AdminTipsVideos = () => {
                         size="sm"
                         variant="ghost"
                         onClick={() => handleToggleActive(video)}
-                        className="text-white hover:bg-white/10"
+                        className="text-foreground hover:bg-foreground/10"
                       >
                         {video.is_active ? (
                           <EyeOff className="w-4 h-4" />
@@ -408,7 +408,7 @@ const AdminTipsVideos = () => {
                         size="sm"
                         variant="ghost"
                         onClick={() => handleDelete(video)}
-                        className="text-red-400 hover:bg-red-500/10"
+                        className="text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
