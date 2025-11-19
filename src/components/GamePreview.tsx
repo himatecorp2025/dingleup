@@ -50,6 +50,7 @@ const GamePreview = () => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [coinsEarned, setCoinsEarned] = useState(0);
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
+  const [gameCompleted, setGameCompleted] = useState(false);
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
 
   // Lifelines - GAME-LEVEL usage counters (not per-question)
@@ -396,6 +397,12 @@ const GamePreview = () => {
   }, [gameState, canSwipe, isAnimating, selectedAnswer, showExitDialog, touchStartY]);
 
   const handleSwipeUp = async () => {
+    // If game completed, restart new game
+    if (gameCompleted) {
+      await restartGameImmediately();
+      return;
+    }
+    
     // If error banner visible and user wants to continue
     if (errorBannerVisible && profile) {
       const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
@@ -439,18 +446,20 @@ const GamePreview = () => {
   const restartGameImmediately = async () => {
     if (!profile || isStartingGame) return;
     
-    // Show toast notification about restart FIRST
-    toast.error('Új játék indítása: -1 élet, +1 arany', {
-      duration: 2000,
-      style: {
-        background: 'hsl(var(--destructive))',
-        color: 'hsl(var(--destructive-foreground))',
-        border: '1px solid hsl(var(--destructive))',
-      }
-    });
-    
-    // Wait briefly so user sees the toast
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // Show toast notification about restart FIRST (only if NOT coming from completed game)
+    if (!gameCompleted) {
+      toast.error('Új játék indítása: -1 élet, +1 arany', {
+        duration: 2000,
+        style: {
+          background: 'hsl(var(--destructive))',
+          color: 'hsl(var(--destructive-foreground))',
+          border: '1px solid hsl(var(--destructive))',
+        }
+      });
+      
+      // Wait briefly so user sees the toast
+      await new Promise(resolve => setTimeout(resolve, 800));
+    }
     
     // Reset all game state without finishing
     setGameState('playing');
@@ -475,6 +484,7 @@ const GamePreview = () => {
     setErrorBannerVisible(false);
     setCanSwipe(true);
     setIsAnimating(false);
+    setGameCompleted(false);
     
     // Start new game immediately (will spend life and add 1 coin)
     await startGame();
@@ -640,9 +650,58 @@ const GamePreview = () => {
     setQuestionVisible(false);
     
     if (currentQuestionIndex >= questions.length - 1) {
+      // Game completed - show results toast and wait for swipe up to restart
       setIsAnimating(false);
       setCanSwipe(true);
       setQuestionVisible(true);
+      
+      // Calculate final results
+      const avgResponseTime = responseTimes.length > 0 
+        ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)
+        : '0.0';
+      
+      // Show beautiful results toast
+      toast.success(
+        <div className="flex flex-col gap-3 p-2">
+          <div className="text-xl font-black text-center mb-2">
+            🏆 JÁTÉK VÉGE! 🏆
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex flex-col items-center bg-white/10 rounded-lg p-3">
+              <div className="text-2xl mb-1">✅</div>
+              <div className="font-bold text-base">{correctAnswers}/15</div>
+              <div className="text-xs opacity-80">Helyes válasz</div>
+            </div>
+            <div className="flex flex-col items-center bg-white/10 rounded-lg p-3">
+              <div className="text-2xl mb-1">💰</div>
+              <div className="font-bold text-base">{coinsEarned}</div>
+              <div className="text-xs opacity-80">Aranyérme</div>
+            </div>
+          </div>
+          <div className="flex flex-col items-center bg-white/10 rounded-lg p-3 mt-1">
+            <div className="text-2xl mb-1">⚡</div>
+            <div className="font-bold text-base">{avgResponseTime}s</div>
+            <div className="text-xs opacity-80">Átlagos válaszidő</div>
+          </div>
+          <div className="text-center mt-2 text-base font-bold animate-pulse">
+            ⬆️ Görgess tovább új játékhoz! ⬆️
+          </div>
+        </div>,
+        {
+          duration: Infinity, // Never auto-close
+          style: {
+            background: 'linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success-glow)) 100%)',
+            color: 'white',
+            border: '2px solid rgba(255, 255, 255, 0.3)',
+            boxShadow: '0 10px 40px rgba(0, 255, 135, 0.4)',
+            maxWidth: '90vw',
+            width: '400px',
+          }
+        }
+      );
+      
+      // Mark game as completed and save results to backend
+      setGameCompleted(true);
       await finishGame();
       return;
     }
@@ -715,7 +774,19 @@ const GamePreview = () => {
   };
 
   const resetGameState = () => {
-    // Exit to dashboard instead of category select
+    // If game was NOT completed (mid-game exit), coins are lost
+    // If game WAS completed, coins already credited by finishGame()
+    if (!gameCompleted) {
+      toast.error('Játék megszakítva - az összes eddig összegyűjtött arany elveszett!', {
+        duration: 3000,
+        style: {
+          background: 'hsl(var(--destructive))',
+          color: 'hsl(var(--destructive-foreground))',
+        }
+      });
+    }
+    
+    // Exit to dashboard
     navigate('/dashboard');
   };
 
@@ -1124,6 +1195,7 @@ const GamePreview = () => {
         <ExitGameDialog
           open={showExitDialog}
           onOpenChange={setShowExitDialog}
+          gameCompleted={gameCompleted}
           onConfirmExit={() => {
             resetGameState();
           }}

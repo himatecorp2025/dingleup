@@ -4,12 +4,14 @@ interface ExitGameDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirmExit: () => void;
+  gameCompleted?: boolean;
 }
 
 export const ExitGameDialog = ({
   open,
   onOpenChange,
-  onConfirmExit
+  onConfirmExit,
+  gameCompleted = false
 }: ExitGameDialogProps) => {
   // Prevent body scroll when dialog is open
   useEffect(() => {
@@ -110,9 +112,18 @@ export const ExitGameDialog = ({
             {/* Dark semi-transparent background */}
             <div className="absolute inset-0 bg-black/50 rounded-xl backdrop-blur-sm border border-white/10" aria-hidden />
             
-            <p className="relative z-10 text-center text-white text-xs sm:text-sm md:text-base font-semibold" style={{ textShadow: '0 0 10px rgba(0,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' }}>
-              Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.
-            </p>
+            <div className="relative z-10 text-center space-y-2">
+              {!gameCompleted && (
+                <p className="text-destructive text-base sm:text-lg font-black animate-pulse" style={{ textShadow: '0 0 10px rgba(255,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' }}>
+                  ⚠️ Az összes eddig összegyűjtött arany elvész! ⚠️
+                </p>
+              )}
+              <p className="text-white text-xs sm:text-sm md:text-base font-semibold" style={{ textShadow: '0 0 10px rgba(0,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' }}>
+                {gameCompleted 
+                  ? 'A játékod befejeződött, az aranyak jóváírva.'
+                  : 'Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.'}
+              </p>
+            </div>
           </div>
 
           {/* 3D Buttons */}
