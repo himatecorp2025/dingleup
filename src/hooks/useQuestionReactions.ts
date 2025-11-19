@@ -35,6 +35,11 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       return;
     }
 
+    // Reset state immediately when fetching new question
+    setLiked(false);
+    setDisliked(false);
+    setLikeCount(0);
+    setDislikeCount(0);
     setLoading(true);
     setError(null);
 
