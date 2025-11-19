@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, ThumbsDown, TrendingUp } from 'lucide-react';
+import { Heart, ThumbsDown, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface TopicPopularityRow {
   topicId: number;
@@ -105,19 +106,10 @@ const AdminPopularContent = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker p-6">
+    <AdminLayout>
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/admin/dashboard')}
-            className="text-foreground hover:bg-primary/20"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <h1 className="text-3xl font-black text-foreground">
+        <div className="mb-8">
+          <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
             Népszerű tartalmak
           </h1>
         </div>
@@ -219,7 +211,7 @@ const AdminPopularContent = () => {
           </div>
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

@@ -5,17 +5,17 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAdminGameProfileDetail } from '@/hooks/useAdminGameProfiles';
-import { ArrowLeft, Brain, TrendingUp, Heart, ThumbsDown, Clock } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Brain, TrendingUp, Heart, ThumbsDown, Clock } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 export default function AdminGameProfileDetail() {
-  const navigate = useNavigate();
   const { userId } = useParams<{ userId: string }>();
   const { loading, error, profile } = useAdminGameProfileDetail(userId);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <AdminLayout>
         <div className="container mx-auto max-w-7xl">
           <Skeleton className="h-10 w-64 mb-6" />
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -25,41 +25,31 @@ export default function AdminGameProfileDetail() {
             <Skeleton className="h-32" />
           </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <AdminLayout>
         <div className="container mx-auto max-w-7xl">
           <Alert variant="destructive">
             <AlertDescription>{error || 'Hiba történt az adatok betöltésekor'}</AlertDescription>
           </Alert>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <AdminLayout>
       <div className="container mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/admin/game-profiles')}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-              <Brain className="h-8 w-8 text-primary" />
-              {profile.username}
-            </h1>
-            <p className="text-muted-foreground">Részletes játékprofil adatok</p>
-          </div>
+        <div className="mb-8">
+          <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-3">
+            <Brain className="h-8 w-8 text-purple-400" />
+            {profile.username}
+          </h1>
+          <p className="text-white/60">Részletes játékprofil adatok</p>
         </div>
 
         {/* Status Alert */}
@@ -286,6 +276,6 @@ export default function AdminGameProfileDetail() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

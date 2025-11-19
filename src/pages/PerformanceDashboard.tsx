@@ -1,77 +1,77 @@
-import { ArrowLeft, RefreshCw } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePerformanceAnalytics } from "@/hooks/usePerformanceAnalytics";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 const PerformanceDashboard = () => {
-  const navigate = useNavigate();
   const { analytics, loading, error, refetch } = usePerformanceAnalytics();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker flex items-center justify-center p-8">
-        <p className="text-lg text-muted-foreground">Betöltés...</p>
-      </div>
+      <AdminLayout>
+        <div className="flex items-center justify-center py-20">
+          <p className="text-lg text-white/70">Betöltés...</p>
+        </div>
+      </AdminLayout>
     );
   }
 
   if (error || !analytics) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker flex items-center justify-center p-8">
-        <p className="text-lg text-destructive">{error || 'Hiba történt az adatok betöltése során'}</p>
-      </div>
+      <AdminLayout>
+        <div className="flex items-center justify-center py-20">
+          <p className="text-lg text-red-400">{error || 'Hiba történt az adatok betöltése során'}</p>
+        </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker p-4 sm:p-6 lg:p-8">
+    <AdminLayout>
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Button onClick={() => navigate('/admin/analytics')} variant="ghost" size="icon" className="text-foreground hover:bg-foreground/10">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">Teljesítmény Dashboard</h1>
-          </div>
-          <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading} className="text-foreground border-foreground/30 hover:bg-foreground/10 w-full sm:w-auto">
+          <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Teljesítmény Dashboard
+          </h1>
+          <Button onClick={() => refetch()} disabled={loading} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Frissítés
           </Button>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="bg-primary-dark/50 p-1 flex-wrap h-auto gap-1">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
+          <TabsList className="backdrop-blur-xl bg-white/5 border border-white/10 p-1 flex-wrap h-auto gap-1">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60">
               Áttekintés
             </TabsTrigger>
-            <TabsTrigger value="pages" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
+            <TabsTrigger value="pages" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60">
               Oldalak
             </TabsTrigger>
-            <TabsTrigger value="devices" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
+            <TabsTrigger value="devices" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60">
               Eszközök
             </TabsTrigger>
-            <TabsTrigger value="errors" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
+            <TabsTrigger value="errors" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60">
               Hibák
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              <Card className="bg-primary-dark/50 border border-primary/30">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="backdrop-blur-xl bg-white/5 border border-white/10">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-foreground text-base sm:text-lg">Átlagos Betöltési Idő</CardTitle>
+                  <CardTitle className="text-white text-lg">Átlagos Betöltési Idő</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl sm:text-4xl font-bold text-foreground">{analytics.overallMetrics.avgLoadTime}ms</p>
+                  <p className="text-4xl font-bold text-white">{analytics.overallMetrics.avgLoadTime}ms</p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-primary-dark/50 border border-primary/30">
+              <Card className="backdrop-blur-xl bg-white/5 border border-white/10">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-foreground text-base sm:text-lg">Átlagos TTFB</CardTitle>
+                  <CardTitle className="text-white text-lg">Átlagos TTFB</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl sm:text-4xl font-bold text-foreground">{analytics.overallMetrics.avgTTFB}ms</p>
@@ -198,7 +198,7 @@ const PerformanceDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 
