@@ -135,7 +135,7 @@ const WeeklyRewards = () => {
       </div>
       
       <p className="relative z-10 text-[10px] sm:text-[11px] text-yellow-300/90 font-semibold text-center mt-3 sm:mt-4 drop-shadow-lg px-2">
-        💰 A jóváírás automatikusan történik a hét lezárása után 💰
+        💰 A jóváírás automatikusan történik minden nap éjfélkor 💰
       </p>
     </div>
   );
