@@ -9,7 +9,8 @@ import {
   Heart,
   Menu,
   X,
-  LogOut
+  LogOut,
+  AlertTriangle
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -53,8 +54,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   };
 
   const menuItems = [
-    { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/admin/game-profiles', label: 'Játékprofilok', icon: Brain },
+    { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+    { path: '/admin/dashboard?tab=users', label: 'Összes felhasználó', icon: Users },
+    { path: '/admin/game-profiles', label: 'Játékos Profilozás', icon: Brain },
+    { path: '/admin/dashboard?tab=invitations', label: 'Meghívások', icon: Users, badge: 'invitations' },
+    { path: '/admin/dashboard?tab=reports', label: 'Jelentések', icon: AlertTriangle, badge: 'reports' },
     { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: Heart },
     { path: '/admin/analytics', label: 'Fejlett Analitika', icon: TrendingUp },
   ];
@@ -64,7 +68,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     navigate('/');
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path.includes('?')) {
+      const [basePath, query] = path.split('?');
+      return location.pathname === basePath && location.search.includes(query);
+    }
+    return location.pathname === path;
+  };
 
   return (
     <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#0f0a1f]">
@@ -105,34 +115,39 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               </h2>
             </div>
 
-            {/* Menu Items */}
-            <nav className="space-y-2">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.path}
-                    onClick={() => navigate(item.path)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                      isActive(item.path)
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-                        : 'text-white/70 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{item.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
+            <div className="mb-6">
+              <h3 className="text-white/50 text-xs font-bold mb-3 uppercase tracking-wider">Főmenü</h3>
+              
+              {/* Menu Items */}
+              <nav className="space-y-2">
+                {menuItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.path}
+                      onClick={() => navigate(item.path)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                        isActive(item.path)
+                          ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
+                          : 'text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
 
             {/* Logout Section */}
             <div className="mt-auto pt-6 border-t border-white/10">
+              <h3 className="text-white/50 text-xs font-bold mb-3 uppercase tracking-wider">Admin fiók szerkesztése</h3>
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-white/70 hover:bg-white/10 hover:text-white"
               >
-                <Users className="w-5 h-5" />
+                <LogOut className="w-5 h-5" />
                 <span className="font-medium">Kijelentkezés</span>
               </button>
             </div>

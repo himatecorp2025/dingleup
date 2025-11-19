@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon, Brain } from 'lucide-react';
 import { toast } from 'sonner';
@@ -14,8 +14,14 @@ type ReportsSubTab = 'development' | 'support';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<MenuTab>('dashboard');
+  
+  // Read tab from URL parameter
+  const searchParams = new URLSearchParams(location.search);
+  const tabParam = searchParams.get('tab') as MenuTab | null;
+  const [activeTab, setActiveTab] = useState<MenuTab>(tabParam || 'dashboard');
+  
   const [reportsSubTab, setReportsSubTab] = useState<ReportsSubTab>('development');
   const [userName, setUserName] = useState('Admin');
   const [allUsers, setAllUsers] = useState<any[]>([]);
@@ -37,6 +43,17 @@ const AdminDashboard = () => {
     report: any;
   } | null>(null);
   const [actionType, setActionType] = useState<'reviewing' | 'resolved' | 'dismissed'>('reviewing');
+
+  // Update activeTab when URL changes
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tabParam = searchParams.get('tab') as MenuTab | null;
+    if (tabParam) {
+      setActiveTab(tabParam);
+    } else {
+      setActiveTab('dashboard');
+    }
+  }, [location.search]);
 
   // Initial load
   useEffect(() => {
