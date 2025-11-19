@@ -11,11 +11,50 @@ serve(async (req) => {
   
   const corsHeaders = getCorsHeaders(origin);
 
-  // Verify cron secret for security
+  // Verify cron secret OR admin authentication OR test mode in development
   const cronSecret = req.headers.get('x-supabase-cron-secret');
   const expectedSecret = Deno.env.get('CRON_SECRET');
   
-  if (!cronSecret || cronSecret !== expectedSecret) {
+  const hasValidCronSecret = cronSecret && cronSecret === expectedSecret;
+  let isAdmin = false;
+  
+  // Parse URL for test mode
+  const url = new URL(req.url);
+  const testMode = url.searchParams.get('test_mode') === 'true';
+  const isDevelopment = (Deno.env.get('SUPABASE_URL') || '').includes('wdpxmwsxhckazwxufttk');
+
+  if (!hasValidCronSecret) {
+    // Check if request has valid JWT and user is admin
+    const authHeader = req.headers.get('authorization');
+    if (authHeader) {
+      const supabaseClient = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+        { 
+          global: { headers: { Authorization: authHeader } },
+          auth: { persistSession: false }
+        }
+      );
+      
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (user) {
+        // Check if user has admin role
+        const { data: roleData } = await supabaseClient
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'admin')
+          .single();
+        
+        isAdmin = !!roleData;
+      }
+    }
+  }
+
+  // Allow test mode only in development
+  const isAuthorized = hasValidCronSecret || isAdmin || (testMode && isDevelopment);
+
+  if (!isAuthorized) {
     return new Response(
       JSON.stringify({ error: 'Unauthorized' }), 
       { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -29,15 +68,28 @@ serve(async (req) => {
   );
 
   try {
-    // Calculate last week's start date (previous Monday)
-    const now = new Date();
-    const budapestTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Budapest' }));
-    const dayOfWeek = budapestTime.getDay();
-    const daysToSubtract = dayOfWeek === 0 ? 13 : dayOfWeek + 6; // Last Monday
-    const lastWeekStart = new Date(budapestTime);
-    lastWeekStart.setDate(budapestTime.getDate() - daysToSubtract);
-    lastWeekStart.setHours(0, 0, 0, 0);
-    const weekStart = lastWeekStart.toISOString().split('T')[0];
+    // Get week_start from query parameter or calculate last completed week
+    const url = new URL(req.url);
+    const weekStartParam = url.searchParams.get('week_start');
+    
+    let weekStart: string;
+    
+    if (weekStartParam) {
+      // Use provided week_start (for manual testing)
+      weekStart = weekStartParam;
+      console.log('[WEEKLY-WINNERS] Using provided week_start:', weekStart);
+    } else {
+      // Calculate last week's start date (previous Monday)
+      // This runs on Sunday night, so we need the Monday that started 6 days ago
+      const now = new Date();
+      const dayOfWeek = now.getUTCDay(); // 0=Sunday, 1=Monday, etc.
+      const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek + 6; // Last Monday
+      const lastWeekStart = new Date(now);
+      lastWeekStart.setUTCDate(now.getUTCDate() - daysToSubtract);
+      lastWeekStart.setUTCHours(0, 0, 0, 0);
+      weekStart = lastWeekStart.toISOString().split('T')[0];
+      console.log('[WEEKLY-WINNERS] Calculated last week start:', weekStart);
+    }
 
     console.log('[WEEKLY-WINNERS] Processing week:', weekStart);
 
