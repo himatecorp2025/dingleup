@@ -83,7 +83,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
       // Fetch from daily_leaderboard_snapshot for yesterday
       const { data, error } = await supabase
-        .from('daily_leaderboard_snapshot')
+        .from('daily_leaderboard_snapshot' as any)
         .select('user_id, username, total_correct_answers, avatar_url, rank')
         .eq('snapshot_date', yesterdayDate)
         .order('rank', { ascending: true })
@@ -96,7 +96,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         return;
       }
 
-      const rankedData = (data || []).map((entry) => ({
+      const rankedData = (data || []).map((entry: any) => ({
         user_id: entry.user_id,
         username: entry.username,
         total_correct_answers: entry.total_correct_answers || 0,
