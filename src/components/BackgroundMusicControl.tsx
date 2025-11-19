@@ -14,11 +14,11 @@ export const BackgroundMusicControl = () => {
       
       {/* Middle frame (bright highlight) */}
       <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-primary/15 via-primary-glow/10 to-primary-dark/15"
-        style={{ top: '3px', left: '3px', right: '3px', bottom: '3px', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
+        style={{ top: '3px', left: '3px', right: '3px', bottom: '3px', boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.075)' }} aria-hidden />
       
       {/* Inner crystal layer */}
       <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-background/60 via-background/70 to-background/80"
-        style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.4)' }} aria-hidden />
+        style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.05), inset 0 -4px 8px rgba(0,0,0,0.2)' }} aria-hidden />
       
       {/* Content */}
       <div className="relative z-10">

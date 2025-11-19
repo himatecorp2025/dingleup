@@ -214,13 +214,13 @@ const DailyGiftDialog = ({
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary-dark via-primary to-primary-dark opacity-95 border-4 border-primary/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
-              <div className="absolute inset-[6px] rounded-3xl bg-gradient-to-b from-background/50 via-transparent to-background/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
+              <div className="absolute inset-[6px] rounded-3xl bg-gradient-to-b from-background/50 via-transparent to-background/70" style={{ boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,0.15), inset 0 -1.5px 0 rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
               
               {/* INNER LAYER */}
-              <div className="absolute inset-[8px] rounded-3xl bg-gradient-to-br from-primary-dark/60 to-primary-dark/60" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
+              <div className="absolute inset-[8px] rounded-3xl bg-gradient-to-br from-primary-dark/60 to-primary-dark/60" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.25)', transform: 'translateZ(30px)' }} aria-hidden />
               
               {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute inset-[8px] rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
+              <div className="absolute inset-[8px] rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
               
               <div className="relative" style={{ transform: 'translateZ(60px)' }}>
               <HexShieldFrame showShine={true}>
@@ -242,7 +242,7 @@ const DailyGiftDialog = ({
                      style={{
                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
                        background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                       boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 6px 16px rgba(0,0,0,0.35)'
+                       boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
                      }} />
                 
                 <div className="absolute inset-[3px]"
@@ -260,7 +260,7 @@ const DailyGiftDialog = ({
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
                          background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 95% 75%) 0%, hsl(0 90% 65%) 30%, hsl(0 85% 55%) 60%, hsl(0 78% 48%) 100%)',
-                         boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.25), inset 0 -12px 24px rgba(0,0,0,0.4)'
+                         boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
                        }} />
                   
                   <div className="absolute inset-[6px] pointer-events-none"

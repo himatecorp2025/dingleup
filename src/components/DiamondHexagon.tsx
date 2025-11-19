@@ -132,7 +132,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         {/* MIDDLE FRAME (bright inner highlight) */}
         <div
           className={`absolute inset-[3px] clip-hexagon bg-gradient-to-b ${colors.gradientMiddle}`}
-          style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }}
+          style={{ boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.15)' }}
           aria-hidden
         />
 
@@ -144,7 +144,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
             left: '5px',
             right: '5px',
             bottom: '5px',
-            boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
+            boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.15)',
           }}
           aria-hidden
         />
@@ -157,7 +157,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
             left: '5px',
             right: '5px',
             bottom: '5px',
-            background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
+            background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)',
           }}
           aria-hidden
         />
@@ -171,7 +171,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
             left: '5px',
             right: '5px',
             bottom: '5px',
-            boxShadow: 'inset 0 0 10px rgba(0,0,0,0.25)',
+            boxShadow: 'inset 0 0 5px rgba(0,0,0,0.125)',
           }}
           aria-hidden
         />
