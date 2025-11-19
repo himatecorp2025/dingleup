@@ -100,6 +100,11 @@ const AdminDashboard = () => {
         schema: 'public',
         table: 'game_results'
       }, debouncedFetch)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'booster_purchases'
+      }, debouncedFetch)
       .subscribe();
 
     return () => {
