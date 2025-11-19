@@ -39,7 +39,10 @@ export const useAudioStore = create<AudioState>((set, get) => ({
     const savedVolume = localStorage.getItem('musicVolume');
     
     const newEnabled = savedEnabled ? JSON.parse(savedEnabled) : true;
-    const newVolume = savedVolume ? parseFloat(savedVolume) : 0.03; // Default 3%
+    // Always use 3% as default, even if there's a saved value that's higher
+    const parsedVolume = savedVolume ? parseFloat(savedVolume) : 0.03;
+    // If saved volume is higher than 3%, reset to 3%
+    const newVolume = parsedVolume > 0.03 ? 0.03 : parsedVolume;
     
     console.log('[AudioStore] Loading settings from localStorage:', { 
       savedEnabled, 
@@ -47,6 +50,11 @@ export const useAudioStore = create<AudioState>((set, get) => ({
       newEnabled, 
       newVolume 
     });
+    
+    // If we reset the volume, save it back to localStorage
+    if (newVolume === 0.03 && savedVolume !== '0.03') {
+      localStorage.setItem('musicVolume', '0.03');
+    }
     
     set({
       musicEnabled: newEnabled,
