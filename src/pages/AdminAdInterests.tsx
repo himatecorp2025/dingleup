@@ -12,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const AdminAdInterests = () => {
   const navigate = useNavigate();
-  const { loading, recalculating, recalculateInterests, fetchAllTopics, fetchTopicSummary, fetchUserInterests } = useAdInterests();
+  const { loading, recalculating, recalculateInterests, fetchAllTopics, fetchTopicSummary, fetchUserInterests, enableRealtime } = useAdInterests();
   
   const [allTopics, setAllTopics] = useState<TopicBasic[]>([]);
   const [topicSummary, setTopicSummary] = useState<AdInterestTopicSummary[]>([]);
@@ -31,6 +31,17 @@ const AdminAdInterests = () => {
       loadData();
     }
   }, [authChecked, currentPage, selectedTopicFilter]);
+
+  // Realtime updates
+  useEffect(() => {
+    if (!authChecked) return;
+
+    const cleanup = enableRealtime(() => {
+      loadData();
+    });
+
+    return cleanup;
+  }, [authChecked]);
 
   const checkAuth = async () => {
     try {

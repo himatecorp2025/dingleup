@@ -27,6 +27,7 @@ export interface AdUserInterestRow {
 export const useAdInterests = () => {
   const [loading, setLoading] = useState(false);
   const [recalculating, setRecalculating] = useState(false);
+  const [realtimeEnabled, setRealtimeEnabled] = useState(false);
 
   const recalculateInterests = async () => {
     setRecalculating(true);
@@ -115,6 +116,45 @@ export const useAdInterests = () => {
     }
   };
 
+  const enableRealtime = (onUpdate: () => void) => {
+    if (realtimeEnabled) return;
+
+    const likesChannel = supabase
+      .channel('admin-ad-interests-likes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'question_likes'
+      }, onUpdate)
+      .subscribe();
+
+    const dislikesChannel = supabase
+      .channel('admin-ad-interests-dislikes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'question_dislikes'
+      }, onUpdate)
+      .subscribe();
+
+    const analyticsChannel = supabase
+      .channel('admin-ad-interests-analytics')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_question_analytics'
+      }, onUpdate)
+      .subscribe();
+
+    setRealtimeEnabled(true);
+
+    return () => {
+      supabase.removeChannel(likesChannel);
+      supabase.removeChannel(dislikesChannel);
+      supabase.removeChannel(analyticsChannel);
+    };
+  };
+
   return {
     loading,
     recalculating,
@@ -122,5 +162,6 @@ export const useAdInterests = () => {
     fetchAllTopics,
     fetchTopicSummary,
     fetchUserInterests,
+    enableRealtime,
   };
 };

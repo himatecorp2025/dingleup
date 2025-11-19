@@ -44,6 +44,58 @@ export function useAdminGameProfiles() {
 
   useEffect(() => {
     fetchProfiles();
+
+    // Realtime subscriptions for automatic updates
+    const gameResultsChannel = supabase
+      .channel('admin-game-profiles-results')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_results'
+      }, () => {
+        fetchProfiles();
+      })
+      .subscribe();
+
+    const likesChannel = supabase
+      .channel('admin-game-profiles-likes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'question_likes'
+      }, () => {
+        fetchProfiles();
+      })
+      .subscribe();
+
+    const dislikesChannel = supabase
+      .channel('admin-game-profiles-dislikes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'question_dislikes'
+      }, () => {
+        fetchProfiles();
+      })
+      .subscribe();
+
+    const analyticsChannel = supabase
+      .channel('admin-game-profiles-analytics')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_question_analytics'
+      }, () => {
+        fetchProfiles();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(gameResultsChannel);
+      supabase.removeChannel(likesChannel);
+      supabase.removeChannel(dislikesChannel);
+      supabase.removeChannel(analyticsChannel);
+    };
   }, [fetchProfiles]);
 
   return {
