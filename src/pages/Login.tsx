@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff, Lock, User, Sparkles } from "lucide-react";
 import { z } from "zod";
+import { MusicControls } from '@/components/MusicControls';
 
 const loginSchema = z.object({
   username: z.string().trim().min(1, "A felhasználónév mező kötelező").max(100),
