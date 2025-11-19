@@ -32,8 +32,15 @@ export const useAdInterests = () => {
   const recalculateInterests = async () => {
     setRecalculating(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Nem vagy bejelentkezve');
+        return;
+      }
+      
       const { data, error } = await supabase.functions.invoke('admin-ad-interests-recalculate', {
         method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
       if (error) throw error;
@@ -52,8 +59,15 @@ export const useAdInterests = () => {
   const fetchAllTopics = async (): Promise<TopicBasic[]> => {
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setLoading(false);
+        return [];
+      }
+      
       const { data, error } = await supabase.functions.invoke('admin-ad-interests-all-topics', {
         method: 'GET',
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
       if (error) throw error;
@@ -71,8 +85,15 @@ export const useAdInterests = () => {
   const fetchTopicSummary = async (): Promise<AdInterestTopicSummary[]> => {
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setLoading(false);
+        return [];
+      }
+      
       const { data, error } = await supabase.functions.invoke('admin-ad-interests-summary', {
         method: 'GET',
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
       if (error) throw error;
@@ -90,6 +111,12 @@ export const useAdInterests = () => {
   const fetchUserInterests = async (page = 1, pageSize = 50, topicId?: string) => {
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setLoading(false);
+        return { users: [], total: 0, page: 1, pageSize: 50 };
+      }
+      
       const params = new URLSearchParams({
         page: page.toString(),
         pageSize: pageSize.toString(),
@@ -101,7 +128,10 @@ export const useAdInterests = () => {
 
       const { data, error } = await supabase.functions.invoke(
         `admin-ad-interests-users?${params.toString()}`,
-        { method: 'GET' }
+        { 
+          method: 'GET',
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        }
       );
 
       if (error) throw error;

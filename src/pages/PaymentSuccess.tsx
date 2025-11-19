@@ -21,8 +21,16 @@ const PaymentSuccess = () => {
 
     const verifyPayment = async () => {
       try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast.error('Nem vagy bejelentkezve');
+          navigate('/dashboard');
+          return;
+        }
+        
         const { data, error } = await supabase.functions.invoke('verify-premium-booster-payment', {
-          body: { sessionId }
+          body: { sessionId },
+          headers: { Authorization: `Bearer ${session.access_token}` }
         });
 
         if (error) throw error;

@@ -94,8 +94,18 @@ const AdminPopularContent = () => {
     setError(null);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError('No admin session');
+        setLoading(false);
+        return;
+      }
+      
       const { data: responseData, error: fetchError } = await supabase.functions.invoke(
-        'admin-topic-popularity'
+        'admin-topic-popularity',
+        {
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        }
       );
 
       if (fetchError) throw fetchError;

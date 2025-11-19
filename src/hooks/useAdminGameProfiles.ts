@@ -27,9 +27,19 @@ export function useAdminGameProfiles() {
       setLoading(true);
       setError(null);
 
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError('No session');
+        setLoading(false);
+        return;
+      }
+      
       const { data, error: invokeError } = await supabase.functions.invoke(
         'admin-game-profiles',
-        { method: 'GET' }
+        { 
+          method: 'GET',
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        }
       );
 
       if (invokeError) throw invokeError;
@@ -118,9 +128,19 @@ export function useAdminGameProfileDetail(userId: string | undefined) {
       setLoading(true);
       setError(null);
 
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError('No session');
+        setLoading(false);
+        return;
+      }
+      
       const { data, error: invokeError } = await supabase.functions.invoke(
         `admin-game-profile-detail?userId=${userId}`,
-        { method: 'GET' }
+        { 
+          method: 'GET',
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        }
       );
 
       if (invokeError) throw invokeError;

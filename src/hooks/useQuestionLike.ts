@@ -33,6 +33,7 @@ export const useQuestionLike = (questionId: string | null) => {
 
         const { data, error } = await supabase.functions.invoke('get-question-like-status', {
           body: { questionId },
+          headers: { Authorization: `Bearer ${session.access_token}` }
         });
 
         if (error) throw error;
@@ -93,8 +94,16 @@ export const useQuestionLike = (questionId: string | null) => {
     }));
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setStatus(previousStatus);
+        toast.error('Nem vagy bejelentkezve');
+        return false;
+      }
+      
       const { data, error } = await supabase.functions.invoke('toggle-question-like', {
         body: { questionId },
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
       if (error) throw error;

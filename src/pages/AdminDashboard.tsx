@@ -141,8 +141,17 @@ const AdminDashboard = () => {
     try {
       setIsRefreshing(true);
       
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Admin session expired');
+        setIsRefreshing(false);
+        return;
+      }
+      
       // Use admin edge function with service role to bypass RLS
-      const { data: adminData, error: adminError } = await supabase.functions.invoke('admin-all-data');
+      const { data: adminData, error: adminError } = await supabase.functions.invoke('admin-all-data', {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      });
       
       if (adminError) {
         console.error('[Admin] Admin data fetch error:', adminError);
@@ -660,7 +669,16 @@ const AdminDashboard = () => {
                   onClick={async () => {
                     try {
                       toast.info('Manuális barátság-szinkronizálás indítása...');
-                      const { data, error } = await supabase.functions.invoke('backfill-friendships');
+                      
+                      const { data: { session } } = await supabase.auth.getSession();
+                      if (!session) {
+                        toast.error('Admin session expired');
+                        return;
+                      }
+                      
+                      const { data, error } = await supabase.functions.invoke('backfill-friendships', {
+                        headers: { Authorization: `Bearer ${session.access_token}` }
+                      });
                       if (error) throw error;
                       toast.success(`Kész! ${data.successful} barátság létrehozva`);
                       await fetchData();

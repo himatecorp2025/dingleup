@@ -39,10 +39,18 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
     setError(null);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError('No session');
+        setLoading(false);
+        return;
+      }
+      
       const { data, error: fetchError } = await supabase.functions.invoke(
         'get-question-reaction-status',
         {
           body: { questionId },
+          headers: { Authorization: `Bearer ${session.access_token}` }
         }
       );
 
@@ -116,10 +124,16 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       setDislikeCount(newDislikeCount);
 
       // Call API
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No session');
+      }
+      
       const { data, error: toggleError } = await supabase.functions.invoke(
         'toggle-question-reaction',
         {
           body: { questionId, reactionType: 'like' },
+          headers: { Authorization: `Bearer ${session.access_token}` }
         }
       );
 
@@ -195,10 +209,16 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       setDislikeCount(newDislikeCount);
 
       // Call API
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No session');
+      }
+      
       const { data, error: toggleError } = await supabase.functions.invoke(
         'toggle-question-reaction',
         {
           body: { questionId, reactionType: 'dislike' },
+          headers: { Authorization: `Bearer ${session.access_token}` }
         }
       );
 

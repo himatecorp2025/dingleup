@@ -36,7 +36,16 @@ export const useRetentionAnalytics = () => {
       if (!initialLoadRef.current && !background) setLoading(true);
       if (!initialLoadRef.current) setError(null);
 
-      const { data, error } = await supabase.functions.invoke('admin-retention-analytics');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError('No session');
+        if (!initialLoadRef.current) setLoading(false);
+        return;
+      }
+      
+      const { data, error } = await supabase.functions.invoke('admin-retention-analytics', {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      });
       if (error) throw error;
 
       setAnalytics(data || null);

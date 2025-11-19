@@ -160,12 +160,21 @@ const GamePreview = () => {
       return;
     }
     
+    // Get session for edge function calls
+    const { data: { session: authSession } } = await supabase.auth.getSession();
+    if (!authSession) {
+      toast.error('Nem vagy bejelentkezve');
+      navigate('/login');
+      return;
+    }
+    
     // Run start reward and session in parallel
     const rewardPromise = (async () => {
       try {
         const startSourceId = `${Date.now()}-start`;
         await supabase.functions.invoke('credit-gameplay-reward', {
-          body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' }
+          body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' },
+          headers: { Authorization: `Bearer ${authSession.access_token}` }
         });
         setCoinsEarned(START_GAME_REWARD);
         await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
@@ -176,7 +185,9 @@ const GamePreview = () => {
 
     const questionsPromise = (async () => {
       try {
-        const { data, error } = await supabase.functions.invoke('start-game-session');
+        const { data, error } = await supabase.functions.invoke('start-game-session', {
+          headers: { Authorization: `Bearer ${authSession.access_token}` }
+        });
 
         if (error) throw error;
         
@@ -264,8 +275,12 @@ const GamePreview = () => {
     const verifyInGamePayment = async () => {
       if (paymentStatus === 'success' && sessionId && userId) {
         try {
+          const { data: { session: paymentSession } } = await supabase.auth.getSession();
+          if (!paymentSession) return;
+          
           const { data, error } = await supabase.functions.invoke('verify-payment', {
-            body: { sessionId }
+            body: { sessionId },
+            headers: { Authorization: `Bearer ${paymentSession.access_token}` }
           });
 
           if (error) throw error;
@@ -517,12 +532,18 @@ const GamePreview = () => {
     const reward = getCoinsForQuestion(currentQuestionIndex);
 
     try {
+      const { data: { session: rewardSession } } = await supabase.auth.getSession();
+      if (!rewardSession) {
+        toast.error('Munkamenet lejárt');
+        return;
+      }
+      
       // Use gameInstanceId to ensure unique sourceId per game, not session
       const sourceId = `${gameInstanceId}-q${currentQuestionIndex}`;
       const { data, error } = await supabase.functions.invoke('credit-gameplay-reward', {
         body: { amount: reward, sourceId, reason: 'correct_answer' },
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          Authorization: `Bearer ${rewardSession.access_token}`,
         },
       });
       if (error) throw error;
