@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { LogOut } from 'lucide-react';
 import { getWeekStartInUserTimezone } from '@/lib/utils';
 
-import WeeklyRewards from '@/components/WeeklyRewards';
+import DailyRewards from '@/components/DailyRewards';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import BottomNav from '@/components/BottomNav';
 
@@ -183,7 +183,7 @@ const Leaderboard = () => {
         </div>
 
         {/* Weekly Rewards Section */}
-        <WeeklyRewards />
+        <DailyRewards />
 
         {/* Leaderboard */}
         {loading ? (
