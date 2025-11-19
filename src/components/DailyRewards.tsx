@@ -59,29 +59,25 @@ const DailyRewards = () => {
           <div className="relative z-10 px-4 py-5">
             {/* Title */}
             <div className="text-center mb-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <svg className="w-6 h-6 text-[hsl(var(--dup-gold-400))] animate-pulse drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
+              <div className="flex items-center justify-center gap-2">
+                <svg className="w-6 h-6 text-[hsl(var(--dup-gold-300))] animate-pulse drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L15 8.5L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L9 8.5L12 2Z"/>
                 </svg>
                 <h2 
                   className="text-2xl font-black tracking-wider"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)), hsl(var(--dup-gold-600)))',
+                    background: 'linear-gradient(135deg, hsl(45 100% 70%), hsl(45 100% 60%), hsl(45 95% 55%))',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
-                    textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
-                    filter: 'drop-shadow(0 0 12px hsla(var(--dup-gold-400), 0.6))'
+                    filter: 'drop-shadow(0 0 16px hsla(45, 100%, 65%, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6))'
                   }}
                 >
                   A ZSENIKNEK
                 </h2>
-                <svg className="w-6 h-6 text-[hsl(var(--dup-gold-400))] animate-pulse drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="w-6 h-6 text-[hsl(var(--dup-gold-300))] animate-pulse drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L15 8.5L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L9 8.5L12 2Z"/>
                 </svg>
               </div>
-              <p className="text-xs text-[hsl(var(--dup-gold-300))] font-semibold drop-shadow-lg px-2">
-                Minden nap 23:55-kor lezárul a verseny! 5 perc szünet után éjfél 00:00-kor kihirdetjük a nyerteseket és újraindul a harc a jutalmakért!
-              </p>
             </div>
 
             {/* Rewards table */}
