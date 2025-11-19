@@ -94,28 +94,53 @@ const WeeklyRewards = () => {
         {rewards.map((reward, index) => (
           <div
             key={index}
-            className={`relative rounded-xl p-1.5 sm:p-2 backdrop-blur-sm transition-all hover:scale-105 overflow-hidden ${
+            className={`group relative rounded-xl p-1.5 sm:p-2 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:-translate-y-1 overflow-hidden cursor-pointer ${
               index < 3
-                ? 'bg-gradient-to-br from-success/95 to-success/80 border-2 sm:border-3 border-accent'
-                : 'bg-gradient-to-br from-success/90 to-success/70 border border-accent/60'
+                ? 'bg-gradient-to-br from-success/95 to-success/80 border-2 sm:border-3 border-accent hover:border-accent/80 hover:shadow-[0_0_25px_rgba(255,215,0,0.5)]'
+                : 'bg-gradient-to-br from-success/90 to-success/70 border border-accent/60 hover:border-accent hover:shadow-[0_0_20px_rgba(255,215,0,0.3)]'
             }`}
+            style={{ 
+              animationDelay: `${index * 0.05}s`
+            }}
           >
+            {/* Animated shimmer effect */}
+            <div 
+              className="absolute inset-0 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{ 
+                background: 'linear-gradient(110deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%)',
+                backgroundSize: '200% 100%',
+                backgroundPosition: '200% 0',
+              }} 
+              aria-hidden 
+            />
+            
             {/* 3D Box Effect for reward cards */}
             <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.15) 0%, transparent 60%)' }} aria-hidden />
             <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ boxShadow: index < 3 ? 'inset 0 2px 8px rgba(255,255,255,0.2), inset 0 -2px 8px rgba(0,0,0,0.3)' : 'inset 0 1px 4px rgba(255,255,255,0.15), inset 0 -1px 4px rgba(0,0,0,0.2)' }} aria-hidden />
 
+            {/* Pulsing glow for top 3 */}
+            {index < 3 && (
+              <div 
+                className="absolute inset-0 rounded-xl pointer-events-none animate-pulse"
+                style={{ 
+                  background: 'radial-gradient(circle at center, rgba(255,215,0,0.2) 0%, transparent 70%)',
+                }}
+                aria-hidden 
+              />
+            )}
+
             <div className="relative z-10">
             {index < 3 && (
-              <div className="absolute -top-0.5 -right-0.5">
-                <svg className="w-3 h-3 text-accent animate-pulse" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <div className="absolute -top-0.5 -right-0.5 animate-pulse">
+                <svg className="w-3 h-3 text-accent drop-shadow-[0_0_6px_rgba(255,215,0,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 2L15 8.5L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L9 8.5L12 2Z" stroke="currentColor" strokeWidth="2" fill="currentColor" strokeLinejoin="round"/>
                 </svg>
               </div>
             )}
             <div className="flex items-center justify-between mb-1">
-              <span className="text-accent font-black text-xs sm:text-sm drop-shadow-lg">{reward.place}</span>
+              <span className="text-accent font-black text-xs sm:text-sm drop-shadow-[0_2px_8px_rgba(255,215,0,0.6)] group-hover:scale-110 transition-transform duration-300">{reward.place}</span>
             </div>
-            <div className="flex items-center gap-1 text-xs mb-0.5">
+            <div className="flex items-center gap-1 text-xs mb-0.5 group-hover:scale-105 transition-transform duration-300">
               <svg className="w-3 h-3 text-accent drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
                 <circle cx="12" cy="12" r="9" fill="currentColor" stroke="hsl(var(--accent-dark))" strokeWidth="2"/>
                 <circle cx="12" cy="12" r="6" fill="none" stroke="hsl(var(--accent-dark))" strokeWidth="1.5" opacity="0.5"/>
@@ -123,8 +148,8 @@ const WeeklyRewards = () => {
               </svg>
               <span className="text-accent-foreground font-bold drop-shadow-lg">{reward.coins}</span>
             </div>
-            <div className="flex items-center gap-1 text-xs">
-              <svg className="w-3 h-3 text-destructive drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
+            <div className="flex items-center gap-1 text-xs group-hover:scale-105 transition-transform duration-300">
+              <svg className="w-3 h-3 text-destructive drop-shadow-lg animate-pulse" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="hsl(var(--destructive))" strokeWidth="1.5"/>
               </svg>
               <span className="text-accent-foreground font-bold drop-shadow-lg">{reward.lives}</span>
