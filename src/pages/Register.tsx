@@ -20,7 +20,7 @@ const registerSchema = z.object({
     const dayDiff = today.getDate() - birthDate.getDate();
     const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
     return actualAge >= 16;
-  }, "Legalább 16 évesnek kell lenned"),
+  }, "A játékban kizárólag 16. életévét betöltött személy vehet részt"),
   password: z.string().min(8, "A jelszónak legalább 8 karakter hosszúnak kell lennie")
     .regex(/[a-z]/, "A jelszónak tartalmaznia kell kisbetűt")
     .regex(/[A-Z]/, "A jelszónak tartalmaznia kell nagybetűt")
