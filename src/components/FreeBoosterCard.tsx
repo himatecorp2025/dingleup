@@ -7,11 +7,14 @@ import { useState } from "react";
 
 interface FreeBoosterCardProps {
   currentGold: number;
+  pendingSpeedTokensCount: number;
   onPurchaseSuccess: () => void;
+  onActivateSuccess: () => void;
 }
 
-export function FreeBoosterCard({ currentGold, onPurchaseSuccess }: FreeBoosterCardProps) {
+export function FreeBoosterCard({ currentGold, pendingSpeedTokensCount, onPurchaseSuccess, onActivateSuccess }: FreeBoosterCardProps) {
   const [purchasing, setPurchasing] = useState(false);
+  const [activating, setActivating] = useState(false);
 
   const handlePurchase = async () => {
     if (currentGold < 900) {
@@ -47,7 +50,35 @@ export function FreeBoosterCard({ currentGold, onPurchaseSuccess }: FreeBoosterC
     }
   };
 
+  const handleActivate = async () => {
+    setActivating(true);
+    try {
+      toast.loading('Speed Booster aktiválás...', { id: 'speed-activate' });
+      
+      const { data, error } = await supabase.functions.invoke('activate-speed-token');
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success(`Speed Booster aktiválva! ${data.activeSpeedToken?.durationMinutes} perc gyorsított életregenerálás.`, { 
+          id: 'speed-activate',
+          duration: 4000 
+        });
+        onActivateSuccess();
+      } else {
+        throw new Error(data?.error || 'Aktiválási hiba');
+      }
+    } catch (error) {
+      console.error('Speed token activation error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Hiba történt az aktiválás során';
+      toast.error(errorMsg, { id: 'speed-activate' });
+    } finally {
+      setActivating(false);
+    }
+  };
+
   const canAfford = currentGold >= 900;
+  const hasPendingTokens = pendingSpeedTokensCount > 0;
 
   return (
     <Card className="p-6 bg-gradient-to-br from-purple-900/40 to-indigo-900/40 border-2 border-yellow-500/30 backdrop-blur-sm">
@@ -80,17 +111,29 @@ export function FreeBoosterCard({ currentGold, onPurchaseSuccess }: FreeBoosterC
         </div>
 
         <div className="pt-2">
-          <Button
-            onClick={handlePurchase}
-            disabled={!canAfford || purchasing}
-            className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-bold disabled:opacity-50"
-          >
-            {!canAfford ? 'Nincs elég aranyad' : purchasing ? 'Vásárlás...' : 'Megveszem 900 aranyért'}
-          </Button>
-          {!canAfford && (
-            <p className="text-xs text-red-400 mt-2 text-center">
-              Még {900 - currentGold} arany szükséges a vásárláshoz
-            </p>
+          {hasPendingTokens ? (
+            <Button
+              onClick={handleActivate}
+              disabled={activating}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold"
+            >
+              {activating ? 'Aktiválás...' : `Aktiválom (${pendingSpeedTokensCount} token)`}
+            </Button>
+          ) : (
+            <>
+              <Button
+                onClick={handlePurchase}
+                disabled={!canAfford || purchasing}
+                className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-bold disabled:opacity-50"
+              >
+                {!canAfford ? 'Nincs elég aranyad' : purchasing ? 'Vásárlás...' : 'Megveszem 900 aranyért'}
+              </Button>
+              {!canAfford && (
+                <p className="text-xs text-red-400 mt-2 text-center">
+                  Még {900 - currentGold} arany szükséges a vásárláshoz
+                </p>
+              )}
+            </>
           )}
         </div>
       </div>

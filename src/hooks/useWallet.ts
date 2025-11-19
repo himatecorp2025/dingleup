@@ -9,6 +9,12 @@ interface WalletData {
   regenIntervalSec: number;
   regenMinutes: number;
   ledger: any[];
+  activeSpeedToken?: {
+    id: string;
+    expiresAt: string;
+    durationMinutes: number;
+    source: string;
+  } | null;
 }
 
 export const useWallet = (userId: string | undefined) => {
