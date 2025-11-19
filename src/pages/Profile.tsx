@@ -497,6 +497,11 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      
+      {/* Music Controls - Fixed top-left corner */}
+      <div className="fixed top-4 left-4 z-[9999] w-64 max-w-[calc(100vw-2rem)]">
+        <MusicControls />
+      </div>
 
       <BottomNav />
       <TutorialManager route="profile" />
