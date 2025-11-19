@@ -13,7 +13,6 @@ import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { BackgroundMusicControl } from '@/components/BackgroundMusicControl';
-import { FreeBoosterCard } from '@/components/FreeBoosterCard';
 
 // Available countries with their codes (all countries)
 const COUNTRIES = [
@@ -643,8 +642,8 @@ const Profile = () => {
           <p className="text-sm sm:text-base text-accent-light/90">{profile.email}</p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-2" data-tutorial="stats">
+        {/* Stats Grid - 2x3 unified layout */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6" data-tutorial="stats">
           {/* Lives - Deep 3D */}
           <div className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu" style={{ perspective: '1000px' }}>
             {/* BASE SHADOW */}
@@ -744,50 +743,93 @@ const Profile = () => {
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.daily_gift_streak} nap</p>
             </div>
           </div>
-        </div>
 
-        {/* 2x3 Grid: Invitation Code + Free Booster */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          {/* Invitation Code Card */}
+          {/* Invitation Code Card - Deep 3D */}
           <div 
             onClick={() => {
               navigator.clipboard.writeText(profile.invitation_code || '');
               toast.success('Meghívókód vágólapra másolva!');
             }}
             className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer transition-transform active:scale-95 transform-gpu hover:scale-105 hover:-translate-y-0.5"
+            style={{ perspective: '1000px' }}
           >
-            {/* Base shadow (3D depth) */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
-            {/* Outer frame */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-500/60
-              shadow-[0_0_20px_rgba(168,85,247,0.6),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-3 border-purple-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
-            {/* Middle frame (bright highlight) */}
-            <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800"
-              style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
-            {/* Inner crystal layer */}
-            <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+            {/* INNER LAYER */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
             
-            {/* Specular highlight */}
-            <div className="absolute rounded-xl sm:rounded-2xl pointer-events-none"
-              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
             
             {/* Content */}
-            <div className="relative z-10">
+            <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <ShareIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Meghívó kód (kattints a másoláshoz)</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Meghívó kód (kattints a másoláshoz)</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.invitation_code}</p>
             </div>
           </div>
 
-          {/* Free Booster Card */}
-          <FreeBoosterCard 
-            currentGold={walletData?.coinsCurrent || 0}
-            onPurchaseSuccess={refetchWallet}
-          />
+          {/* Free Booster Card - Deep 3D */}
+          <div 
+            className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center transform-gpu"
+            style={{ perspective: '1000px' }}
+          >
+            {/* BASE SHADOW */}
+            <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
+            
+            {/* OUTER FRAME */}
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 opacity-90 border-3 border-yellow-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            
+            {/* MIDDLE FRAME */}
+            <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
+            
+            {/* INNER LAYER */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-yellow-500 via-yellow-600 to-yellow-700" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+            
+            {/* SPECULAR HIGHLIGHT */}
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
+            
+            {/* Content */}
+            <div className="relative z-10 space-y-2" style={{ transform: 'translateZ(40px)' }}>
+              <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(234,179,8,0.8)]" viewBox="0 0 24 24" fill="hsl(var(--foreground))" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="hsl(47, 96%, 53%)" strokeWidth="2" strokeLinejoin="round" />
+              </svg>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Free Booster</p>
+              <p className="text-[10px] sm:text-xs text-white/70 leading-tight">+300 arany<br />+15 élet<br />4× 30' Speed</p>
+              <button
+                onClick={async () => {
+                  if ((walletData?.coinsCurrent || 0) < 900) {
+                    toast.error('Nincs elég aranyad');
+                    return;
+                  }
+                  try {
+                    toast.loading('Vásárlás...', { id: 'free-booster' });
+                    const { data, error } = await supabase.functions.invoke('purchase-booster', {
+                      body: { boosterCode: 'FREE' }
+                    });
+                    if (error) throw error;
+                    if (data?.success) {
+                      toast.success(`Sikeres vásárlás! +${data.grantedRewards?.gold} arany, +${data.grantedRewards?.lives} élet`, { id: 'free-booster' });
+                      refetchWallet();
+                    }
+                  } catch (e) {
+                    toast.error('Hiba történt', { id: 'free-booster' });
+                  }
+                }}
+                disabled={(walletData?.coinsCurrent || 0) < 900}
+                className="w-full mt-2 px-2 py-1.5 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+              >
+                {(walletData?.coinsCurrent || 0) < 900 ? 'Nincs elég aranyad' : '900 arany'}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Account Info */}
