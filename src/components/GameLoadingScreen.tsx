@@ -8,9 +8,12 @@ interface GameLoadingScreenProps {
 export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoEnded, setVideoEnded] = useState(false);
+  const hasStarted = useRef(false);
 
   useEffect(() => {
-    if (videoRef.current) {
+    // Only start video once - prevent re-initialization on re-renders
+    if (!hasStarted.current && videoRef.current) {
+      hasStarted.current = true;
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch((err) => {
         // If autoplay fails, end after 2 seconds
@@ -19,7 +22,7 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
         }, 2000);
       });
     }
-  }, [onVideoEnd]);
+  }, []); // Empty deps - only run once on mount
 
   const handleVideoEnd = () => {
     setVideoEnded(true);
