@@ -50,8 +50,8 @@ export function useBoosterState(userId: string | undefined) {
     fetchBoosterState();
 
     // Set up real-time subscription for state changes
-    const settingsChannel = supabase
-      .channel('booster-settings-changes')
+    const channel = supabase
+      .channel(`booster-state-${userId}`)
       .on(
         'postgres_changes',
         {
@@ -89,7 +89,7 @@ export function useBoosterState(userId: string | undefined) {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(settingsChannel);
+      supabase.removeChannel(channel);
     };
   }, [userId]);
 
