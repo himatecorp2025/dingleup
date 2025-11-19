@@ -59,6 +59,13 @@ export const LeaderboardCarousel = () => {
 
   const fetchFromWeeklyRankings = async (): Promise<LeaderboardEntry[]> => {
     try {
+      // Ensure session is valid before calling edge function
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        console.error('[LeaderboardCarousel] No active session');
+        return [];
+      }
+
       // Call Edge Function for country-specific leaderboard
       const { data, error } = await supabase.functions.invoke('get-weekly-leaderboard-by-country', {
         method: 'POST'
