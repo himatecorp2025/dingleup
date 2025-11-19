@@ -129,8 +129,9 @@ const GamePreview = () => {
   const startGame = async () => {
     if (!profile || isStartingGame) return;
     
+    // CRITICAL: Set loading state FIRST - triggers video to appear IMMEDIATELY
     setIsStartingGame(true);
-    setVideoEnded(false); // Reset video state - video must play every time
+    setVideoEnded(false);
 
     try {
       await supabase.rpc('reset_game_helps');
@@ -146,8 +147,9 @@ const GamePreview = () => {
       return;
     }
     
-    await refetchWallet();
-    await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
+    // Run wallet/profile updates in parallel while video plays
+    const walletUpdate = refetchWallet();
+    const broadcast1 = broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
     
     // Ensure fresh auth session before invoking edge functions
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -158,36 +160,46 @@ const GamePreview = () => {
       return;
     }
     
-    try {
-      const startSourceId = `${Date.now()}-start`;
-      await supabase.functions.invoke('credit-gameplay-reward', {
-        body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' }
-      });
-      setCoinsEarned(START_GAME_REWARD);
-      await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
-    } catch (err) {
-      console.error('[GameStart] Start reward credit failed:', err);
-    }
-    
-    await refreshProfile();
-
-    // Load 15 random questions from database via edge function
-    try {
-      const { data, error } = await supabase.functions.invoke('start-game-session');
-
-      if (error) throw error;
-      
-      if (!data?.questions || data.questions.length === 0) {
-        throw new Error('No questions received from backend');
+    // Run start reward and session in parallel
+    const rewardPromise = (async () => {
+      try {
+        const startSourceId = `${Date.now()}-start`;
+        await supabase.functions.invoke('credit-gameplay-reward', {
+          body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' }
+        });
+        setCoinsEarned(START_GAME_REWARD);
+        await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
+      } catch (err) {
+        console.error('[GameStart] Start reward credit failed:', err);
       }
+    })();
 
-      const shuffledWithVariety = shuffleAnswers(data.questions);
-      setQuestions(shuffledWithVariety);
+    const questionsPromise = (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('start-game-session');
+
+        if (error) throw error;
+        
+        if (!data?.questions || data.questions.length === 0) {
+          throw new Error('No questions received from backend');
+        }
+
+        const shuffledWithVariety = shuffleAnswers(data.questions);
+        setQuestions(shuffledWithVariety);
+      } catch (error) {
+        console.error('[GamePreview] Failed to load questions:', error);
+        toast.error('Hiba történt a kérdések betöltésekor');
+        setIsStartingGame(false);
+        navigate('/dashboard');
+        throw error;
+      }
+    })();
+
+    // Wait for all parallel operations
+    try {
+      await Promise.all([walletUpdate, broadcast1, rewardPromise, questionsPromise, refreshProfile()]);
     } catch (error) {
-      console.error('[GamePreview] Failed to load questions:', error);
-      toast.error('Hiba történt a kérdések betöltésekor');
-      setIsStartingGame(false);
-      navigate('/dashboard');
+      // Error already handled in individual promises
       return;
     }
 
@@ -932,12 +944,12 @@ const GamePreview = () => {
     );
   }
 
+  // Show loading video IMMEDIATELY when game start begins (even before backend completes)
+  if (isStartingGame && !videoEnded) {
+    return <GameLoadingScreen onVideoEnd={handleVideoEnd} />;
+  }
+
   if (gameState === 'playing') {
-    // Show loading video until it ends, regardless of question loading state
-    if (!videoEnded) {
-      return <GameLoadingScreen onVideoEnd={handleVideoEnd} />;
-    }
-    
     // Guard: Don't render until questions are loaded
     if (questions.length === 0) {
       return (

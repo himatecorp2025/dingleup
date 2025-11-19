@@ -11,18 +11,25 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
   const hasStarted = useRef(false);
 
   useEffect(() => {
-    // Only start video once - prevent re-initialization on re-renders
+    // Start video immediately - CRITICAL for instant playback
     if (!hasStarted.current && videoRef.current) {
       hasStarted.current = true;
       videoRef.current.currentTime = 0;
-      videoRef.current.play().catch((err) => {
-        // If autoplay fails, end after 2 seconds
-        setTimeout(() => {
-          onVideoEnd();
-        }, 2000);
-      });
+      
+      // Play immediately with error fallback
+      const playPromise = videoRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('[GameLoadingScreen] Autoplay failed:', err);
+          // If autoplay fails, end after 2 seconds fallback
+          setTimeout(() => {
+            onVideoEnd();
+          }, 2000);
+        });
+      }
     }
-  }, []); // Empty deps - only run once on mount
+  }, [onVideoEnd]);
 
   const handleVideoEnd = () => {
     setVideoEnded(true);
