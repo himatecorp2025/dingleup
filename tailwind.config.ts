@@ -170,7 +170,7 @@ export default {
         'gradient-hero': 'var(--gradient-hero)',
         'gradient-gold': 'var(--gradient-gold)',
         'gradient-purple': 'var(--gradient-purple)',
-        'gradient-pink': 'var(--gradient-pink)',
+        'gradient-blue': 'var(--gradient-blue)',
         'gradient-cyan': 'var(--gradient-cyan)',
         'gradient-card': 'var(--gradient-card)',
       },
