@@ -60,11 +60,11 @@ export default function AdminBoosterPurchases() {
           usd_cents_spent,
           created_at,
           purchase_context,
-          booster_types!inner (
+          booster_types (
             code,
             name
           ),
-          profiles!inner (
+          profiles (
             username
           )
         `)
@@ -73,26 +73,35 @@ export default function AdminBoosterPurchases() {
 
       if (error) throw error;
 
-      const formattedData: BoosterPurchase[] = (data || []).map((p: any) => ({
-        id: p.id,
-        user_id: p.user_id,
-        booster_code: p.booster_types.code,
-        booster_name: p.booster_types.name,
-        username: p.profiles.username,
-        purchase_source: p.purchase_source,
-        gold_spent: p.gold_spent,
-        usd_cents_spent: p.usd_cents_spent,
-        created_at: p.created_at,
-        purchase_context: p.purchase_context || 'UNKNOWN'
-      }));
+      // CRITICAL FIX: Supabase returns related data as arrays, not objects
+      const formattedData: BoosterPurchase[] = (data || [])
+        .map((p: any) => {
+          // Null-safe array access for related data
+          const boosterType = Array.isArray(p.booster_types) ? p.booster_types[0] : p.booster_types;
+          const profile = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles;
+
+          return {
+            id: p.id,
+            user_id: p.user_id,
+            booster_code: boosterType?.code || 'UNKNOWN',
+            booster_name: boosterType?.name || 'Unknown Booster',
+            username: profile?.username || 'Unknown User',
+            purchase_source: p.purchase_source,
+            gold_spent: p.gold_spent || 0,
+            usd_cents_spent: p.usd_cents_spent || 0,
+            created_at: p.created_at,
+            purchase_context: p.purchase_context || 'UNKNOWN'
+          };
+        })
+        .filter(p => p.booster_code !== 'UNKNOWN'); // Filter out invalid entries
 
       setPurchases(formattedData);
 
-      // Calculate summary
-      const totalFree = formattedData.filter(p => p.purchase_source === 'GOLD').length;
-      const totalPremium = formattedData.filter(p => p.purchase_source === 'IAP').length;
-      const totalGold = formattedData.reduce((sum, p) => sum + p.gold_spent, 0);
-      const totalUsd = formattedData.reduce((sum, p) => sum + p.usd_cents_spent, 0);
+      // Calculate summary based on booster_code (not purchase_source)
+      const totalFree = formattedData.filter(p => p.booster_code === 'FREE').length;
+      const totalPremium = formattedData.filter(p => p.booster_code === 'PREMIUM').length;
+      const totalGold = formattedData.reduce((sum, p) => sum + (p.gold_spent || 0), 0);
+      const totalUsd = formattedData.reduce((sum, p) => sum + (p.usd_cents_spent || 0), 0);
 
       setSummary({
         total_free: totalFree,
