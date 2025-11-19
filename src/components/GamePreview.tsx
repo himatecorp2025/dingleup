@@ -793,7 +793,7 @@ const GamePreview = () => {
   const finishGame = async () => {
     if (!profile) return;
 
-    setGameState('finished');
+    // Don't change gameState - keep it 'playing' so toast shows on current screen
 
     const avgResponseTime = responseTimes.length > 0 
       ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length 
@@ -845,10 +845,10 @@ const GamePreview = () => {
         }
       }
 
-      // Nincs toast - a result screen mutatja az eredményt
+      // Backend processing complete - results shown in toast
     } catch (error) {
       console.error('Error finishing game:', error);
-      // Nincs toast - error esetén is látszik a result
+      // Error handling - refresh profile anyway
       await refreshProfile();
     }
   };
