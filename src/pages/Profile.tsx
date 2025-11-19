@@ -393,7 +393,10 @@ const Profile = () => {
       }
 
       const response = await supabase.functions.invoke('update-username', {
-        body: { newUsername }
+        body: { newUsername },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
 
       if (response.error) {
@@ -453,7 +456,10 @@ const Profile = () => {
       }
 
       const response = await supabase.functions.invoke('update-password', {
-        body: { currentPassword, newPassword }
+        body: { currentPassword, newPassword },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
 
       if (response.error) {
