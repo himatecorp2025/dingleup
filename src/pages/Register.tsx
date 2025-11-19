@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff, User, Mail, Lock, Trophy } from "lucide-react";
 import { z } from "zod";
+import { MusicControls } from '@/components/MusicControls';
 
 const registerSchema = z.object({
   username: z.string().min(3, "A felhasználónév legalább 3 karakter hosszú legyen").max(50),
