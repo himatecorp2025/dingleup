@@ -27,13 +27,20 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const actionInProgressRef = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Fetch initial reaction status
+  // Fetch initial reaction status with abort controller for cleanup
   const fetchReactionStatus = useCallback(async () => {
     if (!questionId || questionId.trim() === '') {
       setLoading(false);
       return;
     }
+
+    // Cancel any pending fetch
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
 
     // Reset state immediately when fetching new question
     setLiked(false);
@@ -59,6 +66,11 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
         }
       );
 
+      // Check if this fetch was aborted
+      if (abortControllerRef.current?.signal.aborted) {
+        return;
+      }
+
       if (fetchError) throw fetchError;
 
       const status = data as QuestionReactionStatus;
@@ -67,9 +79,12 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       setLikeCount(status.questionLikeCount);
       setDislikeCount(status.questionDislikeCount);
     } catch (err) {
+      // Ignore abort errors
+      if (err instanceof Error && err.name === 'AbortError') {
+        return;
+      }
       console.error('[useQuestionReactions] Fetch error:', err);
       setError('Failed to load reaction status');
-      // Don't throw - just set error state
     } finally {
       setLoading(false);
     }
@@ -77,6 +92,13 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
 
   useEffect(() => {
     fetchReactionStatus();
+    
+    // Cleanup: abort pending fetch on unmount or question change
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [fetchReactionStatus]);
 
   // Toggle LIKE
@@ -88,10 +110,12 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
 
     if (actionInProgressRef.current) {
       // Prevent double-like from very fast repeated interactions (double-tap or double-click)
+      console.log('[useQuestionReactions] Action already in progress, ignoring toggle like');
       return;
     }
 
     actionInProgressRef.current = true;
+    console.log('[useQuestionReactions] Toggle like started');
 
     // Optimistic update
     const prevLiked = liked;
@@ -173,10 +197,12 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
 
     if (actionInProgressRef.current) {
       // Prevent double-dislike from very fast repeated interactions
+      console.log('[useQuestionReactions] Action already in progress, ignoring toggle dislike');
       return;
     }
 
     actionInProgressRef.current = true;
+    console.log('[useQuestionReactions] Toggle dislike started');
 
     // Optimistic update
     const prevLiked = liked;
