@@ -206,12 +206,10 @@ const Register = () => {
               {errors.passwordConfirm && <p className="text-sm text-red-400">{errors.passwordConfirm}</p>}
             </div>
 
-            {inviterCode && (
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-white/80">Meghívó kód (opcionális)</Label>
-                <Input type="text" value={inviterCode} onChange={(e) => setInviterCode(e.target.value)} className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Meghívó kód" disabled={isLoading} />
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-white/80">Meghívó kód (opcionális)</Label>
+              <Input type="text" value={inviterCode} onChange={(e) => setInviterCode(e.target.value)} className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Meghívó kód" disabled={isLoading} />
+            </div>
 
             <div className="flex items-start space-x-2">
               <Checkbox id="terms" checked={formData.termsAccepted} onCheckedChange={(checked) => setFormData({ ...formData, termsAccepted: checked as boolean })} className="mt-1 border-white/20 data-[state=checked]:bg-yellow-400 data-[state=checked]:border-yellow-400" disabled={isLoading} />
