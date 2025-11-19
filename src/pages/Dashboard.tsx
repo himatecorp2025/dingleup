@@ -283,6 +283,9 @@ const Dashboard = () => {
         toast.success(`A Premium Speed Booster aktiválva! ${data.activatedSpeed?.speedCount}× ${data.activatedSpeed?.speedDurationMinutes} perces Speed gyorsítás elindult.`, { id: 'activate-premium-speed' });
         await refetchWallet();
         await refreshProfile();
+      } else if (data?.error === 'NO_PENDING_PREMIUM') {
+        // Already activated - just inform user, no error
+        toast.info('A Premium Speed már aktiválva lett.', { id: 'activate-premium-speed' });
       } else {
         throw new Error(data?.error || 'Ismeretlen hiba');
       }
