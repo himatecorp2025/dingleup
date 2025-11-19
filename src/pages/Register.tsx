@@ -87,19 +87,27 @@ const Register = () => {
       }
 
       if (authData.user) {
-        try {
-          await supabase.functions.invoke('register-with-geolocation', {
-            body: { 
-              userId: authData.user.id, 
-              birthDate: validated.birthDate,
-              email: validated.email,
-              username: validated.username
-            }
+        // Create profile via edge function
+        const { data: geoData, error: geoError } = await supabase.functions.invoke('register-with-geolocation', {
+          body: { 
+            userId: authData.user.id, 
+            birthDate: validated.birthDate,
+            email: validated.email,
+            username: validated.username
+          }
+        });
+
+        if (geoError) {
+          console.error('Profile creation failed:', geoError);
+          toast({
+            title: "Hiba",
+            description: "Profil létrehozása sikertelen. Kérlek próbáld újra később.",
+            variant: "destructive",
           });
-        } catch (geoError) {
-          console.error('Geolocation failed:', geoError);
+          return;
         }
 
+        // Process invitation if provided
         if (inviterCode) {
           try {
             const { error: inviteError } = await supabase.functions.invoke('accept-invitation', {
@@ -114,6 +122,12 @@ const Register = () => {
           }
         }
 
+        // Successfully registered
+        toast({
+          title: "Sikeres regisztráció",
+          description: "Üdvözlünk a DingleUP!-ban!",
+        });
+        
         navigate("/intro");
       }
   } catch (error) {
