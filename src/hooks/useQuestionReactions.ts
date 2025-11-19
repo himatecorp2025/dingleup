@@ -29,7 +29,10 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
 
   // Fetch initial reaction status
   const fetchReactionStatus = useCallback(async () => {
-    if (!questionId) return;
+    if (!questionId || questionId.trim() === '') {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -52,6 +55,7 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
     } catch (err) {
       console.error('[useQuestionReactions] Fetch error:', err);
       setError('Failed to load reaction status');
+      // Don't throw - just set error state
     } finally {
       setLoading(false);
     }
@@ -63,6 +67,11 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
 
   // Toggle LIKE
   const toggleLike = useCallback(async () => {
+    if (!questionId || questionId.trim() === '') {
+      console.warn('[useQuestionReactions] Cannot toggle like - invalid questionId');
+      return;
+    }
+
     // Optimistic update
     const prevLiked = liked;
     const prevDisliked = disliked;
@@ -128,6 +137,11 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
 
   // Toggle DISLIKE
   const toggleDislike = useCallback(async () => {
+    if (!questionId || questionId.trim() === '') {
+      console.warn('[useQuestionReactions] Cannot toggle dislike - invalid questionId');
+      return;
+    }
+
     // Optimistic update
     const prevLiked = liked;
     const prevDisliked = disliked;

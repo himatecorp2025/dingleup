@@ -53,14 +53,20 @@ serve(async (req) => {
       );
     }
 
-    const url = new URL(req.url);
-    const pathParts = url.pathname.split('/');
-    const questionId = pathParts[pathParts.length - 2]; // /api/questions/:questionId/like or /api/questions/:questionId/dislike
-    const reactionType: ReactionType = pathParts[pathParts.length - 1] === 'like' ? 'like' : 'dislike';
+    const body = await req.json();
+    const questionId = body.questionId;
+    const reactionType: ReactionType = body.reactionType;
 
-    if (!questionId) {
+    if (!questionId || typeof questionId !== 'string' || questionId.trim() === '') {
       return new Response(
-        JSON.stringify({ error: 'Question ID required' }),
+        JSON.stringify({ error: 'Valid question ID required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!reactionType || (reactionType !== 'like' && reactionType !== 'dislike')) {
+      return new Response(
+        JSON.stringify({ error: 'Valid reaction type required (like or dislike)' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -70,9 +76,17 @@ serve(async (req) => {
       .from('questions')
       .select('id, like_count, dislike_count')
       .eq('id', questionId)
-      .single();
+      .maybeSingle();
 
-    if (questionError || !question) {
+    if (questionError) {
+      console.error('[toggle-question-reaction] Question query error:', questionError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch question' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!question) {
       return new Response(
         JSON.stringify({ error: 'Question not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
