@@ -173,7 +173,15 @@ const Leaderboard = () => {
         <div className="max-w-4xl mx-auto w-full">
 
         {/* Title */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-2 bg-gradient-to-r from-yellow-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent px-2">
+        <h1 
+          className="text-2xl sm:text-3xl md:text-4xl font-black text-center mb-2 px-2"
+          style={{
+            background: 'linear-gradient(135deg, hsl(45 100% 70%), hsl(45 100% 60%), hsl(45 95% 55%))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            filter: 'drop-shadow(0 0 16px hsla(45, 100%, 65%, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6))'
+          }}
+        >
           🏆 Ranglista 🏆
         </h1>
 
