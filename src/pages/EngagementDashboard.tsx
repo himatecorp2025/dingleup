@@ -27,54 +27,54 @@ const EngagementDashboard = () => {
   }
 
   return (
-    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] p-4 sm:p-6 lg:p-8">
+    <div className="min-h-dvh min-h-svh bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4">
-            <Button onClick={() => navigate('/admin/analytics')} variant="ghost" size="icon" className="text-white hover:bg-white/10">
+            <Button onClick={() => navigate('/admin/analytics')} variant="ghost" size="icon" className="text-foreground hover:bg-foreground/10">
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Engagement Dashboard</h1>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">Engagement Dashboard</h1>
           </div>
-          <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading} className="text-white border-white/30 hover:bg-white/10 w-full sm:w-auto">
+          <Button onClick={() => refetch()} variant="outline" size="sm" disabled={loading} className="text-foreground border-foreground/30 hover:bg-foreground/10 w-full sm:w-auto">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Frissítés
           </Button>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="bg-[#1a1a3e]/50 p-1 flex-wrap h-auto gap-1">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+          <TabsList className="bg-primary-dark/50 p-1 flex-wrap h-auto gap-1">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
               Áttekintés
             </TabsTrigger>
-            <TabsTrigger value="features" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+            <TabsTrigger value="features" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
               Funkciók
             </TabsTrigger>
-            <TabsTrigger value="users" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+            <TabsTrigger value="users" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
               Felhasználók
             </TabsTrigger>
-            <TabsTrigger value="game" className="data-[state=active]:bg-[#6b46c1] data-[state=active]:text-white text-white/70">
+            <TabsTrigger value="game" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
               Játék Engagement
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
+              <Card className="bg-primary-dark/50 border border-primary/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-white text-base sm:text-lg">Átlagos Session Hossz</CardTitle>
+                  <CardTitle className="text-foreground text-base sm:text-lg">Átlagos Session Hossz</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.avgSessionDuration}s</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-foreground">{analytics.avgSessionDuration}s</p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
+              <Card className="bg-primary-dark/50 border border-primary/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-white text-base sm:text-lg">Átlagos Session / Felhasználó</CardTitle>
+                  <CardTitle className="text-foreground text-base sm:text-lg">Átlagos Session / Felhasználó</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.avgSessionsPerUser}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-foreground">{analytics.avgSessionsPerUser}</p>
                 </CardContent>
               </Card>
 
