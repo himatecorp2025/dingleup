@@ -26,8 +26,17 @@ export function FreeBoosterCard({ currentGold, pendingSpeedTokensCount, onPurcha
     try {
       toast.loading('Free Booster vásárlás...', { id: 'free-booster' });
       
+      // Get current session
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData?.session) {
+        throw new Error('Nincs érvényes bejelentkezés');
+      }
+      
       const { data, error } = await supabase.functions.invoke('purchase-booster', {
-        body: { boosterCode: 'FREE' }
+        body: { boosterCode: 'FREE' },
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`
+        }
       });
 
       if (error) throw error;
@@ -55,7 +64,17 @@ export function FreeBoosterCard({ currentGold, pendingSpeedTokensCount, onPurcha
     try {
       toast.loading('Speed Booster aktiválás...', { id: 'speed-activate' });
       
-      const { data, error } = await supabase.functions.invoke('activate-speed-token');
+      // Get current session
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData?.session) {
+        throw new Error('Nincs érvényes bejelentkezés');
+      }
+      
+      const { data, error } = await supabase.functions.invoke('activate-speed-token', {
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`
+        }
+      });
 
       if (error) throw error;
 
@@ -117,7 +136,7 @@ export function FreeBoosterCard({ currentGold, pendingSpeedTokensCount, onPurcha
               disabled={activating}
               className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold"
             >
-              {activating ? 'Aktiválás...' : `Aktiválom (${pendingSpeedTokensCount} token)`}
+              {activating ? 'Aktiválás...' : 'Aktiválom'}
             </Button>
           ) : (
             <>
