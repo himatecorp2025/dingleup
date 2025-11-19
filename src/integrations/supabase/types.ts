@@ -104,6 +104,95 @@ export type Database = {
         }
         Relationships: []
       }
+      booster_purchases: {
+        Row: {
+          booster_type_id: string
+          created_at: string
+          gold_spent: number
+          iap_transaction_id: string | null
+          id: string
+          purchase_source: string
+          usd_cents_spent: number
+          user_id: string
+        }
+        Insert: {
+          booster_type_id: string
+          created_at?: string
+          gold_spent?: number
+          iap_transaction_id?: string | null
+          id?: string
+          purchase_source: string
+          usd_cents_spent?: number
+          user_id: string
+        }
+        Update: {
+          booster_type_id?: string
+          created_at?: string
+          gold_spent?: number
+          iap_transaction_id?: string | null
+          id?: string
+          purchase_source?: string
+          usd_cents_spent?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booster_purchases_booster_type_id_fkey"
+            columns: ["booster_type_id"]
+            isOneToOne: false
+            referencedRelation: "booster_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booster_types: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          price_gold: number | null
+          price_usd_cents: number | null
+          reward_gold: number
+          reward_lives: number
+          reward_speed_count: number
+          reward_speed_duration_min: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          price_gold?: number | null
+          price_usd_cents?: number | null
+          reward_gold?: number
+          reward_lives?: number
+          reward_speed_count?: number
+          reward_speed_duration_min?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_gold?: number | null
+          price_usd_cents?: number | null
+          reward_gold?: number
+          reward_lives?: number
+          reward_speed_count?: number
+          reward_speed_duration_min?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       chat_interaction_events: {
         Row: {
           created_at: string
@@ -2360,6 +2449,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_premium_booster_state: {
+        Row: {
+          created_at: string
+          has_pending_premium_booster: boolean
+          last_premium_purchase_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          has_pending_premium_booster?: boolean
+          last_premium_purchase_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          has_pending_premium_booster?: boolean
+          last_premium_purchase_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_presence: {
         Row: {
           is_online: boolean
@@ -2374,6 +2487,27 @@ export type Database = {
         Update: {
           is_online?: boolean
           last_seen?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_purchase_settings: {
+        Row: {
+          created_at: string
+          instant_premium_booster_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          instant_premium_booster_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          instant_premium_booster_enabled?: boolean
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
