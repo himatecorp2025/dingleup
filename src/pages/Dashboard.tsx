@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DiamondHexagon } from '@/components/DiamondHexagon';
 import { DiamondButton } from '@/components/DiamondButton';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useDailyGift } from '@/hooks/useDailyGift';
@@ -36,6 +36,7 @@ import { useBroadcastChannel } from '@/hooks/useBroadcastChannel';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [userId, setUserId] = useState<string | undefined>();
   const { isHandheld, isStandalone } = usePlatformDetection();
   const { canMountModals } = useScrollBehavior();
@@ -99,7 +100,24 @@ const Dashboard = () => {
         navigate('/login');
       }
     });
-  }, [navigate]);
+
+    // Check for canceled payment
+    if (searchParams.get('canceled') === 'true') {
+      toast.error('Visszaléptél, a jutalmad elveszett!', {
+        duration: 5000,
+        style: {
+          background: 'linear-gradient(135deg, #ff0000 0%, #cc0000 100%)',
+          color: '#ffffff',
+          fontSize: '18px',
+          fontWeight: 'bold',
+          border: '2px solid #ff0000',
+          boxShadow: '0 0 20px rgba(255, 0, 0, 0.5)',
+        },
+      });
+      // Remove the query parameter
+      setSearchParams({});
+    }
+  }, [navigate, searchParams, setSearchParams]);
 
   // Show Welcome Bonus dialog FIRST (highest priority) - TESTING MODE: show on desktop too, with 1s delay
   useEffect(() => {
