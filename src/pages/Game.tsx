@@ -32,8 +32,8 @@ const Game = () => {
   // Wait for audio store to load before rendering game (with timeout fallback)
   if (!loaded && !loadTimeout) {
     return (
-      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-primary-dark via-primary to-primary-darker">
-        <div className="text-foreground text-lg">Betöltés...</div>
+      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-black">
+        {/* Silent loading - no visible text or spinner to ensure seamless video transition */}
       </div>
     );
   }

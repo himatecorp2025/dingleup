@@ -42,11 +42,8 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading fallback component
 const PageLoader = () => (
-  <div className="min-h-dvh min-h-svh bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker flex items-center justify-center">
-    <div className="flex flex-col items-center gap-4">
-      <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-      <p className="text-lg text-foreground/70">Betöltés...</p>
-    </div>
+  <div className="min-h-dvh min-h-svh bg-black flex items-center justify-center">
+    {/* Silent loading - no visible text or spinner for seamless transition */}
   </div>
 );
 
