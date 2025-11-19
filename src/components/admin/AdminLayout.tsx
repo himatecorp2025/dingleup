@@ -10,7 +10,8 @@ import {
   Menu,
   X,
   LogOut,
-  AlertTriangle
+  AlertTriangle,
+  Activity
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -59,8 +60,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/game-profiles', label: 'Játékos Profilozás', icon: Brain },
     { path: '/admin/dashboard?tab=invitations', label: 'Meghívások', icon: Users, badge: 'invitations' },
     { path: '/admin/dashboard?tab=reports', label: 'Jelentések', icon: AlertTriangle, badge: 'reports' },
-    { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: Heart },
-    { path: '/admin/analytics', label: 'Fejlett Analitika', icon: TrendingUp },
+    { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: TrendingUp },
+    { path: '/admin/analytics', label: 'Fejlett Analitika', icon: Activity },
   ];
 
   const handleLogout = async () => {
@@ -90,15 +91,15 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden flex-shrink-0`}>
           <div className="h-full backdrop-blur-xl bg-white/5 border-r border-white/10 p-6">
             {/* Logo */}
-            <div className="mb-8">
-              <div className="relative mb-6">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-xl opacity-50"></div>
+            <div className="mb-6 xl:mb-8">
+              <div className="relative inline-block">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-lg opacity-30"></div>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="64"
-                  height="64"
+                  width="48"
+                  height="48"
                   viewBox="0 0 1024 1024"
-                  className="relative z-10 mx-auto"
+                  className="w-12 h-12 xl:w-16 xl:h-16 mb-2 relative z-10"
                 >
                   <image
                     href="/logo.png"
@@ -110,13 +111,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   />
                 </svg>
               </div>
-              <h2 className="text-xl font-black text-center bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Admin Panel
-              </h2>
+              <h2 className="text-white font-bold text-xs xl:text-sm mt-2">Admin Panel</h2>
             </div>
 
-            <div className="mb-6">
-              <h3 className="text-white/50 text-xs font-bold mb-3 uppercase tracking-wider">Főmenü</h3>
+            <div className="mb-6 xl:mb-8">
+              <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">Főmenü</h3>
               
               {/* Menu Items */}
               <nav className="space-y-2">
@@ -126,13 +125,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     <button
                       key={item.path}
                       onClick={() => navigate(item.path)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                      className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
                         isActive(item.path)
-                          ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-                          : 'text-white/70 hover:bg-white/10 hover:text-white'
+                          ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
+                          : 'text-white/60 hover:bg-white/5'
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-4 h-4 xl:w-5 xl:h-5" />
                       <span className="font-medium">{item.label}</span>
                     </button>
                   );
@@ -140,14 +139,18 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               </nav>
             </div>
 
-            {/* Logout Section */}
-            <div className="mt-auto pt-6 border-t border-white/10">
-              <h3 className="text-white/50 text-xs font-bold mb-3 uppercase tracking-wider">Admin fiók szerkesztése</h3>
+            {/* Admin fiók szerkesztése - közvetlenül a menü után */}
+            <div>
+              <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">Admin fiók szerkesztése</h3>
+              <button className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all mb-2 text-sm">
+                <Users className="w-4 h-4 xl:w-5 xl:h-5" />
+                <span className="font-medium">Profil szerkesztése</span>
+              </button>
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-white/70 hover:bg-white/10 hover:text-white"
+                className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-4 h-4 xl:w-5 xl:h-5" />
                 <span className="font-medium">Kijelentkezés</span>
               </button>
             </div>
