@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Play, Sparkles, Trophy, Zap, Smartphone } from "lucide-react";
-import millionaireHero from "@/assets/millionaire-hero.jpg";
+import { Play, Sparkles, Trophy, Zap } from "lucide-react";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -14,32 +13,45 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary-dark via-primary to-primary-darker py-8">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url(${millionaireHero})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-dark/80 via-primary/70 to-primary-darker" />
+    <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden py-12 sm:py-20">
+      {/* Deep Purple/Blue Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033]"></div>
+      
+      {/* Animated glowing orbs - pink and purple */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-pink-500/30 rounded-full blur-[120px] animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/30 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: '0.7s' }}></div>
+      
+      {/* Sparkle effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 2}s`,
+              opacity: 0.6
+            }}
+          />
+        ))}
       </div>
 
-      {/* Animated gradient orbs */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-accent/30 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          {/* Logo Section */}
-          <div className="flex justify-center mb-4 animate-fade-in">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          
+          {/* Logo Section with glow */}
+          <div className="flex justify-center mb-8 sm:mb-12 animate-fade-in">
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-accent/30 to-secondary/30 rounded-full blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-500/40 via-purple-500/40 to-blue-500/40 rounded-full blur-3xl group-hover:blur-[60px] transition-all duration-700 animate-pulse"></div>
               <svg 
                 xmlns="http://www.w3.org/2000/svg"
-                width="128"
-                height="128"
+                width="200"
+                height="200"
                 viewBox="0 0 1024 1024"
-                className="relative w-32 h-32 md:w-40 md:h-40 object-contain drop-shadow-2xl transform group-hover:scale-105 transition-transform duration-500"
+                className="relative w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 object-contain drop-shadow-2xl transform group-hover:scale-110 transition-transform duration-500"
               >
                 <image
                   href="/logo.png"
@@ -53,72 +65,46 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Title and Description */}
-          <div className="text-center mb-6 space-y-3 animate-fade-in px-4" style={{ animationDelay: '0.2s' }}>
-            <div className="inline-flex items-center gap-2 bg-accent/10 border border-accent/30 rounded-full px-4 py-2 mb-4">
-              <Sparkles className="w-4 h-4 text-accent animate-pulse flex-shrink-0" />
-              <span className="text-xs sm:text-sm font-semibold text-accent whitespace-nowrap">Új játékélmény</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 leading-tight">
-              <span className="text-foreground text-with-stroke">Legyen Ön is</span>
+          {/* Title */}
+          <div className="text-center mb-8 sm:mb-12 space-y-4 sm:space-y-6 animate-fade-in px-4" style={{ animationDelay: '0.2s' }}>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 leading-tight tracking-tight">
+              <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+                Legyen Ön is
+              </span>
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-gold animate-pulse text-with-stroke" style={{ WebkitTextStroke: '1px hsl(var(--background))' }}>
-                Milliomos
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 drop-shadow-[0_0_40px_rgba(234,179,8,0.8)] animate-pulse">
+                MILLIOMOS!
               </span>
             </h1>
             
-            <p className="text-base sm:text-lg md:text-xl text-foreground/90 max-w-3xl mx-auto leading-relaxed font-light px-2 text-with-stroke">
-              Teszteld tudásod <span className="font-bold text-accent text-with-stroke">15 izgalmas kérdésben</span>, 
-              versenyezz a ranglistán, és nyerj <span className="font-bold text-accent text-with-stroke">értékes jutalmakat</span>!
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed font-light px-2 drop-shadow-lg">
+              Most a telefonodon! Teszteld tudásod, hívd a közönséget,<br className="hidden sm:block" />
+              és csatlakozz a szakértői csapatodhoz!<br className="hidden sm:block" />
+              <span className="font-semibold text-pink-300">Légy MILLIOMOS INGYEN még ma!</span>
             </p>
           </div>
 
-          {/* Features Pills - Deep 3D */}
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 animate-fade-in px-4" style={{ animationDelay: '0.4s' }}>
-            <div className="relative" style={{ perspective: '1000px' }}>
-              {/* BASE SHADOW */}
-              <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
-              
-              {/* OUTER FRAME - világosabb színek */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 opacity-90 border-2 border-yellow-400/80 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
-              
-              {/* MIDDLE FRAME */}
-              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
-              
-              {/* INNER LAYER */}
-              <div className="absolute inset-[5px] rounded-full bg-gradient-to-br from-white/20 via-white/10 to-black/20 backdrop-blur-sm" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
-              
-              {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
-              
-              <div className="relative flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 transition-all hover:scale-105 min-h-[44px]" style={{ transform: 'translateZ(40px)' }}>
-                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 drop-shadow-lg flex-shrink-0" />
-                <span className="text-white font-semibold drop-shadow-lg text-xs sm:text-sm whitespace-nowrap leading-none text-with-stroke">Heti Rangsor</span>
+          {/* Mobile Screenshots Showcase */}
+          <div className="relative mb-12 sm:mb-16 animate-fade-in hidden sm:block" style={{ animationDelay: '0.4s' }}>
+            <div className="flex justify-center items-center gap-4 perspective-1000">
+              {/* Game screenshot mockups would go here */}
+              <div className="relative w-64 h-[500px] bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-3xl border-4 border-white/20 shadow-2xl backdrop-blur-sm transform -rotate-6 hover:rotate-0 transition-transform duration-500">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Trophy className="w-20 h-20 text-yellow-400 drop-shadow-lg animate-pulse" />
+                </div>
+              </div>
+              <div className="relative w-64 h-[500px] bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-3xl border-4 border-white/20 shadow-2xl backdrop-blur-sm transform scale-110 hover:scale-115 transition-transform duration-500 z-10">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="w-20 h-20 text-pink-400 drop-shadow-lg animate-pulse" />
+                </div>
+              </div>
+              <div className="relative w-64 h-[500px] bg-gradient-to-br from-pink-600/20 to-purple-600/20 rounded-3xl border-4 border-white/20 shadow-2xl backdrop-blur-sm transform rotate-6 hover:rotate-0 transition-transform duration-500">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Zap className="w-20 h-20 text-blue-400 drop-shadow-lg animate-pulse" />
+                </div>
               </div>
             </div>
-            
-            <div className="relative" style={{ perspective: '1000px' }}>
-              {/* BASE SHADOW */}
-              <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
-              
-              {/* OUTER FRAME - világosabb színek */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500 via-purple-400 to-purple-600 opacity-90 border-2 border-purple-400/80 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
-              
-              {/* MIDDLE FRAME */}
-              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
-              
-              {/* INNER LAYER */}
-              <div className="absolute inset-[5px] rounded-full bg-gradient-to-br from-white/20 via-white/10 to-black/20 backdrop-blur-sm" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
-              
-              {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
-              
-              <div className="relative flex items-center justify-center gap-2 px-6 py-3 transition-all hover:scale-105 min-h-[44px]" style={{ transform: 'translateZ(40px)' }}>
-                <Zap className="w-5 h-5 text-accent drop-shadow-lg" />
-                <span className="text-white font-semibold drop-shadow-lg leading-none text-with-stroke">4 Kategória</span>
-              </div>
-            </div>
+          </div>
             
             <div className="relative" style={{ perspective: '1000px' }}>
               {/* BASE SHADOW */}
