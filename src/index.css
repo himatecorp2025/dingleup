@@ -106,12 +106,12 @@ button, a {
 :root {
   /* Bottom Nav Height for Mobile Layout - now unified */
   
-  /* Vibrant royal blue theme */
-  --background: 220 85% 25%;
+  /* Dark blue-purple theme (from Invitation/Share page) */
+  --background: 231 61% 15%;
   --foreground: 0 0% 100%;
-  --card: 220 70% 30%;
+  --card: 221 48% 16%;
   --card-foreground: 0 0% 100%;
-  --popover: 220 70% 30%;
+  --popover: 221 48% 16%;
   --popover-foreground: 0 0% 100%;
   --primary: 225 73% 57%;           /* Royal blue */
   --primary-dark: 225 73% 47%;      /* Darker royal blue */
@@ -120,14 +120,14 @@ button, a {
   --primary-foreground: 0 0% 100%;
   --secondary: 215 80% 50%;         /* Deep blue */
   --secondary-foreground: 0 0% 100%;
-  --muted: 220 60% 35%;
+  --muted: 231 50% 20%;
   --muted-foreground: 220 20% 75%;
   --accent: 45 100% 60%;            /* Bright gold */
   --accent-foreground: 0 0% 100%;
   --destructive: 0 95% 65%;
   --destructive-foreground: 0 0% 100%;
-  --border: 220 40% 40%;
-  --input: 220 40% 40%;
+  --border: 231 50% 25%;
+  --input: 231 50% 25%;
   --ring: 225 73% 57%;
   --radius: 0.75rem;
   
@@ -141,11 +141,11 @@ button, a {
   
   /* Vibrant gradients */
   --gradient-gold: linear-gradient(135deg, hsl(45, 100%, 60%), hsl(38, 100%, 65%));
-  --gradient-blue: linear-gradient(135deg, hsl(220, 85%, 30%), hsl(225, 73%, 57%));
-  --gradient-royal: linear-gradient(135deg, hsl(220, 85%, 25%), hsl(225, 73%, 40%));
+  --gradient-blue: linear-gradient(135deg, hsl(240, 65%, 11%), hsl(221, 48%, 16%));
+  --gradient-royal: linear-gradient(135deg, hsl(240, 65%, 11%), hsl(231, 61%, 15%));
   --gradient-cyan: linear-gradient(135deg, hsl(187, 100%, 50%), hsl(195, 100%, 55%));
-  --gradient-card: linear-gradient(135deg, hsl(220, 70%, 30%), hsl(225, 73%, 45%));
-  --gradient-hero: linear-gradient(180deg, hsl(220, 85%, 25%), hsl(225, 73%, 40%));
+  --gradient-card: linear-gradient(135deg, hsl(221, 48%, 16%), hsl(231, 61%, 15%));
+  --gradient-hero: linear-gradient(180deg, hsl(240, 65%, 11%), hsl(231, 61%, 15%));
   
   /* Shadows */
   --shadow-elegant: 0 10px 30px -10px hsl(225 73% 57% / 0.3);
