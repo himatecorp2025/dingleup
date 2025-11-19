@@ -22,8 +22,10 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
   onToggleDislike,
 }) => {
   return (
-    <div className="fixed right-4 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-6">
-      {/* LIKE Button */}
+    <div className="fixed right-3 sm:right-4 z-20 flex flex-col gap-4 sm:gap-6" style={{ 
+      bottom: 'calc(7.2rem + env(safe-area-inset-bottom, 0px))'
+    }}>
+      {/* LIKE Button - 50% larger */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -36,15 +38,15 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
         <div className="relative">
           <Heart
             className={cn(
-              "w-8 h-8 transition-all",
+              "w-12 h-12 transition-all",
               liked 
-                ? "fill-red-500 text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]" 
+                ? "fill-red-500 text-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.6)]" 
                 : "text-gray-400 hover:text-red-400"
             )}
           />
           {liked && (
             <div className="absolute inset-0 animate-ping">
-              <Heart className="w-8 h-8 fill-red-500 text-red-500 opacity-20" />
+              <Heart className="w-12 h-12 fill-red-500 text-red-500 opacity-20" />
             </div>
           )}
         </div>
@@ -58,7 +60,7 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
         </span>
       </button>
 
-      {/* DISLIKE Button */}
+      {/* DISLIKE Button - 50% larger */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -71,15 +73,15 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
         <div className="relative">
           <ThumbsDown
             className={cn(
-              "w-8 h-8 transition-all",
+              "w-12 h-12 transition-all",
               disliked 
-                ? "fill-orange-500 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" 
+                ? "fill-orange-500 text-orange-500 drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]" 
                 : "text-gray-400 hover:text-orange-400"
             )}
           />
           {disliked && (
             <div className="absolute inset-0 animate-ping">
-              <ThumbsDown className="w-8 h-8 fill-orange-500 text-orange-500 opacity-20" />
+              <ThumbsDown className="w-12 h-12 fill-orange-500 text-orange-500 opacity-20" />
             </div>
           )}
         </div>

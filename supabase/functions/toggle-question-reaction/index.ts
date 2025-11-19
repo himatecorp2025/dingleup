@@ -111,80 +111,128 @@ serve(async (req) => {
     const hasLike = !!likeData;
     const hasDislike = !!dislikeData;
 
-    // Transaction logic
+    // Determine final state based on current state and action
+    let finalLiked = hasLike;
+    let finalDisliked = hasDislike;
+
+    // Transaction logic with atomic operations and race condition handling
     if (reactionType === 'like') {
       if (hasLike) {
-        // User already liked - remove like (toggle off)
-        await supabaseClient
+        // Toggle off LIKE
+        const { error: deleteError } = await supabaseClient
           .from('question_likes')
           .delete()
           .eq('question_id', questionId)
           .eq('user_id', user.id);
+        
+        if (deleteError) {
+          console.error('[toggle-question-reaction] Delete like error:', deleteError);
+          throw new Error('Failed to remove like');
+        }
+        finalLiked = false;
       } else {
-        // User wants to like
+        // Toggle on LIKE
         if (hasDislike) {
-          // Remove dislike first
-          await supabaseClient
+          // Remove dislike first (atomic order matters)
+          const { error: deleteDislikeError } = await supabaseClient
             .from('question_dislikes')
             .delete()
             .eq('question_id', questionId)
             .eq('user_id', user.id);
+          
+          if (deleteDislikeError) {
+            console.error('[toggle-question-reaction] Delete dislike error:', deleteDislikeError);
+            throw new Error('Failed to remove dislike');
+          }
+          finalDisliked = false;
         }
-        // Add like
-        await supabaseClient
+        
+        // Add like (use insert with error handling for unique constraint)
+        const { error: insertError } = await supabaseClient
           .from('question_likes')
-          .insert({ question_id: questionId, user_id: user.id });
+          .insert({ 
+            question_id: questionId, 
+            user_id: user.id 
+          });
+        
+        if (insertError) {
+          console.error('[toggle-question-reaction] Insert like error:', insertError);
+          // If unique constraint violation, it's already liked (race condition handled)
+          if (insertError.code === '23505') {
+            console.log('[toggle-question-reaction] Like already exists (race condition), treating as success');
+            finalLiked = true;
+          } else {
+            throw new Error('Failed to add like');
+          }
+        } else {
+          finalLiked = true;
+        }
       }
     } else {
       // reactionType === 'dislike'
       if (hasDislike) {
-        // User already disliked - remove dislike (toggle off)
-        await supabaseClient
+        // Toggle off DISLIKE
+        const { error: deleteError } = await supabaseClient
           .from('question_dislikes')
           .delete()
           .eq('question_id', questionId)
           .eq('user_id', user.id);
+        
+        if (deleteError) {
+          console.error('[toggle-question-reaction] Delete dislike error:', deleteError);
+          throw new Error('Failed to remove dislike');
+        }
+        finalDisliked = false;
       } else {
-        // User wants to dislike
+        // Toggle on DISLIKE
         if (hasLike) {
-          // Remove like first
-          await supabaseClient
+          // Remove like first (atomic order matters)
+          const { error: deleteLikeError } = await supabaseClient
             .from('question_likes')
             .delete()
             .eq('question_id', questionId)
             .eq('user_id', user.id);
+          
+          if (deleteLikeError) {
+            console.error('[toggle-question-reaction] Delete like error:', deleteLikeError);
+            throw new Error('Failed to remove like');
+          }
+          finalLiked = false;
         }
-        // Add dislike
-        await supabaseClient
+        
+        // Add dislike (use insert with error handling for unique constraint)
+        const { error: insertError } = await supabaseClient
           .from('question_dislikes')
-          .insert({ question_id: questionId, user_id: user.id });
+          .insert({ 
+            question_id: questionId, 
+            user_id: user.id 
+          });
+        
+        if (insertError) {
+          console.error('[toggle-question-reaction] Insert dislike error:', insertError);
+          // If unique constraint violation, it's already disliked (race condition handled)
+          if (insertError.code === '23505') {
+            console.log('[toggle-question-reaction] Dislike already exists (race condition), treating as success');
+            finalDisliked = true;
+          } else {
+            throw new Error('Failed to add dislike');
+          }
+        } else {
+          finalDisliked = true;
+        }
       }
     }
 
-    // Get updated counts and user reactions
+    // Get updated counts from questions table (triggers have updated them)
     const { data: updatedQuestion } = await supabaseClient
       .from('questions')
       .select('like_count, dislike_count')
       .eq('id', questionId)
       .single();
 
-    const { data: updatedLike } = await supabaseClient
-      .from('question_likes')
-      .select('id')
-      .eq('question_id', questionId)
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    const { data: updatedDislike } = await supabaseClient
-      .from('question_dislikes')
-      .select('id')
-      .eq('question_id', questionId)
-      .eq('user_id', user.id)
-      .maybeSingle();
-
     const response: QuestionReactionToggleResponse = {
-      liked: !!updatedLike,
-      disliked: !!updatedDislike,
+      liked: finalLiked,
+      disliked: finalDisliked,
       questionLikeCount: updatedQuestion?.like_count || 0,
       questionDislikeCount: updatedQuestion?.dislike_count || 0,
     };
@@ -199,7 +247,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('[toggle-question-reaction] Error:', error);
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
