@@ -6,25 +6,25 @@ const statusItems = [
   {
     category: "Felhasználói Élmény",
     progress: 85,
-    color: "from-accent to-yellow-500",
+    color: "from-accent to-accent",
     description: "Responzív design optimalizálás, animációk finomhangolása, sötét/világos téma váltás implementálása és általános UX/UI fejlesztések."
   },
   {
     category: "Játékmechanika",
     progress: 90,
-    color: "from-secondary to-purple-500",
+    color: "from-secondary to-primary",
     description: "Kérdésbank bővítés 500+ kérdésre, timer rendszer optimalizálás, segítségek rendszerének tökéletesítése és pontszámítási logika finomítása."
   },
   {
     category: "Szociális Funkciók",
     progress: 60,
-    color: "from-accent to-orange-500",
+    color: "from-accent to-accent-dark",
     description: "Heti rangsor rendszer fejlesztése, meghívó rendszer kidolgozása, social share funkciók és barátok kezelésének implementálása."
   },
   {
     category: "Tesztelés & Biztonság",
     progress: 75,
-    color: "from-lime-400 to-green-400",
+    color: "from-success to-success",
     description: "Keresztplatform tesztelés, teljesítmény optimalizálás, biztonsági protokollok implementálása és bug fixing folyamatos végzése."
   }
 ];
@@ -58,7 +58,7 @@ const comingSoonFeatures = [
 
 const DevelopmentStatus = () => {
   return (
-    <section className="py-24 px-4 relative bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+    <section className="py-24 px-4 relative bg-gradient-to-b from-primary-darker via-primary-dark to-primary-darker">
       <div className="container mx-auto">
         {/* Development Progress Section */}
         <div className="text-center mb-16 animate-fade-in">
@@ -86,7 +86,7 @@ const DevelopmentStatus = () => {
               <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
               
               {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-3 border-purple-500/60 shadow-2xl transition-all duration-300 group-hover:border-accent/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-dark opacity-90 border-3 border-primary/60 shadow-2xl transition-all duration-300 group-hover:border-accent/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
               <div className="absolute inset-[4px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -140,7 +140,7 @@ const DevelopmentStatus = () => {
               <div className="absolute inset-0 bg-black/70 rounded-2xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
               
               {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-95 border-4 border-purple-500/60 shadow-2xl transition-all duration-300 group-hover:border-secondary/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-dark opacity-95 border-4 border-primary/60 shadow-2xl transition-all duration-300 group-hover:border-secondary/70" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
               <div className="absolute inset-[6px] rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
@@ -154,7 +154,7 @@ const DevelopmentStatus = () => {
               <div className="relative p-6 transition-all duration-300 group-hover:scale-105" style={{ transform: 'translateZ(60px)' }}>
                 {/* Badge */}
                 <div className="absolute top-4 right-4">
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-secondary to-purple-500 text-white shadow-lg drop-shadow-lg">
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-secondary to-primary text-foreground shadow-lg drop-shadow-lg">
                     {feature.badge}
                   </span>
                 </div>
@@ -162,7 +162,7 @@ const DevelopmentStatus = () => {
                 {/* Icon */}
                 <div className="relative mb-4" style={{ perspective: '500px' }}>
                   <div className="absolute inset-0 bg-black/40 rounded-xl" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-secondary/20 to-purple-500/20 border border-secondary/30 shadow-lg" aria-hidden />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-secondary/20 to-primary/20 border border-secondary/30 shadow-lg" aria-hidden />
                   <div className="relative w-14 h-14 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <feature.icon className="w-7 h-7 text-secondary drop-shadow-lg" />
                   </div>
@@ -173,7 +173,7 @@ const DevelopmentStatus = () => {
                 <p className="text-white/80 leading-relaxed drop-shadow">{feature.description}</p>
 
                 {/* Glow effect on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
               </div>
             </div>
           ))}

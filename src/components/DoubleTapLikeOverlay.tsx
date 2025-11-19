@@ -26,7 +26,7 @@ export const DoubleTapLikeOverlay = ({ show, onAnimationEnd }: DoubleTapLikeOver
     <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-50">
       {/* Large heart animation - TikTok style */}
       <Heart
-        className="w-32 h-32 fill-red-500 text-red-500 opacity-0 scale-0"
+        className="w-32 h-32 fill-destructive text-destructive opacity-0 scale-0"
         style={{
           animation: 'likePopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
         }}

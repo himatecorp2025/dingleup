@@ -126,13 +126,13 @@ export const ExitGameDialog = ({
               <div className="absolute inset-0 bg-black/40 rounded-2xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
               
               {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg shadow-red-500/30" aria-hidden />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-destructive via-destructive to-destructive border-2 border-destructive/50 shadow-lg shadow-destructive/30" aria-hidden />
               
               {/* MIDDLE FRAME */}
-              <div className="absolute inset-[3px] rounded-2xl bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              <div className="absolute inset-[3px] rounded-2xl bg-gradient-to-b from-destructive via-destructive to-destructive" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
               
               {/* INNER LAYER */}
-              <div className="absolute inset-[5px] rounded-2xl bg-gradient-to-b from-red-500/40 via-red-600/40 to-red-700/40" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+              <div className="absolute inset-[5px] rounded-2xl bg-gradient-to-b from-destructive/40 via-destructive/40 to-destructive/40" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
               
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
@@ -150,13 +150,13 @@ export const ExitGameDialog = ({
               <div className="absolute inset-0 bg-black/40 rounded-2xl" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
               
               {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-green-700 via-green-600 to-green-900 border-2 border-green-400/50 shadow-lg shadow-green-500/30" aria-hidden />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-success via-success to-success border-2 border-success/50 shadow-lg shadow-success/30" aria-hidden />
               
               {/* MIDDLE FRAME */}
-              <div className="absolute inset-[3px] rounded-2xl bg-gradient-to-b from-green-600 via-green-500 to-green-800" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              <div className="absolute inset-[3px] rounded-2xl bg-gradient-to-b from-success via-success to-success" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)' }} aria-hidden />
               
               {/* INNER LAYER */}
-              <div className="absolute inset-[5px] rounded-2xl bg-gradient-to-b from-green-500/40 via-green-600/40 to-green-700/40" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
+              <div className="absolute inset-[5px] rounded-2xl bg-gradient-to-b from-success/40 via-success/40 to-success/40" style={{ boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.4)' }} aria-hidden />
               
               {/* SPECULAR HIGHLIGHT */}
               <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />

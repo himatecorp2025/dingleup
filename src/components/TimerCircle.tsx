@@ -29,20 +29,20 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
         style={{ 
           transform: 'translateZ(5px)',
           background: timeLeft >= 8 
-            ? 'linear-gradient(135deg, #22c55e, #16a34a, #15803d)' // Bright green gradient
+            ? 'linear-gradient(135deg, hsl(var(--success)), hsl(var(--success)), hsl(var(--success)))' 
             : timeLeft >= 4 
-            ? 'linear-gradient(135deg, #fb923c, #f59e0b, #ea580c)' // Bright orange gradient
-            : 'linear-gradient(135deg, #f87171, #ef4444, #dc2626)', // Bright red gradient
+            ? 'linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent)), hsl(var(--accent)))' 
+            : 'linear-gradient(135deg, hsl(var(--destructive)), hsl(var(--destructive)), hsl(var(--destructive)))', 
           borderColor: timeLeft >= 8 
-            ? 'rgba(74, 222, 128, 0.9)' // Bright green border
+            ? 'hsl(var(--success) / 0.9)' 
             : timeLeft >= 4 
-            ? 'rgba(251, 146, 60, 0.9)' // Bright orange border
-            : 'rgba(248, 113, 113, 0.9)', // Bright red border
+            ? 'hsl(var(--accent) / 0.9)' 
+            : 'hsl(var(--destructive) / 0.9)', 
           boxShadow: timeLeft >= 8
-            ? '0 0 35px rgba(74, 222, 128, 1), 0 12px 35px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' // Bright green glow
+            ? '0 0 35px hsl(var(--success)), 0 12px 35px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' 
             : timeLeft >= 4
-            ? '0 0 35px rgba(251, 146, 60, 1), 0 12px 35px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' // Bright orange glow
-            : '0 0 35px rgba(248, 113, 113, 1), 0 12px 35px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' // Bright red glow
+            ? '0 0 35px hsl(var(--accent)), 0 12px 35px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' 
+            : '0 0 35px hsl(var(--destructive)), 0 12px 35px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.4)' 
         }} 
         aria-hidden 
       />
@@ -97,7 +97,7 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
         </svg>
         
         {/* Inner background with 3D effect */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full" style={{ background: 'radial-gradient(circle, #0f172a 0%, #020617 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(255,255,255,0.1)' }} />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full" style={{ background: 'radial-gradient(circle, hsl(var(--background)) 0%, hsl(var(--background)) 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(255,255,255,0.1)' }} />
         
         {/* Timer number with blink animation */}
         <div className="absolute inset-0 flex items-center justify-center">
