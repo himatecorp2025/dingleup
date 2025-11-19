@@ -173,20 +173,20 @@ Deno.serve(async (req) => {
       // Not critical, use default username
     }
 
-    // Update weekly_rankings INSTANTLY via RPC (aggregated "mixed" category)
+    // Update daily_rankings INSTANTLY via RPC (aggregated "mixed" category)
     try {
-      const { error: weeklyRankError } = await supabaseAdmin.rpc('update_weekly_ranking_for_user', {
+      const { error: dailyRankError } = await supabaseAdmin.rpc('update_daily_ranking_for_user', {
         p_user_id: user.id,
         p_correct_answers: body.correctAnswers,
         p_average_response_time: body.averageResponseTime
       });
 
-      if (weeklyRankError) {
-        console.error('[complete-game] Weekly ranking update error:', weeklyRankError);
+      if (dailyRankError) {
+        console.error('[complete-game] Daily ranking update error:', dailyRankError);
         // Not critical, continue
       }
     } catch (rankErr) {
-      console.error('[complete-game] Weekly ranking RPC exception:', rankErr);
+      console.error('[complete-game] Daily ranking RPC exception:', rankErr);
     }
 
     // Update global_leaderboard using ADMIN client (AGGREGATE LIFETIME TOTAL)
