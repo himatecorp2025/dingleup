@@ -4,12 +4,45 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings, Globe } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { BackgroundMusicControl } from '@/components/BackgroundMusicControl';
+
+// Available countries with their codes
+const COUNTRIES = [
+  { code: 'HU', name: 'Magyarország' },
+  { code: 'AT', name: 'Ausztria' },
+  { code: 'DE', name: 'Németország' },
+  { code: 'SK', name: 'Szlovákia' },
+  { code: 'RO', name: 'Románia' },
+  { code: 'HR', name: 'Horvátország' },
+  { code: 'SI', name: 'Szlovénia' },
+  { code: 'RS', name: 'Szerbia' },
+  { code: 'UA', name: 'Ukrajna' },
+  { code: 'PL', name: 'Lengyelország' },
+  { code: 'CZ', name: 'Csehország' },
+  { code: 'GB', name: 'Egyesült Királyság' },
+  { code: 'IE', name: 'Írország' },
+  { code: 'FR', name: 'Franciaország' },
+  { code: 'ES', name: 'Spanyolország' },
+  { code: 'IT', name: 'Olaszország' },
+  { code: 'PT', name: 'Portugália' },
+  { code: 'NL', name: 'Hollandia' },
+  { code: 'BE', name: 'Belgium' },
+  { code: 'CH', name: 'Svájc' },
+  { code: 'SE', name: 'Svédország' },
+  { code: 'NO', name: 'Norvégia' },
+  { code: 'DK', name: 'Dánia' },
+  { code: 'FI', name: 'Finnország' },
+  { code: 'US', name: 'Egyesült Államok' },
+  { code: 'CA', name: 'Kanada' },
+  { code: 'AU', name: 'Ausztrália' },
+  { code: 'NZ', name: 'Új-Zéland' },
+];
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -127,6 +160,18 @@ const Profile = () => {
       toast.error('Hiba a feltöltés során: ' + error.message);
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleCountryChange = async (newCountryCode: string) => {
+    if (!userId) return;
+    
+    try {
+      await updateProfile({ country_code: newCountryCode });
+      toast.success('Ország sikeresen frissítve! A ranglista most az új országodhoz tartozik.');
+    } catch (error) {
+      console.error('Failed to update country:', error);
+      toast.error('Hiba történt az ország módosítása során.');
     }
   };
 
@@ -477,6 +522,32 @@ const Profile = () => {
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-1">E-mail cím</p>
                 <p className="text-sm sm:text-base text-white font-bold break-all drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{profile.email}</p>
+              </div>
+
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-2 flex items-center gap-2">
+                  <Globe className="w-4 h-4" />
+                  Ország (Ranglista alapja)
+                </p>
+                <Select value={profile.country_code || 'HU'} onValueChange={handleCountryChange}>
+                  <SelectTrigger className="bg-black/30 border-purple-500/30 text-white hover:border-purple-400/50 focus:border-purple-400">
+                    <SelectValue placeholder="Válassz országot" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-purple-500/30">
+                    {COUNTRIES.map((country) => (
+                      <SelectItem 
+                        key={country.code} 
+                        value={country.code}
+                        className="text-foreground hover:bg-accent focus:bg-accent"
+                      >
+                        {country.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-white/40 mt-1">
+                  A ranglista mindig az általad választott ország játékosait jeleníti meg.
+                </p>
               </div>
               
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
