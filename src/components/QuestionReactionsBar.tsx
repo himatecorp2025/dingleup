@@ -25,7 +25,10 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
     <div className="fixed right-4 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-6">
       {/* LIKE Button */}
       <button
-        onClick={onToggleLike}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleLike();
+        }}
         disabled={loading}
         className="flex flex-col items-center gap-1 transition-all hover:scale-110 disabled:opacity-50"
         aria-label={liked ? "Unlike question" : "Like question"}
@@ -57,7 +60,10 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
 
       {/* DISLIKE Button */}
       <button
-        onClick={onToggleDislike}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleDislike();
+        }}
         disabled={loading}
         className="flex flex-col items-center gap-1 transition-all hover:scale-110 disabled:opacity-50"
         aria-label={disliked ? "Remove dislike" : "Dislike question"}
