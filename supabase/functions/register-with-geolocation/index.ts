@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Update user profile with detected country code
+    // Update user profile with detected country code (UPSERT for safety)
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -56,11 +56,14 @@ Deno.serve(async (req) => {
 
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({ 
+      .upsert({ 
+        id: userId,
         country_code: countryCode,
         birth_date: birthDate || '1991-05-05'
-      })
-      .eq('id', userId);
+      }, {
+        onConflict: 'id',
+        ignoreDuplicates: false
+      });
 
     if (updateError) {
       return new Response(
