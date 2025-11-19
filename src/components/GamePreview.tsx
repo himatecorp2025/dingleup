@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart, Coins } from "lucide-react";
 import gameBackground from "@/assets/game-background.png";
@@ -101,6 +101,10 @@ const GamePreview = () => {
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
 
+  // Stable callback for video end - prevents re-render loop
+  const handleVideoEnd = useCallback(() => {
+    setVideoEnded(true);
+  }, []);
 
   // Auth check
   useEffect(() => {
@@ -931,9 +935,7 @@ const GamePreview = () => {
   if (gameState === 'playing') {
     // Show loading video until it ends, regardless of question loading state
     if (!videoEnded) {
-      return <GameLoadingScreen onVideoEnd={() => {
-        setVideoEnded(true);
-      }} />;
+      return <GameLoadingScreen onVideoEnd={handleVideoEnd} />;
     }
     
     // Guard: Don't render until questions are loaded
