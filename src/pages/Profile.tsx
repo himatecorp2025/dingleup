@@ -272,18 +272,20 @@ const Profile = () => {
     const currentDay = now.toISOString().split('T')[0];
 
     const { data, error } = await supabase
-      .from('daily_rankings' as any)
+      .from('daily_rankings')
       .select('total_correct_answers')
       .eq('user_id', userId)
-      .eq('day_date', currentDay);
+      .eq('day_date', currentDay)
+      .eq('category', 'mixed')
+      .maybeSingle();
 
-    if (!error && data) {
-      // Sum all categories for this user in current day
-      const total = data.reduce((sum: number, row: any) => sum + (row.total_correct_answers || 0), 0);
-      setWeeklyCorrectAnswers(total);
-    } else {
+    if (error) {
+      console.error('Error fetching daily correct answers:', error);
       setWeeklyCorrectAnswers(0);
+      return;
     }
+
+    setWeeklyCorrectAnswers(data?.total_correct_answers || 0);
   };
 
   useEffect(() => {
