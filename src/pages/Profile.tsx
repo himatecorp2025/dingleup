@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
+import { useWallet } from '@/hooks/useWallet';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,6 +13,7 @@ import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { BackgroundMusicControl } from '@/components/BackgroundMusicControl';
+import { FreeBoosterCard } from '@/components/FreeBoosterCard';
 
 // Available countries with their codes (all countries)
 const COUNTRIES = [
@@ -216,6 +218,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading, updateProfile } = useGameProfile(userId);
+  const { walletData, refetchWallet } = useWallet(userId);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [weeklyCorrectAnswers, setWeeklyCorrectAnswers] = useState<number>(0);
@@ -743,39 +746,48 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Invitation Code - Full width */}
-        <div 
-          onClick={() => {
-            navigator.clipboard.writeText(profile.invitation_code || '');
-            toast.success('Meghívókód vágólapra másolva!');
-          }}
-          className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center mb-4 sm:mb-6 cursor-pointer transition-transform active:scale-95 transform-gpu hover:scale-105 hover:-translate-y-0.5"
-        >
-          {/* Base shadow (3D depth) */}
-          <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
-          
-          {/* Outer frame */}
-          <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-500/60
-            shadow-[0_0_20px_rgba(168,85,247,0.6),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
-          
-          {/* Middle frame (bright highlight) */}
-          <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800"
-            style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
-          
-          {/* Inner crystal layer */}
-          <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700"
-            style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
-          
-          {/* Specular highlight */}
-          <div className="absolute rounded-xl sm:rounded-2xl pointer-events-none"
-            style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
-          
-          {/* Content */}
-          <div className="relative z-10">
-            <ShareIcon />
-            <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Meghívó kód (kattints a másoláshoz)</p>
-            <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.invitation_code}</p>
+        {/* 2x3 Grid: Invitation Code + Free Booster */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          {/* Invitation Code Card */}
+          <div 
+            onClick={() => {
+              navigator.clipboard.writeText(profile.invitation_code || '');
+              toast.success('Meghívókód vágólapra másolva!');
+            }}
+            className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer transition-transform active:scale-95 transform-gpu hover:scale-105 hover:-translate-y-0.5"
+          >
+            {/* Base shadow (3D depth) */}
+            <div className="absolute rounded-xl sm:rounded-2xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
+            
+            {/* Outer frame */}
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 border-purple-500/60
+              shadow-[0_0_20px_rgba(168,85,247,0.6),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
+            
+            {/* Middle frame (bright highlight) */}
+            <div className="absolute inset-[3px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800"
+              style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+            
+            {/* Inner crystal layer */}
+            <div className="absolute rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700"
+              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+            
+            {/* Specular highlight */}
+            <div className="absolute rounded-xl sm:rounded-2xl pointer-events-none"
+              style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+            
+            {/* Content */}
+            <div className="relative z-10">
+              <ShareIcon />
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold">Meghívó kód (kattints a másoláshoz)</p>
+              <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.invitation_code}</p>
+            </div>
           </div>
+
+          {/* Free Booster Card */}
+          <FreeBoosterCard 
+            currentGold={walletData?.coinsCurrent || 0}
+            onPurchaseSuccess={refetchWallet}
+          />
         </div>
 
         {/* Account Info */}
