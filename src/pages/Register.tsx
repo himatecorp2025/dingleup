@@ -137,7 +137,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center p-4" style={{
+    <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center px-4 sm:px-6 md:px-8" style={{
       paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 1rem)' : '1rem',
       paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)'
     }}>
@@ -152,17 +152,18 @@ const Register = () => {
       </div>
 
       <div className="w-full max-w-md relative z-10 my-4">
-        <div className="flex justify-center mb-6">
-          <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
-            <img src="/logo.png" alt="DingleUP! Logo" className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 transform group-hover:scale-110 transition-transform duration-300" />
-          </div>
-        </div>
-
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative max-h-[85vh] overflow-y-auto">
           <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group" aria-label="Vissza">
             <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
           </button>
+
+          {/* Logo inside box */}
+          <div className="flex justify-center mb-6 mt-8">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
+              <img src="/logo.png" alt="DingleUP! Logo" className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 transform group-hover:scale-110 transition-transform duration-300" />
+            </div>
+          </div>
 
           <h1 className="text-3xl sm:text-4xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] flex items-center justify-center gap-2">
             <Trophy className="w-8 h-8 text-yellow-400 animate-pulse" />
@@ -175,7 +176,7 @@ const Register = () => {
               <Label className="text-sm font-medium text-white/80">Felhasználónév</Label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type="text" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} className="pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Válassz egy felhasználónevet" disabled={isLoading} />
+                <Input type="text" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} className="h-10 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Válassz egy felhasználónevet" disabled={isLoading} />
               </div>
               {errors.username && <p className="text-sm text-red-400">{errors.username}</p>}
             </div>
@@ -184,7 +185,7 @@ const Register = () => {
               <Label className="text-sm font-medium text-white/80">Email</Label>
               <div className="relative group">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="email@pelda.hu" disabled={isLoading} />
+                <Input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="h-10 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="email@pelda.hu" disabled={isLoading} />
               </div>
               {errors.email && <p className="text-sm text-red-400">{errors.email}</p>}
             </div>
@@ -193,7 +194,7 @@ const Register = () => {
               <Label className="text-sm font-medium text-white/80">Születési dátum</Label>
               <div className="relative group">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type="date" value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} className="pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" disabled={isLoading} max={new Date(new Date().setFullYear(new Date().getFullYear() - 16)).toISOString().split('T')[0]} />
+                <Input type="date" value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} className="h-10 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" disabled={isLoading} max={new Date(new Date().setFullYear(new Date().getFullYear() - 16)).toISOString().split('T')[0]} />
               </div>
               {errors.birthDate && <p className="text-sm text-red-400">{errors.birthDate}</p>}
             </div>
@@ -202,7 +203,7 @@ const Register = () => {
               <Label className="text-sm font-medium text-white/80">Jelszó</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type={showPassword ? "text" : "password"} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Min. 8 karakter" disabled={isLoading} />
+                <Input type={showPassword ? "text" : "password"} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="h-10 pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Min. 8 karakter" disabled={isLoading} />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors">
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -214,7 +215,7 @@ const Register = () => {
               <Label className="text-sm font-medium text-white/80">Jelszó megerősítése</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type={showPasswordConfirm ? "text" : "password"} value={formData.passwordConfirm} onChange={(e) => setFormData({ ...formData, passwordConfirm: e.target.value })} className="pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Írd be újra a jelszavad" disabled={isLoading} />
+                <Input type={showPasswordConfirm ? "text" : "password"} value={formData.passwordConfirm} onChange={(e) => setFormData({ ...formData, passwordConfirm: e.target.value })} className="h-10 pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Írd be újra a jelszavad" disabled={isLoading} />
                 <button type="button" onClick={() => setShowPasswordConfirm(!showPasswordConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors">
                   {showPasswordConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -224,7 +225,7 @@ const Register = () => {
 
             <div className="space-y-2">
               <Label className="text-sm font-medium text-white/80">Meghívó kód (opcionális)</Label>
-              <Input type="text" value={inviterCode} onChange={(e) => setInviterCode(e.target.value)} className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Meghívó kód" disabled={isLoading} />
+              <Input type="text" value={inviterCode} onChange={(e) => setInviterCode(e.target.value)} className="h-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Meghívó kód" disabled={isLoading} />
             </div>
 
             <div className="flex items-start space-x-2">
