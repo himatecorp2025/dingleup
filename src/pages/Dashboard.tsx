@@ -503,18 +503,16 @@ if (!profile) {
                   boxShadow: '0 0 30px rgba(234,179,8,0.4), inset 0 0 20px rgba(255,255,255,0.2)',
                 }}
               >
-                {/* Zap/Lightning Bolt SVG Icon with animation */}
-                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-lg animate-pulse" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <span className="animate-pulse text-[clamp(1rem,3vw,1.5rem)] sm:text-[clamp(1.25rem,3.5vw,2rem)]">⚡</span>
                 <span 
-                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)] animate-pulse" 
+                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)] animate-pulse mx-2" 
                   style={{ 
                     textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(234,179,8,0.8)'
                   }}
                 >
-                  SPEED BOOSTER ⚡
+                  SPEED BOOSTER
                 </span>
+                <span className="animate-pulse text-[clamp(1rem,3vw,1.5rem)] sm:text-[clamp(1.25rem,3.5vw,2rem)]">⚡</span>
               </DiamondButton>
             </div>
           </div>
