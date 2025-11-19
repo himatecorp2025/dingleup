@@ -144,14 +144,43 @@ serve(async (req) => {
         updated_at: new Date().toISOString()
       });
 
-    console.log(`[verify-premium-booster-payment] Payment verified and rewards granted for user ${user.id}`);
+    // Create Speed tokens (but don't activate them yet - user must click "Aktiválom")
+    const rewardSpeedCount = boosterType.reward_speed_count || 0;
+    const rewardSpeedDuration = boosterType.reward_speed_duration_min || 0;
+
+    console.log(`[verify-premium-booster-payment] Creating ${rewardSpeedCount} speed tokens of ${rewardSpeedDuration} minutes each`);
+
+    const speedTokens = [];
+    for (let i = 0; i < rewardSpeedCount; i++) {
+      speedTokens.push({
+        user_id: user.id,
+        duration_minutes: rewardSpeedDuration,
+        source: 'PREMIUM_BOOSTER'
+        // used_at and expires_at are NULL - tokens are pending activation
+      });
+    }
+
+    if (speedTokens.length > 0) {
+      const { error: speedError } = await supabaseAdmin
+        .from("speed_tokens")
+        .insert(speedTokens);
+
+      if (speedError) {
+        console.error("[verify-premium-booster-payment] Speed tokens creation error:", speedError);
+      } else {
+        console.log(`[verify-premium-booster-payment] Successfully created ${rewardSpeedCount} speed tokens (pending activation)`);
+      }
+    }
+
+    console.log(`[verify-premium-booster-payment] Success! User ${user.id} received +${rewardGold} gold, +${rewardLives} lives, ${rewardSpeedCount} speed tokens created, pending premium flag set`);
 
     return new Response(
       JSON.stringify({
         success: true,
         grantedRewards: {
           gold: rewardGold,
-          lives: rewardLives
+          lives: rewardLives,
+          speedCount: rewardSpeedCount
         },
         balance: {
           gold: newGold,

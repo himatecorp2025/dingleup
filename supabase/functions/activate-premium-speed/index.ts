@@ -9,13 +9,11 @@ const corsHeaders = {
 interface ActivatePremiumSpeedResponse {
   success: boolean;
   error?: string;
-  balanceAfter?: {
-    gold: number;
-    lives: number;
-  };
-  activatedSpeed?: {
-    speedCount: number;
-    speedDurationMinutes: number;
+  activeSpeedToken?: {
+    id: string;
+    expiresAt: string;
+    durationMinutes: number;
+    source: string;
   };
   hasPendingPremiumBooster?: boolean;
 }

@@ -1,0 +1,144 @@
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+interface ActivateSpeedTokenResponse {
+  success: boolean;
+  error?: string;
+  activeSpeedToken?: {
+    id: string;
+    expiresAt: string;
+    durationMinutes: number;
+    source: string;
+  };
+  pendingTokensCount?: number;
+}
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false } }
+    );
+
+    // Auth check
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Hiányzó autentikáció" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
+    if (userError || !userData.user) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Érvénytelen autentikáció" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = userData.user.id;
+
+    console.log(`[activate-speed-token] User ${userId} activating speed token`);
+
+    // Check for unused speed tokens
+    const { data: unusedTokens, error: tokenError } = await supabaseAdmin
+      .from("speed_tokens")
+      .select("*")
+      .eq("user_id", userId)
+      .is("used_at", null)
+      .order("created_at", { ascending: true })
+      .limit(1);
+
+    if (tokenError || !unusedTokens || unusedTokens.length === 0) {
+      console.log(`[activate-speed-token] No unused tokens found for user ${userId}`);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "NO_UNUSED_TOKENS",
+          pendingTokensCount: 0
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const tokenToActivate = unusedTokens[0];
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + tokenToActivate.duration_minutes * 60 * 1000);
+
+    console.log(`[activate-speed-token] Activating token ${tokenToActivate.id}, expires at ${expiresAt.toISOString()}`);
+
+    // Activate the token
+    const { error: activateError } = await supabaseAdmin
+      .from("speed_tokens")
+      .update({
+        used_at: now.toISOString(),
+        expires_at: expiresAt.toISOString()
+      })
+      .eq("id", tokenToActivate.id);
+
+    if (activateError) {
+      console.error("[activate-speed-token] Activation error:", activateError);
+      return new Response(
+        JSON.stringify({ success: false, error: "Token aktiválási hiba" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // If this was a premium booster token, mark premium as used
+    if (tokenToActivate.source === 'PREMIUM_BOOSTER') {
+      const { error: stateError } = await supabaseAdmin
+        .from("user_premium_booster_state")
+        .update({ has_pending_premium_booster: false })
+        .eq("user_id", userId);
+
+      if (stateError) {
+        console.error("[activate-speed-token] Error updating premium state:", stateError);
+      }
+    }
+
+    // Count remaining unused tokens
+    const { count: remainingCount } = await supabaseAdmin
+      .from("speed_tokens")
+      .select("*", { count: 'exact', head: true })
+      .eq("user_id", userId)
+      .is("used_at", null);
+
+    console.log(`[activate-speed-token] Success! Remaining tokens: ${remainingCount || 0}`);
+
+    const response: ActivateSpeedTokenResponse = {
+      success: true,
+      activeSpeedToken: {
+        id: tokenToActivate.id,
+        expiresAt: expiresAt.toISOString(),
+        durationMinutes: tokenToActivate.duration_minutes,
+        source: tokenToActivate.source
+      },
+      pendingTokensCount: remainingCount || 0
+    };
+
+    return new Response(
+      JSON.stringify(response),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+
+  } catch (error) {
+    console.error("[activate-speed-token] Error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Szerver hiba";
+    return new Response(
+      JSON.stringify({ success: false, error: errorMessage }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});
