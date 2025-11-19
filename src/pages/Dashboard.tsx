@@ -536,10 +536,9 @@ if (!profile) {
                 }}
               >
                 <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
-                  <circle cx="12" cy="12" r="10" fill="white"/>
-                  <path d="M10 8l6 4-6 4V8z" fill="currentColor"/>
+                  <path d="M8 5v14l11-7z" fill="white" stroke="white" strokeWidth="1"/>
                 </svg>
-                <span 
+                <span
                   className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
                   style={{ 
                     textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
