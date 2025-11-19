@@ -27,7 +27,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ success: false, error: "Hiányzó autentikáció" }),
+        JSON.stringify({ success: false, error: "Unauthorized" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -43,8 +43,9 @@ serve(async (req) => {
     
     const { data: userData, error: userError } = await supabaseAuth.auth.getUser(token);
     if (userError || !userData.user) {
+      console.error('[activate-speed-token] Auth failed:', userError?.message || 'No user');
       return new Response(
-        JSON.stringify({ success: false, error: "Érvénytelen autentikáció" }),
+        JSON.stringify({ success: false, error: "Unauthorized" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

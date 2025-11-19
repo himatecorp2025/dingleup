@@ -18,7 +18,13 @@ serve(async (req) => {
 
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      throw new Error('No authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
     const token = authHeader.replace('Bearer ', '').trim();
 
@@ -30,7 +36,14 @@ serve(async (req) => {
     // Verify user authentication using the JWT directly
     const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
     if (authError || !user) {
-      throw new Error('Unauthorized');
+      console.error('[get-wallet] Auth failed:', authError?.message || 'No user');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
 
     // Client for database operations (bypasses RLS)
