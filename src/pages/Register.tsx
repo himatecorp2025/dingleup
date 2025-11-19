@@ -88,14 +88,12 @@ const Register = () => {
 
         if (inviterCode) {
           try {
-            const { data: validationData, error: validationError } = await supabase.functions.invoke('validate-invitation', {
+            const { error: inviteError } = await supabase.functions.invoke('accept-invitation', {
               body: { invitationCode: inviterCode }
             });
 
-            if (!validationError && validationData.valid) {
-              await supabase.functions.invoke('accept-invitation', {
-                body: { invitationCode: inviterCode, invitedUserId: authData.user.id }
-              });
+            if (inviteError) {
+              console.error('Invitation processing failed:', inviteError);
             }
           } catch (inviteError) {
             console.error('Invitation processing failed:', inviteError);

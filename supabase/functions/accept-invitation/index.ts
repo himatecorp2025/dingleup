@@ -41,16 +41,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    const { inviterId, invitationCode } = await req.json();
+    const { invitationCode } = await req.json();
     
-    // Validate inputs
-    if (!inviterId || !UUID_REGEX.test(inviterId)) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Érvénytelen meghívó' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-    
+    // Validate invitation code
     if (!invitationCode || typeof invitationCode !== 'string' || invitationCode.length < 8) {
       return new Response(
         JSON.stringify({ success: false, error: 'Érvénytelen meghívókód' }),
@@ -61,26 +54,21 @@ serve(async (req) => {
     // Use authenticated user's ID
     const invitedUserId = user.id;
 
-    // Verify inviter exists and has this invitation code
+    // Find inviter by invitation code
     const { data: inviterProfile, error: inviterError } = await supabaseClient
       .from('profiles')
       .select('id, coins, invitation_code')
-      .eq('id', inviterId)
+      .eq('invitation_code', invitationCode)
       .single();
 
     if (inviterError || !inviterProfile) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Meghívó nem található' }),
+        JSON.stringify({ success: false, error: 'Érvénytelen meghívókód' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    if (inviterProfile.invitation_code !== invitationCode) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Meghívókód nem egyezik' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    const inviterId = inviterProfile.id;
 
     // Check if invitation record exists (by inviterId and invitedUserId OR invited_email)
     const { data: existingInvitation } = await supabaseClient
