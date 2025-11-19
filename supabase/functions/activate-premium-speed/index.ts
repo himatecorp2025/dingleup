@@ -16,6 +16,10 @@ interface ActivatePremiumSpeedResponse {
     source: string;
   };
   hasPendingPremiumBooster?: boolean;
+  balanceAfter?: {
+    lives: number;
+    coins: number;
+  };
 }
 
 serve(async (req) => {
@@ -157,12 +161,8 @@ serve(async (req) => {
     const response: ActivatePremiumSpeedResponse = {
       success: true,
       balanceAfter: {
-        gold: currentGold,
+        coins: currentGold,
         lives: currentLives
-      },
-      activatedSpeed: {
-        speedCount,
-        speedDurationMinutes: speedDuration
       },
       hasPendingPremiumBooster: false
     };

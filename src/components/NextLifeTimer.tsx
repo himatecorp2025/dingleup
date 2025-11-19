@@ -6,6 +6,7 @@ interface NextLifeTimerProps {
   livesMax: number;
   serverDriftMs?: number;
   onExpired?: () => void;
+  isSpeedBoost?: boolean;
 }
 
 export const NextLifeTimer = ({ 
@@ -13,13 +14,14 @@ export const NextLifeTimer = ({
   livesCurrent, 
   livesMax,
   serverDriftMs = 0,
-  onExpired
+  onExpired,
+  isSpeedBoost = false
 }: NextLifeTimerProps) => {
   const [remainingMs, setRemainingMs] = useState(0);
 
   useEffect(() => {
-    // If lives are at max, hide timer immediately
-    if (!nextLifeAt || livesCurrent >= livesMax) {
+    // For speed boost timer, always show countdown even if lives are at max
+    if (!nextLifeAt || (!isSpeedBoost && livesCurrent >= livesMax)) {
       setRemainingMs(0);
       return;
     }
@@ -41,10 +43,10 @@ export const NextLifeTimer = ({
     const intervalId = setInterval(updateRemaining, 1000);
 
     return () => clearInterval(intervalId);
-  }, [nextLifeAt, livesCurrent, livesMax, serverDriftMs, onExpired]);
+  }, [nextLifeAt, livesCurrent, livesMax, serverDriftMs, onExpired, isSpeedBoost]);
 
-  // Hide timer when lives are at max
-  if (livesCurrent >= livesMax || remainingMs === 0) {
+  // Hide timer when lives are at max (but not for speed boost)
+  if ((!isSpeedBoost && livesCurrent >= livesMax) || remainingMs === 0) {
     return null;
   }
 

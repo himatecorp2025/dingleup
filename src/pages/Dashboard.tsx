@@ -422,17 +422,31 @@ if (!profile) {
               {/* Lives Hexagon with Timer - 3D Diamond - server authoritative */}
               <div className="relative flex flex-col items-center">
                 <DiamondHexagon type="lives" value={walletData?.livesCurrent ?? profile.lives} />
-                {/* Life Regeneration Timer - server authoritative */}
-                <NextLifeTimer
-                  nextLifeAt={walletData?.nextLifeAt || null}
-                  livesCurrent={walletData?.livesCurrent ?? profile.lives}
-                  livesMax={walletData?.livesMax || profile.max_lives}
-                  serverDriftMs={serverDriftMs}
-                  onExpired={() => {
-                    refetchWallet();
-                    refreshProfile();
-                  }}
-                />
+                {/* Life Regeneration Timer or Speed Timer - server authoritative */}
+                {walletData?.activeSpeedToken ? (
+                  <NextLifeTimer
+                    nextLifeAt={walletData.activeSpeedToken.expiresAt}
+                    livesCurrent={walletData?.livesCurrent ?? profile.lives}
+                    livesMax={walletData?.livesMax || profile.max_lives}
+                    serverDriftMs={serverDriftMs}
+                    onExpired={() => {
+                      refetchWallet();
+                      refreshProfile();
+                    }}
+                    isSpeedBoost={true}
+                  />
+                ) : (
+                  <NextLifeTimer
+                    nextLifeAt={walletData?.nextLifeAt || null}
+                    livesCurrent={walletData?.livesCurrent ?? profile.lives}
+                    livesMax={walletData?.livesMax || profile.max_lives}
+                    serverDriftMs={serverDriftMs}
+                    onExpired={() => {
+                      refetchWallet();
+                      refreshProfile();
+                    }}
+                  />
+                )}
               </div>
 
                {/* Avatar Hexagon */}

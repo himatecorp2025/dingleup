@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useWallet } from '@/hooks/useWallet';
+import { useBoosterState } from '@/hooks/useBoosterState';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -218,6 +219,7 @@ const Profile = () => {
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading, updateProfile, refreshProfile } = useGameProfile(userId);
   const { walletData, refetchWallet } = useWallet(userId);
+  const boosterState = useBoosterState(userId);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [weeklyCorrectAnswers, setWeeklyCorrectAnswers] = useState<number>(0);
@@ -803,33 +805,54 @@ const Profile = () => {
               </svg>
               <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Free Booster</p>
               <p className="text-[10px] sm:text-xs text-white/70 leading-tight">+300 arany<br />+15 élet<br />4× 30' Speed</p>
-              <button
-                onClick={async () => {
-                  if ((walletData?.coinsCurrent || 0) < 900) {
-                    toast.error('Nincs elég aranyad');
-                    return;
-                  }
-                  try {
-                    toast.loading('Vásárlás...', { id: 'free-booster' });
-                    const { data, error } = await supabase.functions.invoke('purchase-booster', {
-                      body: { boosterCode: 'FREE' }
-                    });
-                    if (error) throw error;
-                    if (data?.success) {
-                      toast.success(`Sikeres vásárlás! +${data.grantedRewards?.gold} arany, +${data.grantedRewards?.lives} élet`, { id: 'free-booster' });
-                      // Instant refresh for both wallet and profile data
-                      refetchWallet();
-                      refreshProfile();
+              {boosterState.pendingSpeedTokensCount > 0 ? (
+                <button
+                  onClick={async () => {
+                    try {
+                      toast.loading('Speed aktiválás...', { id: 'speed-activate' });
+                      const { data, error } = await supabase.functions.invoke('activate-speed-token');
+                      if (error) throw error;
+                      if (data?.success) {
+                        toast.success(`Speed aktiválva! ${data.activeSpeedToken?.durationMinutes}' gyorsítás`, { id: 'speed-activate' });
+                        refetchWallet();
+                        refreshProfile();
+                      }
+                    } catch (e) {
+                      toast.error('Hiba történt', { id: 'speed-activate' });
                     }
-                  } catch (e) {
-                    toast.error('Hiba történt', { id: 'free-booster' });
-                  }
-                }}
-                disabled={(walletData?.coinsCurrent || 0) < 900}
-                className="w-full mt-2 px-2 py-1.5 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
-              >
-                {(walletData?.coinsCurrent || 0) < 900 ? 'Nincs elég aranyad' : '900 arany'}
-              </button>
+                  }}
+                  className="w-full mt-2 px-2 py-1.5 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white transition-all shadow-lg"
+                >
+                  Aktiválom ({boosterState.pendingSpeedTokensCount} token)
+                </button>
+              ) : (
+                <button
+                  onClick={async () => {
+                    if ((walletData?.coinsCurrent || 0) < 900) {
+                      toast.error('Nincs elég aranyad');
+                      return;
+                    }
+                    try {
+                      toast.loading('Vásárlás...', { id: 'free-booster' });
+                      const { data, error } = await supabase.functions.invoke('purchase-booster', {
+                        body: { boosterCode: 'FREE' }
+                      });
+                      if (error) throw error;
+                      if (data?.success) {
+                        toast.success(`Sikeres vásárlás! +${data.grantedRewards?.gold} arany, +${data.grantedRewards?.lives} élet`, { id: 'free-booster' });
+                        refetchWallet();
+                        refreshProfile();
+                      }
+                    } catch (e) {
+                      toast.error('Hiba történt', { id: 'free-booster' });
+                    }
+                  }}
+                  disabled={(walletData?.coinsCurrent || 0) < 900}
+                  className="w-full mt-2 px-2 py-1.5 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+                >
+                  {(walletData?.coinsCurrent || 0) < 900 ? 'Nincs elég aranyad' : '900 arany'}
+                </button>
+              )}
             </div>
           </div>
         </div>
