@@ -111,19 +111,28 @@ const Register = () => {
 
         navigate("/intro");
       }
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors: Partial<Record<keyof RegisterForm, string>> = {};
-        error.errors.forEach((err) => {
-          if (err.path[0]) {
-            fieldErrors[err.path[0] as keyof RegisterForm] = err.message;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors: Partial<Record<keyof RegisterForm, string>> = {};
+      error.errors.forEach((err) => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0] as keyof RegisterForm] = err.message;
+          
+          // Special toast notification for age restriction
+          if (err.path[0] === 'birthDate') {
+            toast({
+              title: "Regisztráció nem lehetséges",
+              description: "A játékban kizárólag 16. életévét betöltött személy vehet részt.",
+              variant: "destructive",
+            });
           }
-        });
-        setErrors(fieldErrors);
-      }
-    } finally {
-      setIsLoading(false);
+        }
+      });
+      setErrors(fieldErrors);
     }
+  } finally {
+    setIsLoading(false);
+  }
   };
 
   const handleGoogleAuth = async () => {
