@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon, Brain } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon, Brain, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -360,6 +360,28 @@ const AdminDashboard = () => {
           >
             <TrendingUp className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
             <span className="font-medium">Népszerű tartalmak</span>
+          </button>
+          <button
+            onClick={() => { navigate('/admin/booster-types'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
+              window.location.pathname === '/admin/booster-types'
+                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
+                : 'text-white/60 hover:bg-white/5'
+            }`}
+          >
+            <Zap className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
+            <span className="font-medium">Booster Csomagok</span>
+          </button>
+          <button
+            onClick={() => { navigate('/admin/booster-purchases'); onItemClick?.(); }}
+            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
+              window.location.pathname === '/admin/booster-purchases'
+                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
+                : 'text-white/60 hover:bg-white/5'
+            }`}
+          >
+            <ShoppingBag className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
+            <span className="font-medium">Booster Vásárlások</span>
           </button>
           <button
             onClick={() => { navigate('/admin/analytics'); onItemClick?.(); }}
