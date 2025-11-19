@@ -24,36 +24,49 @@ export const UserGrowthChart = () => {
   const fetchChartData = async () => {
     try {
       // Fetch user registrations by day (last 30 days)
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('created_at')
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+        .gte('created_at', thirtyDaysAgo.toISOString())
         .order('created_at', { ascending: true });
 
       if (profilesError) throw profilesError;
+
+      // Fetch total user count so the chart always matches the valós összes felhasználó értéket
+      const { count: totalUsersCount, error: totalUsersError } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+      if (totalUsersError) throw totalUsersError;
+
+      const totalUsers = totalUsersCount ?? 0;
+      const recentUsersCount = profiles?.length ?? 0;
+      const baselineUsers = Math.max(0, totalUsers - recentUsersCount);
 
       // Fetch all purchases
       const { data: purchases, error: purchasesError } = await supabase
         .from('purchases')
         .select('user_id, amount_usd, created_at')
         .eq('status', 'completed')
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+        .gte('created_at', thirtyDaysAgo.toISOString());
 
       if (purchasesError) throw purchasesError;
 
       // Group by date
       const dataMap = new Map<string, { users: number; totalSpend: number; uniqueSpenders: Set<string> }>();
 
-      // Initialize last 30 days
+      // Initialize last 30 nap and start from users who already léteztek a periódus előtt
       for (let i = 29; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
-        dataMap.set(dateStr, { users: 0, totalSpend: 0, uniqueSpenders: new Set() });
+        dataMap.set(dateStr, { users: baselineUsers, totalSpend: 0, uniqueSpenders: new Set() });
       }
 
-      // Count cumulative users (cumulative count)
-      let cumulativeUsers = 0;
+      // Count cumulative users (always cumulative from teljes user bázis)
+      let cumulativeUsers = baselineUsers;
       profiles?.forEach((profile) => {
         const date = new Date(profile.created_at).toISOString().split('T')[0];
         cumulativeUsers++;
