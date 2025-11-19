@@ -564,14 +564,26 @@ if (!profile) {
                 <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
                   <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <span 
-                  className="font-black text-[clamp(0.875rem,3.5vw,1.25rem)] sm:text-[clamp(1rem,4vw,1.5rem)] md:text-[clamp(1.25rem,4.5vw,1.75rem)] animate-pulse" 
-                  style={{ 
-                    textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(234,179,8,0.8)'
-                  }}
-                >
-                  {boosterState.hasPendingPremium ? 'PREMIUM SPEED AKTIVÁLÁSA' : 'SPEED BOOSTER'}
-                </span>
+                <div className="flex flex-col items-center">
+                  <span 
+                    className="relative font-black text-[clamp(0.85rem,2.5vw,1.15rem)] sm:text-[clamp(1rem,3vw,1.5rem)] tracking-[0.05em] sm:tracking-[0.1em]" 
+                    style={{ 
+                      textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(234,179,8,0.8)'
+                    }}
+                  >
+                    {boosterState.hasPendingPremium ? 'PREMIUM SPEED AKTIVÁLÁSA' : 'SPEED BOOSTER'}
+                  </span>
+                  {!boosterState.hasPendingPremium && (
+                    <span 
+                      className="block text-[clamp(0.65rem,2vw,0.85rem)] sm:text-[clamp(0.75rem,2.5vw,1rem)] font-semibold mt-0.5 opacity-90"
+                      style={{ 
+                        textShadow: '-0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000'
+                      }}
+                    >
+                      2.99 USD • Premium Booster
+                    </span>
+                  )}
+                </div>
                 <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] ml-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
                   <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>

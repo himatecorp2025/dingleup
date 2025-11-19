@@ -12,7 +12,9 @@ import {
   LogOut,
   AlertTriangle,
   Activity,
-  Target
+  Target,
+  Zap,
+  ShoppingBag
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -63,6 +65,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/dashboard?tab=invitations', label: 'Meghívások', icon: Users, badge: 'invitations' },
     { path: '/admin/dashboard?tab=reports', label: 'Jelentések', icon: AlertTriangle, badge: 'reports' },
     { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: TrendingUp },
+    { path: '/admin/booster-types', label: 'Booster Csomagok', icon: Zap },
+    { path: '/admin/booster-purchases', label: 'Booster Vásárlások', icon: ShoppingBag },
     { path: '/admin/analytics', label: 'Fejlett Analitika', icon: Activity },
   ];
 

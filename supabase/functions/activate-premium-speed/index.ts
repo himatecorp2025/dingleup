@@ -104,10 +104,30 @@ serve(async (req) => {
 
     console.log(`[activate-premium-speed] Activating ${speedCount}x ${speedDuration}min Speed tokens`);
 
-    // TODO: Create Speed tokens in Speed system
-    // This requires integration with existing Speed token table/system
-    // Example: Insert speedCount rows into speed_tokens table with duration
-    console.log(`[activate-premium-speed] TODO: Create ${speedCount} Speed tokens of ${speedDuration} minutes each`);
+    // Create Speed tokens
+    const speedTokens = [];
+    for (let i = 0; i < speedCount; i++) {
+      speedTokens.push({
+        user_id: userId,
+        duration_minutes: speedDuration,
+        expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year expiry
+        source: 'PREMIUM_BOOSTER'
+      });
+    }
+
+    const { error: speedError } = await supabaseAdmin
+      .from("speed_tokens")
+      .insert(speedTokens);
+
+    if (speedError) {
+      console.error("[activate-premium-speed] Speed tokens creation error:", speedError);
+      return new Response(
+        JSON.stringify({ success: false, error: "Speed token létrehozási hiba" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`[activate-premium-speed] Successfully created ${speedCount} Speed tokens`);
 
     // Clear pending flag
     const { error: clearError } = await supabaseAdmin
