@@ -650,13 +650,13 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-destructive/90 via-destructive to-destructive opacity-90 border-3 border-destructive/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-red-700 via-red-600 to-red-900 opacity-90 border-3 border-red-500/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-destructive/90 via-destructive to-destructive" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
@@ -675,13 +675,13 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-accent/90 via-accent to-accent-dark opacity-90 border-3 border-accent/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-700 via-orange-600 to-orange-900 opacity-90 border-3 border-orange-500/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
             
             {/* INNER LAYER */}
-            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-accent via-accent/90 to-accent-dark" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
+            <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-orange-500 via-orange-600 to-orange-700" style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)', transform: 'translateZ(20px)' }} aria-hidden />
             
             {/* SPECULAR HIGHLIGHT */}
             <div className="absolute inset-[6px] rounded-xl sm:rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)', transform: 'translateZ(30px)' }} aria-hidden />
