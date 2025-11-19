@@ -37,6 +37,7 @@ const PerformanceDashboard = lazy(() => import("./pages/PerformanceDashboard"));
 const EngagementDashboard = lazy(() => import("./pages/EngagementDashboard"));
 const UserJourneyDashboard = lazy(() => import("./pages/UserJourneyDashboard"));
 const PopularContent = lazy(() => import("./pages/PopularContent"));
+const AdminPopularContent = lazy(() => import("./pages/AdminPopularContent"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading fallback component
@@ -290,6 +291,7 @@ const App = () => {
               <Route path="/admin/performance" element={<PerformanceDashboard />} />
               <Route path="/admin/engagement" element={<EngagementDashboard />} />
               <Route path="/admin/user-journey" element={<UserJourneyDashboard />} />
+              <Route path="/admin/popular-content" element={<AdminPopularContent />} />
               <Route path="/popular-content" element={<PopularContent />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

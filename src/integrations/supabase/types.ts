@@ -1495,6 +1495,49 @@ export type Database = {
         }
         Relationships: []
       }
+      question_dislikes: {
+        Row: {
+          created_at: string
+          id: number
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          question_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          question_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_dislikes_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_dislikes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_dislikes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       question_likes: {
         Row: {
           created_at: string
@@ -1543,6 +1586,7 @@ export type Database = {
           answers: Json
           audience: Json
           created_at: string | null
+          dislike_count: number
           id: string
           like_count: number
           question: string
@@ -1554,6 +1598,7 @@ export type Database = {
           answers: Json
           audience: Json
           created_at?: string | null
+          dislike_count?: number
           id: string
           like_count?: number
           question: string
@@ -1565,6 +1610,7 @@ export type Database = {
           answers?: Json
           audience?: Json
           created_at?: string | null
+          dislike_count?: number
           id?: string
           like_count?: number
           question?: string
