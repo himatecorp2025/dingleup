@@ -827,6 +827,14 @@ const Profile = () => {
                 <p className="text-sm sm:text-base text-white font-bold break-all drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{profile.email}</p>
               </div>
 
+              {/* Birth Date (read-only) */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-1">Születési dátum</p>
+                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  {profile.birth_date ? new Date(profile.birth_date).toLocaleDateString('hu-HU') : '1991. 05. 05.'}
+                </p>
+              </div>
+
               {/* Current Password (masked) */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-1">Jelenlegi jelszó</p>

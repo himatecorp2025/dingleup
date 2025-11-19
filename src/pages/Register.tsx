@@ -6,12 +6,21 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Eye, EyeOff, User, Mail, Lock, Trophy } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, User, Mail, Lock, Trophy, Calendar } from "lucide-react";
 import { z } from "zod";
 
 const registerSchema = z.object({
   username: z.string().min(3, "A felhasználónév legalább 3 karakter hosszú legyen").max(50),
   email: z.string().email("Érvénytelen email cím").max(255),
+  birthDate: z.string().refine((date) => {
+    const birthDate = new Date(date);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
+    const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
+    return actualAge >= 16;
+  }, "Legalább 16 évesnek kell lenned"),
   password: z.string().min(8, "A jelszónak legalább 8 karakter hosszúnak kell lennie")
     .regex(/[a-z]/, "A jelszónak tartalmaznia kell kisbetűt")
     .regex(/[A-Z]/, "A jelszónak tartalmaznia kell nagybetűt")
@@ -32,7 +41,7 @@ const Register = () => {
   const invitationCode = searchParams.get('code') || '';
   
   const [formData, setFormData] = useState<RegisterForm>({
-    username: "", email: "", password: "", passwordConfirm: "", termsAccepted: false,
+    username: "", email: "", birthDate: "", password: "", passwordConfirm: "", termsAccepted: false,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterForm, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -63,7 +72,7 @@ const Register = () => {
         email: validated.email,
         password: validated.password,
         options: {
-          data: { username: validated.username },
+          data: { username: validated.username, birthDate: validated.birthDate },
           emailRedirectTo: `${window.location.origin}/`,
         },
       });
@@ -80,7 +89,7 @@ const Register = () => {
       if (authData.user) {
         try {
           await supabase.functions.invoke('register-with-geolocation', {
-            body: { userId: authData.user.id }
+            body: { userId: authData.user.id, birthDate: validated.birthDate }
           });
         } catch (geoError) {
           console.error('Geolocation failed:', geoError);
@@ -178,6 +187,15 @@ const Register = () => {
                 <Input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="email@pelda.hu" disabled={isLoading} />
               </div>
               {errors.email && <p className="text-sm text-red-400">{errors.email}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-white/80">Születési dátum</Label>
+              <div className="relative group">
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
+                <Input type="date" value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} className="pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" disabled={isLoading} max={new Date(new Date().setFullYear(new Date().getFullYear() - 16)).toISOString().split('T')[0]} />
+              </div>
+              {errors.birthDate && <p className="text-sm text-red-400">{errors.birthDate}</p>}
             </div>
 
             <div className="space-y-2">

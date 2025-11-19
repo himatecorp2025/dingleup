@@ -39,6 +39,7 @@ export interface UserProfile {
   id: string;
   username: string;
   email: string;
+  birth_date: string;
   coins: number;
   lives: number;
   max_lives: number;

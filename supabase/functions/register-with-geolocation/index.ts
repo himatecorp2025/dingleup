@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(origin);
 
   try {
-    const { userId } = await req.json();
+    const { userId, birthDate } = await req.json();
     
     if (!userId) {
       return new Response(
@@ -56,7 +56,10 @@ Deno.serve(async (req) => {
 
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({ country_code: countryCode })
+      .update({ 
+        country_code: countryCode,
+        birth_date: birthDate || '1991-05-05'
+      })
       .eq('id', userId);
 
     if (updateError) {
