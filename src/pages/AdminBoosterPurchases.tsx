@@ -18,6 +18,7 @@ interface BoosterPurchase {
   gold_spent: number;
   usd_cents_spent: number;
   created_at: string;
+  purchase_context: string;
 }
 
 interface PurchaseSummary {
@@ -58,6 +59,7 @@ export default function AdminBoosterPurchases() {
           gold_spent,
           usd_cents_spent,
           created_at,
+          purchase_context,
           booster_types!inner (
             code,
             name
@@ -80,7 +82,8 @@ export default function AdminBoosterPurchases() {
         purchase_source: p.purchase_source,
         gold_spent: p.gold_spent,
         usd_cents_spent: p.usd_cents_spent,
-        created_at: p.created_at
+        created_at: p.created_at,
+        purchase_context: p.purchase_context || 'UNKNOWN'
       }));
 
       setPurchases(formattedData);
@@ -198,6 +201,8 @@ export default function AdminBoosterPurchases() {
                 <SelectItem value="all">Minden booster</SelectItem>
                 <SelectItem value="FREE">Free Booster</SelectItem>
                 <SelectItem value="PREMIUM">Premium Booster</SelectItem>
+                <SelectItem value="GOLD_SAVER">Gold Saver</SelectItem>
+                <SelectItem value="INSTANT_RESCUE">Instant Rescue</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -211,6 +216,7 @@ export default function AdminBoosterPurchases() {
                 <TableHead>Felhasználó</TableHead>
                 <TableHead>Booster</TableHead>
                 <TableHead>Forrás</TableHead>
+                <TableHead>Context</TableHead>
                 <TableHead className="text-right">Arany</TableHead>
                 <TableHead className="text-right">USD</TableHead>
                 <TableHead>Dátum</TableHead>
@@ -228,6 +234,17 @@ export default function AdminBoosterPurchases() {
                         : 'bg-green-500/20 text-green-400'
                     }`}>
                       {purchase.purchase_source}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                      purchase.purchase_context === 'INGAME'
+                        ? 'bg-red-500/20 text-red-400'
+                        : purchase.purchase_context === 'DASHBOARD'
+                        ? 'bg-blue-500/20 text-blue-400'
+                        : 'bg-purple-500/20 text-purple-400'
+                    }`}>
+                      {purchase.purchase_context || 'UNKNOWN'}
                     </span>
                   </TableCell>
                   <TableCell className="text-right text-yellow-400">

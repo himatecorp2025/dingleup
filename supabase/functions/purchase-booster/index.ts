@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 interface BoosterPurchaseRequest {
-  boosterCode: 'FREE' | 'PREMIUM';
+  boosterCode: 'FREE' | 'PREMIUM' | 'GOLD_SAVER' | 'INSTANT_RESCUE';
   confirmInstantPurchase?: boolean;
 }
 
@@ -86,6 +86,12 @@ serve(async (req) => {
     } else if (boosterCode === 'PREMIUM') {
       // PREMIUM BOOSTER LOGIC
       return await handlePremiumBoosterPurchase(supabaseAdmin, userId, boosterType, confirmInstantPurchase);
+    } else if (boosterCode === 'GOLD_SAVER') {
+      // IN-GAME GOLD SAVER BOOSTER LOGIC
+      return await handleGoldSaverPurchase(supabaseAdmin, userId, boosterType);
+    } else if (boosterCode === 'INSTANT_RESCUE') {
+      // IN-GAME INSTANT RESCUE BOOSTER LOGIC
+      return await handleInstantRescuePurchase(supabaseAdmin, userId, boosterType);
     }
 
     return new Response(
@@ -195,7 +201,8 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
       booster_type_id: boosterType.id,
       purchase_source: "GOLD",
       gold_spent: priceGold,
-      usd_cents_spent: 0
+      usd_cents_spent: 0,
+      purchase_context: "PROFILE"
     });
 
   if (purchaseError) {
@@ -405,7 +412,8 @@ async function handlePremiumBoosterPurchase(
         purchase_source: "IAP",
         gold_spent: 0,
         usd_cents_spent: priceUsdCents,
-        iap_transaction_id: `stripe_${Date.now()}` // TODO: Replace with real Stripe transaction ID
+        iap_transaction_id: `stripe_${Date.now()}`, // TODO: Replace with real Stripe transaction ID
+        purchase_context: "DASHBOARD"
       });
 
     console.log(`[PREMIUM] Purchase successful, pending activation`);
@@ -433,6 +441,246 @@ async function handlePremiumBoosterPurchase(
     );
   } catch (error) {
     console.error("[PREMIUM] Transaction error:", error);
+    return new Response(
+      JSON.stringify({ success: false, error: "Tranzakciós hiba történt" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+}
+
+async function handleGoldSaverPurchase(supabaseAdmin: any, userId: string, boosterType: any) {
+  const priceGold = boosterType.price_gold || 0;
+  const rewardGold = boosterType.reward_gold || 0;
+  const rewardLives = boosterType.reward_lives || 0;
+
+  console.log(`[GOLD_SAVER] Price: ${priceGold}, Rewards: gold=${rewardGold}, lives=${rewardLives}`);
+
+  // Get current user balance
+  const { data: profile, error: profileError } = await supabaseAdmin
+    .from("profiles")
+    .select("coins, lives")
+    .eq("id", userId)
+    .single();
+
+  if (profileError || !profile) {
+    return new Response(
+      JSON.stringify({ success: false, error: "Profil nem található" }),
+      { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  const currentGold = profile.coins || 0;
+  const currentLives = profile.lives || 0;
+
+  // Check gold availability
+  if (currentGold < priceGold) {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: "NOT_ENOUGH_GOLD",
+        balanceAfter: { gold: currentGold, lives: currentLives, speedTokensAvailable: 0 }
+      }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // Execute transaction: deduct gold, add rewards
+  const newGold = currentGold - priceGold + rewardGold;
+  const newLives = currentLives + rewardLives;
+
+  const { error: updateError } = await supabaseAdmin
+    .from("profiles")
+    .update({
+      coins: newGold,
+      lives: newLives,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", userId);
+
+  if (updateError) {
+    console.error("[GOLD_SAVER] Update error:", updateError);
+    return new Response(
+      JSON.stringify({ success: false, error: "Profil frissítési hiba" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // Log transaction to wallet_ledger
+  const idempotencyKey = `gold_saver:${userId}:${Date.now()}`;
+  const { error: ledgerError } = await supabaseAdmin
+    .from("wallet_ledger")
+    .insert({
+      user_id: userId,
+      delta_coins: rewardGold - priceGold,
+      delta_lives: rewardLives,
+      source: "booster_purchase",
+      idempotency_key: idempotencyKey,
+      metadata: {
+        booster_type_id: boosterType.id,
+        booster_code: 'GOLD_SAVER',
+        price_gold: priceGold,
+        reward_gold: rewardGold,
+        reward_lives: rewardLives,
+        purchase_context: 'INGAME'
+      }
+    });
+
+  if (ledgerError) {
+    console.error("[GOLD_SAVER] Ledger insert error:", ledgerError);
+  }
+
+  // Log purchase
+  const { error: purchaseError } = await supabaseAdmin
+    .from("booster_purchases")
+    .insert({
+      user_id: userId,
+      booster_type_id: boosterType.id,
+      purchase_source: "GOLD",
+      gold_spent: priceGold,
+      usd_cents_spent: 0,
+      purchase_context: "INGAME"
+    });
+
+  if (purchaseError) {
+    console.error("[GOLD_SAVER] Purchase log error:", purchaseError);
+  }
+
+  console.log(`[GOLD_SAVER] Purchase successful, no speed tokens`);
+
+  const response: BoosterPurchaseResponse = {
+    success: true,
+    balanceAfter: {
+      gold: newGold,
+      lives: newLives,
+      speedTokensAvailable: 0
+    },
+    grantedRewards: {
+      gold: rewardGold,
+      lives: rewardLives,
+      speedCount: 0,
+      speedDurationMinutes: 0
+    }
+  };
+
+  return new Response(
+    JSON.stringify(response),
+    { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
+}
+
+async function handleInstantRescuePurchase(supabaseAdmin: any, userId: string, boosterType: any) {
+  const rewardGold = boosterType.reward_gold || 0;
+  const rewardLives = boosterType.reward_lives || 0;
+  const priceUsdCents = boosterType.price_usd_cents || 0;
+
+  console.log(`[INSTANT_RESCUE] Rewards: gold=${rewardGold}, lives=${rewardLives}, price=$${(priceUsdCents / 100).toFixed(2)}`);
+
+  try {
+    // ========== PAYMENT SIMULATION ==========
+    // TODO: Replace with real Stripe payment integration
+    // For now, simulate payment (90% success rate for testing)
+    const paymentSuccess = Math.random() > 0.1; // 90% success rate
+    
+    if (!paymentSuccess) {
+      console.log('[INSTANT_RESCUE] Simulated payment failure');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "PAYMENT_FAILED"
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    console.log('[INSTANT_RESCUE] Simulated payment success');
+    // ========== END PAYMENT SIMULATION ==========
+
+    // Get current balance
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("coins, lives")
+      .eq("id", userId)
+      .single();
+
+    const currentGold = profile?.coins || 0;
+    const currentLives = profile?.lives || 0;
+
+    // Grant immediate rewards: gold + lives (NO speed)
+    const newGold = currentGold + rewardGold;
+    const newLives = currentLives + rewardLives;
+
+    const { error: updateError } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        coins: newGold,
+        lives: newLives,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", userId);
+
+    if (updateError) {
+      console.error("[INSTANT_RESCUE] Profile update error:", updateError);
+      return new Response(
+        JSON.stringify({ success: false, error: "Profil frissítési hiba" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Log wallet transaction
+    const idempotencyKey = `instant_rescue:${userId}:${Date.now()}`;
+    await supabaseAdmin
+      .from("wallet_ledger")
+      .insert({
+        user_id: userId,
+        delta_coins: rewardGold,
+        delta_lives: rewardLives,
+        source: "booster_purchase",
+        idempotency_key: idempotencyKey,
+        metadata: {
+          booster_type_id: boosterType.id,
+          booster_code: 'INSTANT_RESCUE',
+          price_usd_cents: priceUsdCents,
+          reward_gold: rewardGold,
+          reward_lives: rewardLives,
+          purchase_context: 'INGAME'
+        }
+      });
+
+    // Log purchase
+    await supabaseAdmin
+      .from("booster_purchases")
+      .insert({
+        user_id: userId,
+        booster_type_id: boosterType.id,
+        purchase_source: "IAP",
+        gold_spent: 0,
+        usd_cents_spent: priceUsdCents,
+        iap_transaction_id: `stripe_instant_rescue_${Date.now()}`, // TODO: Replace with real Stripe transaction ID
+        purchase_context: "INGAME"
+      });
+
+    console.log(`[INSTANT_RESCUE] Purchase successful`);
+
+    const response: BoosterPurchaseResponse = {
+      success: true,
+      balanceAfter: {
+        gold: newGold,
+        lives: newLives,
+        speedTokensAvailable: 0
+      },
+      grantedRewards: {
+        gold: rewardGold,
+        lives: rewardLives,
+        speedCount: 0,
+        speedDurationMinutes: 0
+      }
+    };
+
+    return new Response(
+      JSON.stringify(response),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    console.error("[INSTANT_RESCUE] Transaction error:", error);
     return new Response(
       JSON.stringify({ success: false, error: "Tranzakciós hiba történt" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

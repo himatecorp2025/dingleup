@@ -111,6 +111,7 @@ export type Database = {
           gold_spent: number
           iap_transaction_id: string | null
           id: string
+          purchase_context: string | null
           purchase_source: string
           usd_cents_spent: number
           user_id: string
@@ -121,6 +122,7 @@ export type Database = {
           gold_spent?: number
           iap_transaction_id?: string | null
           id?: string
+          purchase_context?: string | null
           purchase_source: string
           usd_cents_spent?: number
           user_id: string
@@ -131,6 +133,7 @@ export type Database = {
           gold_spent?: number
           iap_transaction_id?: string | null
           id?: string
+          purchase_context?: string | null
           purchase_source?: string
           usd_cents_spent?: number
           user_id?: string
