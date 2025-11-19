@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface UseQuestionReactionsResult {
@@ -26,7 +26,7 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
   const [dislikeCount, setDislikeCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [actionInProgress, setActionInProgress] = useState(false);
+  const actionInProgressRef = useRef(false);
 
   // Fetch initial reaction status
   const fetchReactionStatus = useCallback(async () => {
@@ -73,12 +73,12 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       return;
     }
 
-    if (actionInProgress) {
-      // Prevent double-like from very fast repeated interactions
+    if (actionInProgressRef.current) {
+      // Prevent double-like from very fast repeated interactions (double-tap or double-click)
       return;
     }
 
-    setActionInProgress(true);
+    actionInProgressRef.current = true;
 
     // Optimistic update
     const prevLiked = liked;
@@ -141,9 +141,9 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       setDislikeCount(prevDislikeCount);
       setError('Failed to update like');
     } finally {
-      setActionInProgress(false);
+      actionInProgressRef.current = false;
     }
-  }, [questionId, liked, disliked, likeCount, dislikeCount, actionInProgress]);
+  }, [questionId, liked, disliked, likeCount, dislikeCount]);
 
   // Toggle DISLIKE
   const toggleDislike = useCallback(async () => {
@@ -152,12 +152,12 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       return;
     }
 
-    if (actionInProgress) {
+    if (actionInProgressRef.current) {
       // Prevent double-dislike from very fast repeated interactions
       return;
     }
 
-    setActionInProgress(true);
+    actionInProgressRef.current = true;
 
     // Optimistic update
     const prevLiked = liked;
@@ -220,9 +220,9 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       setDislikeCount(prevDislikeCount);
       setError('Failed to update dislike');
     } finally {
-      setActionInProgress(false);
+      actionInProgressRef.current = false;
     }
-  }, [questionId, liked, disliked, likeCount, dislikeCount, actionInProgress]);
+  }, [questionId, liked, disliked, likeCount, dislikeCount]);
 
   return {
     liked,
