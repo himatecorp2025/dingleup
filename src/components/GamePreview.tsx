@@ -101,6 +101,7 @@ const GamePreview = () => {
   const [isStartingGame, setIsStartingGame] = useState(false);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
+  const [showLoadingVideo, setShowLoadingVideo] = useState(false);
 
   // Game initialization promise - runs in background while video plays
   const gameInitPromiseRef = useRef<Promise<void> | null>(null);
@@ -139,12 +140,19 @@ const GamePreview = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState]);
 
-  const startGame = async () => {
+  const startGame = async (skipLoadingVideo: boolean = false) => {
     if (!profile || isStartingGame) return;
     
-    // CRITICAL: Show video IMMEDIATELY - no delays, no waiting
+    // Set loading video visibility based on skipLoadingVideo parameter
     setIsStartingGame(true);
-    setVideoEnded(false);
+    if (!skipLoadingVideo) {
+      setShowLoadingVideo(true);
+      setVideoEnded(false);
+    } else {
+      // Seamless restart - skip video and mark as ended immediately
+      setShowLoadingVideo(false);
+      setVideoEnded(true);
+    }
     
     // Start all backend operations in parallel IMMEDIATELY while video plays
     // Store promise in ref so handleVideoEnd can wait for it
@@ -487,7 +495,8 @@ const GamePreview = () => {
     setGameCompleted(false);
     
     // Start new game immediately (will spend life and add 1 coin)
-    await startGame();
+    // Skip loading video for seamless restart
+    await startGame(true);
   };
 
   const handleTimeout = () => {
@@ -660,42 +669,43 @@ const GamePreview = () => {
         ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)
         : '0.0';
       
-      // Show beautiful results toast
+      // Show beautiful results toast with casino aesthetic
       toast.success(
-        <div className="flex flex-col gap-3 p-2">
-          <div className="text-xl font-black text-center mb-2">
+        <div className="flex flex-col gap-2 p-1.5">
+          <div className="text-center text-base font-black mb-1 bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent">
             🏆 JÁTÉK VÉGE! 🏆
           </div>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="flex flex-col items-center bg-white/10 rounded-lg p-3">
-              <div className="text-2xl mb-1">✅</div>
-              <div className="font-bold text-base">{correctAnswers}/15</div>
-              <div className="text-xs opacity-80">Helyes válasz</div>
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
+              <div className="text-lg mb-0.5">✅</div>
+              <div className="font-bold text-green-400">{correctAnswers}/15</div>
+              <div className="text-[10px] opacity-70">Helyes</div>
             </div>
-            <div className="flex flex-col items-center bg-white/10 rounded-lg p-3">
-              <div className="text-2xl mb-1">💰</div>
-              <div className="font-bold text-base">{coinsEarned}</div>
-              <div className="text-xs opacity-80">Aranyérme</div>
+            <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
+              <div className="text-lg mb-0.5">💰</div>
+              <div className="font-bold text-yellow-400">{coinsEarned}</div>
+              <div className="text-[10px] opacity-70">Arany</div>
+            </div>
+            <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
+              <div className="text-lg mb-0.5">⚡</div>
+              <div className="font-bold text-blue-400">{avgResponseTime}s</div>
+              <div className="text-[10px] opacity-70">Idő</div>
             </div>
           </div>
-          <div className="flex flex-col items-center bg-white/10 rounded-lg p-3 mt-1">
-            <div className="text-2xl mb-1">⚡</div>
-            <div className="font-bold text-base">{avgResponseTime}s</div>
-            <div className="text-xs opacity-80">Átlagos válaszidő</div>
-          </div>
-          <div className="text-center mt-2 text-base font-bold animate-pulse">
+          <div className="text-center mt-1 text-xs font-bold animate-pulse text-white/90">
             ⬆️ Görgess tovább új játékhoz! ⬆️
           </div>
         </div>,
         {
           duration: Infinity, // Never auto-close
           style: {
-            background: 'linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success-glow)) 100%)',
+            background: 'linear-gradient(135deg, rgb(88, 28, 135) 0%, rgb(124, 58, 237) 50%, rgb(88, 28, 135) 100%)',
             color: 'white',
-            border: '2px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: '0 10px 40px rgba(0, 255, 135, 0.4)',
-            maxWidth: '90vw',
-            width: '400px',
+            border: '2px solid rgba(234, 179, 8, 0.5)',
+            boxShadow: '0 8px 32px rgba(234, 179, 8, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            maxWidth: '85vw',
+            width: '320px',
+            backdropFilter: 'blur(8px)',
           }
         }
       );
@@ -1098,7 +1108,8 @@ const GamePreview = () => {
 
   // Show loading video IMMEDIATELY when game start begins (even before backend completes)
   // Keep video visible until BOTH video ends AND questions are ready
-  if (isStartingGame || !videoEnded || (gameState === 'playing' && questions.length === 0)) {
+  // UNLESS showLoadingVideo is false (seamless restart)
+  if (showLoadingVideo && (isStartingGame || !videoEnded || (gameState === 'playing' && questions.length === 0))) {
     return (
       <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
         <GameLoadingScreen onVideoEnd={handleVideoEnd} />
