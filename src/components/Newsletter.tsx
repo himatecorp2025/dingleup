@@ -40,20 +40,20 @@ const Newsletter = () => {
   };
 
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
+    <section className="py-24 px-4 bg-gradient-to-b from-primary-darker via-primary-dark to-primary-darker">
       <div className="container mx-auto">
         <div className="max-w-3xl mx-auto relative animate-fade-in" style={{ perspective: '1200px' }}>
           {/* BASE SHADOW */}
           <div className="absolute inset-0 bg-black/70 rounded-3xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
           
           {/* OUTER FRAME */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-95 border-4 border-purple-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary/90 via-primary to-primary opacity-95 border-4 border-primary/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
           
           {/* MIDDLE FRAME */}
-          <div className="absolute inset-[6px] rounded-3xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
+          <div className="absolute inset-[6px] rounded-3xl bg-gradient-to-b from-background/50 via-transparent to-background/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
           
           {/* INNER LAYER */}
-          <div className="absolute inset-[8px] rounded-3xl bg-gradient-to-br from-black/80 to-black/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.1), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
+          <div className="absolute inset-[8px] rounded-3xl bg-gradient-to-br from-background/80 to-background/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.1), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
           
           {/* SPECULAR HIGHLIGHT */}
           <div className="absolute inset-[8px] rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
@@ -72,10 +72,10 @@ const Newsletter = () => {
                 </div>
               </div>
               
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins text-white text-with-stroke drop-shadow-lg flex items-center justify-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins text-foreground text-with-stroke drop-shadow-lg flex items-center justify-center">
                 Légy az Elsők Között!
               </h2>
-              <p className="text-lg text-white/90 mb-8 drop-shadow text-with-stroke">
+              <p className="text-lg text-foreground/90 mb-8 drop-shadow text-with-stroke">
                 Iratkozz fel és értesülj azonnal, amikor a Dingle UP! elérhető lesz. Plusz exkluzív Welcome Bonusz: 2500 arany + 50 élet!
               </p>
 
