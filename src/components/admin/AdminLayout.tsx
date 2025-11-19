@@ -144,14 +144,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">Admin fiók szerkesztése</h3>
               <div className="space-y-2">
                 <button className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm">
-                  <Users className="w-4 h-4 xl:w-5 xl:h-5" />
+                  <Users className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
                   <span className="font-medium">Profil szerkesztése</span>
                 </button>
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
                 >
-                  <LogOut className="w-4 h-4 xl:w-5 xl:h-5" />
+                  <LogOut className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
                   <span className="font-medium">Kijelentkezés</span>
                 </button>
               </div>
