@@ -16,12 +16,13 @@ export const DoubleTapLikeReaction: React.FC<DoubleTapLikeReactionProps> = ({
   const lastTapRef = useRef<number>(0);
   const heartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleTap = () => {
+  const handleTap = (e: React.MouseEvent) => {
     const now = Date.now();
     const timeSinceLastTap = now - lastTapRef.current;
 
     if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
-      // Double tap detected
+      // Double tap detected - prevent propagation
+      e.stopPropagation();
       onDoubleTap();
       
       // Show heart animation
@@ -43,14 +44,15 @@ export const DoubleTapLikeReaction: React.FC<DoubleTapLikeReactionProps> = ({
 
   return (
     <div 
-      className={`relative ${className}`}
-      onClick={handleTap}
+      className={`${className}`}
+      onClickCapture={handleTap}
+      style={{ isolation: 'isolate' }}
     >
       {children}
       
       {/* TikTok-style heart animation on double tap */}
       {showHeart && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[200]">
           <div className="animate-[ping_0.8s_ease-out]">
             <Heart className="w-32 h-32 fill-red-500 text-red-500 opacity-80 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]" />
           </div>

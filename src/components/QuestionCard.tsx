@@ -83,15 +83,12 @@ export const QuestionCard = ({
 
   return (
     <ScreenshotProtection enabled={true}>
-      {/* Full-screen double-tap overlay */}
+      {/* Wrap entire content in double-tap detector */}
       <DoubleTapLikeReaction 
         onDoubleTap={toggleLike}
-        className="w-full h-full absolute inset-0 z-0"
+        className="w-full h-full relative"
       >
-        <div className="w-full h-full pointer-events-none" />
-      </DoubleTapLikeReaction>
-      
-      <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className} relative z-10`}>
+        <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className}`}>
         {/* Top section: Exit button, Lives, Coins */}
         <GameHeader
           lives={lives}
@@ -188,8 +185,9 @@ export const QuestionCard = ({
           onUseHelpAudience={onUseHelpAudience}
           onUseQuestionSwap={onUseQuestionSwap}
         />
+        </div>
       </div>
-    </div>
+      </DoubleTapLikeReaction>
     </ScreenshotProtection>
   );
 };
