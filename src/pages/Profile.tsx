@@ -10,6 +10,7 @@ import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { BackgroundMusicControl } from '@/components/BackgroundMusicControl';
+import { MusicControls } from '@/components/MusicControls';
 
 const Profile = () => {
   const navigate = useNavigate();

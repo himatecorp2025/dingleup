@@ -7,6 +7,7 @@ import { getWeekStartInUserTimezone } from '@/lib/utils';
 import WeeklyRewards from '@/components/WeeklyRewards';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import BottomNav from '@/components/BottomNav';
+import { MusicControls } from '@/components/MusicControls';
 
 interface LeaderboardEntry {
   user_id?: string;
