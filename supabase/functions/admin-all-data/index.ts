@@ -84,6 +84,25 @@ Deno.serve(async (req) => {
       profiles: profileMap.get(p.user_id)
     })) || [];
 
+    // Fetch all booster purchases
+    const { data: boosterPurchases, error: boosterPurchasesError } = await serviceClient
+      .from('booster_purchases')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    // Fetch user profiles for booster purchases (manual join)
+    const boosterPurchaseUserIds = [...new Set(boosterPurchases?.map(p => p.user_id) || [])];
+    const { data: boosterPurchaseProfiles } = await serviceClient
+      .from('profiles')
+      .select('id, username, email')
+      .in('id', boosterPurchaseUserIds);
+
+    const boosterProfileMap = new Map(boosterPurchaseProfiles?.map(p => [p.id, p]) || []);
+    const boosterPurchasesWithProfiles = boosterPurchases?.map(p => ({
+      ...p,
+      profiles: boosterProfileMap.get(p.user_id)
+    })) || [];
+
     // Fetch all reports
     const { data: reports, error: reportsError } = await serviceClient
       .from('reports')
@@ -167,6 +186,7 @@ Deno.serve(async (req) => {
         users: users || [],
         roles: rolesData || [],
         purchases: purchasesWithProfiles,
+        boosterPurchases: boosterPurchasesWithProfiles,
         reports: reportsWithProfiles,
         invitations: invitationsWithProfiles
       }),

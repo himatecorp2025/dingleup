@@ -166,6 +166,25 @@ const AdminDashboard = () => {
         setInvitations(adminData.invitations);
       }
 
+      // Calculate total revenue from purchases + booster purchases
+      let revenueSum = 0;
+      
+      // Add regular Stripe purchases (amount_usd field)
+      if (adminData?.purchases) {
+        revenueSum += adminData.purchases.reduce((sum: number, p: any) => {
+          return sum + (p.amount_usd || 0);
+        }, 0);
+      }
+
+      // Add booster IAP purchases (usd_cents_spent field, converted from cents to dollars)
+      if (adminData?.boosterPurchases) {
+        revenueSum += adminData.boosterPurchases.reduce((sum: number, p: any) => {
+          return sum + ((p.usd_cents_spent || 0) / 100);
+        }, 0);
+      }
+
+      setTotalRevenue(revenueSum.toFixed(2));
+
       setIsRefreshing(false);
     } catch (error) {
       console.error('[Admin] Fatal fetch error:', error);
@@ -446,7 +465,7 @@ const AdminDashboard = () => {
               <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-blue-400 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
             <p className="text-xl lg:text-3xl font-bold text-white">${totalRevenue}</p>
-            <p className="text-white/50 text-xs mt-1">Stripe fizetésekből</p>
+            <p className="text-white/50 text-xs mt-1">Stripe + Booster vásárlásokból</p>
           </button>
 
         </div>
