@@ -70,57 +70,71 @@ serve(async (req) => {
     const limit = parseInt(url.searchParams.get("limit") || "100");
     const offset = parseInt(url.searchParams.get("offset") || "0");
 
-    // Build query
-    let query = supabaseAdmin
+    // FIXED: Fetch purchases first, then join data separately to avoid foreign key issues
+    let purchasesQuery = supabaseAdmin
       .from("booster_purchases")
-      .select(`
-        id,
-        user_id,
-        booster_type_id,
-        purchase_source,
-        gold_spent,
-        usd_cents_spent,
-        iap_transaction_id,
-        created_at,
-        booster_types:booster_type_id (
-          code,
-          name
-        ),
-        profiles:user_id (
-          username
-        )
-      `)
+      .select("*")
       .order("created_at", { ascending: false });
 
     if (source) {
-      query = query.eq("purchase_source", source);
+      purchasesQuery = purchasesQuery.eq("purchase_source", source);
     }
 
-    query = query.range(offset, offset + limit - 1);
+    purchasesQuery = purchasesQuery.range(offset, offset + limit - 1);
 
-    const { data: purchases, error: fetchError } = await query;
+    const { data: purchases, error: fetchError } = await purchasesQuery;
 
     if (fetchError) {
       console.error("[admin-booster-purchases] Fetch error:", fetchError);
       return new Response(
-        JSON.stringify({ error: "Adatok lekérése sikertelen" }),
+        JSON.stringify({ error: "Adatok lekérése sikertelen", details: fetchError.message }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Transform data
-    const response: AdminBoosterPurchaseRow[] = (purchases || []).map(p => ({
-      id: p.id,
-      userId: p.user_id,
-      userDisplayName: (p.profiles as any)?.[0]?.username || null,
-      boosterCode: (p.booster_types as any)?.[0]?.code || '',
-      boosterName: (p.booster_types as any)?.[0]?.name || '',
-      purchaseSource: p.purchase_source as 'GOLD' | 'IAP',
-      goldSpent: p.gold_spent,
-      usdCentsSpent: p.usd_cents_spent,
-      createdAt: p.created_at,
-      iapTransactionId: p.iap_transaction_id
-    }));
+    if (!purchases || purchases.length === 0) {
+      return new Response(
+        JSON.stringify({ purchases: [], summary: { totalFreePurchases: 0, totalPremiumPurchases: 0, totalGoldSpent: 0, totalUsdRevenue: 0 } }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Fetch booster types
+    const boosterTypeIds = [...new Set(purchases.map(p => p.booster_type_id))];
+    const { data: boosterTypes } = await supabaseAdmin
+      .from("booster_types")
+      .select("id, code, name")
+      .in("id", boosterTypeIds);
+
+    // Fetch user profiles
+    const userIds = [...new Set(purchases.map(p => p.user_id))];
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, username")
+      .in("id", userIds);
+
+    // Create lookup maps
+    const boosterTypeMap = new Map(boosterTypes?.map(bt => [bt.id, bt]) || []);
+    const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+    // Transform data with explicit joins
+    const response: AdminBoosterPurchaseRow[] = purchases.map(p => {
+      const boosterType = boosterTypeMap.get(p.booster_type_id);
+      const profile = profileMap.get(p.user_id);
+
+      return {
+        id: p.id,
+        userId: p.user_id,
+        userDisplayName: profile?.username || 'Ismeretlen',
+        boosterCode: boosterType?.code || 'UNKNOWN',
+        boosterName: boosterType?.name || 'Ismeretlen Booster',
+        purchaseSource: p.purchase_source as 'GOLD' | 'IAP',
+        goldSpent: p.gold_spent,
+        usdCentsSpent: p.usd_cents_spent,
+        createdAt: p.created_at,
+        iapTransactionId: p.iap_transaction_id
+      };
+    });
 
     // Calculate summary stats
     const totalFreePurchases = response.filter(p => p.boosterCode === 'FREE').length;
