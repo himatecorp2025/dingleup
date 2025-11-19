@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(origin);
 
   try {
-    const { userId, birthDate } = await req.json();
+    const { userId, birthDate, email, username } = await req.json();
     
     if (!userId) {
       return new Response(
@@ -23,6 +23,7 @@ Deno.serve(async (req) => {
     // Get client IP from request headers
     const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0] || 
                      req.headers.get('x-real-ip') || 
+                     'x-real-ip' || 
                      'unknown';
 
     let countryCode = 'HU'; // Default fallback
@@ -48,19 +49,41 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Update user profile with detected country code (UPSERT for safety)
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
+    const profilePayload: Record<string, unknown> = {
+      id: userId,
+      country_code: countryCode,
+      birth_date: birthDate || '1991-05-05',
+    };
+
+    if (email) {
+      profilePayload.email = email;
+    }
+    if (username) {
+      profilePayload.username = username;
+    }
+
+    // Ensure defaults for new users so NOT NULL constraints are satisfied
+    profilePayload.coins = 0;
+    profilePayload.lives = 15;
+    profilePayload.max_lives = 15;
+    profilePayload.lives_regeneration_rate = 12;
+    profilePayload.last_life_regeneration = new Date().toISOString();
+    profilePayload.help_third_active = true;
+    profilePayload.help_2x_answer_active = true;
+    profilePayload.help_audience_active = true;
+    profilePayload.daily_gift_streak = 0;
+    profilePayload.welcome_bonus_claimed = false;
+    profilePayload.question_swaps_available = 0;
+    profilePayload.total_correct_answers = 0;
+
     const { error: updateError } = await supabase
       .from('profiles')
-      .upsert({ 
-        id: userId,
-        country_code: countryCode,
-        birth_date: birthDate || '1991-05-05'
-      }, {
+      .upsert(profilePayload, {
         onConflict: 'id',
         ignoreDuplicates: false
       });
