@@ -1581,6 +1581,46 @@ export type Database = {
           },
         ]
       }
+      question_seen_history: {
+        Row: {
+          question_id: string
+          seen_at: string
+          user_id: string
+        }
+        Insert: {
+          question_id: string
+          seen_at?: string
+          user_id: string
+        }
+        Update: {
+          question_id?: string
+          seen_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_seen_history_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_seen_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_seen_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       questions: {
         Row: {
           answers: Json
@@ -2192,6 +2232,42 @@ export type Database = {
           },
         ]
       }
+      user_game_settings: {
+        Row: {
+          ai_personalized_questions_enabled: boolean
+          created_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_personalized_questions_enabled?: boolean
+          created_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_personalized_questions_enabled?: boolean
+          created_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_game_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_game_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_journey_analytics: {
         Row: {
           common_paths: Json | null
@@ -2266,6 +2342,70 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_topic_stats: {
+        Row: {
+          answered_count: number
+          avg_response_ms: number | null
+          correct_count: number
+          created_at: string
+          dislike_count: number
+          last_answered_at: string | null
+          like_count: number
+          score: number
+          topic_id: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answered_count?: number
+          avg_response_ms?: number | null
+          correct_count?: number
+          created_at?: string
+          dislike_count?: number
+          last_answered_at?: string | null
+          like_count?: number
+          score?: number
+          topic_id: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answered_count?: number
+          avg_response_ms?: number | null
+          correct_count?: number
+          created_at?: string
+          dislike_count?: number
+          last_answered_at?: string | null
+          like_count?: number
+          score?: number
+          topic_id?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_topic_stats_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_topic_stats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_topic_stats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wallet_ledger: {
         Row: {
