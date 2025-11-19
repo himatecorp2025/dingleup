@@ -94,9 +94,11 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  // Mobile/tablet standalone: redirect any route to /intro until intro is shown
+  // Mobile/tablet standalone: redirect to /intro ONLY on first load (from root)
+  // Do NOT redirect if user is navigating within the app (e.g., Dashboard -> Game)
   // Desktop (width > 1024): ALWAYS show landing page, never redirect to intro
-  if (isMobileOrTablet && isStandalone && !introShown && location.pathname !== '/intro') {
+  if (isMobileOrTablet && isStandalone && !introShown && 
+      (location.pathname === '/' || location.pathname === '/desktop')) {
     return <Navigate to="/intro" replace />;
   }
 
