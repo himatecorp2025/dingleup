@@ -486,10 +486,40 @@ const Profile = () => {
                 </p>
               </div>
               
-              <div>
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-1">Regisztráció dátuma</p>
                 <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                   {new Date(profile.created_at).toLocaleDateString('hu-HU')}
+                </p>
+              </div>
+              
+              <div>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">Regisztrált országom</p>
+                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  {profile.country_code ? 
+                    (() => {
+                      const countryNames: Record<string, string> = {
+                        'HU': 'Magyarország',
+                        'DE': 'Németország',
+                        'AT': 'Ausztria',
+                        'RO': 'Románia',
+                        'SK': 'Szlovákia',
+                        'HR': 'Horvátország',
+                        'SI': 'Szlovénia',
+                        'RS': 'Szerbia',
+                        'UA': 'Ukrajna',
+                        'PL': 'Lengyelország',
+                        'CZ': 'Csehország',
+                        'IT': 'Olaszország',
+                        'FR': 'Franciaország',
+                        'ES': 'Spanyolország',
+                        'GB': 'Egyesült Királyság',
+                        'US': 'Amerikai Egyesült Államok',
+                      };
+                      return countryNames[profile.country_code] || profile.country_code;
+                    })()
+                    : 'Nincs megadva'
+                  }
                 </p>
               </div>
             </div>
