@@ -169,8 +169,8 @@ export default {
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
         'gradient-gold': 'var(--gradient-gold)',
-        'gradient-purple': 'var(--gradient-purple)',
         'gradient-blue': 'var(--gradient-blue)',
+        'gradient-royal': 'var(--gradient-royal)',
         'gradient-cyan': 'var(--gradient-cyan)',
         'gradient-card': 'var(--gradient-card)',
       },
