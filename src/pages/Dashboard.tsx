@@ -100,8 +100,10 @@ const Dashboard = () => {
         navigate('/login');
       }
     });
+  }, [navigate]);
 
-    // Check for canceled payment
+  // Check for canceled payment - separate useEffect for searchParams
+  useEffect(() => {
     if (searchParams.get('canceled') === 'true') {
       toast.error('Visszaléptél, a jutalmad elveszett!', {
         duration: 5000,
@@ -117,7 +119,7 @@ const Dashboard = () => {
       // Remove the query parameter
       setSearchParams({});
     }
-  }, [navigate, searchParams, setSearchParams]);
+  }, [searchParams, setSearchParams]);
 
   // Show Welcome Bonus dialog FIRST (highest priority) - TESTING MODE: show on desktop too, with 1s delay
   useEffect(() => {
