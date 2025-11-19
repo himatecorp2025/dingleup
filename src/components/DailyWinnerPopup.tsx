@@ -28,7 +28,7 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
         const yesterdayDate = yesterday.toISOString().split('T')[0];
 
         const { data: awardData, error: awardError } = await supabase
-          .from('daily_winner_awarded')
+          .from('daily_winner_awarded' as any)
           .select('*')
           .eq('user_id', userId)
           .eq('day_date', yesterdayDate)
@@ -37,7 +37,7 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
         if (awardError || !awardData) return;
 
         const { data: popupData } = await supabase
-          .from('daily_winner_popup_shown')
+          .from('daily_winner_popup_shown' as any)
           .select('*')
           .eq('user_id', userId)
           .eq('day_date', yesterdayDate)
@@ -46,17 +46,17 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
         if (popupData) return;
 
         const { data: prizeData } = await supabase
-          .from('daily_prize_table')
+          .from('daily_prize_table' as any)
           .select('*')
-          .eq('rank', awardData.rank)
+          .eq('rank', (awardData as any).rank)
           .single();
 
         if (!prizeData) return;
 
         setWinnerData({
-          rank: awardData.rank,
-          gold: prizeData.gold,
-          lives: prizeData.lives,
+          rank: (awardData as any).rank,
+          gold: (prizeData as any).gold,
+          lives: (prizeData as any).lives,
           dayDate: yesterdayDate
         });
 
@@ -75,7 +75,7 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
 
     try {
       await supabase
-        .from('daily_winner_popup_shown')
+        .from('daily_winner_popup_shown' as any)
         .insert({
           user_id: userId,
           day_date: winnerData.dayDate
