@@ -45,7 +45,6 @@ export const DoubleTapLikeReaction: React.FC<DoubleTapLikeReactionProps> = ({
     <div 
       className={`relative ${className}`}
       onClick={handleTap}
-      onTouchEnd={handleTap}
     >
       {children}
       
