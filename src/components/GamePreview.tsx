@@ -453,8 +453,11 @@ const GamePreview = () => {
 
   const restartGameImmediately = async () => {
     if (!profile || isStartingGame) return;
+
+    // Dismiss any visible toasts (including results toast)
+    toast.dismiss();
     
-    // Show toast notification about restart FIRST (only if NOT coming from completed game)
+    // Only show toast if game was NOT completed (scroll down mid-game)
     if (!gameCompleted) {
       toast.error('Új játék indítása: -1 élet, +1 arany', {
         duration: 2000,
@@ -469,9 +472,13 @@ const GamePreview = () => {
       await new Promise(resolve => setTimeout(resolve, 800));
     }
     
-    // Reset all game state without finishing
+    // Animate out current question (same as next question animation)
+    setIsAnimating(true);
+    setCanSwipe(false);
+    setQuestionVisible(false);
+    
+    // Reset all game state
     setGameState('playing');
-    setQuestions([]);
     setCurrentQuestionIndex(0);
     setTimeLeft(10);
     setSelectedAnswer(null);
@@ -490,13 +497,17 @@ const GamePreview = () => {
     setRemovedAnswer(null);
     setAudienceVotes({});
     setErrorBannerVisible(false);
-    setCanSwipe(true);
-    setIsAnimating(false);
     setGameCompleted(false);
     
-    // Start new game immediately (will spend life and add 1 coin)
-    // Skip loading video for seamless restart
+    // Start new game in background (seamless - skip video)
     await startGame(true);
+    
+    // Animate in new question after brief delay (same timing as between questions)
+    setTimeout(() => {
+      setQuestionVisible(true);
+      setIsAnimating(false);
+      setCanSwipe(true);
+    }, 300);
   };
 
   const handleTimeout = () => {
@@ -1108,8 +1119,8 @@ const GamePreview = () => {
 
   // Show loading video IMMEDIATELY when game start begins (even before backend completes)
   // Keep video visible until BOTH video ends AND questions are ready
-  // For seamless restart: don't show video but still wait for questions to load
-  if (showLoadingVideo && (isStartingGame || !videoEnded || (gameState === 'playing' && questions.length === 0))) {
+  // For seamless restart: never show any loading screen
+  if (showLoadingVideo && (isStartingGame || !videoEnded)) {
     return (
       <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
         <GameLoadingScreen onVideoEnd={handleVideoEnd} />
@@ -1117,18 +1128,28 @@ const GamePreview = () => {
     );
   }
 
-  // Even during seamless restart, wait for questions to load before rendering game
-  if (isStartingGame || (gameState === 'playing' && questions.length === 0)) {
-    return (
-      <div className="fixed inset-0 w-full h-full bg-black z-50 flex items-center justify-center">
-        <div className="text-white text-lg">Betöltés...</div>
-      </div>
-    );
-  }
-
   if (gameState === 'playing') {
     
+    // During seamless restart, show previous question until new one loads
     const currentQuestion = questions[currentQuestionIndex];
+    
+    // If no question yet (seamless loading), show empty state but keep UI structure
+    if (!currentQuestion) {
+      return (
+        <div 
+          ref={containerRef}
+          className="fixed inset-0 w-full h-full overflow-hidden"
+          style={{
+            backgroundImage: `url(${gameBackground})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+          }}
+        >
+          {/* Keep UI structure but hide content during seamless load */}
+        </div>
+      );
+    }
     
     return (
       <>
