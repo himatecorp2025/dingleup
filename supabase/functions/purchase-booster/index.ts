@@ -256,153 +256,181 @@ async function handlePremiumBoosterPurchase(
 
   console.log(`[PREMIUM] Rewards: gold=${rewardGold}, lives=${rewardLives}, price=$${(priceUsdCents / 100).toFixed(2)}`);
 
-  // Get user purchase settings
-  const { data: settings } = await supabaseAdmin
-    .from("user_purchase_settings")
-    .select("instant_premium_booster_enabled")
-    .eq("user_id", userId)
-    .single();
-
-  const instantEnabled = settings?.instant_premium_booster_enabled || false;
-
-  // Get premium booster state
-  const { data: boosterState } = await supabaseAdmin
-    .from("user_premium_booster_state")
-    .select("has_pending_premium_booster")
-    .eq("user_id", userId)
-    .single();
-
-  const hasPending = boosterState?.has_pending_premium_booster || false;
-
-  // Check if pending premium exists
-  if (hasPending) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: "PENDING_PREMIUM_EXISTS",
-        instantPremiumBoosterEnabled: instantEnabled,
-        hasPendingPremiumBooster: true
-      }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-
-  // Check instant purchase confirmation
-  if (!instantEnabled && !confirmInstantPurchase) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: "INSTANT_PURCHASE_NOT_CONFIRMED",
-        instantPremiumBoosterEnabled: false,
-        hasPendingPremiumBooster: false
-      }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-
-  // If confirming instant purchase, enable it
-  if (!instantEnabled && confirmInstantPurchase) {
-    await supabaseAdmin
+  try {
+    // Get user purchase settings
+    const { data: settings } = await supabaseAdmin
       .from("user_purchase_settings")
+      .select("instant_premium_booster_enabled")
+      .eq("user_id", userId)
+      .single();
+
+    const instantEnabled = settings?.instant_premium_booster_enabled || false;
+
+    // Get premium booster state
+    const { data: boosterState } = await supabaseAdmin
+      .from("user_premium_booster_state")
+      .select("has_pending_premium_booster")
+      .eq("user_id", userId)
+      .single();
+
+    const hasPending = boosterState?.has_pending_premium_booster || false;
+
+    // Check if pending premium exists
+    if (hasPending) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "PENDING_PREMIUM_EXISTS",
+          instantPremiumBoosterEnabled: instantEnabled,
+          hasPendingPremiumBooster: true
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check instant purchase confirmation
+    if (!instantEnabled && !confirmInstantPurchase) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "INSTANT_PURCHASE_NOT_CONFIRMED",
+          instantPremiumBoosterEnabled: false,
+          hasPendingPremiumBooster: false
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // If confirming instant purchase, enable it
+    if (!instantEnabled && confirmInstantPurchase) {
+      await supabaseAdmin
+        .from("user_purchase_settings")
+        .upsert({
+          user_id: userId,
+          instant_premium_booster_enabled: true,
+          updated_at: new Date().toISOString()
+        });
+    }
+
+    // ========== PAYMENT SIMULATION ==========
+    // TODO: Replace with real Stripe payment integration
+    // For now, simulate payment (90% success rate for testing)
+    const paymentSuccess = Math.random() > 0.1; // 90% success rate
+    
+    if (!paymentSuccess) {
+      console.log('[PREMIUM] Simulated payment failure');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "PAYMENT_FAILED",
+          instantPremiumBoosterEnabled: instantEnabled || confirmInstantPurchase,
+          hasPendingPremiumBooster: false
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    console.log('[PREMIUM] Simulated payment success');
+    // ========== END PAYMENT SIMULATION ==========
+
+    // Get current balance
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("coins, lives")
+      .eq("id", userId)
+      .single();
+
+    const currentGold = profile?.coins || 0;
+    const currentLives = profile?.lives || 0;
+
+    // Grant immediate rewards: gold + lives (NOT speed yet)
+    const newGold = currentGold + rewardGold;
+    const newLives = currentLives + rewardLives;
+
+    const { error: updateError } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        coins: newGold,
+        lives: newLives,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", userId);
+
+    if (updateError) {
+      console.error("[PREMIUM] Profile update error:", updateError);
+      return new Response(
+        JSON.stringify({ success: false, error: "Profil frissítési hiba" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Set pending premium booster flag
+    await supabaseAdmin
+      .from("user_premium_booster_state")
       .upsert({
         user_id: userId,
-        instant_premium_booster_enabled: true,
+        has_pending_premium_booster: true,
+        last_premium_purchase_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       });
-  }
 
-  // Get current balance
-  const { data: profile } = await supabaseAdmin
-    .from("profiles")
-    .select("coins, lives")
-    .eq("id", userId)
-    .single();
+    // Log wallet transaction
+    const idempotencyKey = `premium_booster:${userId}:${Date.now()}`;
+    await supabaseAdmin
+      .from("wallet_ledger")
+      .insert({
+        user_id: userId,
+        delta_coins: rewardGold,
+        delta_lives: rewardLives,
+        source: "premium_booster",
+        idempotency_key: idempotencyKey,
+        metadata: {
+          booster_type_id: boosterType.id,
+          price_usd_cents: priceUsdCents,
+          reward_gold: rewardGold,
+          reward_lives: rewardLives,
+          speed_pending: true
+        }
+      });
 
-  const currentGold = profile?.coins || 0;
-  const currentLives = profile?.lives || 0;
+    // Log purchase
+    await supabaseAdmin
+      .from("booster_purchases")
+      .insert({
+        user_id: userId,
+        booster_type_id: boosterType.id,
+        purchase_source: "IAP",
+        gold_spent: 0,
+        usd_cents_spent: priceUsdCents,
+        iap_transaction_id: `stripe_${Date.now()}` // TODO: Replace with real Stripe transaction ID
+      });
 
-  // Grant immediate rewards: gold + lives (NOT speed yet)
-  const newGold = currentGold + rewardGold;
-  const newLives = currentLives + rewardLives;
+    console.log(`[PREMIUM] Purchase successful, pending activation`);
 
-  const { error: updateError } = await supabaseAdmin
-    .from("profiles")
-    .update({
-      coins: newGold,
-      lives: newLives,
-      updated_at: new Date().toISOString()
-    })
-    .eq("id", userId);
+    const response: BoosterPurchaseResponse = {
+      success: true,
+      balanceAfter: {
+        gold: newGold,
+        lives: newLives
+      },
+      grantedRewards: {
+        gold: rewardGold,
+        lives: rewardLives,
+        speedCount: 0, // Not activated yet
+        speedDurationMinutes: 0
+      },
+      instantPremiumBoosterEnabled: true,
+      hasPendingPremiumBooster: true
+    };
 
-  if (updateError) {
-    console.error("[PREMIUM] Profile update error:", updateError);
     return new Response(
-      JSON.stringify({ success: false, error: "Profil frissítési hiba" }),
+      JSON.stringify(response),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    console.error("[PREMIUM] Transaction error:", error);
+    return new Response(
+      JSON.stringify({ success: false, error: "Tranzakciós hiba történt" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
-
-  // Set pending premium booster flag
-  await supabaseAdmin
-    .from("user_premium_booster_state")
-    .upsert({
-      user_id: userId,
-      has_pending_premium_booster: true,
-      last_premium_purchase_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    });
-
-  // Log wallet transaction
-  const idempotencyKey = `premium_booster:${userId}:${Date.now()}`;
-  await supabaseAdmin
-    .from("wallet_ledger")
-    .insert({
-      user_id: userId,
-      delta_coins: rewardGold,
-      delta_lives: rewardLives,
-      source: "premium_booster",
-      idempotency_key: idempotencyKey,
-      metadata: {
-        booster_type_id: boosterType.id,
-        price_usd_cents: priceUsdCents,
-        reward_gold: rewardGold,
-        reward_lives: rewardLives,
-        speed_pending: true
-      }
-    });
-
-  // Log purchase
-  await supabaseAdmin
-    .from("booster_purchases")
-    .insert({
-      user_id: userId,
-      booster_type_id: boosterType.id,
-      purchase_source: "IAP",
-      gold_spent: 0,
-      usd_cents_spent: priceUsdCents,
-      iap_transaction_id: `stripe_${Date.now()}` // TODO: Replace with real Stripe transaction ID
-    });
-
-  console.log(`[PREMIUM] Purchase successful, pending activation`);
-
-  const response: BoosterPurchaseResponse = {
-    success: true,
-    balanceAfter: {
-      gold: newGold,
-      lives: newLives
-    },
-    grantedRewards: {
-      gold: rewardGold,
-      lives: rewardLives,
-      speedCount: 0, // Not activated yet
-      speedDurationMinutes: 0
-    },
-    instantPremiumBoosterEnabled: true,
-    hasPendingPremiumBooster: true
-  };
-
-  return new Response(
-    JSON.stringify(response),
-    { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-  );
 }
