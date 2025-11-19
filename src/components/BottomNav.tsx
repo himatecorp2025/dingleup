@@ -147,7 +147,7 @@ const BottomNav = () => {
   }
 
   return (
-    <div ref={containerRef} className="fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/5 border-t border-white/10 z-[9999]">
+    <div ref={containerRef} className="fixed bottom-0 left-0 right-0 bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#0f0a1f] border-t border-white/10 z-[9999]">
       <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent opacity-60"></div>
       <div className="flex justify-around items-center gap-2 p-2 max-w-screen-sm mx-auto">
         {navItems.map((item, index) => {
