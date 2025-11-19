@@ -17,6 +17,7 @@ interface BoosterPurchaseResponse {
   balanceAfter?: {
     gold: number;
     lives: number;
+    speedTokensAvailable: number;
   };
   grantedRewards?: {
     gold: number;
@@ -230,7 +231,8 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
     success: true,
     balanceAfter: {
       gold: newGold,
-      lives: newLives
+      lives: newLives,
+      speedTokensAvailable: rewardSpeedCount
     },
     grantedRewards: {
       gold: rewardGold,
@@ -412,7 +414,8 @@ async function handlePremiumBoosterPurchase(
       success: true,
       balanceAfter: {
         gold: newGold,
-        lives: newLives
+        lives: newLives,
+        speedTokensAvailable: 0
       },
       grantedRewards: {
         gold: rewardGold,
