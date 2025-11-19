@@ -125,7 +125,7 @@ const Hero = () => {
               <div className="absolute inset-0 bg-black/70 rounded-full" style={{ transform: 'translate(4px, 4px)', filter: 'blur(6px)' }} aria-hidden />
               
               {/* OUTER FRAME - világosabb színek */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-500 via-pink-400 to-pink-600 opacity-90 border-2 border-pink-400/80 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500 via-blue-400 to-blue-600 opacity-90 border-2 border-blue-400/80 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
               
               {/* MIDDLE FRAME */}
               <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
