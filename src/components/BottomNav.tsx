@@ -147,8 +147,8 @@ const BottomNav = () => {
   }
 
   return (
-    <div ref={containerRef} className="fixed bottom-0 left-0 right-0 border-t-2 border-accent/50 z-[9999] shadow-[0_-5px_20px_rgba(255,215,0,0.3)]" style={{ backgroundColor: 'hsl(var(--background))' }}>
-      <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent opacity-60"></div>
+    <div ref={containerRef} className="fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/5 border-t border-white/10 z-[9999]">
+      <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent opacity-60"></div>
       <div className="flex justify-around items-center gap-2 p-2 max-w-screen-sm mx-auto">
         {navItems.map((item, index) => {
           const IconComponent = item.icon;
@@ -162,17 +162,17 @@ const BottomNav = () => {
                 flex flex-col items-center justify-center py-2 sm:py-3 px-2 sm:px-3 rounded-lg
                 transition-all duration-200 relative overflow-hidden flex-1
                 ${isActive 
-                  ? 'bg-gradient-to-t from-primary/40 to-primary/30 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.4)]' 
-                  : 'text-foreground/70 hover:text-primary hover:bg-primary/10'}
+                  ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20' 
+                  : 'text-white/60 hover:bg-white/5'}
               `}
             >
               {isActive && (
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-purple-600/20 to-transparent animate-pulse"></div>
               )}
-              <div className={`mb-0.5 sm:mb-1 relative z-10 ${isActive ? 'drop-shadow-[0_0_5px_hsl(var(--primary)/0.8)]' : ''}`}>
+              <div className={`mb-0.5 sm:mb-1 relative z-10 text-purple-400`}>
                 <IconComponent />
               </div>
-              <span className="text-[9px] sm:text-[10px] font-bold relative z-10 leading-tight">{item.label}</span>
+              <span className="text-[9px] sm:text-[10px] font-medium relative z-10 leading-tight">{item.label}</span>
             </button>
           );
         })}
