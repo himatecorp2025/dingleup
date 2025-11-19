@@ -650,7 +650,7 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-destructive/90 via-destructive to-destructive opacity-90 border-3 border-destructive/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-destructive/90 via-destructive to-destructive opacity-90 border-3 border-destructive/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -675,7 +675,7 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-accent/90 via-accent to-accent-dark opacity-90 border-3 border-accent/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-accent/90 via-accent to-accent-dark opacity-90 border-3 border-accent/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -700,7 +700,7 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-700 via-green-600 to-green-900 opacity-90 border-3 border-green-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-700 via-green-600 to-green-900 opacity-90 border-3 border-green-500/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -725,7 +725,7 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-700 via-blue-600 to-blue-900 opacity-90 border-3 border-blue-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-700 via-blue-600 to-blue-900 opacity-90 border-3 border-blue-500/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -757,7 +757,7 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-3 border-purple-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 opacity-90 border-3 border-purple-500/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
@@ -785,7 +785,7 @@ const Profile = () => {
             <div className="absolute inset-0 bg-black/70 rounded-xl sm:rounded-2xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
             
             {/* OUTER FRAME */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 opacity-90 border-3 border-yellow-500/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-900 opacity-90 border-3 border-yellow-500/60 shadow-xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
             
             {/* MIDDLE FRAME */}
             <div className="absolute inset-[4px] rounded-xl sm:rounded-2xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.5)', transform: 'translateZ(10px)' }} aria-hidden />
