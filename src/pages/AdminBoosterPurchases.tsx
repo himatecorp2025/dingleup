@@ -48,68 +48,42 @@ export default function AdminBoosterPurchases() {
   async function fetchPurchases() {
     try {
       setLoading(true);
-      
-      // Fetch purchases with user and booster info
-      const { data, error } = await supabase
-        .from('booster_purchases')
-        .select(`
-          id,
-          user_id,
-          purchase_source,
-          gold_spent,
-          usd_cents_spent,
-          created_at,
-          purchase_context,
-          booster_types (
-            code,
-            name
-          ),
-          profiles (
-            username
-          )
-        `)
-        .order('created_at', { ascending: false })
-        .limit(100);
+
+      // Prefer backend aggregation via admin edge function for correctness & RLS
+      const { data, error } = await supabase.functions.invoke('admin-booster-purchases', {
+        body: {
+          limit: 100,
+          offset: 0,
+        },
+      });
 
       if (error) throw error;
 
-      // CRITICAL FIX: Supabase returns related data as arrays, not objects
-      const formattedData: BoosterPurchase[] = (data || [])
-        .map((p: any) => {
-          // Null-safe array access for related data
-          const boosterType = Array.isArray(p.booster_types) ? p.booster_types[0] : p.booster_types;
-          const profile = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles;
+      const purchasesResponse = (data as any)?.purchases || [];
+      const summaryResponse = (data as any)?.summary || {};
 
-          return {
-            id: p.id,
-            user_id: p.user_id,
-            booster_code: boosterType?.code || 'UNKNOWN',
-            booster_name: boosterType?.name || 'Unknown Booster',
-            username: profile?.username || 'Unknown User',
-            purchase_source: p.purchase_source,
-            gold_spent: p.gold_spent || 0,
-            usd_cents_spent: p.usd_cents_spent || 0,
-            created_at: p.created_at,
-            purchase_context: p.purchase_context || 'UNKNOWN'
-          };
-        })
-        .filter(p => p.booster_code !== 'UNKNOWN'); // Filter out invalid entries
+      const formattedData: BoosterPurchase[] = purchasesResponse.map((p: any) => ({
+        id: p.id,
+        user_id: p.userId,
+        booster_code: p.boosterCode,
+        booster_name: p.boosterName,
+        username: p.userDisplayName || 'Ismeretlen felhasználó',
+        purchase_source: p.purchaseSource,
+        gold_spent: p.goldSpent || 0,
+        usd_cents_spent: p.usdCentsSpent || 0,
+        created_at: p.createdAt,
+        // Edge function jelenleg nem küld contextet – idővel bővíthető
+        purchase_context: 'UNKNOWN',
+      }));
 
       setPurchases(formattedData);
 
-      // Calculate summary based on booster_code (not purchase_source)
-      const totalFree = formattedData.filter(p => p.booster_code === 'FREE').length;
-      const totalPremium = formattedData.filter(p => p.booster_code === 'PREMIUM').length;
-      const totalGold = formattedData.reduce((sum, p) => sum + (p.gold_spent || 0), 0);
-      const totalUsd = formattedData.reduce((sum, p) => sum + (p.usd_cents_spent || 0), 0);
-
       setSummary({
-        total_free: totalFree,
-        total_premium: totalPremium,
-        total_gold_spent: totalGold,
-        total_usd_revenue: totalUsd / 100
+        total_free: summaryResponse.totalFreePurchases || 0,
+        total_premium: summaryResponse.totalPremiumPurchases || 0,
+        total_gold_spent: summaryResponse.totalGoldSpent || 0,
+        total_usd_revenue: summaryResponse.totalUsdRevenue || 0,
       });
-
     } catch (error) {
       console.error('Error fetching purchases:', error);
       toast.error('Hiba történt a vásárlások betöltésekor');
