@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Crown, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Crown, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon, Brain } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -274,6 +274,13 @@ const AdminDashboard = () => {
           >
             <TrendingUp className="w-4 h-4 xl:w-5 xl:h-5" />
             <span className="font-medium">Játékos viselkedések</span>
+          </button>
+          <button
+            onClick={() => { navigate('/admin/game-profiles'); onItemClick?.(); }}
+            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
+          >
+            <Brain className="w-4 h-4 xl:w-5 xl:h-5 text-primary" />
+            <span className="font-medium">Játékos Profilozás</span>
           </button>
           <button
             onClick={() => { navigate('/admin/normal-users'); onItemClick?.(); }}
