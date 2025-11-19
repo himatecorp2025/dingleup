@@ -86,7 +86,7 @@ const WeeklyRewards = () => {
           </svg>
         </div>
         <p className="text-[10px] sm:text-[11px] text-accent/90 font-semibold drop-shadow-lg px-2">
-          Minden vasárnap 23:55-kor lezárul a rangsorolás. 5 perc szünet után hétfő 00:00-kor kihirdetjük a nyerteseket!
+          Minden nap 23:55-kor lezárul a verseny! 5 perc szünet után éjfél 00:00-kor kihirdetjük a nyerteseket és újraindul a harc a jutalmakért!
         </p>
       </div>
       
