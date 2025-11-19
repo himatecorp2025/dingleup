@@ -39,132 +39,183 @@ serve(async (req) => {
     lastWeekStart.setHours(0, 0, 0, 0);
     const weekStart = lastWeekStart.toISOString().split('T')[0];
 
-    // Get top 10 from last week's rankings
-    const { data: topRankings, error: rankError } = await supabaseClient
-      .from('weekly_rankings')
-      .select('*')
-      .eq('week_start', weekStart)
-      .lte('rank', 10)
-      .order('rank', { ascending: true });
+    console.log('[WEEKLY-WINNERS] Processing week:', weekStart);
 
-    if (rankError) throw rankError;
+    // Get all distinct countries from profiles
+    const { data: countries, error: countriesError } = await supabaseClient
+      .from('profiles')
+      .select('country_code')
+      .not('country_code', 'is', null);
 
-    if (!topRankings || topRankings.length === 0) {
-      return new Response(
-        JSON.stringify({ success: true, message: 'No rankings to process' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    if (countriesError) throw countriesError;
 
-    // Create snapshot
-    for (const ranking of topRankings) {
-      await supabaseClient
-        .from('weekly_leaderboard_snapshot')
-        .upsert({
-          week_start: weekStart,
-          rank: ranking.rank,
-          user_id: ranking.user_id,
-          score: ranking.total_correct_answers,
-          snapshot_at: new Date().toISOString()
-        }, {
-          onConflict: 'week_start,user_id'
-        });
-    }
+    const uniqueCountries = [...new Set(countries?.map(c => c.country_code) || [])];
+    console.log('[WEEKLY-WINNERS] Processing countries:', uniqueCountries.length);
 
-    // Process each winner
-    let processedCount = 0;
-    for (const ranking of topRankings) {
-      const { user_id, rank } = ranking;
+    let totalProcessedWinners = 0;
 
-      // Check if already awarded
-      const { data: existing } = await supabaseClient
-        .from('weekly_winner_awarded')
-        .select('*')
-        .eq('user_id', user_id)
+    // Process each country separately
+    for (const countryCode of uniqueCountries) {
+      console.log(`[WEEKLY-WINNERS] Processing country: ${countryCode}`);
+
+      // Get all users from this country
+      const { data: countryProfiles, error: profilesError } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('country_code', countryCode);
+
+      if (profilesError || !countryProfiles || countryProfiles.length === 0) {
+        console.log(`[WEEKLY-WINNERS] No profiles for country ${countryCode}`);
+        continue;
+      }
+
+      const countryUserIds = countryProfiles.map(p => p.id);
+
+      // Get top 10 rankings for this country for the last week
+      const { data: countryRankings, error: rankError } = await supabaseClient
+        .from('weekly_rankings')
+        .select('user_id, total_correct_answers, average_response_time, rank')
         .eq('week_start', weekStart)
-        .single();
+        .eq('category', 'mixed')
+        .in('user_id', countryUserIds)
+        .order('total_correct_answers', { ascending: false })
+        .order('average_response_time', { ascending: true })
+        .limit(10);
 
-      if (existing) {
+      if (rankError) {
+        console.error(`[WEEKLY-WINNERS] Rank error for ${countryCode}:`, rankError);
         continue;
       }
 
-      // Get prize configuration
-      const { data: prize, error: prizeError } = await supabaseClient
-        .from('weekly_prize_table')
-        .select('*')
-        .eq('rank', rank)
-        .single();
-
-      if (prizeError || !prize) {
+      if (!countryRankings || countryRankings.length === 0) {
+        console.log(`[WEEKLY-WINNERS] No rankings for country ${countryCode}`);
         continue;
       }
 
-      const { gold, lives } = prize;
+      console.log(`[WEEKLY-WINNERS] Found ${countryRankings.length} winners in ${countryCode}`);
 
-      // Credit wallet (coins)
-      const correlationId = `weekly-top10:${user_id}:${weekStart}:${rank}`;
-      const { error: coinError } = await supabaseClient
-        .rpc('credit_wallet', {
-          p_user_id: user_id,
-          p_delta_coins: gold,
-          p_delta_lives: 0,
-          p_source: 'weekly_reward',
-          p_idempotency_key: correlationId,
-          p_metadata: {
+      // Create snapshot for this country's winners
+      for (let idx = 0; idx < countryRankings.length; idx++) {
+        const ranking = countryRankings[idx];
+        const actualRank = idx + 1; // Rank 1-10 based on position
+
+        await supabaseClient
+          .from('weekly_leaderboard_snapshot')
+          .upsert({
             week_start: weekStart,
-            rank,
-            gold
-          }
-        });
-
-      if (coinError) {
-        console.error(`[WEEKLY-WINNERS] Error crediting coins for user ${user_id}:`, coinError);
-        continue;
+            rank: actualRank,
+            user_id: ranking.user_id,
+            score: ranking.total_correct_answers,
+            snapshot_at: new Date().toISOString()
+          }, {
+            onConflict: 'week_start,user_id'
+          });
       }
 
-      // Credit lives
-      const livesCorrelationId = `weekly-top10-lives:${user_id}:${weekStart}:${rank}`;
-      const { error: livesError } = await supabaseClient
-        .rpc('credit_lives', {
-          p_user_id: user_id,
-          p_delta_lives: lives,
-          p_source: 'weekly_reward',
-          p_idempotency_key: livesCorrelationId,
-          p_metadata: {
+      // Process each winner in this country
+      for (let idx = 0; idx < countryRankings.length; idx++) {
+        const ranking = countryRankings[idx];
+        const { user_id } = ranking;
+        const actualRank = idx + 1; // Rank 1-10
+
+        // Check if already awarded
+        const { data: existing } = await supabaseClient
+          .from('weekly_winner_awarded')
+          .select('*')
+          .eq('user_id', user_id)
+          .eq('week_start', weekStart)
+          .single();
+
+        if (existing) {
+          console.log(`[WEEKLY-WINNERS] User ${user_id} already awarded`);
+          continue;
+        }
+
+        // Get prize configuration
+        const { data: prize, error: prizeError } = await supabaseClient
+          .from('weekly_prize_table')
+          .select('*')
+          .eq('rank', actualRank)
+          .single();
+
+        if (prizeError || !prize) {
+          console.error(`[WEEKLY-WINNERS] Prize config missing for rank ${actualRank}:`, prizeError);
+          continue;
+        }
+
+        const { gold, lives } = prize;
+
+        // Credit wallet (coins)
+        const correlationId = `weekly-top10:${user_id}:${weekStart}:${actualRank}:${countryCode}`;
+        const { error: coinError } = await supabaseClient
+          .rpc('credit_wallet', {
+            p_user_id: user_id,
+            p_delta_coins: gold,
+            p_delta_lives: 0,
+            p_source: 'weekly_reward',
+            p_idempotency_key: correlationId,
+            p_metadata: {
+              week_start: weekStart,
+              rank: actualRank,
+              country_code: countryCode,
+              gold
+            }
+          });
+
+        if (coinError) {
+          console.error(`[WEEKLY-WINNERS] Error crediting coins for user ${user_id}:`, coinError);
+          continue;
+        }
+
+        // Credit lives
+        const livesCorrelationId = `weekly-top10-lives:${user_id}:${weekStart}:${actualRank}:${countryCode}`;
+        const { error: livesError } = await supabaseClient
+          .rpc('credit_lives', {
+            p_user_id: user_id,
+            p_delta_lives: lives,
+            p_source: 'weekly_reward',
+            p_idempotency_key: livesCorrelationId,
+            p_metadata: {
+              week_start: weekStart,
+              rank: actualRank,
+              country_code: countryCode,
+              lives
+            }
+          });
+
+        if (livesError) {
+          console.error(`[WEEKLY-WINNERS] Error crediting lives for user ${user_id}:`, livesError);
+          continue;
+        }
+
+        // Mark as awarded
+        const { error: awardError } = await supabaseClient
+          .from('weekly_winner_awarded')
+          .insert({
+            user_id,
             week_start: weekStart,
-            rank,
-            lives
-          }
-        });
+            rank: actualRank,
+            awarded_at: new Date().toISOString()
+          });
 
-      if (livesError) {
-        console.error(`[WEEKLY-WINNERS] Error crediting lives for user ${user_id}:`, livesError);
-        continue;
+        if (awardError) {
+          console.error(`[WEEKLY-WINNERS] Error marking as awarded for user ${user_id}:`, awardError);
+          continue;
+        }
+
+        totalProcessedWinners++;
+        console.log(`[WEEKLY-WINNERS] Awarded user ${user_id} rank ${actualRank} in ${countryCode}: ${gold} gold + ${lives} lives`);
       }
-
-      // Mark as awarded
-      const { error: awardError } = await supabaseClient
-        .from('weekly_winner_awarded')
-        .insert({
-          user_id,
-          week_start: weekStart,
-          rank,
-          awarded_at: new Date().toISOString()
-        });
-
-      if (awardError) {
-        console.error(`[WEEKLY-WINNERS] Error marking as awarded for user ${user_id}:`, awardError);
-        continue;
-      }
-
-      processedCount++;
     }
+
+    console.log(`[WEEKLY-WINNERS] Total winners processed: ${totalProcessedWinners} across ${uniqueCountries.length} countries`);
 
     return new Response(
       JSON.stringify({
         success: true,
         week_start: weekStart,
-        winners_processed: processedCount
+        countries_processed: uniqueCountries.length,
+        winners_processed: totalProcessedWinners
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
