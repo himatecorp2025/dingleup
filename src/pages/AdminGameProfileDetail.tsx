@@ -16,13 +16,10 @@ export default function AdminGameProfileDetail() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="container mx-auto max-w-7xl">
-          <Skeleton className="h-10 w-64 mb-6" />
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
+            <p className="text-lg text-white/70">Betöltés...</p>
           </div>
         </div>
       </AdminLayout>

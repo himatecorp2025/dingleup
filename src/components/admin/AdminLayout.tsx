@@ -8,7 +8,8 @@ import {
   Brain, 
   Heart,
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -57,6 +58,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: Heart },
     { path: '/admin/analytics', label: 'Fejlett Analitika', icon: TrendingUp },
   ];
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -119,6 +125,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 );
               })}
             </nav>
+
+            {/* Logout Section */}
+            <div className="mt-auto pt-6 border-t border-white/10">
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-white/70 hover:bg-white/10 hover:text-white"
+              >
+                <Users className="w-5 h-5" />
+                <span className="font-medium">Kijelentkezés</span>
+              </button>
+            </div>
           </div>
         </aside>
 

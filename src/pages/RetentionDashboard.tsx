@@ -12,8 +12,11 @@ const RetentionDashboard = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center py-20">
-          <p className="text-lg text-white/70">Betöltés...</p>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
+            <p className="text-lg text-white/70">Betöltés...</p>
+          </div>
         </div>
       </AdminLayout>
     );
