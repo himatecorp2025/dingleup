@@ -193,8 +193,8 @@ const Register = () => {
             <div className="space-y-2">
               <Label className="text-sm font-medium text-white/80">Születési dátum</Label>
               <div className="relative group">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type="date" value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} className="h-10 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" disabled={isLoading} max={new Date(new Date().setFullYear(new Date().getFullYear() - 16)).toISOString().split('T')[0]} />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors pointer-events-none" />
+                <Input type="date" value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} className="h-10 w-full pl-10 pr-3 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" disabled={isLoading} max={new Date(new Date().setFullYear(new Date().getFullYear() - 16)).toISOString().split('T')[0]} />
               </div>
               {errors.birthDate && <p className="text-sm text-red-400">{errors.birthDate}</p>}
             </div>
