@@ -4,9 +4,9 @@ import { MillionaireQuestion } from "./MillionaireQuestion";
 import { MillionaireAnswer } from "./MillionaireAnswer";
 import { Question, getSkipCost } from "@/types/game";
 import { ScreenshotProtection } from "./ScreenshotProtection";
-import { QuestionLikeButton } from "./QuestionLikeButton";
-import { DoubleTapLikeOverlay } from "./DoubleTapLikeOverlay";
-import { useQuestionLike } from "@/hooks/useQuestionLike";
+import { QuestionReactionsBar } from "./QuestionReactionsBar";
+import { DoubleTapLikeReaction } from "./DoubleTapLikeReaction";
+import { useQuestionReactions } from "@/hooks/useQuestionReactions";
 import { GameHeader } from "./game/GameHeader";
 import { GameTimer } from "./game/GameTimer";
 import { GameLifelines } from "./game/GameLifelines";
@@ -70,58 +70,11 @@ export const QuestionCard = ({
   const correctAnswerKey = answers.find(a => a.correct)?.key || "";
   const skipCost = getSkipCost(questionNumber - 1); // Convert to 0-indexed
 
-  // Double tap detection for like
-  const { toggleLike } = useQuestionLike(question.id);
-  const [showDoubleTapAnimation, setShowDoubleTapAnimation] = useState(false);
-  const lastTapRef = useRef<number>(0);
-  const doubleTapTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleDoubleTap = async () => {
-    const now = Date.now();
-    const timeSinceLastTap = now - lastTapRef.current;
-
-    if (timeSinceLastTap < 300) {
-      // Double tap detected
-      if (doubleTapTimeoutRef.current) {
-        clearTimeout(doubleTapTimeoutRef.current);
-      }
-      
-      const wasLiked = await toggleLike();
-      if (wasLiked) {
-        setShowDoubleTapAnimation(true);
-      }
-      lastTapRef.current = 0;
-    } else {
-      // First tap
-      lastTapRef.current = now;
-      
-      // Clear any existing timeout
-      if (doubleTapTimeoutRef.current) {
-        clearTimeout(doubleTapTimeoutRef.current);
-      }
-      
-      // Reset after 300ms
-      doubleTapTimeoutRef.current = setTimeout(() => {
-        lastTapRef.current = 0;
-      }, 300);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (doubleTapTimeoutRef.current) {
-        clearTimeout(doubleTapTimeoutRef.current);
-      }
-    };
-  }, []);
+  // Double tap detection for like - delegated to DoubleTapLikeReaction
+  const { toggleLike } = useQuestionReactions(question.id);
 
   return (
     <ScreenshotProtection enabled={true}>
-      {/* Double tap like overlay */}
-      <DoubleTapLikeOverlay 
-        show={showDoubleTapAnimation} 
-        onAnimationEnd={() => setShowDoubleTapAnimation(false)} 
-      />
       
       <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className} relative`}>
         {/* Top section: Exit button, Lives, Coins */}
@@ -134,13 +87,12 @@ export const QuestionCard = ({
 
       {/* Wrapper for Timer + Question + Answers + Help - Vertically centered on mobile/tablet */}
       <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 pt-[7.2rem] sm:pt-[9rem] pb-[7.2rem] sm:pb-[9rem] md:pt-0 md:pb-0 md:mt-[5.5vh]">
-        {/* Middle section: Question and Answers with Like Button */}
+        {/* Middle section: Question and Answers with Reaction Bar */}
         <div className="relative flex">
-          {/* Question and Answers - with double tap detection */}
-          <div 
+          {/* Question and Answers - wrapped with double tap detection */}
+          <DoubleTapLikeReaction 
+            onDoubleTap={toggleLike}
             className="flex-1 flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2"
-            onClick={handleDoubleTap}
-            style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
           >
             <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
               <GameTimer timeLeft={timeLeft} maxTime={30} />
@@ -194,12 +146,10 @@ export const QuestionCard = ({
               })}
               </div>
             </div>
-          </div>
+          </DoubleTapLikeReaction>
 
-          {/* TikTok-style Like Button - Right Action Bar */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10">
-            <QuestionLikeButton questionId={question.id} />
-          </div>
+          {/* TikTok-style Reactions Bar - Right side with LIKE + DISLIKE */}
+          <QuestionReactionsBar questionId={question.id} />
         </div>
 
         {/* Bottom section: Help buttons */}

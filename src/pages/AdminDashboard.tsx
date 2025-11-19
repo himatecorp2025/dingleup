@@ -312,12 +312,8 @@ const AdminDashboard = () => {
             <span className="font-medium">Jelentések ({reports.filter(r => r.status === 'pending' || r.status === 'reviewing').length})</span>
           </button>
           <button
-            onClick={() => { setActiveTab('popular-content'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm ${
-              activeTab === 'popular-content'
-                ? 'bg-blue-600/20 text-blue-400'
-                : 'text-white/70 hover:bg-white/5'
-            }`}
+            onClick={() => { navigate('/admin/popular-content'); onItemClick?.(); }}
+            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-colors text-sm text-white/70 hover:bg-white/5"
           >
             <TrendingUp className="w-4 h-4 xl:w-5 xl:h-5" />
             <span className="font-medium">Népszerű tartalmak</span>
@@ -870,16 +866,6 @@ const AdminDashboard = () => {
 
         {activeTab === 'player-behaviors' && (
           <PlayerBehaviorsTab />
-        )}
-
-        {activeTab === 'popular-content' && (
-          <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-            <iframe
-              src="/popular-content"
-              className="w-full h-[calc(100vh-12rem)] border-0 rounded-lg"
-              title="Népszerű tartalmak"
-            />
-          </div>
         )}
       </div>
 
