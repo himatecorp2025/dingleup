@@ -61,6 +61,14 @@ const Leaderboard = () => {
 
   const fetchLeaderboard = async () => {
     try {
+      // Ensure session is valid before calling edge function
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        console.error('[Leaderboard] No active session');
+        setLoading(false);
+        return;
+      }
+
       // Call Edge Function for country-specific leaderboard
       const { data, error } = await supabase.functions.invoke('get-weekly-leaderboard-by-country', {
         method: 'POST'
