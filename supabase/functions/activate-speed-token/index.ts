@@ -24,13 +24,6 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
-    );
-
-    // Auth check
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(
@@ -40,7 +33,15 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
+    
+    // Auth client for verification
+    const supabaseAuth = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { auth: { persistSession: false, autoRefreshToken: false } }
+    );
+    
+    const { data: userData, error: userError } = await supabaseAuth.auth.getUser(token);
     if (userError || !userData.user) {
       return new Response(
         JSON.stringify({ success: false, error: "Érvénytelen autentikáció" }),
@@ -49,6 +50,13 @@ serve(async (req) => {
     }
 
     const userId = userData.user.id;
+    
+    // Admin client for database operations
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false } }
+    );
 
     console.log(`[activate-speed-token] User ${userId} activating speed token`);
 
