@@ -2094,6 +2094,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_ad_interest_candidates: {
+        Row: {
+          interest_score: number
+          last_update: string
+          topic_id: number
+          user_id: string
+        }
+        Insert: {
+          interest_score?: number
+          last_update?: string
+          topic_id: number
+          user_id: string
+        }
+        Update: {
+          interest_score?: number
+          last_update?: string
+          topic_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_ad_interest_candidates_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_cohorts: {
         Row: {
           churn_risk_score: number | null
