@@ -15,6 +15,14 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     }
 
     try {
+      // Check if user is on mobile/tablet
+      const isMobileOrTablet = window.innerWidth <= 1024;
+      if (!isMobileOrTablet) {
+        setCanClaim(false);
+        setLoading(false);
+        return;
+      }
+
       // SECURITY FIX: Check server-side instead of localStorage
       // Query the database directly instead of trusting client storage
       const { data: profile } = await supabase
