@@ -35,9 +35,9 @@ const Index = () => {
   }, []);
 
   return (
-    <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] overflow-x-hidden overflow-y-auto">
-      {/* Full-screen background extending behind status bar */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]" 
+    <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] overflow-x-hidden overflow-y-auto">
+      {/* Full-screen deep purple/blue background extending behind status bar */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033]" 
            style={{
              top: 'calc(-1 * env(safe-area-inset-top, 0px))',
              left: 'calc(-1 * env(safe-area-inset-left, 0px))',
