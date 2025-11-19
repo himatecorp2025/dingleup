@@ -4,7 +4,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-b from-primary-darker via-primary-dark to-primary-darker border-t border-border/50 py-12 px-4">
+    <footer className="bg-gradient-to-br from-[#0f0033] via-[#1a0033] to-[#0f0033] border-t border-white/10 py-12 px-4">
       <div className="container mx-auto">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Logo & Description */}
@@ -25,7 +25,7 @@ const Footer = () => {
                 preserveAspectRatio="xMidYMid meet"
               />
             </svg>
-            <p className="text-foreground/80 mb-4 max-w-md text-with-stroke">
+            <p className="text-white/80 mb-4 max-w-md drop-shadow-lg">
               A Dingle UP! egy modern kvízjáték, ahol tesztelheted tudásod, versenyezhetsz barátaiddal és nyerhetsz értékes jutalmakat.
             </p>
             <div className="flex gap-4">
@@ -33,52 +33,36 @@ const Footer = () => {
                 href="#" 
                 className="relative group"
                 aria-label="Facebook"
-                style={{ perspective: '500px' }}
               >
-                <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/90 via-primary to-primary opacity-80 border-2 border-primary/50 shadow-lg group-hover:border-accent/70 transition-all" aria-hidden />
-                <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-background/70 to-background/90" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
-                <div className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-                  <Facebook className="w-5 h-5 text-foreground drop-shadow-lg" />
+                <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg shadow-purple-500/50 hover:shadow-purple-500/80">
+                  <Facebook className="w-5 h-5 text-white drop-shadow-lg" />
                 </div>
               </a>
               <a 
                 href="#" 
                 className="relative group"
                 aria-label="Instagram"
-                style={{ perspective: '500px' }}
               >
-                <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/90 via-primary to-primary opacity-80 border-2 border-primary/50 shadow-lg group-hover:border-accent/70 transition-all" aria-hidden />
-                <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-background/70 to-background/90" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
-                <div className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-                  <Instagram className="w-5 h-5 text-foreground drop-shadow-lg" />
+                <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-pink-600 to-purple-600 flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg shadow-pink-500/50 hover:shadow-pink-500/80">
+                  <Instagram className="w-5 h-5 text-white drop-shadow-lg" />
                 </div>
               </a>
               <a 
                 href="#" 
                 className="relative group"
                 aria-label="Twitter"
-                style={{ perspective: '500px' }}
               >
-                <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/90 via-primary to-primary opacity-80 border-2 border-primary/50 shadow-lg group-hover:border-accent/70 transition-all" aria-hidden />
-                <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-background/70 to-background/90" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
-                <div className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-                  <Twitter className="w-5 h-5 text-foreground drop-shadow-lg" />
+                <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg shadow-blue-500/50 hover:shadow-blue-500/80">
+                  <Twitter className="w-5 h-5 text-white drop-shadow-lg" />
                 </div>
               </a>
               <a 
-                href="mailto:info@dingleup.hu" 
+                href="mailto:info@dingleup.com" 
                 className="relative group"
                 aria-label="Email"
-                style={{ perspective: '500px' }}
               >
-                <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(2px, 2px)', filter: 'blur(3px)' }} aria-hidden />
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/90 via-primary to-primary opacity-80 border-2 border-primary/50 shadow-lg group-hover:border-accent/70 transition-all" aria-hidden />
-                <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-background/70 to-background/90" style={{ boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.3)' }} aria-hidden />
-                <div className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-                  <Mail className="w-5 h-5 text-foreground drop-shadow-lg" />
+                <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg shadow-yellow-500/50 hover:shadow-yellow-500/80">
+                  <Mail className="w-5 h-5 text-white drop-shadow-lg" />
                 </div>
               </a>
             </div>
@@ -86,25 +70,25 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-lg mb-4 text-accent text-with-stroke">Gyors Linkek</h3>
+            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">Linkek</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-foreground/70 hover:text-accent transition-colors text-with-stroke">
-                  Kezdőlap
+                <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
+                  Rólunk
                 </a>
               </li>
               <li>
-                <a href="#" className="text-foreground/70 hover:text-accent transition-colors text-with-stroke">
+                <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
                   Funkciók
                 </a>
               </li>
               <li>
-                <a href="#" className="text-foreground/70 hover:text-accent transition-colors text-with-stroke">
+                <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
                   Hogyan működik?
                 </a>
               </li>
               <li>
-                <a href="#" className="text-foreground/70 hover:text-accent transition-colors text-with-stroke">
+                <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
                   GYIK
                 </a>
               </li>
@@ -113,30 +97,30 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h3 className="font-semibold text-lg mb-4 text-accent text-with-stroke">Jogi Információk</h3>
+            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">Jogi Információk</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-foreground/70 hover:text-accent transition-colors text-with-stroke">
+                <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
                   Adatvédelem
                 </a>
               </li>
               <li>
-                <a href="#" className="text-foreground/70 hover:text-accent transition-colors text-with-stroke">
+                <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
                   Felhasználási Feltételek
                 </a>
               </li>
               <li>
-                <a href="#" className="text-foreground/70 hover:text-accent transition-colors text-with-stroke">
+                <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
                   Cookie Szabályzat
                 </a>
               </li>
               <li>
-                <a href="#" className="text-foreground/70 hover:text-accent transition-colors text-with-stroke">
+                <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
                   Kapcsolat
                 </a>
               </li>
               <li>
-                <a href="/admin/login" className="text-foreground/70 hover:text-accent transition-colors text-with-stroke">
+                <a href="/admin/login" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
                   Admin felület
                 </a>
               </li>
@@ -144,9 +128,9 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border/50 pt-8 text-center text-foreground/70 text-sm">
-          <p className="text-with-stroke">© {currentYear} Dingle UP! Minden jog fenntartva.</p>
-          <p className="mt-2 text-with-stroke">
+        <div className="border-t border-white/10 pt-8 text-center text-white/70 text-sm">
+          <p className="drop-shadow">© {currentYear} Dingle UP! Minden jog fenntartva.</p>
+          <p className="mt-2 drop-shadow">
             Készítve ❤️-tel | Játék fejlesztés alatt
           </p>
         </div>

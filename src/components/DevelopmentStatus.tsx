@@ -58,18 +58,22 @@ const comingSoonFeatures = [
 
 const DevelopmentStatus = () => {
   return (
-    <section className="py-24 px-4 relative bg-gradient-to-b from-primary-darker via-primary-dark to-primary-darker">
-      <div className="container mx-auto">
+    <section className="py-24 px-4 relative bg-gradient-to-br from-[#0f0033] via-[#1a0033] to-[#0f0033]">
+      {/* Animated glow effects */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[120px] animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+      
+      <div className="container mx-auto relative z-10">
         {/* Development Progress Section */}
         <div className="text-center mb-16 animate-fade-in">
-          <div className="inline-flex items-center gap-2 bg-accent/10 border border-accent/30 rounded-full px-4 py-2 mb-4">
-            <Sparkles className="w-4 h-4 text-accent animate-pulse" />
-            <span className="text-sm font-semibold text-accent">Aktív Fejlesztés</span>
+          <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/30 rounded-full px-6 py-3 mb-6 backdrop-blur-sm">
+            <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />
+            <span className="text-sm sm:text-base font-bold text-yellow-300">Aktív Fejlesztés</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins text-white text-with-stroke">
-            Fejlesztési <span className="text-white">Státusz</span>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+            Fejlesztési <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">Státusz</span>
           </h2>
-          <p className="text-xl text-white max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto drop-shadow-lg">
             Folyamatosan dolgozunk azon, hogy a legjobb játékélményt nyújtsuk
           </p>
         </div>
