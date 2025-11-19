@@ -17,6 +17,9 @@ export const useQuestionLike = (questionId: string | null) => {
 
   // Fetch initial like status and setup realtime subscription
   useEffect(() => {
+    // Reset state immediately when questionId changes
+    setStatus({ liked: false, likeCount: 0, loading: true });
+    
     if (!questionId) {
       setStatus({ liked: false, likeCount: 0, loading: false });
       return;
