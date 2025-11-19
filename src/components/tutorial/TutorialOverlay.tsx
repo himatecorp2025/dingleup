@@ -139,13 +139,13 @@ export const TutorialOverlay = ({
           maxWidth: '320px'
         }}
       >
-        <div className="bg-gradient-to-br from-[#A47C12]/95 to-[#8B6914]/95 backdrop-blur-sm border-2 border-[#D4AF37] rounded-2xl shadow-2xl p-6">
+        <div className="bg-gradient-to-br from-accent-dark/95 to-accent-darker/95 backdrop-blur-sm border-2 border-accent rounded-2xl shadow-2xl p-6">
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 p-1.5 rounded-full bg-red-600/80 hover:bg-red-700 transition-colors"
+            className="absolute top-3 right-3 p-1.5 rounded-full bg-destructive/80 hover:bg-destructive transition-colors"
           >
-            <X className="w-4 h-4 text-white" />
+            <X className="w-4 h-4 text-foreground" />
           </button>
 
           {/* Content */}
@@ -163,7 +163,7 @@ export const TutorialOverlay = ({
                 <div
                   key={index}
                   className={`h-1 flex-1 rounded-full transition-all ${
-                    index <= currentStep ? 'bg-[#D4AF37]' : 'bg-white/30'
+                    index <= currentStep ? 'bg-accent' : 'bg-foreground/30'
                   }`}
                 />
               ))}
@@ -176,7 +176,7 @@ export const TutorialOverlay = ({
                   onClick={onPrev}
                   variant="outline"
                   size="sm"
-                  className="flex-1 bg-white/10 border-white/30 hover:bg-white/20 text-white"
+                  className="flex-1 bg-foreground/10 border-foreground/30 hover:bg-foreground/20 text-foreground"
                 >
                   <ChevronLeft className="w-4 h-4 mr-1" />
                   Vissza

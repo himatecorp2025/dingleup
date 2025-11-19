@@ -1084,7 +1084,7 @@ const GamePreview = () => {
               <span 
                 className="relative inline-block"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(var(--success)), hsl(var(--success)), hsl(var(--success)))',
+                  background: 'linear-gradient(135deg, hsl(var(--success)), hsl(var(--success-glow)), hsl(var(--success)))',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   textShadow: '0 0 30px rgba(0,255,135,0.5)',
