@@ -73,7 +73,7 @@ export function PremiumBoosterConfirmDialog({
             disabled={!accepted}
             className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-bold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Elfogadás és vásárlás – 2.99 $
+            Elfogadás és vásárlás – 2.49 $
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

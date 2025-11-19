@@ -580,7 +580,7 @@ if (!profile) {
                         textShadow: '-0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000'
                       }}
                     >
-                      2.99 USD • Premium Booster
+                      2.49 USD • Premium Booster
                     </span>
                   )}
                 </div>
