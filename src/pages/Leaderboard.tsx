@@ -170,7 +170,7 @@ const Leaderboard = () => {
     }}>
       {/* Full-screen background that covers status bar */}
       <div 
-        className="fixed bg-gradient-to-b from-primary-dark via-primary to-primary-darker"
+        className="fixed bg-gradient-to-b from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]"
         style={{
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',
