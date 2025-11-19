@@ -12,12 +12,12 @@ import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useWallet } from '@/hooks/useWallet';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
-import { useWeeklyWinnersPopup } from '@/hooks/useWeeklyWinnersPopup';
+import { useDailyWinnersPopup } from '@/hooks/useDailyWinnersPopup';
 import { useBoosterState } from '@/hooks/useBoosterState';
 
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
-import { WeeklyWinnersDialog } from '@/components/WeeklyWinnersDialog';
+import { DailyWinnersDialog } from '@/components/DailyWinnersDialog';
 import { PremiumBoosterConfirmDialog } from '@/components/PremiumBoosterConfirmDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
@@ -27,7 +27,7 @@ import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { IdleWarning } from '@/components/IdleWarning';
 
-import { WeeklyWinnerPopup } from '@/components/WeeklyWinnerPopup';
+import { DailyWinnerPopup } from '@/components/DailyWinnerPopup';
 
 import BottomNav from '@/components/BottomNav';
 import gameBackground from '@/assets/game-background.png';
@@ -49,7 +49,7 @@ const Dashboard = () => {
   const { canClaim, showPopup, weeklyEntryCount, nextReward, claiming, claimDailyGift, checkDailyGift, handleLater, showDailyGiftPopup, setShowPopup } = useDailyGift(userId, false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
   const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
-  const { showPopup: showWeeklyWinnersPopup, triggerPopup: triggerWeeklyWinnersPopup, closePopup: closeWeeklyWinnersPopup, canShowThisWeek: canShowWeeklyPopup } = useWeeklyWinnersPopup(userId);
+  const { showPopup: showDailyWinnersPopup, triggerPopup: triggerDailyWinnersPopup, closePopup: closeDailyWinnersPopup, canShowToday: canShowDailyPopup } = useDailyWinnersPopup(userId);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   const boosterState = useBoosterState(userId);
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
@@ -138,6 +138,13 @@ const Dashboard = () => {
       setShowPopup(true);
     }
   }, [canMountModals, canClaim, showWelcomeBonus, showWeeklyWinners, userId]);
+
+  // Show Daily Winners popup THIRD (after Daily Gift is handled)
+  useEffect(() => {
+    if (canMountModals && canShowDailyPopup && !showWelcomeBonus && !showPopup && !showWeeklyWinners && userId && dailyGiftJustClaimed) {
+      triggerDailyWinnersPopup();
+    }
+  }, [canMountModals, canShowDailyPopup, showWelcomeBonus, showPopup, showWeeklyWinners, userId, dailyGiftJustClaimed, triggerDailyWinnersPopup]);
 
 
 
@@ -238,7 +245,7 @@ const Dashboard = () => {
       await checkDailyGift();
       await refreshProfile();
       setDailyGiftJustClaimed(true);
-      triggerWeeklyWinnersPopup();
+      triggerDailyWinnersPopup();
       setTimeout(() => setDailyGiftJustClaimed(false), 2000);
     }
     return success;
@@ -247,8 +254,9 @@ const Dashboard = () => {
   const handleCloseDailyGift = () => {
     handleLater();
     setShowPopup(false);
-    // Trigger weekly winners popup 3 seconds after dismissing
-    triggerWeeklyWinnersPopup();
+    setDailyGiftJustClaimed(true);
+    // Trigger daily winners popup 3 seconds after dismissing
+    triggerDailyWinnersPopup();
   };
 
   const handleClaimWelcomeBonus = async () => {
@@ -399,13 +407,13 @@ if (!profile) {
       onStayActive={handleStayActive} 
     />
     
-    {/* Weekly winner popup (old version - will be replaced) */}
-    <WeeklyWinnerPopup userId={userId} />
+    {/* Daily winner popup - shows if user won yesterday */}
+    <DailyWinnerPopup userId={userId} />
     
-    {/* Weekly Winners Dialog - minden héten egyszer megjelenik */}
-    <WeeklyWinnersDialog 
-      open={showWeeklyWinnersPopup} 
-      onClose={closeWeeklyWinnersPopup} 
+    {/* Daily Winners Dialog - tegnapi TOP 10 */}
+    <DailyWinnersDialog 
+      open={showDailyWinnersPopup} 
+      onClose={closeDailyWinnersPopup} 
     />
     
     {/* Falling coins background */}

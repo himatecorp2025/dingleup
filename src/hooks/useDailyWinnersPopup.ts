@@ -2,31 +2,27 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 /**
- * Hook to manage weekly winners popup visibility
- * Shows popup 3 seconds after daily gift claim/dismiss, once per week
+ * Hook to manage daily winners popup visibility
+ * Shows popup 3 seconds after daily gift claim/dismiss, once per day
  */
-export const useWeeklyWinnersPopup = (userId: string | undefined) => {
+export const useDailyWinnersPopup = (userId: string | undefined) => {
   const [showPopup, setShowPopup] = useState(false);
-  const [canShowThisWeek, setCanShowThisWeek] = useState(false);
+  const [canShowToday, setCanShowToday] = useState(false);
   const [triggerActive, setTriggerActive] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const getCurrentWeek = () => {
+  const getCurrentDay = () => {
     const now = new Date();
-    const year = now.getFullYear();
-    const oneJan = new Date(year, 0, 1);
-    const numberOfDays = Math.floor((now.getTime() - oneJan.getTime()) / (24 * 60 * 60 * 1000));
-    const weekNumber = Math.ceil((numberOfDays + oneJan.getDay() + 1) / 7);
-    return `${year}-W${weekNumber.toString().padStart(2, '0')}`;
+    return now.toISOString().split('T')[0]; // YYYY-MM-DD format
   };
 
   useEffect(() => {
     if (!userId) {
-      setCanShowThisWeek(false);
+      setCanShowToday(false);
       return;
     }
 
-    checkIfCanShowThisWeek();
+    checkIfCanShowToday();
   }, [userId]);
 
   // Cleanup timer on unmount
@@ -41,7 +37,7 @@ export const useWeeklyWinnersPopup = (userId: string | undefined) => {
 
   // Trigger effect - show popup after 3 seconds
   useEffect(() => {
-    if (!triggerActive || !canShowThisWeek) return;
+    if (!triggerActive || !canShowToday) return;
 
     // Clear existing timer
     if (timerRef.current) {
@@ -61,51 +57,51 @@ export const useWeeklyWinnersPopup = (userId: string | undefined) => {
         timerRef.current = null;
       }
     };
-  }, [triggerActive, canShowThisWeek]);
+  }, [triggerActive, canShowToday]);
 
-  const checkIfCanShowThisWeek = async () => {
+  const checkIfCanShowToday = async () => {
     try {
-      const currentWeek = getCurrentWeek();
+      const currentDay = getCurrentDay();
 
-      // Check if user has seen popup this week
+      // Check if user has seen popup today
       const { data, error } = await supabase
-        .from('weekly_winners_popup_views')
-        .select('last_shown_week')
+        .from('daily_winners_popup_views')
+        .select('last_shown_day')
         .eq('user_id', userId)
         .single();
 
       if (error && error.code !== 'PGRST116') {
-        console.error('[WEEKLY-POPUP] Error checking popup status:', error);
-        setCanShowThisWeek(false);
+        console.error('[DAILY-WINNERS-POPUP] Error checking popup status:', error);
+        setCanShowToday(false);
         return;
       }
 
-      // Can show if not seen this week
-      setCanShowThisWeek(!data || data.last_shown_week !== currentWeek);
+      // Can show if not seen today
+      setCanShowToday(!data || data.last_shown_day !== currentDay);
     } catch (error) {
-      console.error('[WEEKLY-POPUP] Error in checkIfCanShowThisWeek:', error);
-      setCanShowThisWeek(false);
+      console.error('[DAILY-WINNERS-POPUP] Error in checkIfCanShowToday:', error);
+      setCanShowToday(false);
     }
   };
 
   const triggerPopup = useCallback(() => {
-    if (!canShowThisWeek) return;
+    if (!canShowToday) return;
     setTriggerActive(true);
-  }, [canShowThisWeek]);
+  }, [canShowToday]);
 
   const closePopup = async () => {
     if (!userId) return;
 
     try {
-      const currentWeek = getCurrentWeek();
+      const currentDay = getCurrentDay();
 
       // Upsert the popup view record
       const { error } = await supabase
-        .from('weekly_winners_popup_views')
+        .from('daily_winners_popup_views')
         .upsert(
           {
             user_id: userId,
-            last_shown_week: currentWeek,
+            last_shown_day: currentDay,
             updated_at: new Date().toISOString(),
           },
           {
@@ -114,19 +110,19 @@ export const useWeeklyWinnersPopup = (userId: string | undefined) => {
         );
 
       if (error) {
-        console.error('[WEEKLY-POPUP] Error marking popup as shown:', error);
+        console.error('[DAILY-WINNERS-POPUP] Error marking popup as shown:', error);
       }
 
       setShowPopup(false);
-      setCanShowThisWeek(false);
+      setCanShowToday(false);
     } catch (error) {
-      console.error('[WEEKLY-POPUP] Error in closePopup:', error);
+      console.error('[DAILY-WINNERS-POPUP] Error in closePopup:', error);
     }
   };
 
   return {
     showPopup,
-    canShowThisWeek,
+    canShowToday,
     triggerPopup,
     closePopup,
   };
