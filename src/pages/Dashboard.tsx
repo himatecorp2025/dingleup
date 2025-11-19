@@ -148,58 +148,29 @@ const Dashboard = () => {
 
 
 
-  // Realtime weekly rank updates - aggregated across all categories for current week
+  // Realtime country-specific rank updates via edge function
   useEffect(() => {
     if (!userId) return;
 
-    const getWeekStartForRank = () => {
-      const now = new Date();
-      const dayOfWeek = now.getUTCDay();
-      const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      const monday = new Date(now);
-      monday.setUTCDate(now.getUTCDate() - diff);
-      monday.setUTCHours(0, 0, 0, 0);
-      return monday.toISOString().split('T')[0];
-    };
-
     const fetchUserDailyRank = async () => {
       try {
-        const now = new Date();
-        const currentDay = now.toISOString().split('T')[0];
-        
-        // Query daily_rankings for current day - mixed category only
-        const { data, error } = await supabase
-          .from('daily_rankings')
-          .select('user_id, total_correct_answers')
-          .eq('day_date', currentDay)
-          .eq('category', 'mixed');
+        // Call edge function to get country-specific leaderboard and user rank
+        const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country');
         
         if (error) {
-          console.error('Error fetching daily rankings:', error);
-          // Even on error, show rank as if user has 0 correct answers
-          setCurrentRank(1);
+          console.error('[Dashboard] Error fetching user rank:', error);
+          setCurrentRank(1); // Fallback to rank 1
           return;
         }
         
-        if (!data || data.length === 0) {
-          // No data yet this day - user is rank 1 with 0 correct answers
-          setCurrentRank(1);
-          return;
-        }
-
-        // Sort by total correct answers (descending)
-        const sortedUsers = [...data].sort((a, b) => b.total_correct_answers - a.total_correct_answers);
-
-        // Find current user's rank
-        const userRank = sortedUsers.findIndex(entry => entry.user_id === userId);
-        if (userRank !== -1) {
-          setCurrentRank(userRank + 1); // +1 because findIndex is 0-based
+        if (data?.userRank) {
+          setCurrentRank(data.userRank);
         } else {
-          // User not in rankings yet today -> they are at the bottom
-          setCurrentRank(sortedUsers.length + 1);
+          // User not found in leaderboard
+          setCurrentRank(1);
         }
       } catch (err) {
-        console.error('Exception fetching daily user rank:', err);
+        console.error('[Dashboard] Exception fetching user rank:', err);
         setCurrentRank(null);
       }
     };
@@ -207,7 +178,7 @@ const Dashboard = () => {
     // Fetch immediately on mount
     fetchUserDailyRank();
     
-    // Subscribe to realtime changes in daily_rankings
+    // Subscribe to realtime changes in daily_rankings - refresh rank when any ranking changes
     const leaderboardChannel = supabase
       .channel('daily-leaderboard-rank-updates')
       .on(
@@ -218,7 +189,7 @@ const Dashboard = () => {
           table: 'daily_rankings'
         },
         () => {
-          // Daily rankings changed -> recalculate rank
+          // Daily rankings changed -> refetch user rank from edge function
           fetchUserDailyRank();
         }
       )
