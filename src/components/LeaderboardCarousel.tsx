@@ -16,11 +16,10 @@ export const LeaderboardCarousel = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollPausedRef = useRef(false);
   const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const countryCodeCacheRef = useRef<string | null>(null);
 
   useEffect(() => {
     const refresh = async () => {
-      // Azonnali betöltés cache-sel és párhuzamos lekérdezésekkel
+      // MINDIG friss adatot kérdezünk le, NINCS cache
       const weeklyData = await fetchFromWeeklyRankings();
       setTopPlayers(weeklyData.slice(0, 100));
     };
@@ -60,25 +59,19 @@ export const LeaderboardCarousel = () => {
 
   const fetchFromWeeklyRankings = async (): Promise<LeaderboardEntry[]> => {
     try {
-      // Cache country code - csak egyszer kérdezzük le
-      let countryCode = countryCodeCacheRef.current;
-      
-      if (!countryCode) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          return [];
-        }
-        
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('country_code')
-          .eq('id', user.id)
-          .single();
-        
-        countryCode = profile?.country_code || 'HU';
-        countryCodeCacheRef.current = countryCode;
+      // MINDIG frissen lekérdezzük a bejelentkezett user country_code-ját (nincs cache)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        return [];
       }
       
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('country_code')
+        .eq('id', user.id)
+        .single();
+      
+      const countryCode = profile?.country_code || 'HU';
       const weekStart = getWeekStartInUserTimezone();
       
       // Ugyanaz a logika mint Leaderboard.tsx: MINDEN felhasználót lekérdezünk
