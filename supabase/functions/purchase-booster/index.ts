@@ -170,7 +170,7 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
       user_id: userId,
       delta_coins: rewardGold - priceGold,
       delta_lives: rewardLives,
-      source: "free_booster",
+      source: "booster_purchase",
       idempotency_key: idempotencyKey,
       metadata: {
         booster_type_id: boosterType.id,
@@ -381,7 +381,7 @@ async function handlePremiumBoosterPurchase(
         user_id: userId,
         delta_coins: rewardGold,
         delta_lives: rewardLives,
-        source: "premium_booster",
+        source: "booster_purchase",
         idempotency_key: idempotencyKey,
         metadata: {
           booster_type_id: boosterType.id,
