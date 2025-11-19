@@ -1108,11 +1108,20 @@ const GamePreview = () => {
 
   // Show loading video IMMEDIATELY when game start begins (even before backend completes)
   // Keep video visible until BOTH video ends AND questions are ready
-  // UNLESS showLoadingVideo is false (seamless restart)
+  // For seamless restart: don't show video but still wait for questions to load
   if (showLoadingVideo && (isStartingGame || !videoEnded || (gameState === 'playing' && questions.length === 0))) {
     return (
       <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
         <GameLoadingScreen onVideoEnd={handleVideoEnd} />
+      </div>
+    );
+  }
+
+  // Even during seamless restart, wait for questions to load before rendering game
+  if (isStartingGame || (gameState === 'playing' && questions.length === 0)) {
+    return (
+      <div className="fixed inset-0 w-full h-full bg-black z-50 flex items-center justify-center">
+        <div className="text-white text-lg">Betöltés...</div>
       </div>
     );
   }
