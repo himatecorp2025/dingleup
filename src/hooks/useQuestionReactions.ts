@@ -26,6 +26,7 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
   const [dislikeCount, setDislikeCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionInProgress, setActionInProgress] = useState(false);
 
   // Fetch initial reaction status
   const fetchReactionStatus = useCallback(async () => {
@@ -71,6 +72,13 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       console.warn('[useQuestionReactions] Cannot toggle like - invalid questionId');
       return;
     }
+
+    if (actionInProgress) {
+      // Prevent double-like from very fast repeated interactions
+      return;
+    }
+
+    setActionInProgress(true);
 
     // Optimistic update
     const prevLiked = liked;
@@ -132,8 +140,10 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       setLikeCount(prevLikeCount);
       setDislikeCount(prevDislikeCount);
       setError('Failed to update like');
+    } finally {
+      setActionInProgress(false);
     }
-  }, [questionId, liked, disliked, likeCount, dislikeCount]);
+  }, [questionId, liked, disliked, likeCount, dislikeCount, actionInProgress]);
 
   // Toggle DISLIKE
   const toggleDislike = useCallback(async () => {
@@ -141,6 +151,13 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       console.warn('[useQuestionReactions] Cannot toggle dislike - invalid questionId');
       return;
     }
+
+    if (actionInProgress) {
+      // Prevent double-dislike from very fast repeated interactions
+      return;
+    }
+
+    setActionInProgress(true);
 
     // Optimistic update
     const prevLiked = liked;
@@ -202,8 +219,10 @@ export function useQuestionReactions(questionId: string): UseQuestionReactionsRe
       setLikeCount(prevLikeCount);
       setDislikeCount(prevDislikeCount);
       setError('Failed to update dislike');
+    } finally {
+      setActionInProgress(false);
     }
-  }, [questionId, liked, disliked, likeCount, dislikeCount]);
+  }, [questionId, liked, disliked, likeCount, dislikeCount, actionInProgress]);
 
   return {
     liked,
