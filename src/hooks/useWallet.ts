@@ -29,35 +29,10 @@ export const useWallet = (userId: string | undefined) => {
     }
 
     try {
-      // Get current session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      // If no valid session, try to refresh it
-      if (sessionError || !session) {
-        const { error: refreshError } = await supabase.auth.refreshSession();
-        if (refreshError) {
-          console.error('[useWallet] Session refresh failed:', refreshError);
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Get fresh session token for the request
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      
-      if (!currentSession?.access_token) {
-        console.error('[useWallet] No valid access token available');
-        setLoading(false);
-        return;
-      }
-
       const requestTime = Date.now();
       
-      const { data, error } = await supabase.functions.invoke('get-wallet', {
-        headers: {
-          Authorization: `Bearer ${currentSession.access_token}`
-        }
-      });
+      // supabase.functions.invoke automatically includes the current session token
+      const { data, error } = await supabase.functions.invoke('get-wallet');
 
       if (error) {
         console.error('[useWallet] Error fetching wallet:', error);
