@@ -216,7 +216,7 @@ const COUNTRIES = [
 const Profile = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
-  const { profile, loading, updateProfile } = useGameProfile(userId);
+  const { profile, loading, updateProfile, refreshProfile } = useGameProfile(userId);
   const { walletData, refetchWallet } = useWallet(userId);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -817,7 +817,9 @@ const Profile = () => {
                     if (error) throw error;
                     if (data?.success) {
                       toast.success(`Sikeres vásárlás! +${data.grantedRewards?.gold} arany, +${data.grantedRewards?.lives} élet`, { id: 'free-booster' });
+                      // Instant refresh for both wallet and profile data
                       refetchWallet();
+                      refreshProfile();
                     }
                   } catch (e) {
                     toast.error('Hiba történt', { id: 'free-booster' });
