@@ -298,31 +298,25 @@ const Dashboard = () => {
 
   const purchasePremiumBooster = async (confirmInstant: boolean = false) => {
     try {
-      toast.loading('Premium Booster vásárlás...', { id: 'purchase-premium-booster' });
+      toast.loading('Fizetési oldal betöltése...', { id: 'purchase-premium-booster' });
       
-      const { data, error } = await supabase.functions.invoke('purchase-booster', {
-        body: {
-          boosterCode: 'PREMIUM',
-          confirmInstantPurchase: confirmInstant
-        }
+      // Create Stripe Checkout session
+      const { data, error } = await supabase.functions.invoke('create-premium-booster-payment', {
+        body: {}
       });
 
       if (error) throw error;
 
-      if (data?.success) {
-        toast.success(`Sikeres vásárlás! +${data.grantedRewards?.gold} arany és +${data.grantedRewards?.lives} élet jóváírva. Most aktiválhatod a Premium Speed Boostert.`, { id: 'purchase-premium-booster', duration: 6000 });
-        await refetchWallet();
-        await refreshProfile();
+      if (data?.url) {
+        // Redirect to Stripe Checkout in new tab
+        window.open(data.url, '_blank');
+        toast.success('Fizetési oldal megnyitva új fülön', { id: 'purchase-premium-booster' });
       } else {
-        if (data?.error === 'PENDING_PREMIUM_EXISTS') {
-          toast.error('Már van egy aktiválatlan Premium Boosterd! Először aktiváld azt.', { id: 'purchase-premium-booster' });
-        } else {
-          throw new Error(data?.error || 'Ismeretlen hiba');
-        }
+        throw new Error('Fizetési URL nem érkezett meg');
       }
     } catch (error) {
-      console.error('Premium booster purchase error:', error);
-      const errorMsg = error instanceof Error ? error.message : 'Hiba történt a vásárlás során';
+      console.error('Premium booster payment error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Hiba történt a fizetési oldal betöltése során';
       toast.error(errorMsg, { id: 'purchase-premium-booster' });
     }
   };
