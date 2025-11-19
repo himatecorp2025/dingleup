@@ -175,6 +175,12 @@ export const AdminReportActionDialog = ({
     setSubmitting(true);
 
     try {
+      const { data: { session: adminSession } } = await supabase.auth.getSession();
+      if (!adminSession) {
+        toast.error('No admin session');
+        setSubmitting(false);
+        return;
+      }
 
       const { data, error } = await supabase.functions.invoke('admin-send-report-notification', {
         body: {
@@ -193,7 +199,8 @@ export const AdminReportActionDialog = ({
             reporterUsername: report.reporter?.username,
             reporterEmail: report.reporter?.email
           }
-        }
+        },
+        headers: { Authorization: `Bearer ${adminSession.access_token}` }
       });
 
       if (error) {

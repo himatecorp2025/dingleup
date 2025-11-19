@@ -68,7 +68,8 @@ export const LeaderboardCarousel = () => {
 
       // Call Edge Function for country-specific leaderboard
       const { data, error } = await supabase.functions.invoke('get-weekly-leaderboard-by-country', {
-        method: 'POST'
+        method: 'POST',
+        headers: { Authorization: `Bearer ${sessionData.session.access_token}` }
       });
 
       if (error) {

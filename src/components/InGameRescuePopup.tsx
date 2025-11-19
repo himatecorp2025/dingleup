@@ -33,8 +33,16 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
     setLoadingGoldSaver(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Nem vagy bejelentkezve');
+        setLoadingGoldSaver(false);
+        return;
+      }
+      
       const { data, error } = await supabase.functions.invoke('purchase-booster', {
         body: { boosterCode: 'GOLD_SAVER' },
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
       if (error) throw error;
@@ -57,8 +65,16 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
   const handleInstantRescuePurchase = async () => {
     setLoadingInstantRescue(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Nem vagy bejelentkezve');
+        setLoadingInstantRescue(false);
+        return;
+      }
+      
       const { data, error } = await supabase.functions.invoke('purchase-booster', {
         body: { boosterCode: 'INSTANT_RESCUE' },
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
       if (error) throw error;

@@ -293,8 +293,15 @@ const Dashboard = () => {
     try {
       toast.loading('Premium Speed aktiválása...', { id: 'activate-premium-speed' });
       
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Nem vagy bejelentkezve', { id: 'activate-premium-speed' });
+        return;
+      }
+      
       const { data, error } = await supabase.functions.invoke('activate-premium-speed', {
-        body: {}
+        body: {},
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
       if (error) throw error;
@@ -320,9 +327,16 @@ const Dashboard = () => {
     try {
       toast.loading('Fizetési oldal betöltése...', { id: 'purchase-premium-booster' });
       
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Nem vagy bejelentkezve', { id: 'purchase-premium-booster' });
+        return;
+      }
+      
       // Create Stripe Checkout session
       const { data, error } = await supabase.functions.invoke('create-premium-booster-payment', {
-        body: {}
+        body: {},
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
       if (error) throw error;

@@ -43,9 +43,19 @@ export function useUserGameProfile() {
       setLoading(true);
       setError(null);
 
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError('No session');
+        setLoading(false);
+        return;
+      }
+      
       const { data, error: invokeError } = await supabase.functions.invoke(
         'get-user-game-profile',
-        { method: 'GET' }
+        { 
+          method: 'GET',
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        }
       );
 
       if (invokeError) throw invokeError;
@@ -62,11 +72,18 @@ export function useUserGameProfile() {
     try {
       setError(null);
 
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError('No session');
+        return;
+      }
+      
       const { error: invokeError } = await supabase.functions.invoke(
         'update-user-game-settings',
         {
           method: 'POST',
           body: settings,
+          headers: { Authorization: `Bearer ${session.access_token}` }
         }
       );
 
