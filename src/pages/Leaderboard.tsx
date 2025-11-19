@@ -61,68 +61,27 @@ const Leaderboard = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      // Get current user's country code
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      // Call Edge Function for country-specific leaderboard
+      const { data, error } = await supabase.functions.invoke('get-weekly-leaderboard-by-country', {
+        method: 'POST'
+      });
+
+      if (error) {
+        console.error('[Leaderboard] Edge function error:', error);
         setLoading(false);
         return;
       }
-      
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('country_code')
-        .eq('id', user.id)
-        .single();
-      
-      // Fallback to HU if country_code is missing
-      const countryCode = profile?.country_code || 'HU';
-      
-      const weekStart = getWeekStartInUserTimezone();
-      
-      // Get ALL users from same country (not just those with rankings)
-      const { data: allCountryProfiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, username, avatar_url, country_code')
-        .eq('country_code', countryCode);
-      
-      if (profilesError || !allCountryProfiles || allCountryProfiles.length === 0) {
-        console.error('[Leaderboard] Error fetching profiles:', profilesError);
+
+      if (!data || !data.leaderboard) {
+        console.error('[Leaderboard] No leaderboard data returned');
         setLoading(false);
         return;
       }
-      
-      // Get weekly rankings for current week (mixed category only)
-      const { data: rankingsData } = await supabase
-        .from('weekly_rankings')
-        .select('user_id, total_correct_answers')
-        .eq('week_start', weekStart)
-        .eq('category', 'mixed');
-      
-      // Create rankings map (defaults to 0 if no data)
-      const rankingsMap = new Map<string, number>();
-      if (rankingsData) {
-        rankingsData.forEach(row => {
-          rankingsMap.set(row.user_id, row.total_correct_answers || 0);
-        });
-      }
-      
-      // Build leaderboard with ALL users (0 scores included)
-      const rankedData: LeaderboardEntry[] = allCountryProfiles.map(profile => ({
-        user_id: profile.id,
-        username: profile.username || 'Player',
-        avatar_url: profile.avatar_url || null,
-        total_correct_answers: rankingsMap.get(profile.id) || 0,
-        rank: 0
-      }));
 
-      // Sort and assign ranks
-      rankedData
-        .sort((a, b) => b.total_correct_answers - a.total_correct_answers)
-        .forEach((entry, index) => { entry.rank = index + 1; });
-
-      setTopPlayers(rankedData.slice(0, 100));
+      console.log('[Leaderboard] Loaded', data.leaderboard.length, 'players from country:', data.countryCode);
+      setTopPlayers(data.leaderboard);
     } catch (error) {
-      console.error('Error fetching weekly leaderboard:', error);
+      console.error('[Leaderboard] Error fetching weekly leaderboard:', error);
     } finally {
       setLoading(false);
     }

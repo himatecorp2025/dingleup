@@ -59,63 +59,25 @@ export const LeaderboardCarousel = () => {
 
   const fetchFromWeeklyRankings = async (): Promise<LeaderboardEntry[]> => {
     try {
-      // MINDIG frissen lekérdezzük a bejelentkezett user country_code-ját (nincs cache)
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        return [];
-      }
-      
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('country_code')
-        .eq('id', user.id)
-        .single();
-      
-      const countryCode = profile?.country_code || 'HU';
-      const weekStart = getWeekStartInUserTimezone();
-      
-      // Ugyanaz a logika mint Leaderboard.tsx: MINDEN felhasználót lekérdezünk
-      const { data: allCountryProfiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, username, avatar_url, country_code')
-        .eq('country_code', countryCode)
-        .order('created_at', { ascending: true });
-      
-      if (profilesError || !allCountryProfiles || allCountryProfiles.length === 0) {
-        console.error('[LeaderboardCarousel] Error fetching profiles:', profilesError);
-        return [];
-      }
-      
-      // Weekly rankings az aktuális hétre
-      const { data: rankingsData } = await supabase
-        .from('weekly_rankings')
-        .select('user_id, total_correct_answers')
-        .eq('week_start', weekStart)
-        .eq('category', 'mixed');
-      
-      // Ranking map létrehozása (alapértelmezett 0 ponttal)
-      const rankingsMap = new Map<string, number>();
-      if (rankingsData) {
-        rankingsData.forEach(row => {
-          rankingsMap.set(row.user_id, row.total_correct_answers || 0);
-        });
-      }
-      
-      // Ranglista építése MINDEN felhasználóval (0 pontosak is benne vannak)
-      const entries: LeaderboardEntry[] = allCountryProfiles.map(profile => ({
-        user_id: profile.id,
-        username: profile.username || 'Player',
-        avatar_url: profile.avatar_url || null,
-        total_correct_answers: rankingsMap.get(profile.id) || 0
-      }));
+      // Call Edge Function for country-specific leaderboard
+      const { data, error } = await supabase.functions.invoke('get-weekly-leaderboard-by-country', {
+        method: 'POST'
+      });
 
-      // Rendezés helyes válaszok szerint (csökkenő)
-      entries.sort((a, b) => b.total_correct_answers - a.total_correct_answers);
-      
-      // TOP 100-ra vágás
-      return entries.slice(0, 100);
+      if (error) {
+        console.error('[LeaderboardCarousel] Edge function error:', error);
+        return [];
+      }
+
+      if (!data || !data.leaderboard) {
+        console.error('[LeaderboardCarousel] No leaderboard data returned');
+        return [];
+      }
+
+      console.log('[LeaderboardCarousel] Loaded', data.leaderboard.length, 'players from country:', data.countryCode);
+      return data.leaderboard;
     } catch (e) {
-      console.error('[LeaderboardCarousel] weekly_rankings error:', e);
+      console.error('[LeaderboardCarousel] Error:', e);
       return [];
     }
   };
