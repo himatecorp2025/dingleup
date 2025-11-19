@@ -63,7 +63,7 @@ const Hero = () => {
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 leading-tight">
               <span className="text-foreground text-with-stroke">Legyen Ön is</span>
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-gold animate-pulse text-with-stroke" style={{ WebkitTextStroke: '1px #000' }}>
+              <span className="text-transparent bg-clip-text bg-gradient-gold animate-pulse text-with-stroke" style={{ WebkitTextStroke: '1px hsl(var(--background))' }}>
                 Milliomos
               </span>
             </h1>
@@ -302,7 +302,7 @@ const Hero = () => {
       </div>
 
       {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0f0f3d] to-transparent z-10"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-primary-darker to-transparent z-10"></div>
     </section>
   );
 };

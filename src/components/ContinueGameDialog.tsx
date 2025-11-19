@@ -55,9 +55,9 @@ export const ContinueGameDialog = ({
   const getIcon = () => {
     switch (type) {
       case 'timeout':
-        return <Clock className="w-6 h-6 text-orange-500" />;
+        return <Clock className="w-6 h-6 text-accent" />;
       case 'wrong':
-        return <X className="w-6 h-6 text-red-500" />;
+        return <X className="w-6 h-6 text-destructive" />;
       case 'out-of-lives':
         return <span className="text-3xl">💔</span>;
       default:

@@ -84,7 +84,7 @@ const Roadmap = () => {
   };
 
   return (
-    <section className="py-24 px-4 relative bg-gradient-to-b from-background to-[#0f0f3d]/30">
+    <section className="py-24 px-4 relative bg-gradient-to-b from-background to-primary-dark/30">
       <div className="container mx-auto max-w-5xl">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins">

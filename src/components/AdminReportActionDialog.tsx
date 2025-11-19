@@ -88,21 +88,21 @@ const actionConfig = {
     title: 'Jelentés folyamatban',
     description: 'Jelezd a felhasználónak, hogy a jelentést folyamatban van vizsgálva.',
     buttonText: 'Folyamatba helyezés',
-    buttonClass: 'bg-blue-600 hover:bg-blue-700',
+    buttonClass: 'bg-primary hover:bg-primary/90',
     defaultMessage: 'Folyamatban van. Köszönjük a jelzésedet! A csapatunk vizsgálja az ügyet, és hamarosan válaszolunk.'
   },
   resolved: {
     title: 'Jelentés megoldva',
     description: 'Jelezd a felhasználónak, hogy a jelentés meg lett oldva.',
     buttonText: 'Megoldva',
-    buttonClass: 'bg-green-600 hover:bg-green-700',
+    buttonClass: 'bg-success hover:bg-success/90',
     defaultMessage: 'Köszönjük a jelentésedet! Az általad jelzett problémát megoldottuk.'
   },
   dismissed: {
     title: 'Jelentés elutasítva',
     description: 'Jelezd a felhasználónak, hogy a jelentés el lett utasítva és miért.',
     buttonText: 'Elutasítás',
-    buttonClass: 'bg-red-600 hover:bg-red-700',
+    buttonClass: 'bg-destructive hover:bg-destructive/90',
     defaultMessage: 'Köszönjük a jelentésedet. Sajnos ez a jelentés nem igényel további intézkedést.'
   }
 };
@@ -236,7 +236,7 @@ export const AdminReportActionDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-[hsl(var(--primary-dark))] to-[hsl(var(--primary-darker))] border-2 border-accent/50 text-foreground z-[9999] p-4">
         <DialogHeader className="space-y-1">
-          <DialogTitle className="text-xl font-black text-yellow-400">
+          <DialogTitle className="text-xl font-black text-accent">
             {config.title}
           </DialogTitle>
           <DialogDescription className="text-foreground/80 text-sm">
@@ -246,7 +246,7 @@ export const AdminReportActionDialog = ({
 
         <div className="space-y-3 mt-2">
           <div>
-            <Label className="text-base text-yellow-400 mb-2 block font-bold">
+            <Label className="text-base text-accent mb-2 block font-bold">
               ⚠️ Indoklás (KÖTELEZŐ) - Miért {actionType === 'reviewing' ? 'van folyamatban' : actionType === 'resolved' ? 'lett megoldva' : 'lett elutasítva'}?
             </Label>
             <p className="text-xs text-foreground/70 mb-2">
@@ -274,7 +274,7 @@ export const AdminReportActionDialog = ({
           {/* Reason Type Selector - For resolved and dismissed status */}
           {(actionType === 'resolved' || actionType === 'dismissed') && (
             <div>
-              <Label className="text-base text-yellow-400 mb-2 block font-bold">
+              <Label className="text-base text-accent mb-2 block font-bold">
                 ⚠️ {actionType === 'resolved' ? 'Megoldott probléma típusa' : 'Elutasítás oka'} (KÖTELEZŐ)
               </Label>
               <p className="text-xs text-foreground/70 mb-2">
