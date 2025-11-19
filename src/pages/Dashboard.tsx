@@ -13,10 +13,12 @@ import { useWallet } from '@/hooks/useWallet';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useWeeklyWinnersPopup } from '@/hooks/useWeeklyWinnersPopup';
+import { useBoosterState } from '@/hooks/useBoosterState';
 
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { WeeklyWinnersDialog } from '@/components/WeeklyWinnersDialog';
+import { PremiumBoosterConfirmDialog } from '@/components/PremiumBoosterConfirmDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { WeeklyRankingsCountdown } from '@/components/WeeklyRankingsCountdown';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
@@ -48,6 +50,8 @@ const Dashboard = () => {
   const { showDialog: showWeeklyWinners, handleClose: handleWeeklyWinnersClose } = useWeeklyWinners(userId);
   const { showPopup: showWeeklyWinnersPopup, triggerPopup: triggerWeeklyWinnersPopup, closePopup: closeWeeklyWinnersPopup, canShowThisWeek: canShowWeeklyPopup } = useWeeklyWinnersPopup(userId);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
+  const boosterState = useBoosterState(userId);
+  const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
   const [dailyGiftJustClaimed, setDailyGiftJustClaimed] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
@@ -248,25 +252,75 @@ const Dashboard = () => {
       return;
     }
 
+    // If user has pending premium, activate it
+    if (boosterState.hasPendingPremium) {
+      await handleActivatePremiumSpeed();
+      return;
+    }
+
+    // Otherwise, purchase premium booster
+    if (!boosterState.instantPremiumEnabled) {
+      // Show confirmation dialog for first-time purchase
+      setShowPremiumConfirm(true);
+      return;
+    }
+
+    // Instant purchase enabled - direct purchase
+    await purchasePremiumBooster(true);
+  };
+
+  const handleActivatePremiumSpeed = async () => {
     try {
-      toast.loading('Fizetési oldal betöltése...', { id: 'speed-boost-payment' });
+      toast.loading('Premium Speed aktiválása...', { id: 'activate-premium-speed' });
       
-      const { data, error } = await supabase.functions.invoke('create-speed-boost-payment', {
+      const { data, error } = await supabase.functions.invoke('activate-premium-speed', {
         body: {}
       });
 
       if (error) throw error;
 
-      if (data?.url) {
-        // Open payment in new tab
-        window.open(data.url, '_blank');
-        toast.success('Fizetési oldal megnyitva új lapon', { id: 'speed-boost-payment' });
+      if (data?.success) {
+        toast.success(`A Premium Speed Booster aktiválva! ${data.activatedSpeed?.speedCount}× ${data.activatedSpeed?.speedDurationMinutes} perces Speed gyorsítás elindult.`, { id: 'activate-premium-speed' });
+        await refetchWallet();
+        await refreshProfile();
       } else {
-        throw new Error('No payment URL received');
+        throw new Error(data?.error || 'Ismeretlen hiba');
       }
     } catch (error) {
-      console.error('Speed boost payment error:', error);
-      toast.error('Hiba történt a fizetési oldal megnyitásakor', { id: 'speed-boost-payment' });
+      console.error('Premium speed activation error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Hiba történt az aktiválás során';
+      toast.error(errorMsg, { id: 'activate-premium-speed' });
+    }
+  };
+
+  const purchasePremiumBooster = async (confirmInstant: boolean = false) => {
+    try {
+      toast.loading('Premium Booster vásárlás...', { id: 'purchase-premium-booster' });
+      
+      const { data, error } = await supabase.functions.invoke('purchase-booster', {
+        body: {
+          boosterCode: 'PREMIUM',
+          confirmInstantPurchase: confirmInstant
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success(`Sikeres vásárlás! +${data.grantedRewards?.gold} arany és +${data.grantedRewards?.lives} élet jóváírva. Most aktiválhatod a Premium Speed Boostert.`, { id: 'purchase-premium-booster', duration: 6000 });
+        await refetchWallet();
+        await refreshProfile();
+      } else {
+        if (data?.error === 'PENDING_PREMIUM_EXISTS') {
+          toast.error('Már van egy aktiválatlan Premium Boosterd! Először aktiváld azt.', { id: 'purchase-premium-booster' });
+        } else {
+          throw new Error(data?.error || 'Ismeretlen hiba');
+        }
+      }
+    } catch (error) {
+      console.error('Premium booster purchase error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Hiba történt a vásárlás során';
+      toast.error(errorMsg, { id: 'purchase-premium-booster' });
     }
   };
 
@@ -495,12 +549,16 @@ if (!profile) {
                 variant="booster"
                 size="lg"
                 onClick={handleSpeedBoost}
-                disabled={!profile}
+                disabled={!profile || boosterState.loading}
                 className="!py-[clamp(1rem,4vw,1.75rem)] sm:!py-[clamp(1.25rem,5vw,2rem)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(234,179,8,0.6)] active:scale-95"
                 style={{
                   width: '100%',
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #eab308 50%, #f59e0b 100%)',
-                  boxShadow: '0 0 30px rgba(234,179,8,0.4), inset 0 0 20px rgba(255,255,255,0.2)',
+                  background: boosterState.hasPendingPremium 
+                    ? 'linear-gradient(135deg, #10b981 0%, #059669 50%, #10b981 100%)'
+                    : 'linear-gradient(135deg, #f59e0b 0%, #eab308 50%, #f59e0b 100%)',
+                  boxShadow: boosterState.hasPendingPremium
+                    ? '0 0 30px rgba(16,185,129,0.5), inset 0 0 20px rgba(255,255,255,0.2)'
+                    : '0 0 30px rgba(234,179,8,0.4), inset 0 0 20px rgba(255,255,255,0.2)',
                 }}
               >
                 <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
@@ -512,7 +570,7 @@ if (!profile) {
                     textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(234,179,8,0.8)'
                   }}
                 >
-                  SPEED BOOSTER
+                  {boosterState.hasPendingPremium ? 'PREMIUM SPEED AKTIVÁLÁSA' : 'SPEED BOOSTER'}
                 </span>
                 <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] ml-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
                   <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -630,6 +688,12 @@ if (!profile) {
         <BottomNav />
       </div>
       <TutorialManager route="dashboard" />
+      
+      <PremiumBoosterConfirmDialog
+        open={showPremiumConfirm}
+        onOpenChange={setShowPremiumConfirm}
+        onConfirm={() => purchasePremiumBooster(true)}
+      />
     </div>
   );
 };
