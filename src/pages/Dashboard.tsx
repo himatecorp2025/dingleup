@@ -162,74 +162,64 @@ const Dashboard = () => {
       return monday.toISOString().split('T')[0];
     };
 
-    const fetchUserWeeklyRank = async () => {
+    const fetchUserDailyRank = async () => {
       try {
-        const weekStart = getWeekStartForRank();
+        const now = new Date();
+        const currentDay = now.toISOString().split('T')[0];
         
-        // Query weekly_rankings for current week - all categories
+        // Query daily_rankings for current day - mixed category only
         const { data, error } = await supabase
-          .from('weekly_rankings')
+          .from('daily_rankings')
           .select('user_id, total_correct_answers')
-          .eq('week_start', weekStart);
+          .eq('day_date', currentDay)
+          .eq('category', 'mixed');
         
         if (error) {
-          console.error('Error fetching weekly rankings:', error);
+          console.error('Error fetching daily rankings:', error);
           // Even on error, show rank as if user has 0 correct answers
           setCurrentRank(1);
           return;
         }
         
         if (!data || data.length === 0) {
-          // No data yet this week - user is rank 1 with 0 correct answers
+          // No data yet this day - user is rank 1 with 0 correct answers
           setCurrentRank(1);
           return;
         }
 
-        // Aggregate total_correct_answers per user across all categories
-        const userTotals = new Map<string, number>();
-        data.forEach(entry => {
-          const currentTotal = userTotals.get(entry.user_id) || 0;
-          userTotals.set(entry.user_id, currentTotal + entry.total_correct_answers);
-        });
-
-        // Ensure current user is in the map (even if no games played this week)
-        if (userId && !userTotals.has(userId)) {
-          userTotals.set(userId, 0);
-        }
-
         // Sort by total correct answers (descending)
-        const sortedUsers = Array.from(userTotals.entries())
-          .sort((a, b) => b[1] - a[1]);
+        const sortedUsers = [...data].sort((a, b) => b.total_correct_answers - a.total_correct_answers);
 
-        // Find current user's rank - they will always be found now
-        const userRank = sortedUsers.findIndex(([uid]) => uid === userId);
+        // Find current user's rank
+        const userRank = sortedUsers.findIndex(entry => entry.user_id === userId);
         if (userRank !== -1) {
           setCurrentRank(userRank + 1); // +1 because findIndex is 0-based
         } else {
-          setCurrentRank(null);
+          // User not in rankings yet today -> they are at the bottom
+          setCurrentRank(sortedUsers.length + 1);
         }
       } catch (err) {
-        console.error('Exception fetching weekly user rank:', err);
+        console.error('Exception fetching daily user rank:', err);
         setCurrentRank(null);
       }
     };
     
     // Fetch immediately on mount
-    fetchUserWeeklyRank();
+    fetchUserDailyRank();
     
-    // Subscribe to realtime changes in weekly_rankings
+    // Subscribe to realtime changes in daily_rankings
     const leaderboardChannel = supabase
-      .channel('weekly-leaderboard-rank-updates')
+      .channel('daily-leaderboard-rank-updates')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'weekly_rankings'
+          table: 'daily_rankings'
         },
         () => {
-          // Weekly rankings changed -> recalculate rank
-          fetchUserWeeklyRank();
+          // Daily rankings changed -> recalculate rank
+          fetchUserDailyRank();
         }
       )
       .subscribe();
