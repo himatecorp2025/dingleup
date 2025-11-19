@@ -945,19 +945,16 @@ const GamePreview = () => {
   }
 
   // Show loading video IMMEDIATELY when game start begins (even before backend completes)
-  if (isStartingGame && !videoEnded) {
-    return <GameLoadingScreen onVideoEnd={handleVideoEnd} />;
+  // Keep video visible until questions are ready - prevents any loading screen flash
+  if (isStartingGame || (gameState === 'playing' && questions.length === 0)) {
+    return (
+      <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
+        <GameLoadingScreen onVideoEnd={handleVideoEnd} />
+      </div>
+    );
   }
 
   if (gameState === 'playing') {
-    // Guard: Don't render until questions are loaded
-    if (questions.length === 0) {
-      return (
-        <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-black">
-          <div className="relative z-10 text-white text-lg">Kérdések betöltése...</div>
-        </div>
-      );
-    }
     
     const currentQuestion = questions[currentQuestionIndex];
     
