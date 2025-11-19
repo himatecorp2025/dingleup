@@ -135,7 +135,70 @@ export function useAdminGameProfileDetail(userId: string | undefined) {
 
   useEffect(() => {
     fetchProfile();
-  }, [fetchProfile]);
+
+    if (!userId) return;
+
+    // Realtime subscriptions for automatic updates on user-specific data
+    const gameResultsChannel = supabase
+      .channel(`admin-profile-detail-results-${userId}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_results'
+      }, (payload) => {
+        // Only refetch if this change affects the current user
+        if (payload.new && (payload.new as any).user_id === userId) {
+          fetchProfile();
+        }
+      })
+      .subscribe();
+
+    const likesChannel = supabase
+      .channel(`admin-profile-detail-likes-${userId}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'question_likes'
+      }, (payload) => {
+        if (payload.new && (payload.new as any).user_id === userId) {
+          fetchProfile();
+        }
+      })
+      .subscribe();
+
+    const dislikesChannel = supabase
+      .channel(`admin-profile-detail-dislikes-${userId}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'question_dislikes'
+      }, (payload) => {
+        if (payload.new && (payload.new as any).user_id === userId) {
+          fetchProfile();
+        }
+      })
+      .subscribe();
+
+    const analyticsChannel = supabase
+      .channel(`admin-profile-detail-analytics-${userId}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_question_analytics'
+      }, (payload) => {
+        if (payload.new && (payload.new as any).user_id === userId) {
+          fetchProfile();
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(gameResultsChannel);
+      supabase.removeChannel(likesChannel);
+      supabase.removeChannel(dislikesChannel);
+      supabase.removeChannel(analyticsChannel);
+    };
+  }, [fetchProfile, userId]);
 
   return {
     loading,
