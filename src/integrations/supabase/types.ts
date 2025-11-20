@@ -3215,6 +3215,17 @@ export type Database = {
           third: string
         }[]
       }
+      get_random_questions_fast: {
+        Args: { num_questions: number }
+        Returns: {
+          answers: Json
+          audience: Json
+          id: string
+          question: string
+          source_category: string
+          third: string
+        }[]
+      }
       get_user_country_rank: { Args: { p_user_id: string }; Returns: number }
       get_user_threads_optimized: {
         Args: { p_user_id: string }
