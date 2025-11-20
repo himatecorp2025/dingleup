@@ -14,6 +14,7 @@ import { DiamondButton } from "./DiamondButton";
 import { GameStateScreen } from "./GameStateScreen";
 import { QuestionCard } from "./QuestionCard";
 import { ExitGameDialog } from "./ExitGameDialog";
+import { InGameRescuePopup } from "./InGameRescuePopup";
 import { useBroadcastChannel } from "@/hooks/useBroadcastChannel";
 import { Trophy3D } from "./Trophy3D";
 import { getSessionId } from "@/lib/analytics";
@@ -98,6 +99,10 @@ const GamePreview = () => {
   const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const [errorBannerMessage, setErrorBannerMessage] = useState('');
   const [questionVisible, setQuestionVisible] = useState(true);
+  
+  // Rescue popup states
+  const [showRescuePopup, setShowRescuePopup] = useState(false);
+  const [rescueReason, setRescueReason] = useState<'NO_LIFE' | 'NO_GOLD'>('NO_GOLD');
   
   // Coin reward animation states
   const [coinRewardAmount, setCoinRewardAmount] = useState(0);
@@ -453,14 +458,10 @@ const GamePreview = () => {
       
       // Check if user has enough coins NOW (when they try to continue)
       if (profile.coins < cost) {
-        // Not enough coins - show error
+        // Not enough coins - show rescue popup
         setErrorBannerVisible(false);
-        toast.error('Nincs elég aranyérméd a folytatáshoz!');
-        
-        // Exit game after delay
-        setTimeout(() => {
-          resetGameState();
-        }, 1500);
+        setRescueReason('NO_GOLD');
+        setShowRescuePopup(true);
         return;
       }
       
@@ -1316,6 +1317,31 @@ const GamePreview = () => {
           gameCompleted={gameCompleted}
           onConfirmExit={() => {
             resetGameState();
+          }}
+        />
+        
+        {/* In-Game Rescue Popup */}
+        <InGameRescuePopup
+          isOpen={showRescuePopup}
+          onClose={() => {
+            setShowRescuePopup(false);
+            // Exit game when user closes without purchasing
+            resetGameState();
+          }}
+          triggerReason={rescueReason}
+          currentLives={walletData?.livesCurrent || 0}
+          currentGold={profile?.coins || 0}
+          onStateRefresh={async () => {
+            // Refresh wallet and profile after booster purchase
+            await Promise.all([
+              refreshProfile(),
+              refetchWallet()
+            ]);
+            // Close popup
+            setShowRescuePopup(false);
+            // Continue game automatically after purchase
+            setErrorBannerVisible(false);
+            await handleNextQuestion();
           }}
         />
       </>
