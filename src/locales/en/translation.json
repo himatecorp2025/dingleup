@@ -49,7 +49,8 @@
     "freeBooster": "Free Booster",
     "premiumBooster": "Premium Booster",
     "yourRanking": "Your Ranking",
-    "dailyRanking": "Daily Ranking"
+    "dailyRanking": "Daily Ranking",
+    "greeting": "Hello, {{username}}!"
   },
   "game": {
     "question": "Question",
@@ -67,7 +68,11 @@
     "exitGame": "Exit game",
     "notEnoughLives": "Not enough lives to start the game",
     "lifeDeducted": "1 life deducted, 1 coin credited",
-    "swipeToContinue": "Swipe to continue to start a new game"
+    "swipeToContinue": "Swipe to continue to start a new game",
+    "mobileOnly": "Mobile Only",
+    "mobileOnlyDescription": "This game is only available on mobile and tablet devices.",
+    "backToHome": "Back to Home",
+    "loading": "Loading..."
   },
   "leaderboard": {
     "title": "Leaderboard",
