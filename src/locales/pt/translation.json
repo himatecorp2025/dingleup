@@ -230,5 +230,61 @@
     "about": "Sobre",
     "logout": "Sair",
     "notLoggedIn": "Você não está logado! Por favor, faça login!"
+  },
+  "dialogs": {
+    "dailyGift": {
+      "title": "PRESENTE DIÁRIO",
+      "day": "DIA",
+      "todayReward": "HOJE VOCÊ RECEBE",
+      "claim": "REIVINDICAR",
+      "comeLater": "MAIS TARDE",
+      "claiming": "Reivindicando...",
+      "alreadyClaimed": "JÁ REIVINDICADO HOJE"
+    },
+    "welcomeBonus": {
+      "title": "BEM-VINDO!",
+      "specialOffer": "OFERTA ESPECIAL!",
+      "giftForYou": "Presente só para você!",
+      "coins": "OURO",
+      "lives": "VIDAS",
+      "claim": "REIVINDICAR",
+      "claiming": "Reivindicando..."
+    },
+    "inGameRescue": {
+      "title": "Quase eliminado... 🎰",
+      "subtitle": "Escolha um pacote de resgate!",
+      "currentStatus": "Estado atual",
+      "life": "Vida",
+      "gold": "Ouro",
+      "goldSaver": "Economizador de ouro",
+      "goldSaverDesc": "500 ouro por 250 ouro + 15 vidas",
+      "instantRescue": "Resgate instantâneo",
+      "instantRescueDesc": "+1000 ouro + 25 vidas instantaneamente!",
+      "notEnoughGold": "⚠️ Ouro insuficiente",
+      "processing": "Processando...",
+      "immediateCredit": "Crédito imediato",
+      "continueMessage": "Continue de onde parou! 🎮",
+      "cancel": "Cancelar"
+    },
+    "exitGame": {
+      "title": "Tem certeza de que deseja sair?",
+      "warningGoldLost": "⚠️ Todo o ouro coletado até agora será perdido! ⚠️",
+      "warningProgress": "Se você voltar, todos os resultados coletados serão excluídos e você não receberá moedas de ouro.",
+      "gameCompleted": "Seu jogo está completo, ouro creditado.",
+      "exit": "Sair",
+      "stay": "Ficar"
+    },
+    "continueGame": {
+      "timeout": "Tempo esgotado!",
+      "wrong": "Resposta errada!",
+      "outOfLives": "Sem vidas!",
+      "continue": "Continuar?",
+      "notEnoughCoins": "Moedas insuficientes para continuar. Visite a loja!",
+      "continueDescription": "Você pode continuar o jogo por {{cost}} moedas, ou seu resultado atual será salvo se você sair.",
+      "continueButton": "Continuar ({{cost}} moedas)",
+      "buyNow": "🛒 Comprar agora",
+      "exitAndSave": "Sair e salvar",
+      "backToHome": "Voltar ao início"
+    }
   }
 }
