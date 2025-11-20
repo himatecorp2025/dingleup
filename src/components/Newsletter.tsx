@@ -4,14 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useI18n } from "@/i18n";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useI18n();
 
   const handleSubscribe = async () => {
     if (!email || !email.includes("@")) {
-      toast.error("Kérlek adj meg egy érvényes email címet!");
+      toast.error(t('landing.newsletter.error_invalid_email'));
       return;
     }
 
@@ -23,17 +25,17 @@ const Newsletter = () => {
 
       if (error) {
         if (error.code === '23505') {
-          toast.error("Ez az email cím már fel van iratkozva!");
+          toast.error(t('landing.newsletter.error_already_subscribed'));
         } else {
           throw error;
         }
       } else {
-        toast.success("Sikeresen feliratkoztál! Hamarosan értesítünk!");
+        toast.success(t('landing.newsletter.success_subscribed'));
         setEmail("");
       }
     } catch (error) {
       console.error('Subscribe error:', error);
-      toast.error("Hiba történt a feliratkozás során");
+      toast.error(t('landing.newsletter.error_subscription_failed'));
     } finally {
       setLoading(false);
     }
@@ -57,16 +59,16 @@ const Newsletter = () => {
               </div>
               
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]">
-                Légy az Elsők Között!
+                {t('landing.newsletter.title')}
               </h2>
               <p className="text-base sm:text-lg text-white/90 mb-8 drop-shadow-lg">
-                Értesítést kapsz az új funkciókról és exkluzív ajánlatokról!
+                {t('landing.newsletter.subtitle')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <Input
                   type="email"
-                  placeholder="Email címed"
+                  placeholder={t('landing.newsletter.email_placeholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
@@ -78,12 +80,12 @@ const Newsletter = () => {
                   disabled={loading}
                   className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-8 font-bold whitespace-nowrap shadow-lg shadow-pink-500/50 hover:shadow-pink-500/80 transition-all"
                 >
-                  {loading ? "Feldolgozás..." : "Feliratkozom"}
+                  {loading ? t('landing.newsletter.button_loading') : t('landing.newsletter.button_subscribe')}
                 </Button>
               </div>
 
               <p className="text-sm text-white/70 mt-4 drop-shadow">
-                Nem küldünk spam-et. Bármikor leiratkozhatsz.
+                {t('landing.newsletter.no_spam')}
               </p>
             </div>
           </div>
