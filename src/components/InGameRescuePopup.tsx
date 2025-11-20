@@ -102,7 +102,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[95vw] w-full max-h-[70vh] overflow-hidden bg-gradient-to-br from-red-900/40 via-purple-900/60 to-red-900/40 border-[3px] border-yellow-500/80 p-3 shadow-2xl shadow-yellow-500/50">
+      <DialogContent className="max-w-[95vw] w-full max-h-[70vh] overflow-hidden bg-gradient-to-br from-red-900/40 via-purple-900/60 to-red-900/40 border-[3px] border-yellow-500/80 p-3 shadow-2xl shadow-yellow-500/50 rounded-xl">
         {/* Header */}
         <DialogHeader className="space-y-0.5 mb-2">
           <DialogTitle className="text-xl font-black text-center bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(234,179,8,0.8)] leading-tight tracking-wide" style={{ textShadow: '0 2px 10px rgba(234,179,8,0.6), 0 0 20px rgba(234,179,8,0.4)' }}>
