@@ -105,8 +105,8 @@ const Login = () => {
 
   return (
     <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center px-4 sm:px-6 md:px-8" style={{
-      paddingTop: isStandalone ? 'calc(env(safe-area-inset-top) + 1rem)' : '1rem',
-      paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)'
+      paddingTop: isStandalone ? 'env(safe-area-inset-top)' : '0',
+      paddingBottom: 'env(safe-area-inset-bottom)'
     }}>
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-96 h-96 bg-pink-500/30 rounded-full blur-3xl animate-pulse"></div>
@@ -118,7 +118,7 @@ const Login = () => {
         <div className="absolute top-2/3 right-1/4 w-2 h-2 bg-yellow-300 rounded-full animate-pulse" style={{ animationDelay: '2.5s' }}></div>
       </div>
 
-      <div className="w-full max-w-md relative z-10 my-4">
+      <div className="w-full max-w-md relative z-10">
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative">
           <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10" aria-label="Vissza">
             <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
