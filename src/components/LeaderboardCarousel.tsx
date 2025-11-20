@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Crown } from 'lucide-react';
 import { DailyRankingsCountdown } from './DailyRankingsCountdown';
+import { LeaderboardSkeleton } from './LeaderboardSkeleton';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -202,9 +203,7 @@ export const LeaderboardCarousel = () => {
       
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {topPlayers.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-muted-foreground text-xs sm:text-sm">Ranglista betöltése...</p>
-          </div>
+          <LeaderboardSkeleton />
         ) : (
           <div className="inline-flex gap-2 sm:gap-3 px-2">
             {/* Dupla rendering: eredeti lista + másolat körköröz scrollhoz */}

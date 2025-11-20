@@ -11,6 +11,7 @@ import { usePWAInstallTracking } from "@/hooks/usePWAInstallTracking";
 import { lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { GameErrorBoundary } from "@/components/GameErrorBoundary";
 import { OfflineDetector } from "@/components/OfflineDetector";
 import { UpdatePrompt } from "@/components/UpdatePrompt";
 import { useBackButton } from "@/hooks/useBackButton";
@@ -129,7 +130,7 @@ const AppCore = () => {
               <Route path="/dashboard" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
               <Route path="/profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
               <Route path="/leaderboard" element={<ErrorBoundary><Leaderboard /></ErrorBoundary>} />
-              <Route path="/game" element={<ErrorBoundary><Game /></ErrorBoundary>} />
+              <Route path="/game" element={<GameErrorBoundary><Game /></GameErrorBoundary>} />
               <Route path="/registration-success" element={<ErrorBoundary><RegistrationSuccess /></ErrorBoundary>} />
               <Route path="/payment-success" element={<ErrorBoundary><PaymentSuccess /></ErrorBoundary>} />
               <Route path="/install" element={<ErrorBoundary><InstallApp /></ErrorBoundary>} />
