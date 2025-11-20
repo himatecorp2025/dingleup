@@ -21,22 +21,7 @@ const Game = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Safety timeout - if audio doesn't load within 2 seconds, continue anyway
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoadTimeout(true);
-    }, 2000);
-    return () => clearTimeout(timeout);
-  }, []);
-
-  // Wait for audio store to load before rendering game (with timeout fallback)
-  if (!loaded && !loadTimeout) {
-    return (
-      <div className="min-h-dvh min-h-svh flex items-center justify-center bg-black">
-        {/* Silent loading - no visible text or spinner to ensure seamless video transition */}
-      </div>
-    );
-  }
+  // Audio loads in background - no blocking needed for game start
 
   if (!isMobile) {
     return (
