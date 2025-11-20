@@ -130,20 +130,20 @@ serve(async (req) => {
         throw new Error(`Question ${q.id} has invalid answers structure`);
       }
 
-      // Validate each answer has required fields
-      for (const ans of q.answers) {
-        if (!ans.key || !ans.text || ans.correct === undefined) {
-          console.error(`[start-game-session] Invalid answer structure in question ${q.id}:`, ans);
-          throw new Error(`Question ${q.id} has invalid answer structure`);
+      // Format answers - treat missing 'correct' field as false
+      const formattedAnswers = q.answers.map((ans: any) => {
+        if (!ans.key || !ans.text) {
+          console.error(`[start-game-session] Invalid answer in question ${q.id}:`, ans);
+          throw new Error(`Question ${q.id} has invalid answer (missing key or text)`);
         }
-      }
+        return {
+          key: ans.key,
+          text: ans.text,
+          correct: ans.correct === true // undefined/false treated as false
+        };
+      });
 
-      const formattedAnswers = q.answers.map((ans: any) => ({
-        key: ans.key,
-        text: ans.text,
-        correct: ans.correct === true
-      }));
-
+      // Validate at least one correct answer exists
       const correctIndex = formattedAnswers.findIndex((a: any) => a.correct === true);
       if (correctIndex === -1) {
         console.error(`[start-game-session] No correct answer in question ${q.id}`);
