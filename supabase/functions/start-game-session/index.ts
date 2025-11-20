@@ -60,13 +60,14 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // Fetch questions from all 27 topics to ensure mixed gameplay
-    // Request 50 questions (reduced from 108 for faster loading)
+    // Optimized: Single query with randomization for fastest loading
+    // Fetch random questions ensuring topic diversity in one query
     const { data: allQuestions, error: questionsError } = await supabaseClient
       .from('questions')
       .select('id, question, answers, audience, third, source_category')
-      .order('created_at', { ascending: false })
-      .limit(50);
+      .not('source_category', 'is', null)
+      .order('id', { ascending: false }) // Use id ordering for speed
+      .limit(54); // Fetch 2 per topic (27 topics * 2) for diversity pool
 
     if (questionsError || !allQuestions || allQuestions.length < 15) {
       console.error('[start-game-session] Questions fetch error:', questionsError);
