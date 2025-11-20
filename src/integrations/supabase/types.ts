@@ -3199,6 +3199,17 @@ export type Database = {
       get_current_day_date: { Args: never; Returns: string }
       get_current_week_reward: { Args: never; Returns: Json }
       get_current_week_start: { Args: never; Returns: string }
+      get_diverse_questions: {
+        Args: { num_questions: number }
+        Returns: {
+          answers: Json
+          audience: Json
+          id: string
+          question: string
+          source_category: string
+          third: string
+        }[]
+      }
       get_invitation_tier_reward: {
         Args: { accepted_count: number }
         Returns: Json
