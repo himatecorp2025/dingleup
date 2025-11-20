@@ -84,7 +84,7 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers }
                     filter: 'drop-shadow(0 0 16px hsla(45, 100%, 65%, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6))'
                   }}
                 >
-                  A ZSENIKNEK
+                  A GÉNIUSZOK
                 </h2>
                 <svg className="w-6 h-6 text-[hsl(var(--dup-gold-300))] animate-pulse drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L15 8.5L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L9 8.5L12 2Z"/>
