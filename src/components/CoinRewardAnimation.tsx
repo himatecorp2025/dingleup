@@ -13,13 +13,10 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
     if (trigger > 0) {
       setCurrentAmount(amount);
       setVisible(true);
-      
-      // Hide after 1.5 seconds
-      const timer = setTimeout(() => {
-        setVisible(false);
-      }, 1500);
-
-      return () => clearTimeout(timer);
+      // NO automatic hide - stays visible until next question
+    } else if (trigger === 0) {
+      // Hide when trigger resets to 0 (new question)
+      setVisible(false);
     }
   }, [trigger, amount]);
 
