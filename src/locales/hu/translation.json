@@ -259,32 +259,57 @@
   },
   "dialogs": {
     "dailyGift": {
-      "title": "Napi Ajándék",
+      "title": "DAILY GIFT",
       "subtitle": "Napi jutalmad",
-      "day": "Nap",
-      "claim": "Átveszem",
+      "day": "NAP",
+      "dayNumber": "{{day}}. NAP 🔥",
+      "claim": "ÁTVESZEM",
+      "later": "KÉSŐBB",
+      "claiming": "Feldolgozás...",
       "streak": "{{count}} napos szériad",
-      "comeBackTomorrow": "Gyere vissza holnap"
+      "comeBackTomorrow": "Gyere vissza holnap",
+      "todayYouGet": "MA KAPSZ"
     },
     "welcomeBonus": {
-      "title": "Üdvözlő Bónusz",
+      "title": "WELCOME!",
       "subtitle": "Köszöntünk a játékban!",
-      "claim": "Átveszem",
-      "rewards": "Jutalmaim"
+      "specialOffer": "KÜLÖNLEGES AJÁNLAT!",
+      "giftForYou": "Ajándék csak neked!",
+      "claim": "ÁTVESZEM",
+      "claiming": "Feldolgozás...",
+      "rewards": "Jutalmaim",
+      "gold": "ARANY",
+      "lives": "ÉLET"
     },
     "inGameRescue": {
-      "title": "Elfogyott az életed vagy az aranyad?",
-      "subtitle": "Vásárolj boostert és játssz tovább!",
+      "title": "Majdnem kiestél... 🎰",
+      "subtitle": "Válassz egy mentőcsomagot!",
+      "currentStatus": "Aktuális állapot",
+      "life": "Élet",
+      "gold": "Arany",
+      "goldSaver": "Gold Saver",
+      "goldSaverDesc": "500 aranyért 250 aranyat + 15 életet",
+      "instantRescue": "Instant Rescue",
+      "instantRescueDesc": "+1000 arany + 25 élet azonnal!",
+      "notEnoughGold": "⚠️ Nincs elég aranyad",
+      "processing": "Feldolgozás...",
+      "immediateCredit": "Azonnali jóváírás",
+      "continueMessage": "Ott folytatod, ahol abbahagytad! 🎮",
+      "cancel": "Mégsem",
       "freeBooster": "Ingyenes Booster",
       "premiumBooster": "Prémium Booster",
       "activate": "Aktiválás",
       "buy": "Vásárlás"
     },
     "exitGame": {
-      "title": "Biztos ki akarsz lépni?",
+      "title": "Biztosan kilépsz?",
       "subtitle": "Elveszted az eddig gyűjtött aranyakat",
+      "warningGoldLost": "⚠️ Az összes eddig összegyűjtött arany elvész! ⚠️",
+      "warningProgress": "Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.",
+      "gameCompleted": "A játékod befejeződött, az aranyak jóváírva.",
       "cancel": "Mégse",
-      "exit": "Kilépek"
+      "exit": "Kilépés",
+      "stay": "Maradok"
     },
     "continueGame": {
       "title": "Folytatod a játékot?",

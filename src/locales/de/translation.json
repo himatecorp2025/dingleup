@@ -238,21 +238,29 @@
   "dialogs": {
     "dailyGift": {
       "title": "TÄGLICHES GESCHENK",
+      "subtitle": "Deine tägliche Belohnung",
       "day": "TAG",
+      "dayNumber": "TAG {{day}} 🔥",
       "todayReward": "HEUTE ERHÄLTST DU",
+      "todayYouGet": "HEUTE ERHÄLTST DU",
       "claim": "EINLÖSEN",
-      "comeLater": "SPÄTER",
-      "claiming": "Einlösen...",
-      "alreadyClaimed": "HEUTE BEREITS EINGELÖST"
+      "later": "SPÄTER",
+      "claiming": "Verarbeitung...",
+      "alreadyClaimed": "HEUTE BEREITS EINGELÖST",
+      "streak": "{{count}} Tage Streak",
+      "comeBackTomorrow": "Komm morgen zurück"
     },
     "welcomeBonus": {
       "title": "WILLKOMMEN!",
+      "subtitle": "Willkommen im Spiel!",
       "specialOffer": "SONDERANGEBOT!",
       "giftForYou": "Geschenk nur für dich!",
       "coins": "GOLD",
+      "gold": "GOLD",
       "lives": "LEBEN",
       "claim": "EINLÖSEN",
-      "claiming": "Einlösen..."
+      "claiming": "Verarbeitung...",
+      "rewards": "Meine Belohnungen"
     },
     "inGameRescue": {
       "title": "Fast ausgeschieden... 🎰",
@@ -268,15 +276,21 @@
       "processing": "Verarbeitung...",
       "immediateCredit": "Sofortige Gutschrift",
       "continueMessage": "Dort weitermachen, wo du aufgehört hast! 🎮",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "freeBooster": "Kostenloser Booster",
+      "premiumBooster": "Premium Booster",
+      "activate": "Aktivieren",
+      "buy": "Kaufen"
     },
     "exitGame": {
       "title": "Möchtest du wirklich beenden?",
+      "subtitle": "Du verlierst das bisher gesammelte Gold",
       "warningGoldLost": "⚠️ Alles bisher gesammelte Gold geht verloren! ⚠️",
       "warningProgress": "Wenn du zurückgehst, werden alle bisherigen Ergebnisse gelöscht und du erhältst keine Goldmünzen.",
       "gameCompleted": "Dein Spiel ist beendet, Gold gutgeschrieben.",
       "exit": "Beenden",
-      "stay": "Bleiben"
+      "stay": "Bleiben",
+      "cancel": "Abbrechen"
     },
     "continueGame": {
       "timeout": "Zeit abgelaufen!",

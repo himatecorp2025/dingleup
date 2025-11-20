@@ -238,21 +238,29 @@
   "dialogs": {
     "dailyGift": {
       "title": "DAILY GIFT",
+      "subtitle": "Your daily reward",
       "day": "DAY",
+      "dayNumber": "DAY {{day}} 🔥",
       "todayReward": "TODAY YOU GET",
       "claim": "CLAIM",
-      "comeLater": "LATER",
-      "claiming": "Claiming...",
-      "alreadyClaimed": "ALREADY CLAIMED TODAY"
+      "later": "LATER",
+      "claiming": "Processing...",
+      "alreadyClaimed": "ALREADY CLAIMED TODAY",
+      "streak": "{{count}} day streak",
+      "comeBackTomorrow": "Come back tomorrow",
+      "todayYouGet": "TODAY YOU GET"
     },
     "welcomeBonus": {
       "title": "WELCOME!",
+      "subtitle": "Welcome to the game!",
       "specialOffer": "SPECIAL OFFER!",
       "giftForYou": "Gift just for you!",
       "coins": "GOLD",
+      "gold": "GOLD",
       "lives": "LIVES",
       "claim": "CLAIM",
-      "claiming": "Claiming..."
+      "claiming": "Processing...",
+      "rewards": "My rewards"
     },
     "inGameRescue": {
       "title": "Almost out... 🎰",
@@ -268,15 +276,21 @@
       "processing": "Processing...",
       "immediateCredit": "Instant credit",
       "continueMessage": "Continue where you left off! 🎮",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "freeBooster": "Free Booster",
+      "premiumBooster": "Premium Booster",
+      "activate": "Activate",
+      "buy": "Buy"
     },
     "exitGame": {
       "title": "Are you sure you want to exit?",
+      "subtitle": "You'll lose the gold collected so far",
       "warningGoldLost": "⚠️ All gold collected so far will be lost! ⚠️",
       "warningProgress": "If you go back, all progress will be deleted and you won't receive any gold.",
       "gameCompleted": "Your game is complete, gold credited.",
       "exit": "Exit",
-      "stay": "Stay"
+      "stay": "Stay",
+      "cancel": "Cancel"
     },
     "continueGame": {
       "timeout": "Time's up!",

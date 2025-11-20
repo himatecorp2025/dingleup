@@ -323,27 +323,33 @@
   "dialogs": {
     "dailyGift": {
       "title": "REGALO DIARIO",
+      "subtitle": "Tu recompensa diaria",
       "day": "DÍA",
+      "dayNumber": "DÍA {{day}} 🔥",
       "todayReward": "HOY RECIBES",
+      "todayYouGet": "HOY RECIBES",
       "claim": "RECLAMAR",
-      "comeLater": "MÁS TARDE",
-      "claiming": "Reclamando...",
+      "later": "MÁS TARDE",
+      "claiming": "Procesando...",
       "alreadyClaimed": "YA RECLAMADO HOY",
       "description": "¡Reclama tu recompensa diaria!",
-      "streak": "Racha",
+      "streak": "Racha de {{count}} días",
       "claimed": "¡Reclamado!",
       "comeBackTomorrow": "¡Vuelve mañana por otro regalo!"
     },
     "welcomeBonus": {
       "title": "¡BIENVENIDO!",
+      "subtitle": "¡Bienvenido al juego!",
       "specialOffer": "¡OFERTA ESPECIAL!",
       "giftForYou": "¡Regalo solo para ti!",
       "coins": "ORO",
+      "gold": "ORO",
       "lives": "VIDAS",
       "claim": "RECLAMAR",
-      "claiming": "Reclamando...",
+      "claiming": "Procesando...",
       "description": "¡Bienvenido a DingleUP! ! ¡Reclama tu bono inicial!",
-      "claimed": "¡Bono reclamado!"
+      "claimed": "¡Bono reclamado!",
+      "rewards": "Mis recompensas"
     },
     "inGameRescue": {
       "title": "Casi eliminado... 🎰",
@@ -363,10 +369,13 @@
       "description": "¡Compra un booster para seguir jugando!",
       "freeBooster": "Booster gratis",
       "premiumBooster": "Booster Premium",
+      "activate": "Activar",
+      "buy": "Comprar",
       "purchase": "Comprar"
     },
     "exitGame": {
       "title": "¿Estás seguro de que quieres salir?",
+      "subtitle": "Perderás el oro recolectado hasta ahora",
       "warningGoldLost": "⚠️ ¡Todo el oro recolectado hasta ahora se perderá! ⚠️",
       "warningProgress": "Si retrocedes, todos los resultados recolectados se eliminarán y no recibirás monedas de oro.",
       "gameCompleted": "Tu juego ha terminado, oro acreditado.",
