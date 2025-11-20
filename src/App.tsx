@@ -181,7 +181,19 @@ const AudioPolicyManager = () => {
   useEffect(() => {
     const applyAudioPolicy = () => {
       const { musicEnabled, volume, loaded } = useAudioStore.getState();
-      if (!loaded) return;
+      
+      console.log('[AudioPolicyManager] Applying audio policy', { 
+        musicEnabled, 
+        volume, 
+        volumePercent: `${Math.round(volume * 100)}%`,
+        loaded,
+        pathname: location.pathname 
+      });
+
+      if (!loaded) {
+        console.log('[AudioPolicyManager] Settings not loaded yet, skipping');
+        return;
+      }
 
       const audioManager = AudioManager.getInstance();
       
@@ -189,8 +201,11 @@ const AudioPolicyManager = () => {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
                        window.matchMedia('(max-width: 1024px)').matches;
       
+      console.log('[AudioPolicyManager] Platform detection:', { isMobile, userAgent: navigator.userAgent });
+      
       if (!isMobile) {
         // Desktop: disable music entirely
+        console.log('[AudioPolicyManager] Desktop detected, disabling music');
         audioManager.apply(false, 0);
         return;
       }
@@ -198,8 +213,11 @@ const AudioPolicyManager = () => {
       // Check if music is allowed on current route (blocks admin & landing page)
       const musicAllowed = isMusicAllowed(location.pathname);
       
+      console.log('[AudioPolicyManager] Music allowed on route:', { pathname: location.pathname, musicAllowed });
+      
       if (!musicAllowed) {
         // Admin or landing page: disable music
+        console.log('[AudioPolicyManager] Route blocks music, disabling');
         audioManager.apply(false, 0);
         return;
       }
@@ -207,21 +225,30 @@ const AudioPolicyManager = () => {
       // Mobile/Tablet on allowed routes: Switch track based on route
       const isGameRoute = location.pathname === '/game';
       
+      console.log('[AudioPolicyManager] Route check:', { isGameRoute });
+      
       if (isGameRoute) {
         // CategorySelector + Game → game music (backmusic.mp3)
+        console.log('[AudioPolicyManager] Switching to game track');
         audioManager.switchTrack('game');
       } else {
         // All other allowed pages → general music (DingleUP.mp3)
+        console.log('[AudioPolicyManager] Switching to general track');
         audioManager.switchTrack('general');
       }
 
       // Apply volume settings
+      console.log('[AudioPolicyManager] Applying settings:', { musicEnabled, volume });
       audioManager.apply(musicEnabled, volume);
+      
+      const state = audioManager.getState();
+      console.log('[AudioPolicyManager] AudioManager state after apply:', state);
     };
 
     applyAudioPolicy();
     
     const unsubscribe = useAudioStore.subscribe((state) => {
+      console.log('[AudioPolicyManager] Store updated:', state);
       if (state.loaded) {
         applyAudioPolicy();
       }
