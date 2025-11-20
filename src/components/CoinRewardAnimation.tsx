@@ -26,12 +26,7 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
   const successGreen = "88, 80%, 60%";
 
   return (
-    <div
-      className="flex items-center gap-1"
-      style={{
-        animation: "coinPop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)",
-      }}
-    >
+    <div className="flex items-center gap-1">
       {/* Neon glow container */}
       <div className="relative">
         {/* Multiple glow layers for intense neon effect */}
@@ -93,19 +88,6 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
           }}
         />
       </div>
-      
-      <style>{`
-        @keyframes coinPop {
-          0% {
-            transform: translate(-50%, -50%) scale(0.8);
-            opacity: 0;
-          }
-          100% {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-          }
-        }
-      `}</style>
     </div>
   );
 };
