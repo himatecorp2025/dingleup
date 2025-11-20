@@ -292,21 +292,29 @@
   "dialogs": {
     "dailyGift": {
       "title": "CADEAU QUOTIDIEN",
+      "subtitle": "Ta récompense quotidienne",
       "day": "JOUR",
+      "dayNumber": "JOUR {{day}} 🔥",
       "todayReward": "AUJOURD'HUI TU REÇOIS",
+      "todayYouGet": "AUJOURD'HUI TU REÇOIS",
       "claim": "RÉCLAMER",
-      "comeLater": "PLUS TARD",
-      "claiming": "Réclamation...",
-      "alreadyClaimed": "DÉJÀ RÉCLAMÉ AUJOURD'HUI"
+      "later": "PLUS TARD",
+      "claiming": "Traitement...",
+      "alreadyClaimed": "DÉJÀ RÉCLAMÉ AUJOURD'HUI",
+      "streak": "Série de {{count}} jours",
+      "comeBackTomorrow": "Reviens demain"
     },
     "welcomeBonus": {
       "title": "BIENVENUE!",
+      "subtitle": "Bienvenue dans le jeu!",
       "specialOffer": "OFFRE SPÉCIALE!",
       "giftForYou": "Cadeau rien que pour toi!",
       "coins": "OR",
+      "gold": "OR",
       "lives": "VIES",
       "claim": "RÉCLAMER",
-      "claiming": "Réclamation..."
+      "claiming": "Traitement...",
+      "rewards": "Mes récompenses"
     },
     "inGameRescue": {
       "title": "Presque éliminé... 🎰",
@@ -322,15 +330,21 @@
       "processing": "Traitement...",
       "immediateCredit": "Crédit immédiat",
       "continueMessage": "Continue là où tu t'es arrêté! 🎮",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "freeBooster": "Booster gratuit",
+      "premiumBooster": "Booster premium",
+      "activate": "Activer",
+      "buy": "Acheter"
     },
     "exitGame": {
       "title": "Es-tu sûr de vouloir quitter?",
+      "subtitle": "Tu perdras l'or collecté jusqu'à présent",
       "warningGoldLost": "⚠️ Tout l'or collecté jusqu'à présent sera perdu! ⚠️",
       "warningProgress": "Si tu recules, tous les résultats collectés seront supprimés et tu ne recevras pas de pièces d'or.",
       "gameCompleted": "Ton jeu est terminé, or crédité.",
       "exit": "Quitter",
-      "stay": "Rester"
+      "stay": "Rester",
+      "cancel": "Annuler"
     },
     "continueGame": {
       "timeout": "Temps écoulé!",

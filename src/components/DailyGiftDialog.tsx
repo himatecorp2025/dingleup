@@ -5,6 +5,7 @@ import { trackBonusEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import HexAcceptButton from './ui/HexAcceptButton';
+import { useTranslation } from 'react-i18next';
 
 interface DailyGiftDialogProps {
   open: boolean;
@@ -29,6 +30,7 @@ const DailyGiftDialog = ({
   claiming,
   isPremium = false 
 }: DailyGiftDialogProps) => {
+  const { t } = useTranslation();
   const [userId, setUserId] = useState<string | null>(null);
   const isHandheld = usePlatformDetection();
   const [contentVisible, setContentVisible] = useState(false);
@@ -296,7 +298,7 @@ const DailyGiftDialog = ({
                      letterSpacing: '0.06em',
                      textShadow: '0 0 16px rgba(255,255,255,0.2)'
                    }}>
-                  DAY {weeklyEntryCount + 1} 🔥
+                  {t('dialogs.dailyGift.dayNumber', { day: weeklyEntryCount + 1 })}
                 </p>
 
                 {/* Weekly Rewards Preview - 7 boxes */}

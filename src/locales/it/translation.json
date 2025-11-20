@@ -324,27 +324,33 @@
   "dialogs": {
     "dailyGift": {
       "title": "REGALO GIORNALIERO",
+      "subtitle": "La tua ricompensa giornaliera",
       "day": "GIORNO",
+      "dayNumber": "GIORNO {{day}} 🔥",
       "todayReward": "OGGI RICEVI",
+      "todayYouGet": "OGGI RICEVI",
       "claim": "RISCATTA",
-      "comeLater": "PIÙ TARDI",
-      "claiming": "Riscatto...",
+      "later": "PIÙ TARDI",
+      "claiming": "Elaborazione...",
       "alreadyClaimed": "GIÀ RISCATTATO OGGI",
       "description": "Richiedi la tua ricompensa giornaliera!",
-      "streak": "Serie",
+      "streak": "Serie di {{count}} giorni",
       "claimed": "Richiesto!",
       "comeBackTomorrow": "Torna domani per un altro regalo!"
     },
     "welcomeBonus": {
       "title": "BENVENUTO!",
+      "subtitle": "Benvenuto nel gioco!",
       "specialOffer": "OFFERTA SPECIALE!",
       "giftForYou": "Regalo solo per te!",
       "coins": "ORO",
+      "gold": "ORO",
       "lives": "VITE",
       "claim": "RISCATTA",
-      "claiming": "Riscatto...",
+      "claiming": "Elaborazione...",
       "description": "Benvenuto su DingleUP! ! Richiedi il tuo bonus iniziale!",
-      "claimed": "Bonus richiesto!"
+      "claimed": "Bonus richiesto!",
+      "rewards": "Le mie ricompense"
     },
     "inGameRescue": {
       "title": "Quasi eliminato... 🎰",
@@ -363,11 +369,14 @@
       "cancel": "Annulla",
       "description": "Acquista un booster per continuare a giocare!",
       "freeBooster": "Booster gratuito",
-      "premiumBooster": "Booster Premium",
+      "premiumBooster": "Booster premium",
+      "activate": "Attiva",
+      "buy": "Acquista",
       "purchase": "Acquista"
     },
     "exitGame": {
       "title": "Sei sicuro di voler uscire?",
+      "subtitle": "Perderai l'oro raccolto finora",
       "warningGoldLost": "⚠️ Tutto l'oro raccolto finora andrà perso! ⚠️",
       "warningProgress": "Se torni indietro, tutti i risultati raccolti verranno eliminati e non riceverai monete d'oro.",
       "gameCompleted": "Il tuo gioco è terminato, oro accreditato.",

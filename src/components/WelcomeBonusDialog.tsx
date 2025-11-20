@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { trackBonusEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
+import { useTranslation } from 'react-i18next';
 
 interface WelcomeBonusDialogProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface WelcomeBonusDialogProps {
 }
 
 export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: WelcomeBonusDialogProps) => {
+  const { t } = useTranslation();
   const [userId, setUserId] = useState<string | null>(null);
   const [contentVisible, setContentVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -227,7 +229,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                         letterSpacing: '0.05em',
                         textShadow: '0 0 12px rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.9)'
                       }}>
-                    WELCOME!
+                    {t('dialogs.welcomeBonus.title')}
                   </h1>
                 </div>
               </div>
@@ -251,7 +253,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                          textShadow: '0 2px 6px rgba(0,0,0,0.9), 0 0 12px rgba(255,255,255,0.4)'
                        }}>
                       <span>⭐</span>
-                      <span>KÜLÖNLEGES AJÁNLAT!</span>
+                      <span>{t('dialogs.welcomeBonus.specialOffer')}</span>
                       <span>⭐</span>
                     </p>
                   </div>
@@ -300,7 +302,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                        borderTop: '1px solid rgba(255,255,255,0.2)',
                        borderBottom: '1px solid rgba(0,0,0,0.2)'
                      }}>
-                    Ajándék csak neked!
+                    {t('dialogs.welcomeBonus.giftForYou')}
                   </p>
                   
                   {/* Right 3D Gift Box SVG */}
