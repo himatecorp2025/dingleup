@@ -10,6 +10,7 @@ import { useQuestionReactions } from "@/hooks/useQuestionReactions";
 import { GameHeader } from "./game/GameHeader";
 import { GameTimer } from "./game/GameTimer";
 import { GameLifelines } from "./game/GameLifelines";
+import { CoinRewardAnimation } from "./CoinRewardAnimation";
 
 interface QuestionCardProps {
   question: Question;
@@ -29,6 +30,8 @@ interface QuestionCardProps {
   lives: number;
   maxLives: number;
   coins: number;
+  coinRewardAmount?: number;
+  coinRewardTrigger?: number;
   onAnswerSelect: (answerId: string) => void;
   onUseHelp5050: () => void;
   onUseHelp2xAnswer: () => void;
@@ -57,6 +60,8 @@ export const QuestionCard = ({
   lives,
   maxLives,
   coins,
+  coinRewardAmount = 0,
+  coinRewardTrigger = 0,
   onAnswerSelect,
   onUseHelp5050,
   onUseHelp2xAnswer,
@@ -103,8 +108,15 @@ export const QuestionCard = ({
         <div className="relative flex">
           {/* Question and Answers */}
           <div className="flex-1 flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2">
-            <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
+            <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem] relative">
               <GameTimer timeLeft={timeLeft} maxTime={30} />
+              {/* Coin reward animation positioned to the right of timer, centered between timer and screen edge */}
+              <div className="absolute top-1/2 -translate-y-1/2" style={{ left: "calc(50% + 80px)" }}>
+                <CoinRewardAnimation 
+                  amount={coinRewardAmount} 
+                  trigger={coinRewardTrigger}
+                />
+              </div>
             </div>
 
             <div className="-mt-[0.1rem] sm:-mt-[0.2rem] md:-mt-[0.3rem] pb-10 sm:pb-12 md:pb-16">
