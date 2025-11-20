@@ -2,10 +2,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useEffect, useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const BottomNav = () => {
-  const { t } = useTranslation();
   const [isDesktop, setIsDesktop] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -57,9 +55,9 @@ const BottomNav = () => {
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      toast.error(t('errors.serverError'));
+      toast.error('Hiba a kijelentkezés során');
     } else {
-      toast.success(t('auth.logout'));
+      toast.success('Sikeresen kijelentkeztél');
       navigate('/login');
     }
   };
@@ -67,7 +65,7 @@ const BottomNav = () => {
   const handleNavigation = (path: string) => {
     // Check if user is authenticated when on landing page
     if (location.pathname === '/' && !isAuthenticated) {
-      toast.error(t('bottomNav.notLoggedIn'));
+      toast.error('Nem vagy bejelentkezve! Kérlek jelentkezz be!');
       navigate('/login');
       return;
     }
@@ -84,7 +82,7 @@ const BottomNav = () => {
           <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      label: t('bottomNav.dashboard'), 
+      label: 'Dashboard', 
       path: '/dashboard' 
     },
     { 
@@ -96,7 +94,7 @@ const BottomNav = () => {
           <path d="M8.7 13.7L15.3 17.3M15.3 6.7L8.7 10.3" stroke="currentColor" strokeWidth="2"/>
         </svg>
       ),
-      label: t('bottomNav.share'), 
+      label: 'Share', 
       path: '/invitation' 
     },
     { 
@@ -108,7 +106,7 @@ const BottomNav = () => {
           <path d="M12 14V17M8 20H16M10 17H14V20H10V17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         </svg>
       ),
-      label: t('bottomNav.leaderboard'), 
+      label: 'Ranglista', 
       path: '/leaderboard' 
     },
     { 
@@ -118,7 +116,7 @@ const BottomNav = () => {
           <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      label: t('bottomNav.profile'), 
+      label: 'Profil', 
       path: '/profile' 
     },
     { 
@@ -127,7 +125,7 @@ const BottomNav = () => {
           <path d="M3 21H21M3 10H21M5 6L12 3L19 6M4 10V21M20 10V21M8 14V17M12 14V17M16 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      label: t('bottomNav.about'), 
+      label: 'Rólunk', 
       path: '/about' 
     },
     { 
@@ -138,7 +136,7 @@ const BottomNav = () => {
           <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      label: t('bottomNav.logout'), 
+      label: 'Kilépés', 
       action: handleLogout 
     }
   ];

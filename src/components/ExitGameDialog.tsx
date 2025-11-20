@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface ExitGameDialogProps {
   open: boolean;
@@ -14,8 +13,6 @@ export const ExitGameDialog = ({
   onConfirmExit,
   gameCompleted = false
 }: ExitGameDialogProps) => {
-  const { t } = useTranslation();
-  
   // Prevent body scroll when dialog is open
   useEffect(() => {
     if (open) {
@@ -106,7 +103,7 @@ export const ExitGameDialog = ({
             <div className="absolute inset-0 bg-black/60 rounded-2xl backdrop-blur-sm border-2 border-white/20" style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 4px rgba(255,255,255,0.05)' }} aria-hidden />
             
             <h2 className="relative z-10 text-xl sm:text-2xl md:text-3xl font-black text-center text-white" style={{ textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.9), 2px 2px 4px rgba(0,0,0,1), -2px -2px 4px rgba(0,0,0,1), 2px -2px 4px rgba(0,0,0,1), -2px 2px 4px rgba(0,0,0,1)' }}>
-              {t('dialogs.exitGame.title')}
+              Biztosan kilépsz?
             </h2>
           </div>
 
@@ -118,13 +115,13 @@ export const ExitGameDialog = ({
             <div className="relative z-10 text-center space-y-2">
               {!gameCompleted && (
                 <p className="text-destructive text-base sm:text-lg font-black animate-pulse" style={{ textShadow: '0 0 10px rgba(255,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' }}>
-                  {t('dialogs.exitGame.warningGoldLost')}
+                  ⚠️ Az összes eddig összegyűjtött arany elvész! ⚠️
                 </p>
               )}
               <p className="text-white text-xs sm:text-sm md:text-base font-semibold" style={{ textShadow: '0 0 10px rgba(0,0,0,0.9), 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,1)' }}>
                 {gameCompleted 
-                  ? t('dialogs.exitGame.gameCompleted')
-                  : t('dialogs.exitGame.warningProgress')}
+                  ? 'A játékod befejeződött, az aranyak jóváírva.'
+                  : 'Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.'}
               </p>
             </div>
           </div>
@@ -152,7 +149,7 @@ export const ExitGameDialog = ({
               <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
               
               {/* Text */}
-              <span className="relative z-10 drop-shadow-lg">{t('dialogs.exitGame.exit')}</span>
+              <span className="relative z-10 drop-shadow-lg">Kilépés</span>
             </button>
 
             {/* Stay Button - 3D Green */}
@@ -176,7 +173,7 @@ export const ExitGameDialog = ({
               <div className="absolute inset-[5px] rounded-2xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
               
               {/* Text */}
-              <span className="relative z-10 drop-shadow-lg">{t('dialogs.exitGame.stay')}</span>
+              <span className="relative z-10 drop-shadow-lg">Maradok</span>
             </button>
           </div>
         </div>

@@ -1,6 +1,5 @@
 import { HexagonButton } from "@/components/HexagonButton";
 import { RefreshCw, Users, SkipForward } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 interface GameLifelinesProps {
   help5050UsageCount: number;
@@ -33,8 +32,6 @@ export const GameLifelines = ({
   onUseHelpAudience,
   onUseQuestionSwap
 }: GameLifelinesProps) => {
-  const { t } = useTranslation();
-  
   return (
     <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2">
       <button
@@ -49,7 +46,7 @@ export const GameLifelines = ({
         }`}
       >
         <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
-        <span className="text-[9px] sm:text-[10px] font-bold">{t('game.lifeline5050')}</span>
+        <span className="text-[9px] sm:text-[10px] font-bold">50/50</span>
       </button>
       <button
         onClick={onUseHelp2xAnswer}
@@ -63,7 +60,7 @@ export const GameLifelines = ({
         }`}
       >
         <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
-        <span className="text-[9px] sm:text-[10px] font-bold">{t('game.lifeline2x')}</span>
+        <span className="text-[9px] sm:text-[10px] font-bold">2x</span>
       </button>
       <button
         onClick={onUseHelpAudience}
@@ -77,7 +74,7 @@ export const GameLifelines = ({
         }`}
       >
         <Users className="w-4 h-4 sm:w-5 sm:h-5" />
-        <span className="text-[9px] sm:text-[10px] font-bold">{t('game.lifelineAudience')}</span>
+        <span className="text-[9px] sm:text-[10px] font-bold">Közönség</span>
       </button>
       <button
         onClick={onUseQuestionSwap}

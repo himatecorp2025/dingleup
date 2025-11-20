@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -19,7 +19,6 @@ import { useAppLifecycle } from "@/hooks/useAppLifecycle";
 import { useSessionMonitor } from "@/hooks/useSessionMonitor";
 import { AppRouteGuard } from "@/components/AppRouteGuard";
 import { AudioPolicyManager } from "@/components/AudioPolicyManager";
-import { useLanguage } from "@/hooks/useLanguage";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -86,30 +85,6 @@ const AppWithAnalytics = () => {
   useWebVitals(); // Track Core Web Vitals performance
   useErrorTracking(); // Track and log errors
   usePWAInstallTracking(); // Track PWA install events
-  const [countryCode, setCountryCode] = useState<string | null>(null);
-
-  // Fetch user's country code and set language automatically
-  useEffect(() => {
-    const fetchUserCountry = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('country_code')
-          .eq('id', user.id)
-          .single();
-        
-        if (profile?.country_code) {
-          setCountryCode(profile.country_code);
-        }
-      }
-    };
-    fetchUserCountry();
-  }, []);
-
-  // Automatically set language based on country code
-  useLanguage(countryCode);
-  
   return null;
 };
 

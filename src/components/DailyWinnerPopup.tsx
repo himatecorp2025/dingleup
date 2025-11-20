@@ -2,14 +2,12 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
-import { useTranslation } from 'react-i18next';
 
 interface DailyWinnerPopupProps {
   userId: string | undefined;
 }
 
 export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
-  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [winnerData, setWinnerData] = useState<{
     rank: number;
@@ -93,10 +91,10 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
   if (!winnerData || !isHandheld) return null;
 
   const getRankDisplay = (rank: number) => {
-    if (rank === 1) return `🥇 ${t('leaderboard.rank')} 1`;
-    if (rank === 2) return `🥈 ${t('leaderboard.rank')} 2`;
-    if (rank === 3) return `🥉 ${t('leaderboard.rank')} 3`;
-    return `🏆 ${t('leaderboard.rank')} ${rank}`;
+    if (rank === 1) return '🥇 1. HELYEZETT';
+    if (rank === 2) return '🥈 2. HELYEZETT';
+    if (rank === 3) return '🥉 3. HELYEZETT';
+    return `🏆 ${rank}. HELYEZETT`;
   };
 
   const getRankBadgeColor = (rank: number) => {
@@ -153,7 +151,7 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
 
             {/* Title */}
             <h2 className="text-4xl font-bold text-white drop-shadow-lg">
-              {t('leaderboard.yesterdayVictory')}
+              TEGNAPI GYŐZELEM!
             </h2>
 
             {/* Rewards */}
@@ -161,20 +159,20 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
               <div className="flex items-center justify-center gap-3 px-6 py-3 bg-white/10 rounded-xl backdrop-blur-sm">
                 <span className="text-3xl">💰</span>
                 <span className="text-2xl font-bold text-accent">
-                  +{winnerData.gold} {t('dashboard.coins').toLowerCase()}
+                  +{winnerData.gold} arany
                 </span>
               </div>
               <div className="flex items-center justify-center gap-3 px-6 py-3 bg-white/10 rounded-xl backdrop-blur-sm">
                 <span className="text-3xl">❤️</span>
                 <span className="text-2xl font-bold text-red-400">
-                  +{winnerData.lives} {t('dashboard.lives').toLowerCase()}
+                  +{winnerData.lives} élet
                 </span>
               </div>
             </div>
 
             {/* Message */}
             <p className="text-xl text-white/90 mt-4 px-4">
-              {t('leaderboard.congratsTop', { rank: winnerData.rank })}
+              Gratulálunk! Tegnap a TOP {winnerData.rank} közé kerültél!
             </p>
 
             {/* Close Button */}
@@ -182,7 +180,7 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
               onClick={handleClose}
               className="mt-6 px-12 py-4 bg-gradient-to-r from-accent to-accent-dark text-white text-xl font-bold rounded-xl shadow-xl hover:scale-105 transition-transform"
             >
-              {t('common.ok')}
+              OK
             </button>
           </div>
         </div>

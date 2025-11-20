@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useTranslation } from 'react-i18next';
 
 interface QuestionLikeStatus {
   liked: boolean;
@@ -10,7 +9,6 @@ interface QuestionLikeStatus {
 }
 
 export const useQuestionLike = (questionId: string | null) => {
-  const { t } = useTranslation();
   const [status, setStatus] = useState<QuestionLikeStatus>({
     liked: false,
     likeCount: 0,
@@ -128,7 +126,7 @@ export const useQuestionLike = (questionId: string | null) => {
       console.error('[useQuestionLike] Toggle error:', error);
       // Revert optimistic update
       setStatus(previousStatus);
-      toast.error(t('errors.likeUpdateFailed'));
+      toast.error('Nem sikerült frissíteni a lájkot');
       return previousStatus.liked;
     }
   };

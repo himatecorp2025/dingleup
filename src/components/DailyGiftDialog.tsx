@@ -5,7 +5,6 @@ import { trackBonusEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import HexAcceptButton from './ui/HexAcceptButton';
-import { useTranslation } from 'react-i18next';
 
 interface DailyGiftDialogProps {
   open: boolean;
@@ -30,7 +29,6 @@ const DailyGiftDialog = ({
   claiming,
   isPremium = false 
 }: DailyGiftDialogProps) => {
-  const { t } = useTranslation();
   const [userId, setUserId] = useState<string | null>(null);
   const isHandheld = usePlatformDetection();
   const [contentVisible, setContentVisible] = useState(false);
@@ -166,8 +164,8 @@ const DailyGiftDialog = ({
             marginTop: '-3vh'  // 3% feljebb, vertikális center javítás
           }}
         >
-          <DialogTitle className="sr-only">{t('dialogs.dailyGift.title')}</DialogTitle>
-          <DialogDescription className="sr-only">{t('dialogs.dailyGift.subtitle')}</DialogDescription>
+          <DialogTitle className="sr-only">Daily Gift</DialogTitle>
+          <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
 
           {/* Háttér gradiens */}
           <div
@@ -181,7 +179,7 @@ const DailyGiftDialog = ({
           {/* Bezáró X - közelebb a pajzshoz (top: 2vh helyett 1vh) */}
           <button
             onClick={onLater}
-            aria-label={t('common.close')}
+            aria-label="Bezárás"
             className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
             style={{
               top: "max(1vh, env(safe-area-inset-top))",
@@ -283,7 +281,7 @@ const DailyGiftDialog = ({
                         letterSpacing: '0.05em',
                         textShadow: '0 0 12px rgba(255,255,255,0.25)'
                       }}>
-                    {t('dialogs.dailyGift.title')}
+                    DAILY GIFT
                   </h1>
                 </div>
               </div>
@@ -298,7 +296,7 @@ const DailyGiftDialog = ({
                      letterSpacing: '0.06em',
                      textShadow: '0 0 16px rgba(255,255,255,0.2)'
                    }}>
-                  {t('dialogs.dailyGift.dayNumber', { day: weeklyEntryCount + 1 })}
+                  DAY {weeklyEntryCount + 1} 🔥
                 </p>
 
                 {/* Weekly Rewards Preview - 7 boxes */}

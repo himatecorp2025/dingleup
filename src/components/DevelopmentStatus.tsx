@@ -1,65 +1,62 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Sparkles, Rocket, Users, Crown, TrendingUp, Shield } from "lucide-react";
-import { useTranslation } from "react-i18next";
+
+const statusItems = [
+  {
+    category: "Felhasználói Élmény",
+    progress: 85,
+    color: "from-accent to-accent",
+    description: "Responzív design optimalizálás, animációk finomhangolása, sötét/világos téma váltás implementálása és általános UX/UI fejlesztések."
+  },
+  {
+    category: "Játékmechanika",
+    progress: 90,
+    color: "from-secondary to-primary",
+    description: "Kérdésbank bővítés 500+ kérdésre, timer rendszer optimalizálás, segítségek rendszerének tökéletesítése és pontszámítási logika finomítása."
+  },
+  {
+    category: "Szociális Funkciók",
+    progress: 60,
+    color: "from-accent to-accent-dark",
+    description: "Napi rangsor rendszer fejlesztése, meghívó rendszer kidolgozása, social share funkciók és barátok kezelésének implementálása."
+  },
+  {
+    category: "Tesztelés & Biztonság",
+    progress: 75,
+    color: "from-success to-success",
+    description: "Keresztplatform tesztelés, teljesítmény optimalizálás, biztonsági protokollok implementálása és bug fixing folyamatos végzése."
+  }
+];
+
+const comingSoonFeatures = [
+  {
+    icon: Crown,
+    title: "VIP Tagság",
+    description: "Exkluzív előnyök, korlátlan életek és különleges témák prémium tagoknak.",
+    badge: "Hamarosan"
+  },
+  {
+    icon: Users,
+    title: "Többjátékos Mód",
+    description: "Versenyezz valós időben barátaiddal vagy random játékosokkal!",
+    badge: "Fejlesztés alatt"
+  },
+  {
+    icon: TrendingUp,
+    title: "Statisztikák & Elemzés",
+    description: "Részletes teljesítmény követés, kategória szerinti pontosság és haladás elemzés.",
+    badge: "Tervezés alatt"
+  },
+  {
+    icon: Shield,
+    title: "Egyéni Avatárok",
+    description: "Testreszabható profilképek és egyedi profilok minden játékosnak.",
+    badge: "Hamarosan"
+  }
+];
 
 const DevelopmentStatus = () => {
-  const { t } = useTranslation();
-  
-  const statusItems = [
-    {
-      category: t('landing.uxCategory'),
-      progress: 85,
-      color: "from-accent to-accent",
-      description: t('landing.uxDescription')
-    },
-    {
-      category: t('landing.gameCategory'),
-      progress: 90,
-      color: "from-secondary to-primary",
-      description: t('landing.gameDescription')
-    },
-    {
-      category: t('landing.socialCategory'),
-      progress: 60,
-      color: "from-accent to-accent-dark",
-      description: t('landing.socialDescription')
-    },
-    {
-      category: t('landing.testingCategory'),
-      progress: 75,
-      color: "from-success to-success",
-      description: t('landing.testingDescription')
-    }
-  ];
-
-  const comingSoonFeatures = [
-    {
-      icon: Crown,
-      title: t('landing.vipTitle'),
-      description: t('landing.vipDescription'),
-      badge: t('landing.comingSoon')
-    },
-    {
-      icon: Users,
-      title: t('landing.multiplayerTitle'),
-      description: t('landing.multiplayerDescription'),
-      badge: t('landing.inDevelopment')
-    },
-    {
-      icon: TrendingUp,
-      title: t('landing.statsTitle'),
-      description: t('landing.statsDescription'),
-      badge: t('landing.inPlanning')
-    },
-    {
-      icon: Shield,
-      title: t('landing.avatarTitle'),
-      description: t('landing.avatarDescription'),
-      badge: t('landing.comingSoon')
-    }
-  ];
-
   return (
     <section className="py-24 px-4 relative bg-gradient-to-br from-[#0f0033] via-[#1a0033] to-[#0f0033]">
       {/* Animated glow effects */}
@@ -71,13 +68,13 @@ const DevelopmentStatus = () => {
         <div className="text-center mb-16 animate-fade-in">
           <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/30 rounded-full px-6 py-3 mb-6 backdrop-blur-sm">
             <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />
-            <span className="text-sm sm:text-base font-bold text-yellow-300">{t('landing.activeDevelopment')}</span>
+            <span className="text-sm sm:text-base font-bold text-yellow-300">Aktív Fejlesztés</span>
           </div>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-            {t('landing.developmentTitle')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">{t('landing.developmentHighlight')}</span>
+            Fejlesztési <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">Státusz</span>
           </h2>
           <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto drop-shadow-lg">
-            {t('landing.developmentSubtitle')}
+            Folyamatosan dolgozunk azon, hogy a legjobb játékélményt nyújtsuk
           </p>
         </div>
 
@@ -129,10 +126,10 @@ const DevelopmentStatus = () => {
         <div className="text-center mb-12 animate-fade-in">
           <div className="inline-flex items-center gap-2 bg-secondary/10 border border-secondary/30 rounded-full px-4 py-2 mb-4">
             <Rocket className="w-4 h-4 text-secondary" />
-            <span className="text-sm font-semibold text-secondary">{t('landing.upcomingFeatures')}</span>
+            <span className="text-sm font-semibold text-secondary">Közelgő Funkciók</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 font-poppins text-white">
-            {t('landing.whatsComing')} <span className="text-white">{t('landing.soon')}</span>
+            Mit Hozunk <span className="text-white">Nemsokára</span>
           </h2>
         </div>
 

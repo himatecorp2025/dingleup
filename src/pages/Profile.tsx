@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -217,7 +215,6 @@ const COUNTRIES = [
 ];
 
 const Profile = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading, updateProfile, refreshProfile } = useGameProfile(userId);
@@ -331,13 +328,13 @@ const Profile = () => {
       // Validate file size (max 2MB)
       const maxSizeBytes = 2 * 1024 * 1024;
       if (file.size > maxSizeBytes) {
-        toast.error(t('profile.fileSizeError'));
+        toast.error('A fájl mérete maximum 2MB lehet');
         return;
       }
       
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        toast.error(t('profile.fileTypeError'));
+        toast.error('Csak képfájlok engedélyezettek');
         return;
       }
 
@@ -355,9 +352,9 @@ const Profile = () => {
         .getPublicUrl(filePath);
 
       await updateProfile({ avatar_url: data.publicUrl });
-      toast.success(t('profile.avatarUploaded'));
+      toast.success('Profilkép sikeresen feltöltve!');
     } catch (error: any) {
-      toast.error(t('profile.uploadError') + ': ' + error.message);
+      toast.error('Hiba a feltöltés során: ' + error.message);
     } finally {
       setUploading(false);
     }
@@ -368,10 +365,10 @@ const Profile = () => {
     
     try {
       await updateProfile({ country_code: newCountryCode });
-      toast.success(t('profile.countryUpdated'));
+      toast.success('Ország sikeresen frissítve! A ranglista most az új országodhoz tartozik.');
     } catch (error) {
       console.error('Failed to update country:', error);
-      toast.error(t('profile.countryUpdateError'));
+      toast.error('Hiba történt az ország módosítása során.');
     }
   };
 
@@ -382,7 +379,7 @@ const Profile = () => {
 
   const handleUsernameSave = async () => {
     if (!newUsername.trim()) {
-      toast.error(t('profile.usernameEmpty'));
+      toast.error('A felhasználónév nem lehet üres');
       return;
     }
 
@@ -394,7 +391,7 @@ const Profile = () => {
       
       if (daysSinceLastChange < 7) {
         const daysRemaining = Math.ceil(7 - daysSinceLastChange);
-        toast.error(t('profile.usernameCooldown', { days: daysRemaining }));
+        toast.error(`A felhasználónév módosítása csak 7 naponta lehetséges. Még ${daysRemaining} nap múlva próbálkozz újra.`);
         setIsEditingUsername(false);
         return;
       }
@@ -403,7 +400,7 @@ const Profile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error(t('profile.notLoggedIn'));
+        toast.error('Nincs bejelentkezve');
         return;
       }
 
@@ -415,12 +412,12 @@ const Profile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || t('profile.usernameUpdateFailed'));
+        throw new Error(response.error.message || 'Felhasználónév frissítése sikertelen');
       }
 
       await updateProfile({ username: newUsername });
       setIsEditingUsername(false);
-      toast.success(t('profile.usernameChanged'));
+      toast.success('Felhasználónév sikeresen módosítva');
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -428,11 +425,11 @@ const Profile = () => {
 
   const validatePassword = (password: string): string | null => {
     const rules = [
-      { test: (p: string) => p.length >= 8, msg: t('profile.minCharacters') },
-      { test: (p: string) => /[a-z]/.test(p), msg: t('profile.lowercaseRequired') },
-      { test: (p: string) => /[A-Z]/.test(p), msg: t('profile.uppercaseRequired') },
-      { test: (p: string) => /\d/.test(p), msg: t('profile.numberRequired') },
-      { test: (p: string) => /[@$!%*?&.]/.test(p), msg: t('profile.specialCharRequired') },
+      { test: (p: string) => p.length >= 8, msg: 'Legalább 8 karakter' },
+      { test: (p: string) => /[a-z]/.test(p), msg: 'Kisbetű szükséges' },
+      { test: (p: string) => /[A-Z]/.test(p), msg: 'Nagybetű szükséges' },
+      { test: (p: string) => /\d/.test(p), msg: 'Szám szükséges' },
+      { test: (p: string) => /[@$!%*?&.]/.test(p), msg: 'Speciális karakter (@$!%*?&.) szükséges' },
     ];
 
     for (const rule of rules) {
@@ -446,12 +443,12 @@ const Profile = () => {
 
   const handlePasswordSave = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error(t('profile.passwordFieldsRequired'));
+      toast.error('Minden jelszó mező kitöltése kötelező');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error(t('profile.passwordMismatch'));
+      toast.error('Az új jelszavak nem egyeznek');
       return;
     }
 
@@ -465,7 +462,7 @@ const Profile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error(t('profile.notLoggedIn'));
+        toast.error('Nincs bejelentkezve');
         return;
       }
 
@@ -477,13 +474,13 @@ const Profile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || t('profile.passwordUpdateFailed'));
+        throw new Error(response.error.message || 'Jelszó frissítése sikertelen');
       }
 
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      toast.success(t('profile.passwordChanged'));
+      toast.success('Jelszó sikeresen módosítva');
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -770,7 +767,7 @@ const Profile = () => {
           <div 
             onClick={() => {
               navigator.clipboard.writeText(profile.invitation_code || '');
-              toast.success(t('profile.invitationCodeCopied'));
+              toast.success('Meghívókód vágólapra másolva!');
             }}
             className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer transition-transform active:scale-95 transform-gpu hover:scale-105 hover:-translate-y-0.5"
             style={{ perspective: '1000px' }}
@@ -832,13 +829,13 @@ const Profile = () => {
                       toast.loading('Speed aktiválás...', { id: 'speed-activate' });
                       const { data, error } = await supabase.functions.invoke('activate-speed-token');
                       if (error) throw error;
-        if (data?.success) {
-          toast.success(t('profile.speedActivated', { minutes: data.activeSpeedToken?.durationMinutes }), { id: 'speed-activate' });
-          refetchWallet();
-          refreshProfile();
-        }
-      } catch (e) {
-        toast.error(t('profile.errorOccurred'), { id: 'speed-activate' });
+                      if (data?.success) {
+                        toast.success(`Speed aktiválva! ${data.activeSpeedToken?.durationMinutes}' gyorsítás`, { id: 'speed-activate' });
+                        refetchWallet();
+                        refreshProfile();
+                      }
+                    } catch (e) {
+                      toast.error('Hiba történt', { id: 'speed-activate' });
                     }
                   }}
                   className="w-full mt-2 px-2 py-1.5 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white transition-all shadow-lg"
@@ -849,7 +846,7 @@ const Profile = () => {
                 <button
                   onClick={async () => {
                     if ((walletData?.coinsCurrent || 0) < 900) {
-                      toast.error(t('profile.notEnoughGold'));
+                      toast.error('Nincs elég aranyad');
                       return;
                     }
                     try {
@@ -859,12 +856,12 @@ const Profile = () => {
                       });
                       if (error) throw error;
                       if (data?.success) {
-                        toast.success(t('profile.purchaseSuccess', { gold: data.grantedRewards?.gold, lives: data.grantedRewards?.lives }), { id: 'free-booster' });
+                        toast.success(`Sikeres vásárlás! +${data.grantedRewards?.gold} arany, +${data.grantedRewards?.lives} élet`, { id: 'free-booster' });
                         refetchWallet();
                         refreshProfile();
                       }
                     } catch (e) {
-                      toast.error(t('profile.errorOccurred'), { id: 'free-booster' });
+                      toast.error('Hiba történt', { id: 'free-booster' });
                     }
                   }}
                   disabled={(walletData?.coinsCurrent || 0) < 900}

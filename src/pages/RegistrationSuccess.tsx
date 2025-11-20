@@ -1,10 +1,8 @@
-import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, ArrowRight } from "lucide-react";
 
 const RegistrationSuccess = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleStartGame = () => {
@@ -49,12 +47,12 @@ const RegistrationSuccess = () => {
 
           <h1 className="text-3xl font-bold mb-4 font-poppins">
             <span className="text-transparent bg-clip-text bg-gradient-gold">
-              {t('registration.success')}
+              Sikeres Regisztráció!
             </span>
           </h1>
 
           <p className="text-muted-foreground mb-8 text-lg">
-            {t('registration.congratulations')}
+            Gratulálunk! A fiókod sikeresen létrejött. Most már készen állsz, hogy elindítsd a játékot és teszteld a tudásod!
           </p>
 
           <Button
@@ -62,7 +60,7 @@ const RegistrationSuccess = () => {
             onClick={handleStartGame}
             className="w-full bg-gradient-gold text-accent-foreground hover:opacity-90 transition-all hover:scale-105 shadow-glow text-lg px-8 py-6"
           >
-            {t('registration.startGame')}
+            Játék indítása
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>

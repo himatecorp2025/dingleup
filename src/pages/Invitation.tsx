@@ -6,7 +6,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import BottomNav from '@/components/BottomNav';
-import { useTranslation } from 'react-i18next';
 
 interface InvitedFriend {
   id: string;
@@ -22,7 +21,6 @@ interface InvitedFriend {
 }
 
 const Invitation = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string>('');
   const [invitationCode, setInvitationCode] = useState('');
@@ -87,17 +85,17 @@ const Invitation = () => {
       setInvitedCount(invitations?.filter(i => i.accepted).length || 0);
     } catch (error) {
       console.error('Error fetching invitation data:', error);
-      toast.error(t('invitation.fetchError'));
+      toast.error('Hiba a meghívó adatok betöltésekor');
     }
   };
 
   const copyToClipboard = async (text: string, type: 'code' | 'link') => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success(type === 'code' ? t('invitation.copyCodeSuccess') : t('invitation.copyLinkSuccess'));
+      toast.success(type === 'code' ? 'Meghívó kód másolva!' : 'Meghívó link másolva!');
     } catch (error) {
       console.error('Error copying:', error);
-      toast.error(t('invitation.copyError'));
+      toast.error('Hiba a másolás során');
     }
   };
 

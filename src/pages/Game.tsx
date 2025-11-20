@@ -7,9 +7,7 @@ import gameBackground from "@/assets/game-background.png";
 import { useAudioStore } from "@/stores/audioStore";
 import { ScreenshotProtection } from "@/components/ScreenshotProtection";
 import { GameErrorBoundary } from "@/components/GameErrorBoundary";
-import { useTranslation } from "react-i18next";
 const Game = () => {
-  const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
   const [loadTimeout, setLoadTimeout] = useState(false);
   const navigate = useNavigate();
@@ -44,16 +42,17 @@ const Game = () => {
         />
         <div className="max-w-2xl w-full bg-background/80 backdrop-blur-sm rounded-2xl p-8 text-center border-2 border-primary/50 relative z-10">
           <Smartphone className="w-24 h-24 mx-auto mb-6 text-primary" />
-          <h1 className="text-4xl font-black text-foreground mb-4">{t('game.mobileOnly')}</h1>
+          <h1 className="text-4xl font-black text-foreground mb-4">Mobil Játék</h1>
           <p className="text-xl text-foreground/70 mb-8">
-            {t('game.mobileOnlyDescription')}
+            Ez a játék kizárólag mobil nézetben érhető el. 
+            Kérjük, nyissa meg telefonján vagy szűkítse le a böngésző ablakát!
           </p>
           <Button 
             onClick={() => navigate('/')}
             size="lg"
             className="bg-primary hover:bg-primary/90"
           >
-            {t('game.backToHome')}
+            Vissza a főoldalra
           </Button>
         </div>
       </div>

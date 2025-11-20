@@ -1,11 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Play, Sparkles, Trophy, Zap } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 const Hero = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const scrollToFeatures = () => {
     const featuresSection = document.getElementById('features');
@@ -71,16 +69,18 @@ const Hero = () => {
           <div className="text-center mb-8 sm:mb-12 space-y-4 sm:space-y-6 animate-fade-in px-4" style={{ animationDelay: '0.2s' }}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 leading-tight tracking-tight">
               <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
-                {t('landing.heroTitle')}
+                Legyen Ön is
               </span>
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 drop-shadow-[0_0_40px_rgba(234,179,8,0.8)] animate-pulse">
-                {t('landing.heroTitleHighlight')}
+                MILLIOMOS!
               </span>
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed font-light px-2 drop-shadow-lg">
-              {t('landing.heroSubtitle')}
+              Most a telefonodon! Teszteld tudásod, hívd a közönséget,<br className="hidden sm:block" />
+              és csatlakozz a szakértői csapatodhoz!<br className="hidden sm:block" />
+              <span className="font-semibold text-pink-300">Légy MILLIOMOS INGYEN még ma!</span>
             </p>
           </div>
 
@@ -114,7 +114,7 @@ const Hero = () => {
               className="w-full sm:w-auto bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800 text-white font-black text-lg sm:text-xl px-8 sm:px-12 py-6 sm:py-7 rounded-full shadow-[0_0_30px_rgba(34,197,94,0.5)] hover:shadow-[0_0_50px_rgba(34,197,94,0.8)] border-2 border-green-400 transform hover:scale-105 transition-all duration-300"
             >
               <Play className="mr-2 h-6 w-6 sm:h-7 sm:w-7" />
-              {t('landing.startTestGame')}
+              TESZTJÁTÉK INDÍTÁSA
             </Button>
             
             <Button
@@ -123,7 +123,7 @@ const Hero = () => {
               size="lg"
               className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white font-bold text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 rounded-full border-2 border-white/30 hover:border-white/60 backdrop-blur-sm shadow-lg transform hover:scale-105 transition-all duration-300"
             >
-              {t('landing.learnMore')}
+              Tudj meg többet
             </Button>
           </div>
 
@@ -131,15 +131,15 @@ const Hero = () => {
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4 animate-fade-in px-4" style={{ animationDelay: '0.8s' }}>
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 sm:px-6 py-2 sm:py-3">
               <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
-              <span className="text-white font-semibold text-sm sm:text-base">{t('landing.dailyRanking')}</span>
+              <span className="text-white font-semibold text-sm sm:text-base">Napi Rangsor</span>
             </div>
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 sm:px-6 py-2 sm:py-3">
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-pink-400" />
-              <span className="text-white font-semibold text-sm sm:text-base">{t('landing.topicsCount')}</span>
+              <span className="text-white font-semibold text-sm sm:text-base">27 Téma</span>
             </div>
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 sm:px-6 py-2 sm:py-3">
               <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
-              <span className="text-white font-semibold text-sm sm:text-base">{t('landing.questionsCount')}</span>
+              <span className="text-white font-semibold text-sm sm:text-base">1000+ Kérdés</span>
             </div>
           </div>
         </div>

@@ -1,8 +1,6 @@
 import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 const Footer = () => {
-  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -28,7 +26,7 @@ const Footer = () => {
               />
             </svg>
             <p className="text-white/80 mb-4 max-w-md drop-shadow-lg">
-              {t('landing.footerDescription')}
+              A Dingle UP! egy modern kvízjáték, ahol tesztelheted tudásod, versenyezhetsz barátaiddal és nyerhetsz értékes jutalmakat.
             </p>
             <div className="flex gap-4">
               <a 
@@ -72,26 +70,26 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">{t('footer.quickLinks')}</h3>
+            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">Linkek</h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  {t('footer.about')}
+                  Rólunk
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  {t('footer.features')}
+                  Funkciók
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  {t('footer.howItWorks')}
+                  Hogyan működik?
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  {t('footer.faq')}
+                  GYIK
                 </a>
               </li>
             </ul>
@@ -99,31 +97,31 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">{t('footer.legalTitle')}</h3>
+            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">Jogi Információk</h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  {t('footer.privacy')}
+                  Adatvédelem
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  {t('footer.terms')}
+                  Felhasználási Feltételek
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  {t('footer.cookies')}
+                  Cookie Szabályzat
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  {t('footer.contact')}
+                  Kapcsolat
                 </a>
               </li>
               <li>
                 <a href="/admin/login" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  {t('footer.adminPanel')}
+                  Admin felület
                 </a>
               </li>
             </ul>
@@ -131,9 +129,9 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-white/10 pt-8 text-center text-white/70 text-sm">
-          <p className="drop-shadow">{t('landing.footerCopyright', { year: currentYear })}</p>
+          <p className="drop-shadow">© {currentYear} Dingle UP! Minden jog fenntartva.</p>
           <p className="mt-2 drop-shadow">
-            {t('landing.footerMadeWith')}
+            Készítve ❤️-tel | Játék fejlesztés alatt
           </p>
         </div>
       </div>

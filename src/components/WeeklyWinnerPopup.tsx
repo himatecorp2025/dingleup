@@ -2,14 +2,12 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
-import { useTranslation } from 'react-i18next';
 
 interface WeeklyWinnerPopupProps {
   userId: string | undefined;
 }
 
 export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
-  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [winnerData, setWinnerData] = useState<{
     rank: number;
@@ -96,10 +94,10 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
   if (!winnerData || !isHandheld) return null;
 
   const getRankDisplay = (rank: number) => {
-    if (rank === 1) return `🥇 ${t('leaderboard.rank')} 1`;
-    if (rank === 2) return `🥈 ${t('leaderboard.rank')} 2`;
-    if (rank === 3) return `🥉 ${t('leaderboard.rank')} 3`;
-    return `🏆 ${t('leaderboard.rank')} ${rank}`;
+    if (rank === 1) return '🥇 1. HELYEZETT';
+    if (rank === 2) return '🥈 2. HELYEZETT';
+    if (rank === 3) return '🥉 3. HELYEZETT';
+    return `🏆 ${rank}. HELYEZETT`;
   };
 
   const getRankBadgeColor = (rank: number) => {
@@ -172,10 +170,10 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
                 <div className="text-center space-y-[1vh] relative z-10">
                   <h1 className="font-black bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]"
                       style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)' }}>
-                    {t('leaderboard.weeklyVictory')}
+                    HETI GYŐZELEM
                   </h1>
                   <p className="text-white font-bold drop-shadow-lg" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1.25rem)' }}>
-                    {t('leaderboard.top10')}
+                    TOP 10 HELYEZÉS
                   </p>
                 </div>
               </div>
@@ -244,7 +242,7 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
           {/* Bottom text */}
           <div className="bg-black/70 backdrop-blur-sm rounded-2xl border-4 border-purple-600 px-[6vw] py-[2vh] mt-[3vh] max-w-[85vw] shadow-lg z-10">
             <p className="text-white text-center font-bold leading-relaxed drop-shadow-lg" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1rem)' }}>
-              {t('leaderboard.weeklyTopMessage')}
+              A múlt heti teljesítményed alapján bekerültél a TOP 10-be! Gratulálunk! 🎉
             </p>
           </div>
 
@@ -254,7 +252,7 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
             className="mt-[3vh] bg-gradient-to-b from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white font-black rounded-full px-[10vw] py-[2.5vh] shadow-[0_6px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all border-4 border-yellow-400 z-10"
             style={{ fontSize: 'clamp(1rem, 4.5vw, 1.75rem)' }}
           >
-            {t('common.ok')}
+            RENDBEN
           </button>
         </div>
       </DialogContent>

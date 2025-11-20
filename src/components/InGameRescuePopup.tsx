@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useTranslation } from 'react-i18next';
 
 interface InGameRescuePopupProps {
   isOpen: boolean;
@@ -23,13 +22,12 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
   currentGold,
   onStateRefresh,
 }) => {
-  const { t } = useTranslation();
   const [loadingGoldSaver, setLoadingGoldSaver] = useState(false);
   const [loadingInstantRescue, setLoadingInstantRescue] = useState(false);
 
   const handleGoldSaverPurchase = async () => {
     if (currentGold < 500) {
-      toast.error(t('dialogs.inGameRescue.notEnoughGold'));
+      toast.error('⚠️ Nincs elég aranyad a Gold Saver Boosterhez.');
       return;
     }
 
@@ -37,7 +35,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error(t('bottomNav.notLoggedIn'));
+        toast.error('Nem vagy bejelentkezve');
         setLoadingGoldSaver(false);
         return;
       }
@@ -50,15 +48,15 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
       if (error) throw error;
 
       if (data?.success) {
-        toast.success('✅ ' + t('dialogs.inGameRescue.goldSaver') + '!\n+250 ' + t('dialogs.inGameRescue.gold') + ' +15 ' + t('dialogs.inGameRescue.life'));
+        toast.success('✅ Gold Saver Booster aktiválva!\n+250 aranyat és +15 életet írtunk jóvá. Folytasd a játékot!');
         await onStateRefresh();
         onClose();
       } else {
-        toast.error(data?.error || '❌ ' + t('shop.purchaseError'));
+        toast.error(data?.error || '❌ Nem sikerült a vásárlás');
       }
     } catch (error) {
       console.error('Gold Saver purchase error:', error);
-      toast.error('❌ ' + t('shop.purchaseError'));
+      toast.error('❌ Hiba történt a vásárlás során');
     } finally {
       setLoadingGoldSaver(false);
     }
@@ -69,7 +67,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error(t('bottomNav.notLoggedIn'));
+        toast.error('Nem vagy bejelentkezve');
         setLoadingInstantRescue(false);
         return;
       }
@@ -82,19 +80,19 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
       if (error) throw error;
 
       if (data?.success) {
-        toast.success('✅ ' + t('dialogs.inGameRescue.instantRescue') + '!\n+1000 ' + t('dialogs.inGameRescue.gold') + ' +25 ' + t('dialogs.inGameRescue.life'));
+        toast.success('✅ Instant Rescue sikeres!\n+1000 arany és +25 élet jóváírva. A kört azonnal folytathatod.');
         await onStateRefresh();
         onClose();
       } else {
         if (data?.error === 'PAYMENT_FAILED') {
-          toast.error('❌ ' + t('shop.paymentCancelled'));
+          toast.error('❌ A fizetés nem sikerült. Nem vontunk le összeget, és nem írtunk jóvá jutalmat.');
         } else {
-          toast.error(data?.error || '❌ ' + t('shop.purchaseError'));
+          toast.error(data?.error || '❌ Nem sikerült a vásárlás');
         }
       }
     } catch (error) {
       console.error('Instant Rescue purchase error:', error);
-      toast.error('❌ ' + t('shop.purchaseError'));
+      toast.error('❌ Hiba történt a vásárlás során');
     } finally {
       setLoadingInstantRescue(false);
     }
@@ -108,10 +106,10 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         {/* Header */}
         <DialogHeader className="space-y-0.5 mb-2">
           <DialogTitle className="text-xl font-black text-center bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(234,179,8,0.8)] leading-tight tracking-wide" style={{ textShadow: '0 2px 10px rgba(234,179,8,0.6), 0 0 20px rgba(234,179,8,0.4)' }}>
-            {t('dialogs.inGameRescue.title')}
+            Majdnem kiestél... 🎰
           </DialogTitle>
           <p className="text-center text-yellow-100 text-xs font-bold drop-shadow-lg">
-            {t('dialogs.inGameRescue.subtitle')}
+            Válassz egy mentőcsomagot!
           </p>
         </DialogHeader>
 
@@ -121,7 +119,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
             <div className="flex items-center gap-1.5">
               <span className="text-2xl drop-shadow-lg">💚</span>
               <div>
-                <p className="text-blue-200 text-[9px] font-bold">{t('dialogs.inGameRescue.life')}</p>
+                <p className="text-blue-200 text-[9px] font-bold">Élet</p>
                 <p className="text-white font-black text-xl drop-shadow-lg">{currentLives}</p>
               </div>
             </div>
@@ -129,7 +127,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
             <div className="flex items-center gap-1.5">
               <span className="text-2xl drop-shadow-lg">🪙</span>
               <div>
-                <p className="text-yellow-200 text-[9px] font-bold">{t('dialogs.inGameRescue.gold')}</p>
+                <p className="text-yellow-200 text-[9px] font-bold">Arany</p>
                 <p className="text-white font-black text-xl drop-shadow-lg">{currentGold}</p>
               </div>
             </div>
@@ -150,11 +148,11 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </div>
 
               <h3 className="text-xs font-black text-center bg-gradient-to-r from-yellow-200 via-yellow-100 to-yellow-200 bg-clip-text text-transparent mb-1 drop-shadow-lg leading-tight tracking-wide">
-                {t('dialogs.inGameRescue.goldSaver')}
+                Gold Saver
               </h3>
 
               <p className="text-blue-100 text-[9px] text-center mb-2 font-semibold leading-tight px-1">
-                {t('dialogs.inGameRescue.goldSaverDesc')}
+                500 aranyért 250 aranyat + 15 életet
               </p>
 
               {/* Red highlight bar for rewards */}
@@ -169,7 +167,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
               {!hasEnoughGold && (
                 <p className="text-yellow-300 text-[8px] text-center mb-1.5 font-bold drop-shadow-md">
-                  {t('dialogs.inGameRescue.notEnoughGold')}
+                  ⚠️ Nincs elég aranyad
                 </p>
               )}
 
@@ -181,12 +179,12 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 {loadingGoldSaver ? (
                   <>
                     <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                    <span className="text-[9px]">{t('dialogs.inGameRescue.processing')}</span>
+                    <span className="text-[9px]">Feldolgozás...</span>
                   </>
                 ) : hasEnoughGold ? (
-                  <span className="text-xs tracking-wide">500 {t('dialogs.inGameRescue.gold').toUpperCase()}</span>
+                  <span className="text-xs tracking-wide">500 ARANY</span>
                 ) : (
-                  <span className="text-[9px]">{t('game.notEnoughCoins')}</span>
+                  <span className="text-[9px]">NINCS ELÉG</span>
                 )}
               </Button>
             </div>
@@ -204,11 +202,11 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </div>
 
               <h3 className="text-xs font-black text-center bg-gradient-to-r from-pink-200 via-pink-100 to-pink-200 bg-clip-text text-transparent mb-1 drop-shadow-lg leading-tight tracking-wide">
-                {t('dialogs.inGameRescue.instantRescue')}
+                Instant Rescue
               </h3>
 
               <p className="text-pink-100 text-[9px] text-center mb-2 font-semibold leading-tight px-1">
-                {t('dialogs.inGameRescue.instantRescueDesc')}
+                +1000 arany + 25 élet azonnal!
               </p>
 
               {/* Red highlight bar for rewards */}
@@ -229,7 +227,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 {loadingInstantRescue ? (
                   <>
                     <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                    <span className="text-[9px]">{t('dialogs.inGameRescue.processing')}</span>
+                    <span className="text-[9px]">Feldolgozás...</span>
                   </>
                 ) : (
                   <span className="text-xs tracking-wide">1,49 $</span>
@@ -237,7 +235,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </Button>
 
               <p className="text-pink-200/60 text-[7px] text-center mt-1 leading-tight font-medium">
-                {t('dialogs.inGameRescue.immediateCredit')}
+                Azonnali jóváírás
               </p>
             </div>
           </div>
@@ -246,14 +244,14 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         {/* Footer */}
         <div className="text-center pt-1.5 border-t border-yellow-500/20">
           <p className="text-yellow-100/80 text-[9px] mb-1 leading-snug font-semibold drop-shadow-md">
-            {t('dialogs.inGameRescue.continueMessage')}
+            Ott folytatod, ahol abbahagytad! 🎮
           </p>
           <Button
             onClick={onClose}
             variant="ghost"
             className="text-yellow-200/70 hover:text-yellow-100 hover:bg-white/10 text-xs h-7 px-3 font-bold"
           >
-            {t('dialogs.inGameRescue.cancel')}
+            Mégsem
           </Button>
         </div>
       </DialogContent>
