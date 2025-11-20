@@ -230,5 +230,61 @@
     "about": "Über uns",
     "logout": "Abmelden",
     "notLoggedIn": "Du bist nicht angemeldet! Bitte melde dich an!"
+  },
+  "dialogs": {
+    "dailyGift": {
+      "title": "TÄGLICHES GESCHENK",
+      "day": "TAG",
+      "todayReward": "HEUTE ERHÄLTST DU",
+      "claim": "EINLÖSEN",
+      "comeLater": "SPÄTER",
+      "claiming": "Einlösen...",
+      "alreadyClaimed": "HEUTE BEREITS EINGELÖST"
+    },
+    "welcomeBonus": {
+      "title": "WILLKOMMEN!",
+      "specialOffer": "SONDERANGEBOT!",
+      "giftForYou": "Geschenk nur für dich!",
+      "coins": "GOLD",
+      "lives": "LEBEN",
+      "claim": "EINLÖSEN",
+      "claiming": "Einlösen..."
+    },
+    "inGameRescue": {
+      "title": "Fast ausgeschieden... 🎰",
+      "subtitle": "Wähle ein Rettungspaket!",
+      "currentStatus": "Aktueller Status",
+      "life": "Leben",
+      "gold": "Gold",
+      "goldSaver": "Gold Saver",
+      "goldSaverDesc": "500 Gold für 250 Gold + 15 Leben",
+      "instantRescue": "Sofort-Rettung",
+      "instantRescueDesc": "+1000 Gold + 25 Leben sofort!",
+      "notEnoughGold": "⚠️ Nicht genug Gold",
+      "processing": "Verarbeitung...",
+      "immediateCredit": "Sofortige Gutschrift",
+      "continueMessage": "Dort weitermachen, wo du aufgehört hast! 🎮",
+      "cancel": "Abbrechen"
+    },
+    "exitGame": {
+      "title": "Möchtest du wirklich beenden?",
+      "warningGoldLost": "⚠️ Alles bisher gesammelte Gold geht verloren! ⚠️",
+      "warningProgress": "Wenn du zurückgehst, werden alle bisherigen Ergebnisse gelöscht und du erhältst keine Goldmünzen.",
+      "gameCompleted": "Dein Spiel ist beendet, Gold gutgeschrieben.",
+      "exit": "Beenden",
+      "stay": "Bleiben"
+    },
+    "continueGame": {
+      "timeout": "Zeit abgelaufen!",
+      "wrong": "Falsche Antwort!",
+      "outOfLives": "Leben aufgebraucht!",
+      "continue": "Fortsetzen?",
+      "notEnoughCoins": "Nicht genug Münzen zum Fortsetzen. Besuche den Shop!",
+      "continueDescription": "Du kannst das Spiel für {{cost}} Münzen fortsetzen, oder dein aktuelles Ergebnis wird beim Beenden gespeichert.",
+      "continueButton": "Fortsetzen ({{cost}} Münzen)",
+      "buyNow": "🛒 Jetzt kaufen",
+      "exitAndSave": "Beenden und speichern",
+      "backToHome": "Zurück zur Startseite"
+    }
   }
 }

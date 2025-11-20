@@ -230,5 +230,61 @@
     "about": "Over ons",
     "logout": "Uitloggen",
     "notLoggedIn": "Je bent niet ingelogd! Log alsjeblieft in!"
+  },
+  "dialogs": {
+    "dailyGift": {
+      "title": "DAGELIJKS CADEAU",
+      "day": "DAG",
+      "todayReward": "VANDAAG KRIJG JE",
+      "claim": "CLAIMEN",
+      "comeLater": "LATER",
+      "claiming": "Claimen...",
+      "alreadyClaimed": "VANDAAG AL GECLAIMD"
+    },
+    "welcomeBonus": {
+      "title": "WELKOM!",
+      "specialOffer": "SPECIALE AANBIEDING!",
+      "giftForYou": "Cadeau alleen voor jou!",
+      "coins": "GOUD",
+      "lives": "LEVENS",
+      "claim": "CLAIMEN",
+      "claiming": "Claimen..."
+    },
+    "inGameRescue": {
+      "title": "Bijna uitgeschakeld... 🎰",
+      "subtitle": "Kies een reddingspakket!",
+      "currentStatus": "Huidige status",
+      "life": "Leven",
+      "gold": "Goud",
+      "goldSaver": "Goud bespaarder",
+      "goldSaverDesc": "500 goud voor 250 goud + 15 levens",
+      "instantRescue": "Direct redding",
+      "instantRescueDesc": "+1000 goud + 25 levens direct!",
+      "notEnoughGold": "⚠️ Niet genoeg goud",
+      "processing": "Verwerken...",
+      "immediateCredit": "Directe creditering",
+      "continueMessage": "Ga verder waar je gebleven was! 🎮",
+      "cancel": "Annuleren"
+    },
+    "exitGame": {
+      "title": "Weet je zeker dat je wilt afsluiten?",
+      "warningGoldLost": "⚠️ Al het tot nu toe verzamelde goud gaat verloren! ⚠️",
+      "warningProgress": "Als je teruggaat, worden alle verzamelde resultaten verwijderd en ontvang je geen gouden munten.",
+      "gameCompleted": "Je spel is voltooid, goud gecrediteerd.",
+      "exit": "Afsluiten",
+      "stay": "Blijven"
+    },
+    "continueGame": {
+      "timeout": "Tijd is op!",
+      "wrong": "Fout antwoord!",
+      "outOfLives": "Geen levens meer!",
+      "continue": "Doorgaan?",
+      "notEnoughCoins": "Niet genoeg munten om door te gaan. Bezoek de winkel!",
+      "continueDescription": "Je kunt het spel voortzetten voor {{cost}} munten, of je huidige resultaat wordt opgeslagen als je afsluit.",
+      "continueButton": "Doorgaan ({{cost}} munten)",
+      "buyNow": "🛒 Nu kopen",
+      "exitAndSave": "Afsluiten en opslaan",
+      "backToHome": "Terug naar home"
+    }
   }
 }
