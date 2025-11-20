@@ -517,6 +517,8 @@ const GamePreview = () => {
     setRemovedAnswer(null);
     setAudienceVotes({});
     setErrorBannerVisible(false);
+    // Hide coin reward animation on restart
+    setCoinRewardTrigger(0);
     
     // Start new game in background (seamless - skip video)
     // This will fetch new questions while current one stays visible
@@ -698,6 +700,9 @@ const GamePreview = () => {
     setCanSwipe(false);
     setErrorBannerVisible(false);
     setQuestionVisible(false);
+    
+    // Hide coin reward animation when moving to next question
+    setCoinRewardTrigger(0);
     
     if (currentQuestionIndex >= questions.length - 1) {
       // Game completed - show results toast and wait for swipe up to restart
