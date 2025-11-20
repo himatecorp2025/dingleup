@@ -244,7 +244,7 @@ const Dashboard = () => {
 
   const handleSpeedBoost = async () => {
     if (!userId) {
-      toast.error('Kérlek jelentkezz be a vásárláshoz');
+      toast.error(t('shop.pleaseLogin'));
       return;
     }
 
@@ -267,11 +267,11 @@ const Dashboard = () => {
 
   const handleActivatePremiumSpeed = async () => {
     try {
-      toast.loading('Premium Speed aktiválása...', { id: 'activate-premium-speed' });
+      toast.loading(t('shop.activatingPremiumSpeed'), { id: 'activate-premium-speed' });
       
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nem vagy bejelentkezve', { id: 'activate-premium-speed' });
+        toast.error(t('shop.notLoggedIn'), { id: 'activate-premium-speed' });
         return;
       }
       
@@ -283,29 +283,29 @@ const Dashboard = () => {
       if (error) throw error;
 
       if (data?.success) {
-        toast.success(`A Premium Speed Booster aktiválva! ${data.activatedSpeed?.speedCount}× ${data.activatedSpeed?.speedDurationMinutes} perces Speed gyorsítás elindult.`, { id: 'activate-premium-speed' });
+        toast.success(t('shop.premiumSpeedActivated', { count: data.activatedSpeed?.speedCount, minutes: data.activatedSpeed?.speedDurationMinutes }), { id: 'activate-premium-speed' });
         await refetchWallet();
         await refreshProfile();
       } else if (data?.error === 'NO_PENDING_PREMIUM') {
         // Already activated - just inform user, no error
-        toast.info('A Premium Speed már aktiválva lett.', { id: 'activate-premium-speed' });
+        toast.info(t('shop.premiumSpeedAlreadyActivated'), { id: 'activate-premium-speed' });
       } else {
-        throw new Error(data?.error || 'Ismeretlen hiba');
+        throw new Error(data?.error || t('shop.unknownError'));
       }
     } catch (error) {
       console.error('Premium speed activation error:', error);
-      const errorMsg = error instanceof Error ? error.message : 'Hiba történt az aktiválás során';
+      const errorMsg = error instanceof Error ? error.message : t('shop.activationError');
       toast.error(errorMsg, { id: 'activate-premium-speed' });
     }
   };
 
   const purchasePremiumBooster = async (confirmInstant: boolean = false) => {
     try {
-      toast.loading('Fizetési oldal betöltése...', { id: 'purchase-premium-booster' });
+      toast.loading(t('shop.loadingPaymentPage'), { id: 'purchase-premium-booster' });
       
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nem vagy bejelentkezve', { id: 'purchase-premium-booster' });
+        toast.error(t('shop.notLoggedIn'), { id: 'purchase-premium-booster' });
         return;
       }
       
@@ -320,13 +320,13 @@ const Dashboard = () => {
       if (data?.url) {
         // Redirect to Stripe Checkout in new tab
         window.open(data.url, '_blank');
-        toast.success('Fizetési oldal megnyitva új fülön', { id: 'purchase-premium-booster' });
+        toast.success(t('shop.paymentPageOpened'), { id: 'purchase-premium-booster' });
       } else {
-        throw new Error('Fizetési URL nem érkezett meg');
+        throw new Error(t('shop.paymentUrlMissing'));
       }
     } catch (error) {
       console.error('Premium booster payment error:', error);
-      const errorMsg = error instanceof Error ? error.message : 'Hiba történt a fizetési oldal betöltése során';
+      const errorMsg = error instanceof Error ? error.message : t('shop.paymentPageError');
       toast.error(errorMsg, { id: 'purchase-premium-booster' });
     }
   };

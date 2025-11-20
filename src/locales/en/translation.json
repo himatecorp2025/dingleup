@@ -76,19 +76,25 @@
     "mobileOnly": "Mobile Only",
     "mobileOnlyDescription": "This game is only available on mobile and tablet devices.",
     "backToHome": "Back to Home",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "lifeline5050": "50/50",
+    "lifeline2x": "2x",
+    "lifelineAudience": "Audience"
   },
   "leaderboard": {
-    "title": "Leaderboard",
+    "title": "Daily Leaderboard",
     "daily": "Daily",
     "weekly": "Weekly",
     "allTime": "All Time",
     "yourRank": "You",
     "topPlayers": "Top Players",
-    "correctAnswers": "Correct answers",
+    "correctAnswers": "correct answers",
     "country": "Country",
     "forTheGeniuses": "FOR THE GENIUSES",
-    "backToDashboard": "Back to Dashboard"
+    "backToDashboard": "Back to Dashboard",
+    "sundayJackpot": "SUNDAY JACKPOT",
+    "top25DailyReward": "TOP25 DAILY REWARD",
+    "rewardsAutoCredit": "Rewards are automatically credited to the TOP25 players every day at midnight"
   },
   "profile": {
     "title": "My Profile",
@@ -161,7 +167,17 @@
     "purchaseSuccess": "Purchase successful!",
     "activateSpeed": "Activate Speed",
     "speedActive": "Speed Active",
-    "paymentCancelled": "You stepped back, your reward is lost!"
+    "paymentCancelled": "You stepped back, your reward is lost!",
+    "pleaseLogin": "Please log in to make a purchase",
+    "activatingPremiumSpeed": "Activating Premium Speed...",
+    "premiumSpeedActivated": "Premium Speed Booster activated! {{count}}× {{minutes}} minute Speed boost started.",
+    "premiumSpeedAlreadyActivated": "Premium Speed is already activated.",
+    "unknownError": "Unknown error",
+    "loadingPaymentPage": "Loading payment page...",
+    "paymentPageOpened": "Payment page opened in new tab",
+    "paymentUrlMissing": "Payment URL not received",
+    "paymentPageError": "Error loading payment page",
+    "activationError": "Error occurred during activation"
   },
   "rewards": {
     "dailyGift": "Daily Gift",
