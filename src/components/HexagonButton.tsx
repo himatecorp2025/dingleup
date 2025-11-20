@@ -32,12 +32,22 @@ export const HexagonButton = ({
     <button
       className={cn(
         'hexagon-button font-bold touch-manipulation',
+        'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background',
+        'transition-all duration-200',
         variants[variant],
         sizes[size],
         disabled && 'opacity-50 cursor-not-allowed',
         className
       )}
       disabled={disabled}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      onKeyDown={(e) => {
+        if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          props.onClick?.(e as any);
+        }
+      }}
       {...props}
     >
       {children}

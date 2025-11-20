@@ -99,8 +99,22 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
     }
   };
 
+  // Accessibility labels
+  const getAriaLabel = () => {
+    switch (type) {
+      case 'rank':
+        return `Rangsor pozíció: ${value}`;
+      case 'coins':
+        return `Aranyérmék száma: ${value}`;
+      case 'lives':
+        return `Életek száma: ${value}`;
+      default:
+        return '';
+    }
+  };
+
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative ${className}`} role="status" aria-label={getAriaLabel()}>
       {/* Outer glow */}
       <div
         className="absolute inset-0 rounded-full blur-xl opacity-60 animate-pulse"

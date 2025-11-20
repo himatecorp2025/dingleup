@@ -16,6 +16,15 @@ export const GameHeader = ({ lives, maxLives, coins, onExit }: GameHeaderProps) 
         onClick={onExit}
         className="relative p-3 rounded-full hover:scale-110 transition-all"
         title="Kilépés a játékból"
+        aria-label="Kilépés a játékból"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onExit();
+          }
+        }}
       >
         {/* BASE SHADOW */}
         <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />

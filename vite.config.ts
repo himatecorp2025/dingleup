@@ -107,13 +107,23 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg}'],
-        navigateFallback: null,
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,mp4,mp3,woff,woff2}'],
+        // Offline fallback strategy - serve app shell on navigation failures
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api/, /^\/admin/],
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // Increased for video files
         cleanupOutdatedCaches: true,
         skipWaiting: true,
         clientsClaim: true,
+        // Pre-cache critical assets for offline functionality
+        additionalManifestEntries: [
+          { url: '/dingleup-logo.png', revision: null },
+          { url: '/assets/introvideo.mp4', revision: null },
+          { url: '/assets/DingleUP.mp3', revision: null },
+          { url: '/assets/game-background.png', revision: null }
+        ],
         runtimeCaching: [
+          // Supabase API - Network first with fallback
           {
             urlPattern: ({ url }) => url.origin === 'https://wdpxmwsxhckazwxufttk.supabase.co',
             handler: 'NetworkFirst',
@@ -124,6 +134,54 @@ export default defineConfig(({ mode }) => ({
                 maxAgeSeconds: 60 * 60 * 24
               },
               networkTimeoutSeconds: 10
+            }
+          },
+          // Images - Cache first with fallback to network
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
+          },
+          // Videos - Network first, cache for offline
+          {
+            urlPattern: /\.(?:mp4|webm)$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'videos',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 7
+              }
+            }
+          },
+          // Audio - Network first, cache for offline
+          {
+            urlPattern: /\.(?:mp3|wav|ogg)$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'audio',
+              expiration: {
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 60 * 24 * 7
+              }
+            }
+          },
+          // Fonts - Cache first with long expiration
+          {
+            urlPattern: /\.(?:woff|woff2|ttf|otf)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'fonts',
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
             }
           }
         ]
