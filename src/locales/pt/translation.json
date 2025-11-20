@@ -434,5 +434,13 @@
       "success": "Relatório enviado",
       "error": "Erro ao enviar relatório"
     }
+  },
+  "leaderboard": {
+    "rank": "Posição",
+    "yesterdayVictory": "VITÓRIA DE ONTEM!",
+    "congratsTop": "Parabéns! Ontem você ficou no TOP {{rank}}!",
+    "weeklyVictory": "VITÓRIA SEMANAL",
+    "top10": "TOP 10 POSIÇÃO",
+    "weeklyTopMessage": "Com base no seu desempenho da semana passada, você entrou no TOP 10! Parabéns! 🎉"
   }
 }

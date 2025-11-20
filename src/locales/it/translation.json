@@ -443,5 +443,13 @@
       "success": "Segnalazione inviata",
       "error": "Errore nell'invio della segnalazione"
     }
+  },
+  "leaderboard": {
+    "rank": "Posizione",
+    "yesterdayVictory": "VITTORIA DI IERI!",
+    "congratsTop": "Congratulazioni! Ieri sei entrato nella TOP {{rank}}!",
+    "weeklyVictory": "VITTORIA SETTIMANALE",
+    "top10": "TOP 10 POSIZIONE",
+    "weeklyTopMessage": "In base alle tue prestazioni della scorsa settimana, sei entrato nella TOP 10! Congratulazioni! 🎉"
   }
 }
