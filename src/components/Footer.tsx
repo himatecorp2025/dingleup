@@ -1,6 +1,8 @@
 import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -26,7 +28,7 @@ const Footer = () => {
               />
             </svg>
             <p className="text-white/80 mb-4 max-w-md drop-shadow-lg">
-              A Dingle UP! egy modern kvízjáték, ahol tesztelheted tudásod, versenyezhetsz barátaiddal és nyerhetsz értékes jutalmakat.
+              {t('landing.footerDescription')}
             </p>
             <div className="flex gap-4">
               <a 
@@ -129,9 +131,9 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-white/10 pt-8 text-center text-white/70 text-sm">
-          <p className="drop-shadow">© {currentYear} Dingle UP! Minden jog fenntartva.</p>
+          <p className="drop-shadow">{t('landing.footerCopyright', { year: currentYear })}</p>
           <p className="mt-2 drop-shadow">
-            Készítve ❤️-tel | Játék fejlesztés alatt
+            {t('landing.footerMadeWith')}
           </p>
         </div>
       </div>
