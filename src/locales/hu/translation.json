@@ -49,7 +49,8 @@
     "freeBooster": "Ingyenes Booster",
     "premiumBooster": "Prémium Booster",
     "yourRanking": "A te helyezésed",
-    "dailyRanking": "Napi helyezés"
+    "dailyRanking": "Napi helyezés",
+    "greeting": "Szia, {{username}}!"
   },
   "game": {
     "question": "Kérdés",
@@ -67,7 +68,11 @@
     "exitGame": "Kilépés",
     "notEnoughLives": "Nincs elég életed a játék indításához",
     "lifeDeducted": "1 élet levonva, 1 arany jóváírva",
-    "swipeToContinue": "Görgess tovább hogy új játékot indíthass"
+    "swipeToContinue": "Görgess tovább hogy új játékot indíthass",
+    "mobileOnly": "Csak mobilon",
+    "mobileOnlyDescription": "Ez a játék csak mobil és tablet eszközökön érhető el.",
+    "backToHome": "Vissza a főoldalra",
+    "loading": "Betöltés..."
   },
   "leaderboard": {
     "title": "Ranglista",

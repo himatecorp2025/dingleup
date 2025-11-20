@@ -118,7 +118,7 @@ const Dashboard = () => {
   // Check for canceled payment - separate useEffect for searchParams
   useEffect(() => {
     if (searchParams.get('canceled') === 'true') {
-      toast.error('Visszaléptél, a jutalmad elveszett!', {
+      toast.error(t('shop.paymentCancelled'), {
         duration: 5000,
         style: {
           background: 'linear-gradient(135deg, #ff0000 0%, #cc0000 100%)',
@@ -334,7 +334,7 @@ const Dashboard = () => {
   if (loading) {
   return (
     <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-      <p className="text-lg text-foreground">Betöltés...</p>
+      <p className="text-lg text-foreground">{t('common.loading')}</p>
     </div>
   );
 }
@@ -342,7 +342,7 @@ const Dashboard = () => {
 if (!profile) {
   return (
     <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-      <p className="text-lg text-foreground">Betöltés...</p>
+      <p className="text-lg text-foreground">{t('common.loading')}</p>
     </div>
   );
 }
@@ -410,7 +410,7 @@ if (!profile) {
             {/* Left: Greeting */}
             <div className="flex items-center gap-3 h-12 sm:h-16 md:h-20">
               <h1 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
-                Szia, {profile.username}!
+                {t('dashboard.greeting', { username: profile.username })}
               </h1>
             </div>
 
