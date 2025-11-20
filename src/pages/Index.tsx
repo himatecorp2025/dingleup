@@ -11,7 +11,10 @@ import { LoginPromoManager } from '@/components/LoginPromoManager';
 
 const Index = () => {
   const navigate = useNavigate();
-  const [isMobileOrTablet, setIsMobileOrTablet] = useState(true);
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(() => {
+    // Immediate check on first render
+    return window.innerWidth <= 1024;
+  });
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,6 +36,11 @@ const Index = () => {
       setUserId(session?.user?.id ?? null);
     });
   }, []);
+
+  // Mobile/tablet esetén ne rendereljünk semmit, az App.tsx már átnavigál
+  if (isMobileOrTablet) {
+    return null;
+  }
 
   return (
     <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] overflow-x-hidden overflow-y-auto">
