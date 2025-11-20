@@ -75,31 +75,69 @@ serve(async (req) => {
       );
     }
 
-    // Format the questions
-    const selectedQuestions = questions.map((q: any) => ({
-      id: q.id,
-      question: q.question,
-      answers: Array.isArray(q.answers) ? q.answers : [],
-      correctAnswer: Array.isArray(q.answers) ? q.answers.findIndex((a: any) => a.correct === true) : 0,
-      difficulty: 'medium'
-    }));
+    // CRITICAL: Validate and format questions with proper error handling
+    if (questions.length < 15) {
+      console.error('[start-game-session] Insufficient questions:', questions.length);
+      return new Response(
+        JSON.stringify({ error: `Not enough questions in database: only ${questions.length} found, need 15` }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // Create new game session (removed idempotency check for speed)
+    // Format questions for client with proper validation
+    const clientQuestions = questions.map((q: any, idx: number) => {
+      // Validate answers structure
+      if (!Array.isArray(q.answers) || q.answers.length !== 3) {
+        console.error(`[start-game-session] Invalid answers for question ${q.id}:`, q.answers);
+        throw new Error(`Question ${q.id} has invalid answers structure`);
+      }
+
+      // Validate each answer has required fields
+      for (const ans of q.answers) {
+        if (!ans.key || !ans.text || ans.correct === undefined) {
+          console.error(`[start-game-session] Invalid answer structure in question ${q.id}:`, ans);
+          throw new Error(`Question ${q.id} has invalid answer structure`);
+        }
+      }
+
+      const formattedAnswers = q.answers.map((ans: any) => ({
+        key: ans.key,
+        text: ans.text,
+        correct: ans.correct === true
+      }));
+
+      const correctIndex = formattedAnswers.findIndex((a: any) => a.correct === true);
+      if (correctIndex === -1) {
+        console.error(`[start-game-session] No correct answer in question ${q.id}`);
+        throw new Error(`Question ${q.id} has no correct answer`);
+      }
+
+      return {
+        id: q.id,
+        question: q.question,
+        answers: formattedAnswers,
+        topic: 'mixed',
+        audience: q.audience || { A: 33, B: 33, C: 34 },
+        third: q.third || 'A'
+      };
+    });
+
+    // Create session data for database storage
     const sessionId = crypto.randomUUID();
     const sessionData = {
       user_id: user.id,
       session_id: sessionId,
-      category: 'mixed', // Always use "mixed" category
-      questions: selectedQuestions.map(q => ({
-        id: q.id, // Include question ID
+      category: 'mixed',
+      questions: clientQuestions.map(q => ({
+        id: q.id,
         question: q.question,
-        correctAnswer: q.correctAnswer,
-        difficulty: q.difficulty
+        correctAnswer: q.answers.findIndex((a: any) => a.correct),
+        difficulty: 'medium'
       })),
       current_question: 0,
       correct_answers: 0,
       started_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 min expiry
+      expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
     };
 
     // Store session in database
@@ -115,19 +153,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`[start-game-session] Created new session ${sessionId} for user ${user.id}`);
-
-    // Return questions with Answer objects - preserve correct flags for frontend game logic
-    const clientQuestions = selectedQuestions.map(q => ({
-      id: q.id,
-      question: q.question,
-      answers: Array.isArray(q.answers) ? q.answers.map((ans: any) => ({
-        key: ans.key || 'A',
-        text: ans.text || '',
-        correct: ans.correct || false // Preserve correct flag for frontend
-      })) : [],
-      topic: 'mixed'
-    }));
+    console.log(`[start-game-session] Session ${sessionId} created with ${clientQuestions.length} questions for user ${user.id}`);
 
     return new Response(
       JSON.stringify({ 
