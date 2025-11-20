@@ -19,13 +19,11 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
 
     const handleCanPlay = () => {
       setVideoLoaded(true);
+      // Start playing immediately without any delay
       video.play().catch((err) => {
         console.warn('[GameLoadingScreen] Autoplay failed:', err);
-        if (err.name !== 'AbortError') {
-          setTimeout(() => {
-            onVideoEnd();
-          }, 2000);
-        }
+        // On autoplay failure, immediately proceed to game
+        onVideoEnd();
       });
     };
 
@@ -43,10 +41,19 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
       }, 2000);
     };
 
+    // Preload and start immediately
+    video.preload = 'auto';
     video.addEventListener('canplay', handleCanPlay);
     video.addEventListener('ended', handleEnded);
     video.addEventListener('error', handleError);
+    
+    // Force immediate load
     video.load();
+    
+    // Attempt to start playing as soon as possible
+    video.play().catch(() => {
+      // Will retry when canplay fires
+    });
 
     return () => {
       video.removeEventListener('canplay', handleCanPlay);
@@ -101,9 +108,11 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
           muted
           playsInline
           preload="auto"
+          autoPlay
           src={loadingVideo}
           onEnded={handleVideoEnd}
           onPause={(e) => {
+            // Prevent accidental pauses - keep video playing
             if (videoRef.current && !hasEnded.current && videoRef.current.currentTime < videoRef.current.duration) {
               videoRef.current.play().catch(() => {});
             }
