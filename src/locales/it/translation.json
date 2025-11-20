@@ -14,6 +14,9 @@
     "yes": "Sì",
     "no": "No",
     "ok": "OK",
+    "or": "o",
+    "hide": "Nascondi",
+    "show": "Mostra",
     "connectionRestored": "Connessione ripristinata",
     "internetAvailable": "La connessione Internet è nuovamente disponibile.",
     "noInternet": "Nessuna connessione Internet",
@@ -37,7 +40,10 @@
     "loginError": "Errore di accesso",
     "invalidCredentials": "Email o password non validi",
     "ageRequirement": "Solo le persone che hanno compiuto 16 anni possono partecipare al gioco",
-    "termsAccept": "Accetto i Termini di Servizio e confermo che i miei dati personali sono accurati e ho almeno 16 anni"
+    "termsAccept": "Accetto i Termini di Servizio e confermo che i miei dati personali sono accurati e ho almeno 16 anni",
+    "countryCode": "Paese",
+    "dataAccuracy": "Confermo che i miei dati personali forniti sono accurati",
+    "ageConfirmation": "Confermo di avere almeno 16 anni"
   },
   "dashboard": {
     "title": "Pannello",
@@ -76,7 +82,9 @@
     "mobileOnly": "Solo Mobile",
     "mobileOnlyDescription": "Questo gioco è disponibile solo su dispositivi mobili e tablet.",
     "backToHome": "Torna alla Home",
-    "loading": "Caricamento..."
+    "loading": "Caricamento...",
+    "notEnoughCoins": "Monete insufficienti",
+    "purchaseCoins": "Acquista monete"
   },
   "leaderboard": {
     "title": "Classifica",
@@ -88,7 +96,9 @@
     "correctAnswers": "Risposte corrette",
     "country": "Paese",
     "forTheGeniuses": "PER I GENI",
-    "backToDashboard": "Torna alla Dashboard"
+    "backToDashboard": "Torna alla Dashboard",
+    "rank": "Posizione",
+    "player": "Giocatore"
   },
   "profile": {
     "title": "Il mio profilo",
@@ -136,7 +146,22 @@
     "specialCharRequired": "Carattere speciale (@$!%*?&.) richiesto",
     "birthDate": "Data di nascita",
     "country": "Paese",
-    "invitationCode": "Codice invito"
+    "invitationCode": "Codice invito",
+    "username": "Nome utente",
+    "email": "Email",
+    "coins": "Monete",
+    "lives": "Vite",
+    "totalCorrectAnswers": "Risposte corrette totali",
+    "correctAnswers": "Risposte corrette",
+    "winRate": "Tasso di vittoria",
+    "weeklyCorrectAnswers": "Risposte corrette settimanali",
+    "uploadAvatar": "Carica avatar",
+    "uploadSuccess": "Caricamento riuscito",
+    "invalidUsername": "Nome utente non valido",
+    "usernameTaken": "Nome utente già preso",
+    "invalidPassword": "Password non valida",
+    "updateSuccess": "Aggiornamento riuscito",
+    "updateError": "Errore di aggiornamento"
   },
   "wallet": {
     "title": "Portafoglio",
@@ -144,7 +169,9 @@
     "transactions": "Transazioni",
     "earnCoins": "Guadagna monete",
     "spendCoins": "Spendi monete",
-    "history": "Cronologia"
+    "history": "Cronologia",
+    "earned": "Guadagnato",
+    "spent": "Speso"
   },
   "shop": {
     "title": "Negozio",
@@ -161,7 +188,8 @@
     "purchaseSuccess": "Acquisto riuscito!",
     "activateSpeed": "Attiva velocità",
     "speedActive": "Velocità attiva",
-    "paymentCancelled": "Sei tornato indietro, la tua ricompensa è persa!"
+    "paymentCancelled": "Sei tornato indietro, la tua ricompensa è persa!",
+    "purchaseError": "Errore di acquisto"
   },
   "rewards": {
     "dailyGift": "Regalo giornaliero",
@@ -173,7 +201,8 @@
     "day": "Giorno",
     "congratulations": "Congratulazioni!",
     "youReceived": "Hai ricevuto",
-    "and": "e"
+    "and": "e",
+    "rewardClaimed": "Ricompensa richiesta"
   },
   "notifications": {
     "welcomeBack": "Bentornato!",
@@ -191,24 +220,81 @@
     "unauthorized": "Non autorizzato",
     "sessionExpired": "Sessione scaduta",
     "tryAgain": "Riprova",
-    "contactSupport": "Contatta l'assistenza"
+    "contactSupport": "Contatta l'assistenza",
+    "generic": "Si è verificato un errore",
+    "network": "Errore di rete",
+    "server": "Errore del server"
   },
   "landing": {
     "hero": {
       "title": "Metti alla prova la tua conoscenza!",
       "subtitle": "Compete con gli amici, guadagna ricompense e diventa il miglior giocatore di quiz al mondo",
       "playNow": "Gioca ora",
-      "learnMore": "Scopri di più"
+      "learnMore": "Scopri di più",
+      "cta": "Inizia ora",
+      "login": "Accedi"
     },
     "features": {
       "title": "Perché DingleUP!?",
+      "subtitle": "Cosa offre DingleUP!",
       "categories": "27 Argomenti diversi",
       "categoriesDesc": "Storia, scienza, arte e molto altro",
       "leaderboard": "Classifica globale",
       "leaderboardDesc": "Compete con giocatori di tutto il mondo",
       "rewards": "Ricompense giornaliere",
       "rewardsDesc": "Guadagna monete, vite e bonus di attivazione"
+    },
+    "newsletter": {
+      "title": "Rimani informato",
+      "subtitle": "Iscriviti alla nostra newsletter per ricevere le ultime notizie",
+      "placeholder": "La tua email",
+      "cta": "Iscriviti",
+      "success": "Iscrizione riuscita!",
+      "error": "Errore nell'iscrizione"
     }
+  },
+  "footer": {
+    "tagline": "Metti alla prova le tue conoscenze, vinci premi",
+    "about": "Chi siamo",
+    "features": "Caratteristiche",
+    "faq": "FAQ",
+    "legal": "Legale",
+    "contact": "Contatti",
+    "privacy": "Privacy",
+    "terms": "Termini di utilizzo",
+    "copyright": "© 2025 DingleUP! Tutti i diritti riservati."
+  },
+  "about": {
+    "title": "Su DingleUP!",
+    "mission": {
+      "title": "La nostra missione",
+      "description": "DingleUP! è una piattaforma di quiz interattiva dove puoi mettere alla prova le tue conoscenze in diverse aree, vincere premi e competere con altri giocatori."
+    },
+    "story": {
+      "title": "La nostra storia",
+      "description": "Abbiamo creato DingleUP! per rendere l'apprendimento divertente e coinvolgente. Il nostro obiettivo è fornire un'esperienza di gioco che combini intrattenimento e sviluppo delle conoscenze."
+    },
+    "values": {
+      "title": "I nostri valori",
+      "education": "Educazione",
+      "educationDesc": "Crediamo nel potere dell'apprendimento continuo",
+      "community": "Comunità",
+      "communityDesc": "Costruiamo una comunità di giocatori appassionati",
+      "innovation": "Innovazione",
+      "innovationDesc": "Innoviamo costantemente per migliorare l'esperienza"
+    },
+    "team": {
+      "title": "Il nostro team",
+      "description": "Siamo un team appassionato che lavora per offrire la migliore esperienza di gioco di quiz."
+    },
+    "contact": {
+      "title": "Contattaci",
+      "description": "Hai domande? Non esitare a contattarci a"
+    }
+  },
+  "categorySelector": {
+    "title": "Scegli categoria",
+    "subtitle": "Seleziona una categoria di domande"
   },
   "admin": {
     "dashboard": "Pannello admin",
@@ -243,7 +329,11 @@
       "claim": "RISCATTA",
       "comeLater": "PIÙ TARDI",
       "claiming": "Riscatto...",
-      "alreadyClaimed": "GIÀ RISCATTATO OGGI"
+      "alreadyClaimed": "GIÀ RISCATTATO OGGI",
+      "description": "Richiedi la tua ricompensa giornaliera!",
+      "streak": "Serie",
+      "claimed": "Richiesto!",
+      "comeBackTomorrow": "Torna domani per un altro regalo!"
     },
     "welcomeBonus": {
       "title": "BENVENUTO!",
@@ -252,7 +342,9 @@
       "coins": "ORO",
       "lives": "VITE",
       "claim": "RISCATTA",
-      "claiming": "Riscatto..."
+      "claiming": "Riscatto...",
+      "description": "Benvenuto su DingleUP! ! Richiedi il tuo bonus iniziale!",
+      "claimed": "Bonus richiesto!"
     },
     "inGameRescue": {
       "title": "Quasi eliminato... 🎰",
@@ -268,7 +360,11 @@
       "processing": "Elaborazione...",
       "immediateCredit": "Accredito immediato",
       "continueMessage": "Continua da dove hai lasciato! 🎮",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "description": "Acquista un booster per continuare a giocare!",
+      "freeBooster": "Booster gratuito",
+      "premiumBooster": "Booster Premium",
+      "purchase": "Acquista"
     },
     "exitGame": {
       "title": "Sei sicuro di voler uscire?",
@@ -276,7 +372,9 @@
       "warningProgress": "Se torni indietro, tutti i risultati raccolti verranno eliminati e non riceverai monete d'oro.",
       "gameCompleted": "Il tuo gioco è terminato, oro accreditato.",
       "exit": "Esci",
-      "stay": "Rimani"
+      "stay": "Rimani",
+      "description": "Sei sicuro di voler uscire? Perderai i tuoi progressi.",
+      "cancel": "Annulla"
     },
     "continueGame": {
       "timeout": "Tempo scaduto!",
@@ -288,7 +386,53 @@
       "continueButton": "Continua ({{cost}} monete)",
       "buyNow": "🛒 Acquista ora",
       "exitAndSave": "Esci e salva",
-      "backToHome": "Torna alla home"
+      "backToHome": "Torna alla home",
+      "title": "Continua gioco",
+      "timeoutDesc": "Il tempo è scaduto! Continuare?",
+      "wrongAnswerDesc": "Risposta sbagliata! Continuare?",
+      "outOfLivesDesc": "Non hai vite! Acquistare monete per continuare?",
+      "cannotAfford": "Non puoi permettertelo",
+      "wrongAnswer": "Risposta sbagliata",
+      "exit": "Esci",
+      "needCoins": "Hai bisogno di monete"
+    },
+    "dailyWinner": {
+      "title": "Vincitore giornaliero!",
+      "congratulations": "Congratulazioni!",
+      "youWon": "Hai vinto",
+      "position": "Posizione",
+      "claim": "Richiedi",
+      "close": "Chiudi"
+    },
+    "weeklyWinner": {
+      "title": "Vincitore settimanale!",
+      "congratulations": "Congratulazioni!",
+      "youWon": "Hai vinto",
+      "position": "Posizione",
+      "claim": "Richiedi",
+      "close": "Chiudi"
+    },
+    "invitation": {
+      "title": "Invita amici",
+      "description": "Invita i tuoi amici e vinci premi!",
+      "yourCode": "Il tuo codice",
+      "share": "Condividi",
+      "copy": "Copia",
+      "copied": "Copiato!",
+      "close": "Chiudi"
+    },
+    "report": {
+      "title": "Segnala",
+      "description": "Segnala un problema o utente",
+      "type": "Tipo",
+      "bug": "Bug",
+      "user": "Utente",
+      "content": "Contenuto",
+      "description_field": "Descrizione",
+      "submit": "Invia",
+      "cancel": "Annulla",
+      "success": "Segnalazione inviata",
+      "error": "Errore nell'invio della segnalazione"
     }
   }
 }
