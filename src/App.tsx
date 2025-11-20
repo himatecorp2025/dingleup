@@ -85,6 +85,15 @@ const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
     }
   })();
 
+  // Clear intro flag when app starts in standalone mode to ensure intro plays on every app launch
+  useEffect(() => {
+    if (isStandalone) {
+      try {
+        sessionStorage.removeItem('app_intro_shown');
+      } catch {}
+    }
+  }, [isStandalone]);
+
   const introShown = typeof window !== 'undefined' 
     ? sessionStorage.getItem('app_intro_shown') === '1' 
     : false;
