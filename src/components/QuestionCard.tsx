@@ -102,12 +102,14 @@ export const QuestionCard = ({
           onExit={onExit}
         />
 
-        {/* Coin reward animation positioned between timer right edge and screen right edge, vertically centered between hexagons and question box */}
-        <div className="absolute left-[62.5%] top-[6.5rem] sm:top-[7.5rem] md:top-[8.5rem] z-20">
-          <CoinRewardAnimation 
-            amount={coinRewardAmount} 
-            trigger={coinRewardTrigger}
-          />
+        {/* Space between header and timer where coin animation appears */}
+        <div className="relative h-16 sm:h-20 md:h-24">
+          <div className="absolute left-[75%] top-1/2 -translate-y-1/2 z-20">
+            <CoinRewardAnimation 
+              amount={coinRewardAmount} 
+              trigger={coinRewardTrigger}
+            />
+          </div>
         </div>
 
       {/* Wrapper for Timer + Question + Answers + Help - Vertically centered on mobile/tablet */}
