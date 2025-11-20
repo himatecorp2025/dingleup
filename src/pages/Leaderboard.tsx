@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { LogOut } from 'lucide-react';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { useTranslation } from 'react-i18next';
 
 import DailyRewards from '@/components/DailyRewards';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
@@ -30,6 +31,7 @@ interface DailyRewardsData {
 }
 
 const Leaderboard = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -177,8 +179,8 @@ const Leaderboard = () => {
             <button
               onClick={() => navigate('/dashboard')}
               className="relative p-4 rounded-full hover:scale-110 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center"
-              title="Vissza a dashboardra"
-              aria-label="Vissza a dashboardra"
+              title={t('leaderboard.backToDashboard')}
+              aria-label={t('leaderboard.backToDashboard')}
             >
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
@@ -212,7 +214,7 @@ const Leaderboard = () => {
             filter: 'drop-shadow(0 0 16px hsla(45, 100%, 65%, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6))'
           }}
         >
-          🏆 Ranglista 🏆
+          🏆 {t('leaderboard.title')} 🏆
         </h1>
 
         {/* Countdown Timer - below title */}

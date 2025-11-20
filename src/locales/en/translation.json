@@ -47,7 +47,9 @@
     "dailyGift": "Daily Gift",
     "welcomeBonus": "Welcome Bonus",
     "freeBooster": "Free Booster",
-    "premiumBooster": "Premium Booster"
+    "premiumBooster": "Premium Booster",
+    "yourRanking": "Your Ranking",
+    "dailyRanking": "Daily Ranking"
   },
   "game": {
     "question": "Question",
@@ -76,7 +78,8 @@
     "topPlayers": "Top Players",
     "correctAnswers": "Correct answers",
     "country": "Country",
-    "forTheGeniuses": "FOR THE GENIUSES"
+    "forTheGeniuses": "FOR THE GENIUSES",
+    "backToDashboard": "Back to Dashboard"
   },
   "profile": {
     "title": "My Profile",
