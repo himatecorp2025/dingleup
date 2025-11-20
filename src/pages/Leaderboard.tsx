@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { LogOut } from 'lucide-react';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 
 import DailyRewards from '@/components/DailyRewards';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
@@ -36,6 +37,15 @@ const Leaderboard = () => {
   const [userUsername, setUserUsername] = useState<string | null>(null);
   const [userCorrectAnswers, setUserCorrectAnswers] = useState<number>(0);
   const [dailyRewards, setDailyRewards] = useState<DailyRewardsData | null>(null);
+  
+  // Pull-to-refresh functionality
+  const { isPulling, pullProgress } = usePullToRefresh({
+    onRefresh: async () => {
+      await fetchLeaderboard();
+    },
+    threshold: 80,
+    disabled: false
+  });
 
   // Platform detection for conditional padding
   const [isStandalone, setIsStandalone] = useState(false);
@@ -124,6 +134,19 @@ const Leaderboard = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col relative">
+      {/* Pull-to-refresh indicator */}
+      {isPulling && (
+        <div 
+          className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center pointer-events-none"
+          style={{ 
+            height: `${pullProgress * 60}px`,
+            opacity: pullProgress,
+            paddingTop: 'env(safe-area-inset-top, 0px)'
+          }}
+        >
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400" />
+        </div>
+      )}
       {/* Dynamic Island Safe Area - matches Hero component */}
       <div 
         className="absolute top-0 left-0 right-0 pointer-events-none z-50"
