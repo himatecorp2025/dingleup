@@ -14,6 +14,7 @@ import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useDailyWinnersPopup } from '@/hooks/useDailyWinnersPopup';
 import { useBoosterState } from '@/hooks/useBoosterState';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { useTranslation } from 'react-i18next';
 
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
@@ -35,6 +36,7 @@ import { toast } from 'sonner';
 import { useBroadcastChannel } from '@/hooks/useBroadcastChannel';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [userId, setUserId] = useState<string | undefined>();
