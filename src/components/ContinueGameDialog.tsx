@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Coins, Clock, X } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 interface ContinueGameDialogProps {
   open: boolean;
@@ -30,26 +31,27 @@ export const ContinueGameDialog = ({
   onExit,
   onNeedCoins
 }: ContinueGameDialogProps) => {
+  const { t } = useTranslation();
   const canAfford = currentCoins >= cost;
 
   const getTitle = () => {
     switch (type) {
       case 'timeout':
-        return 'Lejárt az idő!';
+        return t('dialogs.continueGame.timeout');
       case 'wrong':
-        return 'Rossz válasz!';
+        return t('dialogs.continueGame.wrong');
       case 'out-of-lives':
-        return 'Elfogyott az életed!';
+        return t('dialogs.continueGame.outOfLives');
       default:
-        return 'Folytatás?';
+        return t('dialogs.continueGame.continue');
     }
   };
 
   const getDescription = () => {
     if (!canAfford) {
-      return 'Nincs elegendő aranyérméd a folytatáshoz. Látogass el a boltba!';
+      return t('dialogs.continueGame.notEnoughCoins');
     }
-    return `Folytathatod a játékot ${cost} aranyérméért, vagy kilépés esetén mentésre kerül a jelenlegi eredményed.`;
+    return t('dialogs.continueGame.continueDescription', { cost });
   };
 
   const getIcon = () => {
@@ -84,14 +86,14 @@ export const ContinueGameDialog = ({
               className="w-full gap-1.5 sm:gap-2 bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70 text-foreground text-sm sm:text-base py-2 sm:py-2.5"
             >
               <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Folytatás ({cost} aranyérme)
+              {t('dialogs.continueGame.continueButton', { cost })}
             </Button>
           ) : (
             <Button 
               onClick={() => onNeedCoins?.()} 
               className="w-full gap-1.5 sm:gap-2 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-accent-foreground font-bold text-sm sm:text-base py-2 sm:py-2.5"
             >
-              🛒 Azonnali vásárlás
+              {t('dialogs.continueGame.buyNow')}
             </Button>
           )}
           <Button 
@@ -99,7 +101,7 @@ export const ContinueGameDialog = ({
             onClick={onExit} 
             className="w-full border-border/30 text-foreground hover:bg-accent/10 text-sm sm:text-base py-2 sm:py-2.5"
           >
-            {canAfford ? 'Kilépés és mentés' : 'Vissza a főoldalra'}
+            {canAfford ? t('dialogs.continueGame.exitAndSave') : t('dialogs.continueGame.backToHome')}
           </Button>
         </DialogFooter>
       </DialogContent>

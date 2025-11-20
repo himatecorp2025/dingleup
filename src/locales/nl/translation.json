@@ -434,5 +434,13 @@
       "success": "Rapport verzonden",
       "error": "Fout bij verzenden rapport"
     }
+  },
+  "leaderboard": {
+    "rank": "Positie",
+    "yesterdayVictory": "GISTEREN'S OVERWINNING!",
+    "congratsTop": "Gefeliciteerd! Gisteren kwam je in de TOP {{rank}}!",
+    "weeklyVictory": "WEKELIJKSE OVERWINNING",
+    "top10": "TOP 10 POSITIE",
+    "weeklyTopMessage": "Op basis van je prestaties van vorige week, ben je in de TOP 10 gekomen! Gefeliciteerd! 🎉"
   }
 }

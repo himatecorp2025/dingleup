@@ -166,8 +166,8 @@ const DailyGiftDialog = ({
             marginTop: '-3vh'  // 3% feljebb, vertikális center javítás
           }}
         >
-          <DialogTitle className="sr-only">Daily Gift</DialogTitle>
-          <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
+          <DialogTitle className="sr-only">{t('dialogs.dailyGift.title')}</DialogTitle>
+          <DialogDescription className="sr-only">{t('dialogs.dailyGift.subtitle')}</DialogDescription>
 
           {/* Háttér gradiens */}
           <div
@@ -181,7 +181,7 @@ const DailyGiftDialog = ({
           {/* Bezáró X - közelebb a pajzshoz (top: 2vh helyett 1vh) */}
           <button
             onClick={onLater}
-            aria-label="Bezárás"
+            aria-label={t('common.close')}
             className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
             style={{
               top: "max(1vh, env(safe-area-inset-top))",
@@ -283,7 +283,7 @@ const DailyGiftDialog = ({
                         letterSpacing: '0.05em',
                         textShadow: '0 0 12px rgba(255,255,255,0.25)'
                       }}>
-                    DAILY GIFT
+                    {t('dialogs.dailyGift.title')}
                   </h1>
                 </div>
               </div>
