@@ -1663,6 +1663,7 @@ export type Database = {
           lives: number | null
           lives_regeneration_rate: number | null
           max_lives: number | null
+          preferred_language: string | null
           question_swaps_available: number | null
           total_correct_answers: number
           updated_at: string | null
@@ -1690,6 +1691,7 @@ export type Database = {
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
+          preferred_language?: string | null
           question_swaps_available?: number | null
           total_correct_answers?: number
           updated_at?: string | null
@@ -1717,6 +1719,7 @@ export type Database = {
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
+          preferred_language?: string | null
           question_swaps_available?: number | null
           total_correct_answers?: number
           updated_at?: string | null
@@ -2325,6 +2328,51 @@ export type Database = {
           description?: string | null
           id?: number
           name?: string
+        }
+        Relationships: []
+      }
+      translations: {
+        Row: {
+          created_at: string
+          de: string | null
+          en: string | null
+          es: string | null
+          fr: string | null
+          hu: string
+          id: string
+          it: string | null
+          key: string
+          nl: string | null
+          pt: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          de?: string | null
+          en?: string | null
+          es?: string | null
+          fr?: string | null
+          hu: string
+          id?: string
+          it?: string | null
+          key: string
+          nl?: string | null
+          pt?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          de?: string | null
+          en?: string | null
+          es?: string | null
+          fr?: string | null
+          hu?: string
+          id?: string
+          it?: string | null
+          key?: string
+          nl?: string | null
+          pt?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
