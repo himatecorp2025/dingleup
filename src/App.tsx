@@ -44,6 +44,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 
 const AdvancedAnalytics = lazy(() => import("./pages/AdvancedAnalytics"));
 const RetentionDashboard = lazy(() => import("./pages/RetentionDashboard"));
+const MonetizationDashboard = lazy(() => import("./pages/MonetizationDashboard"));
 const PerformanceDashboard = lazy(() => import("./pages/PerformanceDashboard"));
 const EngagementDashboard = lazy(() => import("./pages/EngagementDashboard"));
 const UserJourneyDashboard = lazy(() => import("./pages/UserJourneyDashboard"));
@@ -155,8 +156,9 @@ const AppCore = () => {
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
               <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
-              <Route path="/admin/analytics" element={<ErrorBoundary><AdvancedAnalytics /></ErrorBoundary>} />
+              <Route path="/admin/advanced-analytics" element={<ErrorBoundary><AdvancedAnalytics /></ErrorBoundary>} />
               <Route path="/admin/retention" element={<ErrorBoundary><RetentionDashboard /></ErrorBoundary>} />
+              <Route path="/admin/monetization" element={<ErrorBoundary><MonetizationDashboard /></ErrorBoundary>} />
               <Route path="/admin/performance" element={<ErrorBoundary><PerformanceDashboard /></ErrorBoundary>} />
               <Route path="/admin/engagement" element={<ErrorBoundary><EngagementDashboard /></ErrorBoundary>} />
               <Route path="/admin/user-journey" element={<ErrorBoundary><UserJourneyDashboard /></ErrorBoundary>} />
