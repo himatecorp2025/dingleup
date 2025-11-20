@@ -186,9 +186,9 @@ const Register = () => {
       </div>
 
       <div className="w-full max-w-md relative z-10 my-4">
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative max-h-[85vh] overflow-y-auto">
-          <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10" aria-label="Vissza">
-            <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+          <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Vissza">
+            <ArrowLeft className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
           </button>
 
           {/* Logo inside box */}
@@ -205,7 +205,7 @@ const Register = () => {
           </h1>
           <p className="text-center text-white/70 mb-6 text-sm font-medium">Csatlakozz a kvízjáték közösségéhez! 🎯</p>
 
-          <Button type="button" onClick={handleGoogleAuth} variant="outline" className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300 mb-6" disabled={isLoading}>
+          <Button type="button" onClick={handleGoogleAuth} variant="outline" className="w-full h-12 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300 mb-6 text-base" disabled={isLoading}>
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -225,7 +225,7 @@ const Register = () => {
               <Label className="text-sm font-medium text-white/80">Felhasználónév</Label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type="text" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} className="h-10 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Válassz egy felhasználónevet" disabled={isLoading} />
+                <Input type="text" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} className="h-12 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder="Válassz egy felhasználónevet" disabled={isLoading} />
               </div>
               {errors.username && <p className="text-sm text-red-400">{errors.username}</p>}
             </div>
@@ -234,7 +234,7 @@ const Register = () => {
               <Label className="text-sm font-medium text-white/80">Email</Label>
               <div className="relative group">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="h-10 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="email@pelda.hu" disabled={isLoading} />
+                <Input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="h-12 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder="email@pelda.hu" disabled={isLoading} />
               </div>
               {errors.email && <p className="text-sm text-red-400">{errors.email}</p>}
             </div>
@@ -247,7 +247,7 @@ const Register = () => {
                   type="date" 
                   value={formData.birthDate} 
                   onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} 
-                  className="h-10 w-full pl-10 pr-3 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:ml-auto" 
+                  className="h-12 w-full pl-10 pr-3 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:ml-auto" 
                   disabled={isLoading} 
                   max={new Date(new Date().setFullYear(new Date().getFullYear() - 16)).toISOString().split('T')[0]} 
                   style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' } as React.CSSProperties}
@@ -260,8 +260,8 @@ const Register = () => {
               <Label className="text-sm font-medium text-white/80">Jelszó</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type={showPassword ? "text" : "password"} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="h-10 pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Min. 8 karakter" disabled={isLoading} />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors">
+                <Input type={showPassword ? "text" : "password"} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="h-12 pl-10 pr-12 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder="Min. 8 karakter" disabled={isLoading} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={showPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}>
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
@@ -272,8 +272,8 @@ const Register = () => {
               <Label className="text-sm font-medium text-white/80">Jelszó megerősítése</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type={showPasswordConfirm ? "text" : "password"} value={formData.passwordConfirm} onChange={(e) => setFormData({ ...formData, passwordConfirm: e.target.value })} className="h-10 pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Írd be újra a jelszavad" disabled={isLoading} />
-                <button type="button" onClick={() => setShowPasswordConfirm(!showPasswordConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors">
+                <Input type={showPasswordConfirm ? "text" : "password"} value={formData.passwordConfirm} onChange={(e) => setFormData({ ...formData, passwordConfirm: e.target.value })} className="h-12 pl-10 pr-12 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder="Írd be újra a jelszavad" disabled={isLoading} />
+                <button type="button" onClick={() => setShowPasswordConfirm(!showPasswordConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={showPasswordConfirm ? "Jelszó elrejtése" : "Jelszó megjelenítése"}>
                   {showPasswordConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
@@ -282,7 +282,7 @@ const Register = () => {
 
             <div className="space-y-2">
               <Label className="text-sm font-medium text-white/80">Meghívó kód (opcionális)</Label>
-              <Input type="text" value={inviterCode} onChange={(e) => setInviterCode(e.target.value)} className="h-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Meghívó kód" disabled={isLoading} />
+              <Input type="text" value={inviterCode} onChange={(e) => setInviterCode(e.target.value)} className="h-12 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder="Meghívó kód" disabled={isLoading} />
             </div>
 
             <div className="flex items-start space-x-2">
@@ -293,7 +293,7 @@ const Register = () => {
             </div>
             {errors.termsAccepted && <p className="text-sm text-red-400">{errors.termsAccepted}</p>}
 
-            <Button type="submit" className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300" disabled={isLoading}>
+            <Button type="submit" className="w-full h-12 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300 text-base" disabled={isLoading}>
               {isLoading ? "Regisztráció..." : "Regisztráció 🚀"}
             </Button>
           </form>
