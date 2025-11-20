@@ -93,7 +93,7 @@ export const QuestionCard = ({
         onDoubleTap={toggleLike}
         className="w-full h-full relative"
       >
-        <div className={`w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className}`}>
+        <div className={`relative w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className}`}>
         {/* Top section: Exit button, Lives, Coins */}
         <GameHeader
           lives={lives}
@@ -102,18 +102,16 @@ export const QuestionCard = ({
           onExit={onExit}
         />
 
-        {/* Space between header and timer where coin animation appears */}
-        <div className="relative h-16 sm:h-20 md:h-24 mt-[10%]">
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-            <CoinRewardAnimation 
-              amount={coinRewardAmount} 
-              trigger={coinRewardTrigger}
-            />
-          </div>
+        {/* Coin animation - positioned below header */}
+        <div className="absolute left-1/2 -translate-x-1/2 z-20" style={{ top: '12%' }}>
+          <CoinRewardAnimation 
+            amount={coinRewardAmount} 
+            trigger={coinRewardTrigger}
+          />
         </div>
 
-      {/* Wrapper for Timer + Question + Answers + Help - Vertically centered on mobile/tablet */}
-      <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 pt-[7.2rem] sm:pt-[9rem] pb-[7.2rem] sm:pb-[9rem] md:pt-0 md:pb-0 md:mt-[5.5vh]">
+      {/* Wrapper for Timer + Question + Answers + Help - Vertically centered */}
+      <div className="flex-grow flex flex-col justify-center items-center space-y-1 sm:space-y-1.5 md:space-y-2">
         {/* Middle section: Question and Answers with Reaction Bar */}
         <div className="relative flex">
           {/* Question and Answers */}
