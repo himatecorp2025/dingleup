@@ -10,59 +10,47 @@ interface AudioState {
   loadSettings: () => void;
 }
 
-export const useAudioStore = create<AudioState>((set, get) => ({
-  musicEnabled: true,
-  volume: 0.03, // Default 3%
-  loaded: false,
+export const useAudioStore = create<AudioState>((set, get) => {
+  // Load settings immediately on store creation
+  const savedEnabled = typeof window !== 'undefined' ? localStorage.getItem('musicEnabled') : null;
+  const savedVolume = typeof window !== 'undefined' ? localStorage.getItem('musicVolume') : null;
   
-  setMusicEnabled: (enabled) => {
-    console.log('[AudioStore] Setting music enabled:', enabled);
-    set({ musicEnabled: enabled });
-    localStorage.setItem('musicEnabled', JSON.stringify(enabled));
-    
-    // DO NOT apply directly - let AudioPolicyManager handle this
-    // AudioManager.getInstance().apply(enabled, volume);
-  },
+  const initialEnabled = savedEnabled ? JSON.parse(savedEnabled) : true;
+  const parsedVolume = savedVolume ? parseFloat(savedVolume) : 0.03;
+  const initialVolume = parsedVolume > 0.03 ? 0.03 : parsedVolume;
   
-  setVolume: (vol) => {
-    const v = Math.max(0, Math.min(1, vol));
-    console.log('[AudioStore] Setting volume:', v);
-    set({ volume: v });
-    localStorage.setItem('musicVolume', v.toString());
-    
-    // DO NOT apply directly - let AudioPolicyManager handle this
-    // AudioManager.getInstance().apply(musicEnabled, v);
-  },
+  // Save corrected volume if needed
+  if (typeof window !== 'undefined' && initialVolume === 0.03 && savedVolume !== '0.03') {
+    localStorage.setItem('musicVolume', '0.03');
+  }
   
-  loadSettings: () => {
-    const savedEnabled = localStorage.getItem('musicEnabled');
-    const savedVolume = localStorage.getItem('musicVolume');
+  console.log('[AudioStore] Initialized with settings:', { 
+    musicEnabled: initialEnabled, 
+    volume: initialVolume 
+  });
+  
+  return {
+    musicEnabled: initialEnabled,
+    volume: initialVolume,
+    loaded: true,
     
-    const newEnabled = savedEnabled ? JSON.parse(savedEnabled) : true;
-    // Always use 3% as default, even if there's a saved value that's higher
-    const parsedVolume = savedVolume ? parseFloat(savedVolume) : 0.03;
-    // If saved volume is higher than 3%, reset to 3%
-    const newVolume = parsedVolume > 0.03 ? 0.03 : parsedVolume;
+    setMusicEnabled: (enabled) => {
+      console.log('[AudioStore] Setting music enabled:', enabled);
+      set({ musicEnabled: enabled });
+      localStorage.setItem('musicEnabled', JSON.stringify(enabled));
+    },
     
-    console.log('[AudioStore] Loading settings from localStorage:', { 
-      savedEnabled, 
-      savedVolume,
-      newEnabled, 
-      newVolume 
-    });
+    setVolume: (vol) => {
+      const v = Math.max(0, Math.min(1, vol));
+      console.log('[AudioStore] Setting volume:', v);
+      set({ volume: v });
+      localStorage.setItem('musicVolume', v.toString());
+    },
     
-    // If we reset the volume, save it back to localStorage
-    if (newVolume === 0.03 && savedVolume !== '0.03') {
-      localStorage.setItem('musicVolume', '0.03');
-    }
-    
-    set({
-      musicEnabled: newEnabled,
-      volume: newVolume,
-      loaded: true,
-    });
-    
-    // DO NOT apply directly - let AudioPolicyManager handle this based on route/platform
-    // AudioManager.getInstance().apply(newEnabled, newVolume);
-  },
-}));
+    loadSettings: () => {
+      // Settings are already loaded on initialization, this is a no-op
+      // Kept for backward compatibility with existing components
+      console.log('[AudioStore] loadSettings called (settings already loaded on init)');
+    },
+  };
+});
