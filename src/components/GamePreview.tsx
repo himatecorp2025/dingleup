@@ -97,6 +97,10 @@ const GamePreview = () => {
   const [errorBannerMessage, setErrorBannerMessage] = useState('');
   const [questionVisible, setQuestionVisible] = useState(true);
   
+  // Coin reward animation states
+  const [coinRewardAmount, setCoinRewardAmount] = useState(0);
+  const [coinRewardTrigger, setCoinRewardTrigger] = useState(0);
+  
   // Game start guard - prevents multiple simultaneous starts
   const [isStartingGame, setIsStartingGame] = useState(false);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
@@ -204,6 +208,9 @@ const GamePreview = () => {
               headers: { Authorization: `Bearer ${authSession.access_token}` }
             });
             setCoinsEarned(START_GAME_REWARD);
+            // Trigger coin animation for game start
+            setCoinRewardAmount(START_GAME_REWARD);
+            setCoinRewardTrigger(prev => prev + 1);
             await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
           } catch (err) {
             console.error('[GameStart] Start reward credit failed:', err);
@@ -659,6 +666,9 @@ const GamePreview = () => {
       if (error) throw error;
       // Optimistic local counter (UI), server is authoritative
       setCoinsEarned(coinsEarned + reward);
+      // Trigger coin animation for correct answer
+      setCoinRewardAmount(reward);
+      setCoinRewardTrigger(prev => prev + 1);
       // Notify other views to refresh wallet immediately
       await broadcast('wallet:update', { source: 'correct_answer', coinsDelta: reward });
     } catch (err) {
@@ -1248,6 +1258,8 @@ const GamePreview = () => {
                 lives={profile.lives}
                 maxLives={profile.max_lives}
                 coins={profile.coins}
+                coinRewardAmount={coinRewardAmount}
+                coinRewardTrigger={coinRewardTrigger}
                 onAnswerSelect={handleAnswer}
                 onUseHelp5050={useHelp5050}
                 onUseHelp2xAnswer={useHelp2xAnswer}
