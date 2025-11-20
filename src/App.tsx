@@ -114,7 +114,8 @@ const AppCore = () => {
         <ScrollBehaviorManager />
         <AudioPolicyManager />
         <Suspense fallback={<PageLoader />}>
-          <AppRouteGuard>
+          <div className="animate-fade-in">
+            <AppRouteGuard>
             <Routes>
               {/* Public routes - no ErrorBoundary needed */}
               <Route path="/" element={<Index />} />
@@ -157,6 +158,7 @@ const AppCore = () => {
               <Route path="*" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />
             </Routes>
           </AppRouteGuard>
+          </div>
         </Suspense>
       </BrowserRouter>
     </>

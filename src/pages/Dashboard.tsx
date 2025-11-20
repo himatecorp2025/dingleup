@@ -13,6 +13,7 @@ import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useDailyWinnersPopup } from '@/hooks/useDailyWinnersPopup';
 import { useBoosterState } from '@/hooks/useBoosterState';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
@@ -53,6 +54,18 @@ const Dashboard = () => {
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
   const [dailyGiftJustClaimed, setDailyGiftJustClaimed] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
+  
+  // Pull-to-refresh functionality
+  const { isPulling, pullProgress } = usePullToRefresh({
+    onRefresh: async () => {
+      await Promise.all([
+        refreshProfile(),
+        refetchWallet()
+      ]);
+    },
+    threshold: 80,
+    disabled: !isHandheld
+  });
   
   // Instant wallet sync via broadcast (no 3s delay)
   useBroadcastChannel({
@@ -349,6 +362,19 @@ if (!profile) {
     <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
       background: 'transparent'
     }}>
+      {/* Pull-to-refresh indicator */}
+      {isPulling && (
+        <div 
+          className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center pointer-events-none"
+          style={{ 
+            height: `${pullProgress * 60}px`,
+            opacity: pullProgress,
+            paddingTop: 'env(safe-area-inset-top, 0px)'
+          }}
+        >
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400" />
+        </div>
+      )}
       {/* Background image - EXTENDS BEYOND safe-area to cover status bar */}
       <div 
         className="fixed z-0" 
