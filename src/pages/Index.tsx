@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import DevelopmentStatus from "@/components/DevelopmentStatus";
@@ -8,14 +9,28 @@ import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { AlertCircle } from "lucide-react";
 import { LoginPromoManager } from '@/components/LoginPromoManager';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 const Index = () => {
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(() => {
     // Immediate check on first render
     return window.innerWidth <= 1024;
   });
   const [userId, setUserId] = useState<string | null>(null);
+
+  // Set default language to English for landing page
+  useEffect(() => {
+    const preferredLanguage = localStorage.getItem('preferredLanguage');
+    if (!preferredLanguage) {
+      // No saved preference - default to English for landing page
+      i18n.changeLanguage('en');
+    } else {
+      // Use saved preference
+      i18n.changeLanguage(preferredLanguage);
+    }
+  }, [i18n]);
 
   useEffect(() => {
     // Check device type
@@ -57,6 +72,11 @@ const Index = () => {
       />
       
       <div className="relative z-10">
+        {/* Language Selector - Top Right */}
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageSelector />
+        </div>
+
         <div data-tutorial="hero">
           <Hero />
         </div>

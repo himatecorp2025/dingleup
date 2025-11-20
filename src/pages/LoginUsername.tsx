@@ -180,7 +180,7 @@ const LoginUsername = () => {
 
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div>
-                <Label htmlFor="username" className="text-white drop-shadow">Felhasználónév</Label>
+                <Label htmlFor="username" className="text-white drop-shadow">{t('auth.username')}</Label>
                 <div className="relative mt-1" style={{ perspective: '800px' }}>
                   <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700/40 via-purple-600/40 to-purple-900/40 border border-purple-500/30 shadow-md" style={{ transform: 'translateZ(0px)' }} aria-hidden />
@@ -189,7 +189,7 @@ const LoginUsername = () => {
                   <Input
                     id="username"
                     type="text"
-                    placeholder="pl: JózsiBacsi123"
+                    placeholder={t('auth.usernamePlaceholder', { defaultValue: 'pl: JózsiBacsi123' })}
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                     className={`relative bg-black/60 border-0 ${errors.username ? "ring-2 ring-destructive" : ""}`}
@@ -204,7 +204,7 @@ const LoginUsername = () => {
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-white drop-shadow">Jelszó</Label>
+                <Label htmlFor="password" className="text-white drop-shadow">{t('auth.password')}</Label>
                 <div className="relative mt-1" style={{ perspective: '800px' }}>
                   <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700/40 via-purple-600/40 to-purple-900/40 border border-purple-500/30 shadow-md" style={{ transform: 'translateZ(0px)' }} aria-hidden />
@@ -214,7 +214,7 @@ const LoginUsername = () => {
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Pl: Jelszó123!"
+                      placeholder={t('auth.passwordPlaceholder')}
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       className={`bg-black/60 border-0 pr-10 ${errors.password ? "ring-2 ring-destructive" : ""}`}
@@ -247,15 +247,15 @@ const LoginUsername = () => {
                   disabled={isLoading}
                   style={{ transform: 'translateZ(30px)' }}
                 >
-                  <span className="truncate">{isLoading ? "Bejelentkezés..." : "Bejelentkezés"}</span>
+                  <span className="truncate">{isLoading ? t('common.loading') : t('auth.signIn')}</span>
                 </Button>
               </div>
             </form>
 
             <p className="text-center text-xs sm:text-sm text-white/70 mt-4 sm:mt-6 drop-shadow px-2">
-              Még nincs fiókod?{" "}
+              {t('auth.noAccount')}{" "}
               <Link to="/register" className="text-accent hover:underline font-semibold whitespace-nowrap">
-                Regisztráció
+                {t('auth.signUp')}
               </Link>
             </p>
           </div>
