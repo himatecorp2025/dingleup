@@ -9,6 +9,12 @@ import AudioManager from "@/lib/audioManager";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { OfflineDetector } from "@/components/OfflineDetector";
+import { UpdatePrompt } from "@/components/UpdatePrompt";
+import { useBackButton } from "@/hooks/useBackButton";
+import { useAppLifecycle } from "@/hooks/useAppLifecycle";
+import { useSessionMonitor } from "@/hooks/useSessionMonitor";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -277,8 +283,24 @@ const AppWithAnalytics = () => {
   return null;
 };
 
-// Main App component
-const App = () => {
+// Main App component with lifecycle management
+const AppCore = () => {
+  // App lifecycle management
+  useAppLifecycle({
+    onForeground: () => {
+      console.log('[App] Returned to foreground');
+    },
+    onBackground: () => {
+      console.log('[App] Moved to background');
+    },
+  });
+
+  // Back button handling
+  useBackButton();
+
+  // Session monitoring
+  useSessionMonitor();
+
   // Reset intro flag on logout to ensure clean cold-start flow
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
@@ -290,9 +312,11 @@ const App = () => {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <Toaster />
       <Sonner />
+      <OfflineDetector />
+      <UpdatePrompt />
       <BrowserRouter
         future={{
           v7_startTransition: true,
@@ -342,7 +366,17 @@ const App = () => {
           </AppRouteGuard>
         </Suspense>
       </BrowserRouter>
-    </QueryClientProvider>
+    </>
+  );
+};
+
+const App = () => {
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AppCore />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 

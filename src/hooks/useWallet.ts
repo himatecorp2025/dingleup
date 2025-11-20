@@ -52,12 +52,11 @@ export const useWallet = (userId: string | undefined) => {
       if (error) {
         console.error('[useWallet] Error fetching wallet:', error);
         
-        // If Unauthorized (401), session expired - force logout
+        // If Unauthorized (401), session expired - graceful handling
         if (error.message?.includes('Unauthorized') || error.message?.includes('401')) {
-          console.error('[useWallet] Session expired, forcing logout...');
-          await supabase.auth.signOut();
-          localStorage.clear();
-          window.location.href = '/login';
+          console.log('[useWallet] Session invalid, will be handled by SessionMonitor');
+          // Don't force logout here - let SessionMonitor handle it gracefully
+          setLoading(false);
           return;
         }
         
