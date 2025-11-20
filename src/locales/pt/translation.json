@@ -43,7 +43,15 @@
     "termsAccept": "Aceito os Termos de Serviço e confirmo que meus dados pessoais são precisos e tenho pelo menos 16 anos",
     "countryCode": "País",
     "dataAccuracy": "Confirmo que meus dados pessoais fornecidos são precisos",
-    "ageConfirmation": "Confirmo que tenho pelo menos 16 anos"
+    "ageConfirmation": "Confirmo que tenho pelo menos 16 anos",
+    "loginWithGoogle": "Entrar com Google",
+    "registerWithGoogle": "Registrar com Google",
+    "usernameRequired": "O nome de usuário é obrigatório",
+    "emailRequired": "O e-mail é obrigatório",
+    "passwordRequired": "A senha é obrigatória",
+    "birthDateRequired": "A data de nascimento é obrigatória",
+    "countryRequired": "O país é obrigatório",
+    "termsRequired": "Você deve aceitar os termos de serviço"
   },
   "dashboard": {
     "title": "Painel",
@@ -84,7 +92,11 @@
     "backToHome": "Voltar ao Início",
     "loading": "Carregando...",
     "notEnoughCoins": "Moedas insuficientes",
-    "purchaseCoins": "Comprar moedas"
+    "purchaseCoins": "Comprar moedas",
+    "lifeline5050": "50-50",
+    "lifeline2x": "2x Resposta",
+    "lifelineAudience": "Ajuda do Público",
+    "gameStateLoading": "Carregando..."
   },
   "leaderboard": {
     "title": "Classificação",
@@ -98,7 +110,15 @@
     "forTheGeniuses": "PARA OS GÊNIOS",
     "backToDashboard": "Voltar ao Dashboard",
     "rank": "Ranking",
-    "player": "Jogador"
+    "player": "Jogador",
+    "sundayJackpot": "JACKPOT DOMINICAL",
+    "top25DailyReward": "Recompensa diária TOP 25",
+    "rewardsAutoCredit": "As recompensas são creditadas automaticamente",
+    "yesterdayVictory": "VITÓRIA DE ONTEM!",
+    "congratsTop": "Parabéns! Ontem você ficou no TOP {{rank}}!",
+    "weeklyVictory": "VITÓRIA SEMANAL",
+    "top10": "TOP 10 POSIÇÃO",
+    "weeklyTopMessage": "Com base no seu desempenho da semana passada, você entrou no TOP 10! Parabéns! 🎉"
   },
   "profile": {
     "title": "Meu perfil",
@@ -189,7 +209,11 @@
     "activateSpeed": "Ativar velocidade",
     "speedActive": "Velocidade ativa",
     "paymentCancelled": "Você voltou, sua recompensa foi perdida!",
-    "purchaseError": "Erro na compra"
+    "purchaseError": "Erro na compra",
+    "pleaseLogin": "Por favor, faça login para comprar",
+    "activatingPremiumSpeed": "Ativando velocidade premium...",
+    "premiumSpeedActivated": "Velocidade premium ativada!",
+    "speedTokensRemaining": "Tokens de velocidade restantes: {{count}}"
   },
   "rewards": {
     "dailyGift": "Presente diário",
@@ -324,27 +348,33 @@
   "dialogs": {
     "dailyGift": {
       "title": "PRESENTE DIÁRIO",
+      "subtitle": "Sua recompensa diária",
       "day": "DIA",
+      "dayNumber": "DIA {{day}} 🔥",
       "todayReward": "HOJE VOCÊ RECEBE",
+      "todayYouGet": "HOJE VOCÊ RECEBE",
       "claim": "REIVINDICAR",
-      "comeLater": "MAIS TARDE",
-      "claiming": "Reivindicando...",
+      "later": "MAIS TARDE",
+      "claiming": "Processando...",
       "alreadyClaimed": "JÁ REIVINDICADO HOJE",
       "description": "Reivindique sua recompensa diária!",
-      "streak": "Sequência",
+      "streak": "Sequência de {{count}} dias",
       "claimed": "Reivindicado!",
       "comeBackTomorrow": "Volte amanhã para outro presente!"
     },
     "welcomeBonus": {
       "title": "BEM-VINDO!",
+      "subtitle": "Bem-vindo ao jogo!",
       "specialOffer": "OFERTA ESPECIAL!",
       "giftForYou": "Presente só para você!",
       "coins": "OURO",
+      "gold": "OURO",
       "lives": "VIDAS",
       "claim": "REIVINDICAR",
-      "claiming": "Reivindicando...",
+      "claiming": "Processando...",
       "description": "Bem-vindo ao DingleUP! ! Reivindique seu bônus inicial!",
-      "claimed": "Bônus reivindicado!"
+      "claimed": "Bônus reivindicado!",
+      "rewards": "Minhas recompensas"
     },
     "inGameRescue": {
       "title": "Quase eliminado... 🎰",
@@ -364,10 +394,13 @@
       "description": "Compre um booster para continuar jogando!",
       "freeBooster": "Booster grátis",
       "premiumBooster": "Booster Premium",
+      "activate": "Ativar",
+      "buy": "Comprar",
       "purchase": "Comprar"
     },
     "exitGame": {
       "title": "Tem certeza de que deseja sair?",
+      "subtitle": "Você perderá o ouro coletado até agora",
       "warningGoldLost": "⚠️ Todo o ouro coletado até agora será perdido! ⚠️",
       "warningProgress": "Se você voltar, todos os resultados coletados serão excluídos e você não receberá moedas de ouro.",
       "gameCompleted": "Seu jogo está completo, ouro creditado.",
@@ -435,12 +468,40 @@
       "error": "Erro ao enviar relatório"
     }
   },
-  "leaderboard": {
-    "rank": "Posição",
-    "yesterdayVictory": "VITÓRIA DE ONTEM!",
-    "congratsTop": "Parabéns! Ontem você ficou no TOP {{rank}}!",
-    "weeklyVictory": "VITÓRIA SEMANAL",
-    "top10": "TOP 10 POSIÇÃO",
-    "weeklyTopMessage": "Com base no seu desempenho da semana passada, você entrou no TOP 10! Parabéns! 🎉"
+  "invitation": {
+    "title": "Convidar amigos",
+    "subtitle": "Ganhe recompensas convidando amigos",
+    "yourCode": "Seu código de convite",
+    "shareMessage": "Junte-se ao DingleUP! usando meu código: {{code}}",
+    "copyCode": "Copiar código",
+    "codeCopied": "Código copiado!",
+    "invitationsSent": "Convites enviados",
+    "friendsJoined": "Amigos unidos",
+    "rewardsEarned": "Recompensas ganhas"
+  },
+  "payment": {
+    "processing": "Processando pagamento...",
+    "success": "Pagamento bem-sucedido!",
+    "failed": "Pagamento falhou",
+    "cancelled": "Pagamento cancelado",
+    "verifying": "Verificando pagamento..."
+  },
+  "registration": {
+    "title": "Criar conta",
+    "subtitle": "Junte-se ao DingleUP! hoje",
+    "createAccount": "Criar conta",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "signInHere": "Entre aqui"
+  },
+  "install": {
+    "title": "Instalar DingleUP!",
+    "subtitle": "Instale o aplicativo para uma melhor experiência",
+    "installNow": "Instalar agora",
+    "benefits": "Benefícios da instalação",
+    "benefit1": "Acesso mais rápido",
+    "benefit2": "Funciona offline",
+    "benefit3": "Notificações push",
+    "iosInstructions": "No Safari, toque no botão Compartilhar e depois 'Adicionar à Tela Inicial'",
+    "androidInstructions": "Toque no menu e selecione 'Adicionar à Tela Inicial'"
   }
 }
