@@ -102,7 +102,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[95vw] w-full max-h-[70vh] overflow-hidden bg-gradient-to-br from-red-900/40 via-purple-900/60 to-red-900/40 border-[3px] border-yellow-500/80 p-3 shadow-2xl shadow-yellow-500/50 rounded-xl">
+      <DialogContent className="max-w-[95vw] w-full max-h-[70vh] overflow-hidden bg-gradient-to-br from-red-900/40 via-purple-900/60 to-red-900/40 border-[3px] border-yellow-500/80 p-3 shadow-2xl shadow-yellow-500/50 rounded-xl fixed top-[50vh] left-[50vw] -translate-x-1/2 -translate-y-1/2 m-0">
         {/* Header */}
         <DialogHeader className="space-y-0.5 mb-2">
           <DialogTitle className="text-xl font-black text-center bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(234,179,8,0.8)] leading-tight tracking-wide" style={{ textShadow: '0 2px 10px rgba(234,179,8,0.6), 0 0 20px rgba(234,179,8,0.4)' }}>
@@ -135,11 +135,11 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         </div>
 
         {/* Booster Options - Side by Side */}
-        <div className="grid grid-cols-2 gap-2 mb-2">
+        <div className="grid grid-cols-2 gap-2 mb-2 items-stretch">
           {/* Gold Saver Booster */}
-          <div className="relative">
+          <div className="relative flex flex-col h-full">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-600/40 to-orange-600/40 rounded-xl blur-sm"></div>
-            <div className="relative bg-gradient-to-br from-blue-700 via-blue-600 to-purple-700 border-[3px] border-yellow-400 rounded-xl p-2 shadow-xl" style={{ boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.3), 0 6px 20px rgba(234,179,8,0.4)' }}>
+            <div className="relative bg-gradient-to-br from-blue-700 via-blue-600 to-purple-700 border-[3px] border-yellow-400 rounded-xl p-2 shadow-xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.3), 0 6px 20px rgba(234,179,8,0.4)' }}>
               {/* Large coin icon at top */}
               <div className="flex justify-center -mt-6 mb-1">
                 <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 flex items-center justify-center shadow-2xl" style={{ boxShadow: '0 8px 20px rgba(202,138,4,0.6), inset 0 -3px 8px rgba(0,0,0,0.3), inset 0 3px 8px rgba(255,255,255,0.4)' }}>
@@ -162,6 +162,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                   <span className="text-green-100 text-xs font-black drop-shadow-lg">+15💚</span>
                 </div>
               </div>
+
+              <div className="flex-1"></div>
 
               {!hasEnoughGold && (
                 <p className="text-yellow-300 text-[8px] text-center mb-1.5 font-bold drop-shadow-md">
@@ -189,9 +191,9 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           </div>
 
           {/* Instant Rescue Booster - Premium */}
-          <div className="relative">
+          <div className="relative flex flex-col h-full">
             <div className="absolute inset-0 bg-gradient-to-br from-pink-600/40 to-purple-600/40 rounded-xl blur-sm animate-pulse"></div>
-            <div className="relative bg-gradient-to-br from-purple-700 via-pink-600 to-purple-700 border-[3px] border-pink-400 rounded-xl p-2 shadow-xl" style={{ boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.3), 0 6px 20px rgba(236,72,153,0.5)' }}>
+            <div className="relative bg-gradient-to-br from-purple-700 via-pink-600 to-purple-700 border-[3px] border-pink-400 rounded-xl p-2 shadow-xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.3), 0 6px 20px rgba(236,72,153,0.5)' }}>
               {/* Large diamond icon at top */}
               <div className="flex justify-center -mt-6 mb-1">
                 <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-pink-300 via-pink-400 to-red-600 flex items-center justify-center shadow-2xl animate-pulse" style={{ boxShadow: '0 8px 20px rgba(219,39,119,0.7), inset 0 -3px 8px rgba(0,0,0,0.3), inset 0 3px 8px rgba(255,255,255,0.4)' }}>
@@ -214,6 +216,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                   <span className="text-green-100 text-xs font-black drop-shadow-lg">+25💚</span>
                 </div>
               </div>
+
+              <div className="flex-1"></div>
 
               <Button
                 onClick={handleInstantRescuePurchase}
