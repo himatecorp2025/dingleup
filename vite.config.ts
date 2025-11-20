@@ -123,28 +123,34 @@ export default defineConfig(({ mode }) => ({
           { url: '/assets/game-background.png', revision: null }
         ],
         runtimeCaching: [
-          // Supabase API - Network first with fallback
+          // Supabase API - Optimized Network first with shorter timeout for mobile
           {
             urlPattern: ({ url }) => url.origin === 'https://wdpxmwsxhckazwxufttk.supabase.co',
             handler: 'NetworkFirst',
             options: {
               cacheName: 'supabase-api',
               expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24
+                maxEntries: 150,
+                maxAgeSeconds: 60 * 60 * 24 * 2 // 2 days cache
               },
-              networkTimeoutSeconds: 10
+              networkTimeoutSeconds: 5, // Faster timeout for mobile (5s instead of 10s)
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
             }
           },
-          // Images - Cache first with fallback to network
+          // Images - Aggressive cache first for mobile performance
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'images',
               expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30
+                maxEntries: 200, // More images cached
+                maxAgeSeconds: 60 * 60 * 24 * 60 // 60 days cache
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
               }
             }
           },
@@ -172,15 +178,27 @@ export default defineConfig(({ mode }) => ({
               }
             }
           },
-          // Fonts - Cache first with long expiration
+          // Fonts - Aggressive cache with long expiration
           {
             urlPattern: /\.(?:woff|woff2|ttf|otf)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'fonts',
               expiration: {
-                maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24 * 365
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 365 * 2 // 2 years
+              }
+            }
+          },
+          // Static JS/CSS bundles - Cache first for faster loads
+          {
+            urlPattern: /\.(?:js|css)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'static-resources',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
               }
             }
           }

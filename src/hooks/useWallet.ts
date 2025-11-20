@@ -98,10 +98,10 @@ export const useWallet = (userId: string | undefined) => {
       )
       .subscribe();
 
-    // Polling fallback every 30 seconds (optimized from 10s - real-time is primary)
+    // Polling fallback every 60 seconds (real-time is primary, polling is just safety net)
     const intervalId = setInterval(() => {
       fetchWallet();
-    }, 30000);
+    }, 60000);
 
     return () => {
       clearInterval(intervalId);

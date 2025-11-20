@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon, Brain, ShoppingBag } from 'lucide-react';
@@ -60,84 +60,8 @@ const AdminDashboard = () => {
     checkAuth();
   }, []);
 
-  // REALTIME: Background data updates without page reload
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    
-    const debouncedFetch = () => {
-      // Clear any pending fetch
-      if (timeoutId) clearTimeout(timeoutId);
-      // Wait 2 seconds before fetching to batch multiple changes
-      timeoutId = setTimeout(() => {
-        fetchData();
-      }, 2000);
-    };
-
-    const channel = supabase
-      .channel('admin-dashboard-realtime')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'invitations'
-      }, debouncedFetch)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'reports'
-      }, debouncedFetch)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'friendships'
-      }, debouncedFetch)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'profiles'
-      }, debouncedFetch)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'game_results'
-      }, debouncedFetch)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'booster_purchases'
-      }, debouncedFetch)
-      .subscribe();
-
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  useEffect(() => {
-    filterUsers();
-  }, [searchQuery, allUsers]);
-
-  const filterUsers = () => {
-    if (!searchQuery.trim()) {
-      setFilteredUsers(allUsers);
-      return;
-    }
-
-    const query = searchQuery.toLowerCase();
-    const filtered = allUsers.filter(user => 
-      user.id.toLowerCase().includes(query) ||
-      user.username.toLowerCase().includes(query) ||
-      user.email.toLowerCase().includes(query) ||
-      (user.role && user.role.toLowerCase().includes(query)) ||
-      user.lives.toString().includes(query) ||
-      user.coins.toString().includes(query) ||
-      user.total_correct_answers.toString().includes(query) ||
-      new Date(user.created_at).toLocaleDateString('hu-HU').includes(query)
-    );
-    setFilteredUsers(filtered);
-  };
-
-  const fetchData = async () => {
+  // Memoized fetchData to prevent recreation on every render
+  const fetchData = useCallback(async () => {
     try {
       setIsRefreshing(true);
       
@@ -205,7 +129,85 @@ const AdminDashboard = () => {
       toast.error('Kritikus hiba az adatok betöltésekor');
       setIsRefreshing(false);
     }
-  };
+  }, []);
+
+  // REALTIME: Background data updates without page reload
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    const debouncedFetch = () => {
+      // Clear any pending fetch
+      if (timeoutId) clearTimeout(timeoutId);
+      // Wait 3 seconds before fetching to batch multiple changes (optimized for mobile)
+      timeoutId = setTimeout(() => {
+        fetchData();
+      }, 3000);
+    };
+
+    const channel = supabase
+      .channel('admin-dashboard-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'invitations'
+      }, debouncedFetch)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'reports'
+      }, debouncedFetch)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'friendships'
+      }, debouncedFetch)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'profiles'
+      }, debouncedFetch)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'game_results'
+      }, debouncedFetch)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'booster_purchases'
+      }, debouncedFetch)
+      .subscribe();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      supabase.removeChannel(channel);
+    };
+  }, [fetchData]);
+
+  // Memoized filterUsers function
+  const filterUsers = useCallback(() => {
+    if (!searchQuery.trim()) {
+      setFilteredUsers(allUsers);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = allUsers.filter(user => 
+      user.id.toLowerCase().includes(query) ||
+      user.username.toLowerCase().includes(query) ||
+      user.email.toLowerCase().includes(query) ||
+      (user.role && user.role.toLowerCase().includes(query)) ||
+      user.lives.toString().includes(query) ||
+      user.coins.toString().includes(query) ||
+      user.total_correct_answers.toString().includes(query) ||
+      new Date(user.created_at).toLocaleDateString('hu-HU').includes(query)
+    );
+    setFilteredUsers(filtered);
+  }, [searchQuery, allUsers]);
+
+  useEffect(() => {
+    filterUsers();
+  }, [filterUsers]);
 
   const checkAuth = async () => {
     try {

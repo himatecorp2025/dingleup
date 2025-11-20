@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback, memo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Crown } from 'lucide-react';
 import { DailyRankingsCountdown } from './DailyRankingsCountdown';
@@ -11,19 +11,43 @@ interface LeaderboardEntry {
   avatar_url: string | null;
 }
 
-export const LeaderboardCarousel = () => {
+const LeaderboardCarouselComponent = () => {
   const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollPausedRef = useRef(false);
   const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    const refresh = async () => {
-      // MINDIG friss adatot kérdezünk le, NINCS cache
-      const dailyData = await fetchFromDailyRankings();
-      setTopPlayers(dailyData.slice(0, 100));
-    };
+  // Memoized fetch function to prevent recreation on every render
+  const fetchFromDailyRankings = useCallback(async (): Promise<LeaderboardEntry[]> => {
+    try {
+      // Call Edge Function for country-specific daily leaderboard
+      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country');
 
+      if (error) {
+        console.error('[LeaderboardCarousel] Edge function error:', error);
+        return [];
+      }
+
+      if (!data || !data.leaderboard) {
+        console.error('[LeaderboardCarousel] No leaderboard data returned');
+        return [];
+      }
+
+      console.log('[LeaderboardCarousel] Loaded', data.leaderboard.length, 'players from country:', data.countryCode);
+      return data.leaderboard;
+    } catch (e) {
+      console.error('[LeaderboardCarousel] Error:', e);
+      return [];
+    }
+  }, []);
+
+  // Memoized refresh function
+  const refresh = useCallback(async () => {
+    const dailyData = await fetchFromDailyRankings();
+    setTopPlayers(dailyData.slice(0, 100));
+  }, [fetchFromDailyRankings]);
+
+  useEffect(() => {
     // Azonnal indítjuk a betöltést
     refresh();
     
@@ -46,37 +70,7 @@ export const LeaderboardCarousel = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const refresh = async () => {
-    // Azonnali betöltés cache-sel és párhuzamos lekérdezésekkel
-    const dailyData = await fetchFromDailyRankings();
-    setTopPlayers(dailyData.slice(0, 100));
-  };
-
-  const fetchFromDailyRankings = async (): Promise<LeaderboardEntry[]> => {
-    try {
-      // Call Edge Function for country-specific daily leaderboard
-      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country');
-
-      if (error) {
-        console.error('[LeaderboardCarousel] Edge function error:', error);
-        return [];
-      }
-
-      if (!data || !data.leaderboard) {
-        console.error('[LeaderboardCarousel] No leaderboard data returned');
-        return [];
-      }
-
-      console.log('[LeaderboardCarousel] Loaded', data.leaderboard.length, 'players from country:', data.countryCode);
-      return data.leaderboard;
-    } catch (e) {
-      console.error('[LeaderboardCarousel] Error:', e);
-      return [];
-    }
-  };
+  }, [refresh]);
 
   // Auto-scroll logika - infinite loop with seamless transition
   useEffect(() => {
@@ -178,19 +172,20 @@ export const LeaderboardCarousel = () => {
     };
   }, []);
 
-  const getHexagonColor = (index: number) => {
+  // Memoized color functions to prevent recalculation
+  const getHexagonColor = useCallback((index: number) => {
     if (index === 0) return 'from-gold via-gold to-gold-dark'; // Arany
     if (index === 1) return 'from-muted via-muted-foreground to-muted'; // Ezüst
     if (index === 2) return 'from-gold-dark via-gold-dark to-gold'; // Bronz
     return 'from-primary via-primary to-primary'; // Lila
-  };
+  }, []);
 
-  const getCrownColor = (index: number) => {
+  const getCrownColor = useCallback((index: number) => {
     if (index === 0) return 'text-gold';
     if (index === 1) return 'text-muted';
     if (index === 2) return 'text-gold-dark';
     return '';
-  };
+  }, []);
 
   return (
     <div className="w-full py-1">
@@ -243,3 +238,6 @@ export const LeaderboardCarousel = () => {
     </div>
   );
 };
+
+// Memoize entire component to prevent unnecessary re-renders
+export const LeaderboardCarousel = memo(LeaderboardCarouselComponent);

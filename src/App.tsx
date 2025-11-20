@@ -64,7 +64,19 @@ const PageLoader = () => (
   </div>
 );
 
-const queryClient = new QueryClient();
+// Optimized QueryClient with aggressive caching for mobile performance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh longer
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep cached data in memory
+      retry: 1, // Reduce retries for faster failures on mobile
+      refetchOnWindowFocus: false, // Disable refetch on focus for mobile
+      refetchOnReconnect: true, // Refetch when connection restored
+      refetchOnMount: false, // Use cached data on mount when available
+    },
+  },
+});
 
 // Analytics, Error Tracking, and PWA Install tracking wrapper component
 const AppWithAnalytics = () => {
