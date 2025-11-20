@@ -204,6 +204,7 @@ const Leaderboard = () => {
           userRank={userRank}
           userUsername={userUsername}
           userCorrectAnswers={userCorrectAnswers}
+          dailyRewards={dailyRewards}
         />
 
         </div>
