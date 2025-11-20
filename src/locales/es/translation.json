@@ -223,12 +223,68 @@
     "gameProfiles": "Perfiles de juego"
   },
   "bottomNav": {
-    "dashboard": "Dashboard",
+    "dashboard": "Panel",
     "share": "Compartir",
     "leaderboard": "Clasificación",
     "profile": "Perfil",
     "about": "Acerca de",
     "logout": "Cerrar sesión",
     "notLoggedIn": "¡No has iniciado sesión! ¡Por favor inicia sesión!"
+  },
+  "dialogs": {
+    "dailyGift": {
+      "title": "REGALO DIARIO",
+      "day": "DÍA",
+      "todayReward": "HOY RECIBES",
+      "claim": "RECLAMAR",
+      "comeLater": "MÁS TARDE",
+      "claiming": "Reclamando...",
+      "alreadyClaimed": "YA RECLAMADO HOY"
+    },
+    "welcomeBonus": {
+      "title": "¡BIENVENIDO!",
+      "specialOffer": "¡OFERTA ESPECIAL!",
+      "giftForYou": "¡Regalo solo para ti!",
+      "coins": "ORO",
+      "lives": "VIDAS",
+      "claim": "RECLAMAR",
+      "claiming": "Reclamando..."
+    },
+    "inGameRescue": {
+      "title": "Casi eliminado... 🎰",
+      "subtitle": "¡Elige un paquete de rescate!",
+      "currentStatus": "Estado actual",
+      "life": "Vida",
+      "gold": "Oro",
+      "goldSaver": "Ahorrador de oro",
+      "goldSaverDesc": "500 oro por 250 oro + 15 vidas",
+      "instantRescue": "Rescate instantáneo",
+      "instantRescueDesc": "¡+1000 oro + 25 vidas al instante!",
+      "notEnoughGold": "⚠️ No hay suficiente oro",
+      "processing": "Procesando...",
+      "immediateCredit": "Crédito inmediato",
+      "continueMessage": "¡Continúa donde lo dejaste! 🎮",
+      "cancel": "Cancelar"
+    },
+    "exitGame": {
+      "title": "¿Estás seguro de que quieres salir?",
+      "warningGoldLost": "⚠️ ¡Todo el oro recolectado hasta ahora se perderá! ⚠️",
+      "warningProgress": "Si retrocedes, todos los resultados recolectados se eliminarán y no recibirás monedas de oro.",
+      "gameCompleted": "Tu juego ha terminado, oro acreditado.",
+      "exit": "Salir",
+      "stay": "Quedarme"
+    },
+    "continueGame": {
+      "timeout": "¡Se acabó el tiempo!",
+      "wrong": "¡Respuesta incorrecta!",
+      "outOfLives": "¡Sin vidas!",
+      "continue": "¿Continuar?",
+      "notEnoughCoins": "No hay suficientes monedas para continuar. ¡Visita la tienda!",
+      "continueDescription": "Puedes continuar el juego por {{cost}} monedas, o tu resultado actual se guardará si sales.",
+      "continueButton": "Continuar ({{cost}} monedas)",
+      "buyNow": "🛒 Comprar ahora",
+      "exitAndSave": "Salir y guardar",
+      "backToHome": "Volver al inicio"
+    }
   }
 }
