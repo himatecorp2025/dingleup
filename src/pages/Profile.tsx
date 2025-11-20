@@ -324,6 +324,20 @@ const Profile = () => {
       }
 
       const file = event.target.files[0];
+      
+      // Validate file size (max 2MB)
+      const maxSizeBytes = 2 * 1024 * 1024;
+      if (file.size > maxSizeBytes) {
+        toast.error('A fájl mérete maximum 2MB lehet');
+        return;
+      }
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Csak képfájlok engedélyezettek');
+        return;
+      }
+
       const fileExt = file.name.split('.').pop();
       const filePath = `${userId}/${Math.random()}.${fileExt}`;
 
@@ -410,21 +424,20 @@ const Profile = () => {
   };
 
   const validatePassword = (password: string): string | null => {
-    if (password.length < 8) {
-      return 'A jelszónak legalább 8 karakterből kell állnia';
+    const rules = [
+      { test: (p: string) => p.length >= 8, msg: 'Legalább 8 karakter' },
+      { test: (p: string) => /[a-z]/.test(p), msg: 'Kisbetű szükséges' },
+      { test: (p: string) => /[A-Z]/.test(p), msg: 'Nagybetű szükséges' },
+      { test: (p: string) => /\d/.test(p), msg: 'Szám szükséges' },
+      { test: (p: string) => /[@$!%*?&.]/.test(p), msg: 'Speciális karakter (@$!%*?&.) szükséges' },
+    ];
+
+    for (const rule of rules) {
+      if (!rule.test(password)) {
+        return rule.msg;
+      }
     }
-    if (!/[a-z]/.test(password)) {
-      return 'A jelszónak tartalmaznia kell kisbetűt';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'A jelszónak tartalmaznia kell nagybetűt';
-    }
-    if (!/\d/.test(password)) {
-      return 'A jelszónak tartalmaznia kell számot';
-    }
-    if (!/[@$!%*?&.]/.test(password)) {
-      return 'A jelszónak tartalmaznia kell speciális karaktert (@$!%*?&.)';
-    }
+    
     return null;
   };
 

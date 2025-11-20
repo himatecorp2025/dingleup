@@ -15,42 +15,65 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo.png'],
+      includeAssets: ['favicon.ico', 'robots.txt', 'dingleup-logo.png'],
       manifest: {
         name: 'DingleUP!',
         short_name: 'DingleUP!',
-        description: 'Teszteld tudásod 15 izgalmas kérdéssel! Gyűjts aranyérméket és versenyezz a ranglistán.',
-        theme_color: '#1a0033',
-        background_color: '#0f0033',
+        description: 'Kvízjáték magyar nyelven',
+        theme_color: '#9333ea',
+        background_color: '#000000',
         display: 'standalone',
-        orientation: 'portrait',
-        start_url: '/',
-        scope: '/',
         icons: [
           {
             src: '/dingleup-logo.png',
             sizes: '192x192',
             type: 'image/png',
-            purpose: 'any'
+            purpose: 'any maskable'
           },
           {
             src: '/dingleup-logo.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'maskable'
+            purpose: 'any maskable'
           },
           {
             src: '/dingleup-logo.png',
             sizes: '1024x1024',
             type: 'image/png',
-            purpose: 'any'
+            purpose: 'any maskable'
+          }
+        ],
+        shortcuts: [
+          {
+            name: 'Játék indítása',
+            short_name: 'Játék',
+            description: 'Új játék indítása',
+            url: '/game',
+            icons: [{ src: '/dingleup-logo.png', sizes: '192x192' }]
+          },
+          {
+            name: 'Ranglista',
+            short_name: 'Ranglista',
+            description: 'Napi ranglista megtekintése',
+            url: '/leaderboard',
+            icons: [{ src: '/dingleup-logo.png', sizes: '192x192' }]
+          },
+          {
+            name: 'Profil',
+            short_name: 'Profil',
+            description: 'Profil beállítások',
+            url: '/profile',
+            icons: [{ src: '/dingleup-logo.png', sizes: '192x192' }]
           }
         ]
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg}'],
         navigateFallback: null,
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB limit for large assets
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.origin === 'https://wdpxmwsxhckazwxufttk.supabase.co',
@@ -72,5 +95,8 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  esbuild: {
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
   },
 }));

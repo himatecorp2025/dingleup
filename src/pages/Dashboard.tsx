@@ -176,7 +176,10 @@ const Dashboard = () => {
     // Fetch immediately on mount
     fetchUserDailyRank();
     
-    // Subscribe to realtime changes in daily_rankings - refresh rank when any ranking changes
+    // Debounced refetch - only once per 2 seconds
+    let refetchTimeout: NodeJS.Timeout;
+    
+    // Subscribe to realtime changes in daily_rankings
     const leaderboardChannel = supabase
       .channel('daily-leaderboard-rank-updates')
       .on(
@@ -187,13 +190,17 @@ const Dashboard = () => {
           table: 'daily_rankings'
         },
         () => {
-          // Daily rankings changed -> refetch user rank from edge function
-          fetchUserDailyRank();
+          // Debounce: clear previous timeout, schedule new fetch in 2s
+          clearTimeout(refetchTimeout);
+          refetchTimeout = setTimeout(() => {
+            fetchUserDailyRank();
+          }, 2000);
         }
       )
       .subscribe();
     
     return () => {
+      clearTimeout(refetchTimeout);
       supabase.removeChannel(leaderboardChannel);
     };
   }, [userId]);

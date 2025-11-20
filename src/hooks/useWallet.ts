@@ -35,10 +35,8 @@ export const useWallet = (userId: string | undefined) => {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !sessionData?.session) {
-        console.error('[useWallet] No valid session, forcing logout...');
-        await supabase.auth.signOut();
-        localStorage.clear();
-        window.location.href = '/login';
+        console.error('[useWallet] No valid session');
+        setLoading(false);
         return;
       }
       
@@ -51,15 +49,6 @@ export const useWallet = (userId: string | undefined) => {
 
       if (error) {
         console.error('[useWallet] Error fetching wallet:', error);
-        
-        // If Unauthorized (401), session expired - graceful handling
-        if (error.message?.includes('Unauthorized') || error.message?.includes('401')) {
-          console.log('[useWallet] Session invalid, will be handled by SessionMonitor');
-          // Don't force logout here - let SessionMonitor handle it gracefully
-          setLoading(false);
-          return;
-        }
-        
         setLoading(false);
         return;
       }
@@ -109,10 +98,10 @@ export const useWallet = (userId: string | undefined) => {
       )
       .subscribe();
 
-    // Polling fallback every 10 seconds (reduced from 5s)
+    // Polling fallback every 30 seconds (optimized from 10s - real-time is primary)
     const intervalId = setInterval(() => {
       fetchWallet();
-    }, 10000);
+    }, 30000);
 
     return () => {
       clearInterval(intervalId);

@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
-import { useAudioStore } from "@/stores/audioStore";
-import AudioManager from "@/lib/audioManager";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +13,8 @@ import { UpdatePrompt } from "@/components/UpdatePrompt";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useAppLifecycle } from "@/hooks/useAppLifecycle";
 import { useSessionMonitor } from "@/hooks/useSessionMonitor";
+import { AppRouteGuard } from "@/components/AppRouteGuard";
+import { AudioPolicyManager } from "@/components/AudioPolicyManager";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -62,221 +62,6 @@ const PageLoader = () => (
 
 const queryClient = new QueryClient();
 
-// Platform korlátozás és standalone Intro-first guard
-const AppRouteGuard = ({ children }: { children: React.ReactNode }) => {
-  const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
-  const location = useLocation();
-
-  // Detect device type
-  useEffect(() => {
-    const checkDevice = () => {
-      const width = window.innerWidth;
-      setIsMobileOrTablet(width <= 1024);
-    };
-    checkDevice();
-    window.addEventListener('resize', checkDevice);
-    return () => window.removeEventListener('resize', checkDevice);
-  }, []);
-
-  // Standalone intro-first guard (no landing page in app)
-  const isStandalone = (() => {
-    try {
-      return (
-        window.matchMedia('(display-mode: standalone)').matches ||
-        (window.navigator as any).standalone === true ||
-        document.referrer.includes('android-app://')
-      );
-    } catch {
-      return false;
-    }
-  })();
-
-  // Clear intro flag when app starts in standalone mode to ensure intro plays on every app launch
-  useEffect(() => {
-    if (isStandalone) {
-      try {
-        sessionStorage.removeItem('app_intro_shown');
-      } catch {}
-    }
-  }, [isStandalone]);
-
-  const introShown = typeof window !== 'undefined' 
-    ? sessionStorage.getItem('app_intro_shown') === '1' 
-    : false;
-
-  // Mobile/tablet: skip landing page, go directly to intro or dashboard
-  if (isMobileOrTablet && location.pathname === '/') {
-    if (!introShown) {
-      return <Navigate to="/intro" replace />;
-    } else {
-      // If intro was already shown, redirect to dashboard instead of staying on landing page
-      return <Navigate to="/dashboard" replace />;
-    }
-  }
-
-  // Mobile/tablet standalone: redirect to /intro ONLY on first load (from root)
-  // Do NOT redirect if user is navigating within the app (e.g., Dashboard -> Game)
-  // Desktop (width > 1024): ALWAYS show landing page, never redirect to intro
-  if (isMobileOrTablet && isStandalone && !introShown && 
-      (location.pathname === '/' || location.pathname === '/desktop')) {
-    return <Navigate to="/intro" replace />;
-  }
-
-  // Admin pages always accessible
-  if (location.pathname.startsWith('/admin')) {
-    return <>{children}</>;
-  }
-
-  // Desktop: only landing and admin pages accessible
-  if (!isMobileOrTablet && location.pathname !== '/' && location.pathname !== '/desktop' && !location.pathname.startsWith('/admin')) {
-    return (
-      <div className="h-dvh h-svh w-screen flex items-center justify-center bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker">
-        <div className="text-center px-6 max-w-md">
-          <h1 className="text-3xl font-black text-foreground mb-4">📱 Csak mobilon és táblagépen elérhető</h1>
-          <p className="text-foreground/80 mb-6">
-            Ez az alkalmazás csak telefonon és táblagépen használható. 
-            Kérjük, nyisd meg mobil eszközön!
-          </p>
-          <button
-            onClick={() => window.location.href = '/'}
-            className="px-8 py-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-bold rounded-lg hover:brightness-110 transition-all"
-          >
-            Vissza a főoldalra
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-
-  return <>{children}</>;
-};
-
-// A3) Routes where music should be BLOCKED
-const MUSIC_BLOCKED_ROUTES = [
-  /^\/$/,               // Landing page
-  /^\/desktop$/,        // Desktop landing page
-  /^\/admin/,           // All admin routes including subpages (including admin login)
-  /^\/admin-/,          // Any admin-prefixed routes
-  /\/admin\//,          // Any path containing /admin/
-];
-
-function isMusicAllowed(pathname: string): boolean {
-  // Block music on admin routes and landing page
-  const blocked = MUSIC_BLOCKED_ROUTES.some(pattern => pattern.test(pathname));
-  if (blocked) {
-    return false;
-  }
-  return true;
-}
-
-// Audio policy manager component
-const AudioPolicyManager = () => {
-  const location = useLocation();
-  const [isHandheld, setIsHandheld] = useState(false);
-
-  useEffect(() => {
-    const checkHandheld = () => {
-      const isNarrowViewport = window.matchMedia('(max-width: 1024px)').matches;
-      const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-      setIsHandheld(isNarrowViewport && hasCoarsePointer);
-    };
-    checkHandheld();
-    const viewportMedia = window.matchMedia('(max-width: 1024px)');
-    const pointerMedia = window.matchMedia('(pointer: coarse)');
-    const handleChange = () => checkHandheld();
-    viewportMedia.addEventListener('change', handleChange);
-    pointerMedia.addEventListener('change', handleChange);
-    return () => {
-      viewportMedia.removeEventListener('change', handleChange);
-      pointerMedia.removeEventListener('change', handleChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    const applyAudioPolicy = () => {
-      const { musicEnabled, volume, loaded } = useAudioStore.getState();
-      
-      console.log('[AudioPolicyManager] Applying audio policy', { 
-        musicEnabled, 
-        volume, 
-        volumePercent: `${Math.round(volume * 100)}%`,
-        loaded,
-        pathname: location.pathname 
-      });
-
-      if (!loaded) {
-        console.log('[AudioPolicyManager] Settings not loaded yet, skipping');
-        return;
-      }
-
-      const audioManager = AudioManager.getInstance();
-      
-      // Platform detection: music ONLY on mobile/tablet, NEVER on desktop
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
-                       window.matchMedia('(max-width: 1024px)').matches;
-      
-      console.log('[AudioPolicyManager] Platform detection:', { isMobile, userAgent: navigator.userAgent });
-      
-      if (!isMobile) {
-        // Desktop: disable music entirely
-        console.log('[AudioPolicyManager] Desktop detected, disabling music');
-        audioManager.apply(false, 0);
-        return;
-      }
-      
-      // Check if music is allowed on current route (blocks admin & landing page)
-      const musicAllowed = isMusicAllowed(location.pathname);
-      
-      console.log('[AudioPolicyManager] Music allowed on route:', { pathname: location.pathname, musicAllowed });
-      
-      if (!musicAllowed) {
-        // Admin or landing page: disable music
-        console.log('[AudioPolicyManager] Route blocks music, disabling');
-        audioManager.apply(false, 0);
-        return;
-      }
-      
-      // Mobile/Tablet on allowed routes: Switch track based on route
-      const isGameRoute = location.pathname === '/game';
-      
-      console.log('[AudioPolicyManager] Route check:', { isGameRoute });
-      
-      if (isGameRoute) {
-        // CategorySelector + Game → game music (backmusic.mp3)
-        console.log('[AudioPolicyManager] Switching to game track');
-        audioManager.switchTrack('game');
-      } else {
-        // All other allowed pages → general music (DingleUP.mp3)
-        console.log('[AudioPolicyManager] Switching to general track');
-        audioManager.switchTrack('general');
-      }
-
-      // Apply volume settings
-      console.log('[AudioPolicyManager] Applying settings:', { musicEnabled, volume });
-      audioManager.apply(musicEnabled, volume);
-      
-      const state = audioManager.getState();
-      console.log('[AudioPolicyManager] AudioManager state after apply:', state);
-    };
-
-    applyAudioPolicy();
-    
-    const unsubscribe = useAudioStore.subscribe((state) => {
-      console.log('[AudioPolicyManager] Store updated:', state);
-      if (state.loaded) {
-        applyAudioPolicy();
-      }
-    });
-    
-    return () => {
-      unsubscribe();
-    };
-  }, [location.pathname]);
-
-  return null;
-};
-
 // Analytics wrapper component
 const AppWithAnalytics = () => {
   useAnalytics();
@@ -288,18 +73,12 @@ const AppCore = () => {
   // App lifecycle management
   useAppLifecycle({
     onForeground: () => {
-      console.log('[App] Returned to foreground');
+      // Reserved for future use
     },
     onBackground: () => {
-      console.log('[App] Moved to background');
+      // Reserved for future use
     },
   });
-
-  // Back button handling
-  useBackButton();
-
-  // Session monitoring
-  useSessionMonitor();
 
   // Reset intro flag on logout to ensure clean cold-start flow
   useEffect(() => {
@@ -323,6 +102,8 @@ const AppCore = () => {
           v7_relativeSplatPath: true,
         }}
       >
+        <BackButtonHandler />
+        <SessionMonitorWrapper />
         <AppWithAnalytics />
         <ScrollBehaviorManager />
         <AudioPolicyManager />
@@ -368,6 +149,17 @@ const AppCore = () => {
       </BrowserRouter>
     </>
   );
+};
+
+// Wrapper components for hooks requiring Router context
+const BackButtonHandler = () => {
+  useBackButton();
+  return null;
+};
+
+const SessionMonitorWrapper = () => {
+  useSessionMonitor();
+  return null;
 };
 
 const App = () => {
