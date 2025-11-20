@@ -98,7 +98,7 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
       }}>
         <video
           ref={videoRef}
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 w-full h-full opacity-100"
           style={{ 
             objectFit: 'cover',
             objectPosition: 'center',
@@ -118,13 +118,6 @@ export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
             }
           }}
         />
-        
-        {/* Loading spinner while video loads */}
-        {!videoLoaded && (
-          <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
-            <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
       </div>
     </>
   );
