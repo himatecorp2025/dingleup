@@ -109,6 +109,13 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
             );
           })}
         </div>
+
+        {/* Éjféli jutalom jóváírás info - Jackpot */}
+        <div className="mt-6 text-center">
+          <p className="text-sm font-semibold" style={{ color: 'hsl(45 100% 75%)' }}>
+            ⏰ A jutalmak minden nap éjfélkor automatikusan jóváíródnak a TOP25 játékosoknak
+          </p>
+        </div>
       </div>
     );
   }
@@ -147,6 +154,13 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                 </div>
               );
             })}
+          </div>
+
+          {/* Éjféli jutalom jóváírás info - Normál napok */}
+          <div className="mt-6 text-center">
+            <p className="text-sm font-semibold" style={{ color: 'hsl(45 100% 70%)' }}>
+              ⏰ A jutalmak minden nap éjfélkor automatikusan jóváíródnak a TOP10 játékosoknak
+            </p>
           </div>
         </div>
       </div>
