@@ -27,11 +27,8 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
 
   return (
     <div
-      className="absolute flex items-center gap-1"
+      className="flex items-center gap-1"
       style={{
-        left: "75%",
-        top: "50%",
-        transform: "translate(-50%, -50%)",
         animation: "coinPop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)",
       }}
     >
