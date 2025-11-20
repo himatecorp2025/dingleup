@@ -86,9 +86,8 @@ export const broadcastWalletChange = async (
         event: 'wallet_changed',
         payload: { coins, lives, source, timestamp: Date.now() }
       });
+      // Clean up immediately after broadcast (instant, 0 seconds delay)
+      supabase.removeChannel(channel);
     }
   });
-
-  // Clean up after broadcast
-  setTimeout(() => supabase.removeChannel(channel), 1000);
 };

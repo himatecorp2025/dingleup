@@ -74,7 +74,7 @@ export const useWallet = (userId: string | undefined) => {
     
     fetchWallet();
 
-    // Real-time subscription for instant wallet changes (SINGLE subscription)
+    // Real-time subscription for instant wallet changes (instant, 0 seconds delay)
     const channel = supabase
       .channel(`wallet_changes_${userId}`)
       .on(
@@ -98,13 +98,7 @@ export const useWallet = (userId: string | undefined) => {
       )
       .subscribe();
 
-    // Polling fallback every 60 seconds (real-time is primary, polling is just safety net)
-    const intervalId = setInterval(() => {
-      fetchWallet();
-    }, 60000);
-
     return () => {
-      clearInterval(intervalId);
       supabase.removeChannel(channel);
     };
   }, [userId, fetchWallet]);

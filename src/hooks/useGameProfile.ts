@@ -25,8 +25,8 @@ export const useGameProfile = (userId: string | undefined) => {
       if (data) {
         setProfile(data as UserProfile);
       } else {
-        // Profile doesn't exist yet, retry after a short delay
-        setTimeout(() => fetchProfile(), 1000);
+        // Profile doesn't exist yet, retry immediately (no delay)
+        fetchProfile();
         return;
       }
     } catch (error: any) {

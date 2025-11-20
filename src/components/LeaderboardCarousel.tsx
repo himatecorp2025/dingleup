@@ -109,9 +109,10 @@ const LeaderboardCarouselComponent = () => {
       if (autoScrollTimeoutRef.current) {
         clearTimeout(autoScrollTimeoutRef.current);
       }
+      // Resume auto-scroll after 500ms (instant UX, minimal pause)
       autoScrollTimeoutRef.current = setTimeout(() => {
         autoScrollPausedRef.current = false;
-      }, 3000);
+      }, 500);
     };
 
     const handleMouseDown = (e: MouseEvent) => {
