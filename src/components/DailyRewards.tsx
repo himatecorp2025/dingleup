@@ -90,20 +90,32 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                 borderColor: isTop3 ? (place === 1 ? 'hsl(45 100% 60%)' : place === 2 ? 'hsl(0 0% 75%)' : 'hsl(30 60% 55%)') : undefined
               }}>
                 <div className="flex items-center justify-between">
+                  {/* BAL OLDAL: emoji + rangsor + név */}
                   <div className="flex items-center gap-3 flex-1">
                     <span className="text-3xl">{getCrownIcon(place)}</span>
-                    <div className="flex flex-col flex-1">
+                    <div className="flex flex-col">
                       <div className="flex items-center gap-2">
                         <span className="text-2xl font-bold" style={{ color: isTop3 ? (place === 1 ? 'hsl(45 100% 75%)' : place === 2 ? 'hsl(0 0% 85%)' : 'hsl(30 60% 75%)') : 'hsl(45 80% 65%)' }}>#{place}</span>
                         <span className="text-lg font-semibold text-white truncate">{player.username}</span>
                       </div>
-                      <div className="flex gap-3 mt-1">
-                        <span className="text-sm font-bold" style={{ color: 'hsl(45 100% 70%)' }}>🪙 +{reward.coins.toLocaleString()}</span>
-                        <span className="text-sm font-bold" style={{ color: 'hsl(0 80% 70%)' }}>❤️ +{reward.lives}</span>
-                      </div>
+                      <span className="text-xs ml-10" style={{ color: 'hsl(45 80% 60%)' }}>{player.total_correct_answers} helyes válasz</span>
                     </div>
                   </div>
-                  <span className="text-2xl font-bold" style={{ color: isTop3 ? 'white' : 'hsl(45 80% 70%)' }}>{player.total_correct_answers}</span>
+                  
+                  {/* JOBB OLDAL: jutalmak + nagy szám */}
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-end gap-1">
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm">🪙</span>
+                        <span className="text-sm font-bold" style={{ color: 'hsl(45 100% 70%)' }}>+{reward.coins.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm">❤️</span>
+                        <span className="text-sm font-bold" style={{ color: 'hsl(0 80% 70%)' }}>+{reward.lives}</span>
+                      </div>
+                    </div>
+                    <span className="text-3xl font-bold" style={{ color: isTop3 ? 'white' : 'hsl(45 80% 70%)' }}>{player.total_correct_answers}</span>
+                  </div>
                 </div>
               </div>
             );
@@ -136,20 +148,32 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                   background: isTop3 ? (place === 1 ? 'linear-gradient(135deg, hsl(45 90% 40%), hsl(45 100% 30%))' : place === 2 ? 'linear-gradient(135deg, hsl(0 0% 65%), hsl(0 0% 50%))' : 'linear-gradient(135deg, hsl(30 70% 50%), hsl(30 80% 40%))') : 'linear-gradient(135deg, hsl(280 40% 30%), hsl(280 50% 25%))'
                 }}>
                   <div className="flex items-center justify-between">
+                    {/* BAL OLDAL: emoji + rangsor + név */}
                     <div className="flex items-center gap-3 flex-1">
                       <span className="text-3xl">{getCrownIcon(place)}</span>
-                      <div className="flex flex-col flex-1">
+                      <div className="flex flex-col">
                         <div className="flex items-center gap-2">
                           <span className="text-2xl font-bold" style={{ color: isTop3 ? (place === 1 ? 'hsl(45 100% 80%)' : place === 2 ? 'hsl(0 0% 90%)' : 'hsl(30 70% 80%)') : 'hsl(var(--dup-gold-400))' }}>#{place}</span>
                           <span className="text-lg font-semibold text-white truncate">{player.username}</span>
                         </div>
-                        <div className="flex gap-3 mt-1">
-                          <span className="text-sm font-bold" style={{ color: 'hsl(45 100% 75%)' }}>🪙 +{reward.coins.toLocaleString()}</span>
-                          <span className="text-sm font-bold" style={{ color: 'hsl(0 80% 70%)' }}>❤️ +{reward.lives}</span>
-                        </div>
+                        <span className="text-xs ml-10" style={{ color: 'hsl(45 80% 60%)' }}>{player.total_correct_answers} helyes válasz</span>
                       </div>
                     </div>
-                    <span className="text-2xl font-bold" style={{ color: isTop3 ? 'white' : 'hsl(var(--dup-gold-400))' }}>{player.total_correct_answers}</span>
+                    
+                    {/* JOBB OLDAL: jutalmak + nagy szám */}
+                    <div className="flex items-center gap-4">
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="flex items-center gap-1">
+                          <span className="text-sm">🪙</span>
+                          <span className="text-sm font-bold" style={{ color: 'hsl(45 100% 75%)' }}>+{reward.coins.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-sm">❤️</span>
+                          <span className="text-sm font-bold" style={{ color: 'hsl(0 80% 70%)' }}>+{reward.lives}</span>
+                        </div>
+                      </div>
+                      <span className="text-3xl font-bold" style={{ color: isTop3 ? 'white' : 'hsl(var(--dup-gold-400))' }}>{player.total_correct_answers}</span>
+                    </div>
                   </div>
                 </div>
               );
