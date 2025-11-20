@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff, Lock, User, Sparkles } from "lucide-react";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 
 const loginSchema = z.object({
   username: z.string().trim().min(1, "A felhasználónév mező kötelező").max(100),
@@ -18,6 +19,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<LoginForm>({
     username: "",
     password: "",
