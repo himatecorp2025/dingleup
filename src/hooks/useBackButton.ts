@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export const useBackButton = () => {
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -15,20 +14,18 @@ export const useBackButton = () => {
       }
     };
 
-    const handleBackButton = (e: Event) => {
-      e.preventDefault();
-      
-      // If on root, don't go back (would exit app)
+    const handleBackButton = (e: PopStateEvent) => {
+      // If on root, prevent back (would exit app)
       if (location.pathname === '/') {
-        return;
+        e.preventDefault();
+        window.history.pushState(null, '', '/');
       }
-
-      // Otherwise, navigate back within app
-      navigate(-1);
+      // Otherwise, browser handles navigation naturally
     };
 
     // Android back button
     window.addEventListener('popstate', handlePopState);
+    window.addEventListener('popstate', handleBackButton);
     
     // Push initial state to prevent immediate exit
     if (location.pathname === '/') {
@@ -37,6 +34,7 @@ export const useBackButton = () => {
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('popstate', handleBackButton);
     };
-  }, [location, navigate]);
+  }, [location]);
 };

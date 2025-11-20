@@ -37,7 +37,13 @@ export class ErrorBoundary extends Component<Props, State> {
       errorInfo,
     });
 
-    // Log to analytics/monitoring service here if needed
+    // Log to external error reporting service in production
+    if (process.env.NODE_ENV === 'production') {
+      // TODO: Integrate external error reporting (e.g., Sentry, LogRocket)
+      console.warn('[ErrorBoundary] Production error reporting not configured. Consider adding Sentry or similar service.');
+    }
+
+    // Log to analytics if available
     try {
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'exception', {

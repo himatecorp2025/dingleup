@@ -38,8 +38,8 @@ export const useSessionMonitor = () => {
     // Initial validation
     validateSession();
 
-    // Periodic validation
-    const interval = setInterval(validateSession, 5 * 60 * 1000); // 5 minutes
+    // Periodic validation every 2 minutes
+    const interval = setInterval(validateSession, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [navigate, isValidating]);

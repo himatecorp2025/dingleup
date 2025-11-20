@@ -5,6 +5,7 @@ import { RefreshCw } from 'lucide-react';
 export const UpdatePrompt = () => {
   const [showPrompt, setShowPrompt] = useState(false);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -39,7 +40,12 @@ export const UpdatePrompt = () => {
     window.location.reload();
   };
 
-  if (!showPrompt) return null;
+  const handleDismiss = () => {
+    setDismissed(true);
+    setShowPrompt(false);
+  };
+
+  if (!showPrompt || dismissed) return null;
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-[9999] max-w-md mx-auto">
@@ -49,13 +55,21 @@ export const UpdatePrompt = () => {
           <p className="text-sm font-medium text-foreground">Új verzió elérhető</p>
           <p className="text-xs text-muted-foreground">Frissítsd az alkalmazást a legújabb verziókhoz.</p>
         </div>
-        <Button 
-          size="sm" 
-          onClick={handleUpdate}
-          className="shrink-0"
-        >
-          Frissítés
-        </Button>
+        <div className="flex gap-2 shrink-0">
+          <Button 
+            size="sm" 
+            variant="outline"
+            onClick={handleDismiss}
+          >
+            Később
+          </Button>
+          <Button 
+            size="sm" 
+            onClick={handleUpdate}
+          >
+            Frissítés
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { LogOut } from 'lucide-react';
 
 import DailyRewards from '@/components/DailyRewards';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
+import { LeaderboardSkeleton } from '@/components/LeaderboardSkeleton';
 import BottomNav from '@/components/BottomNav';
 
 interface LeaderboardEntry {
@@ -196,16 +197,20 @@ const Leaderboard = () => {
         </div>
 
         {/* Daily Rewards Section with Top 10 */}
-        <DailyRewards 
-          topPlayers={topPlayers.slice(0, 10).map(p => ({
-            username: p.username,
-            total_correct_answers: p.total_correct_answers
-          }))}
-          userRank={userRank}
-          userUsername={userUsername}
-          userCorrectAnswers={userCorrectAnswers}
-          dailyRewards={dailyRewards}
-        />
+        {loading ? (
+          <LeaderboardSkeleton />
+        ) : (
+          <DailyRewards 
+            topPlayers={topPlayers.slice(0, 10).map(p => ({
+              username: p.username,
+              total_correct_answers: p.total_correct_answers
+            }))}
+            userRank={userRank}
+            userUsername={userUsername}
+            userCorrectAnswers={userCorrectAnswers}
+            dailyRewards={dailyRewards}
+          />
+        )}
 
         </div>
       </div>

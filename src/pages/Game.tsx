@@ -6,6 +6,7 @@ import { Smartphone } from "lucide-react";
 import gameBackground from "@/assets/game-background.png";
 import { useAudioStore } from "@/stores/audioStore";
 import { ScreenshotProtection } from "@/components/ScreenshotProtection";
+import { GameErrorBoundary } from "@/components/GameErrorBoundary";
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [loadTimeout, setLoadTimeout] = useState(false);
@@ -59,29 +60,31 @@ const Game = () => {
   }
 
   return (
-    <ScreenshotProtection enabled={true}>
-      <div className="min-h-dvh min-h-svh overflow-hidden relative" style={{
-        paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)'
-      }}>
-        {/* Fixed background layer - extends beyond safe-area, does NOT scroll */}
-        <div 
-          className="fixed bg-cover bg-no-repeat"
-          style={{ 
-            backgroundImage: `url(${gameBackground})`,
-            backgroundPosition: '50% 50%',
-            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
-            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
-            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
-            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
-            pointerEvents: 'none',
-            zIndex: 0
-          }}
-        />
-        <div className="relative z-10">
-          <GamePreview />
+    <GameErrorBoundary>
+      <ScreenshotProtection enabled={true}>
+        <div className="min-h-dvh min-h-svh overflow-hidden relative" style={{
+          paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)'
+        }}>
+          {/* Fixed background layer - extends beyond safe-area, does NOT scroll */}
+          <div 
+            className="fixed bg-cover bg-no-repeat"
+            style={{ 
+              backgroundImage: `url(${gameBackground})`,
+              backgroundPosition: '50% 50%',
+              left: 'calc(-1 * env(safe-area-inset-left, 0px))',
+              right: 'calc(-1 * env(safe-area-inset-right, 0px))',
+              top: 'calc(-1 * env(safe-area-inset-top, 0px))',
+              bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
+          <div className="relative z-10">
+            <GamePreview />
+          </div>
         </div>
-      </div>
-    </ScreenshotProtection>
+      </ScreenshotProtection>
+    </GameErrorBoundary>
   );
 };
 
