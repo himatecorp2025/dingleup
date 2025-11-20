@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { useWebVitals } from "@/hooks/useWebVitals";
 import { lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -62,9 +63,10 @@ const PageLoader = () => (
 
 const queryClient = new QueryClient();
 
-// Analytics wrapper component
+// Analytics and Web Vitals wrapper component
 const AppWithAnalytics = () => {
   useAnalytics();
+  useWebVitals(); // Track Core Web Vitals performance
   return null;
 };
 

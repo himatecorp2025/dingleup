@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useGameProfile } from "@/hooks/useGameProfile";
 import { useWallet } from "@/hooks/useWallet";
+import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 import { supabase } from "@/integrations/supabase/client";
 import { GameCategory, Question, Answer, getSkipCost, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST, getCoinsForQuestion, START_GAME_REWARD } from "@/types/game";
 import { HexagonButton } from "./HexagonButton";
@@ -38,6 +39,7 @@ const GamePreview = () => {
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading: profileLoading, updateProfile, spendLife, refreshProfile } = useGameProfile(userId);
   const { walletData, refetchWallet } = useWallet(userId);
+  const { triggerHaptic } = useHapticFeedback();
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { broadcast } = useBroadcastChannel({ channelName: 'wallet', onMessage: () => {}, enabled: true });
@@ -559,6 +561,9 @@ const GamePreview = () => {
     setSelectedAnswer('__timeout__');
     setContinueType('timeout');
     
+    // Haptic feedback for timeout
+    triggerHaptic('warning');
+    
     // Always show banner first - DO NOT check for insufficient coins here
     setErrorBannerVisible(true);
     setErrorBannerMessage(`⏰ Lejárt az idő - ${TIMEOUT_CONTINUE_COST} aranyérme`);
@@ -661,6 +666,9 @@ const GamePreview = () => {
     setSelectedAnswer(answerKey);
     setCorrectAnswers(correctAnswers + 1);
     
+    // Haptic feedback for correct answer
+    triggerHaptic('success');
+    
     // Használjuk a progresszív jutalom rendszert
     const reward = getCoinsForQuestion(currentQuestionIndex);
 
@@ -699,6 +707,9 @@ const GamePreview = () => {
     setSelectedAnswer(answerKey);
     setContinueType('wrong');
     
+    // Haptic feedback for wrong answer
+    triggerHaptic('error');
+    
     // Always show banner first - let user see the red highlight
     // DO NOT check for insufficient coins here - only when they try to continue
     setTimeout(() => {
@@ -723,6 +734,13 @@ const GamePreview = () => {
       setIsAnimating(false);
       setCanSwipe(true);
       setQuestionVisible(true);
+      
+      // Haptic feedback based on performance
+      if (correctAnswers >= 10) {
+        triggerHaptic('success'); // Good performance
+      } else {
+        triggerHaptic('warning'); // Could be better
+      }
       
       // Calculate final results
       const avgResponseTime = responseTimes.length > 0 

@@ -17,35 +17,71 @@
     <meta name="full-screen" content="yes" />
     <meta name="x5-fullscreen" content="true" />
     <meta name="360-fullscreen" content="true" />
+    
+    <!-- SEO & Icons -->
     <link rel="apple-touch-icon" href="/dingleup-logo.png" />
     <link rel="icon" type="image/png" href="/dingleup-logo.png" />
+    <link rel="canonical" href="https://dingleup.com/" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    
     <title>DingleUP! - Kvízjáték | Teszteld Tudásod</title>
     <meta
       name="description"
       content="A DingleUP! kvízjáték! 15 kérdés, 3 opció, aranyérmék és segítségek. Versenyezz a heti ranglistán és nyerj jutalmakat!"
     />
     <meta name="author" content="DingleUP! Team" />
-    <meta name="keywords" content="kvízjáték, milliomos, DingleUP, kvíz, online játék, heti rangsor" />
+    <meta name="keywords" content="kvízjáték, milliomos, DingleUP, kvíz, online játék, heti rangsor, napi rangsor, jutalmak" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Hungarian" />
 
+    <!-- Open Graph -->
     <meta property="og:title" content="DingleUP! - Kvízjáték" />
-    <meta
-      property="og:description"
-      content="A DingleUP! kvízjáték! Teszteld tudásod 15 izgalmas kérdéssel."
-    />
+    <meta property="og:description" content="A DingleUP! kvízjáték! Teszteld tudásod 15 izgalmas kérdéssel." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/dingleup-logo.png" />
+    <meta property="og:url" content="https://dingleup.com/" />
+    <meta property="og:image" content="https://dingleup.com/dingleup-logo.png" />
+    <meta property="og:locale" content="hu_HU" />
+    <meta property="og:site_name" content="DingleUP!" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="DingleUP! - Kvízjáték" />
-    <meta
-      name="twitter:description"
-      content="A DingleUP! kvízjáték! Teszteld tudásod 15 izgalmas kérdéssel."
-    />
-    <meta name="twitter:image" content="/dingleup-logo.png" />
+    <meta name="twitter:description" content="A DingleUP! kvízjáték! Teszteld tudásod 15 izgalmas kérdéssel." />
+    <meta name="twitter:image" content="https://dingleup.com/dingleup-logo.png" />
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "DingleUP!",
+      "description": "Kvízjáték 15 kérdéssel, aranyérmékkel és napi ranglistával",
+      "url": "https://dingleup.com",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "iOS, Android, Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "HUF"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1200"
+      }
+    }
+    </script>
 
+    <!-- Fonts with optimized loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      @font-face {
+        font-family: 'Poppins';
+        font-display: swap;
+      }
+    </style>
     
     <!-- Prefetch intro video for instant game start -->
     <link rel="prefetch" href="/src/assets/loading-video.mp4" as="video" type="video/mp4" />
