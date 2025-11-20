@@ -13,6 +13,90 @@ interface LeaderboardEntry {
   rank: number;
 }
 
+interface RankReward {
+  rank: number;
+  gold: number;
+  life: number;
+}
+
+// Import reward configuration (copied from shared lib)
+type Weekday = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
+
+const DAILY_BASE_REWARDS: Record<Weekday, { gold: number; life: number }> = {
+  MONDAY:    { gold: 12000,  life: 240 },
+  TUESDAY:   { gold: 18000,  life: 360 },
+  WEDNESDAY: { gold: 27000,  life: 540 },
+  THURSDAY:  { gold: 37500,  life: 750 },
+  FRIDAY:    { gold: 52500,  life: 1050 },
+  SATURDAY:  { gold: 75000,  life: 1500 },
+  SUNDAY:    { gold: 150000, life: 3000 },
+};
+
+const TOP10_MULTIPLIERS = [1.00, 0.70, 0.50, 0.30, 0.25, 0.20, 0.15, 0.12, 0.10, 0.08];
+
+const SUNDAY_JACKPOT_TOP25: RankReward[] = [
+  { rank: 1,  gold: 150000, life: 3000 },
+  { rank: 2,  gold: 105000, life: 2100 },
+  { rank: 3,  gold: 75000,  life: 1500 },
+  { rank: 4,  gold: 45000,  life: 900 },
+  { rank: 5,  gold: 37500,  life: 750 },
+  { rank: 6,  gold: 30000,  life: 600 },
+  { rank: 7,  gold: 22500,  life: 450 },
+  { rank: 8,  gold: 18000,  life: 360 },
+  { rank: 9,  gold: 15000,  life: 300 },
+  { rank: 10, gold: 12000,  life: 240 },
+  { rank: 11, gold: 10000,  life: 200 },
+  { rank: 12, gold: 9000,   life: 180 },
+  { rank: 13, gold: 8000,   life: 160 },
+  { rank: 14, gold: 7000,   life: 140 },
+  { rank: 15, gold: 6000,   life: 120 },
+  { rank: 16, gold: 5000,   life: 100 },
+  { rank: 17, gold: 4000,   life: 80 },
+  { rank: 18, gold: 3500,   life: 70 },
+  { rank: 19, gold: 3000,   life: 60 },
+  { rank: 20, gold: 2500,   life: 50 },
+  { rank: 21, gold: 2000,   life: 40 },
+  { rank: 22, gold: 1800,   life: 36 },
+  { rank: 23, gold: 1500,   life: 30 },
+  { rank: 24, gold: 1300,   life: 26 },
+  { rank: 25, gold: 1200,   life: 24 },
+];
+
+function getWeekday(date: Date): Weekday {
+  const dayIndex = date.getDay();
+  const days: Weekday[] = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  return days[dayIndex];
+}
+
+function getDailyRewardsForDate(date: Date): {
+  day: Weekday;
+  type: 'NORMAL' | 'JACKPOT';
+  rewards: RankReward[];
+} {
+  const day = getWeekday(date);
+
+  if (day === 'SUNDAY') {
+    return {
+      day,
+      type: 'JACKPOT',
+      rewards: SUNDAY_JACKPOT_TOP25,
+    };
+  }
+
+  const base = DAILY_BASE_REWARDS[day];
+  const rewards: RankReward[] = TOP10_MULTIPLIERS.map((multiplier, index) => ({
+    rank: index + 1,
+    gold: Math.round(base.gold * multiplier),
+    life: Math.round(base.life * multiplier),
+  }));
+
+  return {
+    day,
+    type: 'NORMAL',
+    rewards,
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -74,6 +158,13 @@ Deno.serve(async (req) => {
 
     console.log('[get-daily-leaderboard-by-country] Current day:', currentDay);
 
+    // Get daily rewards for today
+    const dailyRewards = getDailyRewardsForDate(now);
+    console.log('[get-daily-leaderboard-by-country] Daily rewards type:', dailyRewards.type, 'day:', dailyRewards.day);
+
+    // Determine how many players to fetch based on day type
+    const maxPlayers = dailyRewards.type === 'JACKPOT' ? 25 : 10;
+
     // Get ALL profiles from same country (this is the complete user base for this country)
     const { data: allCountryProfiles, error: profilesError } = await supabase
       .from('profiles')
@@ -88,7 +179,8 @@ Deno.serve(async (req) => {
           leaderboard: [],
           userRank: null,
           totalPlayers: 0,
-          message: 'Még nincsenek játékosok ebben az országban'
+          message: 'Még nincsenek játékosok ebben az országban',
+          dailyRewards,
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -153,11 +245,12 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        leaderboard: leaderboard.slice(0, 100), // TOP 100
+        leaderboard: leaderboard.slice(0, maxPlayers), // TOP10 or TOP25 based on day
         userRank,
         totalPlayers: leaderboard.length,
         countryCode: userCountryCode,
-        currentDay
+        currentDay,
+        dailyRewards, // Include daily rewards configuration
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
