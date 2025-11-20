@@ -225,10 +225,66 @@
   "bottomNav": {
     "dashboard": "Dashboard",
     "share": "Share",
-    "leaderboard": "Leaderboard",
+    "leaderboard": "Rankings",
     "profile": "Profile",
     "about": "About",
     "logout": "Logout",
-    "notLoggedIn": "Not logged in! Please log in!"
+    "notLoggedIn": "You are not logged in! Please log in!"
+  },
+  "dialogs": {
+    "dailyGift": {
+      "title": "DAILY GIFT",
+      "day": "DAY",
+      "todayReward": "TODAY YOU GET",
+      "claim": "CLAIM",
+      "comeLater": "LATER",
+      "claiming": "Claiming...",
+      "alreadyClaimed": "ALREADY CLAIMED TODAY"
+    },
+    "welcomeBonus": {
+      "title": "WELCOME!",
+      "specialOffer": "SPECIAL OFFER!",
+      "giftForYou": "Gift just for you!",
+      "coins": "GOLD",
+      "lives": "LIVES",
+      "claim": "CLAIM",
+      "claiming": "Claiming..."
+    },
+    "inGameRescue": {
+      "title": "Almost out... 🎰",
+      "subtitle": "Choose a rescue package!",
+      "currentStatus": "Current status",
+      "life": "Life",
+      "gold": "Gold",
+      "goldSaver": "Gold Saver",
+      "goldSaverDesc": "500 gold for 250 gold + 15 lives",
+      "instantRescue": "Instant Rescue",
+      "instantRescueDesc": "+1000 gold + 25 lives instantly!",
+      "notEnoughGold": "⚠️ Not enough gold",
+      "processing": "Processing...",
+      "immediateCredit": "Instant credit",
+      "continueMessage": "Continue where you left off! 🎮",
+      "cancel": "Cancel"
+    },
+    "exitGame": {
+      "title": "Are you sure you want to exit?",
+      "warningGoldLost": "⚠️ All gold collected so far will be lost! ⚠️",
+      "warningProgress": "If you go back, all progress will be deleted and you won't receive any gold.",
+      "gameCompleted": "Your game is complete, gold credited.",
+      "exit": "Exit",
+      "stay": "Stay"
+    },
+    "continueGame": {
+      "timeout": "Time's up!",
+      "wrong": "Wrong answer!",
+      "outOfLives": "Out of lives!",
+      "continue": "Continue?",
+      "notEnoughCoins": "Not enough coins to continue. Visit the shop!",
+      "continueDescription": "You can continue the game for {{cost}} coins, or your current result will be saved if you exit.",
+      "continueButton": "Continue ({{cost}} coins)",
+      "buyNow": "🛒 Buy now",
+      "exitAndSave": "Exit and save",
+      "backToHome": "Back to home"
+    }
   }
 }
