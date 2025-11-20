@@ -60,13 +60,10 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // Ultra-fast: Single random query, no complex logic
+    // Optimized: One question per topic (max), ensuring topic diversity across games
+    // Uses window function to select 1 random question from each topic, then takes 15
     const { data: questions, error: questionsError } = await supabaseClient
-      .from('questions')
-      .select('id, question, answers, audience, third, source_category')
-      .not('source_category', 'is', null)
-      .order('random()')
-      .limit(15);
+      .rpc('get_diverse_questions', { num_questions: 15 });
 
     if (questionsError || !questions || questions.length < 15) {
       console.error('[start-game-session] Questions fetch error:', questionsError);
