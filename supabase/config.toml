@@ -102,3 +102,12 @@ verify_jwt = false
 [functions.load-questions-from-json]
 verify_jwt = false
 
+[functions.detect-language]
+verify_jwt = false
+
+[functions.translate-text]
+verify_jwt = true
+
+[functions.get-translations]
+verify_jwt = false
+
