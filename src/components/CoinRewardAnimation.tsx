@@ -31,7 +31,7 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
       <div className="relative">
         {/* Multiple glow layers for intense neon effect */}
         <div 
-          className="absolute inset-0 blur-xl opacity-80 animate-pulse"
+          className="absolute inset-0 blur-xl opacity-80"
           style={{
             background: `radial-gradient(circle, hsl(${successGreen}) 0%, transparent 70%)`,
           }}
@@ -44,7 +44,7 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
         />
         
         {/* Main content with casino-style animation */}
-        <div className="relative flex items-center gap-1 px-3 py-1.5 rounded-lg"
+        <div className="relative flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg min-w-[80px]"
           style={{
             background: `linear-gradient(135deg, hsl(88, 80%, 35%) 0%, hsl(88, 80%, 45%) 100%)`,
             boxShadow: `
@@ -74,17 +74,16 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
         </div>
 
         {/* Sparkle effects */}
-        <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full animate-ping"
+        <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full"
           style={{
             background: `hsl(${successGreen})`,
             boxShadow: `0 0 10px hsl(${successGreen})`,
           }}
         />
-        <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full animate-ping"
+        <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full"
           style={{
             background: `hsl(${successGreen})`,
             boxShadow: `0 0 10px hsl(${successGreen})`,
-            animationDelay: "0.3s",
           }}
         />
       </div>
