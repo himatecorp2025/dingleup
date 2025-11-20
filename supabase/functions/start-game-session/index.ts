@@ -60,60 +60,21 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // Optimized: Single query with randomization for fastest loading
-    // Fetch random questions ensuring topic diversity in one query
-    const { data: allQuestions, error: questionsError } = await supabaseClient
+    // Ultra-fast: Single random query, no complex logic
+    const { data: questions, error: questionsError } = await supabaseClient
       .from('questions')
       .select('id, question, answers, audience, third, source_category')
       .not('source_category', 'is', null)
-      .order('id', { ascending: false }) // Use id ordering for speed
-      .limit(54); // Fetch 2 per topic (27 topics * 2) for diversity pool
+      .order('random()')
+      .limit(15);
 
-    if (questionsError || !allQuestions || allQuestions.length < 15) {
+    if (questionsError || !questions || questions.length < 15) {
       console.error('[start-game-session] Questions fetch error:', questionsError);
       return new Response(
         JSON.stringify({ error: 'Failed to load questions from database' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    // Group questions by topic/category to ensure diversity
-    const questionsByTopic = new Map<string, any[]>();
-    allQuestions.forEach(q => {
-      const topic = q.source_category || 'unknown';
-      if (!questionsByTopic.has(topic)) {
-        questionsByTopic.set(topic, []);
-      }
-      questionsByTopic.get(topic)!.push(q);
-    });
-
-    // Select questions ensuring mix from different topics
-    const selectedQuestions: any[] = [];
-    const topics = Array.from(questionsByTopic.keys());
-    
-    // Round-robin selection from different topics to ensure diversity
-    let topicIndex = 0;
-    while (selectedQuestions.length < 15 && topics.length > 0) {
-      const currentTopic = topics[topicIndex % topics.length];
-      const topicQuestions = questionsByTopic.get(currentTopic)!;
-      
-      if (topicQuestions.length > 0) {
-        // Pick random question from this topic
-        const randomIndex = Math.floor(Math.random() * topicQuestions.length);
-        selectedQuestions.push(topicQuestions[randomIndex]);
-        topicQuestions.splice(randomIndex, 1);
-      }
-      
-      // Remove topic if no more questions
-      if (topicQuestions.length === 0) {
-        questionsByTopic.delete(currentTopic);
-        topics.splice(topics.indexOf(currentTopic), 1);
-      } else {
-        topicIndex++;
-      }
-    }
-
-    const questions = selectedQuestions;
 
     // CRITICAL: Validate and format questions with proper error handling
     if (questions.length < 15) {
@@ -168,7 +129,7 @@ serve(async (req) => {
       user_id: user.id,
       session_id: sessionId,
       category: 'mixed',
-      questions: clientQuestions.map(q => ({
+      questions: clientQuestions.map((q: any) => ({
         id: q.id,
         question: q.question,
         correctAnswer: q.answers.findIndex((a: any) => a.correct),
