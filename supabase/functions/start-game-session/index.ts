@@ -60,20 +60,23 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // OPTIMIZED: Load ONLY 15 random questions directly from database (not 1000!)
-    // Using PostgreSQL's random() function for server-side randomization
-    const { data: questions, error: questionsError } = await supabaseClient
+    // Fetch larger set (100 questions) and randomly select 15 on server
+    const { data: allQuestions, error: questionsError } = await supabaseClient
       .from('questions')
       .select('id, question, answers, audience, third, source_category')
-      .order('random()')  // PostgreSQL random() for server-side shuffle
-      .limit(15);
+      .limit(100);
 
-    if (questionsError || !questions || questions.length === 0) {
+    if (questionsError || !allQuestions || allQuestions.length < 15) {
+      console.error('[start-game-session] Questions fetch error:', questionsError);
       return new Response(
         JSON.stringify({ error: 'Failed to load questions from database' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Shuffle and select 15 random questions
+    const shuffled = allQuestions.sort(() => Math.random() - 0.5);
+    const questions = shuffled.slice(0, 15);
 
     // CRITICAL: Validate and format questions with proper error handling
     if (questions.length < 15) {
