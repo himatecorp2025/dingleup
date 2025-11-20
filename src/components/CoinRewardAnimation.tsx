@@ -14,10 +14,10 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
       setCurrentAmount(amount);
       setVisible(true);
       
-      // Hide after 2 seconds
+      // Hide after 1.5 seconds
       const timer = setTimeout(() => {
         setVisible(false);
-      }, 2000);
+      }, 1500);
 
       return () => clearTimeout(timer);
     }
@@ -30,10 +30,12 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
 
   return (
     <div
-      className="absolute top-0 flex items-center gap-1 animate-in fade-in zoom-in duration-300"
+      className="absolute flex items-center gap-1"
       style={{
-        left: "50%",
-        transform: "translateX(-50%)",
+        left: "75%",
+        top: "50%",
+        transform: "translate(-50%, -50%)",
+        animation: "coinPop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)",
       }}
     >
       {/* Neon glow container */}
@@ -53,7 +55,7 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
         />
         
         {/* Main content with casino-style animation */}
-        <div className="relative flex items-center gap-1 px-3 py-1.5 rounded-lg animate-bounce"
+        <div className="relative flex items-center gap-1 px-3 py-1.5 rounded-lg"
           style={{
             background: `linear-gradient(135deg, hsl(88, 80%, 35%) 0%, hsl(88, 80%, 45%) 100%)`,
             boxShadow: `
@@ -76,7 +78,6 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
                 0 0 30px hsl(88, 80%, 50%),
                 0 2px 4px rgba(0, 0, 0, 0.8)
               `,
-              animation: "pulse 0.5s ease-in-out infinite",
             }}
           >
             +{currentAmount}
@@ -98,6 +99,19 @@ export const CoinRewardAnimation = ({ amount, trigger }: CoinRewardAnimationProp
           }}
         />
       </div>
+      
+      <style>{`
+        @keyframes coinPop {
+          0% {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+          }
+          100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 };
