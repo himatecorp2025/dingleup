@@ -444,6 +444,9 @@ const GamePreview = () => {
   };
 
   const handleSwipeDown = async () => {
+    // Dismiss all toasts immediately on swipe down
+    toast.dismiss();
+    
     // Swipe down restarts game immediately without showing results
     if (errorBannerVisible) {
       setErrorBannerVisible(false);
@@ -457,7 +460,7 @@ const GamePreview = () => {
     // Dismiss any visible toasts (including results toast)
     toast.dismiss();
     
-    // Only show toast if game was NOT completed (scroll down mid-game)
+    // Only show restart toast if game was NOT completed (scroll down mid-game)
     if (!gameCompleted) {
       toast.error('Új játék indítása: -1 élet, +1 arany', {
         duration: 2000,
@@ -470,18 +473,15 @@ const GamePreview = () => {
       
       // Wait briefly so user sees the toast
       await new Promise(resolve => setTimeout(resolve, 800));
+      // Dismiss the restart toast before animating
+      toast.dismiss();
     }
     
-    // Animate out current question (same as next question animation)
-    setIsAnimating(true);
-    setCanSwipe(false);
-    setQuestionVisible(false);
+    // Don't animate out - keep current question visible during backend load
+    // This prevents any "loading" screen from showing
     
-    // Reset all game state
-    setGameState('playing');
-    setCurrentQuestionIndex(0);
-    setTimeLeft(10);
-    setSelectedAnswer(null);
+    // Reset all game state in background
+    setGameCompleted(false);
     setCorrectAnswers(0);
     setCoinsEarned(0);
     setResponseTimes([]);
@@ -497,13 +497,20 @@ const GamePreview = () => {
     setRemovedAnswer(null);
     setAudienceVotes({});
     setErrorBannerVisible(false);
-    setGameCompleted(false);
     
     // Start new game in background (seamless - skip video)
+    // This will fetch new questions while current one stays visible
     await startGame(true);
     
-    // Animate in new question after brief delay (same timing as between questions)
+    // Now animate to new first question with same effect as next question
+    setIsAnimating(true);
+    setCanSwipe(false);
+    setQuestionVisible(false);
+    
     setTimeout(() => {
+      setCurrentQuestionIndex(0);
+      setTimeLeft(10);
+      setSelectedAnswer(null);
       setQuestionVisible(true);
       setIsAnimating(false);
       setCanSwipe(true);
