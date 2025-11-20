@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export const useWelcomeBonus = (userId: string | undefined) => {
+  const { t } = useTranslation();
   const [canClaim, setCanClaim] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -61,7 +63,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
       const { data, error } = await supabase.rpc('claim_welcome_bonus');
       
       if (error) {
-        const errorMsg = error.message || 'Hiba történt a bónusz felvételekor';
+        const errorMsg = error.message || t('rewards.welcomeBonusError');
         toast.error(errorMsg);
         return false;
       }
@@ -74,15 +76,15 @@ export const useWelcomeBonus = (userId: string | undefined) => {
         setCanClaim(false);
         
         // Show success toast with actual amounts
-        toast.success(`🎉 Üdvözlő bónusz felvéve! +${result.coins} aranyérme, +${result.lives} élet`);
+        toast.success(t('rewards.welcomeBonusClaimed', { coins: result.coins, lives: result.lives }));
         
         return true;
       } else {
-        toast.error(result.error || 'Hiba történt a bónusz felvételekor');
+        toast.error(result.error || t('rewards.welcomeBonusError'));
         return false;
       }
     } catch (error: any) {
-      const errorMsg = error?.message || 'Hiba történt a bónusz felvételekor';
+      const errorMsg = error?.message || t('rewards.welcomeBonusError');
       toast.error(errorMsg);
       return false;
     } finally {

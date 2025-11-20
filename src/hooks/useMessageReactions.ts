@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface Reaction {
   id: string;
@@ -10,6 +11,7 @@ interface Reaction {
 }
 
 export const useMessageReactions = (messageId: string) => {
+  const { t } = useTranslation();
   const [reactions, setReactions] = useState<Reaction[]>([]);
 
   useEffect(() => {
@@ -88,7 +90,7 @@ export const useMessageReactions = (messageId: string) => {
       }
     } catch (error: any) {
       console.error('Error adding reaction:', error);
-      toast.error('Hiba a reakció hozzáadásakor');
+      toast.error(t('errors.reactionAddFailed'));
     }
   };
 

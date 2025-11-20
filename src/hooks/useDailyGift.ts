@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 const DAILY_GIFT_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 
 const DAILY_GIFT_SESSION_KEY = 'daily_gift_dismissed_';
 
 export const useDailyGift = (userId: string | undefined, isPremium: boolean = false) => {
+  const { t } = useTranslation();
   const [canClaim, setCanClaim] = useState(false);
   const [weeklyEntryCount, setWeeklyEntryCount] = useState(0);
   const [nextReward, setNextReward] = useState(0);
@@ -82,9 +84,9 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       const { data, error } = await supabase.rpc('claim_daily_gift');
       
       if (error) {
-        const errorMsg = error.message || 'Hiba történt az ajándék felvételekor';
+        const errorMsg = error.message || t('rewards.dailyGiftError');
         toast({
-          title: 'Hiba',
+          title: t('common.error'),
           description: errorMsg,
           variant: 'destructive'
         });
@@ -106,8 +108,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         
         // Show success toast with actual amounts
         toast({
-          title: '🎁 Napi ajándék átvéve!',
-          description: `+${result.grantedCoins} aranyérme`,
+          title: t('rewards.dailyGiftClaimedTitle'),
+          description: t('rewards.dailyGiftClaimedDescription', { coins: result.grantedCoins }),
         });
         
         // Refetch wallet to update UI immediately
@@ -116,16 +118,16 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         return true;
       } else {
         toast({
-          title: 'Hiba',
-          description: result.error || 'Hiba történt az ajándék felvételekor',
+          title: t('common.error'),
+          description: result.error || t('rewards.dailyGiftError'),
           variant: 'destructive'
         });
         return false;
       }
     } catch (error: any) {
-      const errorMsg = error?.message || 'Hiba történt az ajándék felvételekor';
+      const errorMsg = error?.message || t('rewards.dailyGiftError');
       toast({
-        title: 'Hiba',
+        title: t('common.error'),
         description: errorMsg,
         variant: 'destructive'
       });

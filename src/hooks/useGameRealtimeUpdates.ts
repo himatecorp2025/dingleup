@@ -2,6 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useBroadcastChannel } from './useOptimizedRealtime';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Real-time updates for game-related changes (coins, lives, purchases)
@@ -12,6 +13,7 @@ export const useGameRealtimeUpdates = (
   onCoinsUpdate: (newCoins: number) => void,
   onLivesUpdate: (newLives: number) => void
 ) => {
+  const { t } = useTranslation();
   // Listen for wallet updates via broadcast (faster than database polling)
   const { broadcast: broadcastWalletUpdate } = useBroadcastChannel(
     `wallet-updates-${userId}`,
@@ -27,10 +29,10 @@ export const useGameRealtimeUpdates = (
       // Show toast for significant changes
       if (payload.source === 'purchase' || payload.source === 'reward') {
         if (payload.coins > 0) {
-          toast.success(`+${payload.coins} érme! 💰`);
+          toast.success(t('profile.coinsGained', { coins: payload.coins }));
         }
         if (payload.lives > 0) {
-          toast.success(`+${payload.lives} élet! ❤️`);
+          toast.success(t('profile.livesGained', { lives: payload.lives }));
         }
       }
     }, [onCoinsUpdate, onLivesUpdate])
