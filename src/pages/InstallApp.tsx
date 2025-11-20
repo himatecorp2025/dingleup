@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Download, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 const InstallApp = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -93,14 +95,14 @@ const InstallApp = () => {
         </svg>
         
         <h1 className="text-3xl font-black text-white mb-4">
-          Telepítsd az alkalmazást!
+          {t('install.title')}
         </h1>
 
         {isInstalled ? (
           <div className="bg-green-600/20 border-2 border-green-500/50 rounded-xl p-6 mb-6">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
             <p className="text-white text-lg">
-              Az alkalmazás már telepítve van!
+              {t('install.alreadyInstalled')}
             </p>
           </div>
         ) : (
@@ -111,28 +113,28 @@ const InstallApp = () => {
                 className="w-full py-6 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white font-black text-lg rounded-xl mb-6"
               >
                 <Download className="w-6 h-6 mr-2" />
-                Telepítés most
+                {t('install.installNow')}
               </Button>
             )}
 
             {isIOS && (
               <div className="bg-blue-600/20 border-2 border-blue-500/50 rounded-xl p-6 mb-6 text-left">
-                <h3 className="text-white font-bold text-lg mb-3">iOS telepítés:</h3>
+                <h3 className="text-white font-bold text-lg mb-3">{t('install.iosInstructions')}</h3>
                 <ol className="text-white/80 space-y-2 text-sm">
-                  <li>1. Nyomd meg a <strong>Megosztás</strong> gombot</li>
-                  <li>2. Görgess le és válaszd a <strong>"Kezdőképernyőhöz"</strong> opciót</li>
-                  <li>3. Nyomd meg a <strong>"Hozzáadás"</strong> gombot</li>
+                  <li>{t('install.iosStep1')}</li>
+                  <li>{t('install.iosStep2')}</li>
+                  <li>{t('install.iosStep3')}</li>
                 </ol>
               </div>
             )}
 
             {isAndroid && !isInstallable && (
               <div className="bg-green-600/20 border-2 border-green-500/50 rounded-xl p-6 mb-6 text-left">
-                <h3 className="text-white font-bold text-lg mb-3">Android telepítés:</h3>
+                <h3 className="text-white font-bold text-lg mb-3">{t('install.androidInstructions')}</h3>
                 <ol className="text-white/80 space-y-2 text-sm">
-                  <li>1. Nyomd meg a böngésző <strong>menü</strong> gombot (⋮)</li>
-                  <li>2. Válaszd a <strong>"Telepítés"</strong> vagy <strong>"Kezdőképernyőhöz adás"</strong> opciót</li>
-                  <li>3. Erősítsd meg a telepítést</li>
+                  <li>{t('install.androidStep1')}</li>
+                  <li>{t('install.androidStep2')}</li>
+                  <li>{t('install.androidStep3')}</li>
                 </ol>
               </div>
             )}
@@ -140,7 +142,7 @@ const InstallApp = () => {
             {!isIOS && !isAndroid && (
               <div className="bg-purple-600/20 border-2 border-purple-500/50 rounded-xl p-6 mb-6">
                 <p className="text-white">
-                  Nyisd meg ezt az oldalt mobilon a telepítéshez!
+                  {t('install.openOnMobile')}
                 </p>
               </div>
             )}
@@ -148,10 +150,10 @@ const InstallApp = () => {
         )}
 
         <div className="space-y-3 text-white/70 text-sm">
-          <p>✅ Offline működés</p>
-          <p>✅ Gyors betöltés</p>
-          <p>✅ Alkalmazás-szerű élmény</p>
-          <p>✅ Kezdőképernyő ikon</p>
+          <p>✅ {t('install.feature1')}</p>
+          <p>✅ {t('install.feature2')}</p>
+          <p>✅ {t('install.feature3')}</p>
+          <p>✅ {t('install.feature4')}</p>
         </div>
       </div>
     </div>
