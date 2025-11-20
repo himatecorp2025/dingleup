@@ -187,5 +187,14 @@
     "popularContent": "Beliebte Inhalte",
     "boosterPurchases": "Booster-Käufe",
     "gameProfiles": "Spielprofile"
+  },
+  "bottomNav": {
+    "dashboard": "Dashboard",
+    "share": "Teilen",
+    "leaderboard": "Rangliste",
+    "profile": "Profil",
+    "about": "Über uns",
+    "logout": "Abmelden",
+    "notLoggedIn": "Du bist nicht angemeldet! Bitte melde dich an!"
   }
 }

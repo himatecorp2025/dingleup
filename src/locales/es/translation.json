@@ -187,5 +187,14 @@
     "popularContent": "Contenido popular",
     "boosterPurchases": "Compras de boosters",
     "gameProfiles": "Perfiles de juego"
+  },
+  "bottomNav": {
+    "dashboard": "Dashboard",
+    "share": "Compartir",
+    "leaderboard": "Clasificación",
+    "profile": "Perfil",
+    "about": "Acerca de",
+    "logout": "Cerrar sesión",
+    "notLoggedIn": "¡No has iniciado sesión! ¡Por favor inicia sesión!"
   }
 }

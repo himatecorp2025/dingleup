@@ -187,5 +187,14 @@
     "popularContent": "Populaire inhoud",
     "boosterPurchases": "Booster-aankopen",
     "gameProfiles": "Spelprofielen"
+  },
+  "bottomNav": {
+    "dashboard": "Dashboard",
+    "share": "Delen",
+    "leaderboard": "Klassement",
+    "profile": "Profiel",
+    "about": "Over ons",
+    "logout": "Uitloggen",
+    "notLoggedIn": "Je bent niet ingelogd! Log alsjeblieft in!"
   }
 }

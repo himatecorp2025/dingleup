@@ -187,5 +187,14 @@
     "popularContent": "Népszerű Tartalmak",
     "boosterPurchases": "Booster Vásárlások",
     "gameProfiles": "Játék Profilok"
+  },
+  "bottomNav": {
+    "dashboard": "Dashboard",
+    "share": "Megosztás",
+    "leaderboard": "Ranglista",
+    "profile": "Profil",
+    "about": "Rólunk",
+    "logout": "Kilépés",
+    "notLoggedIn": "Nem vagy bejelentkezve! Kérlek jelentkezz be!"
   }
 }
