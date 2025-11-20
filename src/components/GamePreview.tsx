@@ -167,6 +167,9 @@ const GamePreview = () => {
     
     // Start all backend operations in parallel IMMEDIATELY while video plays
     // Store promise in ref so handleVideoEnd can wait for it
+    const backendStartTime = performance.now();
+    console.log('[GamePreview] Backend loading started');
+    
     gameInitPromiseRef.current = (async () => {
       try {
         // Reset helps
@@ -274,6 +277,10 @@ const GamePreview = () => {
       // Clear starting guard after game is fully initialized
       setIsStartingGame(false);
       gameInitPromiseRef.current = null;
+      
+      const backendEndTime = performance.now();
+      const backendDuration = backendEndTime - backendStartTime;
+      console.log(`[GamePreview] Backend loading completed in ${backendDuration.toFixed(0)}ms`);
     })();
 
     // DO NOT AWAIT - let it run in background while video plays
