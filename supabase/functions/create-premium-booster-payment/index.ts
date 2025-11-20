@@ -1,16 +1,17 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return handleCorsPreflight(origin);
   }
+  
+  const corsHeaders = getCorsHeaders(origin);
 
   try {
     const supabaseClient = createClient(
@@ -25,6 +26,12 @@ serve(async (req) => {
     
     if (!user?.email) {
       throw new Error("User not authenticated");
+    }
+
+    // SECURITY: Rate limiting - max 5 payment attempts per minute
+    const rateLimitResult = await checkRateLimit(supabaseClient, 'create-premium-booster-payment', { maxRequests: 5, windowMinutes: 1 });
+    if (!rateLimitResult.allowed) {
+      return rateLimitExceeded(corsHeaders);
     }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
