@@ -5,10 +5,16 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa';
 import type { Plugin } from 'vite';
 
-// Security headers plugin
-const securityHeadersPlugin = (): Plugin => ({
+// Security headers plugin - ONLY for production builds
+// Development mode needs relaxed policies for HMR and hot reload
+const securityHeadersPlugin = (mode: string): Plugin => ({
   name: 'security-headers',
   configureServer(server) {
+    // Skip security headers in development to allow HMR and hot reload
+    if (mode === 'development') {
+      return;
+    }
+    
     server.middlewares.use((req, res, next) => {
       // Content Security Policy
       res.setHeader(
@@ -45,7 +51,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
-    securityHeadersPlugin(),
+    securityHeadersPlugin(mode),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'dingleup-logo.png'],
