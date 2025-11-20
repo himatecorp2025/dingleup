@@ -15,6 +15,18 @@ interface LeaderboardEntry {
   rank: number;
 }
 
+interface RankReward {
+  rank: number;
+  gold: number;
+  life: number;
+}
+
+interface DailyRewardsData {
+  day: string;
+  type: 'NORMAL' | 'JACKPOT';
+  rewards: RankReward[];
+}
+
 const Leaderboard = () => {
   const navigate = useNavigate();
   const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
@@ -22,6 +34,7 @@ const Leaderboard = () => {
   const [userRank, setUserRank] = useState<number | null>(null);
   const [userUsername, setUserUsername] = useState<string | null>(null);
   const [userCorrectAnswers, setUserCorrectAnswers] = useState<number>(0);
+  const [dailyRewards, setDailyRewards] = useState<DailyRewardsData | null>(null);
 
   // Platform detection for conditional padding
   const [isStandalone, setIsStandalone] = useState(false);
@@ -80,6 +93,7 @@ const Leaderboard = () => {
 
       console.log('[Leaderboard] Loaded', data.leaderboard.length, 'players from country:', data.countryCode);
       setTopPlayers(data.leaderboard);
+      setDailyRewards(data.dailyRewards || null);
       
       // Set user's own rank and info
       if (data.userRank) {
