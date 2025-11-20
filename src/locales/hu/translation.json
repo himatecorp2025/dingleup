@@ -47,7 +47,9 @@
     "dailyGift": "Napi ajándék",
     "welcomeBonus": "Üdvözlő bónusz",
     "freeBooster": "Ingyenes Booster",
-    "premiumBooster": "Prémium Booster"
+    "premiumBooster": "Prémium Booster",
+    "yourRanking": "A te helyezésed",
+    "dailyRanking": "Napi helyezés"
   },
   "game": {
     "question": "Kérdés",
@@ -76,7 +78,9 @@
     "topPlayers": "Legjobb játékosok",
     "correctAnswers": "Helyes válaszok",
     "country": "Ország",
-    "forTheGeniuses": "A ZSENIKNEK"
+    "forTheGeniuses": "A ZSENIKNEK",
+    "backToDashboard": "Vissza a dashboardra"
+  },
   },
   "profile": {
     "title": "Profilom",
