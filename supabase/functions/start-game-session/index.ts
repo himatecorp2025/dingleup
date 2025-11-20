@@ -60,10 +60,10 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // Optimized: One question per topic (max), ensuring topic diversity across games
-    // Uses window function to select 1 random question from each topic, then takes 15
+    // Simple random selection: 15 random questions from entire questions table
+    // No topic logic, just pure random selection for maximum variety
     const { data: questions, error: questionsError } = await supabaseClient
-      .rpc('get_diverse_questions', { num_questions: 15 });
+      .rpc('get_random_questions', { num_questions: 15 });
 
     if (questionsError || !questions || questions.length < 15) {
       console.error('[start-game-session] Questions fetch error:', questionsError);

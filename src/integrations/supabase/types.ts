@@ -3199,7 +3199,12 @@ export type Database = {
       get_current_day_date: { Args: never; Returns: string }
       get_current_week_reward: { Args: never; Returns: Json }
       get_current_week_start: { Args: never; Returns: string }
-      get_diverse_questions: {
+      get_invitation_tier_reward: {
+        Args: { accepted_count: number }
+        Returns: Json
+      }
+      get_next_life_at: { Args: { p_user_id: string }; Returns: string }
+      get_random_questions: {
         Args: { num_questions: number }
         Returns: {
           answers: Json
@@ -3210,11 +3215,6 @@ export type Database = {
           third: string
         }[]
       }
-      get_invitation_tier_reward: {
-        Args: { accepted_count: number }
-        Returns: Json
-      }
-      get_next_life_at: { Args: { p_user_id: string }; Returns: string }
       get_user_country_rank: { Args: { p_user_id: string }; Returns: number }
       get_user_threads_optimized: {
         Args: { p_user_id: string }
