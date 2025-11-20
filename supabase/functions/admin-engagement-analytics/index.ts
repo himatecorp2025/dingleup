@@ -43,12 +43,26 @@ Deno.serve(async (req) => {
     // Use service role for data fetch (bypass RLS)
     const service = createClient(supabaseUrl, supabaseServiceKey);
 
-    const [{ data: sessionEvents }, { data: profiles }, { data: featureEvents }, { data: gameResults }] = await Promise.all([
+    const [sessionRes, profilesRes, featureRes, gameResultsRes, topicsRes] = await Promise.all([
       service.from('app_session_events').select('*'),
       service.from('profiles').select('id, username'),
       service.from('feature_usage_events').select('feature_name, user_id'),
       service.from('game_results').select('*'),
+      service.from('topics').select(`
+        id,
+        name,
+        questions (
+          like_count,
+          dislike_count
+        )
+      `),
     ]);
+
+    const sessionEvents = sessionRes.data || [];
+    const profiles = profilesRes.data || [];
+    const featureEvents = featureRes.data || [];
+    const gameResults = gameResultsRes.data || [];
+    const topicsData = topicsRes.data || [];
 
     // Sessions
     const sessionMap = new Map<string, number[]>();
@@ -99,19 +113,29 @@ Deno.serve(async (req) => {
 
     // Game engagement
     const gamesPerUser = new Map<string, number>();
-    const categoryCount = new Map<string, number>();
     let totalCorrectAnswers = 0;
     (gameResults || []).forEach((g: any) => {
       gamesPerUser.set(g.user_id, (gamesPerUser.get(g.user_id) || 0) + 1);
-      categoryCount.set(g.category, (categoryCount.get(g.category) || 0) + 1);
       totalCorrectAnswers += g.correct_answers || 0;
     });
-    const avgGamesPerUser = gamesPerUser.size > 0 ? Array.from(gamesPerUser.values()).reduce((s, c) => s + c, 0) / gamesPerUser.size : 0;
-    const mostPlayedCategories = Array.from(categoryCount.entries())
-      .map(([category, count]) => ({ category, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-    const avgCorrectAnswers = (gameResults && gameResults.length > 0) ? totalCorrectAnswers / gameResults.length : 0;
+    const avgGamesPerUserRaw = gamesPerUser.size > 0
+      ? Array.from(gamesPerUser.values()).reduce((s, c) => s + c, 0) / gamesPerUser.size
+      : 0;
+    const avgGamesPerUser = Math.round(avgGamesPerUserRaw * 10) / 10;
+    const avgCorrectAnswers = (gameResults && gameResults.length > 0)
+      ? Math.round((totalCorrectAnswers / gameResults.length) * 10) / 10
+      : 0;
+
+    // Top topics based on like_count - dislike_count (reusing topics table)
+    const topicPopularity = (topicsData || []).map((topic: any) => {
+      const totalLikes = (topic.questions || []).reduce((sum: number, q: any) => sum + (q.like_count || 0), 0);
+      const totalDislikes = (topic.questions || []).reduce((sum: number, q: any) => sum + (q.dislike_count || 0), 0);
+      const netScore = totalLikes - totalDislikes;
+      return {
+        category: topic.name as string,
+        count: netScore,
+      };
+    }).sort((a, b) => b.count - a.count).slice(0, 10);
 
     return new Response(JSON.stringify({
       avgSessionDuration,
@@ -121,9 +145,9 @@ Deno.serve(async (req) => {
       engagementByTime,
       mostActiveUsers,
       gameEngagement: {
-        avgGamesPerUser: Math.round(avgGamesPerUser * 10) / 10,
-        avgCorrectAnswers: Math.round(avgCorrectAnswers * 10) / 10,
-        mostPlayedCategories,
+        avgGamesPerUser,
+        avgCorrectAnswers,
+        mostPlayedCategories: topicPopularity,
       },
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (error: any) {

@@ -1,4 +1,5 @@
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import AdminLayout from '@/components/admin/AdminLayout';
 
 const EngagementDashboard = () => {
+  const navigate = useNavigate();
   const { analytics, loading, error, refetch } = useEngagementAnalytics();
 
   if (loading) {
@@ -35,10 +37,20 @@ const EngagementDashboard = () => {
   return (
     <AdminLayout>
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Engagement Dashboard
-          </h1>
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/admin/advanced-analytics')}
+              className="text-white/60 hover:text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </Button>
+            <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Engagement Dashboard
+            </h1>
+          </div>
           <Button onClick={() => refetch()} disabled={loading} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Frissítés
@@ -174,7 +186,7 @@ const EngagementDashboard = () => {
 
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Legnépszerűbb Kategóriák</CardTitle>
+                <CardTitle className="text-white">Legnépszerűbb Témakörök</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -183,7 +195,7 @@ const EngagementDashboard = () => {
                     <XAxis dataKey="category" stroke="#fff" />
                     <YAxis stroke="#fff" />
                     <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
-                    <Bar dataKey="count" fill="hsl(var(--primary))" name="Játékok száma" />
+                    <Bar dataKey="count" fill="hsl(var(--primary))" name="Top témakör pontszám" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
