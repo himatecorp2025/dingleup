@@ -111,25 +111,20 @@ export const QuestionCard = ({
         </div>
 
       {/* Wrapper for Timer + Question + Answers + Help - Vertically centered */}
-      <div className="flex-grow flex flex-col justify-center items-center space-y-1 sm:space-y-1.5 md:space-y-2">
+      <div className="flex-grow flex flex-col justify-center space-y-3 sm:space-y-4">
+        {/* Timer */}
+        <GameTimer timeLeft={timeLeft} maxTime={30} />
+
         {/* Middle section: Question and Answers with Reaction Bar */}
         <div className="relative flex">
           {/* Question and Answers */}
-          <div className="flex-1 flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2">
-            {/* Timer */}
-            <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
-              <GameTimer timeLeft={timeLeft} maxTime={30} />
-            </div>
+          <div className="flex-1 flex flex-col space-y-3 sm:space-y-4">
+            <MillionaireQuestion questionNumber={questionNumber}>
+              {question.question}
+            </MillionaireQuestion>
 
-            <div className="-mt-[0.1rem] sm:-mt-[0.2rem] md:-mt-[0.3rem] pb-10 sm:pb-12 md:pb-16">
-              <MillionaireQuestion questionNumber={questionNumber}>
-                {question.question}
-              </MillionaireQuestion>
-            </div>
-
-            {/* Answers with exact spacing */}
-            <div className="mt-0">
-              <div className="space-y-4 sm:space-y-6 mb-4 sm:mb-6">{question.answers.map((answer) => {
+            {/* Answers */}
+            <div className="space-y-3 sm:space-y-4">{question.answers.map((answer) => {
                 const isRemoved = removedAnswer === answer.key;
                 const isSelected = selectedAnswer === answer.key;
                 const isCorrect = answer.key === correctAnswerKey;
@@ -167,7 +162,6 @@ export const QuestionCard = ({
                   </div>
                 );
               })}
-              </div>
             </div>
           </div>
 
