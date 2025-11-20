@@ -16,11 +16,20 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
   const fetchTranslations = async (targetLang: LangCode): Promise<TranslationMap> => {
     try {
-      const { data, error } = await supabase.functions.invoke('get-translations', {
-        body: { lang: targetLang }
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-translations?lang=${targetLang}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          }
+        }
+      );
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
       return data?.translations || {};
     } catch (error) {
       console.error('[I18n] Failed to fetch translations:', error);
@@ -30,10 +39,20 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
   const detectLanguage = async (): Promise<LangCode> => {
     try {
-      const { data, error } = await supabase.functions.invoke('detect-language');
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/detect-language`,
+        {
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          }
+        }
+      );
       
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       
+      const data = await response.json();
       const detectedLang = data?.language as LangCode;
       if (VALID_LANGUAGES.includes(detectedLang)) {
         return detectedLang;
