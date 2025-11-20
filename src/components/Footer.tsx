@@ -72,26 +72,26 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">Linkek</h3>
+            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">{t('footer.quickLinks')}</h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  Rólunk
+                  {t('footer.about')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  Funkciók
+                  {t('footer.features')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  Hogyan működik?
+                  {t('footer.howItWorks')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  GYIK
+                  {t('footer.faq')}
                 </a>
               </li>
             </ul>
@@ -99,31 +99,31 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">Jogi Információk</h3>
+            <h3 className="font-bold text-lg mb-4 text-yellow-400 drop-shadow-lg">{t('footer.legalTitle')}</h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  Adatvédelem
+                  {t('footer.privacy')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  Felhasználási Feltételek
+                  {t('footer.terms')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  Cookie Szabályzat
+                  {t('footer.cookies')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  Kapcsolat
+                  {t('footer.contact')}
                 </a>
               </li>
               <li>
                 <a href="/admin/login" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  Admin felület
+                  {t('footer.adminPanel')}
                 </a>
               </li>
             </ul>
