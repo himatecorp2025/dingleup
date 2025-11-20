@@ -228,7 +228,63 @@
     "leaderboard": "Classifica",
     "profile": "Profilo",
     "about": "Chi siamo",
-    "logout": "Esci",
+    "logout": "Disconnetti",
     "notLoggedIn": "Non sei connesso! Per favore accedi!"
+  },
+  "dialogs": {
+    "dailyGift": {
+      "title": "REGALO GIORNALIERO",
+      "day": "GIORNO",
+      "todayReward": "OGGI RICEVI",
+      "claim": "RISCATTA",
+      "comeLater": "PIÙ TARDI",
+      "claiming": "Riscatto...",
+      "alreadyClaimed": "GIÀ RISCATTATO OGGI"
+    },
+    "welcomeBonus": {
+      "title": "BENVENUTO!",
+      "specialOffer": "OFFERTA SPECIALE!",
+      "giftForYou": "Regalo solo per te!",
+      "coins": "ORO",
+      "lives": "VITE",
+      "claim": "RISCATTA",
+      "claiming": "Riscatto..."
+    },
+    "inGameRescue": {
+      "title": "Quasi eliminato... 🎰",
+      "subtitle": "Scegli un pacchetto di salvataggio!",
+      "currentStatus": "Stato attuale",
+      "life": "Vita",
+      "gold": "Oro",
+      "goldSaver": "Salvatore d'oro",
+      "goldSaverDesc": "500 oro per 250 oro + 15 vite",
+      "instantRescue": "Salvataggio istantaneo",
+      "instantRescueDesc": "+1000 oro + 25 vite istantaneamente!",
+      "notEnoughGold": "⚠️ Oro insufficiente",
+      "processing": "Elaborazione...",
+      "immediateCredit": "Accredito immediato",
+      "continueMessage": "Continua da dove hai lasciato! 🎮",
+      "cancel": "Annulla"
+    },
+    "exitGame": {
+      "title": "Sei sicuro di voler uscire?",
+      "warningGoldLost": "⚠️ Tutto l'oro raccolto finora andrà perso! ⚠️",
+      "warningProgress": "Se torni indietro, tutti i risultati raccolti verranno eliminati e non riceverai monete d'oro.",
+      "gameCompleted": "Il tuo gioco è terminato, oro accreditato.",
+      "exit": "Esci",
+      "stay": "Rimani"
+    },
+    "continueGame": {
+      "timeout": "Tempo scaduto!",
+      "wrong": "Risposta sbagliata!",
+      "outOfLives": "Vite esaurite!",
+      "continue": "Continuare?",
+      "notEnoughCoins": "Monete insufficienti per continuare. Visita il negozio!",
+      "continueDescription": "Puoi continuare il gioco per {{cost}} monete, oppure il tuo risultato attuale verrà salvato se esci.",
+      "continueButton": "Continua ({{cost}} monete)",
+      "buyNow": "🛒 Acquista ora",
+      "exitAndSave": "Esci e salva",
+      "backToHome": "Torna alla home"
+    }
   }
 }
