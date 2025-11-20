@@ -60,11 +60,12 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // Fetch larger set (100 questions) and randomly select 15 on server
+    // Fetch questions from all 27 topics to ensure mixed gameplay
+    // Request 4 random questions per topic = 108 questions total
     const { data: allQuestions, error: questionsError } = await supabaseClient
       .from('questions')
       .select('id, question, answers, audience, third, source_category')
-      .limit(100);
+      .limit(108);
 
     if (questionsError || !allQuestions || allQuestions.length < 15) {
       console.error('[start-game-session] Questions fetch error:', questionsError);
@@ -74,9 +75,43 @@ serve(async (req) => {
       );
     }
 
-    // Shuffle and select 15 random questions
-    const shuffled = allQuestions.sort(() => Math.random() - 0.5);
-    const questions = shuffled.slice(0, 15);
+    // Group questions by topic/category to ensure diversity
+    const questionsByTopic = new Map<string, any[]>();
+    allQuestions.forEach(q => {
+      const topic = q.source_category || 'unknown';
+      if (!questionsByTopic.has(topic)) {
+        questionsByTopic.set(topic, []);
+      }
+      questionsByTopic.get(topic)!.push(q);
+    });
+
+    // Select questions ensuring mix from different topics
+    const selectedQuestions: any[] = [];
+    const topics = Array.from(questionsByTopic.keys());
+    
+    // Round-robin selection from different topics to ensure diversity
+    let topicIndex = 0;
+    while (selectedQuestions.length < 15 && topics.length > 0) {
+      const currentTopic = topics[topicIndex % topics.length];
+      const topicQuestions = questionsByTopic.get(currentTopic)!;
+      
+      if (topicQuestions.length > 0) {
+        // Pick random question from this topic
+        const randomIndex = Math.floor(Math.random() * topicQuestions.length);
+        selectedQuestions.push(topicQuestions[randomIndex]);
+        topicQuestions.splice(randomIndex, 1);
+      }
+      
+      // Remove topic if no more questions
+      if (topicQuestions.length === 0) {
+        questionsByTopic.delete(currentTopic);
+        topics.splice(topics.indexOf(currentTopic), 1);
+      } else {
+        topicIndex++;
+      }
+    }
+
+    const questions = selectedQuestions;
 
     // CRITICAL: Validate and format questions with proper error handling
     if (questions.length < 15) {
