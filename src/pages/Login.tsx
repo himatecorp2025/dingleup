@@ -56,8 +56,8 @@ const Login = () => {
 
       if (fnError || fnData?.error || !fnData?.email) {
         toast({
-          title: "Bejelentkezési hiba",
-          description: fnData?.error || "Helytelen felhasználónév vagy jelszó",
+          title: t('auth.loginError'),
+          description: fnData?.error || t('auth.invalidCredentials'),
           variant: "destructive",
         });
         return;
@@ -70,8 +70,8 @@ const Login = () => {
 
       if (signInError) {
         toast({
-          title: "Bejelentkezési hiba",
-          description: "Helytelen felhasználónév vagy jelszó",
+          title: t('auth.loginError'),
+          description: t('auth.invalidCredentials'),
           variant: "destructive",
         });
         return;
@@ -101,7 +101,7 @@ const Login = () => {
       options: { redirectTo: `${window.location.origin}/` },
     });
     if (error) {
-      toast({ title: 'Hiba', description: 'Google bejelentkezés sikertelen', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('auth.loginError'), variant: 'destructive' });
     }
   };
 
@@ -122,7 +122,7 @@ const Login = () => {
 
       <div className="w-full max-w-md relative z-10">
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative">
-          <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Vissza">
+          <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={t('common.back')}>
             <ArrowLeft className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
           </button>
 
@@ -136,9 +136,9 @@ const Login = () => {
 
           <h1 className="text-3xl sm:text-4xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] flex items-center justify-center gap-2">
             <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
-            Bejelentkezés
+            {t('auth.login')}
           </h1>
-          <p className="text-center text-white/70 mb-6 text-sm font-medium">Lépj be a kvízjáték világába! ⚡</p>
+          <p className="text-center text-white/70 mb-6 text-sm font-medium">{t('landing.hero.subtitle')} ⚡</p>
 
           <Button
             type="button"
@@ -153,7 +153,7 @@ const Login = () => {
               <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            Bejelentkezés Google-lal
+            {t('auth.login')} Google
           </Button>
 
           <div className="relative my-6">
@@ -161,26 +161,26 @@ const Login = () => {
               <div className="w-full border-t border-white/10"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-transparent text-white/60">vagy</span>
+              <span className="px-4 bg-transparent text-white/60">{t('common.or', { defaultValue: 'vagy' })}</span>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-white/80">Felhasználónév</Label>
+              <Label className="text-sm font-medium text-white/80">{t('auth.username')}</Label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type="text" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} className="h-12 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder="Írd be a felhasználóneved" disabled={isLoading} />
+                <Input type="text" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} className="h-12 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder={t('auth.username')} disabled={isLoading} />
               </div>
               {errors.username && <p className="text-sm text-red-400">{errors.username}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-white/80">Jelszó</Label>
+              <Label className="text-sm font-medium text-white/80">{t('auth.password')}</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type={showPassword ? "text" : "password"} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="h-12 pl-10 pr-12 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder="Írd be a jelszavad" disabled={isLoading} />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={showPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}>
+                <Input type={showPassword ? "text" : "password"} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="h-12 pl-10 pr-12 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder={t('auth.password')} disabled={isLoading} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={showPassword ? t('common.hide', { defaultValue: 'Elrejtés' }) : t('common.show', { defaultValue: 'Megjelenítés' })}>
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
@@ -192,17 +192,17 @@ const Login = () => {
               className="w-full h-12 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300 text-base"
               disabled={isLoading}
             >
-              {isLoading ? "Bejelentkezés..." : "Bejelentkezés 🎮"}
+              {isLoading ? t('common.loading') : t('auth.signIn') + ' 🎮'}
             </Button>
           </form>
 
           <p className="text-center text-white/60 mt-6 text-sm">
-            Még nincs fiókod?{' '}
+            {t('auth.noAccount')}{' '}
             <button
               onClick={() => navigate('/register')}
               className="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors"
             >
-              Regisztrálj itt! 🚀
+              {t('auth.signUp')} 🚀
             </button>
           </p>
         </div>
