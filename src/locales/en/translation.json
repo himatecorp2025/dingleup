@@ -14,6 +14,9 @@
     "yes": "Yes",
     "no": "No",
     "ok": "OK",
+    "or": "or",
+    "hide": "Hide",
+    "show": "Show",
     "connectionRestored": "Connection restored",
     "internetAvailable": "Internet connection is available again.",
     "noInternet": "No internet connection",
@@ -37,7 +40,38 @@
     "loginError": "Login error",
     "invalidCredentials": "Invalid email or password",
     "ageRequirement": "Only individuals who have reached the age of 16 can participate in the game",
-    "termsAccept": "I accept the Terms of Service and confirm that my personal data is accurate and I am at least 16 years old"
+    "termsAccept": "I accept the Terms of Service and confirm that my personal data is accurate and I am at least 16 years old",
+    "registerWithGoogle": "Register with Google",
+    "loginWithGoogle": "Login with Google",
+    "or": "or",
+    "usernameMin": "Username must be at least 3 characters",
+    "invalidEmail": "Invalid email address",
+    "ageRestriction": "You must be at least 16 years old",
+    "passwordMin": "Password must be at least 8 characters",
+    "passwordLowercase": "Password must contain lowercase letters",
+    "passwordUppercase": "Password must contain uppercase letters",
+    "passwordSpecial": "Password must contain special characters",
+    "termsRequired": "You must accept the terms of service",
+    "passwordMismatch": "Passwords do not match",
+    "emailTaken": "This email address is already in use",
+    "profileCreationFailed": "Profile creation failed",
+    "welcomeToDingleUp": "Welcome to DingleUP!",
+    "chooseUsername": "Choose username",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "Secure password",
+    "confirmPasswordPlaceholder": "Re-enter password",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
+    "invitationCode": "Invitation code",
+    "invitationCodePlaceholder": "Optional",
+    "acceptTermsStart": "I accept the",
+    "termsOfService": "terms of service",
+    "and": "and",
+    "privacyPolicy": "privacy policy",
+    "dataDeclaration": "I confirm that my personal data is accurate and I am at least 16 years old",
+    "joinCommunity": "Join the community",
+    "googleSignInFailed": "Google sign-in failed",
+    "registrationBlocked": "Registration blocked"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -50,11 +84,33 @@
     "rank": "Rank",
     "dailyGift": "Daily Gift",
     "welcomeBonus": "Welcome Bonus",
-    "freeBooster": "Free Booster",
-    "premiumBooster": "Premium Booster",
-    "yourRanking": "Your Ranking",
-    "dailyRanking": "Daily Ranking",
-    "greeting": "Hello, {{username}}!"
+    "greeting": "Hello, {{username}}!",
+    "nextLifeIn": "Next Life",
+    "geniusOffer": {
+      "title": "Premium Booster",
+      "subtitle": "Get extra lives and gold!",
+      "price": "Only 2.49 USD",
+      "benefits": {
+        "gold": "+1500 Gold",
+        "lives": "+50 Lives",
+        "speedTokens": "24x Speed Token"
+      },
+      "buyNow": "Buy Now",
+      "activate": "Activate"
+    },
+    "freeBooster": {
+      "title": "Free Booster",
+      "price": "900 gold",
+      "benefits": {
+        "gold": "+300 Gold",
+        "lives": "+15 Lives",
+        "speedTokens": "4x Speed Token"
+      },
+      "buy": "Purchase",
+      "activate": "Activate"
+    },
+    "speedActive": "Speed Token Active",
+    "timeRemaining": "Time Remaining"
   },
   "game": {
     "question": "Question",
@@ -176,8 +232,7 @@
     "loadingPaymentPage": "Loading payment page...",
     "paymentPageOpened": "Payment page opened in new tab",
     "paymentUrlMissing": "Payment URL not received",
-    "paymentPageError": "Error loading payment page",
-    "activationError": "Error occurred during activation"
+    "paymentPageError": "Error loading payment page"
   },
   "rewards": {
     "dailyGift": "Daily Gift",
@@ -266,6 +321,14 @@
       "comeBackTomorrow": "Come back tomorrow",
       "todayYouGet": "TODAY YOU GET"
     },
+    "premiumBooster": {
+      "title": "Premium Speed Booster Purchase",
+      "description": "By purchasing the Premium Speed Booster you get +1500 gold, +50 lives and 24× 60-minute speed tokens.",
+      "withdrawalNotice": "Due to the nature of digital content, the 14-day right of withdrawal cannot be exercised.",
+      "accept": "I accept and purchase",
+      "cancel": "Cancel",
+      "termsCheckbox": "I accept the terms and waive my right of withdrawal"
+    },
     "welcomeBonus": {
       "title": "WELCOME!",
       "subtitle": "Welcome to the game!",
@@ -319,6 +382,152 @@
       "buyNow": "🛒 Buy now",
       "exitAndSave": "Exit and save",
       "backToHome": "Back to home"
+    },
+    "dailyWinner": {
+      "title": "Yesterday's TOP 10",
+      "congratulations": "Congratulations!",
+      "youWon": "You won!",
+      "rank": "Rank",
+      "reward": "Reward",
+      "gold": "gold",
+      "lives": "lives",
+      "close": "Close",
+      "notInTop10": "You didn't make it to the TOP 10"
+    },
+    "weeklyWinner": {
+      "title": "Weekly Winners",
+      "congratulations": "Congratulations on your weekly victory!",
+      "rank": "Rank",
+      "reward": "Reward",
+      "gold": "gold",
+      "lives": "lives",
+      "close": "Close"
+    },
+    "invitation": {
+      "title": "Invite a Friend",
+      "subtitle": "Invite your friends and earn rewards!",
+      "inviteButton": "Send Invite",
+      "copyLink": "Copy Link",
+      "shareVia": "Share via",
+      "linkCopied": "Link copied!",
+      "invitationSent": "Invitation sent!"
+    },
+    "report": {
+      "title": "Report",
+      "subtitle": "Why are you reporting this content?",
+      "reason": "Select reason",
+      "spam": "Spam",
+      "inappropriate": "Inappropriate content",
+      "offensive": "Offensive",
+      "other": "Other",
+      "additionalInfo": "Additional info (optional)",
+      "submit": "Submit Report",
+      "cancel": "Cancel",
+      "success": "Report submitted",
+      "error": "Error submitting report"
     }
+  },
+  "categorySelector": {
+    "title": "Choose Category",
+    "subtitle": "Which topic would you like to play?"
+  },
+  "footer": {
+    "tagline": "For the geniuses",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms of Service",
+    "rightsReserved": "All rights reserved"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Learn more about us and our mission",
+    "mission": {
+      "title": "Our Mission",
+      "description": "DingleUP!'s mission is to make knowledge entertaining and accessible to everyone. We believe that play is the best way to learn."
+    },
+    "story": {
+      "title": "Our Story",
+      "description": "DingleUP! was launched in 2024 to revolutionize online quiz games. Since then, more than 10,000 users have joined us worldwide."
+    },
+    "values": {
+      "title": "Our Values",
+      "innovation": "Innovation",
+      "innovationDesc": "We constantly develop and innovate",
+      "community": "Community",
+      "communityDesc": "Together we are stronger",
+      "excellence": "Excellence",
+      "excellenceDesc": "Quality in everything we do"
+    },
+    "team": {
+      "title": "Our Team",
+      "description": "A team of passionate professionals committed to providing the best gaming experience."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "description": "Have a question or suggestion? Feel free to write to us!",
+      "email": "Email",
+      "emailAddress": "info@dingleup.com"
+    }
+  },
+  "invitation": {
+    "title": "Invite your friends!",
+    "subtitle": "Share your invitation code or link",
+    "invitationCode": "Invitation code",
+    "invitationLink": "Invitation link",
+    "totalRewards": "Total rewards",
+    "goldCoins": "Gold coins",
+    "lives": "Lives",
+    "rewardTiers": "Reward tiers",
+    "friends1to2": "1-2 Friends",
+    "friends1to2Reward": "200 gold + 3 lives / friend",
+    "friends3to9": "3-9 Friends",
+    "friends3to9Reward": "1,000 gold + 5 lives / friend",
+    "friends10plus": "10+ Friends",
+    "friends10plusReward": "6,000 gold + 20 lives / friend",
+    "invitedFriends": "Invited friends",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "noInvitations": "You haven't invited anyone yet",
+    "copyCodeSuccess": "Invitation code copied!",
+    "copyLinkSuccess": "Invitation link copied!",
+    "copyError": "Error copying",
+    "fetchError": "Error loading invitation data",
+    "backToDashboard": "Back to dashboard"
+  },
+  "payment": {
+    "invalidSession": "Invalid payment session",
+    "notLoggedIn": "You are not logged in",
+    "verifying": "Verifying payment...",
+    "pleaseWait": "Please wait while we confirm the transaction.",
+    "success": "Purchase successful!",
+    "successMessage": "Purchase successful! +{{gold}} gold and +{{lives}} lives credited. You can now activate the Premium Speed Booster.",
+    "redirecting": "Redirecting to dashboard...",
+    "verificationError": "Payment verification error",
+    "verificationFailed": "Payment verification failed"
+  },
+  "registration": {
+    "success": "Registration Successful!",
+    "congratulations": "Congratulations! Your account has been successfully created. You are now ready to start the game and test your knowledge!",
+    "startGame": "Start Game"
+  },
+  "install": {
+    "title": "Install the App!",
+    "alreadyInstalled": "App is already installed!",
+    "installNow": "Install Now",
+    "iosInstructions": "iOS Installation:",
+    "iosStep1": "1. Tap the Share button",
+    "iosStep2": "2. Scroll down and select \"Add to Home Screen\"",
+    "iosStep3": "3. Tap the \"Add\" button",
+    "androidInstructions": "Android Installation:",
+    "androidStep1": "1. Tap the browser menu button (⋮)",
+    "androidStep2": "2. Select \"Install\" or \"Add to Home screen\"",
+    "androidStep3": "3. Confirm the installation",
+    "openOnMobile": "Open this page on mobile to install!",
+    "feature1": "Offline Mode",
+    "feature2": "Fast Loading",
+    "feature3": "App-like Experience",
+    "feature4": "Home Screen Icon",
+    "backToDashboard": "Back to Dashboard"
   }
 }
