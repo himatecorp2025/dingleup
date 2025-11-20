@@ -106,6 +106,7 @@ const GamePreview = () => {
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
   const [showLoadingVideo, setShowLoadingVideo] = useState(false);
+  const [isGameReady, setIsGameReady] = useState(false); // NEW: Prevents timer from starting during video
 
   // Game initialization promise - runs in background while video plays
   const gameInitPromiseRef = useRef<Promise<void> | null>(null);
@@ -121,7 +122,11 @@ const GamePreview = () => {
         return;
       }
     }
+    
+    // CRITICAL: Only NOW can the timer start - game is fully loaded and video ended
+    setIsGameReady(true);
     setVideoEnded(true);
+    setIsStartingGame(false); // Release game start lock
   }, []);
 
   // Auth check
@@ -152,10 +157,12 @@ const GamePreview = () => {
     if (!skipLoadingVideo) {
       setShowLoadingVideo(true);
       setVideoEnded(false);
+      setIsGameReady(false); // CRITICAL: Timer won't start until video ends
     } else {
       // Seamless restart - skip video and mark as ended immediately
       setShowLoadingVideo(false);
       setVideoEnded(true);
+      setIsGameReady(true); // Seamless restart - timer can start immediately
     }
     
     // Start all backend operations in parallel IMMEDIATELY while video plays
@@ -346,17 +353,17 @@ const GamePreview = () => {
     }
   }, [userId, gameState]);
 
-  // Timer countdown
+  // Timer countdown - ONLY starts when game is ready (video ended + backend loaded)
   useEffect(() => {
-    if (gameState === 'playing' && timeLeft > 0 && !selectedAnswer && !isAnimating) {
+    if (gameState === 'playing' && isGameReady && timeLeft > 0 && !selectedAnswer && !isAnimating) {
       const timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1);
       }, 1000);
       return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && !selectedAnswer && gameState === 'playing' && !isAnimating) {
+    } else if (timeLeft === 0 && !selectedAnswer && gameState === 'playing' && isGameReady && !isAnimating) {
       handleTimeout();
     }
-  }, [timeLeft, gameState, selectedAnswer, isAnimating]);
+  }, [timeLeft, gameState, isGameReady, selectedAnswer, isAnimating]);
 
   // Touch gesture handler - OPTIMIZED FOR SMOOTH 60FPS SCROLLING
   useEffect(() => {

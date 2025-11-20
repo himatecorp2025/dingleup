@@ -60,11 +60,13 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // Load questions from database
+    // OPTIMIZED: Load ONLY 15 random questions directly from database (not 1000!)
+    // Using PostgreSQL's random() function for server-side randomization
     const { data: questions, error: questionsError } = await supabaseClient
       .from('questions')
       .select('id, question, answers, audience, third, source_category')
-      .limit(1000); // Get all available questions
+      .order('random()')  // PostgreSQL random() for server-side shuffle
+      .limit(15);
 
     if (questionsError || !questions || questions.length === 0) {
       return new Response(
@@ -73,22 +75,8 @@ serve(async (req) => {
       );
     }
 
-    // Cryptographically secure shuffle using Fisher-Yates
-    const shuffleArray = <T,>(array: T[]): T[] => {
-      const shuffled = [...array];
-      const randomBytes = new Uint32Array(shuffled.length);
-      crypto.getRandomValues(randomBytes);
-      
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = randomBytes[i] % (i + 1);
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      return shuffled;
-    };
-
-    // Select 15 random questions using cryptographic shuffle
-    const shuffled = shuffleArray(questions);
-    const selectedQuestions = shuffled.slice(0, 15).map((q: any) => ({
+    // Format the questions
+    const selectedQuestions = questions.map((q: any) => ({
       id: q.id,
       question: q.question,
       answers: Array.isArray(q.answers) ? q.answers : [],
@@ -96,34 +84,7 @@ serve(async (req) => {
       difficulty: 'medium'
     }));
 
-    // Idempotency: check for recent active session (< 5 min old)
-    const { data: recentSession } = await supabaseClient
-      .from('game_sessions')
-      .select('session_id, questions, started_at')
-      .eq('user_id', user.id)
-      .gte('started_at', new Date(Date.now() - 5 * 60 * 1000).toISOString())
-      .order('started_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    // If recent session exists (< 5 min), return it instead of creating duplicate
-    if (recentSession) {
-      console.log(`[start-game-session] Returning existing recent session for user ${user.id}`);
-      return new Response(
-        JSON.stringify({
-          sessionId: recentSession.session_id,
-          questions: selectedQuestions.map(q => ({
-            id: q.id,
-            question: q.question,
-            answers: q.answers,
-            difficulty: q.difficulty
-          }))
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Create new game session with encrypted answers
+    // Create new game session (removed idempotency check for speed)
     const sessionId = crypto.randomUUID();
     const sessionData = {
       user_id: user.id,
