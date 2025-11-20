@@ -46,8 +46,11 @@
     "rank": "Rang",
     "dailyGift": "Cadeau quotidien",
     "welcomeBonus": "Bonus de bienvenue",
-    "freeBooster": "Booster gratuit",
-    "premiumBooster": "Booster premium"
+    "freeBooster": "Booster Gratuit",
+    "premiumBooster": "Booster Premium",
+    "yourRanking": "Votre Classement",
+    "dailyRanking": "Classement Quotidien",
+    "greeting": "Bonjour, {{username}}!"
   },
   "game": {
     "question": "Question",
@@ -65,7 +68,11 @@
     "exitGame": "Quitter le jeu",
     "notEnoughLives": "Pas assez de vies pour commencer",
     "lifeDeducted": "1 vie déduite, 1 pièce créditée",
-    "swipeToContinue": "Balayez pour commencer une nouvelle partie"
+    "swipeToContinue": "Balayez pour commencer une nouvelle partie",
+    "mobileOnly": "Mobile Uniquement",
+    "mobileOnlyDescription": "Ce jeu est disponible uniquement sur les appareils mobiles et tablettes.",
+    "backToHome": "Retour à l'Accueil",
+    "loading": "Chargement..."
   },
   "leaderboard": {
     "title": "Classement",
@@ -73,10 +80,11 @@
     "weekly": "Hebdomadaire",
     "allTime": "Tous les temps",
     "yourRank": "Vous",
-    "topPlayers": "Meilleurs joueurs",
+    "topPlayers": "Meilleurs Joueurs",
     "correctAnswers": "Bonnes réponses",
     "country": "Pays",
-    "forTheGeniuses": "POUR LES GÉNIES"
+    "forTheGeniuses": "POUR LES GÉNIES",
+    "backToDashboard": "Retour au Tableau de Bord"
   },
   "profile": {
     "title": "Mon profil",

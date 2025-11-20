@@ -46,8 +46,11 @@
     "rank": "Rang",
     "dailyGift": "Dagelijks cadeau",
     "welcomeBonus": "Welkomstbonus",
-    "freeBooster": "Gratis booster",
-    "premiumBooster": "Premium booster"
+    "freeBooster": "Gratis Booster",
+    "premiumBooster": "Premium Booster",
+    "yourRanking": "Jouw Ranking",
+    "dailyRanking": "Dagelijkse Ranking",
+    "greeting": "Hallo, {{username}}!"
   },
   "game": {
     "question": "Vraag",
@@ -65,7 +68,11 @@
     "exitGame": "Spel verlaten",
     "notEnoughLives": "Niet genoeg levens om te beginnen",
     "lifeDeducted": "1 leven afgetrokken, 1 munt toegevoegd",
-    "swipeToContinue": "Veeg om een nieuw spel te starten"
+    "swipeToContinue": "Veeg om een nieuw spel te starten",
+    "mobileOnly": "Alleen Mobiel",
+    "mobileOnlyDescription": "Dit spel is alleen beschikbaar op mobiele en tablet apparaten.",
+    "backToHome": "Terug naar Home",
+    "loading": "Laden..."
   },
   "leaderboard": {
     "title": "Klassement",
@@ -73,10 +80,11 @@
     "weekly": "Wekelijks",
     "allTime": "Alle tijd",
     "yourRank": "Jij",
-    "topPlayers": "Topspelers",
+    "topPlayers": "Top Spelers",
     "correctAnswers": "Correcte antwoorden",
     "country": "Land",
-    "forTheGeniuses": "VOOR DE GENIEËN"
+    "forTheGeniuses": "VOOR DE GENIEËN",
+    "backToDashboard": "Terug naar Dashboard"
   },
   "profile": {
     "title": "Mijn profiel",

@@ -68,7 +68,11 @@
     "exitGame": "Esci dal gioco",
     "notEnoughLives": "Non ci sono abbastanza vite per iniziare",
     "lifeDeducted": "1 vita dedotta, 1 moneta accreditata",
-    "swipeToContinue": "Scorri per iniziare una nuova partita"
+    "swipeToContinue": "Scorri per iniziare una nuova partita",
+    "mobileOnly": "Solo Mobile",
+    "mobileOnlyDescription": "Questo gioco è disponibile solo su dispositivi mobili e tablet.",
+    "backToHome": "Torna alla Home",
+    "loading": "Caricamento..."
   },
   "leaderboard": {
     "title": "Classifica",
