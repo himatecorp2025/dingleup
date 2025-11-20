@@ -132,14 +132,11 @@ const Dashboard = () => {
     }
   }, [searchParams, setSearchParams]);
 
-  // Show Welcome Bonus dialog FIRST (highest priority) - TESTING MODE: show on desktop too, with 1s delay
+  // Show Welcome Bonus dialog FIRST (highest priority) - instant, 0 seconds delay
   useEffect(() => {
     if (canMountModals && canClaimWelcome && userId) {
-      const t = setTimeout(() => {
-        setShowWelcomeBonus(true);
-        setShowPopup(false);
-      }, 1000);
-      return () => clearTimeout(t);
+      setShowWelcomeBonus(true);
+      setShowPopup(false);
     }
   }, [canMountModals, canClaimWelcome, userId]);
 
@@ -159,7 +156,7 @@ const Dashboard = () => {
 
 
 
-  // Realtime country-specific rank updates via edge function
+  // Realtime country-specific rank updates via edge function (instant, 0 seconds delay)
   useEffect(() => {
     if (!userId) return;
 
@@ -189,10 +186,7 @@ const Dashboard = () => {
     // Fetch immediately on mount
     fetchUserDailyRank();
     
-    // Debounced refetch - only once per 2 seconds
-    let refetchTimeout: NodeJS.Timeout;
-    
-    // Subscribe to realtime changes in daily_rankings
+    // Subscribe to realtime changes in daily_rankings (instant refetch, 0 seconds delay)
     const leaderboardChannel = supabase
       .channel('daily-leaderboard-rank-updates')
       .on(
@@ -203,17 +197,12 @@ const Dashboard = () => {
           table: 'daily_rankings'
         },
         () => {
-          // Debounce: clear previous timeout, schedule new fetch in 2s
-          clearTimeout(refetchTimeout);
-          refetchTimeout = setTimeout(() => {
-            fetchUserDailyRank();
-          }, 2000);
+          fetchUserDailyRank();
         }
       )
       .subscribe();
     
     return () => {
-      clearTimeout(refetchTimeout);
       supabase.removeChannel(leaderboardChannel);
     };
   }, [userId]);
@@ -245,10 +234,8 @@ const Dashboard = () => {
       // Reload profile and wallet to show updated coins and lives
       await refreshProfile();
       await refetchWallet();
-      // Check if Daily Gift should appear after Welcome Bonus
-      setTimeout(async () => {
-        await checkDailyGift();
-      }, 500);
+      // Check if Daily Gift should appear after Welcome Bonus (instant, 0 seconds delay)
+      await checkDailyGift();
     }
     return success;
   };

@@ -66,8 +66,8 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
       }
     };
 
-    const timeout = setTimeout(checkWinnerStatus, 2000);
-    return () => clearTimeout(timeout);
+    // Check winner status immediately (instant, 0 seconds delay)
+    checkWinnerStatus();
   }, [userId]);
 
   const handleClose = async () => {
