@@ -56,7 +56,7 @@ export const useUserJourneyAnalytics = () => {
   useEffect(() => {
     fetchUserJourneyAnalytics(false);
 
-    // Realtime subscriptions (háttér frissítés)
+    // Realtime subscriptions (instant, 0 seconds delay)
     const navChannel = supabase
       .channel('admin-journey-nav')
       .on('postgres_changes', {
@@ -90,16 +90,10 @@ export const useUserJourneyAnalytics = () => {
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds (háttérben)
-    const interval = setInterval(() => {
-      fetchUserJourneyAnalytics(true);
-    }, 30000);
-
     return () => {
       supabase.removeChannel(navChannel);
       supabase.removeChannel(conversionChannel);
       supabase.removeChannel(exitChannel);
-      clearInterval(interval);
     };
   }, []);
 

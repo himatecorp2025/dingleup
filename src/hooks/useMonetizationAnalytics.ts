@@ -48,7 +48,7 @@ export const useMonetizationAnalytics = () => {
   useEffect(() => {
     fetchMonetizationAnalytics();
 
-    // Real-time subscriptions
+    // Real-time subscriptions (instant, 0 seconds delay)
     const boosterPurchasesChannel = supabase
       .channel('monetization-booster-purchases')
       .on('postgres_changes', {
@@ -60,14 +60,8 @@ export const useMonetizationAnalytics = () => {
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(() => {
-      fetchMonetizationAnalytics(true);
-    }, 30000);
-
     return () => {
       supabase.removeChannel(boosterPurchasesChannel);
-      clearInterval(interval);
     };
   }, []);
 
