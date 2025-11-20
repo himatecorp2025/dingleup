@@ -131,55 +131,43 @@ const AdminDashboard = () => {
     }
   }, []);
 
-  // REALTIME: Background data updates without page reload
+  // REALTIME: Instant background data updates (0 seconds delay)
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    
-    const debouncedFetch = () => {
-      // Clear any pending fetch
-      if (timeoutId) clearTimeout(timeoutId);
-      // Wait 3 seconds before fetching to batch multiple changes (optimized for mobile)
-      timeoutId = setTimeout(() => {
-        fetchData();
-      }, 3000);
-    };
-
     const channel = supabase
       .channel('admin-dashboard-realtime')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'invitations'
-      }, debouncedFetch)
+      }, () => fetchData())
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'reports'
-      }, debouncedFetch)
+      }, () => fetchData())
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'friendships'
-      }, debouncedFetch)
+      }, () => fetchData())
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'profiles'
-      }, debouncedFetch)
+      }, () => fetchData())
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'game_results'
-      }, debouncedFetch)
+      }, () => fetchData())
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'booster_purchases'
-      }, debouncedFetch)
+      }, () => fetchData())
       .subscribe();
 
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
       supabase.removeChannel(channel);
     };
   }, [fetchData]);

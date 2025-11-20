@@ -65,7 +65,7 @@ export const useEngagementAnalytics = () => {
   useEffect(() => {
     fetchEngagementAnalytics(false);
 
-    // Realtime subscriptions (háttér frissítés)
+    // Realtime subscriptions (instant, 0 seconds delay)
     const sessionChannel = supabase
       .channel('admin-engagement-sessions')
       .on('postgres_changes', {
@@ -88,15 +88,9 @@ export const useEngagementAnalytics = () => {
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds (háttérben)
-    const interval = setInterval(() => {
-      fetchEngagementAnalytics(true);
-    }, 30000);
-
     return () => {
       supabase.removeChannel(sessionChannel);
       supabase.removeChannel(featureChannel);
-      clearInterval(interval);
     };
   }, []);
 

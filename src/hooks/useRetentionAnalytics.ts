@@ -65,7 +65,7 @@ export const useRetentionAnalytics = () => {
   useEffect(() => {
     fetchRetentionAnalytics(false);
 
-    // Realtime subscriptions (háttér frissítés)
+    // Realtime subscriptions (instant, 0 seconds delay)
     const sessionChannel = supabase
       .channel('admin-retention-sessions')
       .on('postgres_changes', {
@@ -88,15 +88,9 @@ export const useRetentionAnalytics = () => {
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds (háttérben)
-    const interval = setInterval(() => {
-      fetchRetentionAnalytics(true);
-    }, 30000);
-
     return () => {
       supabase.removeChannel(sessionChannel);
       supabase.removeChannel(profilesChannel);
-      clearInterval(interval);
     };
   }, []);
 

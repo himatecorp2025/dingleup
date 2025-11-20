@@ -79,7 +79,7 @@ export const usePerformanceAnalytics = () => {
   useEffect(() => {
     fetchPerformanceAnalytics(false);
 
-    // Realtime subscriptions (háttér frissítés)
+    // Realtime subscriptions (instant, 0 seconds delay)
     const metricsChannel = supabase
       .channel('admin-performance-metrics')
       .on('postgres_changes', {
@@ -102,15 +102,9 @@ export const usePerformanceAnalytics = () => {
       })
       .subscribe();
 
-    // Auto-refresh every 30 seconds (háttérben)
-    const interval = setInterval(() => {
-      fetchPerformanceAnalytics(true);
-    }, 30000);
-
     return () => {
       supabase.removeChannel(metricsChannel);
       supabase.removeChannel(errorsChannel);
-      clearInterval(interval);
     };
   }, []);
 
