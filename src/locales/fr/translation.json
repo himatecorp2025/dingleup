@@ -198,17 +198,71 @@
       "title": "Testez vos connaissances!",
       "subtitle": "Affrontez des amis, gagnez des récompenses et devenez le meilleur joueur de quiz au monde",
       "playNow": "Jouer maintenant",
-      "learnMore": "En savoir plus"
+      "learnMore": "En savoir plus",
+      "cta": "Commencer maintenant",
+      "login": "Connexion"
     },
     "features": {
       "title": "Pourquoi DingleUP!?",
+      "subtitle": "Ce que DingleUP! offre",
       "categories": "27 Sujets différents",
       "categoriesDesc": "Histoire, science, art et bien plus",
       "leaderboard": "Classement mondial",
       "leaderboardDesc": "Affrontez des joueurs du monde entier",
-      "rewards": "Récompenses quotidiennes",
+      "rewards": "Récompensesquotidiennes",
       "rewardsDesc": "Gagnez des pièces, des vies et des bonus d'activation"
+    },
+    "newsletter": {
+      "title": "Restez informé",
+      "subtitle": "Inscrivez-vous à notre newsletter pour recevoir les dernières nouvelles",
+      "placeholder": "Votre e-mail",
+      "cta": "S'abonner",
+      "success": "Abonnement réussi !",
+      "error": "Erreur lors de l'abonnement"
     }
+  },
+  "footer": {
+    "tagline": "Testez vos connaissances, gagnez des récompenses",
+    "about": "À propos",
+    "features": "Fonctionnalités",
+    "faq": "FAQ",
+    "legal": "Mentions légales",
+    "contact": "Contact",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "copyright": "© 2025 DingleUP! Tous droits réservés."
+  },
+  "about": {
+    "title": "À propos de DingleUP!",
+    "mission": {
+      "title": "Notre mission",
+      "description": "DingleUP! est une plateforme de quiz interactive où vous pouvez tester vos connaissances dans différents domaines, gagner des récompenses et rivaliser avec d'autres joueurs."
+    },
+    "story": {
+      "title": "Notre histoire",
+      "description": "Nous avons créé DingleUP! pour rendre l'apprentissage amusant et engageant. Notre objectif est de fournir une expérience de jeu qui allie divertissement et développement des connaissances."
+    },
+    "values": {
+      "title": "Nos valeurs",
+      "education": "Éducation",
+      "educationDesc": "Nous croyons au pouvoir de l'apprentissage continu",
+      "community": "Communauté",
+      "communityDesc": "Nous construisons une communauté de joueurs passionnés",
+      "innovation": "Innovation",
+      "innovationDesc": "Nous innovons constamment pour améliorer l'expérience"
+    },
+    "team": {
+      "title": "Notre équipe",
+      "description": "Nous sommes une équipe passionnée qui travaille pour offrir la meilleure expérience de jeu-questionnaire."
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "description": "Vous avez des questions ? N'hésitez pas à nous contacter à"
+    }
+  },
+  "categorySelector": {
+    "title": "Choisir une catégorie",
+    "subtitle": "Sélectionnez une catégorie de questions"
   },
   "admin": {
     "dashboard": "Tableau de bord admin",
