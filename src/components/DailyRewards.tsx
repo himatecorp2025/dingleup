@@ -86,51 +86,72 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
             return (
               <div 
                 key={index} 
-                className="relative rounded-xl p-4 transition-transform hover:scale-[1.02]" 
+                className="relative rounded-xl p-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl overflow-hidden" 
                 style={{
                   background: isTop3 
                     ? (place === 1 
-                        ? 'linear-gradient(135deg, hsl(45 100% 45%), hsl(45 100% 35%), hsl(45 100% 25%))' 
+                        ? 'linear-gradient(135deg, hsl(45 100% 48%), hsl(45 100% 38%), hsl(45 100% 28%))' 
                         : place === 2 
-                        ? 'linear-gradient(135deg, hsl(0 0% 70%), hsl(0 0% 60%), hsl(0 0% 50%))' 
-                        : 'linear-gradient(135deg, hsl(30 70% 55%), hsl(30 70% 45%), hsl(30 70% 35%))') 
-                    : 'linear-gradient(135deg, hsl(280 50% 30%), hsl(280 50% 25%), hsl(280 50% 20%))',
+                        ? 'linear-gradient(135deg, hsl(0 0% 75%), hsl(0 0% 65%), hsl(0 0% 55%))' 
+                        : 'linear-gradient(135deg, hsl(30 75% 58%), hsl(30 75% 48%), hsl(30 75% 38%))') 
+                    : 'linear-gradient(135deg, hsl(280 55% 33%), hsl(280 55% 28%), hsl(280 55% 23%))',
                   boxShadow: isTop3 
-                    ? `0 8px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, ${place === 1 ? '0.3' : '0.2'}), inset 0 -2px 8px rgba(0, 0, 0, 0.3)` 
-                    : '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                  border: isTop3 ? '2px solid' : '1px solid hsl(280 30% 40%)',
-                  borderColor: isTop3 ? (place === 1 ? 'hsl(45 100% 65%)' : place === 2 ? 'hsl(0 0% 80%)' : 'hsl(30 70% 60%)') : undefined
+                    ? `0 12px 24px rgba(0, 0, 0, 0.5), 
+                       0 0 ${place === 1 ? '30px' : place === 2 ? '20px' : '15px'} ${place === 1 ? 'rgba(255, 215, 0, 0.4)' : place === 2 ? 'rgba(192, 192, 192, 0.3)' : 'rgba(205, 127, 50, 0.3)'},
+                       inset 0 2px 0 rgba(255, 255, 255, ${place === 1 ? '0.35' : '0.25'}), 
+                       inset 0 -3px 12px rgba(0, 0, 0, 0.35)` 
+                    : '0 6px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -2px 8px rgba(0, 0, 0, 0.2)',
+                  border: isTop3 ? '3px solid' : '1.5px solid hsl(280 30% 42%)',
+                  borderColor: isTop3 ? (place === 1 ? 'hsl(45 100% 68%)' : place === 2 ? 'hsl(0 0% 85%)' : 'hsl(30 75% 65%)') : undefined
                 }}
               >
-                <div className="flex items-center justify-between">
+                {/* Shimmer overlay csak TOP3-ra */}
+                {isTop3 && (
+                  <div 
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%)',
+                      animation: 'shimmer 3s infinite',
+                      backgroundSize: '200% 100%'
+                    }}
+                  />
+                )}
+                
+                <div className="flex items-center justify-between gap-4">
                   {/* BAL OLDAL: emoji + rangsor + név */}
-                  <div className="flex items-center gap-3 flex-1">
-                    <span className="text-3xl" style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }}>
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <span className="text-3xl flex-shrink-0" style={{ filter: 'drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5))' }}>
                       {getCrownIcon(place)}
                     </span>
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-2">
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <div className="flex items-center gap-2 min-w-0">
                         <span 
-                          className="text-2xl font-black" 
+                          className="text-2xl font-black flex-shrink-0" 
                           style={{ 
-                            color: isTop3 ? (place === 1 ? 'hsl(45 100% 85%)' : place === 2 ? 'hsl(0 0% 95%)' : 'hsl(30 70% 85%)') : 'hsl(45 90% 70%)',
-                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)'
+                            color: isTop3 ? (place === 1 ? 'hsl(45 100% 88%)' : place === 2 ? 'hsl(0 0% 97%)' : 'hsl(30 75% 88%)') : 'hsl(45 90% 72%)',
+                            textShadow: isTop3 
+                              ? `0 3px 6px rgba(0, 0, 0, 0.6), 0 0 ${place === 1 ? '15px' : '10px'} ${place === 1 ? 'rgba(255, 215, 0, 0.6)' : 'rgba(255, 255, 255, 0.4)'}`
+                              : '0 2px 4px rgba(0, 0, 0, 0.5)'
                           }}
                         >
                           #{place}
                         </span>
                         <span 
-                          className="text-lg font-bold text-white truncate" 
-                          style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)' }}
+                          className="text-lg font-bold text-white truncate overflow-hidden whitespace-nowrap" 
+                          style={{ 
+                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)',
+                            textOverflow: 'ellipsis',
+                            maxWidth: '140px'
+                          }}
                         >
                           {player.username}
                         </span>
                       </div>
                       <span 
-                        className="text-xs ml-10 font-medium" 
+                        className="text-xs ml-10 font-semibold" 
                         style={{ 
-                          color: isTop3 ? 'rgba(255, 255, 255, 0.8)' : 'hsl(45 80% 65%)',
-                          textShadow: '0 1px 2px rgba(0, 0, 0, 0.4)'
+                          color: isTop3 ? 'rgba(255, 255, 255, 0.85)' : 'hsl(45 85% 68%)',
+                          textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
                         }}
                       >
                         {player.total_correct_answers} helyes válasz
@@ -138,31 +159,33 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                     </div>
                   </div>
                   
-                  {/* JOBB OLDAL: 3D jutalmak SVG ikonokkal */}
-                  <div className="flex flex-col items-end gap-2">
+                  {/* JOBB OLDAL: 3D jutalmak SVG ikonokkal - FIX WIDTH */}
+                  <div className="flex flex-col items-end gap-2 flex-shrink-0" style={{ minWidth: '100px' }}>
                     {/* Aranyérme SVG */}
-                    <div className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="10" fill="url(#goldGradient)" stroke="hsl(45 100% 35%)" strokeWidth="2"/>
-                        <circle cx="12" cy="12" r="7" fill="url(#goldInner)" opacity="0.8"/>
-                        <circle cx="9" cy="9" r="2" fill="rgba(255, 255, 255, 0.4)"/>
+                    <div className="flex items-center justify-end gap-2 w-full">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }}>
+                        <circle cx="12" cy="12" r="10" fill="url(#goldGradient)" stroke="hsl(45 100% 30%)" strokeWidth="2.5"/>
+                        <circle cx="12" cy="12" r="7" fill="url(#goldInner)" opacity="0.85"/>
+                        <circle cx="9" cy="9" r="2.5" fill="rgba(255, 255, 255, 0.5)"/>
                         <defs>
                           <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="hsl(45 100% 65%)" />
-                            <stop offset="50%" stopColor="hsl(45 100% 55%)" />
-                            <stop offset="100%" stopColor="hsl(45 95% 45%)" />
+                            <stop offset="0%" stopColor="hsl(45 100% 70%)" />
+                            <stop offset="50%" stopColor="hsl(45 100% 58%)" />
+                            <stop offset="100%" stopColor="hsl(45 95% 48%)" />
                           </linearGradient>
                           <radialGradient id="goldInner">
-                            <stop offset="0%" stopColor="hsl(45 100% 70%)" />
-                            <stop offset="100%" stopColor="hsl(45 100% 50%)" />
+                            <stop offset="0%" stopColor="hsl(45 100% 75%)" />
+                            <stop offset="100%" stopColor="hsl(45 100% 55%)" />
                           </radialGradient>
                         </defs>
                       </svg>
                       <span 
-                        className="text-base font-black" 
+                        className="text-base font-black tabular-nums" 
                         style={{ 
-                          color: 'hsl(45 100% 75%)',
-                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 215, 0, 0.4)'
+                          color: 'hsl(45 100% 80%)',
+                          textShadow: '0 2px 6px rgba(0, 0, 0, 0.7), 0 0 12px rgba(255, 215, 0, 0.5)',
+                          minWidth: '65px',
+                          textAlign: 'right'
                         }}
                       >
                         +{reward.coins.toLocaleString()}
@@ -170,28 +193,30 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                     </div>
                     
                     {/* Szív SVG */}
-                    <div className="flex items-center gap-2">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div className="flex items-center justify-end gap-2 w-full">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }}>
                         <path 
                           d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" 
                           fill="url(#heartGradient)" 
-                          stroke="hsl(0 85% 45%)" 
-                          strokeWidth="2"
+                          stroke="hsl(0 85% 40%)" 
+                          strokeWidth="2.5"
                         />
-                        <ellipse cx="9" cy="8" rx="2" ry="1.5" fill="rgba(255, 255, 255, 0.4)"/>
+                        <ellipse cx="9" cy="8" rx="2.5" ry="2" fill="rgba(255, 255, 255, 0.5)"/>
                         <defs>
                           <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="hsl(0 90% 65%)" />
-                            <stop offset="50%" stopColor="hsl(0 85% 55%)" />
-                            <stop offset="100%" stopColor="hsl(0 80% 45%)" />
+                            <stop offset="0%" stopColor="hsl(0 92% 68%)" />
+                            <stop offset="50%" stopColor="hsl(0 87% 58%)" />
+                            <stop offset="100%" stopColor="hsl(0 82% 48%)" />
                           </linearGradient>
                         </defs>
                       </svg>
                       <span 
-                        className="text-base font-black" 
+                        className="text-base font-black tabular-nums" 
                         style={{ 
-                          color: 'hsl(0 85% 70%)',
-                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 0, 0, 0.3)'
+                          color: 'hsl(0 88% 75%)',
+                          textShadow: '0 2px 6px rgba(0, 0, 0, 0.7), 0 0 12px rgba(255, 0, 0, 0.4)',
+                          minWidth: '65px',
+                          textAlign: 'right'
                         }}
                       >
                         +{reward.lives}
@@ -203,6 +228,14 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
             );
           })}
         </div>
+        
+        {/* Shimmer keyframes */}
+        <style>{`
+          @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+          }
+        `}</style>
 
         {/* Éjféli jutalom jóváírás info - Jackpot */}
         <div className="mt-6 text-center">
@@ -228,22 +261,156 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
               return (
                 <div 
                   key={index} 
-                  className="relative rounded-xl p-4 transition-transform hover:scale-[1.02]" 
+                  className="relative rounded-xl p-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl overflow-hidden" 
                   style={{
                     background: isTop3 
                       ? (place === 1 
-                          ? 'linear-gradient(135deg, hsl(45 95% 45%), hsl(45 100% 35%), hsl(45 100% 28%))' 
+                          ? 'linear-gradient(135deg, hsl(45 98% 48%), hsl(45 98% 38%), hsl(45 98% 28%))' 
                           : place === 2 
-                          ? 'linear-gradient(135deg, hsl(0 0% 72%), hsl(0 0% 62%), hsl(0 0% 52%))' 
-                          : 'linear-gradient(135deg, hsl(30 75% 55%), hsl(30 75% 45%), hsl(30 75% 38%))') 
-                      : 'linear-gradient(135deg, hsl(280 50% 32%), hsl(280 50% 27%), hsl(280 50% 22%))',
+                          ? 'linear-gradient(135deg, hsl(0 0% 75%), hsl(0 0% 65%), hsl(0 0% 55%))' 
+                          : 'linear-gradient(135deg, hsl(30 78% 58%), hsl(30 78% 48%), hsl(30 78% 38%))') 
+                      : 'linear-gradient(135deg, hsl(280 55% 33%), hsl(280 55% 28%), hsl(280 55% 23%))',
                     boxShadow: isTop3 
-                      ? `0 8px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, ${place === 1 ? '0.3' : '0.2'}), inset 0 -2px 8px rgba(0, 0, 0, 0.3)` 
-                      : '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                    border: isTop3 ? '2px solid' : '1px solid hsl(280 30% 40%)',
-                    borderColor: isTop3 ? (place === 1 ? 'hsl(45 100% 65%)' : place === 2 ? 'hsl(0 0% 82%)' : 'hsl(30 75% 62%)') : undefined
+                      ? `0 12px 24px rgba(0, 0, 0, 0.5), 
+                         0 0 ${place === 1 ? '30px' : place === 2 ? '20px' : '15px'} ${place === 1 ? 'rgba(255, 215, 0, 0.4)' : place === 2 ? 'rgba(192, 192, 192, 0.3)' : 'rgba(205, 127, 50, 0.3)'},
+                         inset 0 2px 0 rgba(255, 255, 255, ${place === 1 ? '0.35' : '0.25'}), 
+                         inset 0 -3px 12px rgba(0, 0, 0, 0.35)` 
+                      : '0 6px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -2px 8px rgba(0, 0, 0, 0.2)',
+                    border: isTop3 ? '3px solid' : '1.5px solid hsl(280 30% 42%)',
+                    borderColor: isTop3 ? (place === 1 ? 'hsl(45 100% 68%)' : place === 2 ? 'hsl(0 0% 85%)' : 'hsl(30 78% 65%)') : undefined
                   }}
                 >
+                  {/* Shimmer overlay csak TOP3-ra */}
+                  {isTop3 && (
+                    <div 
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%)',
+                        animation: 'shimmerNormal 3s infinite',
+                        backgroundSize: '200% 100%'
+                      }}
+                    />
+                  )}
+                  
+                  <div className="flex items-center justify-between gap-4">
+                    {/* BAL OLDAL: emoji + rangsor + név */}
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <span className="text-3xl flex-shrink-0" style={{ filter: 'drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5))' }}>
+                        {getCrownIcon(place)}
+                      </span>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span 
+                            className="text-2xl font-black flex-shrink-0" 
+                            style={{ 
+                              color: isTop3 ? (place === 1 ? 'hsl(45 100% 88%)' : place === 2 ? 'hsl(0 0% 97%)' : 'hsl(30 78% 88%)') : 'hsl(var(--dup-gold-400))',
+                              textShadow: isTop3 
+                                ? `0 3px 6px rgba(0, 0, 0, 0.6), 0 0 ${place === 1 ? '15px' : '10px'} ${place === 1 ? 'rgba(255, 215, 0, 0.6)' : 'rgba(255, 255, 255, 0.4)'}`
+                                : '0 2px 4px rgba(0, 0, 0, 0.5)'
+                            }}
+                          >
+                            #{place}
+                          </span>
+                          <span 
+                            className="text-lg font-bold text-white truncate overflow-hidden whitespace-nowrap" 
+                            style={{ 
+                              textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)',
+                              textOverflow: 'ellipsis',
+                              maxWidth: '140px'
+                            }}
+                          >
+                            {player.username}
+                          </span>
+                        </div>
+                        <span 
+                          className="text-xs ml-10 font-semibold" 
+                          style={{ 
+                            color: isTop3 ? 'rgba(255, 255, 255, 0.85)' : 'hsl(45 85% 68%)',
+                            textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
+                          }}
+                        >
+                          {player.total_correct_answers} helyes válasz
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* JOBB OLDAL: 3D jutalmak SVG ikonokkal - FIX WIDTH */}
+                    <div className="flex flex-col items-end gap-2 flex-shrink-0" style={{ minWidth: '100px' }}>
+                      {/* Aranyérme SVG */}
+                      <div className="flex items-center justify-end gap-2 w-full">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }}>
+                          <circle cx="12" cy="12" r="10" fill="url(#goldGradient3)" stroke="hsl(45 100% 30%)" strokeWidth="2.5"/>
+                          <circle cx="12" cy="12" r="7" fill="url(#goldInner3)" opacity="0.85"/>
+                          <circle cx="9" cy="9" r="2.5" fill="rgba(255, 255, 255, 0.5)"/>
+                          <defs>
+                            <linearGradient id="goldGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="hsl(45 100% 70%)" />
+                              <stop offset="50%" stopColor="hsl(45 100% 58%)" />
+                              <stop offset="100%" stopColor="hsl(45 95% 48%)" />
+                            </linearGradient>
+                            <radialGradient id="goldInner3">
+                              <stop offset="0%" stopColor="hsl(45 100% 75%)" />
+                              <stop offset="100%" stopColor="hsl(45 100% 55%)" />
+                            </radialGradient>
+                          </defs>
+                        </svg>
+                        <span 
+                          className="text-base font-black tabular-nums" 
+                          style={{ 
+                            color: 'hsl(45 100% 80%)',
+                            textShadow: '0 2px 6px rgba(0, 0, 0, 0.7), 0 0 12px rgba(255, 215, 0, 0.5)',
+                            minWidth: '65px',
+                            textAlign: 'right'
+                          }}
+                        >
+                          +{reward.coins.toLocaleString()}
+                        </span>
+                      </div>
+                      
+                      {/* Szív SVG */}
+                      <div className="flex items-center justify-end gap-2 w-full">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }}>
+                          <path 
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" 
+                            fill="url(#heartGradient3)" 
+                            stroke="hsl(0 85% 40%)" 
+                            strokeWidth="2.5"
+                          />
+                          <ellipse cx="9" cy="8" rx="2.5" ry="2" fill="rgba(255, 255, 255, 0.5)"/>
+                          <defs>
+                            <linearGradient id="heartGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="hsl(0 92% 68%)" />
+                              <stop offset="50%" stopColor="hsl(0 87% 58%)" />
+                              <stop offset="100%" stopColor="hsl(0 82% 48%)" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                        <span 
+                          className="text-base font-black tabular-nums" 
+                          style={{ 
+                            color: 'hsl(0 88% 75%)',
+                            textShadow: '0 2px 6px rgba(0, 0, 0, 0.7), 0 0 12px rgba(255, 0, 0, 0.4)',
+                            minWidth: '65px',
+                            textAlign: 'right'
+                          }}
+                        >
+                          +{reward.lives}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
+          {/* Shimmer keyframes - Normal */}
+          <style>{`
+            @keyframes shimmerNormal {
+              0% { background-position: -200% 0; }
+              100% { background-position: 200% 0; }
+            }
+          `}</style>
                   <div className="flex items-center justify-between">
                     {/* BAL OLDAL: emoji + rangsor + név */}
                     <div className="flex items-center gap-3 flex-1">
