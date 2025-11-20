@@ -176,8 +176,9 @@ const Leaderboard = () => {
           <div className="flex items-center mb-2">
             <button
               onClick={() => navigate('/dashboard')}
-              className="relative p-3 rounded-full hover:scale-110 transition-all"
+              className="relative p-4 rounded-full hover:scale-110 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center"
               title="Vissza a dashboardra"
+              aria-label="Vissza a dashboardra"
             >
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
@@ -195,7 +196,7 @@ const Leaderboard = () => {
               <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
               
               {/* Icon */}
-              <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
+              <LogOut className="w-7 h-7 text-white relative z-10 -scale-x-100" />
             </button>
           </div>
 

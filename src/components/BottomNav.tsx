@@ -159,20 +159,22 @@ const BottomNav = () => {
               key={index}
               onClick={() => item.action ? item.action() : handleNavigation(item.path!)}
               className={`
-                flex flex-col items-center justify-center py-2 sm:py-3 px-2 sm:px-3 rounded-lg
+                flex flex-col items-center justify-center py-3 px-3 rounded-lg min-h-[56px]
                 transition-all duration-200 relative overflow-hidden flex-1
                 ${isActive 
                   ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20' 
                   : 'text-white/60 hover:bg-white/5'}
               `}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
             >
               {isActive && (
                 <div className="absolute inset-0 bg-gradient-to-t from-purple-600/20 to-transparent animate-pulse"></div>
               )}
-              <div className={`mb-0.5 sm:mb-1 relative z-10 text-purple-400`}>
+              <div className={`mb-1 relative z-10 text-purple-400`}>
                 <IconComponent />
               </div>
-              <span className="text-[9px] sm:text-[10px] font-medium relative z-10 leading-tight">{item.label}</span>
+              <span className="text-[10px] sm:text-[11px] font-medium relative z-10 leading-tight">{item.label}</span>
             </button>
           );
         })}

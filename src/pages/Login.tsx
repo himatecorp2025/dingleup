@@ -120,8 +120,8 @@ const Login = () => {
 
       <div className="w-full max-w-md relative z-10">
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 relative">
-          <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10" aria-label="Vissza">
-            <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
+          <button onClick={() => navigate('/')} className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Vissza">
+            <ArrowLeft className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
           </button>
 
           {/* Logo inside box */}
@@ -142,7 +142,7 @@ const Login = () => {
             type="button"
             onClick={handleGoogleAuth}
             variant="outline"
-            className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300"
+            className="w-full h-12 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300 text-base"
             disabled={isLoading}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -168,7 +168,7 @@ const Login = () => {
               <Label className="text-sm font-medium text-white/80">Felhasználónév</Label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type="text" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} className="h-10 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Írd be a felhasználóneved" disabled={isLoading} />
+                <Input type="text" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} className="h-12 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder="Írd be a felhasználóneved" disabled={isLoading} />
               </div>
               {errors.username && <p className="text-sm text-red-400">{errors.username}</p>}
             </div>
@@ -177,8 +177,8 @@ const Login = () => {
               <Label className="text-sm font-medium text-white/80">Jelszó</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
-                <Input type={showPassword ? "text" : "password"} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="h-10 pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20" placeholder="Írd be a jelszavad" disabled={isLoading} />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors">
+                <Input type={showPassword ? "text" : "password"} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="h-12 pl-10 pr-12 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base" placeholder="Írd be a jelszavad" disabled={isLoading} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={showPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}>
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
@@ -187,7 +187,7 @@ const Login = () => {
 
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300"
+              className="w-full h-12 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300 text-base"
               disabled={isLoading}
             >
               {isLoading ? "Bejelentkezés..." : "Bejelentkezés 🎮"}
