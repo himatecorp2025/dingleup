@@ -61,11 +61,12 @@ serve(async (req) => {
     }
 
     // Fetch questions from all 27 topics to ensure mixed gameplay
-    // Request 4 random questions per topic = 108 questions total
+    // Request 50 questions (reduced from 108 for faster loading)
     const { data: allQuestions, error: questionsError } = await supabaseClient
       .from('questions')
       .select('id, question, answers, audience, third, source_category')
-      .limit(108);
+      .order('created_at', { ascending: false })
+      .limit(50);
 
     if (questionsError || !allQuestions || allQuestions.length < 15) {
       console.error('[start-game-session] Questions fetch error:', questionsError);

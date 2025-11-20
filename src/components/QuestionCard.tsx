@@ -102,8 +102,8 @@ export const QuestionCard = ({
           onExit={onExit}
         />
 
-        {/* Coin animation - positioned below header */}
-        <div className="absolute left-1/2 -translate-x-1/2 z-20" style={{ top: '12%' }}>
+        {/* Coin animation - positioned below header at 75% horizontal width */}
+        <div className="absolute z-20" style={{ top: '12%', left: '75%', transform: 'translateX(-50%)' }}>
           <CoinRewardAnimation 
             amount={coinRewardAmount} 
             trigger={coinRewardTrigger}
