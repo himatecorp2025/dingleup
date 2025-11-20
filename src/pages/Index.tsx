@@ -37,10 +37,9 @@ const Index = () => {
     });
   }, []);
 
-  // Mobile/tablet esetén ne rendereljünk semmit, az App.tsx már átnavigál
-  if (isMobileOrTablet) {
-    return null;
-  }
+  // Desktop: show landing page normally
+  // Mobile/tablet: AppRouteGuard handles redirect, but we still need to render something briefly
+  // to avoid flash of empty content before redirect completes
 
   return (
     <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] overflow-x-hidden overflow-y-auto">
