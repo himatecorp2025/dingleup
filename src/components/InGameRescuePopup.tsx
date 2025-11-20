@@ -102,73 +102,62 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[95vw] w-full max-h-[75vh] overflow-y-auto bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] border-2 border-gold-500/40 p-5 sm:p-6">
+      <DialogContent className="max-w-[95vw] w-full max-h-[70vh] overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] border-2 border-gold-500/40 p-4">
         {/* Header */}
-        <DialogHeader className="space-y-2 mb-4">
-          <DialogTitle className="text-2xl sm:text-3xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent drop-shadow-lg leading-tight">
+        <DialogHeader className="space-y-1 mb-3">
+          <DialogTitle className="text-xl sm:text-2xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent drop-shadow-lg leading-tight">
             Majdnem kiestél... 🎰
           </DialogTitle>
-          <p className="text-center text-white/90 text-sm sm:text-base font-medium leading-snug">
+          <p className="text-center text-white/90 text-xs sm:text-sm font-medium">
             Válassz egy mentőcsomagot!
           </p>
         </DialogHeader>
 
-        {/* Current Status - Minimal & Elegant */}
-        <div className="bg-gradient-to-br from-purple-900/40 to-purple-800/20 border border-purple-400/30 rounded-xl p-3 mb-4 backdrop-blur-sm">
+        {/* Current Status */}
+        <div className="bg-gradient-to-br from-purple-900/40 to-purple-800/20 border border-purple-400/30 rounded-xl p-2 mb-3 backdrop-blur-sm">
           <div className="flex items-center justify-around">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">💚</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xl">💚</span>
               <div>
-                <p className="text-white/60 text-xs font-medium">Élet</p>
-                <p className="text-white font-black text-xl">{currentLives}</p>
+                <p className="text-white/60 text-[10px] font-medium">Élet</p>
+                <p className="text-white font-black text-lg">{currentLives}</p>
               </div>
             </div>
-            <div className="h-8 w-px bg-white/20"></div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🪙</span>
+            <div className="h-6 w-px bg-white/20"></div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xl">🪙</span>
               <div>
-                <p className="text-white/60 text-xs font-medium">Arany</p>
-                <p className="text-white font-black text-xl">{currentGold}</p>
+                <p className="text-white/60 text-[10px] font-medium">Arany</p>
+                <p className="text-white font-black text-lg">{currentGold}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Booster Options */}
-        <div className="space-y-3 mb-4">
+        {/* Booster Options - Side by Side */}
+        <div className="grid grid-cols-2 gap-2 mb-3">
           {/* Gold Saver Booster */}
           <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl blur-sm group-hover:blur-md transition-all"></div>
-            <div className="relative bg-gradient-to-br from-amber-900/60 to-orange-900/40 border-2 border-yellow-500/60 rounded-2xl p-4 backdrop-blur-sm hover:scale-[1.02] transition-transform duration-200">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-2xl shadow-lg shadow-yellow-500/50">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl blur-sm group-hover:blur-md transition-all"></div>
+            <div className="relative bg-gradient-to-br from-amber-900/60 to-orange-900/40 border-2 border-yellow-500/60 rounded-xl p-3 backdrop-blur-sm hover:scale-[1.02] transition-transform duration-200">
+              <div className="flex flex-col items-center gap-2 mb-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-xl shadow-lg shadow-yellow-500/50">
                   🟡
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-black text-yellow-300 mb-1 leading-tight">Gold Saver Booster</h3>
-                  <p className="text-white/80 text-xs leading-snug">
-                    500 aranyért visszakapsz 250 aranyat + 15 életet
-                  </p>
-                </div>
+                <h3 className="text-sm font-black text-yellow-300 text-center leading-tight">Gold Saver</h3>
               </div>
 
-              <div className="flex items-center justify-between mb-3 bg-black/30 rounded-lg p-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-green-400 text-sm">✓</span>
-                  <span className="text-white text-sm font-bold">+250 🪙</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-green-400 text-sm">✓</span>
-                  <span className="text-white text-sm font-bold">+15 💚</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-red-400 text-sm">✗</span>
-                  <span className="text-white/60 text-xs">Speed</span>
-                </div>
+              <p className="text-white/80 text-[10px] text-center mb-2 leading-snug">
+                500 aranyért visszakapsz 250 aranyat + 15 életet
+              </p>
+
+              <div className="flex items-center justify-center gap-2 mb-2 bg-black/30 rounded-lg p-1.5">
+                <span className="text-white text-xs font-bold">+250🪙</span>
+                <span className="text-white text-xs font-bold">+15💚</span>
               </div>
 
               {!hasEnoughGold && (
-                <p className="text-red-400 text-xs text-center mb-2 font-medium">
+                <p className="text-red-400 text-[9px] text-center mb-1.5 font-medium">
                   ⚠️ Nincs elég aranyad
                 </p>
               )}
@@ -176,17 +165,17 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <Button
                 onClick={handleGoldSaverPurchase}
                 disabled={!hasEnoughGold || loadingGoldSaver}
-                className="w-full bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 hover:from-yellow-400 hover:via-yellow-300 hover:to-yellow-400 text-gray-900 font-black text-base py-6 rounded-xl disabled:opacity-50 shadow-xl shadow-yellow-500/30 hover:shadow-yellow-400/50 transition-all border-2 border-yellow-300/50"
+                className="w-full bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 hover:from-yellow-400 hover:via-yellow-300 hover:to-yellow-400 text-gray-900 font-black text-xs py-3 rounded-lg disabled:opacity-50 shadow-lg shadow-yellow-500/30 hover:shadow-yellow-400/50 transition-all border border-yellow-300/50"
               >
                 {loadingGoldSaver ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Feldolgozás...
+                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                    <span className="text-[10px]">Feldolgozás...</span>
                   </>
                 ) : hasEnoughGold ? (
-                  '💸 Vásárlás - 500 arany'
+                  '💸 500 arany'
                 ) : (
-                  'Nincs elég aranyam'
+                  <span className="text-[10px]">Nincs elég</span>
                 )}
               </Button>
             </div>
@@ -194,52 +183,41 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
           {/* Instant Rescue Booster - Premium */}
           <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-red-500/30 to-pink-500/30 rounded-2xl blur-md group-hover:blur-lg transition-all animate-pulse"></div>
-            <div className="relative bg-gradient-to-br from-red-900/70 to-pink-900/50 border-2 border-red-500/70 rounded-2xl p-4 backdrop-blur-sm hover:scale-[1.02] transition-transform duration-200">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center text-2xl shadow-lg shadow-red-500/50 animate-pulse">
+            <div className="absolute inset-0 bg-gradient-to-r from-red-500/30 to-pink-500/30 rounded-xl blur-md group-hover:blur-lg transition-all animate-pulse"></div>
+            <div className="relative bg-gradient-to-br from-red-900/70 to-pink-900/50 border-2 border-red-500/70 rounded-xl p-3 backdrop-blur-sm hover:scale-[1.02] transition-transform duration-200">
+              <div className="flex flex-col items-center gap-2 mb-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center text-xl shadow-lg shadow-red-500/50 animate-pulse">
                   🔴
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-black text-red-300 mb-1 leading-tight">Instant Rescue 💎</h3>
-                  <p className="text-white/80 text-xs leading-snug">
-                    Azonnal visszamentsz! +1000 arany + 25 élet
-                  </p>
-                </div>
+                <h3 className="text-sm font-black text-red-300 text-center leading-tight">Instant Rescue 💎</h3>
               </div>
 
-              <div className="flex items-center justify-between mb-3 bg-black/30 rounded-lg p-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-green-400 text-sm">✓</span>
-                  <span className="text-white text-sm font-bold">+1000 🪙</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-green-400 text-sm">✓</span>
-                  <span className="text-white text-sm font-bold">+25 💚</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-red-400 text-sm">✗</span>
-                  <span className="text-white/60 text-xs">Speed</span>
-                </div>
+              <p className="text-white/80 text-[10px] text-center mb-2 leading-snug">
+                Azonnal visszamentsz! +1000 arany + 25 élet
+              </p>
+
+              <div className="flex items-center justify-center gap-2 mb-2 bg-black/30 rounded-lg p-1.5">
+                <span className="text-white text-xs font-bold">+1000🪙</span>
+                <span className="text-white text-xs font-bold">+25💚</span>
               </div>
 
               <Button
                 onClick={handleInstantRescuePurchase}
                 disabled={loadingInstantRescue}
-                className="w-full bg-gradient-to-r from-red-500 via-pink-500 to-red-500 hover:from-red-400 hover:via-pink-400 hover:to-red-400 text-white font-black text-base py-6 rounded-xl shadow-xl shadow-red-500/40 hover:shadow-red-400/60 transition-all border-2 border-red-300/50"
+                className="w-full bg-gradient-to-r from-red-500 via-pink-500 to-red-500 hover:from-red-400 hover:via-pink-400 hover:to-red-400 text-white font-black text-xs py-3 rounded-lg shadow-lg shadow-red-500/40 hover:shadow-red-400/60 transition-all border border-red-300/50"
               >
                 {loadingInstantRescue ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Feldolgozás...
+                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                    <span className="text-[10px]">Feldolgozás...</span>
                   </>
                 ) : (
-                  '💳 Megmentem - 1,49 $'
+                  '💳 1,49 $'
                 )}
               </Button>
 
-              <p className="text-white/40 text-[9px] text-center mt-2 leading-tight">
-                Digitális szolgáltatás • Azonnali jóváírás • Elállási jog nem gyakorolható
+              <p className="text-white/40 text-[8px] text-center mt-1.5 leading-tight">
+                Digitális szolgáltatás • Azonnali jóváírás
               </p>
             </div>
           </div>
@@ -247,13 +225,13 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
         {/* Footer */}
         <div className="text-center pt-2 border-t border-white/10">
-          <p className="text-white/60 text-xs mb-2 leading-snug">
+          <p className="text-white/60 text-[10px] mb-1.5 leading-snug">
             Ott folytatod, ahol abbahagytad! 🎮
           </p>
           <Button
             onClick={onClose}
             variant="ghost"
-            className="text-white/50 hover:text-white/80 hover:bg-white/5 text-sm h-9 px-4"
+            className="text-white/50 hover:text-white/80 hover:bg-white/5 text-xs h-8 px-3"
           >
             Mégsem
           </Button>
