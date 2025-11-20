@@ -78,43 +78,125 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           {topPlayers.slice(0, maxRank).map((player, index) => {
             const place = index + 1;
             const reward = getRewardForRank(place);
             const isTop3 = place <= 3;
             return (
-              <div key={index} className="relative rounded-xl p-4" style={{
-                background: isTop3 ? (place === 1 ? 'linear-gradient(135deg, hsl(45 100% 35%), hsl(45 100% 25%))' : place === 2 ? 'linear-gradient(135deg, hsl(0 0% 60%), hsl(0 0% 45%))' : 'linear-gradient(135deg, hsl(30 60% 45%), hsl(30 60% 35%))') : 'linear-gradient(135deg, hsl(280 40% 25%), hsl(280 50% 20%))',
-                border: isTop3 ? '3px solid' : '2px solid hsl(280 30% 40%)',
-                borderColor: isTop3 ? (place === 1 ? 'hsl(45 100% 60%)' : place === 2 ? 'hsl(0 0% 75%)' : 'hsl(30 60% 55%)') : undefined
-              }}>
+              <div 
+                key={index} 
+                className="relative rounded-xl p-4 transition-transform hover:scale-[1.02]" 
+                style={{
+                  background: isTop3 
+                    ? (place === 1 
+                        ? 'linear-gradient(135deg, hsl(45 100% 45%), hsl(45 100% 35%), hsl(45 100% 25%))' 
+                        : place === 2 
+                        ? 'linear-gradient(135deg, hsl(0 0% 70%), hsl(0 0% 60%), hsl(0 0% 50%))' 
+                        : 'linear-gradient(135deg, hsl(30 70% 55%), hsl(30 70% 45%), hsl(30 70% 35%))') 
+                    : 'linear-gradient(135deg, hsl(280 50% 30%), hsl(280 50% 25%), hsl(280 50% 20%))',
+                  boxShadow: isTop3 
+                    ? `0 8px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, ${place === 1 ? '0.3' : '0.2'}), inset 0 -2px 8px rgba(0, 0, 0, 0.3)` 
+                    : '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  border: isTop3 ? '2px solid' : '1px solid hsl(280 30% 40%)',
+                  borderColor: isTop3 ? (place === 1 ? 'hsl(45 100% 65%)' : place === 2 ? 'hsl(0 0% 80%)' : 'hsl(30 70% 60%)') : undefined
+                }}
+              >
                 <div className="flex items-center justify-between">
                   {/* BAL OLDAL: emoji + rangsor + név */}
                   <div className="flex items-center gap-3 flex-1">
-                    <span className="text-3xl">{getCrownIcon(place)}</span>
+                    <span className="text-3xl" style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }}>
+                      {getCrownIcon(place)}
+                    </span>
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold" style={{ color: isTop3 ? (place === 1 ? 'hsl(45 100% 75%)' : place === 2 ? 'hsl(0 0% 85%)' : 'hsl(30 60% 75%)') : 'hsl(45 80% 65%)' }}>#{place}</span>
-                        <span className="text-lg font-semibold text-white truncate">{player.username}</span>
+                        <span 
+                          className="text-2xl font-black" 
+                          style={{ 
+                            color: isTop3 ? (place === 1 ? 'hsl(45 100% 85%)' : place === 2 ? 'hsl(0 0% 95%)' : 'hsl(30 70% 85%)') : 'hsl(45 90% 70%)',
+                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)'
+                          }}
+                        >
+                          #{place}
+                        </span>
+                        <span 
+                          className="text-lg font-bold text-white truncate" 
+                          style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)' }}
+                        >
+                          {player.username}
+                        </span>
                       </div>
-                      <span className="text-xs ml-10" style={{ color: 'hsl(45 80% 60%)' }}>{player.total_correct_answers} helyes válasz</span>
+                      <span 
+                        className="text-xs ml-10 font-medium" 
+                        style={{ 
+                          color: isTop3 ? 'rgba(255, 255, 255, 0.8)' : 'hsl(45 80% 65%)',
+                          textShadow: '0 1px 2px rgba(0, 0, 0, 0.4)'
+                        }}
+                      >
+                        {player.total_correct_answers} helyes válasz
+                      </span>
                     </div>
                   </div>
                   
-                  {/* JOBB OLDAL: jutalmak + nagy szám */}
-                  <div className="flex items-center gap-4">
-                    <div className="flex flex-col items-end gap-1">
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm">🪙</span>
-                        <span className="text-sm font-bold" style={{ color: 'hsl(45 100% 70%)' }}>+{reward.coins.toLocaleString()}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm">❤️</span>
-                        <span className="text-sm font-bold" style={{ color: 'hsl(0 80% 70%)' }}>+{reward.lives}</span>
-                      </div>
+                  {/* JOBB OLDAL: 3D jutalmak SVG ikonokkal */}
+                  <div className="flex flex-col items-end gap-2">
+                    {/* Aranyérme SVG */}
+                    <div className="flex items-center gap-2">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="url(#goldGradient)" stroke="hsl(45 100% 35%)" strokeWidth="2"/>
+                        <circle cx="12" cy="12" r="7" fill="url(#goldInner)" opacity="0.8"/>
+                        <circle cx="9" cy="9" r="2" fill="rgba(255, 255, 255, 0.4)"/>
+                        <defs>
+                          <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="hsl(45 100% 65%)" />
+                            <stop offset="50%" stopColor="hsl(45 100% 55%)" />
+                            <stop offset="100%" stopColor="hsl(45 95% 45%)" />
+                          </linearGradient>
+                          <radialGradient id="goldInner">
+                            <stop offset="0%" stopColor="hsl(45 100% 70%)" />
+                            <stop offset="100%" stopColor="hsl(45 100% 50%)" />
+                          </radialGradient>
+                        </defs>
+                      </svg>
+                      <span 
+                        className="text-base font-black" 
+                        style={{ 
+                          color: 'hsl(45 100% 75%)',
+                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 215, 0, 0.4)'
+                        }}
+                      >
+                        +{reward.coins.toLocaleString()}
+                      </span>
                     </div>
-                    <span className="text-3xl font-bold" style={{ color: isTop3 ? 'white' : 'hsl(45 80% 70%)' }}>{player.total_correct_answers}</span>
+                    
+                    {/* Szív SVG */}
+                    <div className="flex items-center gap-2">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path 
+                          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" 
+                          fill="url(#heartGradient)" 
+                          stroke="hsl(0 85% 45%)" 
+                          strokeWidth="2"
+                        />
+                        <ellipse cx="9" cy="8" rx="2" ry="1.5" fill="rgba(255, 255, 255, 0.4)"/>
+                        <defs>
+                          <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="hsl(0 90% 65%)" />
+                            <stop offset="50%" stopColor="hsl(0 85% 55%)" />
+                            <stop offset="100%" stopColor="hsl(0 80% 45%)" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <span 
+                        className="text-base font-black" 
+                        style={{ 
+                          color: 'hsl(0 85% 70%)',
+                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 0, 0, 0.3)'
+                        }}
+                      >
+                        +{reward.lives}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -138,41 +220,125 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
       <div className="relative rounded-3xl p-1" style={{ background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-500)), hsl(var(--dup-gold-700)))' }}>
         <div className="relative rounded-3xl p-5" style={{ background: 'linear-gradient(135deg, hsl(var(--dup-purple-900)), hsl(var(--dup-purple-800)))' }}>
           <h2 className="text-2xl font-black text-center mb-4" style={{ background: 'linear-gradient(135deg, hsl(45 100% 70%), hsl(45 100% 60%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>A GÉNIUSZOK</h2>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {topPlayers.slice(0, maxRank).map((player, index) => {
               const place = index + 1;
               const reward = getRewardForRank(place);
               const isTop3 = place <= 3;
               return (
-                <div key={index} className="relative rounded-xl p-4" style={{
-                  background: isTop3 ? (place === 1 ? 'linear-gradient(135deg, hsl(45 90% 40%), hsl(45 100% 30%))' : place === 2 ? 'linear-gradient(135deg, hsl(0 0% 65%), hsl(0 0% 50%))' : 'linear-gradient(135deg, hsl(30 70% 50%), hsl(30 80% 40%))') : 'linear-gradient(135deg, hsl(280 40% 30%), hsl(280 50% 25%))'
-                }}>
+                <div 
+                  key={index} 
+                  className="relative rounded-xl p-4 transition-transform hover:scale-[1.02]" 
+                  style={{
+                    background: isTop3 
+                      ? (place === 1 
+                          ? 'linear-gradient(135deg, hsl(45 95% 45%), hsl(45 100% 35%), hsl(45 100% 28%))' 
+                          : place === 2 
+                          ? 'linear-gradient(135deg, hsl(0 0% 72%), hsl(0 0% 62%), hsl(0 0% 52%))' 
+                          : 'linear-gradient(135deg, hsl(30 75% 55%), hsl(30 75% 45%), hsl(30 75% 38%))') 
+                      : 'linear-gradient(135deg, hsl(280 50% 32%), hsl(280 50% 27%), hsl(280 50% 22%))',
+                    boxShadow: isTop3 
+                      ? `0 8px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, ${place === 1 ? '0.3' : '0.2'}), inset 0 -2px 8px rgba(0, 0, 0, 0.3)` 
+                      : '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                    border: isTop3 ? '2px solid' : '1px solid hsl(280 30% 40%)',
+                    borderColor: isTop3 ? (place === 1 ? 'hsl(45 100% 65%)' : place === 2 ? 'hsl(0 0% 82%)' : 'hsl(30 75% 62%)') : undefined
+                  }}
+                >
                   <div className="flex items-center justify-between">
                     {/* BAL OLDAL: emoji + rangsor + név */}
                     <div className="flex items-center gap-3 flex-1">
-                      <span className="text-3xl">{getCrownIcon(place)}</span>
+                      <span className="text-3xl" style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }}>
+                        {getCrownIcon(place)}
+                      </span>
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                          <span className="text-2xl font-bold" style={{ color: isTop3 ? (place === 1 ? 'hsl(45 100% 80%)' : place === 2 ? 'hsl(0 0% 90%)' : 'hsl(30 70% 80%)') : 'hsl(var(--dup-gold-400))' }}>#{place}</span>
-                          <span className="text-lg font-semibold text-white truncate">{player.username}</span>
+                          <span 
+                            className="text-2xl font-black" 
+                            style={{ 
+                              color: isTop3 ? (place === 1 ? 'hsl(45 100% 85%)' : place === 2 ? 'hsl(0 0% 95%)' : 'hsl(30 75% 85%)') : 'hsl(var(--dup-gold-400))',
+                              textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)'
+                            }}
+                          >
+                            #{place}
+                          </span>
+                          <span 
+                            className="text-lg font-bold text-white truncate" 
+                            style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)' }}
+                          >
+                            {player.username}
+                          </span>
                         </div>
-                        <span className="text-xs ml-10" style={{ color: 'hsl(45 80% 60%)' }}>{player.total_correct_answers} helyes válasz</span>
+                        <span 
+                          className="text-xs ml-10 font-medium" 
+                          style={{ 
+                            color: isTop3 ? 'rgba(255, 255, 255, 0.8)' : 'hsl(45 80% 65%)',
+                            textShadow: '0 1px 2px rgba(0, 0, 0, 0.4)'
+                          }}
+                        >
+                          {player.total_correct_answers} helyes válasz
+                        </span>
                       </div>
                     </div>
                     
-                    {/* JOBB OLDAL: jutalmak + nagy szám */}
-                    <div className="flex items-center gap-4">
-                      <div className="flex flex-col items-end gap-1">
-                        <div className="flex items-center gap-1">
-                          <span className="text-sm">🪙</span>
-                          <span className="text-sm font-bold" style={{ color: 'hsl(45 100% 75%)' }}>+{reward.coins.toLocaleString()}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span className="text-sm">❤️</span>
-                          <span className="text-sm font-bold" style={{ color: 'hsl(0 80% 70%)' }}>+{reward.lives}</span>
-                        </div>
+                    {/* JOBB OLDAL: 3D jutalmak SVG ikonokkal */}
+                    <div className="flex flex-col items-end gap-2">
+                      {/* Aranyérme SVG */}
+                      <div className="flex items-center gap-2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="12" r="10" fill="url(#goldGradient2)" stroke="hsl(45 100% 35%)" strokeWidth="2"/>
+                          <circle cx="12" cy="12" r="7" fill="url(#goldInner2)" opacity="0.8"/>
+                          <circle cx="9" cy="9" r="2" fill="rgba(255, 255, 255, 0.4)"/>
+                          <defs>
+                            <linearGradient id="goldGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="hsl(45 100% 65%)" />
+                              <stop offset="50%" stopColor="hsl(45 100% 55%)" />
+                              <stop offset="100%" stopColor="hsl(45 95% 45%)" />
+                            </linearGradient>
+                            <radialGradient id="goldInner2">
+                              <stop offset="0%" stopColor="hsl(45 100% 70%)" />
+                              <stop offset="100%" stopColor="hsl(45 100% 50%)" />
+                            </radialGradient>
+                          </defs>
+                        </svg>
+                        <span 
+                          className="text-base font-black" 
+                          style={{ 
+                            color: 'hsl(45 100% 78%)',
+                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 215, 0, 0.4)'
+                          }}
+                        >
+                          +{reward.coins.toLocaleString()}
+                        </span>
                       </div>
-                      <span className="text-3xl font-bold" style={{ color: isTop3 ? 'white' : 'hsl(var(--dup-gold-400))' }}>{player.total_correct_answers}</span>
+                      
+                      {/* Szív SVG */}
+                      <div className="flex items-center gap-2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path 
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" 
+                            fill="url(#heartGradient2)" 
+                            stroke="hsl(0 85% 45%)" 
+                            strokeWidth="2"
+                          />
+                          <ellipse cx="9" cy="8" rx="2" ry="1.5" fill="rgba(255, 255, 255, 0.4)"/>
+                          <defs>
+                            <linearGradient id="heartGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="hsl(0 90% 65%)" />
+                              <stop offset="50%" stopColor="hsl(0 85% 55%)" />
+                              <stop offset="100%" stopColor="hsl(0 80% 45%)" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                        <span 
+                          className="text-base font-black" 
+                          style={{ 
+                            color: 'hsl(0 85% 72%)',
+                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 0, 0, 0.3)'
+                          }}
+                        >
+                          +{reward.lives}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
