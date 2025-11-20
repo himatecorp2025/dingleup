@@ -1,14 +1,24 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 
 export const useSessionMonitor = () => {
   const [isValidating, setIsValidating] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    // Check session validity every 5 minutes
+    // Public pages that don't require session monitoring
+    const publicPaths = ['/', '/desktop', '/login', '/register', '/about', '/intro', '/admin/login', '/login-username'];
+    const isPublicPage = publicPaths.some(path => location.pathname === path);
+    
+    // Skip session monitoring on public pages
+    if (isPublicPage) {
+      return;
+    }
+
+    // Check session validity every 5 minutes for protected pages
     const validateSession = async () => {
       if (isValidating) return;
       
@@ -42,5 +52,5 @@ export const useSessionMonitor = () => {
     const interval = setInterval(validateSession, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [navigate, isValidating]);
+  }, [navigate, location.pathname, isValidating]);
 };
