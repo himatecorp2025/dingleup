@@ -9,12 +9,12 @@ import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useTranslation } from 'react-i18next';
 
-const loginSchema = z.object({
-  username: z.string().trim().min(1, "A felhasználónév mező kötelező").max(255),
-  password: z.string().min(1, "A jelszó mező kötelező"),
+const getLoginSchema = (t: any) => z.object({
+  username: z.string().trim().min(1, t('auth.usernameRequired')).max(255),
+  password: z.string().min(1, t('auth.passwordRequired')),
 });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type LoginForm = z.infer<ReturnType<typeof getLoginSchema>>;
 
 const LoginUsername = () => {
   const navigate = useNavigate();
@@ -34,7 +34,8 @@ const LoginUsername = () => {
     setIsLoading(true);
 
     try {
-      const validated = loginSchema.parse(formData);
+      const schema = getLoginSchema(t);
+      const validated = schema.parse(formData);
 
       // Call the login-with-username edge function to get email
       // Note: This function is PUBLIC (no auth required) - login-with-username has verify_jwt = false
@@ -113,7 +114,7 @@ const LoginUsername = () => {
       <div className="w-full max-w-md relative z-10">
         <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 sm:mb-8 transition-colors drop-shadow-lg">
           <ArrowLeft className="w-4 h-4" />
-          Vissza a főoldalra
+          {t('game.backToHome')}
         </Link>
 
         <div className="relative" style={{ perspective: '1200px' }}>
@@ -142,9 +143,9 @@ const LoginUsername = () => {
                 />
               </svg>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 font-poppins px-2">
-                <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">Bejelentkezés</span>
+                <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">{t('auth.login')}</span>
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-white/80 drop-shadow px-2">Add meg felhasználóneved és jelszavad</p>
+              <p className="text-xs sm:text-sm md:text-base text-white/80 drop-shadow px-2">{t('landing.hero.subtitle')}</p>
             </div>
 
             <div className="space-y-3 mb-4">
@@ -167,12 +168,12 @@ const LoginUsername = () => {
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                   </svg>
-                  <span className="truncate">Bejelentkezés Google-lel</span>
+                  <span className="truncate">{t('auth.login')} Google</span>
                 </Button>
               </div>
               <div className="flex items-center gap-2 text-xs text-white/70">
                 <span className="h-px flex-1 bg-white/20"></span>
-                <span>vagy</span>
+                <span>{t('common.or', { defaultValue: 'vagy' })}</span>
                 <span className="h-px flex-1 bg-white/20"></span>
               </div>
             </div>

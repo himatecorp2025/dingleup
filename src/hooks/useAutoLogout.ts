@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const INACTIVITY_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 const WARNING_TIMEOUT = 9 * 60 * 1000; // 9 minutes (60 seconds before logout)
 
 export const useAutoLogout = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const warningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -26,7 +28,7 @@ export const useAutoLogout = () => {
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (!error) {
-      toast.info('Biztonsági okokból kijelentkeztettünk 10 perc inaktivitás miatt');
+      toast.info(t('auth.autoLogout'));
       navigate('/login');
     }
   };

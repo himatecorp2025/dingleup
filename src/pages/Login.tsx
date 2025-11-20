@@ -9,12 +9,12 @@ import { ArrowLeft, Eye, EyeOff, Lock, User, Sparkles } from "lucide-react";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 
-const loginSchema = z.object({
-  username: z.string().trim().min(1, "A felhasználónév mező kötelező").max(100),
-  password: z.string().min(1, "A jelszó mező kötelező"),
+const getLoginSchema = (t: any) => z.object({
+  username: z.string().trim().min(1, t('auth.usernameRequired')).max(100),
+  password: z.string().min(1, t('auth.passwordRequired')),
 });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type LoginForm = z.infer<ReturnType<typeof getLoginSchema>>;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -45,7 +45,8 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const validated = loginSchema.parse(formData);
+      const schema = getLoginSchema(t);
+      const validated = schema.parse(formData);
 
       const { data: fnData, error: fnError } = await supabase.functions.invoke('login-with-username', {
         body: {
