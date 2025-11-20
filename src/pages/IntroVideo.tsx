@@ -10,14 +10,35 @@ const IntroVideo = () => {
   const [fallbackTriggered, setFallbackTriggered] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Standalone (PWA) módban mindig loginra navigál
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                       (window.navigator as any).standalone === true ||
-                       document.referrer.includes('android-app://');
+  // PWA/Standalone mode detection with persistent tracking
+  const isStandalone = (() => {
+    try {
+      return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        (window.navigator as any).standalone === true ||
+        document.referrer.includes('android-app://')
+      );
+    } catch {
+      return false;
+    }
+  })();
+  
+  // CRITICAL FIX: In standalone mode after cold start (force-stop),
+  // ALWAYS play intro video - don't check sessionStorage flag
+  // This ensures consistent intro experience on every app launch
+  const shouldPlayIntro = isStandalone 
+    ? true // Always play in standalone/PWA mode
+    : !sessionStorage.getItem('app_intro_shown'); // Browser: play only once per session
   
   const nextPage = isStandalone ? '/login' : (searchParams.get('next') || '/login');
 
   useEffect(() => {
+    // CRITICAL: Skip intro if already shown in browser mode
+    if (!shouldPlayIntro && !isStandalone) {
+      navigate(nextPage);
+      return;
+    }
+
     const video = videoRef.current;
     if (!video || fallbackTriggered) return;
 

@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useWebVitals } from "@/hooks/useWebVitals";
+import { useErrorTracking } from "@/hooks/useErrorTracking";
+import { usePWAInstallTracking } from "@/hooks/usePWAInstallTracking";
 import { lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -63,10 +65,12 @@ const PageLoader = () => (
 
 const queryClient = new QueryClient();
 
-// Analytics and Web Vitals wrapper component
+// Analytics, Error Tracking, and PWA Install tracking wrapper component
 const AppWithAnalytics = () => {
   useAnalytics();
   useWebVitals(); // Track Core Web Vitals performance
+  useErrorTracking(); // Track and log errors
+  usePWAInstallTracking(); // Track PWA install events
   return null;
 };
 
@@ -112,39 +116,45 @@ const AppCore = () => {
         <Suspense fallback={<PageLoader />}>
           <AppRouteGuard>
             <Routes>
+              {/* Public routes - no ErrorBoundary needed */}
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/login-username" element={<LoginUsername />} />
-              <Route path="/registration-success" element={<RegistrationSuccess />} />
-              <Route path="/payment-success" element={<PaymentSuccess />} />
-              <Route path="/install" element={<InstallApp />} />
-              <Route path="/invitation" element={<Invitation />} />
               <Route path="/intro" element={<IntroVideo />} />
-              <Route path="/game" element={<Game />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin" element={<AdminDashboard />} />
               
-              <Route path="/admin/analytics" element={<AdvancedAnalytics />} />
-              <Route path="/admin/retention" element={<RetentionDashboard />} />
-              <Route path="/admin/performance" element={<PerformanceDashboard />} />
-              <Route path="/admin/engagement" element={<EngagementDashboard />} />
-              <Route path="/admin/user-journey" element={<UserJourneyDashboard />} />
-              <Route path="/admin/popular-content" element={<AdminPopularContent />} />
-              <Route path="/admin/game-profiles" element={<AdminGameProfiles />} />
-              <Route path="/admin/game-profiles/:userId" element={<AdminGameProfileDetail />} />
-              <Route path="/admin/ad-interests" element={<AdminAdInterests />} />
-              <Route path="/admin/booster-types" element={<AdminBoosterTypes />} />
-              <Route path="/admin/booster-purchases" element={<AdminBoosterPurchases />} />
-              <Route path="/popular-content" element={<PopularContent />} />
-              <Route path="/profile/game" element={<ProfileGame />} />
-              <Route path="*" element={<NotFound />} />
+              {/* Protected routes wrapped in ErrorBoundary */}
+              <Route path="/dashboard" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
+              <Route path="/profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
+              <Route path="/leaderboard" element={<ErrorBoundary><Leaderboard /></ErrorBoundary>} />
+              <Route path="/game" element={<ErrorBoundary><Game /></ErrorBoundary>} />
+              <Route path="/registration-success" element={<ErrorBoundary><RegistrationSuccess /></ErrorBoundary>} />
+              <Route path="/payment-success" element={<ErrorBoundary><PaymentSuccess /></ErrorBoundary>} />
+              <Route path="/install" element={<ErrorBoundary><InstallApp /></ErrorBoundary>} />
+              <Route path="/invitation" element={<ErrorBoundary><Invitation /></ErrorBoundary>} />
+              <Route path="/about" element={<ErrorBoundary><About /></ErrorBoundary>} />
+              <Route path="/popular-content" element={<ErrorBoundary><PopularContent /></ErrorBoundary>} />
+              <Route path="/profile/game" element={<ErrorBoundary><ProfileGame /></ErrorBoundary>} />
+              
+              {/* Admin routes wrapped in ErrorBoundary */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+              <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+              <Route path="/admin/analytics" element={<ErrorBoundary><AdvancedAnalytics /></ErrorBoundary>} />
+              <Route path="/admin/retention" element={<ErrorBoundary><RetentionDashboard /></ErrorBoundary>} />
+              <Route path="/admin/performance" element={<ErrorBoundary><PerformanceDashboard /></ErrorBoundary>} />
+              <Route path="/admin/engagement" element={<ErrorBoundary><EngagementDashboard /></ErrorBoundary>} />
+              <Route path="/admin/user-journey" element={<ErrorBoundary><UserJourneyDashboard /></ErrorBoundary>} />
+              <Route path="/admin/popular-content" element={<ErrorBoundary><AdminPopularContent /></ErrorBoundary>} />
+              <Route path="/admin/game-profiles" element={<ErrorBoundary><AdminGameProfiles /></ErrorBoundary>} />
+              <Route path="/admin/game-profiles/:userId" element={<ErrorBoundary><AdminGameProfileDetail /></ErrorBoundary>} />
+              <Route path="/admin/ad-interests" element={<ErrorBoundary><AdminAdInterests /></ErrorBoundary>} />
+              <Route path="/admin/booster-types" element={<ErrorBoundary><AdminBoosterTypes /></ErrorBoundary>} />
+              <Route path="/admin/booster-purchases" element={<ErrorBoundary><AdminBoosterPurchases /></ErrorBoundary>} />
+              
+              {/* 404 fallback */}
+              <Route path="*" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />
             </Routes>
           </AppRouteGuard>
         </Suspense>
