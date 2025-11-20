@@ -13,7 +13,11 @@
     "next": "Következő",
     "yes": "Igen",
     "no": "Nem",
-    "ok": "OK"
+    "ok": "OK",
+    "connectionRestored": "Kapcsolat helyreállt",
+    "internetAvailable": "Az internetkapcsolat újra elérhető.",
+    "noInternet": "Nincs internetkapcsolat",
+    "offlineFunctionsUnavailable": "Egyes funkciók offline módban nem érhetők el."
   },
   "auth": {
     "login": "Bejelentkezés",
@@ -36,21 +40,43 @@
     "termsAccept": "Elfogadom az Általános Szerződési Feltételeket és megerősítem, hogy a megadott személyes adataim megfelelnek a valóságnak, valamint betöltöttem a 16. életévemet"
   },
   "dashboard": {
-    "title": "Főoldal",
-    "playNow": "Játék indítása",
+    "title": "Áttekintés",
+    "playNow": "Játssz Most",
     "leaderboard": "Ranglista",
-    "profile": "Profilom",
+    "profile": "Profil",
     "wallet": "Pénztárca",
     "lives": "Életek",
     "coins": "Aranyak",
     "rank": "Helyezés",
-    "dailyGift": "Napi ajándék",
-    "welcomeBonus": "Üdvözlő bónusz",
-    "freeBooster": "Ingyenes Booster",
-    "premiumBooster": "Prémium Booster",
-    "yourRanking": "A te helyezésed",
-    "dailyRanking": "Napi helyezés",
-    "greeting": "Szia, {{username}}!"
+    "dailyGift": "Napi Ajándék",
+    "welcomeBonus": "Üdvözlő Bónusz",
+    "greeting": "Szia, {{username}}!",
+    "nextLifeIn": "Következő élet",
+    "geniusOffer": {
+      "title": "Prémium Booster",
+      "subtitle": "Szerezz extra életet és aranyat!",
+      "price": "Csak 2.49 USD",
+      "benefits": {
+        "gold": "+1500 Arany",
+        "lives": "+50 Élet",
+        "speedTokens": "24x Sebesség Token"
+      },
+      "buyNow": "Megveszem",
+      "activate": "Aktiválás"
+    },
+    "freeBooster": {
+      "title": "Ingyenes Booster",
+      "price": "900 arany",
+      "benefits": {
+        "gold": "+300 Arany",
+        "lives": "+15 Élet",
+        "speedTokens": "4x Sebesség Token"
+      },
+      "buy": "Vásárlás",
+      "activate": "Aktiválás"
+    },
+    "speedActive": "Sebesség Token aktív",
+    "timeRemaining": "Hátralevő idő"
   },
   "game": {
     "question": "Kérdés",
@@ -203,7 +229,7 @@
       "leaderboard": "Globális Ranglista",
       "leaderboardDesc": "Versenyezz játékosokkal világszerte",
       "rewards": "Napi Jutalmak",
-      "rewardsDesc": "Szerezz aranyakat és éle és aktiváló bónuszokat"
+      "rewardsDesc": "Szerezz aranyakat és életet és aktiváló bónuszokat"
     }
   },
   "admin": {
@@ -233,58 +259,125 @@
   },
   "dialogs": {
     "dailyGift": {
-      "title": "DAILY GIFT",
-      "day": "DAY",
-      "todayReward": "MA KAPSZ",
-      "claim": "FELOLD",
-      "comeLater": "KÉSŐBB",
-      "claiming": "Feloldás...",
-      "alreadyClaimed": "MA MÁR FELOLDOTTAD"
+      "title": "Napi Ajándék",
+      "subtitle": "Napi jutalmad",
+      "day": "Nap",
+      "claim": "Átveszem",
+      "streak": "{{count}} napos szériad",
+      "comeBackTomorrow": "Gyere vissza holnap"
     },
     "welcomeBonus": {
-      "title": "WELCOME!",
-      "specialOffer": "KÜLÖNLEGES AJÁNLAT!",
-      "giftForYou": "Ajándék csak neked!",
-      "coins": "ARANY",
-      "lives": "ÉLET",
-      "claim": "FELOLD",
-      "claiming": "Feloldás..."
+      "title": "Üdvözlő Bónusz",
+      "subtitle": "Köszöntünk a játékban!",
+      "claim": "Átveszem",
+      "rewards": "Jutalmaim"
     },
     "inGameRescue": {
-      "title": "Majdnem kiestél... 🎰",
-      "subtitle": "Válassz egy mentőcsomagot!",
-      "currentStatus": "Jelenlegi állapot",
-      "life": "Élet",
-      "gold": "Arany",
-      "goldSaver": "Gold Saver",
-      "goldSaverDesc": "500 aranyért 250 aranyat + 15 életet",
-      "instantRescue": "Instant Rescue",
-      "instantRescueDesc": "+1000 arany + 25 élet azonnal!",
-      "notEnoughGold": "⚠️ Nincs elég aranyad",
-      "processing": "Feldolgozás...",
-      "immediateCredit": "Azonnali jóváírás",
-      "continueMessage": "Ott folytatod, ahol abbahagytad! 🎮",
-      "cancel": "Mégsem"
+      "title": "Elfogyott az életed vagy az aranyad?",
+      "subtitle": "Vásárolj boostert és játssz tovább!",
+      "freeBooster": "Ingyenes Booster",
+      "premiumBooster": "Prémium Booster",
+      "activate": "Aktiválás",
+      "buy": "Vásárlás"
     },
     "exitGame": {
-      "title": "Biztosan kilépsz?",
-      "warningGoldLost": "⚠️ Az összes eddig összegyűjtött arany elvész! ⚠️",
-      "warningProgress": "Ha visszalépsz, minden eddig összegyűjtött eredmény törlődik és nem kapsz aranyérmet.",
-      "gameCompleted": "A játékod befejeződött, az aranyak jóváírva.",
-      "exit": "Kilépés",
-      "stay": "Maradok"
+      "title": "Biztos ki akarsz lépni?",
+      "subtitle": "Elveszted az eddig gyűjtött aranyakat",
+      "cancel": "Mégse",
+      "exit": "Kilépek"
     },
     "continueGame": {
-      "timeout": "Lejárt az idő!",
-      "wrong": "Rossz válasz!",
-      "outOfLives": "Elfogyott az életed!",
-      "continue": "Folytatás?",
-      "notEnoughCoins": "Nincs elegendő aranyérméd a folytatáshoz. Látogass el a boltba!",
-      "continueDescription": "Folytathatod a játékot {{cost}} aranyérméért, vagy kilépés esetén mentésre kerül a jelenlegi eredményed.",
-      "continueButton": "Folytatás ({{cost}} aranyérme)",
-      "buyNow": "🛒 Azonnali vásárlás",
-      "exitAndSave": "Kilépés és mentés",
-      "backToHome": "Vissza a főoldalra"
+      "title": "Folytatod a játékot?",
+      "subtitle": "1 élet ellenében",
+      "cost": "Költség: 1 élet",
+      "continue": "Folytatom",
+      "cancel": "Mégse"
+    },
+    "dailyWinner": {
+      "title": "Tegnapi TOP 10",
+      "congratulations": "Gratulálunk!",
+      "youWon": "Nyertél!",
+      "rank": "Helyezés",
+      "reward": "Jutalom",
+      "gold": "arany",
+      "lives": "élet",
+      "close": "Bezár",
+      "notInTop10": "Nem kerültél be a TOP 10-be"
+    },
+    "weeklyWinner": {
+      "title": "Heti Nyertesek",
+      "congratulations": "Gratulálunk a heti győzelemhez!",
+      "rank": "Helyezés",
+      "reward": "Jutalom",
+      "gold": "arany",
+      "lives": "élet",
+      "close": "Bezár"
+    },
+    "invitation": {
+      "title": "Barát meghívása",
+      "subtitle": "Hívd meg barátaidat és szerezz jutalmakat!",
+      "inviteButton": "Meghívás küldése",
+      "copyLink": "Link másolása",
+      "shareVia": "Megosztás",
+      "linkCopied": "Link másolva!",
+      "invitationSent": "Meghívás elküldve!"
+    },
+    "report": {
+      "title": "Jelentés",
+      "subtitle": "Miért jelented ezt a tartalmat?",
+      "reason": "Ok kiválasztása",
+      "spam": "Spam",
+      "inappropriate": "Nem megfelelő tartalom",
+      "offensive": "Sértő",
+      "other": "Egyéb",
+      "additionalInfo": "További információ (opcionális)",
+      "submit": "Jelentés küldése",
+      "cancel": "Mégse",
+      "success": "Jelentés elküldve",
+      "error": "Hiba történt a jelentés során"
+    }
+  },
+  "categorySelector": {
+    "title": "Válassz Kategóriát",
+    "subtitle": "Melyik témakörben szeretnél játszani?"
+  },
+  "footer": {
+    "tagline": "A zseniknek",
+    "about": "Rólunk",
+    "contact": "Kapcsolat",
+    "privacy": "Adatvédelem",
+    "terms": "Felhasználási feltételek",
+    "rightsReserved": "Minden jog fenntartva"
+  },
+  "about": {
+    "title": "Rólunk",
+    "subtitle": "Tudj meg többet rólunk és a küldetésünkről",
+    "mission": {
+      "title": "Küldetésünk",
+      "description": "A DingleUP! küldetése, hogy a tudást szórakoztatóvá és elérhetővé tegye mindenki számára. Hiszünk abban, hogy a játék a legjobb módja a tanulásnak."
+    },
+    "story": {
+      "title": "Történetünk",
+      "description": "2024-ben indult a DingleUP!, hogy forradalmasítsa az online kvízjátékokat. Azóta több mint 10,000 felhasználó csatlakozott hozzánk világszerte."
+    },
+    "values": {
+      "title": "Értékeink",
+      "innovation": "Innováció",
+      "innovationDesc": "Folyamatosan fejlesztünk és újítunk",
+      "community": "Közösség",
+      "communityDesc": "Együtt erősebbek vagyunk",
+      "excellence": "Kiválóság",
+      "excellenceDesc": "Minőség mindenben, amit csinálunk"
+    },
+    "team": {
+      "title": "Csapatunk",
+      "description": "Szenvedélyes szakemberek csapata, akik elkötelezettek amellett, hogy a legjobb játékélményt nyújtsák."
+    },
+    "contact": {
+      "title": "Lépj kapcsolatba velünk",
+      "description": "Van kérdésed vagy javaslat? Írj nekünk bátran!",
+      "email": "Email",
+      "emailAddress": "info@dingleup.com"
     }
   }
 }
