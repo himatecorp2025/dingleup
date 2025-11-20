@@ -351,13 +351,17 @@ const GamePreview = () => {
     }
   }, [timeLeft, gameState, selectedAnswer, isAnimating]);
 
-  // Touch gesture handler
+  // Touch gesture handler - OPTIMIZED FOR SMOOTH 60FPS SCROLLING
   useEffect(() => {
     if (gameState !== 'playing' || !canSwipe) return;
+
+    let rafId: number | null = null;
+    let currentTranslateY = 0;
 
     const handleTouchStart = (e: TouchEvent) => {
       if (isAnimating || showExitDialog) return;
       setTouchStartY(e.touches[0].clientY);
+      currentTranslateY = 0;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -366,18 +370,25 @@ const GamePreview = () => {
       const currentY = e.touches[0].clientY;
       const delta = currentY - touchStartY;
       
-      // Smooth scroll - always allow swiping
-      setTranslateY(delta * 0.3); // Damped movement for smooth feel
+      // Use requestAnimationFrame for smooth 60fps updates
+      if (rafId) cancelAnimationFrame(rafId);
+      
+      rafId = requestAnimationFrame(() => {
+        currentTranslateY = delta * 0.35; // Smooth damped movement
+        setTranslateY(currentTranslateY);
+      });
     };
 
     const handleTouchEnd = async (e: TouchEvent) => {
       if (isAnimating || showExitDialog) return;
       
+      if (rafId) cancelAnimationFrame(rafId);
+      
       const touchEndY = e.changedTouches[0].clientY;
       const delta = touchStartY - touchEndY;
 
       if (Math.abs(delta) < swipeThreshold) {
-        // Smooth reset with transition
+        // Smooth reset with spring animation
         setTranslateY(0);
         return;
       }
@@ -393,16 +404,18 @@ const GamePreview = () => {
       setTranslateY(0);
     };
 
-    document.addEventListener('touchstart', handleTouchStart);
-    document.addEventListener('touchmove', handleTouchMove);
-    document.addEventListener('touchend', handleTouchEnd);
+    // Use passive listeners for better scroll performance
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
+      if (rafId) cancelAnimationFrame(rafId);
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [gameState, canSwipe, isAnimating, selectedAnswer, showExitDialog, touchStartY]);
+  }, [gameState, canSwipe, touchStartY, isAnimating, showExitDialog, swipeThreshold]);
 
   const handleSwipeUp = async () => {
     // If game completed, restart new game
@@ -1195,19 +1208,27 @@ const GamePreview = () => {
             </div>
           )}
 
-          {/* Question module with TikTok-style animation */}
+          {/* Question module with OPTIMIZED TikTok-style smooth animation */}
           <div 
-            className={`absolute inset-0 w-full h-full transition-transform ease-in-out`}
+            className={`absolute inset-0 w-full h-full`}
             style={{ 
               transform: isAnimating 
-                ? 'translateY(-100%)' 
-                : `translateY(${translateY}px)`,
-              transitionDuration: isAnimating ? '400ms' : '0ms'
+                ? 'translate3d(0, -100%, 0)' // GPU-accelerated
+                : `translate3d(0, ${translateY}px, 0)`, // GPU-accelerated
+              transition: isAnimating 
+                ? 'transform 350ms cubic-bezier(0.4, 0.0, 0.2, 1)' // Smooth ease-out
+                : 'transform 0ms',
+              willChange: isAnimating || translateY !== 0 ? 'transform' : 'auto',
+              backfaceVisibility: 'hidden', // Prevent flickering
+              WebkitBackfaceVisibility: 'hidden',
             }}
           >
             <div 
-              className="w-full h-full transition-opacity duration-200"
-              style={{ opacity: questionVisible ? 1 : 0 }}
+              className="w-full h-full"
+              style={{ 
+                opacity: questionVisible ? 1 : 0,
+                transition: 'opacity 200ms ease-in-out',
+              }}
             >
               <QuestionCard
                 question={currentQuestion}
