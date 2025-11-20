@@ -20,9 +20,9 @@ export default defineConfig(({ mode }) => ({
         name: 'DingleUP!',
         short_name: 'DingleUP!',
         description: 'Teszteld tudásod 15 izgalmas kérdéssel! Gyűjts aranyérméket és versenyezz a ranglistán.',
-        theme_color: '#0a0a2e',
-        background_color: '#0a0a2e',
-        display: 'fullscreen',
+        theme_color: '#1a0033',
+        background_color: '#0f0033',
+        display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
         scope: '/',
@@ -38,6 +38,12 @@ export default defineConfig(({ mode }) => ({
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
+          },
+          {
+            src: '/dingleup-logo.png',
+            sizes: '1024x1024',
+            type: 'image/png',
+            purpose: 'any'
           }
         ]
       },
