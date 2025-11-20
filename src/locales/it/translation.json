@@ -47,7 +47,10 @@
     "dailyGift": "Regalo giornaliero",
     "welcomeBonus": "Bonus di benvenuto",
     "freeBooster": "Booster gratuito",
-    "premiumBooster": "Booster premium"
+    "premiumBooster": "Booster premium",
+    "yourRanking": "La tua classifica",
+    "dailyRanking": "Classifica giornaliera",
+    "greeting": "Ciao, {{username}}!"
   },
   "game": {
     "question": "Domanda",
@@ -76,7 +79,8 @@
     "topPlayers": "Migliori giocatori",
     "correctAnswers": "Risposte corrette",
     "country": "Paese",
-    "forTheGeniuses": "PER I GENI"
+    "forTheGeniuses": "PER I GENI",
+    "backToDashboard": "Torna alla Dashboard"
   },
   "profile": {
     "title": "Il mio profilo",
