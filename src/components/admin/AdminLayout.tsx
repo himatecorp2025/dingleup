@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -16,7 +16,6 @@ import {
   Zap,
   ShoppingBag
 } from 'lucide-react';
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 interface AdminLayoutProps {
@@ -67,7 +66,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: TrendingUp },
     { path: '/admin/booster-types', label: 'Booster Csomagok', icon: Zap },
     { path: '/admin/booster-purchases', label: 'Booster Vásárlások', icon: ShoppingBag },
-    { path: '/admin/analytics', label: 'Fejlett Analitika', icon: Activity },
+    { path: '/admin/advanced-analytics', label: 'Fejlett Analitika', icon: Activity },
   ];
 
   const handleLogout = async () => {
