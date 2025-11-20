@@ -110,8 +110,8 @@ export const QuestionCard = ({
           <div className="flex-1 flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2">
             <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem] relative">
               <GameTimer timeLeft={timeLeft} maxTime={30} />
-              {/* Coin reward animation positioned to the right of timer, centered between timer and screen edge */}
-              <div className="absolute top-1/2 -translate-y-1/2" style={{ left: "calc(50% + 80px)" }}>
+              {/* Coin reward animation positioned between timer right edge and screen right edge */}
+              <div className="absolute top-1/2 -translate-y-1/2" style={{ left: "calc(75% + 25px)" }}>
                 <CoinRewardAnimation 
                   amount={coinRewardAmount} 
                   trigger={coinRewardTrigger}
