@@ -23,7 +23,10 @@ interface DailyRewardsProps {
   dailyRewards: DailyRewardsData | null;
 }
 
+import { useTranslation } from 'react-i18next';
+
 const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, dailyRewards }: DailyRewardsProps) => {
+  const { t } = useTranslation();
   const isJackpot = dailyRewards?.type === 'JACKPOT';
   const maxRank = isJackpot ? 25 : 10;
 
@@ -149,13 +152,13 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
                       </div>
                       <span 
                         className="text-xs ml-10 font-semibold" 
-                        style={{ 
-                          color: isTop3 ? 'rgba(255, 255, 255, 0.85)' : 'hsl(45 85% 68%)',
-                          textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
-                        }}
-                      >
-                        {player.total_correct_answers} helyes válasz
-                      </span>
+                         style={{ 
+                           color: isTop3 ? 'rgba(255, 255, 255, 0.85)' : 'hsl(45 85% 68%)',
+                           textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
+                         }}
+                       >
+                         {player.total_correct_answers} {t('leaderboard.correctAnswers')}
+                       </span>
                     </div>
                   </div>
                   
@@ -240,7 +243,7 @@ const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, 
         {/* Éjféli jutalom jóváírás info - Jackpot */}
         <div className="mt-6 text-center">
           <p className="text-sm font-semibold" style={{ color: 'hsl(45 100% 75%)' }}>
-            ⏰ A jutalmak minden nap éjfélkor automatikusan jóváíródnak a TOP25 játékosoknak
+            ⏰ {t('leaderboard.rewardsAutoCredit')}
           </p>
         </div>
       </div>

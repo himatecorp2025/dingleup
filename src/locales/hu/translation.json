@@ -91,17 +91,20 @@
     "totalQuestions": "Összes kérdés",
     "coinsEarned": "Megszerzett aranyak",
     "continue": "Folytatás",
-    "exitGame": "Kilépés",
+    "exitGame": "Kilépés a játékból",
     "notEnoughLives": "Nincs elég életed a játék indításához",
     "lifeDeducted": "1 élet levonva, 1 arany jóváírva",
     "swipeToContinue": "Görgess tovább hogy új játékot indíthass",
     "mobileOnly": "Csak mobilon",
     "mobileOnlyDescription": "Ez a játék csak mobil és tablet eszközökön érhető el.",
     "backToHome": "Vissza a főoldalra",
-    "loading": "Betöltés..."
+    "loading": "Betöltés...",
+    "lifeline5050": "50/50",
+    "lifeline2x": "2x",
+    "lifelineAudience": "Közönség"
   },
   "leaderboard": {
-    "title": "Ranglista",
+    "title": "Napi Ranglista",
     "daily": "Napi",
     "weekly": "Heti",
     "allTime": "Örökranglista",
@@ -110,7 +113,10 @@
     "correctAnswers": "Helyes válaszok",
     "country": "Ország",
     "forTheGeniuses": "A ZSENIKNEK",
-    "backToDashboard": "Vissza a dashboardra"
+    "backToDashboard": "Vissza a dashboardra",
+    "sundayJackpot": "VASÁRNAPI JACKPOT",
+    "top25DailyReward": "TOP25 NAPI JUTALOM",
+    "rewardsAutoCredit": "A jutalmak minden nap éjfélkor automatikusan jóváíródnak a TOP25 játékosoknak"
   },
   "profile": {
     "title": "Profilom",
@@ -183,7 +189,16 @@
     "purchaseSuccess": "Sikeres vásárlás!",
     "activateSpeed": "Sebesség aktiválása",
     "speedActive": "Sebesség aktív",
-    "paymentCancelled": "Visszaléptél, a jutalmad elveszett!"
+    "paymentCancelled": "Visszaléptél, a jutalmad elveszett!",
+    "pleaseLogin": "Kérlek jelentkezz be a vásárláshoz",
+    "activatingPremiumSpeed": "Premium Speed aktiválása...",
+    "premiumSpeedActivated": "A Premium Speed Booster aktiválva! {{count}}× {{minutes}} perces Speed gyorsítás elindult.",
+    "premiumSpeedAlreadyActivated": "A Premium Speed már aktiválva lett.",
+    "unknownError": "Ismeretlen hiba",
+    "loadingPaymentPage": "Fizetési oldal betöltése...",
+    "paymentPageOpened": "Fizetési oldal megnyitva új fülön",
+    "paymentUrlMissing": "Fizetési URL nem érkezett meg",
+    "paymentPageError": "Hiba történt a fizetési oldal betöltése során"
   },
   "rewards": {
     "dailyGift": "Napi ajándék",
@@ -269,6 +284,14 @@
       "streak": "{{count}} napos szériad",
       "comeBackTomorrow": "Gyere vissza holnap",
       "todayYouGet": "MA KAPSZ"
+    },
+    "premiumBooster": {
+      "title": "Premium Speed Booster vásárlás",
+      "description": "A Premium Speed Booster megvásárlásával +1500 aranyat, +50 életet és 24× 60 perces sebesség tokent kapsz.",
+      "withdrawalNotice": "A digitális tartalom természete miatt a 14 napos elállási jog nem gyakorolható.",
+      "accept": "Elfogadom és megvásárolom",
+      "cancel": "Mégse",
+      "termsCheckbox": "Elfogadom a feltételeket és lemondok az elállási jogomról"
     },
     "welcomeBonus": {
       "title": "WELCOME!",
@@ -404,5 +427,68 @@
       "email": "Email",
       "emailAddress": "info@dingleup.com"
     }
+  },
+  "invitation": {
+    "title": "Hívd meg barátaidat!",
+    "subtitle": "Oszd meg meghívó kódodat vagy linkedet",
+    "invitationCode": "Meghívó kód",
+    "invitationLink": "Meghívó link",
+    "totalRewards": "Összes jutalom",
+    "goldCoins": "Aranyérmék",
+    "lives": "Életek",
+    "rewardTiers": "Jutalomszintek",
+    "friends1to2": "1-2 Barát",
+    "friends1to2Reward": "200 arany + 3 élet / barát",
+    "friends3to9": "3-9 Barát",
+    "friends3to9Reward": "1,000 arany + 5 élet / barát",
+    "friends10plus": "10+ Barát",
+    "friends10plusReward": "6,000 arany + 20 élet / barát",
+    "invitedFriends": "Meghívott barátok",
+    "pending": "Függőben",
+    "accepted": "Elfogadva",
+    "noInvitations": "Még nem hívtál meg senkit",
+    "copyCodeSuccess": "Meghívó kód másolva!",
+    "copyLinkSuccess": "Meghívó link másolva!",
+    "copyError": "Hiba a másolás során",
+    "fetchError": "Hiba a meghívó adatok betöltésekor",
+    "backToDashboard": "Vissza a dashboardra"
+  },
+  "payment": {
+    "invalidSession": "Érvénytelen fizetési session",
+    "notLoggedIn": "Nem vagy bejelentkezve",
+    "verifying": "Fizetés ellenőrzése...",
+    "pleaseWait": "Kérlek várj, amíg megerősítjük a tranzakciót.",
+    "success": "Sikeres vásárlás!",
+    "successMessage": "Sikeres vásárlás! +{{gold}} arany és +{{lives}} élet jóváírva. Most aktiválhatod a Premium Speed Boostert.",
+    "redirecting": "Átirányítás a Dashboard-ra...",
+    "verificationError": "Hiba történt a fizetés ellenőrzése során",
+    "verificationFailed": "Fizetés ellenőrzése sikertelen"
+  },
+  "registration": {
+    "success": "Sikeres Regisztráció!",
+    "congratulations": "Gratulálunk! A fiókod sikeresen létrejött. Most már készen állsz, hogy elindítsd a játékot és teszteld a tudásod!",
+    "startGame": "Játék indítása"
+  },
+  "install": {
+    "title": "Telepítsd az alkalmazást!",
+    "alreadyInstalled": "Az alkalmazás már telepítve van!",
+    "installNow": "Telepítés most",
+    "iosInstructions": "iOS telepítés:",
+    "iosStep1": "1. Nyomd meg a Megosztás gombot",
+    "iosStep2": "2. Görgess le és válaszd a \"Kezdőképernyőhöz\" opciót",
+    "iosStep3": "3. Nyomd meg a \"Hozzáadás\" gombot",
+    "androidInstructions": "Android telepítés:",
+    "androidStep1": "1. Nyomd meg a böngésző menü gombot (⋮)",
+    "androidStep2": "2. Válaszd a \"Telepítés\" vagy \"Kezdőképernyőhöz adás\" opciót",
+    "androidStep3": "3. Erősítsd meg a telepítést",
+    "openOnMobile": "Nyisd meg ezt az oldalt mobilon a telepítéshez!",
+    "feature1": "Offline működés",
+    "feature2": "Gyors betöltés",
+    "feature3": "Alkalmazás-szerű élmény",
+    "feature4": "Kezdőképernyő ikon",
+    "backToDashboard": "Vissza a dashboardra"
+  },
+  "categorySelector": {
+    "title": "Válassz kategóriát"
   }
 }
