@@ -14,6 +14,9 @@
     "yes": "Sí",
     "no": "No",
     "ok": "OK",
+    "or": "o",
+    "hide": "Ocultar",
+    "show": "Mostrar",
     "connectionRestored": "Conexión restablecida",
     "internetAvailable": "La conexión a Internet está disponible nuevamente.",
     "noInternet": "Sin conexión a Internet",
@@ -37,7 +40,10 @@
     "loginError": "Error de inicio de sesión",
     "invalidCredentials": "Correo o contraseña inválidos",
     "ageRequirement": "Solo personas mayores de 16 años pueden participar en el juego",
-    "termsAccept": "Acepto los Términos de Servicio y confirmo que mis datos personales son exactos y tengo al menos 16 años"
+    "termsAccept": "Acepto los Términos de Servicio y confirmo que mis datos personales son exactos y tengo al menos 16 años",
+    "countryCode": "País",
+    "dataAccuracy": "Confirmo que mis datos personales proporcionados son exactos",
+    "ageConfirmation": "Confirmo que tengo al menos 16 años"
   },
   "dashboard": {
     "title": "Panel",
@@ -88,7 +94,9 @@
     "correctAnswers": "Respuestas correctas",
     "country": "País",
     "forTheGeniuses": "PARA LOS GENIOS",
-    "backToDashboard": "Volver al Dashboard"
+    "backToDashboard": "Volver al Dashboard",
+    "rank": "Rango",
+    "player": "Jugador"
   },
   "profile": {
     "title": "Mi perfil",
@@ -136,7 +144,23 @@
     "specialCharRequired": "Se requiere carácter especial (@$!%*?&.)",
     "birthDate": "Fecha de nacimiento",
     "country": "País",
-    "invitationCode": "Código de invitación"
+    "invitationCode": "Código de invitación",
+    "username": "Nombre de usuario",
+    "coins": "Monedas",
+    "lives": "Vidas",
+    "totalCorrectAnswers": "Respuestas correctas totales",
+    "correctAnswers": "Respuestas correctas",
+    "winRate": "Tasa de victorias",
+    "weeklyCorrectAnswers": "Respuestas correctas semanales",
+    "dailyStreak": "Racha diaria",
+    "uploadAvatar": "Subir avatar",
+    "uploadError": "Error al subir",
+    "uploadSuccess": "Subida exitosa",
+    "invalidUsername": "Nombre de usuario inválido",
+    "usernameTaken": "Nombre de usuario ya tomado",
+    "invalidPassword": "Contraseña inválida",
+    "updateSuccess": "Actualización exitosa",
+    "updateError": "Error de actualización"
   },
   "wallet": {
     "title": "Cartera",
@@ -144,7 +168,9 @@
     "transactions": "Transacciones",
     "earnCoins": "Ganar monedas",
     "spendCoins": "Gastar monedas",
-    "history": "Historial"
+    "history": "Historial",
+    "earned": "Ganado",
+    "spent": "Gastado"
   },
   "shop": {
     "title": "Tienda",
@@ -161,7 +187,8 @@
     "purchaseSuccess": "¡Compra exitosa!",
     "activateSpeed": "Activar velocidad",
     "speedActive": "Velocidad activa",
-    "paymentCancelled": "¡Retrocediste, tu recompensa se perdió!"
+    "paymentCancelled": "¡Retrocediste, tu recompensa se perdió!",
+    "purchaseError": "Error de compra"
   },
   "rewards": {
     "dailyGift": "Regalo diario",
@@ -173,7 +200,8 @@
     "day": "Día",
     "congratulations": "¡Felicidades!",
     "youReceived": "Has recibido",
-    "and": "y"
+    "and": "y",
+    "rewardClaimed": "Recompensa reclamada"
   },
   "notifications": {
     "welcomeBack": "¡Bienvenido de nuevo!",
@@ -191,24 +219,81 @@
     "unauthorized": "No autorizado",
     "sessionExpired": "Sesión expirada",
     "tryAgain": "Intentar de nuevo",
-    "contactSupport": "Contactar soporte"
+    "contactSupport": "Contactar soporte",
+    "generic": "Ocurrió un error",
+    "network": "Error de red",
+    "server": "Error del servidor"
   },
   "landing": {
     "hero": {
       "title": "¡Pon a prueba tu conocimiento!",
       "subtitle": "Compite con amigos, gana recompensas y conviértete en el mejor jugador de quiz del mundo",
       "playNow": "Jugar ahora",
-      "learnMore": "Saber más"
+      "learnMore": "Saber más",
+      "cta": "Comenzar ahora",
+      "login": "Iniciar sesión"
     },
     "features": {
       "title": "¿Por qué DingleUP!?",
+      "subtitle": "Lo que DingleUP! ofrece",
       "categories": "27 Temas diferentes",
       "categoriesDesc": "Historia, ciencia, arte y mucho más",
       "leaderboard": "Clasificación global",
       "leaderboardDesc": "Compite con jugadores de todo el mundo",
       "rewards": "Recompensas diarias",
       "rewardsDesc": "Gana monedas, vidas y bonos de activación"
+    },
+    "newsletter": {
+      "title": "Mantente informado",
+      "subtitle": "Suscríbete a nuestro boletín para recibir las últimas noticias",
+      "placeholder": "Tu correo",
+      "cta": "Suscribirse",
+      "success": "¡Suscripción exitosa!",
+      "error": "Error al suscribirse"
     }
+  },
+  "footer": {
+    "tagline": "Pon a prueba tus conocimientos, gana recompensas",
+    "about": "Acerca de",
+    "features": "Características",
+    "faq": "Preguntas frecuentes",
+    "legal": "Legal",
+    "contact": "Contacto",
+    "privacy": "Política de privacidad",
+    "terms": "Términos de uso",
+    "copyright": "© 2025 DingleUP! Todos los derechos reservados."
+  },
+  "about": {
+    "title": "Acerca de DingleUP!",
+    "mission": {
+      "title": "Nuestra misión",
+      "description": "DingleUP! es una plataforma de preguntas interactiva donde puedes poner a prueba tus conocimientos en diferentes áreas, ganar recompensas y competir con otros jugadores."
+    },
+    "story": {
+      "title": "Nuestra historia",
+      "description": "Creamos DingleUP! para hacer que el aprendizaje sea divertido y atractivo. Nuestro objetivo es proporcionar una experiencia de juego que combine entretenimiento y desarrollo de conocimientos."
+    },
+    "values": {
+      "title": "Nuestros valores",
+      "education": "Educación",
+      "educationDesc": "Creemos en el poder del aprendizaje continuo",
+      "community": "Comunidad",
+      "communityDesc": "Construimos una comunidad de jugadores apasionados",
+      "innovation": "Innovación",
+      "innovationDesc": "Innovamos constantemente para mejorar la experiencia"
+    },
+    "team": {
+      "title": "Nuestro equipo",
+      "description": "Somos un equipo apasionado que trabaja para ofrecer la mejor experiencia de juego de preguntas."
+    },
+    "contact": {
+      "title": "Contáctanos",
+      "description": "¿Tienes preguntas? No dudes en contactarnos en"
+    }
+  },
+  "categorySelector": {
+    "title": "Elegir categoría",
+    "subtitle": "Selecciona una categoría de preguntas"
   },
   "admin": {
     "dashboard": "Panel de administración",
@@ -243,7 +328,11 @@
       "claim": "RECLAMAR",
       "comeLater": "MÁS TARDE",
       "claiming": "Reclamando...",
-      "alreadyClaimed": "YA RECLAMADO HOY"
+      "alreadyClaimed": "YA RECLAMADO HOY",
+      "description": "¡Reclama tu recompensa diaria!",
+      "streak": "Racha",
+      "claimed": "¡Reclamado!",
+      "comeBackTomorrow": "¡Vuelve mañana por otro regalo!"
     },
     "welcomeBonus": {
       "title": "¡BIENVENIDO!",
@@ -252,7 +341,9 @@
       "coins": "ORO",
       "lives": "VIDAS",
       "claim": "RECLAMAR",
-      "claiming": "Reclamando..."
+      "claiming": "Reclamando...",
+      "description": "¡Bienvenido a DingleUP! ! ¡Reclama tu bono inicial!",
+      "claimed": "¡Bono reclamado!"
     },
     "inGameRescue": {
       "title": "Casi eliminado... 🎰",
@@ -268,7 +359,11 @@
       "processing": "Procesando...",
       "immediateCredit": "Crédito inmediato",
       "continueMessage": "¡Continúa donde lo dejaste! 🎮",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "description": "¡Compra un booster para seguir jugando!",
+      "freeBooster": "Booster gratis",
+      "premiumBooster": "Booster Premium",
+      "purchase": "Comprar"
     },
     "exitGame": {
       "title": "¿Estás seguro de que quieres salir?",
@@ -276,7 +371,9 @@
       "warningProgress": "Si retrocedes, todos los resultados recolectados se eliminarán y no recibirás monedas de oro.",
       "gameCompleted": "Tu juego ha terminado, oro acreditado.",
       "exit": "Salir",
-      "stay": "Quedarme"
+      "stay": "Quedarme",
+      "description": "¿Estás seguro de que quieres salir? Perderás tu progreso.",
+      "cancel": "Cancelar"
     },
     "continueGame": {
       "timeout": "¡Se acabó el tiempo!",
@@ -288,7 +385,53 @@
       "continueButton": "Continuar ({{cost}} monedas)",
       "buyNow": "🛒 Comprar ahora",
       "exitAndSave": "Salir y guardar",
-      "backToHome": "Volver al inicio"
+      "backToHome": "Volver al inicio",
+      "title": "Continuar juego",
+      "timeoutDesc": "¡Se acabó el tiempo! ¿Continuar?",
+      "wrongAnswerDesc": "¡Respuesta incorrecta! ¿Continuar?",
+      "outOfLivesDesc": "¡No tienes vidas! ¿Comprar monedas para continuar?",
+      "cannotAfford": "No puedes permitírtelo",
+      "wrongAnswer": "Respuesta incorrecta",
+      "exit": "Salir",
+      "needCoins": "Necesitas monedas"
+    },
+    "dailyWinner": {
+      "title": "¡Ganador diario!",
+      "congratulations": "¡Felicidades!",
+      "youWon": "Ganaste",
+      "position": "Posición",
+      "claim": "Reclamar",
+      "close": "Cerrar"
+    },
+    "weeklyWinner": {
+      "title": "¡Ganador semanal!",
+      "congratulations": "¡Felicidades!",
+      "youWon": "Ganaste",
+      "position": "Posición",
+      "claim": "Reclamar",
+      "close": "Cerrar"
+    },
+    "invitation": {
+      "title": "Invitar amigos",
+      "description": "¡Invita a tus amigos y gana recompensas!",
+      "yourCode": "Tu código",
+      "share": "Compartir",
+      "copy": "Copiar",
+      "copied": "¡Copiado!",
+      "close": "Cerrar"
+    },
+    "report": {
+      "title": "Reportar",
+      "description": "Reporta un problema o usuario",
+      "type": "Tipo",
+      "bug": "Error",
+      "user": "Usuario",
+      "content": "Contenido",
+      "description_field": "Descripción",
+      "submit": "Enviar",
+      "cancel": "Cancelar",
+      "success": "Reporte enviado",
+      "error": "Error al enviar reporte"
     }
   }
 }
