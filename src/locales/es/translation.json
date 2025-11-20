@@ -43,7 +43,15 @@
     "termsAccept": "Acepto los Términos de Servicio y confirmo que mis datos personales son exactos y tengo al menos 16 años",
     "countryCode": "País",
     "dataAccuracy": "Confirmo que mis datos personales proporcionados son exactos",
-    "ageConfirmation": "Confirmo que tengo al menos 16 años"
+    "ageConfirmation": "Confirmo que tengo al menos 16 años",
+    "loginWithGoogle": "Iniciar sesión con Google",
+    "registerWithGoogle": "Registrarse con Google",
+    "usernameRequired": "El nombre de usuario es obligatorio",
+    "emailRequired": "El correo electrónico es obligatorio",
+    "passwordRequired": "La contraseña es obligatoria",
+    "birthDateRequired": "La fecha de nacimiento es obligatoria",
+    "countryRequired": "El país es obligatorio",
+    "termsRequired": "Debes aceptar los términos de servicio"
   },
   "dashboard": {
     "title": "Panel",
@@ -82,7 +90,13 @@
     "mobileOnly": "Solo Móvil",
     "mobileOnlyDescription": "Este juego solo está disponible en dispositivos móviles y tabletas.",
     "backToHome": "Volver al Inicio",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "notEnoughCoins": "Monedas insuficientes",
+    "purchaseCoins": "Comprar monedas",
+    "lifeline5050": "50-50",
+    "lifeline2x": "2x Respuesta",
+    "lifelineAudience": "Ayuda del Público",
+    "gameStateLoading": "Cargando..."
   },
   "leaderboard": {
     "title": "Clasificación",
@@ -96,7 +110,15 @@
     "forTheGeniuses": "PARA LOS GENIOS",
     "backToDashboard": "Volver al Dashboard",
     "rank": "Rango",
-    "player": "Jugador"
+    "player": "Jugador",
+    "sundayJackpot": "JACKPOT DOMINICAL",
+    "top25DailyReward": "Recompensa diaria TOP 25",
+    "rewardsAutoCredit": "Las recompensas se acreditan automáticamente",
+    "yesterdayVictory": "¡VICTORIA DE AYER!",
+    "congratsTop": "¡Felicidades! ¡Ayer quedaste en el TOP {{rank}}!",
+    "weeklyVictory": "VICTORIA SEMANAL",
+    "top10": "TOP 10 POSICIÓN",
+    "weeklyTopMessage": "¡Basado en tu rendimiento de la semana pasada, entraste en el TOP 10! ¡Felicidades! 🎉"
   },
   "profile": {
     "title": "Mi perfil",
@@ -146,6 +168,7 @@
     "country": "País",
     "invitationCode": "Código de invitación",
     "username": "Nombre de usuario",
+    "email": "Correo electrónico",
     "coins": "Monedas",
     "lives": "Vidas",
     "totalCorrectAnswers": "Respuestas correctas totales",
@@ -188,7 +211,11 @@
     "activateSpeed": "Activar velocidad",
     "speedActive": "Velocidad activa",
     "paymentCancelled": "¡Retrocediste, tu recompensa se perdió!",
-    "purchaseError": "Error de compra"
+    "purchaseError": "Error de compra",
+    "pleaseLogin": "Por favor inicia sesión para comprar",
+    "activatingPremiumSpeed": "Activando velocidad premium...",
+    "premiumSpeedActivated": "¡Velocidad premium activada!",
+    "speedTokensRemaining": "Tokens de velocidad restantes: {{count}}"
   },
   "rewards": {
     "dailyGift": "Regalo diario",
@@ -443,12 +470,40 @@
       "error": "Error al enviar reporte"
     }
   },
-  "leaderboard": {
-    "rank": "Posición",
-    "yesterdayVictory": "¡VICTORIA DE AYER!",
-    "congratsTop": "¡Felicidades! ¡Ayer quedaste en el TOP {{rank}}!",
-    "weeklyVictory": "VICTORIA SEMANAL",
-    "top10": "TOP 10 POSICIÓN",
-    "weeklyTopMessage": "¡Basado en tu rendimiento de la semana pasada, entraste en el TOP 10! ¡Felicidades! 🎉"
+  "invitation": {
+    "title": "Invitar amigos",
+    "subtitle": "Gana recompensas invitando amigos",
+    "yourCode": "Tu código de invitación",
+    "shareMessage": "¡Únete a DingleUP! usando mi código: {{code}}",
+    "copyCode": "Copiar código",
+    "codeCopied": "¡Código copiado!",
+    "invitationsSent": "Invitaciones enviadas",
+    "friendsJoined": "Amigos unidos",
+    "rewardsEarned": "Recompensas ganadas"
+  },
+  "payment": {
+    "processing": "Procesando pago...",
+    "success": "¡Pago exitoso!",
+    "failed": "Pago fallido",
+    "cancelled": "Pago cancelado",
+    "verifying": "Verificando pago..."
+  },
+  "registration": {
+    "title": "Crear cuenta",
+    "subtitle": "Únete a DingleUP! hoy",
+    "createAccount": "Crear cuenta",
+    "alreadyHaveAccount": "¿Ya tienes cuenta?",
+    "signInHere": "Inicia sesión aquí"
+  },
+  "install": {
+    "title": "Instalar DingleUP!",
+    "subtitle": "Instala la aplicación para una mejor experiencia",
+    "installNow": "Instalar ahora",
+    "benefits": "Beneficios de la instalación",
+    "benefit1": "Acceso más rápido",
+    "benefit2": "Funciona sin conexión",
+    "benefit3": "Notificaciones push",
+    "iosInstructions": "En Safari, toca el botón Compartir y luego 'Agregar a pantalla de inicio'",
+    "androidInstructions": "Toca el menú y selecciona 'Agregar a pantalla de inicio'"
   }
 }

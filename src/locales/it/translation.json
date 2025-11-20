@@ -43,7 +43,15 @@
     "termsAccept": "Accetto i Termini di Servizio e confermo che i miei dati personali sono accurati e ho almeno 16 anni",
     "countryCode": "Paese",
     "dataAccuracy": "Confermo che i miei dati personali forniti sono accurati",
-    "ageConfirmation": "Confermo di avere almeno 16 anni"
+    "ageConfirmation": "Confermo di avere almeno 16 anni",
+    "loginWithGoogle": "Accedi con Google",
+    "registerWithGoogle": "Registrati con Google",
+    "usernameRequired": "Il nome utente è obbligatorio",
+    "emailRequired": "L'email è obbligatoria",
+    "passwordRequired": "La password è obbligatoria",
+    "birthDateRequired": "La data di nascita è obbligatoria",
+    "countryRequired": "Il paese è obbligatorio",
+    "termsRequired": "Devi accettare i termini di servizio"
   },
   "dashboard": {
     "title": "Pannello",
@@ -84,7 +92,11 @@
     "backToHome": "Torna alla Home",
     "loading": "Caricamento...",
     "notEnoughCoins": "Monete insufficienti",
-    "purchaseCoins": "Acquista monete"
+    "purchaseCoins": "Acquista monete",
+    "lifeline5050": "50-50",
+    "lifeline2x": "2x Risposta",
+    "lifelineAudience": "Aiuto del Pubblico",
+    "gameStateLoading": "Caricamento..."
   },
   "leaderboard": {
     "title": "Classifica",
@@ -98,7 +110,15 @@
     "forTheGeniuses": "PER I GENI",
     "backToDashboard": "Torna alla Dashboard",
     "rank": "Posizione",
-    "player": "Giocatore"
+    "player": "Giocatore",
+    "sundayJackpot": "JACKPOT DOMENICALE",
+    "top25DailyReward": "Ricompensa giornaliera TOP 25",
+    "rewardsAutoCredit": "Le ricompense vengono accreditate automaticamente",
+    "yesterdayVictory": "VITTORIA DI IERI!",
+    "congratsTop": "Congratulazioni! Ieri sei entrato nella TOP {{rank}}!",
+    "weeklyVictory": "VITTORIA SETTIMANALE",
+    "top10": "TOP 10 POSIZIONE",
+    "weeklyTopMessage": "In base alle tue prestazioni della scorsa settimana, sei entrato nella TOP 10! Congratulazioni! 🎉"
   },
   "profile": {
     "title": "Il mio profilo",
@@ -189,7 +209,11 @@
     "activateSpeed": "Attiva velocità",
     "speedActive": "Velocità attiva",
     "paymentCancelled": "Sei tornato indietro, la tua ricompensa è persa!",
-    "purchaseError": "Errore di acquisto"
+    "purchaseError": "Errore di acquisto",
+    "pleaseLogin": "Per favore accedi per acquistare",
+    "activatingPremiumSpeed": "Attivazione velocità premium...",
+    "premiumSpeedActivated": "Velocità premium attivata!",
+    "speedTokensRemaining": "Token velocità rimanenti: {{count}}"
   },
   "rewards": {
     "dailyGift": "Regalo giornaliero",
@@ -444,12 +468,40 @@
       "error": "Errore nell'invio della segnalazione"
     }
   },
-  "leaderboard": {
-    "rank": "Posizione",
-    "yesterdayVictory": "VITTORIA DI IERI!",
-    "congratsTop": "Congratulazioni! Ieri sei entrato nella TOP {{rank}}!",
-    "weeklyVictory": "VITTORIA SETTIMANALE",
-    "top10": "TOP 10 POSIZIONE",
-    "weeklyTopMessage": "In base alle tue prestazioni della scorsa settimana, sei entrato nella TOP 10! Congratulazioni! 🎉"
+  "invitation": {
+    "title": "Invita amici",
+    "subtitle": "Guadagna ricompense invitando amici",
+    "yourCode": "Il tuo codice invito",
+    "shareMessage": "Unisciti a DingleUP! usando il mio codice: {{code}}",
+    "copyCode": "Copia codice",
+    "codeCopied": "Codice copiato!",
+    "invitationsSent": "Inviti inviati",
+    "friendsJoined": "Amici uniti",
+    "rewardsEarned": "Ricompense guadagnate"
+  },
+  "payment": {
+    "processing": "Elaborazione pagamento...",
+    "success": "Pagamento riuscito!",
+    "failed": "Pagamento fallito",
+    "cancelled": "Pagamento annullato",
+    "verifying": "Verifica pagamento..."
+  },
+  "registration": {
+    "title": "Crea account",
+    "subtitle": "Unisciti a DingleUP! oggi",
+    "createAccount": "Crea account",
+    "alreadyHaveAccount": "Hai già un account?",
+    "signInHere": "Accedi qui"
+  },
+  "install": {
+    "title": "Installa DingleUP!",
+    "subtitle": "Installa l'app per una migliore esperienza",
+    "installNow": "Installa ora",
+    "benefits": "Vantaggi dell'installazione",
+    "benefit1": "Accesso più veloce",
+    "benefit2": "Funziona offline",
+    "benefit3": "Notifiche push",
+    "iosInstructions": "In Safari, tocca il pulsante Condividi e poi 'Aggiungi a Home'",
+    "androidInstructions": "Tocca il menu e seleziona 'Aggiungi a Home'"
   }
 }

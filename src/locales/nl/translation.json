@@ -43,7 +43,15 @@
     "termsAccept": "Ik accepteer de Servicevoorwaarden en bevestig dat mijn persoonlijke gegevens correct zijn en dat ik minimaal 16 jaar oud ben",
     "countryCode": "Land",
     "dataAccuracy": "Ik bevestig dat mijn verstrekte persoonlijke gegevens nauwkeurig zijn",
-    "ageConfirmation": "Ik bevestig dat ik minimaal 16 jaar oud ben"
+    "ageConfirmation": "Ik bevestig dat ik minimaal 16 jaar oud ben",
+    "loginWithGoogle": "Inloggen met Google",
+    "registerWithGoogle": "Registreren met Google",
+    "usernameRequired": "Gebruikersnaam is verplicht",
+    "emailRequired": "E-mail is verplicht",
+    "passwordRequired": "Wachtwoord is verplicht",
+    "birthDateRequired": "Geboortedatum is verplicht",
+    "countryRequired": "Land is verplicht",
+    "termsRequired": "Je moet de servicevoorwaarden accepteren"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -84,7 +92,11 @@
     "backToHome": "Terug naar Home",
     "loading": "Laden...",
     "notEnoughCoins": "Niet genoeg munten",
-    "purchaseCoins": "Munten kopen"
+    "purchaseCoins": "Munten kopen",
+    "lifeline5050": "50-50",
+    "lifeline2x": "2x Antwoord",
+    "lifelineAudience": "Hulp van het Publiek",
+    "gameStateLoading": "Laden..."
   },
   "leaderboard": {
     "title": "Klassement",
@@ -98,7 +110,15 @@
     "forTheGeniuses": "VOOR DE GENIEËN",
     "backToDashboard": "Terug naar Dashboard",
     "rank": "Rang",
-    "player": "Speler"
+    "player": "Speler",
+    "sundayJackpot": "ZONDAG JACKPOT",
+    "top25DailyReward": "TOP 25 dagelijkse beloning",
+    "rewardsAutoCredit": "Beloningen worden automatisch gecrediteerd",
+    "yesterdayVictory": "GISTEREN'S OVERWINNING!",
+    "congratsTop": "Gefeliciteerd! Gisteren kwam je in de TOP {{rank}}!",
+    "weeklyVictory": "WEKELIJKSE OVERWINNING",
+    "top10": "TOP 10 POSITIE",
+    "weeklyTopMessage": "Op basis van je prestaties van vorige week, ben je in de TOP 10 gekomen! Gefeliciteerd! 🎉"
   },
   "profile": {
     "title": "Mijn profiel",
@@ -189,7 +209,11 @@
     "activateSpeed": "Snelheid activeren",
     "speedActive": "Snelheid actief",
     "paymentCancelled": "Je bent teruggegaan, je beloning is verloren!",
-    "purchaseError": "Aankoopfout"
+    "purchaseError": "Aankoopfout",
+    "pleaseLogin": "Log in om te kopen",
+    "activatingPremiumSpeed": "Premium snelheid activeren...",
+    "premiumSpeedActivated": "Premium snelheid geactiveerd!",
+    "speedTokensRemaining": "Snelheidstoken over: {{count}}"
   },
   "rewards": {
     "dailyGift": "Dagelijks cadeau",
@@ -324,27 +348,33 @@
   "dialogs": {
     "dailyGift": {
       "title": "DAGELIJKS CADEAU",
+      "subtitle": "Je dagelijkse beloning",
       "day": "DAG",
+      "dayNumber": "DAG {{day}} 🔥",
       "todayReward": "VANDAAG KRIJG JE",
+      "todayYouGet": "VANDAAG KRIJG JE",
       "claim": "CLAIMEN",
-      "comeLater": "LATER",
-      "claiming": "Claimen...",
+      "later": "LATER",
+      "claiming": "Verwerken...",
       "alreadyClaimed": "VANDAAG AL GECLAIMD",
       "description": "Claim je dagelijkse beloning!",
-      "streak": "Reeks",
+      "streak": "Reeks van {{count}} dagen",
       "claimed": "Geclaimd!",
       "comeBackTomorrow": "Kom morgen terug voor een ander cadeau!"
     },
     "welcomeBonus": {
       "title": "WELKOM!",
+      "subtitle": "Welkom bij het spel!",
       "specialOffer": "SPECIALE AANBIEDING!",
       "giftForYou": "Cadeau alleen voor jou!",
       "coins": "GOUD",
+      "gold": "GOUD",
       "lives": "LEVENS",
       "claim": "CLAIMEN",
-      "claiming": "Claimen...",
+      "claiming": "Verwerken...",
       "description": "Welkom bij DingleUP! ! Claim je startbonus!",
-      "claimed": "Bonus geclaimd!"
+      "claimed": "Bonus geclaimd!",
+      "rewards": "Mijn beloningen"
     },
     "inGameRescue": {
       "title": "Bijna uitgeschakeld... 🎰",
@@ -364,10 +394,13 @@
       "description": "Koop een booster om door te spelen!",
       "freeBooster": "Gratis booster",
       "premiumBooster": "Premium booster",
+      "activate": "Activeren",
+      "buy": "Kopen",
       "purchase": "Kopen"
     },
     "exitGame": {
       "title": "Weet je zeker dat je wilt afsluiten?",
+      "subtitle": "Je verliest het tot nu toe verzamelde goud",
       "warningGoldLost": "⚠️ Al het tot nu toe verzamelde goud gaat verloren! ⚠️",
       "warningProgress": "Als je teruggaat, worden alle verzamelde resultaten verwijderd en ontvang je geen gouden munten.",
       "gameCompleted": "Je spel is voltooid, goud gecrediteerd.",
@@ -435,12 +468,40 @@
       "error": "Fout bij verzenden rapport"
     }
   },
-  "leaderboard": {
-    "rank": "Positie",
-    "yesterdayVictory": "GISTEREN'S OVERWINNING!",
-    "congratsTop": "Gefeliciteerd! Gisteren kwam je in de TOP {{rank}}!",
-    "weeklyVictory": "WEKELIJKSE OVERWINNING",
-    "top10": "TOP 10 POSITIE",
-    "weeklyTopMessage": "Op basis van je prestaties van vorige week, ben je in de TOP 10 gekomen! Gefeliciteerd! 🎉"
+  "invitation": {
+    "title": "Vrienden uitnodigen",
+    "subtitle": "Verdien beloningen door vrienden uit te nodigen",
+    "yourCode": "Je uitnodigingscode",
+    "shareMessage": "Word lid van DingleUP! met mijn code: {{code}}",
+    "copyCode": "Code kopiëren",
+    "codeCopied": "Code gekopieerd!",
+    "invitationsSent": "Uitnodigingen verzonden",
+    "friendsJoined": "Vrienden toegetreden",
+    "rewardsEarned": "Beloningen verdiend"
+  },
+  "payment": {
+    "processing": "Betaling verwerken...",
+    "success": "Betaling geslaagd!",
+    "failed": "Betaling mislukt",
+    "cancelled": "Betaling geannuleerd",
+    "verifying": "Betaling verifiëren..."
+  },
+  "registration": {
+    "title": "Account aanmaken",
+    "subtitle": "Word vandaag lid van DingleUP!",
+    "createAccount": "Account aanmaken",
+    "alreadyHaveAccount": "Al een account?",
+    "signInHere": "Log hier in"
+  },
+  "install": {
+    "title": "Installeer DingleUP!",
+    "subtitle": "Installeer de app voor een betere ervaring",
+    "installNow": "Nu installeren",
+    "benefits": "Voordelen van installatie",
+    "benefit1": "Snellere toegang",
+    "benefit2": "Werkt offline",
+    "benefit3": "Push-meldingen",
+    "iosInstructions": "Tik in Safari op de knop Delen en vervolgens op 'Zet op beginscherm'",
+    "androidInstructions": "Tik op het menu en selecteer 'Zet op beginscherm'"
   }
 }
