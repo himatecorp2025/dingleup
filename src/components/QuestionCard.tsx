@@ -88,10 +88,10 @@ export const QuestionCard = ({
 
   return (
     <ScreenshotProtection enabled={true}>
-      {/* Wrap entire content in double-tap detector */}
+      {/* Wrap entire content in double-tap detector - covers full screen */}
       <DoubleTapLikeReaction 
         onDoubleTap={toggleLike}
-        className="w-full h-full relative"
+        className="absolute inset-0 w-full h-full"
       >
         <div className={`relative w-full h-full flex flex-col pt-0 px-2 sm:px-3 md:px-4 pb-2 gap-0 ${className}`}>
         {/* Top section: Exit button, Lives, Coins */}
