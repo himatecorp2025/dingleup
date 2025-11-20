@@ -102,23 +102,25 @@ export const QuestionCard = ({
           onExit={onExit}
         />
 
+        {/* Coin reward animation positioned between hexagons and question box */}
+        <div className="relative" style={{ height: '40px' }}>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+            <CoinRewardAnimation 
+              amount={coinRewardAmount} 
+              trigger={coinRewardTrigger}
+            />
+          </div>
+        </div>
+
       {/* Wrapper for Timer + Question + Answers + Help - Vertically centered on mobile/tablet */}
       <div className="flex-grow flex flex-col justify-center md:justify-start space-y-1 sm:space-y-1.5 md:space-y-2 pt-[7.2rem] sm:pt-[9rem] pb-[7.2rem] sm:pb-[9rem] md:pt-0 md:pb-0 md:mt-[5.5vh]">
         {/* Middle section: Question and Answers with Reaction Bar */}
         <div className="relative flex">
           {/* Question and Answers */}
           <div className="flex-1 flex flex-col space-y-1 sm:space-y-1.5 md:space-y-2">
-            {/* Timer with coin reward animation positioned in center between question box and hexagons */}
+            {/* Timer */}
             <div className="flex justify-center -mt-[7.2rem] sm:-mt-[9rem] md:-mt-[10.8rem]">
               <GameTimer timeLeft={timeLeft} maxTime={30} />
-            </div>
-            
-            {/* Coin reward positioned between timer area and question box */}
-            <div className="relative -mt-16">
-              <CoinRewardAnimation 
-                amount={coinRewardAmount} 
-                trigger={coinRewardTrigger}
-              />
             </div>
 
             <div className="-mt-[0.1rem] sm:-mt-[0.2rem] md:-mt-[0.3rem] pb-10 sm:pb-12 md:pb-16">
