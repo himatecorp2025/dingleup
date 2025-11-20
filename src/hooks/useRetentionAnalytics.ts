@@ -43,8 +43,13 @@ export const useRetentionAnalytics = () => {
         return;
       }
       
+      // Add time filter to reduce data load (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
       const { data, error } = await supabase.functions.invoke('admin-retention-analytics', {
-        headers: { Authorization: `Bearer ${session.access_token}` }
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { startDate: thirtyDaysAgo.toISOString() }
       });
       if (error) throw error;
 

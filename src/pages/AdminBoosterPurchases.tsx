@@ -47,6 +47,22 @@ export default function AdminBoosterPurchases() {
 
   useEffect(() => {
     fetchPurchases();
+
+    // Real-time subscription for booster purchases
+    const channel = supabase
+      .channel('admin-booster-purchases')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'booster_purchases'
+      }, () => {
+        fetchPurchases();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   async function fetchPurchases() {

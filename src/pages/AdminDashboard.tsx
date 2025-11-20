@@ -400,7 +400,7 @@ const AdminDashboard = () => {
             <span className="font-medium">Booster Vásárlások</span>
           </button>
           <button
-            onClick={() => { navigate('/admin/analytics'); onItemClick?.(); }}
+            onClick={() => { navigate('/admin/advanced-analytics'); onItemClick?.(); }}
             className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm text-white/60 hover:bg-white/5"
           >
             <Activity className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
@@ -548,7 +548,7 @@ const AdminDashboard = () => {
             </div>
 
             <button
-              onClick={() => navigate('/admin/analytics')}
+              onClick={() => navigate('/admin/advanced-analytics')}
               className="w-full backdrop-blur-xl bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl lg:rounded-2xl p-6 lg:p-8 text-left transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 hover:scale-[1.02]"
             >
               <div className="flex items-center gap-4">

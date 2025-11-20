@@ -57,8 +57,13 @@ export const usePerformanceAnalytics = () => {
         return;
       }
       
+      // Add time filter to reduce data load (last 7 days)
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
       const { data, error } = await supabase.functions.invoke('admin-performance-analytics', {
-        headers: { Authorization: `Bearer ${session.access_token}` }
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { startDate: sevenDaysAgo.toISOString() }
       });
       if (error) throw error;
 

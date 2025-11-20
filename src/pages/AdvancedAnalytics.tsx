@@ -31,9 +31,9 @@ const AdvancedAnalytics = () => {
 
           <button
             onClick={() => navigate('/admin/monetization')}
-            className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
+            className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-green-500/20"
           >
-            <DollarSign className="w-10 h-10 text-purple-400 mb-4" />
+            <DollarSign className="w-10 h-10 text-green-400 mb-4" />
             <h4 className="text-white font-bold text-xl mb-2">Monetizációs Dashboard</h4>
             <p className="text-white/60 text-sm">Bevétel, ARPU, konverzió, LTV analízis</p>
           </button>
