@@ -60,10 +60,10 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // OPTIMIZED: Fast random selection using TABLESAMPLE for sub-second performance
-    // Uses get_random_questions_fast with 5% sample + oversample for speed
+    // Ultra-fast: Simple random selection optimized for 2700-row table (sub-100ms)
+    // Direct ORDER BY random() LIMIT 15 - no overhead, maximum speed
     const { data: questions, error: questionsError } = await supabaseClient
-      .rpc('get_random_questions_fast', { num_questions: 15 });
+      .rpc('get_random_questions', { num_questions: 15 });
 
     if (questionsError || !questions || questions.length < 15) {
       console.error('[start-game-session] Questions fetch error:', questionsError);
