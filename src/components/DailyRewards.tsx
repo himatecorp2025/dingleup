@@ -1,4 +1,16 @@
-const DailyRewards = () => {
+interface LeaderboardPlayer {
+  username: string;
+  total_correct_answers: number;
+}
+
+interface DailyRewardsProps {
+  topPlayers: LeaderboardPlayer[];
+  userRank: number | null;
+  userUsername: string | null;
+  userCorrectAnswers: number;
+}
+
+const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers }: DailyRewardsProps) => {
   const rewards = [
     { place: 1, coins: 5000, lives: 100 },
     { place: 2, coins: 2500, lives: 50 },
@@ -80,17 +92,63 @@ const DailyRewards = () => {
               </div>
             </div>
 
-            {/* Rewards table */}
-            <div className="space-y-1.5">
-              {rewards.map((reward, index) => (
-                <div
-                  key={index}
-                  className="relative rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:z-10"
+            {/* User's own ranking box (only if user has a rank) */}
+            {userRank && userUsername && (
+              <div className="mb-4">
+                <div 
+                  className="relative rounded-3xl p-1 overflow-hidden"
                   style={{
-                    background: index < 3 
-                      ? 'linear-gradient(90deg, hsl(var(--dup-purple-700)), hsl(280 70% 35%))'
-                      : 'linear-gradient(90deg, hsl(var(--dup-purple-800)), hsl(280 60% 25%))',
-                    boxShadow: index < 3 
+                    background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-500)), hsl(var(--dup-gold-700)))',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.4)',
+                  }}
+                >
+                  <div 
+                    className="absolute inset-0 opacity-30 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%)',
+                      backgroundSize: '200% 200%',
+                      animation: 'shimmer 3s infinite linear'
+                    }}
+                  />
+                  <div 
+                    className="relative rounded-3xl overflow-hidden p-4"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(var(--dup-purple-900)), hsl(var(--dup-purple-800)), hsl(280 60% 25%))',
+                      border: '2px solid hsl(var(--dup-gold-600))',
+                    }}
+                  >
+                    <div 
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background: 'radial-gradient(ellipse at top, rgba(255, 255, 255, 0.15) 0%, transparent 60%)',
+                      }}
+                    />
+                    <div className="relative z-10 text-center">
+                      <p className="text-lg font-bold text-[hsl(var(--dup-gold-300))]">
+                        Te: {userRank}. helyezett - {userUsername}
+                      </p>
+                      <p className="text-sm text-[hsl(var(--dup-gold-400))] mt-1">
+                        Helyes: {userCorrectAnswers}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Top 10 Players with rewards */}
+            <div className="space-y-1.5">
+              {rewards.map((reward, index) => {
+                const player = topPlayers[index];
+                return (
+                  <div
+                    key={index}
+                    className="relative rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:z-10"
+                    style={{
+                      background: index < 3 
+                        ? 'linear-gradient(90deg, hsl(var(--dup-purple-700)), hsl(280 70% 35%))'
+                        : 'linear-gradient(90deg, hsl(var(--dup-purple-800)), hsl(280 60% 25%))',
+                      boxShadow: index < 3
                       ? '0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.1)'
                       : '0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.05)',
                   }}
@@ -113,48 +171,80 @@ const DailyRewards = () => {
                     }}
                   />
 
-                  <div className="relative flex items-center justify-between px-4 py-3">
-                    {/* Rank */}
-                    <div className="flex items-center gap-2 min-w-[80px]">
-                      <span className="text-xl">{getCrownIcon(reward.place)}</span>
-                      <span 
-                        className="text-lg font-black"
-                        style={{
-                          color: index < 3 ? 'hsl(var(--dup-gold-400))' : 'hsl(var(--dup-text-100))',
-                          textShadow: index < 3 ? '0 0 8px hsla(var(--dup-gold-400), 0.6)' : 'none'
-                        }}
-                      >
-                        {reward.place}.
+                  <div className="relative flex items-center gap-3 px-4 py-3">
+                    {/* Crown/medal icon */}
+                    <div className="flex-shrink-0 w-12 text-center">
+                      <span className="text-2xl" style={{
+                        filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8))'
+                      }}>
+                        {getCrownIcon(reward.place)}
                       </span>
                     </div>
 
-                    {/* Rewards */}
-                    <div className="flex items-center gap-4">
-                      {/* Coins */}
-                      <div className="flex items-center gap-1.5">
-                        <svg className="w-5 h-5 text-[hsl(var(--dup-gold-500))] drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
-                          <circle cx="12" cy="12" r="10" fill="currentColor" stroke="hsl(var(--dup-gold-700))" strokeWidth="2"/>
-                          <circle cx="12" cy="12" r="7" fill="none" stroke="hsl(var(--dup-gold-700))" strokeWidth="1" opacity="0.5"/>
-                          <text x="12" y="16" textAnchor="middle" fill="hsl(var(--dup-gold-900))" fontSize="10" fontWeight="bold">$</text>
-                        </svg>
-                        <span className="text-[hsl(var(--dup-gold-300))] font-bold text-sm">
-                          {reward.coins.toLocaleString()}
-                        </span>
+                    {/* Rank, username and reward info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span 
+                            className="font-black text-lg flex-shrink-0"
+                            style={{
+                              background: index < 3 
+                                ? 'linear-gradient(135deg, hsl(45 100% 70%), hsl(45 100% 60%))'
+                                : 'linear-gradient(135deg, hsl(45 85% 65%), hsl(45 80% 55%))',
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8))'
+                            }}
+                          >
+                            {reward.place}.
+                          </span>
+                          <span className="text-white/90 font-bold text-sm truncate">
+                            {player ? player.username : `${reward.place}. helyezett`}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xl">🪙</span>
+                            <span 
+                              className="font-bold text-base"
+                              style={{
+                                background: 'linear-gradient(135deg, hsl(45 100% 70%), hsl(45 100% 55%))',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))'
+                              }}
+                            >
+                              {reward.coins}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xl">❤️</span>
+                            <span 
+                              className="font-bold text-base"
+                              style={{
+                                background: 'linear-gradient(135deg, hsl(0 100% 70%), hsl(0 100% 55%))',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))'
+                              }}
+                            >
+                              {reward.lives}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-
-                      {/* Lives */}
-                      <div className="flex items-center gap-1.5">
-                        <svg className="w-5 h-5 text-[hsl(var(--destructive))] drop-shadow-lg animate-pulse" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                        </svg>
-                        <span className="text-[hsl(var(--destructive))] font-bold text-sm">
-                          {reward.lives}
-                        </span>
-                      </div>
+                      {/* Correct answers count */}
+                      {player && (
+                        <p className="text-xs text-white/60 ml-8">
+                          Helyes: {player.total_correct_answers}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Footer message */}
