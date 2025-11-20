@@ -20,6 +20,9 @@ const Leaderboard = () => {
   const navigate = useNavigate();
   const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userRank, setUserRank] = useState<number | null>(null);
+  const [userUsername, setUserUsername] = useState<string | null>(null);
+  const [userCorrectAnswers, setUserCorrectAnswers] = useState<number>(0);
 
   // Platform detection for conditional padding
   const [isStandalone, setIsStandalone] = useState(false);
@@ -78,6 +81,26 @@ const Leaderboard = () => {
 
       console.log('[Leaderboard] Loaded', data.leaderboard.length, 'players from country:', data.countryCode);
       setTopPlayers(data.leaderboard);
+      
+      // Set user's own rank and info
+      if (data.userRank) {
+        setUserRank(data.userRank);
+        
+        // Get current user's data
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('username, total_correct_answers')
+            .eq('id', user.id)
+            .single();
+          
+          if (profileData) {
+            setUserUsername(profileData.username);
+            setUserCorrectAnswers(profileData.total_correct_answers);
+          }
+        }
+      }
     } catch (error) {
       console.error('[Leaderboard] Error fetching daily leaderboard:', error);
     } finally {
@@ -190,8 +213,16 @@ const Leaderboard = () => {
           <DailyRankingsCountdown compact={false} />
         </div>
 
-        {/* Weekly Rewards Section */}
-        <DailyRewards />
+        {/* Daily Rewards Section with Top 10 */}
+        <DailyRewards 
+          topPlayers={topPlayers.slice(0, 10).map(p => ({
+            username: p.username,
+            total_correct_answers: p.total_correct_answers
+          }))}
+          userRank={userRank}
+          userUsername={userUsername}
+          userCorrectAnswers={userCorrectAnswers}
+        />
 
         {/* Leaderboard */}
         {loading ? (
