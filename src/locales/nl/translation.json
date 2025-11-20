@@ -13,7 +13,11 @@
     "next": "Volgende",
     "yes": "Ja",
     "no": "Nee",
-    "ok": "OK"
+    "ok": "OK",
+    "connectionRestored": "Verbinding hersteld",
+    "internetAvailable": "De internetverbinding is weer beschikbaar.",
+    "noInternet": "Geen internetverbinding",
+    "offlineFunctionsUnavailable": "Sommige functies zijn niet beschikbaar in offline modus."
   },
   "auth": {
     "login": "Inloggen",

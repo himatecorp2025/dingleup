@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
+import { useTranslation } from 'react-i18next';
 
 const loginSchema = z.object({
   username: z.string().trim().min(1, "A felhasználónév mező kötelező").max(255),
@@ -18,6 +19,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 const LoginUsername = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<LoginForm>({
     username: "",
     password: "",
@@ -45,8 +47,8 @@ const LoginUsername = () => {
 
       if (error || data?.error || !data?.email) {
         toast({
-          title: "Bejelentkezési hiba",
-          description: data?.error || "Helytelen felhasználónév vagy jelszó",
+          title: t('auth.loginError'),
+          description: data?.error || t('auth.invalidCredentials'),
           variant: "destructive",
         });
         return;
@@ -60,8 +62,8 @@ const LoginUsername = () => {
 
       if (signInError) {
         toast({
-          title: "Bejelentkezési hiba",
-          description: "Helytelen felhasználónév vagy jelszó",
+          title: t('auth.loginError'),
+          description: t('auth.invalidCredentials'),
           variant: "destructive",
         });
         return;
@@ -79,8 +81,8 @@ const LoginUsername = () => {
         setErrors(fieldErrors);
       } else {
         toast({
-          title: "Bejelentkezési hiba",
-          description: "Váratlan hiba történt",
+          title: t('auth.loginError'),
+          description: t('common.error'),
           variant: "destructive",
         });
       }
@@ -95,7 +97,7 @@ const LoginUsername = () => {
       options: { redirectTo: `${window.location.origin}/` },
     });
     if (error) {
-      toast({ title: 'Hiba', description: 'Google bejelentkezés sikertelen', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('auth.loginError'), variant: 'destructive' });
     }
   };
 

@@ -13,7 +13,11 @@
     "next": "Siguiente",
     "yes": "Sí",
     "no": "No",
-    "ok": "OK"
+    "ok": "OK",
+    "connectionRestored": "Conexión restablecida",
+    "internetAvailable": "La conexión a Internet está disponible nuevamente.",
+    "noInternet": "Sin conexión a Internet",
+    "offlineFunctionsUnavailable": "Algunas funciones no están disponibles en modo sin conexión."
   },
   "auth": {
     "login": "Iniciar sesión",
