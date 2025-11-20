@@ -60,10 +60,10 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // Simple random selection: 15 random questions from entire questions table
-    // No topic logic, just pure random selection for maximum variety
+    // OPTIMIZED: Fast random selection using TABLESAMPLE for sub-second performance
+    // Uses get_random_questions_fast with 5% sample + oversample for speed
     const { data: questions, error: questionsError } = await supabaseClient
-      .rpc('get_random_questions', { num_questions: 15 });
+      .rpc('get_random_questions_fast', { num_questions: 15 });
 
     if (questionsError || !questions || questions.length < 15) {
       console.error('[start-game-session] Questions fetch error:', questionsError);
