@@ -187,5 +187,14 @@
     "popularContent": "Popular Content",
     "boosterPurchases": "Booster Purchases",
     "gameProfiles": "Game Profiles"
+  },
+  "bottomNav": {
+    "dashboard": "Dashboard",
+    "share": "Share",
+    "leaderboard": "Leaderboard",
+    "profile": "Profile",
+    "about": "About",
+    "logout": "Logout",
+    "notLoggedIn": "Not logged in! Please log in!"
   }
 }
