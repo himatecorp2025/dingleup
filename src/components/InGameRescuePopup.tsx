@@ -102,165 +102,160 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[90vw] w-full max-h-[70vh] overflow-y-auto bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] border-2 border-purple-500/30 p-4">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-black text-center bg-gradient-to-r from-red-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-1">
-            Majdnem kiestél… megmentsük a játékodat? 😈
+      <DialogContent className="max-w-[95vw] w-full max-h-[75vh] overflow-y-auto bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] border-2 border-gold-500/40 p-5 sm:p-6">
+        {/* Header */}
+        <DialogHeader className="space-y-2 mb-4">
+          <DialogTitle className="text-2xl sm:text-3xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent drop-shadow-lg leading-tight">
+            Majdnem kiestél... 🎰
           </DialogTitle>
-          <p className="text-center text-white/80 text-xs mb-3">
-            Az életed vagy az aranyad elfogyott. Válassz egy mentőcsomagot, és ott folytathatod, ahol abbahagytad!
+          <p className="text-center text-white/90 text-sm sm:text-base font-medium leading-snug">
+            Válassz egy mentőcsomagot!
           </p>
         </DialogHeader>
 
-        {/* Current Status Card - Compact */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl p-3 mb-3">
-          <h3 className="text-white font-bold text-sm mb-2">Jelenlegi állapotod</h3>
-          <div className="grid grid-cols-2 gap-3">
+        {/* Current Status - Minimal & Elegant */}
+        <div className="bg-gradient-to-br from-purple-900/40 to-purple-800/20 border border-purple-400/30 rounded-xl p-3 mb-4 backdrop-blur-sm">
+          <div className="flex items-center justify-around">
             <div className="flex items-center gap-2">
-              <span className="text-xl">💚</span>
+              <span className="text-2xl">💚</span>
               <div>
-                <p className="text-white/60 text-xs">Élet</p>
-                <p className="text-white font-bold text-lg">{currentLives}</p>
+                <p className="text-white/60 text-xs font-medium">Élet</p>
+                <p className="text-white font-black text-xl">{currentLives}</p>
               </div>
             </div>
+            <div className="h-8 w-px bg-white/20"></div>
             <div className="flex items-center gap-2">
-              <span className="text-xl">🪙</span>
+              <span className="text-2xl">🪙</span>
               <div>
-                <p className="text-white/60 text-xs">Arany</p>
-                <p className="text-white font-bold text-lg">{currentGold}</p>
+                <p className="text-white/60 text-xs font-medium">Arany</p>
+                <p className="text-white font-black text-xl">{currentGold}</p>
               </div>
             </div>
           </div>
-          <p className="text-white/40 text-[10px] mt-1">Az értékek valós időben frissülnek a fiókodban.</p>
         </div>
 
-        {/* Booster Cards Grid - Compact */}
-        <div className="grid grid-cols-1 gap-3 mb-3">
+        {/* Booster Options */}
+        <div className="space-y-3 mb-4">
           {/* Gold Saver Booster */}
-          <div className="backdrop-blur-xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/50 rounded-2xl p-4 hover:scale-[1.02] transition-transform duration-300 shadow-xl hover:shadow-yellow-500/30">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-3xl">🟡</span>
-              <div className="flex-1">
-                <h3 className="text-lg font-black text-yellow-300 mb-0.5">Gold Saver Booster</h3>
-                <p className="text-white/80 text-xs">
-                  Kicsi áldozat, nagy mentés: elköltesz 500 aranyat, de azonnal visszakapsz 250 aranyat és +15 életet.
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl blur-sm group-hover:blur-md transition-all"></div>
+            <div className="relative bg-gradient-to-br from-amber-900/60 to-orange-900/40 border-2 border-yellow-500/60 rounded-2xl p-4 backdrop-blur-sm hover:scale-[1.02] transition-transform duration-200">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-2xl shadow-lg shadow-yellow-500/50">
+                  🟡
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-black text-yellow-300 mb-1 leading-tight">Gold Saver Booster</h3>
+                  <p className="text-white/80 text-xs leading-snug">
+                    500 aranyért visszakapsz 250 aranyat + 15 életet
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mb-3 bg-black/30 rounded-lg p-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="text-white text-sm font-bold">+250 🪙</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="text-white text-sm font-bold">+15 💚</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-red-400 text-sm">✗</span>
+                  <span className="text-white/60 text-xs">Speed</span>
+                </div>
+              </div>
+
+              {!hasEnoughGold && (
+                <p className="text-red-400 text-xs text-center mb-2 font-medium">
+                  ⚠️ Nincs elég aranyad
                 </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 mb-3">
-              <div className="flex flex-col items-center bg-black/30 rounded-lg p-2">
-                <span className="text-green-400 text-xs">✓</span>
-                <span className="text-white text-xs font-bold">+250</span>
-                <span className="text-white/60 text-[10px]">arany</span>
-              </div>
-              <div className="flex flex-col items-center bg-black/30 rounded-lg p-2">
-                <span className="text-green-400 text-xs">✓</span>
-                <span className="text-white text-xs font-bold">+15</span>
-                <span className="text-white/60 text-[10px]">élet</span>
-              </div>
-              <div className="flex flex-col items-center bg-black/30 rounded-lg p-2">
-                <span className="text-red-400 text-xs">❌</span>
-                <span className="text-white/60 text-[10px]">Nincs</span>
-                <span className="text-white/60 text-[10px]">Speed</span>
-              </div>
-            </div>
-
-            <div className="bg-black/30 rounded-xl p-2 mb-2">
-              <p className="text-yellow-300 font-bold text-center text-base">💸 500 arany</p>
-            </div>
-
-            {!hasEnoughGold && (
-              <p className="text-red-400 text-[10px] text-center mb-2">
-                Nincs elég aranyad ehhez a boosterhez. Próbáld ki az Instant Rescue Booster-t!
-              </p>
-            )}
-
-            <Button
-              onClick={handleGoldSaverPurchase}
-              disabled={!hasEnoughGold || loadingGoldSaver}
-              className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold text-sm py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-yellow-500/50 transition-all"
-            >
-              {loadingGoldSaver ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Feldolgozás...
-                </>
-              ) : hasEnoughGold ? (
-                'Megmentem arannyal (500)'
-              ) : (
-                'Nincs elég aranyam'
               )}
-            </Button>
+
+              <Button
+                onClick={handleGoldSaverPurchase}
+                disabled={!hasEnoughGold || loadingGoldSaver}
+                className="w-full bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 hover:from-yellow-400 hover:via-yellow-300 hover:to-yellow-400 text-gray-900 font-black text-base py-6 rounded-xl disabled:opacity-50 shadow-xl shadow-yellow-500/30 hover:shadow-yellow-400/50 transition-all border-2 border-yellow-300/50"
+              >
+                {loadingGoldSaver ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Feldolgozás...
+                  </>
+                ) : hasEnoughGold ? (
+                  '💸 Vásárlás - 500 arany'
+                ) : (
+                  'Nincs elég aranyam'
+                )}
+              </Button>
+            </div>
           </div>
 
-          {/* Instant Rescue Booster */}
-          <div className="backdrop-blur-xl bg-gradient-to-br from-red-500/20 to-pink-500/20 border-2 border-red-500/50 rounded-2xl p-4 hover:scale-[1.02] transition-transform duration-300 shadow-xl hover:shadow-red-500/30 animate-pulse-slow">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-3xl">🔴</span>
-              <div className="flex-1">
-                <h3 className="text-lg font-black text-red-300 mb-0.5">Instant Rescue Booster</h3>
-                <p className="text-white/80 text-xs">
-                  Nem akarod itt elveszíteni ezt a kört? Egy apró összegért azonnal visszahozzuk a játékod.
-                </p>
+          {/* Instant Rescue Booster - Premium */}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-red-500/30 to-pink-500/30 rounded-2xl blur-md group-hover:blur-lg transition-all animate-pulse"></div>
+            <div className="relative bg-gradient-to-br from-red-900/70 to-pink-900/50 border-2 border-red-500/70 rounded-2xl p-4 backdrop-blur-sm hover:scale-[1.02] transition-transform duration-200">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center text-2xl shadow-lg shadow-red-500/50 animate-pulse">
+                  🔴
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-black text-red-300 mb-1 leading-tight">Instant Rescue 💎</h3>
+                  <p className="text-white/80 text-xs leading-snug">
+                    Azonnal visszamentsz! +1000 arany + 25 élet
+                  </p>
+                </div>
               </div>
+
+              <div className="flex items-center justify-between mb-3 bg-black/30 rounded-lg p-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="text-white text-sm font-bold">+1000 🪙</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="text-white text-sm font-bold">+25 💚</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-red-400 text-sm">✗</span>
+                  <span className="text-white/60 text-xs">Speed</span>
+                </div>
+              </div>
+
+              <Button
+                onClick={handleInstantRescuePurchase}
+                disabled={loadingInstantRescue}
+                className="w-full bg-gradient-to-r from-red-500 via-pink-500 to-red-500 hover:from-red-400 hover:via-pink-400 hover:to-red-400 text-white font-black text-base py-6 rounded-xl shadow-xl shadow-red-500/40 hover:shadow-red-400/60 transition-all border-2 border-red-300/50"
+              >
+                {loadingInstantRescue ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Feldolgozás...
+                  </>
+                ) : (
+                  '💳 Megmentem - 1,49 $'
+                )}
+              </Button>
+
+              <p className="text-white/40 text-[9px] text-center mt-2 leading-tight">
+                Digitális szolgáltatás • Azonnali jóváírás • Elállási jog nem gyakorolható
+              </p>
             </div>
-
-            <div className="grid grid-cols-3 gap-2 mb-3">
-              <div className="flex flex-col items-center bg-black/30 rounded-lg p-2">
-                <span className="text-green-400 text-xs">✓</span>
-                <span className="text-white text-xs font-bold">+1000</span>
-                <span className="text-white/60 text-[10px]">arany</span>
-              </div>
-              <div className="flex flex-col items-center bg-black/30 rounded-lg p-2">
-                <span className="text-green-400 text-xs">✓</span>
-                <span className="text-white text-xs font-bold">+25</span>
-                <span className="text-white/60 text-[10px]">élet</span>
-              </div>
-              <div className="flex flex-col items-center bg-black/30 rounded-lg p-2">
-                <span className="text-red-400 text-xs">❌</span>
-                <span className="text-white/60 text-[10px]">Nincs</span>
-                <span className="text-white/60 text-[10px]">Speed</span>
-              </div>
-            </div>
-
-            <div className="bg-black/30 rounded-xl p-2 mb-2">
-              <p className="text-red-300 font-bold text-center text-base">💳 1,49 $</p>
-            </div>
-
-            <Button
-              onClick={handleInstantRescuePurchase}
-              disabled={loadingInstantRescue}
-              className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-400 hover:to-pink-400 text-white font-bold text-sm py-3 rounded-xl shadow-lg hover:shadow-red-500/50 transition-all mb-2"
-            >
-              {loadingInstantRescue ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Feldolgozás...
-                </>
-              ) : (
-                'Megmentem a játékot – 1,49 $'
-              )}
-            </Button>
-
-            <p className="text-white/40 text-[9px] text-center leading-tight">
-              A vásárlás digitális szolgáltatásnak minősül.
-              A jutalmakat azonnal jóváírjuk a fiókodon, ezért a 14 napos elállási jog nem gyakorolható.
-            </p>
           </div>
         </div>
 
-        {/* Footer - Compact */}
-        <div className="text-center space-y-2">
-          <p className="text-white/70 text-xs">
-            A játékod nem szakad meg – a mentőcsomag után pontosan ott folytatod, ahol abbahagytad.
+        {/* Footer */}
+        <div className="text-center pt-2 border-t border-white/10">
+          <p className="text-white/60 text-xs mb-2 leading-snug">
+            Ott folytatod, ahol abbahagytad! 🎮
           </p>
           <Button
             onClick={onClose}
             variant="ghost"
-            className="text-white/50 hover:text-white/80 hover:bg-white/5 text-xs py-2"
+            className="text-white/50 hover:text-white/80 hover:bg-white/5 text-sm h-9 px-4"
           >
-            Most inkább kihagyom
+            Mégsem
           </Button>
         </div>
       </DialogContent>
