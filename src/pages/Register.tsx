@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff, User, Mail, Lock, Trophy, Calendar } from "lucide-react";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 
 const registerSchema = z.object({
   username: z.string().min(3, "A felhasználónév legalább 3 karakter hosszú legyen").max(50),
@@ -37,6 +38,7 @@ type RegisterForm = z.infer<typeof registerSchema>;
 const Register = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const invitationCode = searchParams.get('code') || '';
   
