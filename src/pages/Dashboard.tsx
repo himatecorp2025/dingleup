@@ -661,7 +661,7 @@ if (!profile) {
 
           {/* Play Now Button - Boosters felett */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
-            <div className="w-full max-w-screen-lg">
+            <div className="w-[90%] max-w-screen-lg">
               <PlayNowButton
                 data-tutorial="play-button"
                 onClick={() => navigate('/game')}
