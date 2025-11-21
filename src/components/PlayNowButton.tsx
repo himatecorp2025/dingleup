@@ -41,7 +41,7 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         alt=""
         className="absolute inset-0 w-full h-full object-contain pointer-events-none"
         style={{
-          transform: 'scale(2, 1.5)',
+          transform: 'scale(1, 1.5)',
         }}
         aria-hidden
       />
