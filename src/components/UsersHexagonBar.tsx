@@ -35,15 +35,20 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
   };
 
   return (
-    <div className={`relative flex items-center gap-1.5 sm:gap-2 ${className}`}>
+    <div className={`relative flex items-center gap-1.5 sm:gap-2 ${className}`} style={{ minWidth: '280px', minHeight: '80px' }}>
       {/* Purple SVG Background Container */}
       <div 
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
           backgroundImage: `url(${usersHexagonSvg})`,
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
+          width: '100%',
+          height: '120%',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           zIndex: 0
         }}
         aria-hidden
