@@ -42,7 +42,7 @@ export const InvitationDialogFixed = ({ open, onClose, userId }: InvitationDialo
       if (profileError) throw profileError;
 
       setInvitationCode(profile.invitation_code);
-      setInvitationLink(`${window.location.origin}/register?code=${profile.invitation_code}`);
+      setInvitationLink(`${window.location.origin}/auth/register?code=${profile.invitation_code}`);
 
       const { count, error: countError } = await supabase
         .from('invitations')

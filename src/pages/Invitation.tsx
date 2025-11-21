@@ -66,7 +66,7 @@ const Invitation = () => {
       if (profileError) throw profileError;
 
       setInvitationCode(profile.invitation_code);
-      setInvitationLink(`${window.location.origin}/register?code=${profile.invitation_code}`);
+      setInvitationLink(`${window.location.origin}/auth/register?code=${profile.invitation_code}`);
 
       // Get all invitations with user details (accepted and pending)
       const { data: invitations, error: invitationsError } = await supabase
