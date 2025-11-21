@@ -42,17 +42,19 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          width: '400%',
-          height: '150%',
-          top: '-25%',
-          left: '-150%',
+          width: '800%',
+          height: '225%',
+          top: '-62.5%',
+          left: '-350%',
         }}
         aria-hidden
       />
 
-      {/* Content (Text + Icon) */}
-      <div className="relative z-10 flex items-center justify-center py-4 px-6 text-foreground font-black text-base sm:text-lg">
-        {children}
+      {/* Content (Text + Icon) - Centered both horizontally and vertically */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center">
+        <div className="flex items-center justify-center gap-2 sm:gap-3 text-foreground font-black text-base sm:text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          {children}
+        </div>
       </div>
     </button>
   );
