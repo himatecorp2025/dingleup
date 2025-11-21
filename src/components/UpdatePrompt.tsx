@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
+import { useI18n } from '@/i18n';
 
 export const UpdatePrompt = () => {
+  const { t } = useI18n();
   const [showPrompt, setShowPrompt] = useState(false);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -52,8 +54,8 @@ export const UpdatePrompt = () => {
       <div className="bg-card border border-border rounded-lg p-4 shadow-lg flex items-center gap-3">
         <RefreshCw className="w-5 h-5 text-primary shrink-0" />
         <div className="flex-1">
-          <p className="text-sm font-medium text-foreground">Új verzió elérhető</p>
-          <p className="text-xs text-muted-foreground">Frissítsd az alkalmazást a legújabb verziókhoz.</p>
+          <p className="text-sm font-medium text-foreground">{t('update_prompt.title')}</p>
+          <p className="text-xs text-muted-foreground">{t('update_prompt.description')}</p>
         </div>
         <div className="flex gap-2 shrink-0">
           <Button 
@@ -61,13 +63,13 @@ export const UpdatePrompt = () => {
             variant="outline"
             onClick={handleDismiss}
           >
-            Később
+            {t('update_prompt.later')}
           </Button>
           <Button 
             size="sm" 
             onClick={handleUpdate}
           >
-            Frissítés
+            {t('update_prompt.update')}
           </Button>
         </div>
       </div>

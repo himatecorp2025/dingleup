@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Button } from './ui/button';
+import { useI18n } from '@/i18n';
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -11,6 +12,7 @@ interface VideoPlayerProps {
 }
 
 export const VideoPlayer = ({ videoUrl, title, videoId, userId, onClose }: VideoPlayerProps) => {
+  const { t } = useI18n();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(true);
   const [hasTrackedPlay, setHasTrackedPlay] = useState(false);
@@ -102,7 +104,7 @@ export const VideoPlayer = ({ videoUrl, title, videoId, userId, onClose }: Video
         onEnded={handleVideoEnded}
       >
         <source src={videoUrl} type="video/mp4" />
-        A böngésződ nem támogatja a videó lejátszást.
+        {t('video.unsupported_browser')}
       </video>
 
       {/* Title overlay (optional) */}

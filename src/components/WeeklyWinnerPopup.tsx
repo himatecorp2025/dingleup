@@ -96,10 +96,10 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
   if (!winnerData || !isHandheld) return null;
 
   const getRankDisplay = (rank: number) => {
-    if (rank === 1) return '🥇 1. HELYEZETT';
-    if (rank === 2) return '🥈 2. HELYEZETT';
-    if (rank === 3) return '🥉 3. HELYEZETT';
-    return `🏆 ${rank}. HELYEZETT`;
+    if (rank === 1) return t('weekly_winner.rank_first');
+    if (rank === 2) return t('weekly_winner.rank_second');
+    if (rank === 3) return t('weekly_winner.rank_third');
+    return t('weekly_winner.rank_position').replace('{{rank}}', rank.toString());
   };
 
   const getRankBadgeColor = (rank: number) => {
