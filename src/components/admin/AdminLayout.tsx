@@ -15,7 +15,8 @@ import {
   Target,
   Zap,
   ShoppingBag,
-  Gamepad2
+  Gamepad2,
+  Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -68,6 +69,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/booster-types', label: 'Booster Csomagok', icon: Zap },
     { path: '/admin/booster-purchases', label: 'Booster Vásárlások', icon: ShoppingBag },
     { path: '/admin/advanced-analytics', label: 'Fejlett Analitika', icon: Activity },
+    { path: '/admin/age-statistics', label: 'Korcsoport Statisztika', icon: Calendar },
   ];
 
   const handleLogout = async () => {
