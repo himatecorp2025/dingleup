@@ -7,6 +7,25 @@ import { Languages, Loader2, CheckCircle, XCircle, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
+interface LanguageStats {
+  total: number;
+  translated: number;
+  percentage: number;
+}
+
+interface InitialStats {
+  totalKeys: number;
+  languages: {
+    en: LanguageStats;
+    de: LanguageStats;
+    fr: LanguageStats;
+    es: LanguageStats;
+    it: LanguageStats;
+    pt: LanguageStats;
+    nl: LanguageStats;
+  };
+}
+
 export const TranslationSeeder = () => {
   const [isTranslating, setIsTranslating] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -16,44 +35,75 @@ export const TranslationSeeder = () => {
     success: number;
     errors: number;
   } | null>(null);
+  const [initialStats, setInitialStats] = useState<InitialStats | null>(null);
   const [hasUntranslated, setHasUntranslated] = useState<boolean | null>(null);
   const [isCheckingContent, setIsCheckingContent] = useState(true);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
-  // Check if there are untranslated UI texts
+  // Load initial statistics with per-language breakdown
   useEffect(() => {
-    const checkUntranslatedTexts = async () => {
+    const loadInitialStats = async () => {
       try {
         setIsCheckingContent(true);
 
-        // Check if there are any translations with null values in target languages
-        const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
+        const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'] as const;
         
-        // Build OR conditions for null checks
-        const { data: untranslatedTexts, error } = await supabase
+        // Get total keys count
+        const { count: totalKeys, error: countError } = await supabase
           .from('translations')
-          .select('key')
-          .or(TARGET_LANGUAGES.map(lang => `${lang}.is.null`).join(','))
-          .limit(1);
+          .select('*', { count: 'exact', head: true });
 
-        if (error) {
-          console.error('[TranslationSeeder] Error checking content:', error);
-          setHasUntranslated(false);
+        if (countError) {
+          console.error('[TranslationSeeder] Error fetching total keys:', countError);
           return;
         }
 
-        // If we found at least one row with null translations, there are untranslated texts
-        setHasUntranslated(untranslatedTexts && untranslatedTexts.length > 0);
+        // Get per-language statistics using batched queries
+        const languageStats: Partial<InitialStats['languages']> = {};
+        let hasAnyUntranslated = false;
+
+        for (const lang of TARGET_LANGUAGES) {
+          const { count: translatedCount, error } = await supabase
+            .from('translations')
+            .select('*', { count: 'exact', head: true })
+            .not(lang, 'is', null);
+
+          if (error) {
+            console.error(`[TranslationSeeder] Error fetching ${lang} stats:`, error);
+            continue;
+          }
+
+          const translated = translatedCount || 0;
+          const total = totalKeys || 0;
+          const percentage = total > 0 ? Math.round((translated / total) * 100) : 0;
+
+          languageStats[lang] = {
+            total,
+            translated,
+            percentage
+          };
+
+          if (translated < total) {
+            hasAnyUntranslated = true;
+          }
+        }
+
+        setInitialStats({
+          totalKeys: totalKeys || 0,
+          languages: languageStats as InitialStats['languages']
+        });
+
+        setHasUntranslated(hasAnyUntranslated);
 
       } catch (error) {
-        console.error('[TranslationSeeder] Exception checking content:', error);
+        console.error('[TranslationSeeder] Exception loading stats:', error);
         setHasUntranslated(false);
       } finally {
         setIsCheckingContent(false);
       }
     };
 
-    checkUntranslatedTexts();
+    loadInitialStats();
   }, []);
 
   // Subscribe to real-time progress updates
@@ -204,6 +254,16 @@ export const TranslationSeeder = () => {
     }
   };
 
+  const LANGUAGE_NAMES: Record<string, string> = {
+    en: 'Angol',
+    de: 'Német',
+    fr: 'Francia',
+    es: 'Spanyol',
+    it: 'Olasz',
+    pt: 'Portugál',
+    nl: 'Holland'
+  };
+
   return (
     <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -217,6 +277,34 @@ export const TranslationSeeder = () => {
         AI-alapú automatikus fordítás generálása az összes UI szövegre mind a 7 támogatott nyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
         A folyamat eltarthat néhány percig.
       </p>
+
+      {/* Initial Statistics Display */}
+      {initialStats && (
+        <div className="mb-4 space-y-3">
+          <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-white">Összes kulcs:</span>
+              <span className="text-lg font-bold text-blue-400">{initialStats.totalKeys}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2">
+            {Object.entries(initialStats.languages).map(([lang, langStats]) => (
+              <div key={lang} className="p-3 bg-white/5 rounded-lg">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-white">{LANGUAGE_NAMES[lang]}:</span>
+                  <span className="text-sm font-bold text-blue-400">{langStats.percentage}%</span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-white/60">
+                  <span>{langStats.translated} / {langStats.total} lefordítva</span>
+                  <span>{langStats.total - langStats.translated} hátra</span>
+                </div>
+                <Progress value={langStats.percentage} className="h-1.5 mt-2" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {status && (
         <div className="mb-4 p-3 bg-white/5 rounded-lg">
