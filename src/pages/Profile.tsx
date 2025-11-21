@@ -369,7 +369,7 @@ const Profile = () => {
       // Automatically set language based on country
       const newLang = COUNTRY_TO_LANG[newCountryCode] || 'en';
       
-      // Update BOTH country_code AND preferred_language in database
+      // Update database and language in parallel
       const { error } = await supabase
         .from('profiles')
         .update({ 
@@ -380,14 +380,8 @@ const Profile = () => {
       
       if (error) throw error;
       
-      // Update localStorage for persistence
-      localStorage.setItem('dingleup_lang', newLang);
-      
-      // Update i18n context for immediate UI refresh
-      await setLang(newLang);
-      
-      // Refresh profile data
-      await refreshProfile();
+      // Skip DB update in setLang since we already updated it
+      await setLang(newLang, true);
       
       toast.success('Ország sikeresen frissítve! A ranglista és a nyelv most az új országodhoz tartozik.');
     } catch (error) {
