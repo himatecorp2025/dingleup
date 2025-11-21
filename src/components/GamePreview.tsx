@@ -144,7 +144,7 @@ const GamePreview = () => {
       if (session?.user) {
         setUserId(session.user.id);
       } else {
-        navigate('/login');
+        navigate('/account-choice');
       }
     });
   }, [navigate]);
@@ -205,7 +205,7 @@ const GamePreview = () => {
       if (sessionError || !session) {
         console.error('[Game] Session error:', sessionError);
         toast.error(t('game.session_expired'));
-        navigate('/login');
+        navigate('/account-choice');
         throw new Error('Session error');
       }
       
@@ -213,7 +213,7 @@ const GamePreview = () => {
       const { data: { session: authSession } } = await supabase.auth.getSession();
       if (!authSession) {
         toast.error(t('game.not_logged_in'));
-        navigate('/login');
+        navigate('/account-choice');
         throw new Error('Not authenticated');
       }
       

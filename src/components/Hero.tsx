@@ -117,7 +117,7 @@ const Hero = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 animate-fade-in px-4" style={{ animationDelay: '0.6s' }}>
             <Button
-              onClick={() => navigate('/intro-video')}
+              onClick={() => navigate('/account-choice')}
               size="lg"
               className="w-full sm:w-auto bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800 text-white font-black text-lg sm:text-xl px-8 sm:px-12 py-6 sm:py-7 rounded-full shadow-[0_0_30px_rgba(34,197,94,0.5)] hover:shadow-[0_0_50px_rgba(34,197,94,0.8)] border-2 border-green-400 transform hover:scale-105 transition-all duration-300"
             >

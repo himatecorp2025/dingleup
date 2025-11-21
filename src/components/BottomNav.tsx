@@ -60,7 +60,7 @@ const BottomNav = () => {
       toast.error(t('common.error'));
     } else {
       toast.success(t('profile.logout'));
-      navigate('/login');
+      navigate('/account-choice');
     }
   };
 
@@ -68,7 +68,7 @@ const BottomNav = () => {
     // Check if user is authenticated when on landing page
     if (location.pathname === '/' && !isAuthenticated) {
       toast.error(t('auth.login.not_logged_in'));
-      navigate('/login');
+      navigate('/account-choice');
       return;
     }
     
