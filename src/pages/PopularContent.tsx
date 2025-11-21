@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, TrendingUp, Heart, Search } from 'lucide-react';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n';
 
 interface TopicPopularity {
   topic_id: number;
@@ -18,6 +19,7 @@ interface TopicPopularity {
 
 export default function PopularContent() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [topics, setTopics] = useState<TopicPopularity[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +44,7 @@ export default function PopularContent() {
       }
     } catch (error) {
       console.error('[PopularContent] Fetch error:', error);
-      toast.error('Nem sikerült betölteni a népszerű tartalmakat');
+      toast.error(t('popular.error_loading'));
     } finally {
       setLoading(false);
     }
@@ -87,7 +89,7 @@ export default function PopularContent() {
             className="gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Vissza
+            {t('popular.back_button')}
           </Button>
         </div>
 
@@ -97,9 +99,9 @@ export default function PopularContent() {
             <div className="flex items-center gap-3">
               <TrendingUp className="w-8 h-8 text-primary" />
               <div>
-                <CardTitle className="text-3xl">Népszerű tartalmak</CardTitle>
+                <CardTitle className="text-3xl">{t('popular.page_title')}</CardTitle>
                 <CardDescription className="mt-2">
-                  Témakörönkénti összesített lájkok – segít megérteni, melyik témák a legkedveltebbek a játékosok körében.
+                  {t('popular.page_description')}
                 </CardDescription>
               </div>
             </div>
@@ -113,7 +115,7 @@ export default function PopularContent() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Témakör keresése név szerint..."
+                placeholder={t('popular.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -132,8 +134,8 @@ export default function PopularContent() {
             ) : filteredAndSortedTopics.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 {searchQuery
-                  ? 'Nincs találat a keresési feltételeknek megfelelően.'
-                  : 'Még nincsenek lájkolt kérdések.'}
+                  ? t('popular.no_results')
+                  : t('popular.no_likes_yet')}
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -146,7 +148,7 @@ export default function PopularContent() {
                         onClick={() => handleSort('topic_name')}
                       >
                         <div className="flex items-center gap-2">
-                          Témakör neve
+                          {t('popular.table_topic_name')}
                           {sortConfig.key === 'topic_name' && (
                             <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
                           )}
@@ -158,7 +160,7 @@ export default function PopularContent() {
                       >
                         <div className="flex items-center justify-end gap-2">
                           <Heart className="w-4 h-4" />
-                          Összes lájk
+                          {t('popular.table_total_likes')}
                           {sortConfig.key === 'total_likes' && (
                             <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
                           )}
@@ -169,7 +171,7 @@ export default function PopularContent() {
                         onClick={() => handleSort('question_count')}
                       >
                         <div className="flex items-center justify-end gap-2">
-                          Kérdések száma
+                          {t('popular.table_questions_count')}
                           {sortConfig.key === 'question_count' && (
                             <span>{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
                           )}
