@@ -1,5 +1,6 @@
 import { HexagonButton } from "@/components/HexagonButton";
 import { RefreshCw, Users, SkipForward } from "lucide-react";
+import { useI18n } from "@/i18n";
 
 interface GameLifelinesProps {
   help5050UsageCount: number;
@@ -32,6 +33,8 @@ export const GameLifelines = ({
   onUseHelpAudience,
   onUseQuestionSwap
 }: GameLifelinesProps) => {
+  const { t } = useI18n();
+  
   return (
     <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2">
       <button
@@ -74,7 +77,7 @@ export const GameLifelines = ({
         }`}
       >
         <Users className="w-4 h-4 sm:w-5 sm:h-5" />
-        <span className="text-[9px] sm:text-[10px] font-bold">Közönség</span>
+        <span className="text-[9px] sm:text-[10px] font-bold">{t('game.lifeline_audience')}</span>
       </button>
       <button
         onClick={onUseQuestionSwap}

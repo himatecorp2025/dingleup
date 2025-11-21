@@ -179,8 +179,8 @@ const Leaderboard = () => {
             <button
               onClick={() => navigate('/dashboard')}
               className="relative p-4 rounded-full hover:scale-110 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center"
-              title="Vissza a dashboardra"
-              aria-label="Vissza a dashboardra"
+              title={t('leaderboard.back_aria')}
+              aria-label={t('leaderboard.back_aria')}
             >
               {/* BASE SHADOW */}
               <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
