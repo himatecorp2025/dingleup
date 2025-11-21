@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
 
 console.log('[verify-age] Function loaded');
 
@@ -42,6 +43,13 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // SECURITY: Rate limiting check (5 attempts per 15 minutes)
+    const rateLimitResult = await checkRateLimit(supabase, 'verify-age', RATE_LIMITS.AUTH);
+    if (!rateLimitResult.allowed) {
+      console.log('[verify-age] Rate limit exceeded for user:', user.id);
+      return rateLimitExceeded(corsHeaders);
     }
 
     const body = await req.json();
