@@ -154,10 +154,16 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
           <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
         </div>
         
-        {/* Timer countdown */}
-        <div className="flex items-center justify-center m-0 p-0 gap-0 leading-none [background:transparent]">
-          <span className="text-[7px] sm:text-[8px] font-extrabold text-primary-dark drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] leading-none whitespace-nowrap">
+        {/* Timer countdown with text */}
+        <div className="flex items-center justify-center m-0 p-0 gap-1 leading-none [background:transparent]">
+          <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
+            {t('countdown.you_can_win')}
+          </span>
+          <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
             {timeRemaining}
+          </span>
+          <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
+            {t('countdown.in_time')}
           </span>
         </div>
       </div>
