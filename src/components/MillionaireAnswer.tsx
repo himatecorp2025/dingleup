@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, memo } from 'react';
 
 interface MillionaireAnswerProps {
   children: ReactNode;
@@ -13,7 +13,7 @@ interface MillionaireAnswerProps {
   showCorrectPulse?: boolean;
 }
 
-export const MillionaireAnswer = ({ 
+const MillionaireAnswerComponent = ({
   children, 
   letter, 
   onClick, 
@@ -218,3 +218,5 @@ export const MillionaireAnswer = ({
     </div>
   );
 };
+
+export const MillionaireAnswer = memo(MillionaireAnswerComponent);

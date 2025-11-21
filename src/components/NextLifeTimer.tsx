@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useMemo } from 'react';
 import { useI18n } from '@/i18n';
 
 interface NextLifeTimerProps {
@@ -10,7 +10,7 @@ interface NextLifeTimerProps {
   isSpeedBoost?: boolean;
 }
 
-export const NextLifeTimer = ({ 
+const NextLifeTimerComponent = ({
   nextLifeAt, 
   livesCurrent, 
   livesMax,
@@ -156,3 +156,5 @@ export const NextLifeTimer = ({
     </div>
   );
 };
+
+export const NextLifeTimer = memo(NextLifeTimerComponent);
