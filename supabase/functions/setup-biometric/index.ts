@@ -24,9 +24,42 @@ Deno.serve(async (req) => {
 
     const { credential_id, public_key } = await req.json();
 
-    if (!credential_id || !public_key) {
+    // Input validation
+    if (!credential_id || typeof credential_id !== 'string' || 
+        !public_key || typeof public_key !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Credential ID és public key kötelező' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate credential_id format (base64url)
+    if (!/^[A-Za-z0-9_-]+$/.test(credential_id)) {
+      return new Response(
+        JSON.stringify({ error: 'Érvénytelen credential_id formátum' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate public_key format (base64)
+    if (!/^[A-Za-z0-9+/]+=*$/.test(public_key)) {
+      return new Response(
+        JSON.stringify({ error: 'Érvénytelen public_key formátum' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Length validation
+    if (credential_id.length > 1024) {
+      return new Response(
+        JSON.stringify({ error: 'Credential ID túl hosszú' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (public_key.length > 2048) {
+      return new Response(
+        JSON.stringify({ error: 'Public key túl hosszú' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

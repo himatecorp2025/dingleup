@@ -1641,6 +1641,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pin_reset_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          token: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          token: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age_verified: boolean | null
@@ -3297,6 +3324,7 @@ export type Database = {
       claim_daily_gift: { Args: never; Returns: Json }
       claim_welcome_bonus: { Args: never; Returns: Json }
       cleanup_expired_game_sessions: { Args: never; Returns: undefined }
+      cleanup_expired_pin_reset_tokens: { Args: never; Returns: undefined }
       cleanup_old_analytics: { Args: never; Returns: undefined }
       cleanup_old_messages: { Args: never; Returns: undefined }
       create_friendship_from_invitation: {
