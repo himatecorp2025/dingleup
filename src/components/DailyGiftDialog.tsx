@@ -167,7 +167,7 @@ const DailyGiftDialog = ({
           }}
         >
           <DialogTitle className="sr-only">Daily Gift</DialogTitle>
-          <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
+          <DialogDescription className="sr-only">{t('daily_gift.show_reward_description')}</DialogDescription>
 
           {/* Háttér gradiens */}
           <div
@@ -181,7 +181,7 @@ const DailyGiftDialog = ({
           {/* Bezáró X - közelebb a pajzshoz (top: 2vh helyett 1vh) */}
           <button
             onClick={onLater}
-            aria-label="Bezárás"
+            aria-label={t('daily_gift.close_aria')}
             className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
             style={{
               top: "max(1vh, env(safe-area-inset-top))",

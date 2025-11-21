@@ -108,10 +108,10 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         {/* Header */}
         <DialogHeader className="space-y-0.5 mb-2">
           <DialogTitle className="text-xl font-black text-center bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(234,179,8,0.8)] leading-tight tracking-wide" style={{ textShadow: '0 2px 10px rgba(234,179,8,0.6), 0 0 20px rgba(234,179,8,0.4)' }}>
-            Majdnem kiestél... 🎰
+            {t('rescue.title')}
           </DialogTitle>
           <p className="text-center text-yellow-100 text-xs font-bold drop-shadow-lg">
-            Válassz egy mentőcsomagot!
+            {t('rescue.subtitle')}
           </p>
         </DialogHeader>
 
@@ -121,7 +121,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
             <div className="flex items-center gap-1.5">
               <span className="text-2xl drop-shadow-lg">💚</span>
               <div>
-                <p className="text-blue-200 text-[9px] font-bold">Élet</p>
+                <p className="text-blue-200 text-[9px] font-bold">{t('rescue.life_label')}</p>
                 <p className="text-white font-black text-xl drop-shadow-lg">{currentLives}</p>
               </div>
             </div>
@@ -129,7 +129,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
             <div className="flex items-center gap-1.5">
               <span className="text-2xl drop-shadow-lg">🪙</span>
               <div>
-                <p className="text-yellow-200 text-[9px] font-bold">Arany</p>
+                <p className="text-yellow-200 text-[9px] font-bold">{t('rescue.gold_label')}</p>
                 <p className="text-white font-black text-xl drop-shadow-lg">{currentGold}</p>
               </div>
             </div>
@@ -154,14 +154,14 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </h3>
 
               <p className="text-blue-100 text-[9px] text-center mb-2 font-semibold leading-tight px-1">
-                500 aranyért 250 aranyat + 15 életet
+                {t('rescue.gold_saver_description')}
               </p>
 
               {/* Red highlight bar for rewards */}
               <div className="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 border border-red-400/50 rounded-lg p-1.5 mb-2 shadow-lg" style={{ boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.3), 0 3px 10px rgba(239,68,68,0.4)' }}>
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-yellow-100 text-xs font-black drop-shadow-lg">+250🪙</span>
-                  <span className="text-green-100 text-xs font-black drop-shadow-lg">+15💚</span>
+                  <span className="text-yellow-100 text-xs font-black drop-shadow-lg">{t('rescue.gold_saver_reward_gold')}</span>
+                  <span className="text-green-100 text-xs font-black drop-shadow-lg">{t('rescue.gold_saver_reward_lives')}</span>
                 </div>
               </div>
 
@@ -169,7 +169,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
               {!hasEnoughGold && (
                 <p className="text-yellow-300 text-[8px] text-center mb-1.5 font-bold drop-shadow-md">
-                  ⚠️ Nincs elég aranyad
+                  {t('rescue.not_enough_warning')}
                 </p>
               )}
 
@@ -181,12 +181,12 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 {loadingGoldSaver ? (
                   <>
                     <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                    <span className="text-[9px]">Feldolgozás...</span>
+                    <span className="text-[9px]">{t('rescue.processing')}</span>
                   </>
                 ) : hasEnoughGold ? (
                   <span className="text-xs tracking-wide">500 ARANY</span>
                 ) : (
-                  <span className="text-[9px]">NINCS ELÉG</span>
+                  <span className="text-[9px]">{t('rescue.not_enough_short')}</span>
                 )}
               </Button>
             </div>
@@ -208,14 +208,14 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </h3>
 
               <p className="text-pink-100 text-[9px] text-center mb-2 font-semibold leading-tight px-1">
-                +1000 arany + 25 élet azonnal!
+                {t('rescue.instant_rescue_description')}
               </p>
 
               {/* Red highlight bar for rewards */}
               <div className="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 border border-red-400/50 rounded-lg p-1.5 mb-2 shadow-lg" style={{ boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.3), 0 3px 10px rgba(239,68,68,0.4)' }}>
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-yellow-100 text-xs font-black drop-shadow-lg">+1000🪙</span>
-                  <span className="text-green-100 text-xs font-black drop-shadow-lg">+25💚</span>
+                  <span className="text-yellow-100 text-xs font-black drop-shadow-lg">{t('rescue.instant_rescue_reward_gold')}</span>
+                  <span className="text-green-100 text-xs font-black drop-shadow-lg">{t('rescue.instant_rescue_reward_lives')}</span>
                 </div>
               </div>
 
@@ -229,7 +229,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 {loadingInstantRescue ? (
                   <>
                     <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                    <span className="text-[9px]">Feldolgozás...</span>
+                    <span className="text-[9px]">{t('rescue.processing')}</span>
                   </>
                 ) : (
                   <span className="text-xs tracking-wide">1,49 $</span>
@@ -237,7 +237,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </Button>
 
               <p className="text-pink-200/60 text-[7px] text-center mt-1 leading-tight font-medium">
-                Azonnali jóváírás
+                {t('rescue.instant_credit')}
               </p>
             </div>
           </div>
@@ -246,14 +246,14 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         {/* Footer */}
         <div className="text-center pt-1.5 border-t border-yellow-500/20">
           <p className="text-yellow-100/80 text-[9px] mb-1 leading-snug font-semibold drop-shadow-md">
-            Ott folytatod, ahol abbahagytad! 🎮
+            {t('rescue.continue_message')}
           </p>
           <Button
             onClick={onClose}
             variant="ghost"
             className="text-yellow-200/70 hover:text-yellow-100 hover:bg-white/10 text-xs h-7 px-3 font-bold"
           >
-            Mégsem
+            {t('rescue.cancel_button')}
           </Button>
         </div>
       </DialogContent>

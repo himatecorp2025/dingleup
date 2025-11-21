@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle } from 'lucide-react';
+import { useI18n } from '@/i18n';
 
 interface IdleWarningProps {
   show: boolean;
@@ -8,6 +9,7 @@ interface IdleWarningProps {
 }
 
 export const IdleWarning = ({ show, remainingSeconds, onStayActive }: IdleWarningProps) => {
+  const { t } = useI18n();
   if (!show) return null;
 
   const minutes = Math.floor(remainingSeconds / 60);
@@ -26,10 +28,10 @@ export const IdleWarning = ({ show, remainingSeconds, onStayActive }: IdleWarnin
           </div>
           <div className="flex-1">
             <p className="text-white font-bold text-sm sm:text-base">
-              Inaktivitás miatt hamarosan kijelentkeztetünk
+              {t('idle.warning_message')}
             </p>
             <p className="text-white/90 text-xs sm:text-sm">
-              Kijelentkezés: <span className="font-mono font-black text-lg">{timeString}</span>
+              {t('idle.logout_label')} <span className="font-mono font-black text-lg">{timeString}</span>
             </p>
           </div>
         </div>
@@ -37,7 +39,7 @@ export const IdleWarning = ({ show, remainingSeconds, onStayActive }: IdleWarnin
           onClick={onStayActive}
           className="px-4 py-2 bg-white hover:bg-white/90 text-red-700 font-black rounded-lg transition-all shadow-lg whitespace-nowrap text-sm sm:text-base"
         >
-          Maradok
+          {t('idle.stay_button')}
         </button>
       </div>
     </div>

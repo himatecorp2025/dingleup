@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
+import I18nContext from '@/i18n/I18nContext';
 
 interface Props {
   children: ReactNode;
@@ -12,6 +13,9 @@ interface State {
 }
 
 export class GameErrorBoundary extends Component<Props, State> {
+  static contextType = I18nContext;
+  declare context: React.ContextType<typeof I18nContext>;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -37,6 +41,8 @@ export class GameErrorBoundary extends Component<Props, State> {
   };
 
   render() {
+    const { t } = this.context || { t: (key: string) => key };
+    
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] flex items-center justify-center p-4">
@@ -48,10 +54,10 @@ export class GameErrorBoundary extends Component<Props, State> {
               
               <div>
                 <h1 className="text-2xl font-bold text-foreground mb-2">
-                  Játék hiba
+                  {t('game_error_boundary.title')}
                 </h1>
                 <p className="text-muted-foreground">
-                  A játék futása közben hiba lépett fel. Próbáld újra a főoldalról.
+                  {t('game_error_boundary.message')}
                 </p>
               </div>
 
@@ -60,7 +66,7 @@ export class GameErrorBoundary extends Component<Props, State> {
                 className="w-full"
                 variant="default"
               >
-                Vissza a főoldalra
+                {t('game_error_boundary.back')}
               </Button>
             </div>
           </div>

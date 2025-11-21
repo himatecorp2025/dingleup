@@ -23,29 +23,31 @@ interface ReportDialogProps {
   reportedMessageId?: string;
 }
 
-// Development categories
-const DEV_CATEGORIES = [
-  { value: 'crash', label: 'Összeomlás / Crash' },
-  { value: 'ui_bug', label: 'UI/Design hiba' },
-  { value: 'functionality', label: 'Funkcionalitás hiba' },
-  { value: 'performance', label: 'Teljesítmény probléma' },
-  { value: 'data_loss', label: 'Adatvesztés' },
-  { value: 'other', label: 'Egyéb' },
-];
-
-// Support categories
-const SUPPORT_CATEGORIES = [
-  { value: 'harassment', label: 'Zaklatás' },
-  { value: 'spam', label: 'Spam / Reklám' },
-  { value: 'inappropriate', label: 'Nem megfelelő tartalom' },
-  { value: 'hate_speech', label: 'Gyűlöletbeszéd' },
-  { value: 'impersonation', label: 'Személyazonosság visszaélés' },
-  { value: 'discrimination', label: 'Diszkrimináció' },
-  { value: 'other', label: 'Egyéb' },
-];
 
 export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessageId }: ReportDialogProps) => {
   const { t } = useI18n();
+  
+  // Development categories
+  const DEV_CATEGORIES = [
+    { value: 'crash', label: t('report.dev_category.crash') },
+    { value: 'ui_bug', label: t('report.dev_category.ui_bug') },
+    { value: 'functionality', label: t('report.dev_category.functionality') },
+    { value: 'performance', label: t('report.dev_category.performance') },
+    { value: 'data_loss', label: t('report.dev_category.data_loss') },
+    { value: 'other', label: t('report.dev_category.other') },
+  ];
+
+  // Support categories
+  const SUPPORT_CATEGORIES = [
+    { value: 'harassment', label: t('report.support_category.harassment') },
+    { value: 'spam', label: t('report.support_category.spam') },
+    { value: 'inappropriate', label: t('report.support_category.inappropriate') },
+    { value: 'hate_speech', label: t('report.support_category.hate_speech') },
+    { value: 'impersonation', label: t('report.support_category.impersonation') },
+    { value: 'discrimination', label: t('report.support_category.discrimination') },
+    { value: 'other', label: t('report.support_category.other') },
+  ];
+  
   const [reportType, setReportType] = useState<'bug' | 'user_behavior'>('bug');
   const [bugCategory, setBugCategory] = useState<string>('');
   const [violationType, setViolationType] = useState<string>('');
@@ -222,8 +224,8 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                 <SelectValue placeholder={t('report.type_placeholder')} />
               </SelectTrigger>
               <SelectContent className="z-[10001] bg-muted-foreground border border-accent/40 text-foreground">
-                <SelectItem value="bug">🐛 Fejlesztői jelentés (Bug, hiba)</SelectItem>
-                <SelectItem value="user_behavior">⚠️ Felhasználói jelentés (Visszaélés)</SelectItem>
+                <SelectItem value="bug">{t('report.type_option_dev')}</SelectItem>
+                <SelectItem value="user_behavior">{t('report.type_option_user')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -311,7 +313,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
               {screenshots.length < 3 && (
                 <label className="flex items-center justify-center gap-2 px-3 py-2 bg-muted border border-primary/50 rounded cursor-pointer hover:bg-muted/80 transition-colors">
                   <ImagePlus className="w-4 h-4 text-primary" />
-                  <span className="text-sm text-foreground">Kép hozzáadása</span>
+                  <span className="text-sm text-foreground">{t('report.add_screenshot')}</span>
                   <input 
                     type="file" 
                     accept="image/*" 

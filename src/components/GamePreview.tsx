@@ -212,7 +212,7 @@ const GamePreview = () => {
       // Get session for edge function calls
       const { data: { session: authSession } } = await supabase.auth.getSession();
       if (!authSession) {
-        toast.error('Nem vagy bejelentkezve');
+        toast.error(t('game.not_logged_in'));
         navigate('/login');
         throw new Error('Not authenticated');
       }

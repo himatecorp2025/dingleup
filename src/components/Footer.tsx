@@ -123,7 +123,7 @@ const Footer = () => {
               </li>
               <li>
                 <a href="/admin/login" className="text-white/80 hover:text-yellow-400 transition-colors drop-shadow">
-                  Admin felület
+                  {t('footer.admin_link')}
                 </a>
               </li>
             </ul>
