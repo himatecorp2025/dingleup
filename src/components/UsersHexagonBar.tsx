@@ -35,7 +35,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
 
   return (
     <div className={`relative flex items-center gap-1.5 sm:gap-2 ${className}`} style={{ minWidth: '280px', minHeight: '80px' }}>
-      {/* Blue SVG Background Container - Inline SVG */}
+      {/* Blue Info SVG Background Container - Inline SVG */}
       <svg 
         xmlns="http://www.w3.org/2000/svg"
         viewBox="22.53058 -47.5814116 672.82399 167.3667432"
@@ -97,7 +97,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
 
         <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
 
-        <g transform="scale(1,1.2)">
+        <g transform="scale(1,1.45)">
           <use href="#HEX_INFO" fill="black" fillOpacity="0.5"/>
 
           <use href="#HEX_INFO" fill="none" stroke="url(#band20_info)" strokeWidth="20"
