@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { LogOut } from 'lucide-react';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { useI18n } from '@/i18n';
 
 import DailyRewards from '@/components/DailyRewards';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
@@ -31,6 +32,7 @@ interface DailyRewardsData {
 
 const Leaderboard = () => {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [userRank, setUserRank] = useState<number | null>(null);
@@ -212,7 +214,7 @@ const Leaderboard = () => {
             filter: 'drop-shadow(0 0 16px hsla(45, 100%, 65%, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6))'
           }}
         >
-          🏆 Ranglista 🏆
+          🏆 {t('leaderboard.title')} 🏆
         </h1>
 
         {/* Countdown Timer - below title */}

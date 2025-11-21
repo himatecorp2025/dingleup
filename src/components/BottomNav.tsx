@@ -2,11 +2,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useEffect, useState, useRef } from 'react';
+import { useI18n } from '@/i18n';
 
 const BottomNav = () => {
   const [isDesktop, setIsDesktop] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { t } = useI18n();
 
   useEffect(() => {
     const checkDesktop = () => {
@@ -55,9 +57,9 @@ const BottomNav = () => {
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      toast.error('Hiba a kijelentkezés során');
+      toast.error(t('common.error'));
     } else {
-      toast.success('Sikeresen kijelentkeztél');
+      toast.success(t('profile.logout'));
       navigate('/login');
     }
   };
@@ -65,7 +67,7 @@ const BottomNav = () => {
   const handleNavigation = (path: string) => {
     // Check if user is authenticated when on landing page
     if (location.pathname === '/' && !isAuthenticated) {
-      toast.error('Nem vagy bejelentkezve! Kérlek jelentkezz be!');
+      toast.error(t('auth.login.not_logged_in'));
       navigate('/login');
       return;
     }

@@ -7,6 +7,7 @@ import { useGameProfile } from '@/hooks/useGameProfile';
 import { useDailyGift } from '@/hooks/useDailyGift';
 import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { useScrollBehavior } from '@/hooks/useScrollBehavior';
+import { useI18n } from '@/i18n';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useWallet } from '@/hooks/useWallet';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
@@ -38,6 +39,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [userId, setUserId] = useState<string | undefined>();
+  const { t } = useI18n();
   const { isHandheld, isStandalone } = usePlatformDetection();
   const { canMountModals } = useScrollBehavior();
   const { markActive } = useActivityTracker('route_view');
@@ -332,7 +334,7 @@ const Dashboard = () => {
   if (loading) {
   return (
     <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-      <p className="text-lg text-foreground">Betöltés...</p>
+      <p className="text-lg text-foreground">{t('common.loading')}</p>
     </div>
   );
 }
@@ -340,7 +342,7 @@ const Dashboard = () => {
 if (!profile) {
   return (
     <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-      <p className="text-lg text-foreground">Betöltés...</p>
+      <p className="text-lg text-foreground">{t('common.loading')}</p>
     </div>
   );
 }
@@ -408,7 +410,7 @@ if (!profile) {
             {/* Left: Greeting */}
             <div className="flex items-center gap-3 h-12 sm:h-16 md:h-20">
               <h1 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
-                Szia, {profile.username}!
+                {t('dashboard.welcome')}, {profile.username}!
               </h1>
             </div>
 
