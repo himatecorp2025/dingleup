@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { UserGrowthChart } from '@/components/UserGrowthChart';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { AdminReportActionDialog } from '@/components/AdminReportActionDialog';
-import { TranslationSeeder } from '@/components/TranslationSeeder';
 
 type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'invitations' | 'reports' | 'popular-content';
 type ReportsSubTab = 'development' | 'support';
@@ -548,11 +547,6 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </button>
-
-            {/* Translation Seeder Tool */}
-            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-              <TranslationSeeder />
-            </div>
           </div>
         )}
 

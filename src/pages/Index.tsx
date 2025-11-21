@@ -7,7 +7,6 @@ import DevelopmentStatus from "@/components/DevelopmentStatus";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { AlertCircle } from "lucide-react";
-import { LoginPromoManager } from '@/components/LoginPromoManager';
 
 const Index = () => {
   const navigate = useNavigate();
