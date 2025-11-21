@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useState } from 'react';
+import { useI18n } from '@/i18n';
 
 interface ThreadCardProps {
   threadId: string;
@@ -42,6 +43,7 @@ export const ThreadCard = ({
   onClick,
   onDelete,
 }: ThreadCardProps) => {
+  const { t } = useI18n();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const formatTime = (dateStr: string | null) => {
@@ -53,10 +55,10 @@ export const ThreadCard = ({
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (days > 0) return `${days}n`;
-    if (hours > 0) return `${hours}ó`;
-    if (minutes > 0) return `${minutes}p`;
-    return 'most';
+    if (days > 0) return t('thread.time_days').replace('{count}', days.toString());
+    if (hours > 0) return t('thread.time_hours').replace('{count}', hours.toString());
+    if (minutes > 0) return t('thread.time_minutes').replace('{count}', minutes.toString());
+    return t('thread.time_now');
   };
 
   const getInitials = (name: string) => {
@@ -116,7 +118,7 @@ export const ThreadCard = ({
               <DropdownMenuTrigger
                 onClick={(e) => e.stopPropagation()}
                 className="text-muted-foreground hover:text-accent transition-colors p-1"
-                aria-label="További műveletek"
+                aria-label={t('thread.more_actions')}
               >
                 <MoreVertical className="w-4 h-4" />
               </DropdownMenuTrigger>
@@ -129,7 +131,7 @@ export const ThreadCard = ({
                   className="text-destructive hover:text-destructive/80 hover:bg-destructive/10 cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
-                  Beszélgetés törlése
+                  {t('messages.delete_conversation')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -147,21 +149,21 @@ export const ThreadCard = ({
         <AlertDialogContent className="bg-background border-border/40">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-accent">
-              Beszélgetés törlése
+              {t('thread.delete_title')}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground">
-              Biztosan törölni szeretnéd ezt a beszélgetést? Ez csak neked fogja elrejteni, az üzenetek megmaradnak.
+              {t('thread.delete_description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="bg-muted text-foreground border-border/30 hover:bg-muted/80">
-              Mégse
+              {t('common.action.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
               className="bg-destructive text-foreground hover:bg-destructive/90 border border-destructive/70"
             >
-              Törlés
+              {t('common.action.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
