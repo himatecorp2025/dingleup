@@ -27,7 +27,7 @@ export const useAutoLogout = () => {
     const { error } = await supabase.auth.signOut();
     if (!error) {
       toast.info('Biztonsági okokból kijelentkeztettünk 10 perc inaktivitás miatt');
-      navigate('/login');
+      navigate('/auth/login');
     }
   };
 
