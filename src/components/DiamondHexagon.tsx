@@ -27,21 +27,21 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       iconColor: 'hsl(var(--accent))',
     },
     coins: {
-      gradientOuter: 'from-accent-dark via-accent to-accent-darker',
-      gradientMiddle: 'from-accent via-accent-glow to-accent-dark',
-      gradientInner: 'from-accent-glow via-accent to-accent-dark',
-      borderColor: 'border-accent',
-      shadowColor: 'shadow-[0_0_20px_hsl(var(--accent)/0.6),0_8px_25px_rgba(0,0,0,0.5)]',
-      glowColor: 'hsl(var(--accent) / 0.4)',
+      gradientOuter: 'from-yellow-900 via-yellow-600 to-yellow-800',
+      gradientMiddle: 'from-yellow-600 via-yellow-400 to-yellow-700',
+      gradientInner: 'from-yellow-400 via-yellow-500 to-yellow-700',
+      borderColor: 'border-yellow-400',
+      shadowColor: 'shadow-[0_0_20px_rgba(234,179,8,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
+      glowColor: 'rgba(234, 179, 8, 0.4)',
       iconColor: 'hsl(var(--foreground))',
     },
     lives: {
-      gradientOuter: 'from-destructive-dark via-destructive to-destructive-darker',
-      gradientMiddle: 'from-destructive via-destructive-glow to-destructive-dark',
-      gradientInner: 'from-destructive-glow via-destructive to-destructive-dark',
-      borderColor: 'border-destructive',
-      shadowColor: 'shadow-[0_0_20px_hsl(var(--destructive)/0.6),0_8px_25px_rgba(0,0,0,0.5)]',
-      glowColor: 'hsl(var(--destructive) / 0.4)',
+      gradientOuter: 'from-red-900 via-red-600 to-red-800',
+      gradientMiddle: 'from-red-600 via-red-400 to-red-700',
+      gradientInner: 'from-red-400 via-red-500 to-red-700',
+      borderColor: 'border-red-400',
+      shadowColor: 'shadow-[0_0_20px_rgba(239,68,68,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
+      glowColor: 'rgba(239, 68, 68, 0.4)',
       iconColor: 'hsl(var(--foreground))',
     },
     avatar: {
@@ -147,7 +147,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       />
 
       {/* 3D Hexagon Container */}
-      <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
+      <div className="relative w-12 h-8 sm:w-16 sm:h-11 md:w-20 md:h-14 lg:w-24 lg:h-17">
         {/* BASE SHADOW (3D depth) */}
         <div
           className="absolute clip-hexagon"
