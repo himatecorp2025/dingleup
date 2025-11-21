@@ -1,15 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n';
 import { Button } from '@/components/ui/button';
-import { UserPlus, LogIn } from 'lucide-react';
+import { UserPlus, LogIn, Loader2 } from 'lucide-react';
+import { useAutoRegister } from '@/hooks/useAutoRegister';
+import dingleupLogo from '@/assets/dingleup-logo-circle.png';
 
 export default function AccountChoice() {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const { isReady } = useAutoRegister();
 
   const handleNoAccount = () => {
-    // Auto-registration már megtörtént a useAutoRegister hook által
-    // Csak navigáljunk a dashboardra, ahol az age-gate modal megjelenik
+    if (!isReady) return;
     navigate('/dashboard');
   };
 
@@ -26,8 +28,13 @@ export default function AccountChoice() {
       </div>
 
       <div className="relative z-10 w-full max-w-md space-y-8">
-        {/* Logo */}
+        {/* Logo and Title */}
         <div className="text-center space-y-4">
+          <img 
+            src={dingleupLogo} 
+            alt="DingleUP!" 
+            className="w-32 h-32 mx-auto mb-4 drop-shadow-2xl"
+          />
           <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 drop-shadow-lg">
             DingleUP!
           </h1>
@@ -37,18 +44,38 @@ export default function AccountChoice() {
           <p className="text-white/70 text-sm">
             {t('auth.accountChoice.description')}
           </p>
+          
+          {/* Loading indicator */}
+          {!isReady && (
+            <div className="flex items-center justify-center gap-2 text-white/90 py-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span className="text-sm">Előkészítés folyamatban...</span>
+            </div>
+          )}
         </div>
 
         {/* Action buttons */}
         <div className="space-y-4">
           <Button
             onClick={handleNoAccount}
-            className="w-full h-20 text-base font-bold bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg shadow-green-500/50 transition-all transform hover:scale-105 flex items-center justify-start px-6"
+            disabled={!isReady}
+            className="w-full h-20 text-base font-bold bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg shadow-green-500/50 transition-all transform hover:scale-105 flex items-center justify-start px-6 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            <UserPlus className="mr-3 h-6 w-6 flex-shrink-0" />
-            <span className="text-left leading-tight">
-              {t('auth.accountChoice.noAccountButton')}
-            </span>
+            {!isReady ? (
+              <>
+                <Loader2 className="mr-3 h-6 w-6 flex-shrink-0 animate-spin" />
+                <span className="text-left leading-tight">
+                  Fiók készítése...
+                </span>
+              </>
+            ) : (
+              <>
+                <UserPlus className="mr-3 h-6 w-6 flex-shrink-0" />
+                <span className="text-left leading-tight">
+                  {t('auth.accountChoice.noAccountButton')}
+                </span>
+              </>
+            )}
           </Button>
 
           <Button
