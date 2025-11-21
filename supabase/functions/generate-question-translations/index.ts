@@ -24,6 +24,8 @@ const BATCH_SIZE = 10; // Increased batch size for faster processing
 const DELAY_BETWEEN_BATCHES = 3000; // 3 seconds delay
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 10000; // 10 seconds between retries
+const MAX_WORK_TIME_MS = 240000; // 4 minutes max per run (leaves 1min safety buffer before 5min timeout)
+const MAX_QUESTIONS_PER_RUN = 150; // Process max 150 questions per invocation
 
 async function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -159,14 +161,58 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    // Get all questions that need translation - CRITICAL: specify large limit to override 1000-row default
-    const { data: questions, error: questionsError } = await supabase
-      .from('questions')
-      .select('id, question, answers, correct_answer')
-      .order('created_at', { ascending: true })
-      .limit(10000); // Explicitly set high limit to fetch all questions (2748 currently)
+    // Fetch questions using pagination (1000-row Lovable Cloud backend limit)
+    const allQuestions: Array<{ id: string; question: string; answers: any; correct_answer: string | null }> = [];
+    const PAGE_SIZE = 500;
+    let page = 0;
+    let hasMore = true;
 
-    if (questionsError) throw questionsError;
+    while (hasMore && allQuestions.length < MAX_QUESTIONS_PER_RUN * 2) { // Fetch up to 2x max to have buffer
+      const { data: batch, error: batchError } = await supabase
+        .from('questions')
+        .select('id, question, answers, correct_answer')
+        .order('created_at', { ascending: true })
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+
+      if (batchError) throw batchError;
+
+      if (batch && batch.length > 0) {
+        allQuestions.push(...batch);
+        console.log(`[generate-question-translations] Fetched page ${page + 1}: ${batch.length} questions (total: ${allQuestions.length})`);
+        page++;
+        hasMore = batch.length === PAGE_SIZE;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    // Filter to questions that need translation (missing at least one target language)
+    const questionsNeedingTranslation: typeof allQuestions = [];
+    for (const q of allQuestions) {
+      let needsTranslation = false;
+      for (const lang of TARGET_LANGUAGES) {
+        const { data: existing } = await supabase
+          .from('question_translations')
+          .select('id')
+          .eq('question_id', q.id)
+          .eq('lang', lang)
+          .single();
+        if (!existing) {
+          needsTranslation = true;
+          break;
+        }
+      }
+      if (needsTranslation) {
+        questionsNeedingTranslation.push(q);
+      }
+      // Limit to MAX_QUESTIONS_PER_RUN
+      if (questionsNeedingTranslation.length >= MAX_QUESTIONS_PER_RUN) {
+        break;
+      }
+    }
+
+    const questions = questionsNeedingTranslation;
+
     if (!questions || questions.length === 0) {
       return new Response(JSON.stringify({ success: true, message: 'No questions to translate' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -181,6 +227,7 @@ serve(async (req) => {
 
     const totalQuestions = questions.length;
     const totalOperations = totalQuestions * TARGET_LANGUAGES.length;
+    const startTime = Date.now();
 
     // Broadcast initial progress
     await progressChannel.send({
@@ -196,13 +243,33 @@ serve(async (req) => {
       }
     });
 
-    // Process questions in batches
+    // Process questions in batches with time limit
+    let processedQuestions = 0;
     for (let i = 0; i < questions.length; i += BATCH_SIZE) {
+      // Check time limit before starting new batch
+      const elapsedTime = Date.now() - startTime;
+      if (elapsedTime > MAX_WORK_TIME_MS) {
+        console.log(`[generate-question-translations] Time limit reached (${Math.floor(elapsedTime / 1000)}s). Stopping gracefully.`);
+        await progressChannel.send({
+          type: 'broadcast',
+          event: 'progress',
+          payload: {
+            progress: Math.floor((processedQuestions / totalQuestions) * 100),
+            status: `Időlimit elérve. ${processedQuestions}/${totalQuestions} kérdés feldolgozva ebben a futásban.`,
+            translated: translatedCount,
+            skipped: skippedCount,
+            errors: errors.length,
+            total: totalQuestions
+          }
+        });
+        break;
+      }
+
       const batch = questions.slice(i, i + BATCH_SIZE);
       const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
       const totalBatches = Math.ceil(questions.length / BATCH_SIZE);
       
-      console.log(`[generate-question-translations] Processing batch ${batchNumber}/${totalBatches}`);
+      console.log(`[generate-question-translations] Processing batch ${batchNumber}/${totalBatches} (elapsed: ${Math.floor(elapsedTime / 1000)}s)`);
 
       // Broadcast batch progress
       const currentProgress = Math.floor((i / totalQuestions) * 100);
@@ -321,6 +388,8 @@ serve(async (req) => {
           }
         }
       }
+
+      processedQuestions += batch.length;
 
       // Longer delay between batches to avoid rate limits
       if (i + BATCH_SIZE < questions.length) {
