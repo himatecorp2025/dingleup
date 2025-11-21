@@ -213,11 +213,7 @@ const AppContent = () => {
     return <SplashScreen />;
   }
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AppCore />
-    </QueryClientProvider>
-  );
+  return <AppCore />;
 };
 
 const App = () => {
