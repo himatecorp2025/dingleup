@@ -44,6 +44,8 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         className="absolute inset-0 w-full h-full pointer-events-none"
         style={{
           transform: 'scale(1.25, 1.5)',
+          filter: 'drop-shadow(0 0 20px rgba(34, 197, 94, 0.6)) drop-shadow(0 0 40px rgba(34, 197, 94, 0.3))',
+          animation: 'pulse-glow 3s ease-in-out infinite',
         }}
         aria-hidden
       >
@@ -115,6 +117,17 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
           {children}
         </div>
       </div>
+
+      <style>{`
+        @keyframes pulse-glow {
+          0%, 100% {
+            filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.6)) drop-shadow(0 0 40px rgba(34, 197, 94, 0.3));
+          }
+          50% {
+            filter: drop-shadow(0 0 25px rgba(34, 197, 94, 0.8)) drop-shadow(0 0 50px rgba(34, 197, 94, 0.4));
+          }
+        }
+      `}</style>
     </button>
   );
 };
