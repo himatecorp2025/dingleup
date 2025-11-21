@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { LogOut } from 'lucide-react';
@@ -40,8 +40,54 @@ const Leaderboard = () => {
   const [userCorrectAnswers, setUserCorrectAnswers] = useState<number>(0);
   const [dailyRewards, setDailyRewards] = useState<DailyRewardsData | null>(null);
   
-  // Memoized fetch function to prevent recreation on every render
-  const fetchLeaderboard = useCallback(async () => {
+  // Pull-to-refresh functionality
+  const { isPulling, pullProgress } = usePullToRefresh({
+    onRefresh: async () => {
+      await fetchLeaderboard();
+    },
+    threshold: 80,
+    disabled: false
+  });
+
+  // Platform detection for conditional padding
+  const [isStandalone, setIsStandalone] = useState(false);
+  
+  useEffect(() => {
+    const checkStandalone = () => {
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
+                    (window.navigator as any).standalone === true ||
+                    document.referrer.includes('android-app://');
+      setIsStandalone(isPWA);
+    };
+    checkStandalone();
+  }, []);
+
+  useEffect(() => {
+    fetchLeaderboard();
+    
+    // Real-time subscription for daily_rankings updates
+    const channel = supabase
+      .channel('leaderboard-rankings-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'daily_rankings'
+        },
+        () => {
+          fetchLeaderboard();
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+
+  const fetchLeaderboard = async () => {
     try {
       // Call Edge Function for country-specific daily leaderboard
       const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country');
@@ -86,49 +132,7 @@ const Leaderboard = () => {
     } finally {
       setLoading(false);
     }
-  }, []); // No dependencies - stable function
-  
-  // Pull-to-refresh functionality
-  const { isPulling, pullProgress } = usePullToRefresh({
-    onRefresh: fetchLeaderboard, // Direct reference to memoized function
-    threshold: 80,
-    disabled: false
-  });
-
-  // Platform detection for conditional padding
-  const [isStandalone, setIsStandalone] = useState(false);
-  
-  useEffect(() => {
-    const checkStandalone = () => {
-      const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
-                    (window.navigator as any).standalone === true ||
-                    document.referrer.includes('android-app://');
-      setIsStandalone(isPWA);
-    };
-    checkStandalone();
-  }, []);
-
-  useEffect(() => {
-    fetchLeaderboard();
-    
-    // Real-time subscription for daily_rankings updates
-    const channel = supabase
-      .channel('leaderboard-rankings-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'daily_rankings'
-        },
-        fetchLeaderboard // Direct reference - already memoized
-      )
-      .subscribe();
-    
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [fetchLeaderboard]); // Include fetchLeaderboard in dependencies
+  };
 
   return (
     <div className="min-h-screen w-full flex flex-col relative">

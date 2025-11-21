@@ -1,11 +1,9 @@
-import { memo } from 'react';
-
 interface TimerCircleProps {
   timeLeft: number;
   maxTime?: number;
 }
 
-const TimerCircleComponent = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
+export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
   // Green: 10-8s, Orange: 7-4s, Red: 3-0s
   const getTimerColor = () => {
     if (timeLeft >= 8) return "hsl(var(--success))"; // Green
@@ -114,5 +112,3 @@ const TimerCircleComponent = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
     </div>
   );
 };
-
-export const TimerCircle = memo(TimerCircleComponent);

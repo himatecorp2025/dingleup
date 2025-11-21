@@ -63,29 +63,6 @@ serve(async (req) => {
     const body: BoosterPurchaseRequest = await req.json();
     const { boosterCode, confirmInstantPurchase } = body;
 
-    // SECURITY: Comprehensive input validation
-    if (!boosterCode || typeof boosterCode !== 'string') {
-      return new Response(
-        JSON.stringify({ success: false, error: 'boosterCode is required' }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const validBoosterCodes = ['FREE', 'PREMIUM', 'GOLD_SAVER', 'INSTANT_RESCUE'];
-    if (!validBoosterCodes.includes(boosterCode)) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Invalid booster code' }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    if (confirmInstantPurchase !== undefined && typeof confirmInstantPurchase !== 'boolean') {
-      return new Response(
-        JSON.stringify({ success: false, error: 'confirmInstantPurchase must be boolean' }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     console.log(`[purchase-booster] User ${userId} purchasing ${boosterCode}`);
 
     // Get booster definition
@@ -141,36 +118,10 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
 
   console.log(`[FREE] Price: ${priceGold}, Rewards: gold=${rewardGold}, lives=${rewardLives}, speed=${rewardSpeedCount}x${rewardSpeedDuration}min`);
 
-  // SECURITY: Race condition protection - idempotency check first
-  const idempotencyKey = `free_booster:${userId}:${Date.now()}`;
-  const recentPurchaseWindow = new Date(Date.now() - 5000); // 5 second window
-  
-  const { data: recentPurchase } = await supabaseAdmin
-    .from("booster_purchases")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("booster_type_id", boosterType.id)
-    .eq("purchase_source", "GOLD")
-    .gte("created_at", recentPurchaseWindow.toISOString())
-    .limit(1)
-    .maybeSingle();
-
-  if (recentPurchase) {
-    console.log(`[FREE] Duplicate purchase detected within 5s, returning cached success`);
-    return new Response(
-      JSON.stringify({ 
-        success: true,
-        cached: true,
-        message: "Purchase already processed"
-      }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-
-  // Get current user balance with SELECT FOR UPDATE pattern (optimistic locking)
+  // Get current user balance
   const { data: profile, error: profileError } = await supabaseAdmin
     .from("profiles")
-    .select("coins, lives, max_lives, updated_at")
+    .select("coins, lives, max_lives")
     .eq("id", userId)
     .single();
 
@@ -184,7 +135,6 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
   const currentGold = profile.coins || 0;
   const currentLives = profile.lives || 0;
   const maxLives = profile.max_lives || 15;
-  const lastUpdated = profile.updated_at;
 
   // Check gold availability
   if (currentGold < priceGold) {
@@ -198,37 +148,29 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
     );
   }
 
-  // SECURITY: Race condition protection - optimistic locking
-  // Update only if updated_at hasn't changed (no concurrent modification)
+  // Execute transaction: deduct gold, add rewards
   const newGold = currentGold - priceGold + rewardGold;
   const newLives = currentLives + rewardLives;
-  const now = new Date().toISOString();
 
-  const { data: updateResult, error: updateError } = await supabaseAdmin
+  const { error: updateError } = await supabaseAdmin
     .from("profiles")
     .update({
       coins: newGold,
       lives: newLives,
-      updated_at: now
+      updated_at: new Date().toISOString()
     })
-    .eq("id", userId)
-    .eq("updated_at", lastUpdated) // Optimistic lock - only update if unchanged
-    .select("id")
-    .maybeSingle();
+    .eq("id", userId);
 
-  if (updateError || !updateResult) {
-    console.error("[FREE] Update error or concurrent modification:", updateError);
+  if (updateError) {
+    console.error("[FREE] Update error:", updateError);
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: "CONCURRENT_MODIFICATION",
-        message: "Please try again"
-      }),
-      { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ success: false, error: "Profil frissítési hiba" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 
-  // Log transaction to wallet_ledger (using idempotency key from earlier)
+  // Log transaction to wallet_ledger
+  const idempotencyKey = `free_booster:${userId}:${Date.now()}`;
   const { error: ledgerError } = await supabaseAdmin
     .from("wallet_ledger")
     .insert({

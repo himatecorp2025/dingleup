@@ -10,7 +10,7 @@ export const useSessionMonitor = () => {
 
   useEffect(() => {
     // Public pages that don't require session monitoring
-    const publicPaths = ['/', '/desktop', '/account-choice', '/auth/login', '/about', '/intro', '/admin/login', '/legal/aszf', '/legal/privacy'];
+    const publicPaths = ['/', '/desktop', '/login', '/register', '/about', '/intro', '/admin/login', '/login-username'];
     const isPublicPage = publicPaths.some(path => location.pathname === path);
     
     // Skip session monitoring on public pages
@@ -18,7 +18,7 @@ export const useSessionMonitor = () => {
       return;
     }
 
-    // SECURITY: Check session validity every 15 minutes (session timeout)
+    // Check session validity every 5 minutes for protected pages
     const validateSession = async () => {
       if (isValidating) return;
       
@@ -36,7 +36,7 @@ export const useSessionMonitor = () => {
           });
           
           await supabase.auth.signOut();
-          navigate('/account-choice', { replace: true });
+          navigate('/login', { replace: true });
         }
       } catch (err) {
         console.error('[SessionMonitor] Error validating session:', err);
@@ -48,8 +48,8 @@ export const useSessionMonitor = () => {
     // Initial validation
     validateSession();
 
-    // SECURITY: Periodic validation every 15 minutes (session timeout)
-    const interval = setInterval(validateSession, 15 * 60 * 1000);
+    // Periodic validation every 2 minutes
+    const interval = setInterval(validateSession, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [navigate, location.pathname, isValidating]);

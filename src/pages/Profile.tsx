@@ -443,7 +443,6 @@ const Profile = () => {
                 <img 
                   src={profile.avatar_url} 
                   alt={profile.username}
-                  loading="lazy"
                   className="w-full h-full object-cover clip-hexagon"
                 />
               ) : (
@@ -642,7 +641,7 @@ const Profile = () => {
                 <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="hsl(47, 96%, 53%)" strokeWidth="2" strokeLinejoin="round" />
               </svg>
               <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">{t('profile.free_booster')}</p>
-              <p className="text-[10px] sm:text-xs text-white/70 leading-tight">{t('profile.free_booster_rewards')}</p>
+              <p className="text-[10px] sm:text-xs text-white/70 leading-tight" dangerouslySetInnerHTML={{ __html: t('profile.free_booster_rewards') }} />
               {boosterState.pendingSpeedTokensCount > 0 ? (
                 <button
                   onClick={async () => {

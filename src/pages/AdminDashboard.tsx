@@ -930,7 +930,6 @@ const AdminDashboard = () => {
                               <img 
                                 src={url} 
                                 alt={`Képernyőkép ${idx + 1}`}
-                                loading="lazy"
                                 className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-300"
                                 onError={(e) => {
                                   console.error('Image load error:', url);

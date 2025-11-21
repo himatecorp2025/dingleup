@@ -1,6 +1,5 @@
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useI18n } from '@/i18n';
-import { memo } from 'react';
 
 interface GameStateScreenProps {
   type: 'out-of-lives';
@@ -11,7 +10,7 @@ interface GameStateScreenProps {
   reward?: number;
 }
 
-const GameStateScreenComponent = ({
+export const GameStateScreen = ({ 
   type, 
   onContinue, 
   onSkip,
@@ -158,5 +157,3 @@ const GameStateScreenComponent = ({
     </div>
   );
 };
-
-export const GameStateScreen = memo(GameStateScreenComponent);

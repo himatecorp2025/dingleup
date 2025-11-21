@@ -123,81 +123,82 @@ export default defineConfig(({ mode }) => ({
           { url: '/assets/game-background.png', revision: null }
         ],
         runtimeCaching: [
-          // Supabase API - Aggressive cache-first for maximum speed
+          // Supabase API - Optimized Network first with shorter timeout for mobile
           {
             urlPattern: ({ url }) => url.origin === 'https://wdpxmwsxhckazwxufttk.supabase.co',
-            handler: 'CacheFirst',
+            handler: 'NetworkFirst',
             options: {
-              cacheName: 'supabase-api-cache',
+              cacheName: 'supabase-api',
               expiration: {
-                maxEntries: 300,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days aggressive cache
+                maxEntries: 150,
+                maxAgeSeconds: 60 * 60 * 24 * 2 // 2 days cache
               },
+              networkTimeoutSeconds: 5, // Faster timeout for mobile (5s instead of 10s)
               cacheableResponse: {
                 statuses: [0, 200]
               }
             }
           },
-          // Images - Maximum aggressive cache first
+          // Images - Aggressive cache first for mobile performance
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'images-cache',
+              cacheName: 'images',
               expiration: {
-                maxEntries: 500, // Much more images cached
-                maxAgeSeconds: 60 * 60 * 24 * 90 // 90 days aggressive cache
+                maxEntries: 200, // More images cached
+                maxAgeSeconds: 60 * 60 * 24 * 60 // 60 days cache
               },
               cacheableResponse: {
                 statuses: [0, 200]
               }
             }
           },
-          // Videos - Cache first with network fallback
+          // Videos - Network first, cache for offline
           {
             urlPattern: /\.(?:mp4|webm)$/,
-            handler: 'CacheFirst',
+            handler: 'NetworkFirst',
             options: {
-              cacheName: 'videos-cache',
+              cacheName: 'videos',
               expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 7
               }
             }
           },
-          // Audio - Cache first with network fallback
+          // Audio - Network first, cache for offline
           {
             urlPattern: /\.(?:mp3|wav|ogg)$/,
-            handler: 'CacheFirst',
+            handler: 'NetworkFirst',
             options: {
-              cacheName: 'audio-cache',
+              cacheName: 'audio',
               expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 60 * 24 * 7
               }
             }
           },
-          // Fonts - Maximum aggressive cache
+          // Fonts - Aggressive cache with long expiration
           {
             urlPattern: /\.(?:woff|woff2|ttf|otf)$/,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'fonts-cache',
+              cacheName: 'fonts',
               expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 365 * 3 // 3 years
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 365 * 2 // 2 years
               }
             }
           },
-          // Static JS/CSS bundles - Cache first for instant loads
+          // Static JS/CSS bundles - Cache first for faster loads
           {
             urlPattern: /\.(?:js|css)$/,
-            handler: 'CacheFirst',
+            handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: 'static-resources-cache',
+              cacheName: 'static-resources',
               expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
               }
             }
           }

@@ -16,26 +16,9 @@ export const UserGrowthChart = () => {
   useEffect(() => {
     fetchChartData();
     
-    // Real-time subscription instead of polling
-    const channel = supabase
-      .channel('user-growth-updates')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'profiles'
-        },
-        () => {
-          console.log('[UserGrowthChart] Profile change detected, refetching...');
-          fetchChartData();
-        }
-      )
-      .subscribe();
-    
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    // Refresh every 15 seconds for faster updates
+    const interval = setInterval(fetchChartData, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchChartData = async () => {

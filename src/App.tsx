@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/lib/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
 import { useAnalytics } from "@/hooks/useAnalytics";
@@ -25,8 +24,9 @@ import { useI18n } from "@/i18n";
 // Eager load critical pages
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
-import AccountChoice from "./pages/AccountChoice";
-import AuthLogin from "./pages/AuthLogin";
+import Login from "./pages/Login";
+import LoginUsername from "./pages/LoginUsername";
+import Register from "./pages/Register";
 
 // Lazy load secondary pages
 const Game = lazy(() => import("./pages/Game"));
@@ -38,8 +38,6 @@ const InstallApp = lazy(() => import("./pages/InstallApp"));
 const Invitation = lazy(() => import("./pages/Invitation"));
 import IntroVideo from "./pages/IntroVideo";
 const About = lazy(() => import("./pages/About"));
-const LegalTerms = lazy(() => import("./pages/LegalTerms"));
-const LegalPrivacy = lazy(() => import("./pages/LegalPrivacy"));
 
 // Lazy load admin pages
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
@@ -68,7 +66,19 @@ const PageLoader = () => (
   </div>
 );
 
-// QueryClient imported from centralized config (see src/lib/react-query.ts)
+// Optimized QueryClient with aggressive caching for mobile performance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh longer
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep cached data in memory
+      retry: 1, // Reduce retries for faster failures on mobile
+      refetchOnWindowFocus: false, // Disable refetch on focus for mobile
+      refetchOnReconnect: true, // Refetch when connection restored
+      refetchOnMount: false, // Use cached data on mount when available
+    },
+  },
+});
 
 // Analytics, Error Tracking, and PWA Install tracking wrapper component
 const AppWithAnalytics = () => {
@@ -78,8 +88,6 @@ const AppWithAnalytics = () => {
   usePWAInstallTracking(); // Track PWA install events
   return null;
 };
-
-// Auto-registration removed from global wrapper - now only runs on AccountChoice page
 
 // Main App component with lifecycle management
 const AppCore = () => {
@@ -127,8 +135,9 @@ const AppCore = () => {
               {/* Public routes - no ErrorBoundary needed */}
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
-              <Route path="/account-choice" element={<AccountChoice />} />
-              <Route path="/auth/login" element={<AuthLogin />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/login-username" element={<LoginUsername />} />
               <Route path="/intro" element={<IntroVideo />} />
               
               {/* Protected routes wrapped in ErrorBoundary */}
@@ -143,8 +152,6 @@ const AppCore = () => {
               <Route path="/about" element={<ErrorBoundary><About /></ErrorBoundary>} />
               <Route path="/popular-content" element={<ErrorBoundary><PopularContent /></ErrorBoundary>} />
               <Route path="/profile/game" element={<ErrorBoundary><ProfileGame /></ErrorBoundary>} />
-              <Route path="/legal/aszf" element={<ErrorBoundary><LegalTerms /></ErrorBoundary>} />
-              <Route path="/legal/privacy" element={<ErrorBoundary><LegalPrivacy /></ErrorBoundary>} />
               
               {/* Admin routes wrapped in ErrorBoundary */}
               <Route path="/admin/login" element={<AdminLogin />} />
@@ -192,7 +199,6 @@ const SplashScreen = () => (
       <img 
         src="/dingleup-logo.png" 
         alt="DingleUP!" 
-        loading="eager"
         className="w-32 h-32 object-contain"
       />
     </div>
@@ -207,7 +213,11 @@ const AppContent = () => {
     return <SplashScreen />;
   }
 
-  return <AppCore />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppCore />
+    </QueryClientProvider>
+  );
 };
 
 const App = () => {

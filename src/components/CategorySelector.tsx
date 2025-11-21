@@ -1,12 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { useI18n } from "@/i18n";
-import { memo } from "react";
 
 interface CategorySelectorProps {
   onSelectCategory: (category: string) => void;
 }
 
-const CategorySelectorComponent = ({ onSelectCategory }: CategorySelectorProps) => {
+export const CategorySelector = ({ onSelectCategory }: CategorySelectorProps) => {
   const { t } = useI18n();
   
   const categories = [
@@ -40,5 +39,3 @@ const CategorySelectorComponent = ({ onSelectCategory }: CategorySelectorProps) 
     </div>
   );
 };
-
-export const CategorySelector = memo(CategorySelectorComponent);

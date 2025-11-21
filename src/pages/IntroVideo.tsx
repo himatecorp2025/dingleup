@@ -30,7 +30,7 @@ const IntroVideo = () => {
     ? true // Always play in standalone/PWA mode
     : !sessionStorage.getItem('app_intro_shown'); // Browser: play only once per session
   
-  const nextPage = isStandalone ? '/account-choice' : (searchParams.get('next') || '/account-choice');
+  const nextPage = isStandalone ? '/login' : (searchParams.get('next') || '/login');
 
   useEffect(() => {
     // CRITICAL: Skip intro if already shown in browser mode

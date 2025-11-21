@@ -15,7 +15,6 @@ import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useDailyWinnersPopup } from '@/hooks/useDailyWinnersPopup';
 import { useBoosterState } from '@/hooks/useBoosterState';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
-import { useEmailPinSetup } from '@/hooks/useEmailPinSetup';
 
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
@@ -30,10 +29,6 @@ import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { IdleWarning } from '@/components/IdleWarning';
 
 import { DailyWinnerPopup } from '@/components/DailyWinnerPopup';
-import { AgeGateModal } from '@/components/AgeGateModal';
-import { useAgeGateStatus } from '@/hooks/useAgeGateStatus';
-import { EmailPinSetupDialog } from '@/components/EmailPinSetupDialog';
-import { BiometricSetupDialog } from '@/components/BiometricSetupDialog';
 
 import BottomNav from '@/components/BottomNav';
 import gameBackground from '@/assets/game-background.png';
@@ -50,9 +45,6 @@ const Dashboard = () => {
   const { markActive } = useActivityTracker('route_view');
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { walletData, serverDriftMs, refetchWallet } = useWallet(userId);
-  const { needsAgeGate, loading: ageGateLoading } = useAgeGateStatus(userId);
-  const { showEmailPinSetup, hideEmailPinSetup } = useEmailPinSetup(userId);
-  const [showBiometricSetup, setShowBiometricSetup] = useState(false);
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
@@ -358,14 +350,6 @@ if (!profile) {
     <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
       background: 'transparent'
     }}>
-      {/* Age Gate Modal - MUST be first, blocks everything until completed */}
-      {needsAgeGate && !ageGateLoading && (
-        <AgeGateModal onSuccess={() => {
-          refreshProfile();
-          refetchWallet();
-        }} />
-      )}
-      
       {/* Pull-to-refresh indicator */}
       {isPulling && (
         <div 
@@ -411,24 +395,6 @@ if (!profile) {
       open={showDailyWinnersPopup} 
       onClose={closeDailyWinnersPopup} 
     />
-
-    {/* Email+PIN Setup Dialog - 3 perc után */}
-    {showEmailPinSetup && (
-      <EmailPinSetupDialog 
-        onSuccess={() => {
-          hideEmailPinSetup();
-          setShowBiometricSetup(true);
-        }} 
-      />
-    )}
-
-    {/* Biometric Setup Dialog */}
-    {showBiometricSetup && (
-      <BiometricSetupDialog 
-        onSuccess={() => setShowBiometricSetup(false)}
-        onSkip={() => setShowBiometricSetup(false)}
-      />
-    )}
     
     {/* Falling coins background */}
     <FallingCoins />
@@ -563,7 +529,6 @@ if (!profile) {
                     <img 
                       src={profile.avatar_url} 
                       alt={profile.username}
-                      loading="lazy"
                       className="w-full h-full object-cover clip-hexagon"
                     />
                   ) : (

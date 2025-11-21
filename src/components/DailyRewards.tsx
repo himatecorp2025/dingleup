@@ -1,5 +1,4 @@
 import { useI18n } from '@/i18n';
-import { memo, useMemo, useCallback } from 'react';
 
 interface LeaderboardPlayer {
   username: string;
@@ -26,29 +25,25 @@ interface DailyRewardsProps {
   dailyRewards: DailyRewardsData | null;
 }
 
-const DailyRewardsComponent = ({ topPlayers, userRank, userUsername, userCorrectAnswers, dailyRewards }: DailyRewardsProps) => {
+const DailyRewards = ({ topPlayers, userRank, userUsername, userCorrectAnswers, dailyRewards }: DailyRewardsProps) => {
   const { t } = useI18n();
-  
-  // Memoize expensive computations
-  const isJackpot = useMemo(() => dailyRewards?.type === 'JACKPOT', [dailyRewards?.type]);
-  const maxRank = useMemo(() => isJackpot ? 25 : 10, [isJackpot]);
+  const isJackpot = dailyRewards?.type === 'JACKPOT';
+  const maxRank = isJackpot ? 25 : 10;
 
-  // Memoize reward lookup function
-  const getRewardForRank = useCallback((rank: number): { coins: number; lives: number } => {
+  const getRewardForRank = (rank: number): { coins: number; lives: number } => {
     if (!dailyRewards) {
       return { coins: 0, lives: 0 };
     }
     const reward = dailyRewards.rewards.find(r => r.rank === rank);
     return { coins: reward?.gold || 0, lives: reward?.life || 0 };
-  }, [dailyRewards]);
+  };
 
-  // Memoize crown icon function (pure function, can be outside component)
-  const getCrownIcon = useCallback((place: number) => {
+  const getCrownIcon = (place: number) => {
     if (place === 1) return '👑';
     if (place === 2) return '🥈';
     if (place === 3) return '🥉';
     return '⭐';
-  }, []);
+  };
 
   // JACKPOT VASÁRNAPI DESIGN
   if (isJackpot) {
@@ -345,8 +340,5 @@ const DailyRewardsComponent = ({ topPlayers, userRank, userUsername, userCorrect
     </div>
   );
 };
-
-// Memoize entire component to prevent unnecessary re-renders
-const DailyRewards = memo(DailyRewardsComponent);
 
 export default DailyRewards;
