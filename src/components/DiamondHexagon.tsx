@@ -128,6 +128,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
             fill="none"
             shapeRendering="geometricPrecision"
             colorInterpolationFilters="sRGB"
+            preserveAspectRatio="none"
           >
             <defs>
               <path id="HEX" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
