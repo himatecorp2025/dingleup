@@ -119,7 +119,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
   if (type === 'rank') {
     return (
       <div className={`relative ${className}`} role="status" aria-label={getAriaLabel()}>
-        {/* Blue Hexagon SVG - exact original from user */}
+        {/* Blue Hexagon SVG - sized to match other hexagons exactly */}
         <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
           <svg 
             viewBox="22.53058 -47.5814116 672.82399 167.3667432"
@@ -133,12 +133,6 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
           >
             <defs>
               <path id="HEX" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
-
-              <linearGradient id="bg" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#191534"/>
-                <stop offset="100%" stopColor="#0e0b1c"/>
-              </linearGradient>
-
               <linearGradient id="chromeGrad" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
                 <stop offset="0%" stopColor="#f8fbff"/>
                 <stop offset="10%" stopColor="#c6ccd3"/>
@@ -148,48 +142,32 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
                 <stop offset="78%" stopColor="#bfc6cf"/>
                 <stop offset="100%" stopColor="#ffffff"/>
               </linearGradient>
-
               <linearGradient id="band20" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
                 <stop offset="0%" stopColor="#BFE0FF"/>
                 <stop offset="35%" stopColor="#2196F3"/>
                 <stop offset="100%" stopColor="#0B5DB8"/>
               </linearGradient>
-
               <linearGradient id="band5" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
                 <stop offset="0%" stopColor="#E6F2FF"/>
                 <stop offset="50%" stopColor="#5AB6FF"/>
                 <stop offset="100%" stopColor="#1E74D6"/>
               </linearGradient>
-
               <filter id="pro3d" x="-50%" y="-50%" width="200%" height="200%">
                 <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
                 <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
               </filter>
-
               <mask id="maskOuterOnly" maskUnits="userSpaceOnUse">
                 <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
                 <use href="#HEX" stroke="white" strokeWidth="2" fill="none"/>
-                <use href="#HEX" stroke="black" strokeWidth="25" fill="none"/>
+                <use href="#HEX" stroke="black" strokeWidth="22" fill="none"/>
               </mask>
             </defs>
-
-            <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
-
-            <g transform="scale(1,1.2)">
-              <use href="#HEX" fill="black" fillOpacity="0.5"/>
-
-              <use href="#HEX" fill="none" stroke="url(#band20)" strokeWidth="20"
-                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d)"
-                   vectorEffect="non-scaling-stroke"/>
-
-              <use href="#HEX" fill="none" stroke="url(#band5)" strokeWidth="5"
-                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d)"
-                   vectorEffect="non-scaling-stroke"/>
-
-              <g mask="url(#maskOuterOnly)">
-                <use href="#HEX" fill="none" stroke="url(#chromeGrad)" strokeWidth="2"
-                     strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
-              </g>
+            
+            <use href="#HEX" fill="url(#band20)" stroke="url(#band20)" strokeWidth="20"/>
+            <use href="#HEX" stroke="url(#band5)" strokeWidth="5" fill="none"/>
+            <use href="#HEX" stroke="url(#chromeGrad)" strokeWidth="2" fill="none" mask="url(#maskOuterOnly)"/>
+            <g filter="url(#pro3d)">
+              <use href="#HEX" fill="none" stroke="none"/>
             </g>
           </svg>
           
