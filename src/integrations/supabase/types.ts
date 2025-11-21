@@ -1303,6 +1303,27 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          email: string
+          failed_attempts: number
+          last_attempt_at: string
+          locked_until: string | null
+        }
+        Insert: {
+          email: string
+          failed_attempts?: number
+          last_attempt_at?: string
+          locked_until?: string | null
+        }
+        Update: {
+          email?: string
+          failed_attempts?: number
+          last_attempt_at?: string
+          locked_until?: string | null
+        }
+        Relationships: []
+      }
       message_media: {
         Row: {
           created_at: string | null
@@ -1647,6 +1668,7 @@ export type Database = {
           expires_at: string
           id: string
           token: string
+          used: boolean
           used_at: string | null
           user_id: string
         }
@@ -1655,6 +1677,7 @@ export type Database = {
           expires_at: string
           id?: string
           token: string
+          used?: boolean
           used_at?: string | null
           user_id: string
         }
@@ -1663,6 +1686,7 @@ export type Database = {
           expires_at?: string
           id?: string
           token?: string
+          used?: boolean
           used_at?: string | null
           user_id?: string
         }
