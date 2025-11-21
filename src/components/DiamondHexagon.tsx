@@ -53,19 +53,19 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
     switch (type) {
       case 'rank':
-        // Crown SVG
+        // Crown SVG - gold color for rank
         return (
             <svg
               className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
               viewBox="0 0 24 24"
-              fill={color}
+              fill="hsl(var(--accent))"
               xmlns="http://www.w3.org/2000/svg"
             >
-            <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke={color} strokeWidth="2" strokeLinejoin="round"/>
-            <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke={color} strokeWidth="2"/>
-            <circle cx="12" cy="9" r="1.5" fill={color}/>
-            <circle cx="7" cy="11" r="1.5" fill={color}/>
-            <circle cx="17" cy="11" r="1.5" fill={color}/>
+            <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke="hsl(var(--accent))" strokeWidth="2" strokeLinejoin="round"/>
+            <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke="hsl(var(--accent))" strokeWidth="2"/>
+            <circle cx="12" cy="9" r="1.5" fill="hsl(var(--accent))"/>
+            <circle cx="7" cy="11" r="1.5" fill="hsl(var(--accent))"/>
+            <circle cx="17" cy="11" r="1.5" fill="hsl(var(--accent))"/>
           </svg>
         );
       case 'coins':
@@ -115,6 +115,73 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
     }
   };
 
+  // Render blue hexagon SVG for rank type
+  if (type === 'rank') {
+    return (
+      <div className={`relative ${className}`} role="status" aria-label={getAriaLabel()}>
+        {/* Blue Hexagon SVG - sized to match other hexagons exactly */}
+        <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
+          <svg 
+            viewBox="22.53058 -47.5814116 672.82399 167.3667432"
+            className="absolute inset-0 w-full h-full"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            shapeRendering="geometricPrecision"
+            colorInterpolationFilters="sRGB"
+          >
+            <defs>
+              <path id="HEX" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+              <linearGradient id="chromeGrad" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#f8fbff"/>
+                <stop offset="10%" stopColor="#c6ccd3"/>
+                <stop offset="22%" stopColor="#ffffff"/>
+                <stop offset="40%" stopColor="#9ea6b0"/>
+                <stop offset="58%" stopColor="#e7ebf0"/>
+                <stop offset="78%" stopColor="#bfc6cf"/>
+                <stop offset="100%" stopColor="#ffffff"/>
+              </linearGradient>
+              <linearGradient id="band20" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#BFE0FF"/>
+                <stop offset="35%" stopColor="#2196F3"/>
+                <stop offset="100%" stopColor="#0B5DB8"/>
+              </linearGradient>
+              <linearGradient id="band5" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#E6F2FF"/>
+                <stop offset="50%" stopColor="#5AB6FF"/>
+                <stop offset="100%" stopColor="#1E74D6"/>
+              </linearGradient>
+              <filter id="pro3d" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
+                <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
+              </filter>
+              <mask id="maskOuterOnly" maskUnits="userSpaceOnUse">
+                <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
+                <use href="#HEX" stroke="white" strokeWidth="2" fill="none"/>
+                <use href="#HEX" stroke="black" strokeWidth="22" fill="none"/>
+              </mask>
+            </defs>
+            
+            <use href="#HEX" fill="url(#band20)" stroke="url(#band20)" strokeWidth="20"/>
+            <use href="#HEX" stroke="url(#band5)" strokeWidth="5" fill="none"/>
+            <use href="#HEX" stroke="url(#chromeGrad)" strokeWidth="2" fill="none" mask="url(#maskOuterOnly)"/>
+            <g filter="url(#pro3d)">
+              <use href="#HEX" fill="none" stroke="none"/>
+            </g>
+          </svg>
+          
+          {/* Content (Crown + Rank number) - positioned on top of SVG */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+            {renderIcon()}
+            <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              {value}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Original hexagon design for coins and lives
   return (
     <div className={`relative ${className}`} role="status" aria-label={getAriaLabel()}>
       {/* Outer glow */}
