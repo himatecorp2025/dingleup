@@ -19,6 +19,7 @@ import { useAppLifecycle } from "@/hooks/useAppLifecycle";
 import { useSessionMonitor } from "@/hooks/useSessionMonitor";
 import { AppRouteGuard } from "@/components/AppRouteGuard";
 import { AudioPolicyManager } from "@/components/AudioPolicyManager";
+import { useI18n } from "@/i18n";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -191,12 +192,38 @@ const SessionMonitorWrapper = () => {
   return null;
 };
 
+// Splash screen while translations load
+const SplashScreen = () => (
+  <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
+    <div className="animate-pulse">
+      <img 
+        src="/dingleup-logo.png" 
+        alt="DingleUP!" 
+        className="w-32 h-32 object-contain"
+      />
+    </div>
+  </div>
+);
+
+// Content wrapper that checks i18n loading state
+const AppContent = () => {
+  const { isLoading } = useI18n();
+
+  if (isLoading) {
+    return <SplashScreen />;
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppCore />
+    </QueryClientProvider>
+  );
+};
+
 const App = () => {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AppCore />
-      </QueryClientProvider>
+      <AppContent />
     </ErrorBoundary>
   );
 };
