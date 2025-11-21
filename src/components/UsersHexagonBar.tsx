@@ -35,7 +35,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
 
   return (
     <div className={`relative flex items-center gap-1.5 sm:gap-2 ${className}`} style={{ minWidth: '280px', minHeight: '80px' }}>
-      {/* Purple SVG Background Container - Inline SVG */}
+      {/* Blue SVG Background Container - Inline SVG */}
       <svg 
         xmlns="http://www.w3.org/2000/svg"
         viewBox="22.53058 -47.5814116 672.82399 167.3667432"
@@ -54,14 +54,14 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
         aria-hidden
       >
         <defs>
-          <path id="HEX_USERS" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+          <path id="HEX_INFO" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
 
-          <linearGradient id="bg_users" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+          <linearGradient id="bg_info" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#191534"/>
             <stop offset="100%" stopColor="#0e0b1c"/>
           </linearGradient>
 
-          <linearGradient id="chromeGrad_users" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+          <linearGradient id="chromeGrad_info" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#f8fbff"/>
             <stop offset="10%" stopColor="#c6ccd3"/>
             <stop offset="22%" stopColor="#ffffff"/>
@@ -71,45 +71,45 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
             <stop offset="100%" stopColor="#ffffff"/>
           </linearGradient>
 
-          <linearGradient id="band20_users" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#E8D9FF"/>
-            <stop offset="35%" stopColor="#A855F7"/>
-            <stop offset="100%" stopColor="#5B21B6"/>
+          <linearGradient id="band20_info" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#BFE0FF"/>
+            <stop offset="35%" stopColor="#2196F3"/>
+            <stop offset="100%" stopColor="#0B5DB8"/>
           </linearGradient>
 
-          <linearGradient id="band5_users" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#F3E9FF"/>
-            <stop offset="50%" stopColor="#C084FC"/>
-            <stop offset="100%" stopColor="#7C3AED"/>
+          <linearGradient id="band5_info" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#E6F2FF"/>
+            <stop offset="50%" stopColor="#5AB6FF"/>
+            <stop offset="100%" stopColor="#1E74D6"/>
           </linearGradient>
 
-          <filter id="pro3d_users" x="-50%" y="-50%" width="200%" height="200%">
+          <filter id="pro3d_info" x="-50%" y="-50%" width="200%" height="200%">
             <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
             <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
           </filter>
 
-          <mask id="maskOuterOnly_users" maskUnits="userSpaceOnUse">
+          <mask id="maskOuterOnly_info" maskUnits="userSpaceOnUse">
             <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
-            <use href="#HEX_USERS" stroke="white" strokeWidth="2" fill="none"/>
-            <use href="#HEX_USERS" stroke="black" strokeWidth="25" fill="none"/>
+            <use href="#HEX_INFO" stroke="white" strokeWidth="2" fill="none"/>
+            <use href="#HEX_INFO" stroke="black" strokeWidth="25" fill="none"/>
           </mask>
         </defs>
 
         <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
 
-        <g transform="scale(1,1.44)">
-          <use href="#HEX_USERS" fill="black" fillOpacity="0.5"/>
+        <g transform="scale(1,1.2)">
+          <use href="#HEX_INFO" fill="black" fillOpacity="0.5"/>
 
-          <use href="#HEX_USERS" fill="none" stroke="url(#band20_users)" strokeWidth="20"
-               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_users)"
+          <use href="#HEX_INFO" fill="none" stroke="url(#band20_info)" strokeWidth="20"
+               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_info)"
                vectorEffect="non-scaling-stroke"/>
 
-          <use href="#HEX_USERS" fill="none" stroke="url(#band5_users)" strokeWidth="5"
-               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_users)"
+          <use href="#HEX_INFO" fill="none" stroke="url(#band5_info)" strokeWidth="5"
+               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_info)"
                vectorEffect="non-scaling-stroke"/>
 
-          <g mask="url(#maskOuterOnly_users)">
-            <use href="#HEX_USERS" fill="none" stroke="url(#chromeGrad_users)" strokeWidth="2"
+          <g mask="url(#maskOuterOnly_info)">
+            <use href="#HEX_INFO" fill="none" stroke="url(#chromeGrad_info)" strokeWidth="2"
                  strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
           </g>
         </g>
