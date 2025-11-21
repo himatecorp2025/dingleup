@@ -96,6 +96,11 @@ function = "aggregate-daily-activity"
 schedule = "0 23 * * *"
 function = "process-daily-winners"
 
+# Cron job for automatic translation every 5 minutes
+[[edge_runtime.cron]]
+schedule = "*/5 * * * *"
+function = "auto-translate-all"
+
 [functions.set-default-country]
 verify_jwt = false
 
