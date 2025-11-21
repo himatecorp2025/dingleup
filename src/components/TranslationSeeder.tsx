@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { Languages, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 export const TranslationSeeder = () => {
   const [isTranslating, setIsTranslating] = useState(false);
@@ -14,6 +15,28 @@ export const TranslationSeeder = () => {
     success: number;
     errors: number;
   } | null>(null);
+  const channelRef = useRef<RealtimeChannel | null>(null);
+
+  // Subscribe to real-time progress updates
+  useEffect(() => {
+    if (!isTranslating) return;
+
+    const channel = supabase.channel('ui-translation-progress');
+    channelRef.current = channel;
+
+    channel
+      .on('broadcast', { event: 'progress' }, (payload: any) => {
+        console.log('[TranslationSeeder] Progress update:', payload);
+        setProgress(payload.payload.progress || 0);
+        setStatus(payload.payload.status || '');
+      })
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+      channelRef.current = null;
+    };
+  }, [isTranslating]);
 
   const startTranslation = async () => {
     try {
@@ -25,11 +48,9 @@ export const TranslationSeeder = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast.error('Admin session expired');
+        setIsTranslating(false);
         return;
       }
-
-      setStatus('UI szövegek fordítása folyamatban... Ez eltarthat néhány percig.');
-      setProgress(10);
 
       // Fetch all translations that need translation (only hu column filled)
       const { data: translations, error: fetchError } = await supabase
@@ -41,19 +62,18 @@ export const TranslationSeeder = () => {
         console.error('[TranslationSeeder] Fetch error:', fetchError);
         toast.error('Hiba a fordítandó szövegek lekérésekor');
         setStatus('Hiba történt');
+        setIsTranslating(false);
         return;
       }
 
       if (!translations || translations.length === 0) {
         toast.info('Nincs fordítandó szöveg');
         setStatus('Nincs fordítandó szöveg');
+        setIsTranslating(false);
         return;
       }
 
-      setProgress(20);
-      setStatus(`${translations.length} szöveg fordítása...`);
-
-      // Call translate-text-batch edge function
+      // Edge function will broadcast progress via channel
       const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
       const items = translations.map(t => ({ key: t.key, hu: t.hu }));
 
@@ -66,11 +86,9 @@ export const TranslationSeeder = () => {
         console.error('[TranslationSeeder] Translation error:', error);
         toast.error('Hiba történt a fordítás közben');
         setStatus('Hiba történt');
+        setIsTranslating(false);
         return;
       }
-
-      setProgress(60);
-      setStatus('Fordítások mentése az adatbázisba...');
 
       // Update translations in database
       let successCount = 0;
@@ -149,7 +167,10 @@ export const TranslationSeeder = () => {
       {isTranslating && (
         <div className="mb-4">
           <Progress value={progress} className="h-2" />
-          <p className="text-xs text-white/50 mt-2">Kérlek várj, a fordítás folyamatban van...</p>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-xs text-white/50">Folyamat:</p>
+            <p className="text-sm font-semibold text-blue-400">{progress}%</p>
+          </div>
         </div>
       )}
 

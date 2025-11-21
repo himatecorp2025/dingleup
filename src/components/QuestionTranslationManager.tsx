@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { Languages, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 export const QuestionTranslationManager = () => {
   const [isTranslating, setIsTranslating] = useState(false);
@@ -14,6 +15,35 @@ export const QuestionTranslationManager = () => {
     skipped: number;
     errors: number;
   } | null>(null);
+  const channelRef = useRef<RealtimeChannel | null>(null);
+
+  // Subscribe to real-time progress updates
+  useEffect(() => {
+    if (!isTranslating) return;
+
+    const channel = supabase.channel('question-translation-progress');
+    channelRef.current = channel;
+
+    channel
+      .on('broadcast', { event: 'progress' }, (payload: any) => {
+        console.log('[QuestionTranslationManager] Progress update:', payload);
+        setProgress(payload.payload.progress || 0);
+        setStatus(payload.payload.status || '');
+        if (payload.payload.translated !== undefined) {
+          setStats({
+            translated: payload.payload.translated,
+            skipped: payload.payload.skipped,
+            errors: payload.payload.errors
+          });
+        }
+      })
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+      channelRef.current = null;
+    };
+  }, [isTranslating]);
 
   const startTranslation = async () => {
     try {
@@ -25,12 +55,11 @@ export const QuestionTranslationManager = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast.error('Admin session expired');
+        setIsTranslating(false);
         return;
       }
 
-      setStatus('Kérdések fordítása folyamatban... Ez eltarthat néhány percig.');
-      setProgress(10);
-
+      // Edge function will broadcast progress via channel
       const { data, error } = await supabase.functions.invoke('generate-question-translations', {
         headers: { Authorization: `Bearer ${session.access_token}` }
       });
@@ -39,16 +68,20 @@ export const QuestionTranslationManager = () => {
         console.error('[QuestionTranslationManager] Error:', error);
         toast.error('Hiba történt a fordítás közben');
         setStatus('Hiba történt');
+        setIsTranslating(false);
         return;
       }
 
-      setProgress(100);
-      setStatus('Fordítás befejezve!');
-      setStats({
-        translated: data.translated || 0,
-        skipped: data.skipped || 0,
-        errors: data.errors?.length || 0
-      });
+      // Final state will be set by broadcast, but ensure completion
+      if (data.translated !== undefined) {
+        setProgress(100);
+        setStatus('Fordítás befejezve!');
+        setStats({
+          translated: data.translated || 0,
+          skipped: data.skipped || 0,
+          errors: data.errors?.length || 0
+        });
+      }
 
       toast.success(`Fordítás sikeres! ${data.translated} új fordítás létrehozva.`);
 
@@ -89,7 +122,10 @@ export const QuestionTranslationManager = () => {
       {isTranslating && (
         <div className="mb-4">
           <Progress value={progress} className="h-2" />
-          <p className="text-xs text-white/50 mt-2">Kérlek várj, a fordítás folyamatban van...</p>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-xs text-white/50">Folyamat:</p>
+            <p className="text-sm font-semibold text-purple-400">{progress}%</p>
+          </div>
         </div>
       )}
 
