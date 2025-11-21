@@ -33,6 +33,8 @@ const LoginNew = () => {
   const [showPin, setShowPin] = useState(false);
   const [showBiometricModal, setShowBiometricModal] = useState(false);
   const [biometricAttempted, setBiometricAttempted] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [isBiometricLoading, setIsBiometricLoading] = useState(false);
   const { authenticateBiometric, checkBiometricAvailable, isSupported } = useWebAuthn();
 
   useEffect(() => {
@@ -44,26 +46,50 @@ const LoginNew = () => {
     };
     checkStandalone();
 
-    // Try biometric login if username is in localStorage
-    const tryBiometricLogin = async () => {
+    // Check if biometric is available for saved username
+    const checkBiometric = async () => {
       const savedUsername = localStorage.getItem('lastUsername');
       if (savedUsername && isSupported) {
         const isAvailable = await checkBiometricAvailable(savedUsername);
+        setBiometricAvailable(isAvailable);
+        
+        // Auto-attempt biometric login on first load
         if (isAvailable && !biometricAttempted) {
           setBiometricAttempted(true);
-          try {
-            await authenticateBiometric(savedUsername);
-            navigate('/dashboard');
-          } catch (error) {
-            // Silently fall back to PIN login
-            console.log('Biometric login failed, showing PIN form');
-          }
+          handleBiometricLogin(savedUsername);
         }
       }
     };
 
-    tryBiometricLogin();
+    checkBiometric();
   }, []);
+
+  const handleBiometricLogin = async (username?: string) => {
+    setIsBiometricLoading(true);
+    try {
+      const savedUsername = username || localStorage.getItem('lastUsername');
+      if (!savedUsername) {
+        toast({
+          title: t('auth.login.errorTitle'),
+          description: 'Nincs mentett felhasználónév',
+          variant: "destructive",
+        });
+        return;
+      }
+
+      await authenticateBiometric(savedUsername);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Biometric login failed:', error);
+      toast({
+        title: t('auth.login.errorTitle'),
+        description: 'A biometrikus bejelentkezés sikertelen',
+        variant: "destructive",
+      });
+    } finally {
+      setIsBiometricLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,6 +235,31 @@ const LoginNew = () => {
           <p className="text-center text-white/70 mb-6 text-sm font-medium">
             {t('auth.login.subtitle')}
           </p>
+
+          {/* Biometric Login Button */}
+          {biometricAvailable && (
+            <div className="mb-4">
+              <Button
+                type="button"
+                onClick={() => handleBiometricLogin()}
+                disabled={isBiometricLoading}
+                className="w-full h-12 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:from-purple-600 hover:via-purple-700 hover:to-purple-800 text-white font-bold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all duration-300 text-base flex items-center justify-center gap-2"
+              >
+                <Fingerprint className="w-5 h-5" />
+                {isBiometricLoading ? 'Biometrikus azonosítás...' : 'Biometrikus bejelentkezés'}
+              </Button>
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-white/20"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] px-2 text-white/60">
+                    vagy PIN kóddal
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
