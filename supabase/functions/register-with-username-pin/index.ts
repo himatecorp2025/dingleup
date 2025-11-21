@@ -33,10 +33,16 @@ serve(async (req) => {
     }
 
     // Validate username
-    const usernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
-    if (!usernameRegex.test(username)) {
+    if (username.length < 3 || username.length > 30) {
       return new Response(
-        JSON.stringify({ error: 'Érvénytelen felhasználónév. Használj 3-30 karaktert (betűk, számok, aláhúzás)' }),
+        JSON.stringify({ error: 'A felhasználónév 3-30 karakter hosszú legyen' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    if (/\s/.test(username)) {
+      return new Response(
+        JSON.stringify({ error: 'A felhasználónév nem tartalmazhat szóközt' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

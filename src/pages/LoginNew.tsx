@@ -9,7 +9,7 @@ import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 
 const loginSchema = z.object({
-  username: z.string().trim().min(1, 'Add meg a felhasználóneved'),
+  username: z.string().trim().min(1, 'Add meg a felhasználóneved').regex(/^[^\s]+$/, 'A felhasználónév nem tartalmazhat szóközt'),
   pin: z.string().regex(/^\d{6}$/, 'A PIN pontosan 6 számjegyből kell álljon'),
 });
 
