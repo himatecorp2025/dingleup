@@ -13,7 +13,7 @@ const registerSchema = z.object({
     .trim()
     .min(3, 'A felhasználónév legalább 3 karakter hosszú kell legyen')
     .max(30, 'A felhasználónév maximum 30 karakter lehet')
-    .regex(/^[a-zA-Z0-9_]+$/, 'Csak betűk, számok és aláhúzás engedélyezett'),
+    .regex(/^[^\s]+$/, 'A felhasználónév nem tartalmazhat szóközt'),
   pin: z.string()
     .regex(/^\d{6}$/, 'A PIN pontosan 6 számjegyből kell álljon'),
   pinConfirm: z.string()
