@@ -69,12 +69,17 @@ export const TranslationSeeder: React.FC = () => {
   const fetchDetailedStats = async () => {
     setIsLoadingStats(true);
     try {
-      // Fetch all translations for detailed analysis (no limit - fetch everything)
+      // Fetch all translations for detailed analysis (no limit)
+      const { count } = await supabase
+        .from('translations')
+        .select('*', { count: 'exact', head: true })
+        .not('hu', 'is', null);
+
       const { data: translations, error } = await supabase
         .from('translations')
         .select('key, hu, en, de, fr, es, it, pt, nl')
         .not('hu', 'is', null)
-        .range(0, 10000); // Explicit large range to override default 1000 limit
+        .limit(count || 10000); // Dynamic limit based on actual row count
 
       if (error) throw error;
       if (!translations) return;
