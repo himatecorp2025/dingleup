@@ -11,7 +11,7 @@ interface I18nProviderProps {
 
 const CACHE_KEY_PREFIX = 'dingleup_translations_';
 const CACHE_VERSION_KEY = 'dingleup_translations_version';
-const CACHE_VERSION = '1.1';
+const CACHE_VERSION = '1.2'; // Bumped to force cache refresh
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 interface CachedTranslations {
@@ -98,6 +98,16 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
   const initializeLanguage = async () => {
     try {
+      // Clear old cache versions immediately
+      const storedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+      if (storedVersion !== CACHE_VERSION) {
+        // Clear all translation caches
+        VALID_LANGUAGES.forEach(lang => {
+          localStorage.removeItem(getCacheKey(lang));
+        });
+        localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
+      }
+
       // 1. Check localStorage first
       const storedLang = localStorage.getItem(STORAGE_KEY);
       let targetLang: LangCode = DEFAULT_LANG;
