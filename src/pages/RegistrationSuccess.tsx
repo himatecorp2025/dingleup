@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, ArrowRight } from "lucide-react";
+import { useI18n } from "@/i18n";
 
 const RegistrationSuccess = () => {
   const navigate = useNavigate();
