@@ -20,7 +20,118 @@ const LANGUAGE_NAMES: Record<LangCode, string> = {
 };
 
 const TARGET_LANGUAGES: LangCode[] = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
-const BATCH_SIZE = 10; // Process 10 questions at a time
+const BATCH_SIZE = 5; // Smaller batch for better reliability
+const DELAY_BETWEEN_BATCHES = 5000; // 5 seconds delay
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 10000; // 10 seconds between retries
+
+async function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function translateWithRetry(
+  lovableApiKey: string,
+  questionId: string,
+  questionText: string,
+  answers: any[],
+  correctAnswer: string,
+  lang: LangCode,
+  retries = MAX_RETRIES
+): Promise<{ question: string; a: string; b: string; c: string } | null> {
+  const systemPrompt = `You are a professional translator specializing in quiz questions and educational content.
+Your task is to translate Hungarian quiz questions into ${LANGUAGE_NAMES[lang]} while maintaining:
+1. Natural, native-speaker fluency
+2. Appropriate educational/quiz terminology
+3. Same answer order (A/B/C positions must not change)
+4. The correct answer indicator remains the same letter
+5. Cultural appropriateness for ${LANGUAGE_NAMES[lang]}-speaking audiences
+
+CRITICAL: Return ONLY a valid JSON object with this exact structure:
+{
+  "question": "translated question text",
+  "a": "translated answer A",
+  "b": "translated answer B",
+  "c": "translated answer C"
+}
+
+Do NOT add explanations, notes, or markdown formatting. ONLY the JSON object.`;
+
+  const answerA = answers[0]?.text || '';
+  const answerB = answers[1]?.text || '';
+  const answerC = answers[2]?.text || '';
+
+  const userPrompt = `Translate this Hungarian quiz question to ${LANGUAGE_NAMES[lang]}:
+
+Question: ${questionText}
+Answer A: ${answerA}
+Answer B: ${answerB}
+Answer C: ${answerC}
+Correct answer: ${correctAnswer}
+
+Remember: Keep the same answer positions (A/B/C). The correct answer is marked as "${correctAnswer}" and must remain in that position after translation.`;
+
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${lovableApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.3,
+          max_tokens: 500
+        })
+      });
+
+      if (!aiResponse.ok) {
+        const errorText = await aiResponse.text();
+        console.error(`[translate-retry] AI error for ${lang} (attempt ${attempt + 1}/${retries}):`, aiResponse.status, errorText);
+        
+        if (aiResponse.status === 429 || aiResponse.status === 402) {
+          // Rate limit or payment error - retry after delay
+          if (attempt < retries - 1) {
+            console.log(`[translate-retry] Retrying after ${RETRY_DELAY}ms...`);
+            await delay(RETRY_DELAY);
+            continue;
+          }
+        }
+        return null;
+      }
+
+      const aiData = await aiResponse.json();
+      const translatedText = aiData.choices?.[0]?.message?.content?.trim() || '';
+      
+      if (!translatedText) {
+        return null;
+      }
+
+      // Parse JSON response
+      const cleanText = translatedText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const translated = JSON.parse(cleanText);
+
+      // Validate structure
+      if (!translated.question || !translated.a || !translated.b || !translated.c) {
+        return null;
+      }
+
+      return translated;
+
+    } catch (error) {
+      console.error(`[translate-retry] Error on attempt ${attempt + 1}/${retries}:`, error);
+      if (attempt < retries - 1) {
+        await delay(RETRY_DELAY);
+      }
+    }
+  }
+
+  return null;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -111,98 +222,21 @@ serve(async (req) => {
               continue;
             }
 
-            // Prepare AI prompt
-            const systemPrompt = `You are a professional translator specializing in quiz questions and educational content.
-Your task is to translate Hungarian quiz questions into ${LANGUAGE_NAMES[lang]} while maintaining:
-1. Natural, native-speaker fluency
-2. Appropriate educational/quiz terminology
-3. Same answer order (A/B/C positions must not change)
-4. The correct answer indicator remains the same letter
-5. Cultural appropriateness for ${LANGUAGE_NAMES[lang]}-speaking audiences
-
-CRITICAL: Return ONLY a valid JSON object with this exact structure:
-{
-  "question": "translated question text",
-  "a": "translated answer A",
-  "b": "translated answer B",
-  "c": "translated answer C"
-}
-
-Do NOT add explanations, notes, or markdown formatting. ONLY the JSON object.`;
-
             // Extract answers from JSONB array
             const answers = question.answers as any[];
-            const answerA = answers[0]?.text || '';
-            const answerB = answers[1]?.text || '';
-            const answerC = answers[2]?.text || '';
 
-            const userPrompt = `Translate this Hungarian quiz question to ${LANGUAGE_NAMES[lang]}:
+            // Translate with retry logic
+            const translated = await translateWithRetry(
+              LOVABLE_API_KEY,
+              question.id,
+              question.question,
+              answers,
+              question.correct_answer || 'A',
+              lang
+            );
 
-Question: ${question.question}
-Answer A: ${answerA}
-Answer B: ${answerB}
-Answer C: ${answerC}
-Correct answer: ${question.correct_answer}
-
-Remember: Keep the same answer positions (A/B/C). The correct answer is marked as "${question.correct_answer}" and must remain in that position after translation.`;
-
-            const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                model: 'google/gemini-2.5-flash',
-                messages: [
-                  { role: 'system', content: systemPrompt },
-                  { role: 'user', content: userPrompt }
-                ],
-                temperature: 0.3,
-                max_tokens: 500
-              })
-            });
-
-            if (!aiResponse.ok) {
-              const errorText = await aiResponse.text();
-              console.error(`[generate-question-translations] AI error for ${lang}:`, aiResponse.status, errorText);
-              
-              if (aiResponse.status === 429) {
-                errors.push(`Rate limit exceeded for ${lang}`);
-                continue;
-              }
-              if (aiResponse.status === 402) {
-                errors.push(`Payment required for ${lang}`);
-                continue;
-              }
-              
-              errors.push(`Translation failed for question ${question.id} (${lang})`);
-              continue;
-            }
-
-            const aiData = await aiResponse.json();
-            const translatedText = aiData.choices?.[0]?.message?.content?.trim() || '';
-            
-            if (!translatedText) {
-              errors.push(`Empty translation for question ${question.id} (${lang})`);
-              continue;
-            }
-
-            // Parse JSON response
-            let translated;
-            try {
-              // Remove markdown code blocks if present
-              const cleanText = translatedText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-              translated = JSON.parse(cleanText);
-            } catch (e) {
-              console.error(`[generate-question-translations] JSON parse error for question ${question.id} (${lang}):`, translatedText);
-              errors.push(`Invalid JSON for question ${question.id} (${lang})`);
-              continue;
-            }
-
-            // Validate structure
-            if (!translated.question || !translated.a || !translated.b || !translated.c) {
-              errors.push(`Incomplete translation for question ${question.id} (${lang})`);
+            if (!translated) {
+              errors.push(`Translation failed for question ${question.id} (${lang}) after ${MAX_RETRIES} retries`);
               continue;
             }
 
@@ -233,9 +267,10 @@ Remember: Keep the same answer positions (A/B/C). The correct answer is marked a
         }
       }
 
-      // Small delay between batches
+      // Longer delay between batches to avoid rate limits
       if (i + BATCH_SIZE < questions.length) {
-        await new Promise(resolve => setTimeout(resolve, 200));
+        console.log(`[generate-question-translations] Waiting ${DELAY_BETWEEN_BATCHES}ms before next batch...`);
+        await delay(DELAY_BETWEEN_BATCHES);
       }
     }
 
