@@ -9,6 +9,7 @@ import { UserGrowthChart } from '@/components/UserGrowthChart';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { AdminReportActionDialog } from '@/components/AdminReportActionDialog';
 import { QuestionTranslationManager } from '@/components/QuestionTranslationManager';
+import { TranslationSeeder } from '@/components/TranslationSeeder';
 
 type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'invitations' | 'reports' | 'popular-content';
 type ReportsSubTab = 'development' | 'support';
@@ -548,6 +549,9 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </button>
+
+            {/* UI Translation Manager */}
+            <TranslationSeeder />
 
             {/* Question Translation Manager */}
             <QuestionTranslationManager />
