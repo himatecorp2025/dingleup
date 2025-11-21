@@ -11,6 +11,7 @@ interface I18nProviderProps {
 
 const CACHE_KEY_PREFIX = 'dingleup_translations_';
 const CACHE_VERSION_KEY = 'dingleup_translations_version';
+const CACHE_VERSION = '1.1';
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 interface CachedTranslations {
@@ -34,6 +35,12 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
       const data: CachedTranslations = JSON.parse(cached);
       const now = Date.now();
       
+      // Check version first - if version changed, invalidate cache
+      if (data.version !== CACHE_VERSION) {
+        localStorage.removeItem(getCacheKey(targetLang));
+        return null;
+      }
+      
       // Check if cache is still valid (within TTL)
       if (now - data.timestamp > CACHE_TTL) {
         localStorage.removeItem(getCacheKey(targetLang));
@@ -52,7 +59,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
       const data: CachedTranslations = {
         translations,
         timestamp: Date.now(),
-        version: '1.0'
+        version: CACHE_VERSION
       };
       localStorage.setItem(getCacheKey(targetLang), JSON.stringify(data));
     } catch (error) {
