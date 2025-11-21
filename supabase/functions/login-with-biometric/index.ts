@@ -32,7 +32,8 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('[login-with-biometric] Attempting biometric login with credential:', credential_id);
+    // SECURITY: Do not log credential_id - it's a sensitive identifier
+    console.log('[login-with-biometric] Attempting biometric login');
 
     // User keresése credential_id alapján
     const { data: profile, error: profileError } = await supabase
