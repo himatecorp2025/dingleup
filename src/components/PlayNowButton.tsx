@@ -31,10 +31,7 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         background: 'transparent',
         border: 'none',
         padding: 0,
-        minHeight: '80px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        height: '80px',
         animation: 'pulse-button 3s ease-in-out infinite',
       }}
     >
@@ -118,8 +115,8 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         </g>
       </svg>
 
-      {/* Content (Text + Icon) - Centered both horizontally and vertically */}
-      <div className="relative z-10 flex items-center justify-center">
+      {/* Content (Text + Icon) - Absolutely centered */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center">
         <div className="flex items-center justify-center gap-2 sm:gap-3 text-foreground font-black text-base sm:text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
           {children}
         </div>
