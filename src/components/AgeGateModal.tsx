@@ -53,8 +53,8 @@ export const AgeGateModal = ({ onSuccess }: AgeGateModalProps) => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast({
-          title: 'Hiba',
-          description: 'Nincs aktív munkamenet',
+          title: t('common.error'),
+          description: t('auth.ageGate.errorNoSession'),
           variant: 'destructive',
         });
         return;
@@ -73,27 +73,27 @@ export const AgeGateModal = ({ onSuccess }: AgeGateModalProps) => {
         if (error.message?.includes('underage')) {
           setIsUnderage(true);
           toast({
-            title: t('auth.age_gate.error_underage'),
-            description: t('auth.age_gate.underage_message'),
+            title: t('auth.ageGate.errorUnderage'),
+            description: t('auth.ageGate.underageMessage'),
             variant: 'destructive',
             duration: 10000,
           });
         } else if (error.message?.includes('consent_required')) {
           toast({
-            title: 'Hiba',
-            description: t('auth.age_gate.error_consent_required'),
+            title: t('common.error'),
+            description: t('auth.ageGate.errorConsentRequired'),
             variant: 'destructive',
           });
         } else if (error.message?.includes('invalid_dob')) {
           toast({
-            title: 'Hiba',
-            description: t('auth.age_gate.error_invalid_dob'),
+            title: t('common.error'),
+            description: t('auth.ageGate.errorInvalidDob'),
             variant: 'destructive',
           });
         } else {
           toast({
-            title: 'Hiba',
-            description: 'Hiba történt az ellenőrzés során',
+            title: t('common.error'),
+            description: t('auth.ageGate.errorGeneric'),
             variant: 'destructive',
           });
         }
@@ -102,16 +102,16 @@ export const AgeGateModal = ({ onSuccess }: AgeGateModalProps) => {
 
       if (data?.success) {
         toast({
-          title: 'Sikeres',
-          description: 'Korhatár-ellenőrzés sikeresen elvégezve',
+          title: t('common.success'),
+          description: t('auth.ageGate.successMessage'),
         });
         onSuccess();
       }
     } catch (err) {
       console.error('[AgeGateModal] Unexpected error:', err);
       toast({
-        title: 'Hiba',
-        description: 'Váratlan hiba történt',
+        title: t('common.error'),
+        description: t('auth.ageGate.errorUnexpected'),
         variant: 'destructive',
       });
     } finally {
@@ -128,10 +128,10 @@ export const AgeGateModal = ({ onSuccess }: AgeGateModalProps) => {
     return (
       <div className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4">
         <div className="bg-card border border-border rounded-lg p-6 max-w-md w-full text-center space-y-4">
-          <h2 className="text-2xl font-bold text-destructive">{t('auth.age_gate.error_underage')}</h2>
-          <p className="text-muted-foreground">{t('auth.age_gate.underage_message')}</p>
+          <h2 className="text-2xl font-bold text-destructive">{t('auth.ageGate.errorUnderage')}</h2>
+          <p className="text-muted-foreground">{t('auth.ageGate.underageMessage')}</p>
           <Button onClick={handleExit} variant="destructive" className="w-full">
-            {t('auth.age_gate.exit_button')}
+            {t('auth.ageGate.exitButton')}
           </Button>
         </div>
       </div>
@@ -141,9 +141,9 @@ export const AgeGateModal = ({ onSuccess }: AgeGateModalProps) => {
   return (
     <div className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-card border border-border rounded-lg p-6 max-w-md w-full my-8">
-        <h2 className="text-2xl font-bold mb-4 text-center">{t('auth.age_gate.title')}</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">{t('auth.ageGate.title')}</h2>
         <p className="text-sm text-muted-foreground mb-6 text-center">
-          {t('auth.age_gate.description')}
+          {t('auth.ageGate.description')}
         </p>
 
         <div className="space-y-4 mb-6">
@@ -151,37 +151,19 @@ export const AgeGateModal = ({ onSuccess }: AgeGateModalProps) => {
           <div className="grid grid-cols-3 gap-2">
             {/* Year */}
             <div>
-              <label className="text-xs text-muted-foreground block mb-1">{t('auth.age_gate.year_label')}</label>
-              <select
-                value={selectedYear || ''}
-                onChange={(e) => setSelectedYear(Number(e.target.value))}
-                className="w-full h-10 px-3 bg-background border border-border rounded-md text-sm"
-              >
-                <option value="">-</option>
-                {years.map(year => (
-                  <option key={year} value={year}>{year}</option>
-                ))}
-              </select>
+              <label className="text-xs text-muted-foreground block mb-1">{t('auth.ageGate.yearLabel')}</label>
+...
             </div>
 
             {/* Month */}
             <div>
-              <label className="text-xs text-muted-foreground block mb-1">{t('auth.age_gate.month_label')}</label>
-              <select
-                value={selectedMonth || ''}
-                onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                className="w-full h-10 px-3 bg-background border border-border rounded-md text-sm"
-              >
-                <option value="">-</option>
-                {months.map(month => (
-                  <option key={month} value={month}>{String(month).padStart(2, '0')}</option>
-                ))}
-              </select>
+              <label className="text-xs text-muted-foreground block mb-1">{t('auth.ageGate.monthLabel')}</label>
+...
             </div>
 
             {/* Day */}
             <div>
-              <label className="text-xs text-muted-foreground block mb-1">{t('auth.age_gate.day_label')}</label>
+              <label className="text-xs text-muted-foreground block mb-1">{t('auth.ageGate.dayLabel')}</label>
               <select
                 value={selectedDay || ''}
                 onChange={(e) => setSelectedDay(Number(e.target.value))}
@@ -207,15 +189,15 @@ export const AgeGateModal = ({ onSuccess }: AgeGateModalProps) => {
               htmlFor="consent"
               className="text-xs text-muted-foreground leading-tight cursor-pointer"
             >
-              {t('auth.age_gate.consent_label')
+              {t('auth.ageGate.consentLabel')
                 .replace('{terms}', '')
                 .replace('{privacy}', '')}
               <Link to="/legal/aszf" className="text-primary hover:underline mx-1">
-                {t('auth.age_gate.link_terms')}
+                {t('auth.ageGate.linkTerms')}
               </Link>
-              és az
+              {t('auth.ageGate.and')}
               <Link to="/legal/privacy" className="text-primary hover:underline mx-1">
-                {t('auth.age_gate.link_privacy')}
+                {t('auth.ageGate.linkPrivacy')}
               </Link>
               .
             </label>
@@ -227,7 +209,7 @@ export const AgeGateModal = ({ onSuccess }: AgeGateModalProps) => {
           disabled={!isValid || isSubmitting}
           className="w-full"
         >
-          {isSubmitting ? 'Ellenőrzés...' : t('auth.age_gate.submit_button')}
+          {isSubmitting ? t('auth.ageGate.submitting') : t('auth.ageGate.submitButton')}
         </Button>
       </div>
     </div>

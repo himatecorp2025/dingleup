@@ -57,7 +57,7 @@ export const EmailPinSetupDialog = ({ onSuccess }: EmailPinSetupDialogProps) => 
       if (error) {
         console.error('[EmailPinSetupDialog] Error:', error);
         toast({
-          title: error.message || 'Hiba történt',
+          title: error.message || t('auth.emailPin.errorGeneric'),
           variant: 'destructive',
         });
         return;
@@ -72,7 +72,7 @@ export const EmailPinSetupDialog = ({ onSuccess }: EmailPinSetupDialogProps) => 
     } catch (err) {
       console.error('[EmailPinSetupDialog] Unexpected error:', err);
       toast({
-        title: 'Váratlan hiba történt',
+        title: t('auth.emailPin.errorUnexpected'),
         variant: 'destructive',
       });
     } finally {
@@ -150,7 +150,7 @@ export const EmailPinSetupDialog = ({ onSuccess }: EmailPinSetupDialogProps) => 
             disabled={isSubmitting || !email || pin.length !== 6 || pinConfirm.length !== 6}
             className="w-full h-12 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg"
           >
-            {isSubmitting ? 'Mentés...' : t('auth.emailPin.submitButton')}
+            {isSubmitting ? t('auth.emailPin.submitting') : t('auth.emailPin.submitButton')}
           </Button>
         </form>
       </div>

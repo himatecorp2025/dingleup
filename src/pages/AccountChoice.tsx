@@ -2,10 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UserPlus, LogIn, Loader2 } from 'lucide-react';
 import { useAutoRegister } from '@/hooks/useAutoRegister';
+import { useI18n } from '@/i18n';
 import dingleupLogo from '@/assets/dingleup-logo-circle.png';
 
 export default function AccountChoice() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { isReady, error, userId } = useAutoRegister();
 
   const handleNoAccount = () => {
@@ -51,24 +53,24 @@ export default function AccountChoice() {
             DingleUP!
           </h1>
           <h2 className="text-2xl font-bold text-white">
-            Üdvözlünk!
+            {t('auth.accountChoice.title')}
           </h2>
           <p className="text-white/70 text-sm">
-            Válassz az alábbi lehetőségek közül
+            {t('auth.accountChoice.subtitle')}
           </p>
           
           {/* Loading indicator */}
           {!isReady && (
             <div className="flex items-center justify-center gap-2 text-white/90 py-2">
               <Loader2 className="h-5 w-5 animate-spin" />
-              <span className="text-sm">Előkészítés folyamatban...</span>
+              <span className="text-sm">{t('auth.accountChoice.loading')}</span>
             </div>
           )}
           
           {/* Error indicator */}
           {error && (
             <div className="flex flex-col items-center justify-center gap-2 text-red-400 py-2 px-4 bg-red-500/10 rounded-lg border border-red-500/20">
-              <span className="text-sm font-semibold">⚠️ Hiba</span>
+              <span className="text-sm font-semibold">{t('auth.accountChoice.errorTitle')}</span>
               <span className="text-xs text-center">{error}</span>
             </div>
           )}
@@ -85,14 +87,14 @@ export default function AccountChoice() {
               <>
                 <Loader2 className="mr-3 h-6 w-6 flex-shrink-0 animate-spin" />
                 <span className="text-left leading-tight">
-                  Fiók készítése...
+                  {t('auth.accountChoice.creatingAccount')}
                 </span>
               </>
             ) : (
               <>
                 <UserPlus className="mr-3 h-6 w-6 flex-shrink-0" />
                 <span className="text-left leading-tight">
-                  Nincs fiókom - Regisztráció
+                  {t('auth.accountChoice.noAccountButton')}
                 </span>
               </>
             )}
@@ -104,7 +106,7 @@ export default function AccountChoice() {
           >
             <LogIn className="mr-3 h-6 w-6 flex-shrink-0" />
             <span className="text-left leading-tight">
-              Van fiókom - Bejelentkezés
+              {t('auth.accountChoice.hasAccountButton')}
             </span>
           </Button>
         </div>
