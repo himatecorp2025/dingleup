@@ -2,7 +2,6 @@ import { useEffect, useState, useRef, useCallback, memo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Crown } from 'lucide-react';
 import { DailyRankingsCountdown } from './DailyRankingsCountdown';
-import { TimerButton } from './TimerButton';
 import { LeaderboardSkeleton } from './LeaderboardSkeleton';
 import { useI18n } from '@/i18n';
 
@@ -195,13 +194,9 @@ const LeaderboardCarouselComponent = () => {
     <div className="w-full py-1">
       <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-foreground mb-1 drop-shadow-lg">🏆 {t('leaderboard.carousel_title')} 🏆</h3>
       
-      {/* Daily Rankings Timer Button */}
+      {/* Daily Rankings Countdown */}
       <div className="flex justify-center mb-2">
-        <TimerButton>
-          <span className="text-[6px] font-extrabold text-primary-dark drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] leading-none whitespace-nowrap">
-            <DailyRankingsCountdown compact={true} />
-          </span>
-        </TimerButton>
+        <DailyRankingsCountdown compact={false} />
       </div>
       
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>

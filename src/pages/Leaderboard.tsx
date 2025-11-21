@@ -7,7 +7,6 @@ import { useI18n } from '@/i18n';
 
 import DailyRewards from '@/components/DailyRewards';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
-import { TimerButton } from '@/components/TimerButton';
 import { LeaderboardSkeleton } from '@/components/LeaderboardSkeleton';
 import BottomNav from '@/components/BottomNav';
 
@@ -220,11 +219,7 @@ const Leaderboard = () => {
 
         {/* Countdown Timer - below title */}
         <div className="flex justify-center mb-2 px-2">
-          <TimerButton>
-            <span className="text-[6px] font-extrabold text-primary-dark drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] leading-none whitespace-nowrap">
-              <DailyRankingsCountdown compact={true} />
-            </span>
-          </TimerButton>
+          <DailyRankingsCountdown compact={false} />
         </div>
 
         {/* Daily Rewards Section with Top 10 */}
