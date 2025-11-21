@@ -1,11 +1,11 @@
-import { ReactNode } from 'react';
+import { ReactNode, memo } from 'react';
 
 interface MillionaireQuestionProps {
   children: ReactNode;
   questionNumber?: number;
 }
 
-export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
+const MillionaireQuestionComponent = ({ children, questionNumber }: MillionaireQuestionProps) => {
   return (
     <div className="relative w-full mb-3" style={{ perspective: '1200px', transformStyle: 'preserve-3d', minHeight: '100px' }}>
       {/* BASE SHADOW - Enhanced */}
@@ -82,3 +82,5 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
     </div>
   );
 };
+
+export const MillionaireQuestion = memo(MillionaireQuestionComponent);
