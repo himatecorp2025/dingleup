@@ -167,7 +167,7 @@ const DailyGiftDialog = ({
           }}
         >
           <DialogTitle className="sr-only">Daily Gift</DialogTitle>
-          <DialogDescription className="sr-only">{t('daily.description')}</DialogDescription>
+          <DialogDescription className="sr-only">Napi jutalom megjelenítése</DialogDescription>
 
           {/* Háttér gradiens */}
           <div
