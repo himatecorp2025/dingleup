@@ -24,9 +24,11 @@ import { useI18n } from "@/i18n";
 // Eager load critical pages
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login";
-import LoginUsername from "./pages/LoginUsername";
-import Register from "./pages/Register";
+
+// New simplified auth pages
+import AuthChoice from "./pages/AuthChoice";
+import RegisterNew from "./pages/RegisterNew";
+import LoginNew from "./pages/LoginNew";
 
 // Lazy load secondary pages
 const Game = lazy(() => import("./pages/Game"));
@@ -135,9 +137,12 @@ const AppCore = () => {
               {/* Public routes - no ErrorBoundary needed */}
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/login-username" element={<LoginUsername />} />
+              
+              {/* New simplified auth routes */}
+              <Route path="/auth/choice" element={<AuthChoice />} />
+              <Route path="/auth/register" element={<RegisterNew />} />
+              <Route path="/auth/login" element={<LoginNew />} />
+              
               <Route path="/intro" element={<IntroVideo />} />
               
               {/* Protected routes wrapped in ErrorBoundary */}

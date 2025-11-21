@@ -1369,6 +1369,27 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts_pin: {
+        Row: {
+          failed_attempts: number | null
+          last_attempt_at: string | null
+          locked_until: string | null
+          username: string
+        }
+        Insert: {
+          failed_attempts?: number | null
+          last_attempt_at?: string | null
+          locked_until?: string | null
+          username: string
+        }
+        Update: {
+          failed_attempts?: number | null
+          last_attempt_at?: string | null
+          locked_until?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
       message_media: {
         Row: {
           created_at: string | null
@@ -1767,7 +1788,7 @@ export type Database = {
           lives: number | null
           lives_regeneration_rate: number | null
           max_lives: number | null
-          pin_hash: string | null
+          pin_hash: string
           preferred_language: string | null
           question_swaps_available: number | null
           total_correct_answers: number
@@ -1806,7 +1827,7 @@ export type Database = {
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
-          pin_hash?: string | null
+          pin_hash: string
           preferred_language?: string | null
           question_swaps_available?: number | null
           total_correct_answers?: number
@@ -1845,7 +1866,7 @@ export type Database = {
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
-          pin_hash?: string | null
+          pin_hash?: string
           preferred_language?: string | null
           question_swaps_available?: number | null
           total_correct_answers?: number
