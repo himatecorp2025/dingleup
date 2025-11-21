@@ -472,7 +472,6 @@ const Profile = () => {
           <h1 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-accent via-foreground to-accent mb-1 flex items-center justify-center gap-2">
             {profile.username}
           </h1>
-          <p className="text-sm sm:text-base text-accent-light/90">{profile.email}</p>
         </div>
 
         {/* Stats Grid - 2x3 unified layout */}
@@ -746,12 +745,6 @@ const Profile = () => {
                 <p className="text-xs text-white/40 mt-1">{t('profile.username_cooldown')}</p>
               </div>
               
-              {/* Email */}
-              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.email_label')}</p>
-                <p className="text-sm sm:text-base text-white font-bold break-all drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{profile.email}</p>
-              </div>
-
               {/* Birth Date (read-only) */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.birth_date_label')}</p>
