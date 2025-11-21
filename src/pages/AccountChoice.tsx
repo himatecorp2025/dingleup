@@ -6,16 +6,25 @@ import { useAutoRegister } from '@/hooks/useAutoRegister';
 import dingleupLogo from '@/assets/dingleup-logo-circle.png';
 
 export default function AccountChoice() {
+  console.log('[AccountChoice] Component rendering');
   const { t } = useI18n();
   const navigate = useNavigate();
   const { isReady, error } = useAutoRegister();
+  
+  console.log('[AccountChoice] Hook values - isReady:', isReady, 'error:', error);
 
   const handleNoAccount = () => {
-    if (!isReady) return;
+    console.log('[AccountChoice] handleNoAccount clicked, isReady:', isReady);
+    if (!isReady) {
+      console.log('[AccountChoice] Button disabled, registration not ready');
+      return;
+    }
+    console.log('[AccountChoice] Navigating to dashboard...');
     navigate('/dashboard');
   };
 
   const handleHasAccount = () => {
+    console.log('[AccountChoice] handleHasAccount clicked');
     navigate('/auth/login');
   };
 

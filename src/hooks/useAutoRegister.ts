@@ -1,114 +1,128 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
 
 const DEVICE_ID_KEY = 'dingleup_device_id';
+
+// Helper function to get or create device ID
+const getOrCreateDeviceId = (): string => {
+  try {
+    let deviceId = localStorage.getItem(DEVICE_ID_KEY);
+    if (!deviceId) {
+      deviceId = crypto.randomUUID();
+      localStorage.setItem(DEVICE_ID_KEY, deviceId);
+      console.log('[DeviceID] Created new device_id:', deviceId.substring(0, 8) + '...');
+    } else {
+      console.log('[DeviceID] Using existing device_id:', deviceId.substring(0, 8) + '...');
+    }
+    return deviceId;
+  } catch (err) {
+    console.error('[DeviceID] Error accessing localStorage:', err);
+    return crypto.randomUUID(); // Fallback without storage
+  }
+};
 
 export const useAutoRegister = () => {
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('[useAutoRegister] Hook mounted and useEffect running');
     let mounted = true;
 
     const autoRegister = async () => {
       try {
-        console.log('[useAutoRegister] Starting...');
+        console.log('[useAutoRegister] Starting auto-registration process...');
         
         // Check if user already has session
-        const { data: { session } } = await supabase.auth.getSession();
+        console.log('[useAutoRegister] Checking for existing session...');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('[useAutoRegister] Session check error:', sessionError);
+        }
         
         if (session) {
-          console.log('[useAutoRegister] Session already exists:', session.user.id);
+          console.log('[useAutoRegister] ✓ Session already exists:', session.user.id);
           if (mounted) setIsReady(true);
           return;
         }
 
+        console.log('[useAutoRegister] No existing session, proceeding with registration...');
+
         // Get or create device_id
-        let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-        
-        if (!deviceId) {
-          deviceId = crypto.randomUUID();
-          localStorage.setItem(DEVICE_ID_KEY, deviceId);
-          console.log('[useAutoRegister] Created new device_id:', deviceId.substring(0, 8) + '...');
-        } else {
-          console.log('[useAutoRegister] Using existing device_id:', deviceId.substring(0, 8) + '...');
+        const deviceId = getOrCreateDeviceId();
+        console.log('[useAutoRegister] Device ID ready:', deviceId.substring(0, 8) + '...');
+
+        console.log('[useAutoRegister] Invoking auto-register-device function...');
+
+        // Call auto-register edge function
+        const { data, error: invokeError } = await supabase.functions.invoke('auto-register-device', {
+          body: { device_id: deviceId },
+        });
+
+        if (invokeError) {
+          console.error('[useAutoRegister] ✗ Edge function invocation error:', invokeError);
+          if (mounted) {
+            setError('Regisztrációs hiba történt');
+            setIsReady(true);
+          }
+          return;
         }
 
-        console.log('[useAutoRegister] Calling auto-register-device function...');
+        console.log('[useAutoRegister] ✓ Edge function response:', data);
 
-        // Call auto-register edge function with timeout
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-        try {
-          const { data, error } = await supabase.functions.invoke('auto-register-device', {
-            body: { device_id: deviceId },
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-
-          clearTimeout(timeoutId);
-
-          if (error) {
-            console.error('[useAutoRegister] Registration error:', error);
-            if (mounted) {
-              setError('Regisztrációs hiba történt');
-              setIsReady(true);
-            }
-            return;
+        if (!data?.success) {
+          console.error('[useAutoRegister] ✗ Registration failed:', data);
+          if (mounted) {
+            setError('A regisztráció sikertelen volt');
+            setIsReady(true);
           }
+          return;
+        }
 
-          console.log('[useAutoRegister] Edge function response:', data);
-
-          if (data?.success && data?.email) {
-            console.log('[useAutoRegister] Registration successful, email:', data.email);
-            console.log('[useAutoRegister] Attempting sign in...');
-            
-            // Sign in with device_id as password
-            const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-              email: data.email,
-              password: deviceId,
-            });
-
-            if (signInError) {
-              console.error('[useAutoRegister] Sign in error:', signInError);
-              if (mounted) {
-                setError('Bejelentkezési hiba történt');
-                setIsReady(true);
-              }
-              return;
-            }
-
-            console.log('[useAutoRegister] Sign in successful:', signInData.user?.id);
-
-            // Wait for session to be established
-            const { data: { session: newSession } } = await supabase.auth.getSession();
-            if (newSession) {
-              console.log('[useAutoRegister] Session established successfully:', newSession.user.id);
-            } else {
-              console.warn('[useAutoRegister] Session not found after sign in');
-            }
-          } else {
-            console.warn('[useAutoRegister] Unexpected response from edge function:', data);
+        if (!data?.email) {
+          console.error('[useAutoRegister] ✗ No email in response:', data);
+          if (mounted) {
+            setError('Nincs email a válaszban');
+            setIsReady(true);
           }
+          return;
+        }
 
-          if (mounted) setIsReady(true);
-        } catch (err: any) {
-          clearTimeout(timeoutId);
-          if (err.name === 'AbortError') {
-            console.error('[useAutoRegister] Request timeout');
-            if (mounted) {
-              setError('A regisztráció túl sokáig tartott');
-              setIsReady(true);
-            }
-          } else {
-            throw err;
+        console.log('[useAutoRegister] ✓ Registration successful! Email:', data.email);
+        console.log('[useAutoRegister] Signing in with credentials...');
+        
+        // Sign in with device_id as password
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: deviceId,
+        });
+
+        if (signInError) {
+          console.error('[useAutoRegister] ✗ Sign in error:', signInError);
+          if (mounted) {
+            setError('Bejelentkezési hiba történt');
+            setIsReady(true);
           }
+          return;
+        }
+
+        console.log('[useAutoRegister] ✓ Sign in successful! User:', signInData.user?.id);
+
+        // Verify session was established
+        const { data: { session: newSession } } = await supabase.auth.getSession();
+        if (newSession) {
+          console.log('[useAutoRegister] ✓✓ Session established successfully!');
+        } else {
+          console.warn('[useAutoRegister] ⚠ Session not found after sign in');
+        }
+
+        if (mounted) {
+          console.log('[useAutoRegister] Setting isReady to true');
+          setIsReady(true);
         }
       } catch (err) {
-        console.error('[useAutoRegister] Unexpected error:', err);
+        console.error('[useAutoRegister] ✗✗ Unexpected error:', err);
         if (mounted) {
           setError('Váratlan hiba történt');
           setIsReady(true);
@@ -116,12 +130,16 @@ export const useAutoRegister = () => {
       }
     };
 
+    // Start auto-registration
     autoRegister();
 
     return () => {
+      console.log('[useAutoRegister] Hook unmounting');
       mounted = false;
     };
   }, []);
+
+  console.log('[useAutoRegister] Rendering with isReady:', isReady, 'error:', error);
 
   return { isReady, error };
 };
