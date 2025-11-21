@@ -53,19 +53,19 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
     switch (type) {
       case 'rank':
-        // Crown SVG
+        // Crown SVG - gold color for rank
         return (
             <svg
               className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
               viewBox="0 0 24 24"
-              fill={color}
+              fill="hsl(var(--accent))"
               xmlns="http://www.w3.org/2000/svg"
             >
-            <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke={color} strokeWidth="2" strokeLinejoin="round"/>
-            <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke={color} strokeWidth="2"/>
-            <circle cx="12" cy="9" r="1.5" fill={color}/>
-            <circle cx="7" cy="11" r="1.5" fill={color}/>
-            <circle cx="17" cy="11" r="1.5" fill={color}/>
+            <path d="M2.5 16L3.5 5L7 7.5L12 2L17 7.5L20.5 5L21.5 16H2.5Z" stroke="hsl(var(--accent))" strokeWidth="2" strokeLinejoin="round"/>
+            <path d="M3 16H21V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V16Z" stroke="hsl(var(--accent))" strokeWidth="2"/>
+            <circle cx="12" cy="9" r="1.5" fill="hsl(var(--accent))"/>
+            <circle cx="7" cy="11" r="1.5" fill="hsl(var(--accent))"/>
+            <circle cx="17" cy="11" r="1.5" fill="hsl(var(--accent))"/>
           </svg>
         );
       case 'coins':
@@ -115,6 +115,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
     }
   };
 
+  // Original hexagon design for all types (rank, coins, lives)
   return (
     <div className={`relative ${className}`} role="status" aria-label={getAriaLabel()}>
       {/* Outer glow */}
@@ -203,3 +204,4 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
     </div>
   );
 };
+
