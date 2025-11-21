@@ -1,5 +1,4 @@
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
-import { useI18n } from '@/i18n';
 
 interface GameStateScreenProps {
   type: 'out-of-lives';
@@ -18,17 +17,16 @@ export const GameStateScreen = ({
   totalScore = 0,
   reward = 0
 }: GameStateScreenProps) => {
-  const { t } = useI18n();
   const isHandheld = usePlatformDetection();
   
   const config = {
     'out-of-lives': {
-      title: t('game.results.title'),
+      title: 'YOU LOSE!',
       bgColor: 'from-destructive to-destructive-dark',
       titleColor: 'from-foreground to-destructive-glow',
       borderColor: 'border-muted',
       stars: [false, false, false],
-      buttonText: t('game.continue.shop_button'),
+      buttonText: 'Vásárolj +5 életet',
       buttonColor: 'from-success to-success/90'
     }
   };

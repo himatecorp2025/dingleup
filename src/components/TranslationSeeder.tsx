@@ -69,63 +69,44 @@ export const TranslationSeeder: React.FC = () => {
   const fetchDetailedStats = async () => {
     setIsLoadingStats(true);
     try {
-      // 1) Total number of keys (HU filled)
-      const { count: total } = await supabase
+      // Fetch all translations for detailed analysis (no limit - fetch everything)
+      const { data: translations, error } = await supabase
         .from('translations')
-        .select('*', { count: 'exact', head: true })
-        .not('hu', 'is', null);
-
-      const safeTotal = total || 0;
-
-      if (safeTotal === 0) {
-        setLanguageStats([]);
-        setOverallStats({ total: 0, pending: 0 });
-        return;
-      }
-
-      // 2) Fully translated keys: HU + all target languages not null
-      const { count: fullyTranslatedCount } = await supabase
-        .from('translations')
-        .select('*', { count: 'exact', head: true })
+        .select('key, hu, en, de, fr, es, it, pt, nl')
         .not('hu', 'is', null)
-        .not('en', 'is', null)
-        .not('de', 'is', null)
-        .not('fr', 'is', null)
-        .not('es', 'is', null)
-        .not('it', 'is', null)
-        .not('pt', 'is', null)
-        .not('nl', 'is', null);
+        .range(0, 10000); // Explicit large range to override default 1000 limit
 
-      const overallPending = safeTotal - (fullyTranslatedCount || 0);
+      if (error) throw error;
+      if (!translations) return;
 
-      // 3) Per-language translated counts (HEAD-only queries, no 1000 row cap issue)
-      const langQueries = LANGUAGES.map(lang =>
-        supabase
-          .from('translations')
-          .select('*', { count: 'exact', head: true })
-          .not('hu', 'is', null)
-          .not(lang.code, 'is', null)
-      );
+      const total = translations.length;
+      let overallPending = 0;
+      const langStats: LanguageStats[] = [];
 
-      const langResults = await Promise.all(langQueries);
-
-      const langStats: LanguageStats[] = LANGUAGES.map((lang, index) => {
-        const translated = langResults[index].count || 0;
-        const pending = safeTotal - translated;
-        return {
-          code: lang.code,
+      // Calculate per-language statistics
+      for (const lang of LANGUAGES) {
+        const langCode = lang.code;
+        const translated = translations.filter(t => t[langCode as keyof typeof t]).length;
+        const pending = total - translated;
+        
+        langStats.push({
+          code: langCode,
           name: lang.name,
-          total: safeTotal,
+          total,
           translated,
           pending,
-          percentage: safeTotal > 0 ? Math.round((translated / safeTotal) * 100) : 0,
-        };
-      });
+          percentage: total > 0 ? Math.round((translated / total) * 100) : 0
+        });
+
+        overallPending += pending;
+      }
 
       setLanguageStats(langStats);
       setOverallStats({
-        total: safeTotal,
-        pending: overallPending,
+        total,
+        pending: translations.filter(t => 
+          !t.en || !t.de || !t.fr || !t.es || !t.it || !t.pt || !t.nl
+        ).length
       });
 
     } catch (error) {

@@ -126,10 +126,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           borderRadius: 0
         }}
       >
-        <DialogTitle className="sr-only">Napi Nyertesek</DialogTitle>
-        <DialogDescription className="sr-only">Az elmúlt nap TOP 10 nyertesei</DialogDescription>
+        <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
+        <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
         
-        <div
+        <div 
           className="relative w-full h-full overflow-hidden"
           style={{
             background: 'linear-gradient(180deg, #0a0015 0%, #1a0033 50%, #0f0033 100%)',
@@ -179,7 +179,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               <div className="relative px-8 py-4 bg-gradient-to-r from-primary via-accent to-primary rounded-2xl shadow-2xl">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/50 via-accent/50 to-primary/50 rounded-2xl blur-xl animate-pulse" />
                 <h2 className="relative text-2xl md:text-3xl font-bold text-white text-center tracking-wider drop-shadow-lg">
-                  🏆 NAPI TOP 10 🏆
+                  🏆 TEGNAPI TOP 10 🏆
                 </h2>
               </div>
             </div>
@@ -195,11 +195,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s'
               }}
             >
-            {topPlayers.length === 0 ? (
-              <div className="text-center text-muted-foreground py-8">
-                <p className="text-lg">Nincs adat</p>
-              </div>
-            ) : (
+              {topPlayers.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8">
+                  <p className="text-lg">Még nincs adat a tegnapi napról</p>
+                </div>
+              ) : (
                 topPlayers.map((player, index) => {
                   const delay = index * 0.08;
                   const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
@@ -254,7 +254,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s'
               }}
             >
-              OK
+              Bezárás
             </button>
           </div>
         </div>

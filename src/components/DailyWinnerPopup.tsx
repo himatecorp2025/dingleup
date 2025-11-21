@@ -2,12 +2,14 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { useI18n } from '@/i18n';
 
 interface DailyWinnerPopupProps {
   userId: string | undefined;
 }
 
 export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [winnerData, setWinnerData] = useState<{
     rank: number;
@@ -94,7 +96,7 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
     if (rank === 1) return '🥇 1. HELYEZETT';
     if (rank === 2) return '🥈 2. HELYEZETT';
     if (rank === 3) return '🥉 3. HELYEZETT';
-    return `🏅 ${rank}. HELYEZETT`;
+    return `🏆 ${rank}. HELYEZETT`;
   };
 
   const getRankBadgeColor = (rank: number) => {
@@ -151,7 +153,7 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
 
             {/* Title */}
             <h2 className="text-4xl font-bold text-white drop-shadow-lg">
-              GRATULÁLUNK!
+              {t('daily_winner.title')}
             </h2>
 
             {/* Rewards */}
@@ -172,7 +174,7 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
 
             {/* Message */}
             <p className="text-xl text-white/90 mt-4 px-4">
-              Tegnap a napi ranglistán a TOP 10-be kerültél!
+              {t('daily_winner.congratulations_daily')}
             </p>
 
             {/* Close Button */}
