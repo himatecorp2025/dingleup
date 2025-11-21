@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n';
 
 interface InGameRescuePopupProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
   currentGold,
   onStateRefresh,
 }) => {
+  const { t } = useI18n();
   const [loadingGoldSaver, setLoadingGoldSaver] = useState(false);
   const [loadingInstantRescue, setLoadingInstantRescue] = useState(false);
 
@@ -106,10 +108,10 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         {/* Header */}
         <DialogHeader className="space-y-0.5 mb-2">
           <DialogTitle className="text-xl font-black text-center bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(234,179,8,0.8)] leading-tight tracking-wide" style={{ textShadow: '0 2px 10px rgba(234,179,8,0.6), 0 0 20px rgba(234,179,8,0.4)' }}>
-            🆘 Mentés szükséges! 🆘
+            🆘 {t('game.rescue.title')} 🆘
           </DialogTitle>
           <p className="text-center text-yellow-100 text-xs font-bold drop-shadow-lg">
-            Válassz mentoboostert a folytatáshoz!
+            {t('game.rescue.description')}
           </p>
         </DialogHeader>
 
@@ -148,7 +150,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </div>
 
               <h3 className="text-xs font-black text-center bg-gradient-to-r from-yellow-200 via-yellow-100 to-yellow-200 bg-clip-text text-transparent mb-1 drop-shadow-lg leading-tight tracking-wide">
-                ARANYMENTŐ
+                {t('game.rescue.free_booster').toUpperCase()}
               </h3>
 
               <p className="text-blue-100 text-[9px] text-center mb-2 font-semibold leading-tight px-1">
@@ -202,7 +204,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </div>
 
               <h3 className="text-xs font-black text-center bg-gradient-to-r from-pink-200 via-pink-100 to-pink-200 bg-clip-text text-transparent mb-1 drop-shadow-lg leading-tight tracking-wide">
-                AZONNALI MENTÉS
+                {t('game.rescue.premium_booster').toUpperCase()}
               </h3>
 
               <p className="text-pink-100 text-[9px] text-center mb-2 font-semibold leading-tight px-1">
@@ -251,7 +253,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
             variant="ghost"
             className="text-yellow-200/70 hover:text-yellow-100 hover:bg-white/10 text-xs h-7 px-3 font-bold"
           >
-            Mégse
+            {t('game.rescue.close')}
           </Button>
         </div>
       </DialogContent>
