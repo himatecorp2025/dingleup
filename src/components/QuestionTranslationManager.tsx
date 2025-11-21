@@ -26,40 +26,39 @@ export const QuestionTranslationManager = () => {
       try {
         setIsCheckingContent(true);
 
-        // Get questions that don't have all 7 target language translations
+        // OPTIMIZED: Single aggregated query instead of 2748 separate queries
         const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
         
-        // Fetch all questions
-        const { data: allQuestions, error: questionsError } = await supabase
+        // Get total questions count
+        const { count: totalQuestions, error: questionsError } = await supabase
           .from('questions')
-          .select('id');
+          .select('id', { count: 'exact', head: true });
 
-        if (questionsError || !allQuestions) {
+        if (questionsError || !totalQuestions) {
           setHasUntranslated(false);
           return;
         }
 
-        // For each question, check if it has all 7 target language translations
-        let missingCount = 0;
-        
-        for (const question of allQuestions) {
-          const { count, error } = await supabase
-            .from('question_translations')
-            .select('lang', { count: 'exact', head: true })
-            .eq('question_id', question.id)
-            .in('lang', TARGET_LANGUAGES);
-          
-          if (error) continue;
-          
-          // If less than 7 translations, this question needs translation
-          if ((count || 0) < TARGET_LANGUAGES.length) {
-            missingCount++;
-            // Early exit - we know there's untranslated content
-            break;
-          }
+        // Count translations for each target language
+        const { count: totalTranslations, error: translationsError } = await supabase
+          .from('question_translations')
+          .select('id', { count: 'exact', head: true })
+          .in('lang', TARGET_LANGUAGES);
+
+        if (translationsError) {
+          setHasUntranslated(false);
+          return;
         }
 
-        setHasUntranslated(missingCount > 0);
+        // Calculate expected translations (totalQuestions * 7 languages)
+        const expectedTranslations = totalQuestions * TARGET_LANGUAGES.length;
+        const hasUntranslated = (totalTranslations || 0) < expectedTranslations;
+
+        setHasUntranslated(hasUntranslated);
+
+        if (hasUntranslated) {
+          console.log(`[QuestionTranslationManager] Untranslated questions found: ${expectedTranslations - (totalTranslations || 0)} translations missing`);
+        }
 
       } catch (error) {
         console.error('[QuestionTranslationManager] Error checking content:', error);
