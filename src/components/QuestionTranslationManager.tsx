@@ -111,44 +111,10 @@ export const QuestionTranslationManager = () => {
     loadInitialStats();
   }, []);
 
-  // Subscribe to real-time progress updates
-  useEffect(() => {
-    if (!isTranslating) return;
-
-    const channel = supabase.channel('question-translation-progress');
-    channelRef.current = channel;
-
-    channel
-      .on('broadcast', { event: 'progress' }, (payload: any) => {
-        console.log('[QuestionTranslationManager] Progress update:', payload);
-        const newProgress = payload.payload.progress || 0;
-        const newStatus = payload.payload.status || '';
-        setProgress(newProgress);
-        setStatus(newStatus);
-        if (payload.payload.translated !== undefined) {
-          setStats({
-            translated: payload.payload.translated,
-            skipped: payload.payload.skipped,
-            errors: payload.payload.errors
-          });
-        }
-        
-        // Ha befejezett, állítsuk le a loading állapotot
-        if (newProgress === 100 || newStatus.includes('befejezve')) {
-          setIsTranslating(false);
-        }
-      })
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-      channelRef.current = null;
-    };
-  }, [isTranslating]);
+  // This useEffect is now REMOVED - channel subscription happens in startTranslation BEFORE invoking edge function
 
   const startTranslation = async () => {
     try {
-      setIsTranslating(true);
       setProgress(0);
       setStatus('Fordítás indítása...');
       setStats(null);
@@ -156,12 +122,37 @@ export const QuestionTranslationManager = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast.error('Admin session expired');
-        setIsTranslating(false);
         return;
       }
 
+      // CRITICAL: Subscribe to channel BEFORE setting isTranslating to ensure we catch all broadcasts
+      const channel = supabase.channel('question-translation-progress');
+      channelRef.current = channel;
+
+      channel
+        .on('broadcast', { event: 'progress' }, (payload: any) => {
+          console.log('[QuestionTranslationManager] Progress update:', payload);
+          const newProgress = payload.payload.progress || 0;
+          const newStatus = payload.payload.status || '';
+          setProgress(newProgress);
+          setStatus(newStatus);
+          if (payload.payload.translated !== undefined) {
+            setStats({
+              translated: payload.payload.translated,
+              skipped: payload.payload.skipped,
+              errors: payload.payload.errors
+            });
+          }
+        })
+        .subscribe();
+
+      // Small delay to ensure subscription is active
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // NOW set isTranslating to show loading state
+      setIsTranslating(true);
+
       // ITERATIVE APPROACH: Invoke edge function repeatedly until all translations complete
-      // Each run processes ~150 questions in ~4 minutes, then exits gracefully
       let continueProcessing = true;
       let iterationCount = 0;
 
@@ -229,7 +220,13 @@ export const QuestionTranslationManager = () => {
     } catch (error) {
       console.error('[QuestionTranslationManager] Exception:', error);
       toast.error('Hiba történt a fordítás során');
+    } finally {
       setIsTranslating(false);
+      // Cleanup channel
+      if (channelRef.current) {
+        await supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     }
   };
 
