@@ -193,8 +193,8 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
             </g>
           </svg>
           
-          {/* Content (Crown + Rank number) - positioned on top of SVG */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+          {/* Content (Crown + Rank number) - centered exactly like Play Now button */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center z-10">
             {renderIcon()}
             <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
               {value}
