@@ -8,7 +8,7 @@ import dingleupLogo from '@/assets/dingleup-logo-circle.png';
 export default function AccountChoice() {
   const { t } = useI18n();
   const navigate = useNavigate();
-  const { isReady } = useAutoRegister();
+  const { isReady, error } = useAutoRegister();
 
   const handleNoAccount = () => {
     if (!isReady) return;
@@ -50,6 +50,13 @@ export default function AccountChoice() {
             <div className="flex items-center justify-center gap-2 text-white/90 py-2">
               <Loader2 className="h-5 w-5 animate-spin" />
               <span className="text-sm">Előkészítés folyamatban...</span>
+            </div>
+          )}
+          
+          {/* Error indicator */}
+          {error && (
+            <div className="flex items-center justify-center gap-2 text-red-400 py-2">
+              <span className="text-sm">{error}</span>
             </div>
           )}
         </div>
