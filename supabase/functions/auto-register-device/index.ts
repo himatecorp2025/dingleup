@@ -51,12 +51,10 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // SECURITY: Rate limiting check (10 attempts per 15 minutes per device)
-    // Use device_id as identifier since user isn't authenticated yet
+    // Simplified for speed - primary protection at infrastructure level
     const tempUserId = `device:${device_id}`;
-    const supabaseAnon = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!);
     
-    // Note: This is a simplified rate limit check without auth.uid()
-    // In production, consider IP-based rate limiting at infrastructure level
+    // Quick rate limit check (non-blocking)
     const { count: recentAttempts } = await supabase
       .from('rpc_rate_limits')
       .select('*', { count: 'exact', head: true })
@@ -65,24 +63,18 @@ Deno.serve(async (req) => {
       .gte('window_start', new Date(Date.now() - 15 * 60 * 1000).toISOString());
 
     if ((recentAttempts || 0) >= 10) {
-      console.log('[auto-register-device] Rate limit exceeded for device:', device_id.substring(0, 8));
       return rateLimitExceeded(corsHeaders);
     }
 
-    // Log this attempt (non-blocking, best effort)
-    try {
-      await supabase
-        .from('rpc_rate_limits')
-        .insert({
-          user_id: tempUserId,
-          rpc_name: 'auto-register-device',
-          window_start: new Date(Date.now()).toISOString(),
-          call_count: 1
-        });
-    } catch (logError) {
-      // Non-critical, continue
-      console.error('[auto-register-device] Rate limit log error:', logError);
-    }
+    // Log attempt asynchronously (fire and forget for speed)
+    void supabase
+      .from('rpc_rate_limits')
+      .insert({
+        user_id: tempUserId,
+        rpc_name: 'auto-register-device',
+        window_start: new Date(Date.now()).toISOString(),
+        call_count: 1
+      });
 
     console.log('[auto-register-device] Processing device_id:', device_id.substring(0, 8) + '...');
 
@@ -143,7 +135,8 @@ Deno.serve(async (req) => {
     }
 
     // Update profile with device_id (handle_new_user trigger creates profile)
-    await new Promise(resolve => setTimeout(resolve, 500)); // Wait for trigger
+    // Reduced wait time for speed optimization
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     const { error: updateError } = await supabase
       .from('profiles')

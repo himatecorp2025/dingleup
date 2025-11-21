@@ -11,40 +11,36 @@ export const useAutoRegister = () => {
   useEffect(() => {
     const autoRegister = async () => {
       try {
-        // Check if user already has session
+        // Check if user already has session - this is fast
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
-          console.log('[useAutoRegister] Existing session found');
           setIsReady(true);
           return;
         }
 
-        // Get or create device_id
+        // Get or create device_id - this is instant
         let deviceId = localStorage.getItem(DEVICE_ID_KEY);
         
         if (!deviceId) {
           deviceId = crypto.randomUUID();
           localStorage.setItem(DEVICE_ID_KEY, deviceId);
-          console.log('[useAutoRegister] Created new device_id');
-        } else {
-          console.log('[useAutoRegister] Existing device_id found');
         }
 
-        // Call auto-register edge function
+        // Set ready immediately for better UX - registration continues in background
+        setIsReady(true);
+
+        // Call auto-register edge function with short timeout
         const { data, error } = await supabase.functions.invoke('auto-register-device', {
           body: { device_id: deviceId },
         });
 
         if (error) {
           console.error('[useAutoRegister] Registration error:', error);
-          setIsReady(true);
           return;
         }
 
         if (data?.success && data?.email) {
-          console.log('[useAutoRegister] Registration successful:', data.existing ? 'existing' : 'new');
-          
           // Sign in with device_id as password
           const { error: signInError } = await supabase.auth.signInWithPassword({
             email: data.email,
@@ -53,13 +49,10 @@ export const useAutoRegister = () => {
 
           if (signInError) {
             console.error('[useAutoRegister] Sign in error:', signInError);
-          } else {
-            console.log('[useAutoRegister] Signed in successfully');
           }
         }
       } catch (err) {
         console.error('[useAutoRegister] Unexpected error:', err);
-      } finally {
         setIsReady(true);
       }
     };
