@@ -20,6 +20,7 @@ import { useSessionMonitor } from "@/hooks/useSessionMonitor";
 import { AppRouteGuard } from "@/components/AppRouteGuard";
 import { AudioPolicyManager } from "@/components/AudioPolicyManager";
 import { useI18n } from "@/i18n";
+import { useAutoRegister } from "@/hooks/useAutoRegister";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -38,6 +39,8 @@ const InstallApp = lazy(() => import("./pages/InstallApp"));
 const Invitation = lazy(() => import("./pages/Invitation"));
 import IntroVideo from "./pages/IntroVideo";
 const About = lazy(() => import("./pages/About"));
+const LegalTerms = lazy(() => import("./pages/LegalTerms"));
+const LegalPrivacy = lazy(() => import("./pages/LegalPrivacy"));
 
 // Lazy load admin pages
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
@@ -89,6 +92,12 @@ const AppWithAnalytics = () => {
   return null;
 };
 
+// Auto-registration wrapper
+const AutoRegisterWrapper = () => {
+  useAutoRegister();
+  return null;
+};
+
 // Main App component with lifecycle management
 const AppCore = () => {
   // App lifecycle management
@@ -125,6 +134,7 @@ const AppCore = () => {
       >
         <BackButtonHandler />
         <SessionMonitorWrapper />
+        <AutoRegisterWrapper />
         <AppWithAnalytics />
         <ScrollBehaviorManager />
         <AudioPolicyManager />
@@ -152,6 +162,8 @@ const AppCore = () => {
               <Route path="/about" element={<ErrorBoundary><About /></ErrorBoundary>} />
               <Route path="/popular-content" element={<ErrorBoundary><PopularContent /></ErrorBoundary>} />
               <Route path="/profile/game" element={<ErrorBoundary><ProfileGame /></ErrorBoundary>} />
+              <Route path="/legal/aszf" element={<ErrorBoundary><LegalTerms /></ErrorBoundary>} />
+              <Route path="/legal/privacy" element={<ErrorBoundary><LegalPrivacy /></ErrorBoundary>} />
               
               {/* Admin routes wrapped in ErrorBoundary */}
               <Route path="/admin/login" element={<AdminLogin />} />

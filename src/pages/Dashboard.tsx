@@ -29,6 +29,8 @@ import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { IdleWarning } from '@/components/IdleWarning';
 
 import { DailyWinnerPopup } from '@/components/DailyWinnerPopup';
+import { AgeGateModal } from '@/components/AgeGateModal';
+import { useAgeGateStatus } from '@/hooks/useAgeGateStatus';
 
 import BottomNav from '@/components/BottomNav';
 import gameBackground from '@/assets/game-background.png';
@@ -45,6 +47,7 @@ const Dashboard = () => {
   const { markActive } = useActivityTracker('route_view');
   const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
   const { walletData, serverDriftMs, refetchWallet } = useWallet(userId);
+  const { needsAgeGate, loading: ageGateLoading } = useAgeGateStatus(userId);
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
@@ -350,6 +353,14 @@ if (!profile) {
     <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
       background: 'transparent'
     }}>
+      {/* Age Gate Modal - MUST be first, blocks everything until completed */}
+      {needsAgeGate && !ageGateLoading && (
+        <AgeGateModal onSuccess={() => {
+          refreshProfile();
+          refetchWallet();
+        }} />
+      )}
+      
       {/* Pull-to-refresh indicator */}
       {isPulling && (
         <div 

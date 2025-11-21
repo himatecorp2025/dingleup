@@ -1643,6 +1643,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age_verified: boolean | null
           avatar_url: string | null
           birth_date: string
           coins: number | null
@@ -1650,7 +1651,9 @@ export type Database = {
           created_at: string | null
           daily_gift_last_claimed: string | null
           daily_gift_streak: number | null
+          device_id: string | null
           email: string
+          first_login_age_gate_completed: boolean | null
           help_2x_answer_active: boolean | null
           help_audience_active: boolean | null
           help_third_active: boolean | null
@@ -1660,6 +1663,8 @@ export type Database = {
           last_invitation_reward_reset: string | null
           last_life_regeneration: string | null
           last_username_change: string | null
+          legal_consent: boolean | null
+          legal_consent_at: string | null
           lives: number | null
           lives_regeneration_rate: number | null
           max_lives: number | null
@@ -1671,6 +1676,7 @@ export type Database = {
           welcome_bonus_claimed: boolean | null
         }
         Insert: {
+          age_verified?: boolean | null
           avatar_url?: string | null
           birth_date: string
           coins?: number | null
@@ -1678,7 +1684,9 @@ export type Database = {
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
+          device_id?: string | null
           email: string
+          first_login_age_gate_completed?: boolean | null
           help_2x_answer_active?: boolean | null
           help_audience_active?: boolean | null
           help_third_active?: boolean | null
@@ -1688,6 +1696,8 @@ export type Database = {
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           last_username_change?: string | null
+          legal_consent?: boolean | null
+          legal_consent_at?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
@@ -1699,6 +1709,7 @@ export type Database = {
           welcome_bonus_claimed?: boolean | null
         }
         Update: {
+          age_verified?: boolean | null
           avatar_url?: string | null
           birth_date?: string
           coins?: number | null
@@ -1706,7 +1717,9 @@ export type Database = {
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
+          device_id?: string | null
           email?: string
+          first_login_age_gate_completed?: boolean | null
           help_2x_answer_active?: boolean | null
           help_audience_active?: boolean | null
           help_third_active?: boolean | null
@@ -1716,6 +1729,8 @@ export type Database = {
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           last_username_change?: string | null
+          legal_consent?: boolean | null
+          legal_consent_at?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
