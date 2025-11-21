@@ -7,17 +7,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
+import { useI18n } from "@/i18n";
 
-const loginSchema = z.object({
-  username: z.string().trim().min(1, 'Add meg a felhasználóneved').regex(/^[^\s]+$/, 'A felhasználónév nem tartalmazhat szóközt'),
-  pin: z.string().regex(/^\d{6}$/, 'A PIN pontosan 6 számjegyből kell álljon'),
+const createLoginSchema = (t: (key: string) => string) => z.object({
+  username: z.string().trim().min(1, t('auth.login.validationUsernameRequired')).regex(/^[^\s]+$/, t('auth.login.validationUsernameNoSpaces')),
+  pin: z.string().regex(/^\d{6}$/, t('auth.login.validationPinFormat')),
 });
-
-type LoginForm = z.infer<typeof loginSchema>;
 
 const LoginNew = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useI18n();
+  
+  const loginSchema = createLoginSchema(t);
+  type LoginForm = z.infer<typeof loginSchema>;
   const [formData, setFormData] = useState<LoginForm>({
     username: "",
     pin: "",
@@ -55,8 +58,8 @@ const LoginNew = () => {
 
       if (loginError || loginData?.error) {
         toast({
-          title: "Hiba",
-          description: loginData?.error || "Hiba történt a bejelentkezés során",
+          title: t('auth.login.errorTitle'),
+          description: loginData?.error || t('auth.login.errorLoginFailed'),
           variant: "destructive",
         });
         return;
@@ -64,8 +67,8 @@ const LoginNew = () => {
 
       if (!loginData?.success || !loginData?.user?.email || !loginData?.passwordVariants) {
         toast({
-          title: "Hiba",
-          description: "Sikertelen bejelentkezés",
+          title: t('auth.login.errorTitle'),
+          description: t('auth.login.errorLoginUnsuccessful'),
           variant: "destructive",
         });
         return;
@@ -87,16 +90,16 @@ const LoginNew = () => {
 
       if (!signInSuccess) {
         toast({
-          title: "Hiba",
-          description: "Helytelen felhasználónév vagy PIN",
+          title: t('auth.login.errorTitle'),
+          description: t('auth.login.errorInvalidCredentials'),
           variant: "destructive",
         });
         return;
       }
 
       toast({
-        title: "Sikeres belépés!",
-        description: "Üdvözlünk vissza!",
+        title: t('auth.login.successTitle'),
+        description: t('auth.login.successMessage'),
       });
       navigate("/dashboard");
     } catch (error) {
@@ -111,8 +114,8 @@ const LoginNew = () => {
       } else {
         console.error('Login error:', error);
         toast({
-          title: "Hiba",
-          description: "Váratlan hiba történt",
+          title: t('auth.login.errorTitle'),
+          description: t('auth.login.errorUnexpected'),
           variant: "destructive",
         });
       }
@@ -141,7 +144,7 @@ const LoginNew = () => {
           <button 
             onClick={() => navigate('/auth/choice')} 
             className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" 
-            aria-label="Vissza"
+            aria-label={t('auth.login.backButton')}
           >
             <ArrowLeft className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
           </button>
@@ -159,15 +162,15 @@ const LoginNew = () => {
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)]">
-            Belépés
+            {t('auth.login.title')}
           </h1>
           <p className="text-center text-white/70 mb-6 text-sm font-medium">
-            Jelentkezz be a fiókodba
+            {t('auth.login.subtitle')}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-white/80">Felhasználónév</Label>
+              <Label className="text-sm font-medium text-white/80">{t('auth.login.usernameLabel')}</Label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
                 <Input
@@ -175,7 +178,7 @@ const LoginNew = () => {
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   className="h-12 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base"
-                  placeholder="felhasználónév"
+                  placeholder={t('auth.login.usernamePlaceholder')}
                   disabled={isLoading}
                 />
               </div>
@@ -183,7 +186,7 @@ const LoginNew = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-white/80">6 számjegyű PIN</Label>
+              <Label className="text-sm font-medium text-white/80">{t('auth.login.pinLabel')}</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
                 <Input
@@ -193,7 +196,7 @@ const LoginNew = () => {
                   value={formData.pin}
                   onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '').slice(0, 6) })}
                   className="h-12 pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base"
-                  placeholder="123456"
+                  placeholder={t('auth.login.pinPlaceholder')}
                   disabled={isLoading}
                   maxLength={6}
                 />
@@ -201,7 +204,7 @@ const LoginNew = () => {
                   type="button"
                   onClick={() => setShowPin(!showPin)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
-                  aria-label={showPin ? "PIN elrejtése" : "PIN megjelenítése"}
+                  aria-label={showPin ? t('auth.login.hidePin') : t('auth.login.showPin')}
                 >
                   {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -214,17 +217,17 @@ const LoginNew = () => {
               className="w-full h-12 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300 text-base"
               disabled={isLoading}
             >
-              {isLoading ? 'Belépés...' : 'Belépés'}
+              {isLoading ? t('auth.login.submittingButton') : t('auth.login.submitButton')}
             </Button>
           </form>
 
           <p className="text-center text-white/60 mt-6 text-sm">
-            Nincs még fiókod?{' '}
+            {t('auth.login.noAccountYet')}{' '}
             <button
               onClick={() => navigate('/auth/register')}
               className="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors"
             >
-              Regisztráció
+              {t('auth.login.registerLink')}
             </button>
           </p>
         </div>
