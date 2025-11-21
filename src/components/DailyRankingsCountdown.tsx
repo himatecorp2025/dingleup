@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Trophy } from 'lucide-react';
 import { useI18n } from '@/i18n/useI18n';
 
 interface DailyRankingsCountdownProps {
@@ -57,99 +56,100 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
 
   return (
     <div 
-      className="relative h-full flex items-center w-[180px] sm:w-[220px] md:w-[260px]"
+      className="relative flex items-center"
       style={{ 
-        clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
+        width: 'clamp(180px, 50vw, 260px)',
+        height: '80px',
       }}
     >
-      {/* BASE SHADOW (3D depth) */}
-      <div
+      {/* Inline SVG Background - Golden Hexagon */}
+      <svg 
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="22.53058 -47.5814116 672.82399 167.3667432"
+        fill="none"
+        shapeRendering="geometricPrecision"
+        colorInterpolationFilters="sRGB"
         className="absolute"
         style={{
-          top: '4px',
-          left: '4px',
-          right: '-4px',
-          bottom: '-4px',
-          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-          background: 'rgba(0,0,0,0.35)',
-          filter: 'blur(4px)',
+          width: '100%',
+          height: '100%',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%) scale(1.25, 1.5)',
+          filter: 'drop-shadow(0 0 8px rgba(234, 179, 8, 0.9)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.6))',
         }}
         aria-hidden
-      />
+      >
+        <defs>
+          <path id="HEX_COUNTDOWN" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
 
-      {/* OUTER GOLD FRAME (dark diagonal gradient) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-          background: 'linear-gradient(135deg, #B8860B, #DAA520 50%, #8B6914)',
-          boxShadow: 'inset 0 0 0 3px #FFD700, 0 0 30px rgba(255,215,0,0.8)',
-        }}
-        aria-hidden
-      />
+          <linearGradient id="bg_countdown" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#191534"/>
+            <stop offset="100%" stopColor="#0e0b1c"/>
+          </linearGradient>
 
-      {/* MIDDLE GOLD FRAME (bright inner highlight) */}
-      <div
-        className="absolute inset-[3px]"
-        style={{
-          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-          background: 'linear-gradient(180deg, #FFD700, #FDB931 40%, #D97706)',
-          boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.6)',
-        }}
-        aria-hidden
-      />
+          <linearGradient id="chromeGrad_countdown" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#f8fbff"/>
+            <stop offset="10%" stopColor="#c6ccd3"/>
+            <stop offset="22%" stopColor="#ffffff"/>
+            <stop offset="40%" stopColor="#9ea6b0"/>
+            <stop offset="58%" stopColor="#e7ebf0"/>
+            <stop offset="78%" stopColor="#bfc6cf"/>
+            <stop offset="100%" stopColor="#ffffff"/>
+          </linearGradient>
 
-      {/* INNER GOLDEN CRYSTAL */}
-      <div
-        className="absolute"
-        style={{
-          top: '6px',
-          left: '6px',
-          right: '6px',
-          bottom: '6px',
-          clipPath: 'polygon(8% 0.6%, 92% 0%, 100% 50%, 92% 100%, 8% 99.4%, 0% 50%)',
-          background: 'radial-gradient(ellipse 100% 80% at 50% -10%, #FFF9E6 0%, #FFE082 30%, #FDB931 60%, #F59E0B 100%)',
-          boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.4), inset 0 -12px 24px rgba(0,0,0,0.3)',
-        }}
-        aria-hidden
-      />
+          <linearGradient id="band20_countdown" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#FFF4CC"/>
+            <stop offset="35%" stopColor="#F6C453"/>
+            <stop offset="100%" stopColor="#B45309"/>
+          </linearGradient>
 
-      {/* SPECULAR HIGHLIGHT (top-left) */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          top: '8px',
-          left: '20%',
-          width: '30%',
-          height: '30%',
-          background: 'radial-gradient(ellipse 100% 100% at center, rgba(255,255,255,0.6) 0%, transparent 70%)',
-          filter: 'blur(4px)',
-        }}
-        aria-hidden
-      />
+          <linearGradient id="band5_countdown" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#FFFAE6"/>
+            <stop offset="50%" stopColor="#F6D365"/>
+            <stop offset="100%" stopColor="#CA8A04"/>
+          </linearGradient>
 
-      {/* CONTENT */}
-      <div className="relative z-10 flex items-center justify-center gap-2 w-full px-4">
-        <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-primary-dark drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
-        <div className="flex flex-col items-center">
-          <span className="text-[9px] sm:text-[10px] font-bold text-primary-dark/90 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] leading-tight whitespace-nowrap">
-            {t('countdown.tomorrow')}
-          </span>
-          <span className="text-[7px] sm:text-[8px] font-extrabold text-primary-dark drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] leading-none whitespace-nowrap mt-0.5">
+          <filter id="pro3d_countdown" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
+            <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
+          </filter>
+
+          <mask id="maskOuterOnly_countdown" maskUnits="userSpaceOnUse">
+            <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
+            <use href="#HEX_COUNTDOWN" stroke="white" strokeWidth="2" fill="none"/>
+            <use href="#HEX_COUNTDOWN" stroke="black" strokeWidth="25" fill="none"/>
+          </mask>
+        </defs>
+
+        <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
+
+        <g transform="scale(1,1.2)">
+          <use href="#HEX_COUNTDOWN" fill="black" fillOpacity="0.5"/>
+
+          <use href="#HEX_COUNTDOWN" fill="none" stroke="url(#band20_countdown)" strokeWidth="20"
+               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_countdown)"
+               vectorEffect="non-scaling-stroke"/>
+
+          <use href="#HEX_COUNTDOWN" fill="none" stroke="url(#band5_countdown)" strokeWidth="5"
+               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_countdown)"
+               vectorEffect="non-scaling-stroke"/>
+
+          <g mask="url(#maskOuterOnly_countdown)">
+            <use href="#HEX_COUNTDOWN" fill="none" stroke="url(#chromeGrad_countdown)" strokeWidth="2"
+                 strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
+          </g>
+        </g>
+      </svg>
+
+      {/* Content - Absolutely centered */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center m-0 p-0 bg-transparent">
+        <div className="flex items-center justify-center m-0 p-0 gap-0 leading-none [background:transparent] translate-y-[6px]">
+          <span className="text-[7px] sm:text-[8px] font-extrabold text-primary-dark drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] leading-none whitespace-nowrap">
             {timeRemaining}
           </span>
         </div>
       </div>
-
-      {/* HEXAGON GLOW EFFECT */}
-      <div
-        className="absolute inset-0 pointer-events-none animate-pulse"
-        style={{
-          clipPath: 'polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%)',
-          boxShadow: '0 0 40px rgba(255,215,0,0.6), inset 0 0 20px rgba(255,215,0,0.3)',
-        }}
-        aria-hidden
-      />
     </div>
   );
 };
