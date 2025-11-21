@@ -93,8 +93,8 @@ Deno.serve(async (req) => {
     }
 
     // TODO: Send reset email via Resend integration
-    // For now, we just return success
-    console.log('[request-pin-reset] Reset token generated for user:', profile.id, 'token:', resetToken);
+    // SECURITY: Never log reset tokens - they are sensitive credentials
+    console.log('[request-pin-reset] Reset token generated for user:', profile.id);
 
     return new Response(
       JSON.stringify({ 
