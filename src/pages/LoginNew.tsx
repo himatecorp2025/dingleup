@@ -62,7 +62,7 @@ const LoginNew = () => {
         return;
       }
 
-      if (!loginData?.success || !loginData?.user?.email || !loginData?.authPassword) {
+      if (!loginData?.success || !loginData?.user?.email || !loginData?.passwordVariants) {
         toast({
           title: "Hiba",
           description: "Sikertelen bejelentkezés",
@@ -71,14 +71,21 @@ const LoginNew = () => {
         return;
       }
 
-      // Sign in with Supabase using email and authPassword
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: loginData.user.email,
-        password: loginData.authPassword,
-      });
+      // Try signing in with password variants (handles migration edge cases)
+      let signInSuccess = false;
+      for (const password of loginData.passwordVariants) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: loginData.user.email,
+          password,
+        });
 
-      if (signInError) {
-        console.error('Sign in error:', signInError);
+        if (!signInError) {
+          signInSuccess = true;
+          break;
+        }
+      }
+
+      if (!signInSuccess) {
         toast({
           title: "Hiba",
           description: "Helytelen felhasználónév vagy PIN",

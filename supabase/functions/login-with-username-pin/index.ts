@@ -57,16 +57,14 @@ serve(async (req) => {
     // Check rate limiting
     const { data: rateLimitData } = await supabaseAdmin
       .from('login_attempts_pin')
-      .select('*')
+      .select('locked_until')
       .eq('username', normalizedUsername.toLowerCase())
       .maybeSingle();
 
-    if (rateLimitData) {
-      const now = new Date();
-      const lockedUntil = rateLimitData.locked_until ? new Date(rateLimitData.locked_until) : null;
-      
-      if (lockedUntil && lockedUntil > now) {
-        const minutesRemaining = Math.ceil((lockedUntil.getTime() - now.getTime()) / 60000);
+    if (rateLimitData?.locked_until) {
+      const lockedUntil = new Date(rateLimitData.locked_until);
+      if (lockedUntil > new Date()) {
+        const minutesRemaining = Math.ceil((lockedUntil.getTime() - Date.now()) / 60000);
         return new Response(
           JSON.stringify({ 
             error: `Túl sok sikertelen próbálkozás. Próbáld újra ${minutesRemaining} perc múlva.` 
@@ -76,22 +74,14 @@ serve(async (req) => {
       }
     }
 
-    // Find user by username
+    // Find user by username and get auth email (CRITICAL: need actual auth email!)
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('id, username, pin_hash')
       .ilike('username', normalizedUsername)
       .maybeSingle();
 
-    if (profileError) {
-      console.error('Profile lookup error:', profileError);
-      return new Response(
-        JSON.stringify({ error: 'Hiba történt a bejelentkezés során' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (!profile) {
+    if (profileError || !profile) {
       await recordFailedAttempt(supabaseAdmin, normalizedUsername);
       return new Response(
         JSON.stringify({ error: 'Helytelen felhasználónév vagy PIN' }),
@@ -101,15 +91,17 @@ serve(async (req) => {
 
     // Verify PIN hash
     const pinHash = await hashPin(pin);
-    const isValidPin = pinHash === profile.pin_hash;
-
-    if (!isValidPin) {
+    if (pinHash !== profile.pin_hash) {
       await recordFailedAttempt(supabaseAdmin, normalizedUsername);
       return new Response(
         JSON.stringify({ error: 'Helytelen felhasználónév vagy PIN' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Get actual auth email from auth.users (legacy users have gmail, new users have @dingleup.auto)
+    const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(profile.id);
+    const authEmail = authUser?.user?.email || `${profile.username.toLowerCase()}@dingleup.auto`;
 
     // Clear failed attempts
     await supabaseAdmin
@@ -118,33 +110,11 @@ serve(async (req) => {
       .eq('username', normalizedUsername.toLowerCase());
 
     // Return credentials for frontend to sign in
-    const autoEmail = `${profile.username.toLowerCase()}@dingleup.auto`;
-    let authPassword = pin + profile.username;
-    
-    // Try signing in with standard password first
-    let { error: testSignInError } = await supabaseAdmin.auth.signInWithPassword({
-      email: autoEmail,
-      password: authPassword,
-    });
-    
-    // If standard password fails, try with !@# suffix (for users where Supabase rejected weak password)
-    if (testSignInError) {
-      authPassword = pin + profile.username + '!@#';
-      const retrySignIn = await supabaseAdmin.auth.signInWithPassword({
-        email: autoEmail,
-        password: authPassword,
-      });
-      testSignInError = retrySignIn.error;
-    }
-    
-    // If still fails, the password doesn't match any known format
-    if (testSignInError) {
-      await recordFailedAttempt(supabaseAdmin, normalizedUsername);
-      return new Response(
-        JSON.stringify({ error: 'Helytelen felhasználónév vagy PIN' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    // Try multiple password formats (migration compatibility)
+    const passwordVariants = [
+      pin + profile.username,           // Standard: "123456Username"
+      pin + profile.username + '!@#',   // Weak password workaround: "123456Username!@#"
+    ];
 
     return new Response(
       JSON.stringify({ 
@@ -152,9 +122,9 @@ serve(async (req) => {
         user: {
           id: profile.id,
           username: profile.username,
-          email: autoEmail,
+          email: authEmail,
         },
-        authPassword,
+        passwordVariants, // Frontend will try these in order
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -174,31 +144,21 @@ async function recordFailedAttempt(supabaseAdmin: any, username: string) {
   
   const { data: existing } = await supabaseAdmin
     .from('login_attempts_pin')
-    .select('*')
+    .select('failed_attempts')
     .eq('username', normalizedUsername)
     .maybeSingle();
 
-  if (existing) {
-    const newAttempts = existing.failed_attempts + 1;
-    const shouldLock = newAttempts >= MAX_ATTEMPTS;
-    
-    await supabaseAdmin
-      .from('login_attempts_pin')
-      .update({
-        failed_attempts: newAttempts,
-        last_attempt_at: now.toISOString(),
-        locked_until: shouldLock 
-          ? new Date(now.getTime() + LOCKOUT_MINUTES * 60000).toISOString()
-          : null,
-      })
-      .eq('username', normalizedUsername);
-  } else {
-    await supabaseAdmin
-      .from('login_attempts_pin')
-      .insert({
-        username: normalizedUsername,
-        failed_attempts: 1,
-        last_attempt_at: now.toISOString(),
-      });
-  }
+  const newAttempts = (existing?.failed_attempts || 0) + 1;
+  const shouldLock = newAttempts >= MAX_ATTEMPTS;
+  
+  await supabaseAdmin
+    .from('login_attempts_pin')
+    .upsert({
+      username: normalizedUsername,
+      failed_attempts: newAttempts,
+      last_attempt_at: now.toISOString(),
+      locked_until: shouldLock 
+        ? new Date(now.getTime() + LOCKOUT_MINUTES * 60000).toISOString()
+        : null,
+    }, { onConflict: 'username' });
 }

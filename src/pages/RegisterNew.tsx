@@ -73,7 +73,7 @@ const RegisterNew = () => {
         return;
       }
 
-      if (!regData?.success) {
+      if (!regData?.success || !regData?.user) {
         toast({
           title: "Hiba",
           description: "Sikertelen regisztráció",
