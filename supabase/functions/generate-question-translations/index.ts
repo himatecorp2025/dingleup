@@ -94,8 +94,13 @@ Remember: Keep the same answer positions (A/B/C). The correct answer is marked a
         const errorText = await aiResponse.text();
         console.error(`[translate-retry] AI error for ${lang} (attempt ${attempt + 1}/${retries}):`, aiResponse.status, errorText);
         
-        if (aiResponse.status === 429 || aiResponse.status === 402) {
-          // Rate limit or payment error - retry after delay
+        // If payment required (out of credits), fail immediately without retry
+        if (aiResponse.status === 402) {
+          throw new Error('PAYMENT_REQUIRED: Lovable AI credits exhausted');
+        }
+        
+        // For rate limits, retry after delay
+        if (aiResponse.status === 429) {
           if (attempt < retries - 1) {
             console.log(`[translate-retry] Retrying after ${RETRY_DELAY}ms...`);
             await delay(RETRY_DELAY);
@@ -311,14 +316,24 @@ serve(async (req) => {
             const answers = question.answers as any[];
 
             // Translate with retry logic
-            const translated = await translateWithRetry(
-              LOVABLE_API_KEY,
-              question.id,
-              question.question,
-              answers,
-              question.correct_answer || 'A',
-              lang
-            );
+            let translated;
+            try {
+              translated = await translateWithRetry(
+                LOVABLE_API_KEY,
+                question.id,
+                question.question,
+                answers,
+                question.correct_answer || 'A',
+                lang
+              );
+            } catch (error) {
+              // If payment required, stop entire process immediately
+              if (error instanceof Error && error.message.includes('PAYMENT_REQUIRED')) {
+                console.error('[generate-question-translations] CRITICAL: Out of Lovable AI credits');
+                throw new Error('Lovable AI credits exhausted. Please add credits to your workspace at Settings → Workspace → Usage.');
+              }
+              throw error;
+            }
 
             if (!translated) {
               errors.push(`Translation failed for question ${question.id} (${lang}) after ${MAX_RETRIES} retries`);
