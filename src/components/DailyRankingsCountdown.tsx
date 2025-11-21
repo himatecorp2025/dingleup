@@ -77,7 +77,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%) scale(1.25, 1.5)',
-          filter: 'drop-shadow(0 0 8px rgba(234, 179, 8, 0.9)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.6))',
+          filter: 'drop-shadow(0 0 8px rgba(168, 85, 247, 0.9)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.6))',
         }}
         aria-hidden
       >
@@ -100,15 +100,15 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
           </linearGradient>
 
           <linearGradient id="band20_countdown" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#FFF4CC"/>
-            <stop offset="35%" stopColor="#F6C453"/>
-            <stop offset="100%" stopColor="#B45309"/>
+            <stop offset="0%" stopColor="#E8D9FF"/>
+            <stop offset="35%" stopColor="#A855F7"/>
+            <stop offset="100%" stopColor="#5B21B6"/>
           </linearGradient>
 
           <linearGradient id="band5_countdown" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#FFFAE6"/>
-            <stop offset="50%" stopColor="#F6D365"/>
-            <stop offset="100%" stopColor="#CA8A04"/>
+            <stop offset="0%" stopColor="#F3E9FF"/>
+            <stop offset="50%" stopColor="#C084FC"/>
+            <stop offset="100%" stopColor="#7C3AED"/>
           </linearGradient>
 
           <filter id="pro3d_countdown" x="-50%" y="-50%" width="200%" height="200%">
