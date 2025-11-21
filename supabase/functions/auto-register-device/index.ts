@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
 
 console.log('[auto-register-device] Function loaded');
 
@@ -48,6 +49,40 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // SECURITY: Rate limiting check (10 attempts per 15 minutes per device)
+    // Use device_id as identifier since user isn't authenticated yet
+    const tempUserId = `device:${device_id}`;
+    const supabaseAnon = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!);
+    
+    // Note: This is a simplified rate limit check without auth.uid()
+    // In production, consider IP-based rate limiting at infrastructure level
+    const { count: recentAttempts } = await supabase
+      .from('rpc_rate_limits')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', tempUserId)
+      .eq('rpc_name', 'auto-register-device')
+      .gte('window_start', new Date(Date.now() - 15 * 60 * 1000).toISOString());
+
+    if ((recentAttempts || 0) >= 10) {
+      console.log('[auto-register-device] Rate limit exceeded for device:', device_id.substring(0, 8));
+      return rateLimitExceeded(corsHeaders);
+    }
+
+    // Log this attempt (non-blocking, best effort)
+    try {
+      await supabase
+        .from('rpc_rate_limits')
+        .insert({
+          user_id: tempUserId,
+          rpc_name: 'auto-register-device',
+          window_start: new Date(Date.now()).toISOString(),
+          call_count: 1
+        });
+    } catch (logError) {
+      // Non-critical, continue
+      console.error('[auto-register-device] Rate limit log error:', logError);
+    }
 
     console.log('[auto-register-device] Processing device_id:', device_id.substring(0, 8) + '...');
 

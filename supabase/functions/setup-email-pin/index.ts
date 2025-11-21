@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
 import * as bcrypt from 'https://deno.land/x/bcrypt@v0.4.1/mod.ts';
 
 console.log('[setup-email-pin] Function loaded');
@@ -64,6 +65,13 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: 'Érvénytelen session' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // SECURITY: Rate limiting check (5 attempts per 15 minutes)
+    const rateLimitResult = await checkRateLimit(supabase, 'setup-email-pin', RATE_LIMITS.AUTH);
+    if (!rateLimitResult.allowed) {
+      console.log('[setup-email-pin] Rate limit exceeded for user:', user.id);
+      return rateLimitExceeded(corsHeaders);
     }
 
     // Ellenőrizd, hogy az email még nem foglalt
