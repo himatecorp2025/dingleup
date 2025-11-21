@@ -1,49 +1,19 @@
 import { useNavigate } from 'react-router-dom';
-import { useI18n } from '@/i18n';
 import { Button } from '@/components/ui/button';
 import { UserPlus, LogIn, Loader2 } from 'lucide-react';
 import { useAutoRegister } from '@/hooks/useAutoRegister';
 import dingleupLogo from '@/assets/dingleup-logo-circle.png';
 
 export default function AccountChoice() {
-  console.log('[AccountChoice] Component rendering');
   const navigate = useNavigate();
-  
-  // Safe I18n hook with error boundary
-  let t: any;
-  try {
-    const i18n = useI18n();
-    t = i18n.t;
-  } catch (err) {
-    console.error('[AccountChoice] I18n error:', err);
-    // Fallback translation function
-    t = (key: string) => {
-      const fallbacks: Record<string, string> = {
-        'auth.accountChoice.title': 'Üdvözlünk!',
-        'auth.accountChoice.description': 'Válassz az alábbi lehetőségek közül',
-        'auth.accountChoice.noAccountButton': 'Nincs fiókom - Regisztráció',
-        'auth.accountChoice.hasAccountButton': 'Van fiókom - Bejelentkezés',
-      };
-      return fallbacks[key] || key;
-    };
-  }
-  
   const { isReady, error } = useAutoRegister();
-  
-  console.log('[AccountChoice] Hook values - isReady:', isReady, 'error:', error);
 
   const handleNoAccount = () => {
-    console.log('[AccountChoice] handleNoAccount clicked, isReady:', isReady);
-    if (!isReady) {
-      console.log('[AccountChoice] Button disabled, registration not ready');
-      return;
-    }
-    console.log('[AccountChoice] Navigating to dashboard...');
+    if (!isReady) return;
     navigate('/dashboard');
   };
 
   const handleHasAccount = () => {
-    console.log('[AccountChoice] handleHasAccount clicked');
     navigate('/auth/login');
   };
 
@@ -67,10 +37,10 @@ export default function AccountChoice() {
             DingleUP!
           </h1>
           <h2 className="text-2xl font-bold text-white">
-            {t('auth.accountChoice.title')}
+            Üdvözlünk!
           </h2>
           <p className="text-white/70 text-sm">
-            {t('auth.accountChoice.description')}
+            Válassz az alábbi lehetőségek közül
           </p>
           
           {/* Loading indicator */}
@@ -107,7 +77,7 @@ export default function AccountChoice() {
               <>
                 <UserPlus className="mr-3 h-6 w-6 flex-shrink-0" />
                 <span className="text-left leading-tight">
-                  {t('auth.accountChoice.noAccountButton')}
+                  Nincs fiókom - Regisztráció
                 </span>
               </>
             )}
@@ -119,7 +89,7 @@ export default function AccountChoice() {
           >
             <LogIn className="mr-3 h-6 w-6 flex-shrink-0" />
             <span className="text-left leading-tight">
-              {t('auth.accountChoice.hasAccountButton')}
+              Van fiókom - Bejelentkezés
             </span>
           </Button>
         </div>
