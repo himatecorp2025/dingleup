@@ -58,8 +58,9 @@ const Dashboard = () => {
   const [dailyGiftJustClaimed, setDailyGiftJustClaimed] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
-  // Age-gate modal state
+  // Age-gate modal state - ABSOLUTE PRIORITY GATE
   const [showAgeGate, setShowAgeGate] = useState(false);
+  const [ageGateCompleted, setAgeGateCompleted] = useState(false);
   
   // Pull-to-refresh functionality
   const { isPulling, pullProgress } = usePullToRefresh({
@@ -138,39 +139,41 @@ const Dashboard = () => {
     }
   }, [searchParams, setSearchParams]);
 
-  // Check age-gate FIRST (highest priority) - before any dialogs
+  // Check age-gate FIRST (ABSOLUTE PRIORITY) - blocks ALL other popups until completed
   useEffect(() => {
     if (profile && !loading) {
       // Show age-gate if birth_date is missing or age_verified is false
       if (!profile.age_verified || !profile.birth_date) {
         setShowAgeGate(true);
+        setAgeGateCompleted(false); // Block all other popups
       } else {
         setShowAgeGate(false);
+        setAgeGateCompleted(true); // Age gate already completed - allow other popups
       }
     }
   }, [profile, loading]);
 
-  // Show Welcome Bonus dialog SECOND (after age-gate) - instant, 0 seconds delay
+  // Show Welcome Bonus dialog SECOND (after age-gate COMPLETED) - instant, 0 seconds delay
   useEffect(() => {
-    if (canMountModals && canClaimWelcome && userId && !showAgeGate) {
+    if (canMountModals && canClaimWelcome && userId && ageGateCompleted && !showAgeGate) {
       setShowWelcomeBonus(true);
       setShowPopup(false);
     }
-  }, [canMountModals, canClaimWelcome, userId, showAgeGate]);
+  }, [canMountModals, canClaimWelcome, userId, ageGateCompleted, showAgeGate]);
 
-  // Show Daily Gift dialog THIRD (after age-gate and welcome bonus) - AUTOMATIC, no auto-claim
+  // Show Daily Gift dialog THIRD (after age-gate COMPLETED and welcome bonus) - AUTOMATIC, no auto-claim
   useEffect(() => {
-    if (canMountModals && canClaim && !showAgeGate && !showWelcomeBonus && userId) {
+    if (canMountModals && canClaim && ageGateCompleted && !showAgeGate && !showWelcomeBonus && userId) {
       setShowPopup(true);
     }
-  }, [canMountModals, canClaim, showAgeGate, showWelcomeBonus, userId]);
+  }, [canMountModals, canClaim, ageGateCompleted, showAgeGate, showWelcomeBonus, userId]);
 
-  // Show Daily Winners popup FOURTH (after age-gate, Daily Gift is handled)
+  // Show Daily Winners popup FOURTH (after age-gate COMPLETED, Daily Gift is handled)
   useEffect(() => {
-    if (canMountModals && canShowDailyPopup && !showAgeGate && !showWelcomeBonus && !showPopup && userId && dailyGiftJustClaimed) {
+    if (canMountModals && canShowDailyPopup && ageGateCompleted && !showAgeGate && !showWelcomeBonus && !showPopup && userId && dailyGiftJustClaimed) {
       triggerDailyWinnersPopup();
     }
-  }, [canMountModals, canShowDailyPopup, showAgeGate, showWelcomeBonus, showPopup, userId, dailyGiftJustClaimed, triggerDailyWinnersPopup]);
+  }, [canMountModals, canShowDailyPopup, ageGateCompleted, showAgeGate, showWelcomeBonus, showPopup, userId, dailyGiftJustClaimed, triggerDailyWinnersPopup]);
 
 
 
@@ -396,13 +399,14 @@ if (!profile) {
           pointerEvents: 'none'
         }}
       />
-    {/* Age-gate modal (HIGHEST PRIORITY - blocks everything) */}
+    {/* Age-gate modal (ABSOLUTE PRIORITY - blocks ALL popups until completed) */}
     {userId && (
       <AgeGateModal 
         open={showAgeGate} 
         userId={userId} 
         onSuccess={() => {
           setShowAgeGate(false);
+          setAgeGateCompleted(true); // Unblock other popups ONLY after successful completion
           refreshProfile();
         }} 
       />
