@@ -7,8 +7,27 @@ import dingleupLogo from '@/assets/dingleup-logo-circle.png';
 
 export default function AccountChoice() {
   console.log('[AccountChoice] Component rendering');
-  const { t } = useI18n();
   const navigate = useNavigate();
+  
+  // Safe I18n hook with error boundary
+  let t: any;
+  try {
+    const i18n = useI18n();
+    t = i18n.t;
+  } catch (err) {
+    console.error('[AccountChoice] I18n error:', err);
+    // Fallback translation function
+    t = (key: string) => {
+      const fallbacks: Record<string, string> = {
+        'auth.accountChoice.title': 'Üdvözlünk!',
+        'auth.accountChoice.description': 'Válassz az alábbi lehetőségek közül',
+        'auth.accountChoice.noAccountButton': 'Nincs fiókom - Regisztráció',
+        'auth.accountChoice.hasAccountButton': 'Van fiókom - Bejelentkezés',
+      };
+      return fallbacks[key] || key;
+    };
+  }
+  
   const { isReady, error } = useAutoRegister();
   
   console.log('[AccountChoice] Hook values - isReady:', isReady, 'error:', error);
