@@ -35,7 +35,7 @@ export const BiometricSetupDialog = ({ onSuccess, onSkip }: BiometricSetupDialog
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast({
-          title: 'Nincs aktív munkamenet',
+          title: t('auth.biometric.errorNoSession'),
           variant: 'destructive',
         });
         setIsSubmitting(false);
@@ -71,7 +71,7 @@ export const BiometricSetupDialog = ({ onSuccess, onSkip }: BiometricSetupDialog
 
       if (!credential) {
         toast({
-          title: 'Biometrikus regisztráció megszakítva',
+          title: t('auth.biometric.errorCanceled'),
           variant: 'destructive',
         });
         setIsSubmitting(false);
@@ -90,7 +90,7 @@ export const BiometricSetupDialog = ({ onSuccess, onSkip }: BiometricSetupDialog
       if (error) {
         console.error('[BiometricSetupDialog] Error:', error);
         toast({
-          title: error.message || 'Hiba történt',
+          title: error.message || t('auth.biometric.errorGeneric'),
           variant: 'destructive',
         });
         setIsSubmitting(false);
@@ -106,7 +106,7 @@ export const BiometricSetupDialog = ({ onSuccess, onSkip }: BiometricSetupDialog
     } catch (err) {
       console.error('[BiometricSetupDialog] Unexpected error:', err);
       toast({
-        title: 'Biometrikus regisztráció sikertelen',
+        title: t('auth.biometric.errorUnexpected'),
         variant: 'destructive',
       });
     } finally {
@@ -137,7 +137,7 @@ export const BiometricSetupDialog = ({ onSuccess, onSkip }: BiometricSetupDialog
             className="w-full h-12 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold text-lg"
           >
             <Fingerprint className="mr-2 h-5 w-5" />
-            {isSubmitting ? 'Engedélyezés...' : t('auth.biometric.enableButton')}
+            {isSubmitting ? t('auth.biometric.submitting') : t('auth.biometric.enableButton')}
           </Button>
 
           <Button
