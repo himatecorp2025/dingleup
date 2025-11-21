@@ -39,7 +39,7 @@ export interface UserProfile {
   id: string;
   username: string;
   email: string;
-  birth_date: string;
+  birth_date: string | null;
   coins: number;
   lives: number;
   max_lives: number;
@@ -59,6 +59,9 @@ export interface UserProfile {
   country_code: string | null;
   created_at: string;
   updated_at: string;
+  age_verified: boolean | null;
+  age_consent: boolean | null;
+  terms_accepted_at: string | null;
 }
 
 export interface WeeklyRanking {
