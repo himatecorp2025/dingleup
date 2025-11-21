@@ -43,18 +43,22 @@ export default function AccountChoice() {
         <div className="space-y-4">
           <Button
             onClick={handleNoAccount}
-            className="w-full h-16 text-lg font-bold bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg shadow-green-500/50 transition-all transform hover:scale-105"
+            className="w-full h-20 text-base font-bold bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg shadow-green-500/50 transition-all transform hover:scale-105 flex items-center justify-start px-6"
           >
-            <UserPlus className="mr-2 h-6 w-6" />
-            {t('auth.accountChoice.noAccountButton')}
+            <UserPlus className="mr-3 h-6 w-6 flex-shrink-0" />
+            <span className="text-left leading-tight">
+              {t('auth.accountChoice.noAccountButton')}
+            </span>
           </Button>
 
           <Button
             onClick={handleHasAccount}
-            className="w-full h-16 text-lg font-bold bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/50 transition-all transform hover:scale-105"
+            className="w-full h-20 text-base font-bold bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/50 transition-all transform hover:scale-105 flex items-center justify-start px-6"
           >
-            <LogIn className="mr-2 h-6 w-6" />
-            {t('auth.accountChoice.hasAccountButton')}
+            <LogIn className="mr-3 h-6 w-6 flex-shrink-0" />
+            <span className="text-left leading-tight">
+              {t('auth.accountChoice.hasAccountButton')}
+            </span>
           </Button>
         </div>
       </div>
