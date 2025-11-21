@@ -55,6 +55,7 @@ Deno.serve(async (req) => {
     const userId = user.id;
     const body: GetPersonalizedQuestionsRequest = await req.json();
     const numberOfQuestions = body.numberOfQuestions || 15;
+    const lang = (body as any).lang || 'en'; // Language for question translations
 
     // Get total answered count
     const { data: statsData, error: statsError } = await supabaseClient
@@ -91,13 +92,33 @@ Deno.serve(async (req) => {
         throw questionsError;
       }
 
-      // Shuffle and select
+      // Fetch translations for selected questions
       const shuffled = allQuestions?.sort(() => Math.random() - 0.5) || [];
-      questions = shuffled.slice(0, numberOfQuestions).map(q => ({
-        questionId: q.id,
-        topicId: String(q.topic_id),
-        topicName: (q.topics as any)?.name || `Topic ${q.topic_id}`,
-      }));
+      const selectedIds = shuffled.slice(0, numberOfQuestions).map(q => q.id);
+      
+      const { data: translations } = await supabaseClient
+        .from('question_translations')
+        .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
+        .in('question_id', selectedIds)
+        .in('lang', [lang, 'en', 'hu']);
+
+      questions = selectedIds.map(id => {
+        const q = shuffled.find(sq => sq.id === id)!;
+        const tr = translations?.find(t => t.question_id === id && t.lang === lang) ||
+                   translations?.find(t => t.question_id === id && t.lang === 'en') ||
+                   translations?.find(t => t.question_id === id && t.lang === 'hu');
+        
+        return {
+          questionId: id,
+          topicId: String(q.topic_id),
+          topicName: (q.topics as any)?.name || `Topic ${q.topic_id}`,
+          lang: tr?.lang || 'hu',
+          questionText: tr?.question_text || '',
+          answerA: tr?.answer_a || '',
+          answerB: tr?.answer_b || '',
+          answerC: tr?.answer_c || '',
+        };
+      }).filter(q => q.questionText);
     } else {
       // Personalized 70/20/10 distribution
       preferredTopicsCount = Math.floor(numberOfQuestions * 0.7);
@@ -165,15 +186,32 @@ Deno.serve(async (req) => {
         .sort(() => Math.random() - 0.5)
         .slice(0, dislikedTopicsCount);
 
-      // Combine and shuffle
-      const combined = [...preferred, ...newQs, ...disliked];
-      questions = combined
-        .sort(() => Math.random() - 0.5)
-        .map(q => ({
+      // Combine, shuffle, and fetch translations
+      const combined = [...preferred, ...newQs, ...disliked].sort(() => Math.random() - 0.5);
+      const selectedIds = combined.map(q => q.id);
+      
+      const { data: translations } = await supabaseClient
+        .from('question_translations')
+        .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
+        .in('question_id', selectedIds)
+        .in('lang', [lang, 'en', 'hu']);
+
+      questions = combined.map(q => {
+        const tr = translations?.find(t => t.question_id === q.id && t.lang === lang) ||
+                   translations?.find(t => t.question_id === q.id && t.lang === 'en') ||
+                   translations?.find(t => t.question_id === q.id && t.lang === 'hu');
+        
+        return {
           questionId: q.id,
           topicId: String(q.topic_id),
           topicName: (q.topics as any)?.name || `Topic ${q.topic_id}`,
-        }));
+          lang: tr?.lang || 'hu',
+          questionText: tr?.question_text || '',
+          answerA: tr?.answer_a || '',
+          answerB: tr?.answer_b || '',
+          answerC: tr?.answer_c || '',
+        };
+      }).filter(q => q.questionText);
 
       // Log to seen history
       if (questions.length > 0) {
