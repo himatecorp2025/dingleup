@@ -119,7 +119,32 @@ serve(async (req) => {
 
     // Return credentials for frontend to sign in
     const autoEmail = `${profile.username.toLowerCase()}@dingleup.auto`;
-    const authPassword = pin + profile.username;
+    let authPassword = pin + profile.username;
+    
+    // Try signing in with standard password first
+    let { error: testSignInError } = await supabaseAdmin.auth.signInWithPassword({
+      email: autoEmail,
+      password: authPassword,
+    });
+    
+    // If standard password fails, try with !@# suffix (for users where Supabase rejected weak password)
+    if (testSignInError) {
+      authPassword = pin + profile.username + '!@#';
+      const retrySignIn = await supabaseAdmin.auth.signInWithPassword({
+        email: autoEmail,
+        password: authPassword,
+      });
+      testSignInError = retrySignIn.error;
+    }
+    
+    // If still fails, the password doesn't match any known format
+    if (testSignInError) {
+      await recordFailedAttempt(supabaseAdmin, normalizedUsername);
+      return new Response(
+        JSON.stringify({ error: 'Helytelen felhasználónév vagy PIN' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     return new Response(
       JSON.stringify({ 
