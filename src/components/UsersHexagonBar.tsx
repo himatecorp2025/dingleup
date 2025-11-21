@@ -45,7 +45,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           width: '100%',
-          height: '150%',
+          height: '200%',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
