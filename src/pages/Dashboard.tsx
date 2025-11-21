@@ -419,12 +419,14 @@ if (!profile) {
       onStayActive={handleStayActive} 
     />
     
-    {/* Daily winner popup - shows if user won yesterday */}
-    <DailyWinnerPopup userId={userId} />
+    {/* Daily winner popup - shows if user won yesterday (only after age gate completed) */}
+    {ageGateCompleted && !showAgeGate && (
+      <DailyWinnerPopup userId={userId} />
+    )}
     
-    {/* Daily Winners Dialog - tegnapi TOP 10 */}
+    {/* Daily Winners Dialog - tegnapi TOP 10 (only after age gate completed) */}
     <DailyWinnersDialog 
-      open={showDailyWinnersPopup} 
+      open={ageGateCompleted && !showAgeGate && showDailyWinnersPopup} 
       onClose={closeDailyWinnersPopup} 
     />
     
@@ -739,9 +741,9 @@ if (!profile) {
           {/* Ranglista Button (moved above) removed here */}
       </div>
 
-      {/* Welcome bonus dialog - FIRST */}
+      {/* Welcome bonus dialog - FIRST (only after age gate completed) */}
         <WelcomeBonusDialog
-          open={showWelcomeBonus}
+          open={ageGateCompleted && !showAgeGate && showWelcomeBonus}
           onClaim={handleClaimWelcomeBonus}
           onLater={() => {
             handleWelcomeLater();
@@ -749,10 +751,10 @@ if (!profile) {
           }}
           claiming={claimingWelcome}
         />
-
-      {/* Daily gift dialog - SECOND - manual trigger */}
-      <DailyGiftDialog
-        open={showPopup}
+ 
+       {/* Daily gift dialog - SECOND - manual trigger (only after age gate completed) */}
+       <DailyGiftDialog
+        open={ageGateCompleted && !showAgeGate && showPopup}
         onClaim={handleClaimDailyGift}
         onLater={handleCloseDailyGift}
         weeklyEntryCount={weeklyEntryCount}
