@@ -24,7 +24,6 @@ const BATCH_SIZE = 10; // Increased batch size for faster processing
 const DELAY_BETWEEN_BATCHES = 3000; // 3 seconds delay
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 10000; // 10 seconds between retries
-const MAX_WORK_TIME_MS = 240000; // 4 minutes max per run (leaves 1min safety buffer before 5min timeout)
 const MAX_QUESTIONS_PER_RUN = 150; // Process max 150 questions per invocation
 
 async function delay(ms: number) {
@@ -227,7 +226,6 @@ serve(async (req) => {
 
     const totalQuestions = questions.length;
     const totalOperations = totalQuestions * TARGET_LANGUAGES.length;
-    const startTime = Date.now();
 
     // Broadcast initial progress
     await progressChannel.send({
@@ -243,33 +241,14 @@ serve(async (req) => {
       }
     });
 
-    // Process questions in batches with time limit
+    // Process questions in batches
     let processedQuestions = 0;
     for (let i = 0; i < questions.length; i += BATCH_SIZE) {
-      // Check time limit before starting new batch
-      const elapsedTime = Date.now() - startTime;
-      if (elapsedTime > MAX_WORK_TIME_MS) {
-        console.log(`[generate-question-translations] Time limit reached (${Math.floor(elapsedTime / 1000)}s). Stopping gracefully.`);
-        await progressChannel.send({
-          type: 'broadcast',
-          event: 'progress',
-          payload: {
-            progress: Math.floor((processedQuestions / totalQuestions) * 100),
-            status: `Időlimit elérve. ${processedQuestions}/${totalQuestions} kérdés feldolgozva ebben a futásban.`,
-            translated: translatedCount,
-            skipped: skippedCount,
-            errors: errors.length,
-            total: totalQuestions
-          }
-        });
-        break;
-      }
-
       const batch = questions.slice(i, i + BATCH_SIZE);
       const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
       const totalBatches = Math.ceil(questions.length / BATCH_SIZE);
       
-      console.log(`[generate-question-translations] Processing batch ${batchNumber}/${totalBatches} (elapsed: ${Math.floor(elapsedTime / 1000)}s)`);
+      console.log(`[generate-question-translations] Processing batch ${batchNumber}/${totalBatches}`);
 
       // Broadcast batch progress
       const currentProgress = Math.floor((i / totalQuestions) * 100);
