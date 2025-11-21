@@ -120,42 +120,34 @@ export const QuestionTranslationManager = () => {
         return;
       }
 
-      // Edge function will broadcast progress via channel
-      const { data, error } = await supabase.functions.invoke('generate-question-translations', {
+      // FIRE AND FORGET: Don't wait for response, just monitor broadcast channel
+      // The edge function will take 15-20 minutes to complete, which exceeds timeout
+      supabase.functions.invoke('generate-question-translations', {
         headers: { Authorization: `Bearer ${session.access_token}` }
+      }).then(({ data, error }) => {
+        if (error) {
+          console.error('[QuestionTranslationManager] Edge function error:', error);
+          // Don't show error to user if it's timeout - real-time updates will continue
+          if (error.message && !error.message.includes('Failed to send')) {
+            toast.error('Hiba történt a fordítás indításakor');
+            setIsTranslating(false);
+          }
+          return;
+        }
+
+        // Final success confirmation (if edge function completes before timeout)
+        console.log('[QuestionTranslationManager] Edge function completed:', data);
+        if (data?.translated !== undefined) {
+          toast.success(`Fordítás befejezve! ${data.translated} új fordítás létrehozva.`);
+        }
       });
 
-      if (error) {
-        console.error('[QuestionTranslationManager] Error:', error);
-        toast.error('Hiba történt a fordítás közben');
-        setStatus('Hiba történt');
-        setIsTranslating(false);
-        return;
-      }
-
-      // Final state will be set by broadcast, but ensure completion
-      if (data.translated !== undefined) {
-        setProgress(100);
-        setStatus('Fordítás befejezve!');
-        setStats({
-          translated: data.translated || 0,
-          skipped: data.skipped || 0,
-          errors: data.errors?.length || 0
-        });
-      }
-
-      toast.success(`Fordítás sikeres! ${data.translated} új fordítás létrehozva.`);
-
-      if (data.errors && data.errors.length > 0) {
-        console.warn('[QuestionTranslationManager] Errors:', data.errors);
-        toast.warning(`${data.errors.length} hiba történt a fordítás során. Ellenőrizd a console-t.`);
-      }
+      // Show confirmation that translation started
+      toast.info('Fordítás elindítva! Figyeld a folyamatjelzőt a valós idejű frissítésekhez.');
 
     } catch (error) {
       console.error('[QuestionTranslationManager] Exception:', error);
-      toast.error('Váratlan hiba történt');
-      setStatus('Váratlan hiba');
-    } finally {
+      toast.error('Hiba történt a fordítás indításakor');
       setIsTranslating(false);
     }
   };
