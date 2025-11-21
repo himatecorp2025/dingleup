@@ -44,12 +44,13 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { date_of_birth, consent_checked } = await req.json();
+    const body = await req.json();
+    const { date_of_birth, consent_checked } = body;
 
     console.log('[verify-age] Processing age verification for user:', user.id);
 
-    // Validate inputs
-    if (!consent_checked) {
+    // SECURITY: Comprehensive input validation
+    if (typeof consent_checked !== 'boolean' || !consent_checked) {
       console.log('[verify-age] Consent not checked');
       return new Response(
         JSON.stringify({ error: 'consent_required' }),
@@ -57,17 +58,55 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (!date_of_birth) {
-      console.log('[verify-age] Invalid date of birth');
+    if (!date_of_birth || typeof date_of_birth !== 'string') {
+      console.log('[verify-age] Invalid date of birth format');
       return new Response(
         JSON.stringify({ error: 'invalid_dob' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Calculate age
+    // Validate date format (YYYY-MM-DD)
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+    if (!datePattern.test(date_of_birth)) {
+      console.log('[verify-age] Invalid date format');
+      return new Response(
+        JSON.stringify({ error: 'invalid_dob_format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Calculate age with validation
     const birthDate = new Date(date_of_birth);
     const today = new Date();
+    
+    // Check if date is valid
+    if (isNaN(birthDate.getTime())) {
+      console.log('[verify-age] Invalid date value');
+      return new Response(
+        JSON.stringify({ error: 'invalid_dob_value' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check if date is not in the future
+    if (birthDate > today) {
+      console.log('[verify-age] Future date not allowed');
+      return new Response(
+        JSON.stringify({ error: 'future_date_not_allowed' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check reasonable date range (not before 1900)
+    const minDate = new Date('1900-01-01');
+    if (birthDate < minDate) {
+      console.log('[verify-age] Date too old');
+      return new Response(
+        JSON.stringify({ error: 'invalid_dob_range' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
     

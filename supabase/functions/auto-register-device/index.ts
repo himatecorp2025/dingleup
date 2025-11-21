@@ -14,12 +14,33 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { device_id } = await req.json();
+    const body = await req.json();
+    const { device_id } = body;
 
-    if (!device_id) {
-      console.error('[auto-register-device] Missing device_id');
+    // SECURITY: Comprehensive input validation
+    if (!device_id || typeof device_id !== 'string') {
+      console.error('[auto-register-device] Missing or invalid device_id');
       return new Response(
-        JSON.stringify({ error: 'device_id is required' }),
+        JSON.stringify({ error: 'device_id must be a valid string' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate device_id format (alphanumeric, hyphens, underscores only)
+    const deviceIdPattern = /^[a-zA-Z0-9_-]+$/;
+    if (!deviceIdPattern.test(device_id)) {
+      console.error('[auto-register-device] Invalid device_id format');
+      return new Response(
+        JSON.stringify({ error: 'device_id contains invalid characters' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate length (16-128 characters)
+    if (device_id.length < 16 || device_id.length > 128) {
+      console.error('[auto-register-device] Invalid device_id length');
+      return new Response(
+        JSON.stringify({ error: 'device_id must be between 16-128 characters' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
