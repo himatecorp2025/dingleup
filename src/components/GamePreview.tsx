@@ -569,7 +569,7 @@ const GamePreview = () => {
     
     // Always show banner first - DO NOT check for insufficient coins here
     setErrorBannerVisible(true);
-    setErrorBannerMessage(`⏰ Lejárt az idő - ${TIMEOUT_CONTINUE_COST} aranyérme`);
+    setErrorBannerMessage(t('game.timeout_message').replace('{cost}', TIMEOUT_CONTINUE_COST.toString()));
   };
 
   const shuffleAnswers = (questionSet: any[]): Question[] => {
@@ -717,7 +717,7 @@ const GamePreview = () => {
     // DO NOT check for insufficient coins here - only when they try to continue
     setTimeout(() => {
       setErrorBannerVisible(true);
-      setErrorBannerMessage(`❌ Rossz válasz - ${CONTINUE_AFTER_WRONG_COST} aranyérme`);
+      setErrorBannerMessage(t('game.wrong_answer_message').replace('{cost}', CONTINUE_AFTER_WRONG_COST.toString()));
     }, 500);
   };
 
@@ -754,27 +754,27 @@ const GamePreview = () => {
       toast.success(
         <div className="flex flex-col gap-2 p-1.5">
           <div className="text-center text-base font-black mb-1 bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent">
-            🏆 JÁTÉK VÉGE! 🏆
+            {t('game.game_over')}
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
               <div className="text-lg mb-0.5">✅</div>
               <div className="font-bold text-green-400">{correctAnswers}/15</div>
-              <div className="text-[10px] opacity-70">Helyes</div>
+              <div className="text-[10px] opacity-70">{t('game.correct')}</div>
             </div>
             <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
               <div className="text-lg mb-0.5">💰</div>
               <div className="font-bold text-yellow-400">{coinsEarned}</div>
-              <div className="text-[10px] opacity-70">Arany</div>
+              <div className="text-[10px] opacity-70">{t('game.gold')}</div>
             </div>
             <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
               <div className="text-lg mb-0.5">⚡</div>
               <div className="font-bold text-blue-400">{avgResponseTime}s</div>
-              <div className="text-[10px] opacity-70">Idő</div>
+              <div className="text-[10px] opacity-70">{t('game.time')}</div>
             </div>
           </div>
           <div className="text-center mt-1 text-xs font-bold animate-pulse text-white/90">
-            ⬆️ Görgess tovább új játékhoz! ⬆️
+            {t('game.swipe_up_new_game')}
           </div>
         </div>,
         {
@@ -1154,7 +1154,7 @@ const GamePreview = () => {
   if (profileLoading || !userId) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
-        <div className="relative z-10 text-white">Betöltés...</div>
+        <div className="relative z-10 text-white">{t('game.loading')}</div>
       </div>
     );
   }
@@ -1163,9 +1163,9 @@ const GamePreview = () => {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
         <div className="relative z-10 text-white flex flex-col items-center gap-4">
-          <p>Hiba a profil betöltésekor</p>
+          <p>{t('game.profile_load_error')}</p>
           <Button onClick={() => navigate('/dashboard')} variant="outline">
-            Vissza
+            {t('common.back')}
           </Button>
         </div>
       </div>
@@ -1249,10 +1249,10 @@ const GamePreview = () => {
               <div className="relative text-white px-6 py-3 font-bold text-xs text-center animate-fade-in" style={{ transform: 'translateZ(60px)', textShadow: '0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6), 1px 1px 0 rgba(0,0,0,1), -1px -1px 0 rgba(0,0,0,1), 1px -1px 0 rgba(0,0,0,1), -1px 1px 0 rgba(0,0,0,1)' }}>
                 <div className="mb-1">{errorBannerMessage}</div>
                 <div className="text-[10px] opacity-90">
-                  ⬆️ Felfelé: tovább ({continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} 🪙 levonva)
+                  {t('game.swipe_up_continue').replace('{cost}', (continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST).toString())}
                 </div>
                 <div className="text-[10px] opacity-90">
-                  ⬇️ Lefelé: kilépés (nyeremény megőrzése)
+                  {t('game.swipe_down_exit')}
                 </div>
               </div>
             </div>

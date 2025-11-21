@@ -1,7 +1,9 @@
 import { Volume2, VolumeX } from 'lucide-react';
 import { useAudioStore } from '@/stores/audioStore';
+import { useI18n } from '@/i18n';
 
 export const BackgroundMusicControl = () => {
+  const { t } = useI18n();
   const { musicEnabled, volume, setMusicEnabled, setVolume } = useAudioStore();
 
   return (
@@ -24,13 +26,13 @@ export const BackgroundMusicControl = () => {
       <div className="relative z-10">
         <h2 className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-glow to-primary mb-3 sm:mb-4 flex items-center gap-2">
           {musicEnabled ? <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" /> : <VolumeX className="w-5 h-5 sm:w-6 sm:h-6" />}
-          Háttérzene (Játékban)
+          {t('profile.music.title')}
         </h2>
         
         <div className="space-y-4">
           {/* On/Off Toggle */}
           <div className="flex items-center justify-between">
-            <span className="text-sm sm:text-base text-foreground/90">Zene be/ki</span>
+            <span className="text-sm sm:text-base text-foreground/90">{t('profile.music.toggle')}</span>
             <button
               onClick={() => setMusicEnabled(!musicEnabled)}
               className={`relative w-14 h-7 rounded-full transition-all ${
@@ -48,7 +50,7 @@ export const BackgroundMusicControl = () => {
           {/* Volume Slider */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm sm:text-base text-foreground/90">Hangerő</span>
+              <span className="text-sm sm:text-base text-foreground/90">{t('profile.music.volume')}</span>
               <span className="text-sm sm:text-base text-primary-glow font-bold">
                 {Math.round(volume * 100)}%
               </span>
