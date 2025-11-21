@@ -45,7 +45,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
         className="absolute pointer-events-none"
         style={{
           width: '100%',
-          height: '200%',
+          height: '250%',
           top: '50%',
           left: '50%',
           transform: 'translate(-40%, -65%)',
