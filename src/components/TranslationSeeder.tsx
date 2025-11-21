@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Languages, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Languages, Loader2, CheckCircle, XCircle, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
 export const TranslationSeeder = () => {
@@ -15,7 +16,45 @@ export const TranslationSeeder = () => {
     success: number;
     errors: number;
   } | null>(null);
+  const [hasUntranslated, setHasUntranslated] = useState<boolean | null>(null);
+  const [isCheckingContent, setIsCheckingContent] = useState(true);
   const channelRef = useRef<RealtimeChannel | null>(null);
+
+  // Check if there are untranslated UI texts
+  useEffect(() => {
+    const checkUntranslatedTexts = async () => {
+      try {
+        setIsCheckingContent(true);
+
+        // Check if there are any translations with null values in target languages
+        const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
+        
+        // Build OR conditions for null checks
+        const { data: untranslatedTexts, error } = await supabase
+          .from('translations')
+          .select('key')
+          .or(TARGET_LANGUAGES.map(lang => `${lang}.is.null`).join(','))
+          .limit(1);
+
+        if (error) {
+          console.error('[TranslationSeeder] Error checking content:', error);
+          setHasUntranslated(false);
+          return;
+        }
+
+        // If we found at least one row with null translations, there are untranslated texts
+        setHasUntranslated(untranslatedTexts && untranslatedTexts.length > 0);
+
+      } catch (error) {
+        console.error('[TranslationSeeder] Exception checking content:', error);
+        setHasUntranslated(false);
+      } finally {
+        setIsCheckingContent(false);
+      }
+    };
+
+    checkUntranslatedTexts();
+  }, []);
 
   // Subscribe to real-time progress updates
   useEffect(() => {
@@ -200,23 +239,46 @@ export const TranslationSeeder = () => {
         </div>
       )}
 
-      <Button
-        onClick={startTranslation}
-        disabled={isTranslating}
-        className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
-      >
-        {isTranslating ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Fordítás folyamatban...
-          </>
-        ) : (
-          <>
-            <Languages className="w-4 h-4 mr-2" />
-            UI Szövegek fordítása
-          </>
-        )}
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="w-full">
+              <Button
+                onClick={startTranslation}
+                disabled={isTranslating || isCheckingContent || !hasUntranslated}
+                className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isCheckingContent ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Tartalom ellenőrzése...
+                  </>
+                ) : isTranslating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Fordítás folyamatban...
+                  </>
+                ) : !hasUntranslated ? (
+                  <>
+                    <Info className="w-4 h-4 mr-2" />
+                    Nincs fordítandó szöveg
+                  </>
+                ) : (
+                  <>
+                    <Languages className="w-4 h-4 mr-2" />
+                    UI Szövegek fordítása
+                  </>
+                )}
+              </Button>
+            </div>
+          </TooltipTrigger>
+          {!hasUntranslated && !isCheckingContent && (
+            <TooltipContent>
+              <p>Minden UI szöveg már le van fordítva mind a 7 nyelvre</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 };
