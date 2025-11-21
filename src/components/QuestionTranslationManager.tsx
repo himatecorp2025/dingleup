@@ -26,32 +26,40 @@ export const QuestionTranslationManager = () => {
       try {
         setIsCheckingContent(true);
 
-        // Get total questions count
-        const { count: totalQuestions, error: questionsError } = await supabase
-          .from('questions')
-          .select('id', { count: 'exact', head: true });
-
-        if (questionsError || !totalQuestions) {
-          setHasUntranslated(false);
-          return;
-        }
-
-        // Check if all questions have translations for all 7 languages
+        // Get questions that don't have all 7 target language translations
         const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
-        const expectedTranslations = totalQuestions * TARGET_LANGUAGES.length;
+        
+        // Fetch all questions
+        const { data: allQuestions, error: questionsError } = await supabase
+          .from('questions')
+          .select('id');
 
-        const { count: existingTranslations, error: translationsError } = await supabase
-          .from('question_translations')
-          .select('id', { count: 'exact', head: true })
-          .in('lang', TARGET_LANGUAGES);
-
-        if (translationsError) {
+        if (questionsError || !allQuestions) {
           setHasUntranslated(false);
           return;
         }
 
-        // If existing translations < expected, there are untranslated questions
-        setHasUntranslated((existingTranslations || 0) < expectedTranslations);
+        // For each question, check if it has all 7 target language translations
+        let missingCount = 0;
+        
+        for (const question of allQuestions) {
+          const { count, error } = await supabase
+            .from('question_translations')
+            .select('lang', { count: 'exact', head: true })
+            .eq('question_id', question.id)
+            .in('lang', TARGET_LANGUAGES);
+          
+          if (error) continue;
+          
+          // If less than 7 translations, this question needs translation
+          if ((count || 0) < TARGET_LANGUAGES.length) {
+            missingCount++;
+            // Early exit - we know there's untranslated content
+            break;
+          }
+        }
+
+        setHasUntranslated(missingCount > 0);
 
       } catch (error) {
         console.error('[QuestionTranslationManager] Error checking content:', error);
