@@ -135,7 +135,17 @@ export const QuestionTranslationManager = () => {
 
         if (error) {
           console.error('[QuestionTranslationManager] Edge function error:', error);
-          toast.error(`Hiba az ${iterationCount}. futás során`);
+          
+          // Check if payment required (out of credits)
+          const errorMessage = error.message || String(error);
+          if (errorMessage.includes('credits exhausted') || errorMessage.includes('PAYMENT_REQUIRED')) {
+            toast.error('Elfogytak a Lovable AI kredit-ek! Töltsd fel a workspace-t a Settings → Workspace → Usage menüpontban.', {
+              duration: 8000,
+            });
+          } else {
+            toast.error(`Hiba az ${iterationCount}. futás során`);
+          }
+          
           setIsTranslating(false);
           break;
         }
