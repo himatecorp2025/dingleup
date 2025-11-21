@@ -189,3 +189,5 @@ const AdminPasswordReset = () => {
 };
 
 export default AdminPasswordReset;
+
+// Direct URL access: /admin/reset-password
