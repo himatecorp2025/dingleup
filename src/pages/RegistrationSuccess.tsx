@@ -4,6 +4,7 @@ import { CheckCircle, ArrowRight } from "lucide-react";
 
 const RegistrationSuccess = () => {
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const handleStartGame = () => {
     // AudioManager handles music automatically based on user settings
