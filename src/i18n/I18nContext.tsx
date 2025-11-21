@@ -37,32 +37,6 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
     }
   };
 
-  const detectLanguage = async (): Promise<LangCode> => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/detect-language`,
-        {
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          }
-        }
-      );
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      const detectedLang = data?.language as LangCode;
-      if (VALID_LANGUAGES.includes(detectedLang)) {
-        return detectedLang;
-      }
-      return DEFAULT_LANG;
-    } catch (error) {
-      console.error('[I18n] Failed to detect language:', error);
-      return DEFAULT_LANG;
-    }
-  };
 
   const initializeLanguage = async () => {
     setIsLoading(true);
@@ -99,11 +73,10 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         }
       }
 
-      // 3. Detect language from IP
-      const detectedLang = await detectLanguage();
-      setLangState(detectedLang);
-      localStorage.setItem(STORAGE_KEY, detectedLang);
-      const trans = await fetchTranslations(detectedLang);
+      // 3. Default to English
+      setLangState(DEFAULT_LANG);
+      localStorage.setItem(STORAGE_KEY, DEFAULT_LANG);
+      const trans = await fetchTranslations(DEFAULT_LANG);
       setTranslations(trans);
     } catch (error) {
       console.error('[I18n] Language initialization failed:', error);
