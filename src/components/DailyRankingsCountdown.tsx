@@ -57,9 +57,11 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
 
   return (
     <div 
-      className="relative flex items-center"
+      className="relative flex items-center mx-auto"
       style={{ 
-        width: 'clamp(180px, 50vw, 260px)',
+        width: 'fit-content',
+        minWidth: 'clamp(180px, 50vw, 260px)',
+        maxWidth: '90vw',
         height: '80px',
       }}
     >
