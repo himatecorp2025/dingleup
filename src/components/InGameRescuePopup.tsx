@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n';
 
 interface InGameRescuePopupProps {
   isOpen: boolean;
@@ -22,12 +23,13 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
   currentGold,
   onStateRefresh,
 }) => {
+  const { t } = useI18n();
   const [loadingGoldSaver, setLoadingGoldSaver] = useState(false);
   const [loadingInstantRescue, setLoadingInstantRescue] = useState(false);
 
   const handleGoldSaverPurchase = async () => {
     if (currentGold < 500) {
-      toast.error('⚠️ Nincs elég aranyad a Gold Saver Boosterhez.');
+      toast.error(t('rescue.not_enough_gold'));
       return;
     }
 
@@ -35,7 +37,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nem vagy bejelentkezve');
+        toast.error(t('auth.login.not_logged_in'));
         setLoadingGoldSaver(false);
         return;
       }
@@ -48,15 +50,15 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
       if (error) throw error;
 
       if (data?.success) {
-        toast.success('✅ Gold Saver Booster aktiválva!\n+250 aranyat és +15 életet írtunk jóvá. Folytasd a játékot!');
+        toast.success(t('rescue.gold_saver_success'));
         await onStateRefresh();
         onClose();
       } else {
-        toast.error(data?.error || '❌ Nem sikerült a vásárlás');
+        toast.error(data?.error || t('rescue.purchase_failed'));
       }
     } catch (error) {
       console.error('Gold Saver purchase error:', error);
-      toast.error('❌ Hiba történt a vásárlás során');
+      toast.error(t('rescue.purchase_error'));
     } finally {
       setLoadingGoldSaver(false);
     }
@@ -67,7 +69,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nem vagy bejelentkezve');
+        toast.error(t('auth.login.not_logged_in'));
         setLoadingInstantRescue(false);
         return;
       }
@@ -80,19 +82,19 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
       if (error) throw error;
 
       if (data?.success) {
-        toast.success('✅ Instant Rescue sikeres!\n+1000 arany és +25 élet jóváírva. A kört azonnal folytathatod.');
+        toast.success(t('rescue.instant_rescue_success'));
         await onStateRefresh();
         onClose();
       } else {
         if (data?.error === 'PAYMENT_FAILED') {
-          toast.error('❌ A fizetés nem sikerült. Nem vontunk le összeget, és nem írtunk jóvá jutalmat.');
+          toast.error(t('rescue.payment_failed'));
         } else {
-          toast.error(data?.error || '❌ Nem sikerült a vásárlás');
+          toast.error(data?.error || t('rescue.purchase_failed'));
         }
       }
     } catch (error) {
       console.error('Instant Rescue purchase error:', error);
-      toast.error('❌ Hiba történt a vásárlás során');
+      toast.error(t('rescue.purchase_error'));
     } finally {
       setLoadingInstantRescue(false);
     }
