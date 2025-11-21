@@ -43,7 +43,6 @@ const About = lazy(() => import("./pages/About"));
 
 // Lazy load admin pages
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
-const AdminPasswordReset = lazy(() => import("./pages/AdminPasswordReset"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminAgeStatistics = lazy(() => import("./pages/AdminAgeStatistics"));
 const ASZF = lazy(() => import("./pages/ASZF"));
@@ -164,7 +163,6 @@ const AppCore = () => {
               
               {/* Admin routes wrapped in ErrorBoundary */}
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/reset-password" element={<AdminPasswordReset />} />
               <Route path="/admin/dashboard" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
               <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
               <Route path="/admin/advanced-analytics" element={<ErrorBoundary><AdvancedAnalytics /></ErrorBoundary>} />
