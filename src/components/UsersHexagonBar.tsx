@@ -34,7 +34,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
   };
 
   return (
-    <div className={`relative flex items-center gap-1.5 sm:gap-2 ${className}`} style={{ minWidth: '280px', minHeight: '80px' }}>
+    <div className={`relative ${className}`} style={{ minWidth: '320px', minHeight: '100px' }}>
       {/* Blue Info SVG Background Container - Inline SVG */}
       <svg 
         xmlns="http://www.w3.org/2000/svg"
@@ -116,22 +116,22 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
       </svg>
 
       {/* Rank Hexagon - Blue */}
-      <div className="relative z-10">
+      <div className="absolute z-10" style={{ left: '8%', top: '50%', transform: 'translateY(-50%)' }}>
         <DiamondHexagon type="rank" value={rank !== null ? rank : '...'} />
       </div>
 
       {/* Coins Hexagon - Gold */}
-      <div className="relative z-10">
+      <div className="absolute z-10" style={{ left: '30%', top: '50%', transform: 'translateY(-50%)' }}>
         <DiamondHexagon type="coins" value={coins} />
       </div>
 
       {/* Lives Hexagon - Red */}
-      <div className="relative z-10">
+      <div className="absolute z-10" style={{ left: '52%', top: '50%', transform: 'translateY(-50%)' }}>
         <DiamondHexagon type="lives" value={lives} />
       </div>
 
       {/* Avatar Hexagon - Purple */}
-      <div className="relative z-10">
+      <div className="absolute z-10" style={{ left: '74%', top: '50%', transform: 'translateY(-50%)' }}>
         <DiamondHexagon 
           type="avatar" 
           value={username} 
