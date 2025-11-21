@@ -14,7 +14,8 @@ import {
   Activity,
   Target,
   Zap,
-  ShoppingBag
+  ShoppingBag,
+  Gamepad2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -151,6 +152,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 <button className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm">
                   <Users className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
                   <span className="font-medium">Profil szerkesztése</span>
+                </button>
+                {/* Vissza a játékba gomb - csak mobilon/tableten */}
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="md:hidden w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
+                >
+                  <Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
+                  <span className="font-medium">Vissza a játékba</span>
                 </button>
                 <button
                   onClick={handleLogout}
