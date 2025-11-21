@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import { compare, hash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -78,7 +78,7 @@ serve(async (req) => {
     }
 
     // Verify current PIN
-    const isValidPin = await bcrypt.compare(currentPin, profile.pin_hash);
+    const isValidPin = await compare(currentPin, profile.pin_hash);
     
     if (!isValidPin) {
       return new Response(
@@ -88,7 +88,7 @@ serve(async (req) => {
     }
 
     // Hash new PIN
-    const newPinHash = await bcrypt.hash(newPin);
+    const newPinHash = await hash(newPin);
 
     // Update pin_hash in profiles table
     const { error: updateError } = await supabaseAdmin
