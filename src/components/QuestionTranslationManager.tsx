@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Languages, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Languages, Loader2, CheckCircle, XCircle, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
 export const QuestionTranslationManager = () => {
@@ -15,7 +16,53 @@ export const QuestionTranslationManager = () => {
     skipped: number;
     errors: number;
   } | null>(null);
+  const [hasUntranslated, setHasUntranslated] = useState<boolean | null>(null);
+  const [isCheckingContent, setIsCheckingContent] = useState(true);
   const channelRef = useRef<RealtimeChannel | null>(null);
+
+  // Check if there are untranslated questions
+  useEffect(() => {
+    const checkUntranslatedQuestions = async () => {
+      try {
+        setIsCheckingContent(true);
+
+        // Get total questions count
+        const { count: totalQuestions, error: questionsError } = await supabase
+          .from('questions')
+          .select('id', { count: 'exact', head: true });
+
+        if (questionsError || !totalQuestions) {
+          setHasUntranslated(false);
+          return;
+        }
+
+        // Check if all questions have translations for all 7 languages
+        const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
+        const expectedTranslations = totalQuestions * TARGET_LANGUAGES.length;
+
+        const { count: existingTranslations, error: translationsError } = await supabase
+          .from('question_translations')
+          .select('id', { count: 'exact', head: true })
+          .in('lang', TARGET_LANGUAGES);
+
+        if (translationsError) {
+          setHasUntranslated(false);
+          return;
+        }
+
+        // If existing translations < expected, there are untranslated questions
+        setHasUntranslated((existingTranslations || 0) < expectedTranslations);
+
+      } catch (error) {
+        console.error('[QuestionTranslationManager] Error checking content:', error);
+        setHasUntranslated(false);
+      } finally {
+        setIsCheckingContent(false);
+      }
+    };
+
+    checkUntranslatedQuestions();
+  }, []);
 
   // Subscribe to real-time progress updates
   useEffect(() => {
@@ -155,23 +202,46 @@ export const QuestionTranslationManager = () => {
         </div>
       )}
 
-      <Button
-        onClick={startTranslation}
-        disabled={isTranslating}
-        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-      >
-        {isTranslating ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Fordítás folyamatban...
-          </>
-        ) : (
-          <>
-            <Languages className="w-4 h-4 mr-2" />
-            Kérdések fordítása
-          </>
-        )}
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="w-full">
+              <Button
+                onClick={startTranslation}
+                disabled={isTranslating || isCheckingContent || !hasUntranslated}
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isCheckingContent ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Tartalom ellenőrzése...
+                  </>
+                ) : isTranslating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Fordítás folyamatban...
+                  </>
+                ) : !hasUntranslated ? (
+                  <>
+                    <Info className="w-4 h-4 mr-2" />
+                    Nincs fordítandó kérdés
+                  </>
+                ) : (
+                  <>
+                    <Languages className="w-4 h-4 mr-2" />
+                    Kérdések fordítása
+                  </>
+                )}
+              </Button>
+            </div>
+          </TooltipTrigger>
+          {!hasUntranslated && !isCheckingContent && (
+            <TooltipContent>
+              <p>Minden kérdés már le van fordítva mind a 7 nyelvre</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 };
