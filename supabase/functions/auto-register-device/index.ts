@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
 
     // Create new user with device_id
     const tempEmail = `device_${device_id.substring(0, 16)}@dingleup.auto`;
-    const tempPassword = device_id; // Use device_id as password so frontend can sign in
+    const tempPassword = device_id; // Use device_id as password
     const username = `user_${device_id.substring(0, 8)}`;
 
     console.log('[auto-register-device] Creating new user:', username);
@@ -121,7 +121,6 @@ Deno.serve(async (req) => {
       email_confirm: true,
       user_metadata: {
         username: username,
-        birthDate: '1991-05-05', // Default placeholder
         device_id: device_id,
       },
     });
@@ -134,21 +133,21 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Update profile with device_id (handle_new_user trigger creates profile)
-    // Minimal wait for trigger execution
-    await new Promise(resolve => setTimeout(resolve, 50));
+    console.log('[auto-register-device] User created, id:', authData.user.id);
 
-    const { error: updateError } = await supabase
+    // Wait for handle_new_user trigger to create profile
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Verify profile was created
+    const { data: profileCheck } = await supabase
       .from('profiles')
-      .update({ device_id: device_id })
-      .eq('id', authData.user.id);
+      .select('id, email, device_id, age_verified, first_login_age_gate_completed')
+      .eq('id', authData.user.id)
+      .single();
 
-    if (updateError) {
-      console.error('[auto-register-device] Profile update error:', updateError);
-      // Not critical, continue
-    }
+    console.log('[auto-register-device] Profile created:', profileCheck);
 
-    console.log('[auto-register-device] New user created successfully:', authData.user.id);
+    console.log('[auto-register-device] New user registration successful:', authData.user.id);
 
     return new Response(
       JSON.stringify({ 

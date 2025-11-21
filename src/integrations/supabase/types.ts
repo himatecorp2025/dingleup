@@ -1742,14 +1742,14 @@ export type Database = {
           age_verified: boolean | null
           avatar_url: string | null
           biometric_enabled: boolean | null
-          birth_date: string
+          birth_date: string | null
           coins: number | null
           country_code: string
           created_at: string | null
           daily_gift_last_claimed: string | null
           daily_gift_streak: number | null
           device_id: string | null
-          email: string
+          email: string | null
           email_pin_setup_completed: boolean | null
           email_verified: boolean | null
           first_login_age_gate_completed: boolean | null
@@ -1781,14 +1781,14 @@ export type Database = {
           age_verified?: boolean | null
           avatar_url?: string | null
           biometric_enabled?: boolean | null
-          birth_date: string
+          birth_date?: string | null
           coins?: number | null
           country_code?: string
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
           device_id?: string | null
-          email: string
+          email?: string | null
           email_pin_setup_completed?: boolean | null
           email_verified?: boolean | null
           first_login_age_gate_completed?: boolean | null
@@ -1820,14 +1820,14 @@ export type Database = {
           age_verified?: boolean | null
           avatar_url?: string | null
           biometric_enabled?: boolean | null
-          birth_date?: string
+          birth_date?: string | null
           coins?: number | null
           country_code?: string
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
           device_id?: string | null
-          email?: string
+          email?: string | null
           email_pin_setup_completed?: boolean | null
           email_verified?: boolean | null
           first_login_age_gate_completed?: boolean | null
