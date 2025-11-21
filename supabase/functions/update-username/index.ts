@@ -30,16 +30,31 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    const { newUsername } = await req.json();
+    const body = await req.json();
+    const { newUsername } = body;
 
+    // SECURITY: Comprehensive input validation
     if (!newUsername || typeof newUsername !== 'string') {
-      throw new Error('Invalid username');
+      throw new Error('A felhasználónév kötelező és szöveges érték kell legyen');
     }
 
-    // Validate username format
+    // Validate username format (alphanumeric, hyphens, underscores only)
     const trimmedUsername = newUsername.trim();
+    const usernamePattern = /^[a-zA-Z0-9_-]+$/;
+    
+    if (!usernamePattern.test(trimmedUsername)) {
+      throw new Error('A felhasználónév csak betűket, számokat, kötőjelet és aláhúzást tartalmazhat');
+    }
+
     if (trimmedUsername.length < 3 || trimmedUsername.length > 30) {
       throw new Error('A felhasználónévnek 3 és 30 karakter között kell lennie');
+    }
+
+    // Prevent inappropriate usernames (basic profanity filter)
+    const bannedWords = ['admin', 'dingleup', 'moderator', 'system'];
+    const lowercaseUsername = trimmedUsername.toLowerCase();
+    if (bannedWords.some(word => lowercaseUsername.includes(word))) {
+      throw new Error('Ez a felhasználónév nem használható');
     }
 
     // Check if username is already taken

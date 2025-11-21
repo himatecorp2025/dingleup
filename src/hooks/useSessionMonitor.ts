@@ -18,7 +18,7 @@ export const useSessionMonitor = () => {
       return;
     }
 
-    // Check session validity every 5 minutes for protected pages
+    // SECURITY: Check session validity every 15 minutes (session timeout)
     const validateSession = async () => {
       if (isValidating) return;
       
@@ -48,8 +48,8 @@ export const useSessionMonitor = () => {
     // Initial validation
     validateSession();
 
-    // Periodic validation every 2 minutes
-    const interval = setInterval(validateSession, 2 * 60 * 1000);
+    // SECURITY: Periodic validation every 15 minutes (session timeout)
+    const interval = setInterval(validateSession, 15 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [navigate, location.pathname, isValidating]);
