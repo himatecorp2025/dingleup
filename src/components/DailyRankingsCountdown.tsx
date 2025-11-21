@@ -11,7 +11,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
   const { t } = useI18n();
   const [timeRemaining, setTimeRemaining] = useState('');
   const [containerWidth, setContainerWidth] = useState(260); // default width
-  const contentRef = useRef<HTMLDivElement>(null);
+  const timerRowRef = useRef<HTMLDivElement>(null); // Ref for second row only
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -44,16 +44,21 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
     return () => clearInterval(interval);
   }, [t]);
 
-  // Measure content width and update container width (+10%)
+  // Measure only the second row (timer row) width and update container width (+5%)
   useEffect(() => {
-    if (contentRef.current) {
+    if (timerRowRef.current) {
       const measureWidth = () => {
-        const contentWidth = contentRef.current?.scrollWidth || 260;
-        const newWidth = Math.max(180, contentWidth * 1.1); // +10% wider than content, min 180px
+        const timerRowWidth = timerRowRef.current?.offsetWidth || 260;
+        const newWidth = Math.max(180, timerRowWidth * 1.05); // +5% wider than timer row, min 180px
         setContainerWidth(newWidth);
       };
 
+      // Initial measurement
       measureWidth();
+      
+      // Use requestAnimationFrame to ensure DOM is fully rendered
+      requestAnimationFrame(measureWidth);
+      
       // Remeasure on window resize
       window.addEventListener('resize', measureWidth);
       return () => window.removeEventListener('resize', measureWidth);
@@ -164,7 +169,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
       </svg>
 
       {/* Content - Absolutely centered */}
-      <div ref={contentRef} className="absolute inset-0 z-10 flex flex-col items-center justify-center m-0 p-0 bg-transparent gap-1">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center m-0 p-0 bg-transparent gap-1">
         {/* TOP 100 title with trophies */}
         <div className="flex items-center justify-center gap-1 [background:transparent]">
           <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
@@ -174,8 +179,8 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
           <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
         </div>
         
-        {/* Timer countdown with text */}
-        <div className="flex items-center justify-center m-0 p-0 gap-1 leading-none [background:transparent]">
+        {/* Timer countdown with text - this row is measured for width */}
+        <div ref={timerRowRef} className="flex items-center justify-center m-0 p-0 gap-1 leading-none [background:transparent]">
           <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
             {t('countdown.you_can_win')}
           </span>
