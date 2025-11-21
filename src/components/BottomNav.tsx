@@ -84,7 +84,7 @@ const BottomNav = () => {
           <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      label: 'Dashboard', 
+      label: t('nav.dashboard'), 
       path: '/dashboard' 
     },
     { 
@@ -96,7 +96,7 @@ const BottomNav = () => {
           <path d="M8.7 13.7L15.3 17.3M15.3 6.7L8.7 10.3" stroke="currentColor" strokeWidth="2"/>
         </svg>
       ),
-      label: 'Share', 
+      label: t('nav.share'), 
       path: '/invitation' 
     },
     { 
@@ -108,7 +108,7 @@ const BottomNav = () => {
           <path d="M12 14V17M8 20H16M10 17H14V20H10V17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         </svg>
       ),
-      label: 'Ranglista', 
+      label: t('nav.leaderboard'), 
       path: '/leaderboard' 
     },
     { 
@@ -118,7 +118,7 @@ const BottomNav = () => {
           <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      label: 'Profil', 
+      label: t('nav.profile'), 
       path: '/profile' 
     },
     { 
@@ -127,7 +127,7 @@ const BottomNav = () => {
           <path d="M3 21H21M3 10H21M5 6L12 3L19 6M4 10V21M20 10V21M8 14V17M12 14V17M16 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      label: 'Rólunk', 
+      label: t('nav.about'), 
       path: '/about' 
     },
     { 
@@ -138,7 +138,7 @@ const BottomNav = () => {
           <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      label: 'Kilépés', 
+      label: t('nav.logout'), 
       action: handleLogout 
     }
   ];

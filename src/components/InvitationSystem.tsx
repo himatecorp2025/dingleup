@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { UserPlus, Copy, Check, Gift } from 'lucide-react';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n';
 
 interface InvitationSystemProps {
   userId: string;
@@ -19,6 +20,7 @@ interface Invitation {
 }
 
 const InvitationSystem = ({ userId, invitationCode }: InvitationSystemProps) => {
+  const { t } = useI18n();
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,18 +44,18 @@ const InvitationSystem = ({ userId, invitationCode }: InvitationSystemProps) => 
     const trimmedEmail = email.trim().toLowerCase();
     
     if (!trimmedEmail) {
-      toast.error('Kérlek adj meg egy email címet');
+      toast.error(t('invitation_system.error.email_required'));
       return;
     }
 
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (!emailRegex.test(trimmedEmail)) {
-      toast.error('Érvénytelen email formátum');
+      toast.error(t('invitation_system.error.invalid_email'));
       return;
     }
 
     if (trimmedEmail.length > 255) {
-      toast.error('Az email cím túl hosszú');
+      toast.error(t('invitation_system.error.email_too_long'));
       return;
     }
     
@@ -67,9 +69,9 @@ const InvitationSystem = ({ userId, invitationCode }: InvitationSystemProps) => 
       });
 
     if (error) {
-      toast.error('Hiba történt a meghívó küldésekor');
+      toast.error(t('invitation_system.error.send_failed'));
     } else {
-      toast.success('Meghívó elküldve!');
+      toast.success(t('invitation_system.sent'));
       setEmail('');
       fetchInvitations();
     }
@@ -79,12 +81,12 @@ const InvitationSystem = ({ userId, invitationCode }: InvitationSystemProps) => 
   const copyInvitationLink = () => {
     const link = `${window.location.origin}/register?code=${invitationCode}`;
     navigator.clipboard.writeText(link);
-    toast.success('Meghívó link másolva!');
+    toast.success(t('invitation_system.link_copied'));
   };
 
   const copyInvitationCode = () => {
     navigator.clipboard.writeText(invitationCode);
-    toast.success('Meghívó kód másolva!');
+    toast.success(t('invitation_system.code_copied'));
   };
 
   const acceptedCount = invitations.filter(i => i.accepted).length;

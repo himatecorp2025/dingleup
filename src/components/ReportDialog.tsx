@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ImagePlus, X } from 'lucide-react';
+import { useI18n } from '@/i18n';
 
 interface ReportDialogProps {
   open: boolean;
@@ -44,6 +45,7 @@ const SUPPORT_CATEGORIES = [
 ];
 
 export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessageId }: ReportDialogProps) => {
+  const { t } = useI18n();
   const [reportType, setReportType] = useState<'bug' | 'user_behavior'>('bug');
   const [bugCategory, setBugCategory] = useState<string>('');
   const [violationType, setViolationType] = useState<string>('');
@@ -58,18 +60,18 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
     // Validate file types
     const validFiles = files.filter(file => {
       if (!file.type.startsWith('image/')) {
-        toast.error(`${file.name} nem kép fájl!`);
+        toast.error(t('report.error.not_image').replace('{name}', file.name));
         return false;
       }
       if (file.size > 5 * 1024 * 1024) {
-        toast.error(`${file.name} túl nagy (max 5MB)!`);
+        toast.error(t('report.error.file_too_large').replace('{name}', file.name));
         return false;
       }
       return true;
     });
 
     if (screenshots.length + validFiles.length > 3) {
-      toast.error('Maximum 3 képet tölthetsz fel!');
+      toast.error(t('report.error.max_3_images'));
       return;
     }
 
@@ -92,17 +94,17 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
 
   const handleSubmit = async () => {
     if (!description.trim()) {
-      toast.error('Kérlek, add meg a jelentés részleteit!');
+      toast.error(t('report.error.description_required'));
       return;
     }
 
     if (reportType === 'bug' && !bugCategory) {
-      toast.error('Kérlek, válassz kategóriát!');
+      toast.error(t('report.error.category_required'));
       return;
     }
 
     if (reportType === 'user_behavior' && !violationType) {
-      toast.error('Kérlek, válassz kategóriát!');
+      toast.error(t('report.error.type_required'));
       return;
     }
 
@@ -111,23 +113,23 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
     try {
       // SECURITY: Comprehensive input validation
       if (!description.trim()) {
-        toast.error('A leírás mező kötelező!');
+        toast.error(t('report.error.description_required'));
         return;
       }
 
       if (description.length < 10) {
-        toast.error('A leírás túl rövid (minimum 10 karakter)!');
+        toast.error(t('report.error.description_short'));
         return;
       }
 
       if (description.length > 2000) {
-        toast.error('A leírás túl hosszú (maximum 2000 karakter)!');
+        toast.error(t('report.error.description_long'));
         return;
       }
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Jelentkezz be a jelentés beküldéséhez!');
+        toast.error(t('report.error.login_required'));
         return;
       }
 
@@ -140,7 +142,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
       // Upload screenshots if any
       const screenshotUrls: string[] = [];
       if (screenshots.length > 0) {
-        toast.info('Képek feltöltése...');
+        toast.info(t('report.uploading'));
         
         for (let i = 0; i < screenshots.length; i++) {
           const file = screenshots[i];
@@ -156,7 +158,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
 
           if (uploadError) {
             console.error('Screenshot upload error:', uploadError);
-            toast.error(`Kép feltöltési hiba: ${file.name}`);
+            toast.error(t('report.upload_error').replace('{name}', file.name));
             continue;
           }
 
@@ -185,7 +187,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
 
       if (error) throw error;
 
-      toast.success('Jelentés sikeresen elküldve! Köszönjük!');
+      toast.success(t('report.success'));
       onOpenChange(false);
       setDescription('');
       setBugCategory('');
@@ -194,7 +196,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
       setScreenshotPreviews([]);
     } catch (error) {
       console.error('Report error:', error);
-      toast.error('Hiba történt a jelentés küldésekor');
+      toast.error(t('report.error.send_failed'));
     } finally {
       setSubmitting(false);
     }
@@ -205,19 +207,19 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
       <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-primary-dark to-primary-darker border-2 border-accent/50 text-foreground z-[9999] p-4">
         <DialogHeader className="space-y-1">
           <DialogTitle className="text-xl font-black text-accent">
-            Jelentés beküldése
+            {t('report.title')}
           </DialogTitle>
           <DialogDescription className="text-foreground/80 text-sm">
-            Segíts nekünk javítani az alkalmazást vagy jelents vissza sértő viselkedést!
+            {t('report.description_label')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
           <div>
-            <Label className="text-sm">Jelentés típusa</Label>
+            <Label className="text-sm">{t('report.type_label')}</Label>
             <Select value={reportType} onValueChange={(v) => setReportType(v as 'bug' | 'user_behavior')}>
               <SelectTrigger className="bg-muted border-primary/50 h-9">
-                <SelectValue placeholder="Válassz típust" />
+                <SelectValue placeholder={t('report.type_placeholder')} />
               </SelectTrigger>
               <SelectContent className="z-[10001] bg-muted-foreground border border-accent/40 text-foreground">
                 <SelectItem value="bug">🐛 Fejlesztői jelentés (Bug, hiba)</SelectItem>
@@ -229,10 +231,10 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
           {reportType === 'bug' ? (
             <div className="space-y-2">
               <div>
-                <Label className="text-sm">Hiba kategória</Label>
+                <Label className="text-sm">{t('report.category_label')}</Label>
                 <Select value={bugCategory} onValueChange={setBugCategory}>
                   <SelectTrigger className="bg-muted border-primary/50 h-9">
-                    <SelectValue placeholder="Válassz kategóriát" />
+                    <SelectValue placeholder={t('report.category_placeholder')} />
                   </SelectTrigger>
                   <SelectContent className="z-[10001] bg-muted-foreground border border-accent/40 text-foreground">
                     {DEV_CATEGORIES.map((cat) => (
@@ -244,11 +246,11 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                 </Select>
               </div>
               <div>
-                <Label className="text-sm">Hiba leírása</Label>
+                <Label className="text-sm">{t('report.description_label')}</Label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Írd le részletesen, mit tapasztaltál..."
+                  placeholder={t('report.description_placeholder')}
                   className="min-h-[80px] bg-muted border-primary/50 text-foreground text-sm"
                 />
               </div>
@@ -256,10 +258,10 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
           ) : (
             <div className="space-y-2">
               <div>
-                <Label className="text-sm">Visszaélés típusa</Label>
+                <Label className="text-sm">{t('report.category_label')}</Label>
                 <Select value={violationType} onValueChange={setViolationType}>
                   <SelectTrigger className="bg-muted border-primary/50 h-9">
-                    <SelectValue placeholder="Válassz típust" />
+                    <SelectValue placeholder={t('report.type_placeholder')} />
                   </SelectTrigger>
                   <SelectContent className="z-[10001] bg-muted-foreground border border-accent/40 text-foreground">
                     {SUPPORT_CATEGORIES.map((cat) => (
@@ -271,11 +273,11 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                 </Select>
               </div>
               <div>
-                <Label className="text-sm">Részletek</Label>
+                <Label className="text-sm">{t('report.description_label')}</Label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Írd le, mi történt..."
+                  placeholder={t('report.description_placeholder')}
                   className="min-h-[80px] bg-muted border-primary/50 text-foreground text-sm"
                 />
               </div>
@@ -284,7 +286,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
 
           {/* Screenshot Upload Section */}
           <div>
-            <Label className="text-sm">Képernyőképek (opcionális, max 3 kép)</Label>
+            <Label className="text-sm">{t('report.screenshot_label')}</Label>
             <div className="space-y-2 mt-1">
               {screenshotPreviews.length > 0 && (
                 <div className="grid grid-cols-3 gap-2">
@@ -328,14 +330,14 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
               variant="outline"
               className="flex-1 bg-muted border-primary/50 text-foreground hover:bg-muted/80 h-9 text-sm"
             >
-              Mégsem
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={submitting}
               className="flex-1 bg-gradient-to-r from-accent to-accent-dark text-accent-foreground font-bold h-9 text-sm"
             >
-              {submitting ? 'Küldés...' : 'Jelentés beküldése'}
+              {submitting ? t('common.loading') : t('report.submit')}
             </Button>
           </div>
         </div>
