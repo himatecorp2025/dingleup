@@ -21,7 +21,6 @@ import { useSessionMonitor } from "@/hooks/useSessionMonitor";
 import { AppRouteGuard } from "@/components/AppRouteGuard";
 import { AudioPolicyManager } from "@/components/AudioPolicyManager";
 import { useI18n } from "@/i18n";
-import { useAutoRegister } from "@/hooks/useAutoRegister";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -80,11 +79,7 @@ const AppWithAnalytics = () => {
   return null;
 };
 
-// Auto-registration wrapper
-const AutoRegisterWrapper = () => {
-  useAutoRegister();
-  return null;
-};
+// Auto-registration removed from global wrapper - now only runs on AccountChoice page
 
 // Main App component with lifecycle management
 const AppCore = () => {
@@ -122,7 +117,6 @@ const AppCore = () => {
       >
         <BackButtonHandler />
         <SessionMonitorWrapper />
-        <AutoRegisterWrapper />
         <AppWithAnalytics />
         <ScrollBehaviorManager />
         <AudioPolicyManager />

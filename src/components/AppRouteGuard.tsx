@@ -46,13 +46,9 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     ? sessionStorage.getItem('app_intro_shown') === '1' 
     : false;
 
-  // Mobile/tablet: skip landing page, go directly to intro or dashboard
+  // Mobile/tablet: skip landing page, go directly to account-choice
   if (isMobileOrTablet && location.pathname === '/') {
-    if (!introShown) {
-      return <Navigate to="/intro" replace />;
-    } else {
-      return <Navigate to="/dashboard" replace />;
-    }
+    return <Navigate to="/account-choice" replace />;
   }
 
   // Mobile/tablet standalone: redirect to /intro ONLY on first load (from root)
