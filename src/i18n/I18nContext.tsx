@@ -202,19 +202,12 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   };
 
   const t = (key: string): string => {
-    // Try current language
-    if (translations[key] && translations[key].trim() !== '') {
-      return translations[key];
-    }
-
-    // Fallback to English if current lang failed
-    if (lang !== 'en' && translations[`${key}_en`] && translations[`${key}_en`].trim() !== '') {
-      return translations[`${key}_en`];
-    }
-
-    // Fallback to Hungarian (source language)
-    if (translations[`${key}_hu`] && translations[`${key}_hu`].trim() !== '') {
-      return translations[`${key}_hu`];
+    // The edge function already returns the correct language with fallback to Hungarian
+    // So we just need to return the value directly from the translations map
+    const value = translations[key];
+    
+    if (value && value.trim() !== '') {
+      return value;
     }
 
     // Log missing translation in development
