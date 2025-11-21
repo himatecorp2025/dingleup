@@ -5,6 +5,7 @@ import { trackBonusEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import HexAcceptButton from './ui/HexAcceptButton';
+import { useI18n } from '@/i18n';
 
 interface DailyGiftDialogProps {
   open: boolean;
@@ -29,6 +30,7 @@ const DailyGiftDialog = ({
   claiming,
   isPremium = false 
 }: DailyGiftDialogProps) => {
+  const { t } = useI18n();
   const [userId, setUserId] = useState<string | null>(null);
   const isHandheld = usePlatformDetection();
   const [contentVisible, setContentVisible] = useState(false);
@@ -281,7 +283,7 @@ const DailyGiftDialog = ({
                         letterSpacing: '0.05em',
                         textShadow: '0 0 12px rgba(255,255,255,0.25)'
                       }}>
-                    DAILY GIFT
+                    {t('daily.title')}
                   </h1>
                 </div>
               </div>
@@ -296,7 +298,7 @@ const DailyGiftDialog = ({
                      letterSpacing: '0.06em',
                      textShadow: '0 0 16px rgba(255,255,255,0.2)'
                    }}>
-                  DAY {weeklyEntryCount + 1} 🔥
+                  {t('daily.day_label')} {weeklyEntryCount + 1} 🔥
                 </p>
 
                 {/* Weekly Rewards Preview - 7 boxes */}
@@ -415,7 +417,7 @@ const DailyGiftDialog = ({
                     disabled={!canClaim || claiming}
                     style={{ width: 'var(--sync-width)' }}
                   >
-                    {claiming ? "FELDOLGOZÁS..." : "IGÉNYLEM"}
+                    {claiming ? t('daily.claim_button_processing') : t('daily.claim_button_active')}
                   </HexAcceptButton>
                 </div>
               </div>

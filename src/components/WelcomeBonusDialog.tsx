@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { trackBonusEvent } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
+import { useI18n } from '@/i18n';
 
 interface WelcomeBonusDialogProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface WelcomeBonusDialogProps {
 }
 
 export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: WelcomeBonusDialogProps) => {
+  const { t } = useI18n();
   const [userId, setUserId] = useState<string | null>(null);
   const [contentVisible, setContentVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -227,7 +229,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                         letterSpacing: '0.05em',
                         textShadow: '0 0 12px rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.9)'
                       }}>
-                    WELCOME!
+                    {t('welcome.title')}
                   </h1>
                 </div>
               </div>
@@ -245,15 +247,13 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                          borderBottom: '2px solid rgba(0,0,0,0.3)',
                          animation: 'offerPulse 1.5s ease-in-out infinite'
                        }}>
-                    <p className="text-white font-black text-center tracking-wider flex items-center justify-center gap-2"
+                     <p className="text-white font-black text-center tracking-wider flex items-center justify-center gap-2"
                        style={{ 
                          fontSize: 'clamp(0.65rem, 3cqw, 0.9rem)',
                          textShadow: '0 2px 6px rgba(0,0,0,0.9), 0 0 12px rgba(255,255,255,0.4)'
                        }}>
-                      <span>⭐</span>
-                      <span>KÜLÖNLEGES AJÁNLAT!</span>
-                      <span>⭐</span>
-                    </p>
+                       {t('welcome.special_offer')}
+                     </p>
                   </div>
                   <style>{`
                     @keyframes offerPulse {
@@ -300,7 +300,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                        borderTop: '1px solid rgba(255,255,255,0.2)',
                        borderBottom: '1px solid rgba(0,0,0,0.2)'
                      }}>
-                    Ajándék csak neked!
+                    {t('welcome.gift_for_you')}
                   </p>
                   
                   {/* Right 3D Gift Box SVG */}
@@ -529,7 +529,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                             textShadow: "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
                             whiteSpace: "nowrap"
                           }}>
-                      {claiming ? 'FELDOLGOZÁS...' : 'KÖSZÖNÖM!'}
+                      {claiming ? t('welcome.claim_button_processing') : t('welcome.claim_button_active')}
                     </span>
                   </button>
                 </div>
