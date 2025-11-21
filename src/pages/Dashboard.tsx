@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { AgeGateModal } from '@/components/AgeGateModal';
 import { DiamondHexagon } from '@/components/DiamondHexagon';
-import { DiamondButton } from '@/components/DiamondButton';
 import { PlayNowButton } from '@/components/PlayNowButton';
+import { BoosterButton } from '@/components/BoosterButton';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
@@ -613,21 +613,10 @@ if (!profile) {
           {/* Booster Button - Top 100 felett */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
             <div className="w-full max-w-screen-lg">
-              <DiamondButton
-                variant="booster"
-                size="lg"
+              <BoosterButton
                 onClick={handleSpeedBoost}
                 disabled={!profile || boosterState.loading}
-                className="!py-[clamp(1rem,4vw,1.75rem)] sm:!py-[clamp(1.25rem,5vw,2rem)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(234,179,8,0.6)] active:scale-95"
-                style={{
-                  width: '100%',
-                  background: boosterState.hasPendingPremium 
-                    ? 'linear-gradient(135deg, #10b981 0%, #059669 50%, #10b981 100%)'
-                    : 'linear-gradient(135deg, #f59e0b 0%, #eab308 50%, #f59e0b 100%)',
-                  boxShadow: boosterState.hasPendingPremium
-                    ? '0 0 30px rgba(16,185,129,0.5), inset 0 0 20px rgba(255,255,255,0.2)'
-                    : '0 0 30px rgba(234,179,8,0.4), inset 0 0 20px rgba(255,255,255,0.2)',
-                }}
+                className="transition-all duration-300 hover:scale-105 active:scale-95"
               >
                 <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
                   <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -655,7 +644,7 @@ if (!profile) {
                 <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] ml-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
                   <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-              </DiamondButton>
+              </BoosterButton>
             </div>
           </div>
 
