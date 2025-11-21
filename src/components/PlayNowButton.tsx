@@ -32,20 +32,16 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         background: 'transparent',
         border: 'none',
         padding: 0,
+        height: '80px',
       }}
     >
       {/* SVG Background */}
-      <div 
-        className="absolute pointer-events-none"
+      <img
+        src={playNowButtonSvg}
+        alt=""
+        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
         style={{
-          backgroundImage: `url(${playNowButtonSvg})`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          width: '800%',
-          height: '225%',
-          top: '-62.5%',
-          left: '-350%',
+          transform: 'scale(2, 1.5)',
         }}
         aria-hidden
       />
