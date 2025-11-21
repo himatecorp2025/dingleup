@@ -1,11 +1,20 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
-import { hash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Simple SHA-256 hash using Web Crypto API
+async function hashPin(pin: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(pin);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -72,15 +81,15 @@ serve(async (req) => {
       );
     }
 
-    // Hash PIN
-    const pinHash = await hash(pin);
+    // Hash PIN with SHA-256
+    const pinHash = await hashPin(pin);
 
-    // Create auth user with admin API - AZONNAL MEGERŐSÍTVE
+    // Create auth user with admin API - IMMEDIATELY CONFIRMED
     const autoEmail = `${username.toLowerCase()}@dingleup.auto`;
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: autoEmail,
       password: pin + username,
-      email_confirm: true, // AZONNAL MEGERŐSÍTETT
+      email_confirm: true,
       user_metadata: { username }
     });
 
