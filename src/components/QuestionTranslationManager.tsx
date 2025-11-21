@@ -74,14 +74,21 @@ export const QuestionTranslationManager = () => {
     channel
       .on('broadcast', { event: 'progress' }, (payload: any) => {
         console.log('[QuestionTranslationManager] Progress update:', payload);
-        setProgress(payload.payload.progress || 0);
-        setStatus(payload.payload.status || '');
+        const newProgress = payload.payload.progress || 0;
+        const newStatus = payload.payload.status || '';
+        setProgress(newProgress);
+        setStatus(newStatus);
         if (payload.payload.translated !== undefined) {
           setStats({
             translated: payload.payload.translated,
             skipped: payload.payload.skipped,
             errors: payload.payload.errors
           });
+        }
+        
+        // Ha befejezett, állítsuk le a loading állapotot
+        if (newProgress === 100 || newStatus.includes('befejezve')) {
+          setIsTranslating(false);
         }
       })
       .subscribe();
