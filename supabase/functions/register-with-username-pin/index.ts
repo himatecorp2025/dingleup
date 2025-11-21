@@ -104,12 +104,14 @@ serve(async (req) => {
     // Save username and pin_hash to profiles
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
-      .update({ 
+      .upsert({ 
+        id: authData.user.id,
         username,
         pin_hash: pinHash,
         email: null,
-      })
-      .eq('id', authData.user.id);
+      }, {
+        onConflict: 'id'
+      });
 
     if (profileError) {
       console.error('Profile update error:', profileError);
