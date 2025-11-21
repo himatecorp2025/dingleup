@@ -672,17 +672,10 @@ if (!profile) {
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
                     viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                    className="w-12 h-12 sm:w-16 sm:h-16"
+                    fill="currentColor" 
+                    className="w-10 h-10 sm:w-14 sm:h-14"
                   >
-                    <path d="M5 12h14"/>
-                    <path d="m12 5 7 7-7 7"/>
-                    <path d="M19 12l-7 7"/>
-                    <path d="M19 12l-7-7"/>
+                    <path d="M8 5v14l11-7z" strokeLinejoin="round"/>
                   </svg>
                 </span>
               </PlayNowButton>
