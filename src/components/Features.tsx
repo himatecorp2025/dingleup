@@ -79,6 +79,7 @@ const Features = () => {
                   <img 
                     src={feature.image} 
                     alt={feature.title}
+                    loading="lazy"
                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 to-transparent"></div>
