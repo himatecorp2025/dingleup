@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/i18n';
 
 interface NextLifeTimerProps {
   nextLifeAt: string | null;
@@ -17,6 +18,7 @@ export const NextLifeTimer = ({
   onExpired,
   isSpeedBoost = false
 }: NextLifeTimerProps) => {
+  const { t } = useI18n();
   const [remainingMs, setRemainingMs] = useState(0);
 
   useEffect(() => {
@@ -59,7 +61,7 @@ export const NextLifeTimer = ({
   return (
     <div 
       className="absolute -bottom-[7.2px] -right-0.5 rounded-md z-50 text-[8px]"
-      title="Következő élet érkezése"
+      title={t('timer.next_life')}
       style={{ perspective: '1000px' }}
     >
       {/* DEEP BOTTOM SHADOW - Multiple layers for depth */}

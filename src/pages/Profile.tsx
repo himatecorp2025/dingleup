@@ -221,7 +221,7 @@ const Profile = () => {
   const { profile, loading, updateProfile, refreshProfile } = useGameProfile(userId);
   const { walletData, refetchWallet } = useWallet(userId);
   const boosterState = useBoosterState(userId);
-  const { lang, setLang } = useI18n();
+  const { lang, setLang, t } = useI18n();
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [weeklyCorrectAnswers, setWeeklyCorrectAnswers] = useState<number>(0);
@@ -330,13 +330,13 @@ const Profile = () => {
       // Validate file size (max 2MB)
       const maxSizeBytes = 2 * 1024 * 1024;
       if (file.size > maxSizeBytes) {
-        toast.error('A fájl mérete maximum 2MB lehet');
+        toast.error(t('common.error.file_size_max'));
         return;
       }
       
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        toast.error('Csak képfájlok engedélyezettek');
+        toast.error(t('common.error.image_only'));
         return;
       }
 
@@ -354,9 +354,9 @@ const Profile = () => {
         .getPublicUrl(filePath);
 
       await updateProfile({ avatar_url: data.publicUrl });
-      toast.success('Profilkép sikeresen feltöltve!');
+      toast.success(t('profile.avatar_uploaded'));
     } catch (error: any) {
-      toast.error('Hiba a feltöltés során: ' + error.message);
+      toast.error(t('common.error.upload') + ': ' + error.message);
     } finally {
       setUploading(false);
     }
@@ -383,10 +383,10 @@ const Profile = () => {
       // Skip DB update in setLang since we already updated it
       await setLang(newLang, true);
       
-      toast.success('Ország sikeresen frissítve! A ranglista és a nyelv most az új országodhoz tartozik.');
+      toast.success(t('profile.country_updated'));
     } catch (error) {
       console.error('Failed to update country:', error);
-      toast.error('Hiba történt az ország módosítása során.');
+      toast.error(t('profile.country_error'));
     }
   };
 
@@ -397,7 +397,7 @@ const Profile = () => {
 
   const handleUsernameSave = async () => {
     if (!newUsername.trim()) {
-      toast.error('A felhasználónév nem lehet üres');
+      toast.error(t('common.error.username_empty'));
       return;
     }
 
@@ -409,7 +409,7 @@ const Profile = () => {
       
       if (daysSinceLastChange < 7) {
         const daysRemaining = Math.ceil(7 - daysSinceLastChange);
-        toast.error(`A felhasználónév módosítása csak 7 naponta lehetséges. Még ${daysRemaining} nap múlva próbálkozz újra.`);
+        toast.error(t('common.error.username_cooldown').replace('{days}', daysRemaining.toString()));
         setIsEditingUsername(false);
         return;
       }
@@ -418,7 +418,7 @@ const Profile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nincs bejelentkezve');
+        toast.error(t('auth.login.not_logged_in'));
         return;
       }
 
@@ -435,7 +435,7 @@ const Profile = () => {
 
       await updateProfile({ username: newUsername });
       setIsEditingUsername(false);
-      toast.success('Felhasználónév sikeresen módosítva');
+      toast.success(t('profile.username_updated'));
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -461,12 +461,12 @@ const Profile = () => {
 
   const handlePasswordSave = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error('Minden jelszó mező kitöltése kötelező');
+      toast.error(t('common.error.password_all_required'));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error('Az új jelszavak nem egyeznek');
+      toast.error(t('common.error.password_mismatch'));
       return;
     }
 
@@ -480,7 +480,7 @@ const Profile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nincs bejelentkezve');
+        toast.error(t('auth.login.not_logged_in'));
         return;
       }
 
