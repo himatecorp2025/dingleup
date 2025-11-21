@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AgeGateModal } from '@/components/AgeGateModal';
 import { DiamondHexagon } from '@/components/DiamondHexagon';
 import { DiamondButton } from '@/components/DiamondButton';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -56,6 +57,9 @@ const Dashboard = () => {
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
   const [dailyGiftJustClaimed, setDailyGiftJustClaimed] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
+  
+  // Age-gate modal state
+  const [showAgeGate, setShowAgeGate] = useState(false);
   
   // Pull-to-refresh functionality
   const { isPulling, pullProgress } = usePullToRefresh({
@@ -134,27 +138,39 @@ const Dashboard = () => {
     }
   }, [searchParams, setSearchParams]);
 
-  // Show Welcome Bonus dialog FIRST (highest priority) - instant, 0 seconds delay
+  // Check age-gate FIRST (highest priority) - before any dialogs
   useEffect(() => {
-    if (canMountModals && canClaimWelcome && userId) {
+    if (profile && !loading) {
+      // Show age-gate if birth_date is missing or age_verified is false
+      if (!profile.age_verified || !profile.birth_date) {
+        setShowAgeGate(true);
+      } else {
+        setShowAgeGate(false);
+      }
+    }
+  }, [profile, loading]);
+
+  // Show Welcome Bonus dialog SECOND (after age-gate) - instant, 0 seconds delay
+  useEffect(() => {
+    if (canMountModals && canClaimWelcome && userId && !showAgeGate) {
       setShowWelcomeBonus(true);
       setShowPopup(false);
     }
-  }, [canMountModals, canClaimWelcome, userId]);
+  }, [canMountModals, canClaimWelcome, userId, showAgeGate]);
 
-  // Show Daily Gift dialog SECOND (after welcome bonus) - AUTOMATIC, no auto-claim
+  // Show Daily Gift dialog THIRD (after age-gate and welcome bonus) - AUTOMATIC, no auto-claim
   useEffect(() => {
-    if (canMountModals && canClaim && !showWelcomeBonus && userId) {
+    if (canMountModals && canClaim && !showAgeGate && !showWelcomeBonus && userId) {
       setShowPopup(true);
     }
-  }, [canMountModals, canClaim, showWelcomeBonus, userId]);
+  }, [canMountModals, canClaim, showAgeGate, showWelcomeBonus, userId]);
 
-  // Show Daily Winners popup THIRD (after Daily Gift is handled)
+  // Show Daily Winners popup FOURTH (after age-gate, Daily Gift is handled)
   useEffect(() => {
-    if (canMountModals && canShowDailyPopup && !showWelcomeBonus && !showPopup && userId && dailyGiftJustClaimed) {
+    if (canMountModals && canShowDailyPopup && !showAgeGate && !showWelcomeBonus && !showPopup && userId && dailyGiftJustClaimed) {
       triggerDailyWinnersPopup();
     }
-  }, [canMountModals, canShowDailyPopup, showWelcomeBonus, showPopup, userId, dailyGiftJustClaimed, triggerDailyWinnersPopup]);
+  }, [canMountModals, canShowDailyPopup, showAgeGate, showWelcomeBonus, showPopup, userId, dailyGiftJustClaimed, triggerDailyWinnersPopup]);
 
 
 
@@ -380,6 +396,18 @@ if (!profile) {
           pointerEvents: 'none'
         }}
       />
+    {/* Age-gate modal (HIGHEST PRIORITY - blocks everything) */}
+    {userId && (
+      <AgeGateModal 
+        open={showAgeGate} 
+        userId={userId} 
+        onSuccess={() => {
+          setShowAgeGate(false);
+          refreshProfile();
+        }} 
+      />
+    )}
+    
     {/* Idle warning (60s countdown before logout) */}
     <IdleWarning 
       show={showWarning} 

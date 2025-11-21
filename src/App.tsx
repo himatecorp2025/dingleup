@@ -44,6 +44,9 @@ const About = lazy(() => import("./pages/About"));
 // Lazy load admin pages
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminAgeStatistics = lazy(() => import("./pages/AdminAgeStatistics"));
+const ASZF = lazy(() => import("./pages/ASZF"));
+const Adatkezeles = lazy(() => import("./pages/Adatkezeles"));
 
 const AdvancedAnalytics = lazy(() => import("./pages/AdvancedAnalytics"));
 const RetentionDashboard = lazy(() => import("./pages/RetentionDashboard"));
@@ -174,6 +177,11 @@ const AppCore = () => {
               <Route path="/admin/ad-interests" element={<ErrorBoundary><AdminAdInterests /></ErrorBoundary>} />
               <Route path="/admin/booster-types" element={<ErrorBoundary><AdminBoosterTypes /></ErrorBoundary>} />
               <Route path="/admin/booster-purchases" element={<ErrorBoundary><AdminBoosterPurchases /></ErrorBoundary>} />
+              <Route path="/admin/age-statistics" element={<ErrorBoundary><AdminAgeStatistics /></ErrorBoundary>} />
+              
+              {/* Legal pages */}
+              <Route path="/aszf" element={<ASZF />} />
+              <Route path="/adatkezeles" element={<Adatkezeles />} />
               
               {/* 404 fallback */}
               <Route path="*" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />

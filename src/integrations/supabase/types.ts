@@ -1760,6 +1760,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age_consent: boolean | null
           age_verified: boolean | null
           avatar_url: string | null
           biometric_enabled: boolean | null
@@ -1791,6 +1792,7 @@ export type Database = {
           pin_hash: string
           preferred_language: string | null
           question_swaps_available: number | null
+          terms_accepted_at: string | null
           total_correct_answers: number
           updated_at: string | null
           username: string
@@ -1799,6 +1801,7 @@ export type Database = {
           welcome_bonus_claimed: boolean | null
         }
         Insert: {
+          age_consent?: boolean | null
           age_verified?: boolean | null
           avatar_url?: string | null
           biometric_enabled?: boolean | null
@@ -1830,6 +1833,7 @@ export type Database = {
           pin_hash: string
           preferred_language?: string | null
           question_swaps_available?: number | null
+          terms_accepted_at?: string | null
           total_correct_answers?: number
           updated_at?: string | null
           username: string
@@ -1838,6 +1842,7 @@ export type Database = {
           welcome_bonus_claimed?: boolean | null
         }
         Update: {
+          age_consent?: boolean | null
           age_verified?: boolean | null
           avatar_url?: string | null
           biometric_enabled?: boolean | null
@@ -1869,6 +1874,7 @@ export type Database = {
           pin_hash?: string
           preferred_language?: string | null
           question_swaps_available?: number | null
+          terms_accepted_at?: string | null
           total_correct_answers?: number
           updated_at?: string | null
           username?: string
