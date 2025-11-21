@@ -192,9 +192,7 @@ const LeaderboardCarouselComponent = () => {
 
   return (
     <div className="w-full py-1">
-      <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-foreground mb-1 drop-shadow-lg">🏆 {t('leaderboard.carousel_title')} 🏆</h3>
-      
-      {/* Daily Rankings Countdown */}
+      {/* Daily Rankings Countdown with TOP 100 title inside */}
       <div className="flex justify-center mb-2">
         <DailyRankingsCountdown compact={false} />
       </div>
