@@ -11,6 +11,13 @@
     <meta name="fullscreen" content="yes" />
     <meta name="apple-touch-fullscreen" content="yes" />
     
+    <!-- SECURITY: Critical Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://wdpxmwsxhckazwxufttk.supabase.co https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://wdpxmwsxhckazwxufttk.supabase.co wss://wdpxmwsxhckazwxufttk.supabase.co; media-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
+    
     <!-- Fullscreen mode meta tags -->
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
