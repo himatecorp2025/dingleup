@@ -143,7 +143,7 @@ export const AgeGateModal = ({ open, userId, onSuccess }: AgeGateModalProps) => 
   return (
     <Dialog open={open} modal>
       <DialogContent 
-        className="max-w-md w-[90vw] bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-yellow-400/30 shadow-2xl rounded-lg"
+        className="max-w-md w-[90vw] bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d] border-2 border-yellow-400/30 shadow-2xl rounded-lg p-6"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
