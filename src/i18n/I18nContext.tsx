@@ -126,8 +126,18 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
   const t = (key: string): string => {
     // Try current language
-    if (translations[key]) {
+    if (translations[key] && translations[key].trim() !== '') {
       return translations[key];
+    }
+
+    // Fallback to English if current lang failed
+    if (lang !== 'en' && translations[`${key}_en`] && translations[`${key}_en`].trim() !== '') {
+      return translations[`${key}_en`];
+    }
+
+    // Fallback to Hungarian (source language)
+    if (translations[`${key}_hu`] && translations[`${key}_hu`].trim() !== '') {
+      return translations[`${key}_hu`];
     }
 
     // Log missing translation in development
@@ -135,7 +145,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
       console.warn(`[I18n] Missing translation for key: ${key} (lang: ${lang})`);
     }
 
-    // Return key itself as fallback (debug mode)
+    // Return key itself as last resort (debug mode)
     return key;
   };
 
