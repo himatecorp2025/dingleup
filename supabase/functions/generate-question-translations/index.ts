@@ -45,11 +45,10 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    // Get active questions that need translation
+    // Get all questions that need translation
     const { data: questions, error: questionsError } = await supabase
       .from('questions')
-      .select('id, question_text, answer_a, answer_b, answer_c, correct_answer')
-      .eq('is_active', true)
+      .select('id, question, answers, correct_answer')
       .order('created_at', { ascending: true });
 
     if (questionsError) throw questionsError;
@@ -80,16 +79,19 @@ serve(async (req) => {
           .single();
 
         if (!huExists) {
+          // Extract answers from JSONB array
+          const answers = question.answers as any[];
+          
           // Insert Hungarian source
           await supabase
             .from('question_translations')
             .insert({
               question_id: question.id,
               lang: 'hu',
-              question_text: question.question_text,
-              answer_a: question.answer_a,
-              answer_b: question.answer_b,
-              answer_c: question.answer_c,
+              question_text: question.question,
+              answer_a: answers[0]?.text || '',
+              answer_b: answers[1]?.text || '',
+              answer_c: answers[2]?.text || '',
             });
         }
 
@@ -128,12 +130,18 @@ CRITICAL: Return ONLY a valid JSON object with this exact structure:
 
 Do NOT add explanations, notes, or markdown formatting. ONLY the JSON object.`;
 
+            // Extract answers from JSONB array
+            const answers = question.answers as any[];
+            const answerA = answers[0]?.text || '';
+            const answerB = answers[1]?.text || '';
+            const answerC = answers[2]?.text || '';
+
             const userPrompt = `Translate this Hungarian quiz question to ${LANGUAGE_NAMES[lang]}:
 
-Question: ${question.question_text}
-Answer A: ${question.answer_a}
-Answer B: ${question.answer_b}
-Answer C: ${question.answer_c}
+Question: ${question.question}
+Answer A: ${answerA}
+Answer B: ${answerB}
+Answer C: ${answerC}
 Correct answer: ${question.correct_answer}
 
 Remember: Keep the same answer positions (A/B/C). The correct answer is marked as "${question.correct_answer}" and must remain in that position after translation.`;
