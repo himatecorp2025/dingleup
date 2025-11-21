@@ -209,6 +209,7 @@ const SplashScreen = () => (
       <img 
         src="/dingleup-logo.png" 
         alt="DingleUP!" 
+        loading="eager"
         className="w-32 h-32 object-contain"
       />
     </div>

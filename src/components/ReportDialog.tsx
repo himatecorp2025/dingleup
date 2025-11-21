@@ -297,6 +297,7 @@ export const ReportDialog = ({ open, onOpenChange, reportedUserId, reportedMessa
                       <img 
                         src={preview} 
                         alt={`Screenshot ${index + 1}`}
+                        loading="lazy"
                         className="w-full h-20 object-cover rounded border border-primary/30"
                       />
                       <button

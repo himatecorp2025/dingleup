@@ -443,6 +443,7 @@ const Profile = () => {
                 <img 
                   src={profile.avatar_url} 
                   alt={profile.username}
+                  loading="lazy"
                   className="w-full h-full object-cover clip-hexagon"
                 />
               ) : (
