@@ -1765,6 +1765,7 @@ export type Database = {
           avatar_url: string | null
           biometric_enabled: boolean | null
           birth_date: string | null
+          challenge_expires_at: string | null
           coins: number | null
           country_code: string
           created_at: string | null
@@ -1796,6 +1797,7 @@ export type Database = {
           total_correct_answers: number
           updated_at: string | null
           username: string
+          webauthn_challenge: string | null
           webauthn_credential_id: string | null
           webauthn_public_key: string | null
           welcome_bonus_claimed: boolean | null
@@ -1806,6 +1808,7 @@ export type Database = {
           avatar_url?: string | null
           biometric_enabled?: boolean | null
           birth_date?: string | null
+          challenge_expires_at?: string | null
           coins?: number | null
           country_code?: string
           created_at?: string | null
@@ -1837,6 +1840,7 @@ export type Database = {
           total_correct_answers?: number
           updated_at?: string | null
           username: string
+          webauthn_challenge?: string | null
           webauthn_credential_id?: string | null
           webauthn_public_key?: string | null
           welcome_bonus_claimed?: boolean | null
@@ -1847,6 +1851,7 @@ export type Database = {
           avatar_url?: string | null
           biometric_enabled?: boolean | null
           birth_date?: string | null
+          challenge_expires_at?: string | null
           coins?: number | null
           country_code?: string
           created_at?: string | null
@@ -1878,6 +1883,7 @@ export type Database = {
           total_correct_answers?: number
           updated_at?: string | null
           username?: string
+          webauthn_challenge?: string | null
           webauthn_credential_id?: string | null
           webauthn_public_key?: string | null
           welcome_bonus_claimed?: boolean | null
