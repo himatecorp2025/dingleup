@@ -41,13 +41,8 @@ export const BoosterButton: React.FC<BoosterButtonProps> = ({
         fill="none"
         shapeRendering="geometricPrecision"
         colorInterpolationFilters="sRGB"
-        className="absolute"
+        className="absolute inset-0 w-full h-full"
         style={{
-          width: '100%',
-          height: '100%',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%) scale(1.25, 1.5)',
           filter: 'drop-shadow(0 0 8px rgba(234, 179, 8, 0.9)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.6))',
         }}
         aria-hidden
