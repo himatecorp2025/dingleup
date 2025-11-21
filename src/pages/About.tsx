@@ -14,9 +14,9 @@ const About = () => {
   const { t } = useI18n();
   const navigate = useNavigate();
 
-  // Check if current user is admin (only for DingleUP! owner)
+  // Check if current user is DingelUP! (only for this specific username)
   useEffect(() => {
-    const checkAdminRole = async () => {
+    const checkDingelUpUser = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
@@ -24,21 +24,20 @@ const About = () => {
           return;
         }
 
-        const { data: roleData } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .eq('role', 'admin')
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', session.user.id)
           .maybeSingle();
 
-        setIsAdmin(!!roleData);
+        setIsAdmin(profileData?.username === 'DingelUP!');
       } catch (error) {
-        console.error('Admin role check error:', error);
+        console.error('DingelUP user check error:', error);
         setIsAdmin(false);
       }
     };
 
-    checkAdminRole();
+    checkDingelUpUser();
   }, []);
 
   // Only show on mobile/tablet
