@@ -604,7 +604,7 @@ if (!profile) {
                       textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(234,179,8,0.8)'
                     }}
                   >
-                    {boosterState.hasPendingPremium ? 'PREMIUM SPEED AKTIVÁLÁSA' : 'SPEED BOOSTER'}
+                    {boosterState.hasPendingPremium ? t('dashboard.premium_speed_activate') : t('dashboard.speed_booster')}
                   </span>
                   {!boosterState.hasPendingPremium && (
                     <span 
@@ -613,7 +613,7 @@ if (!profile) {
                         textShadow: '-0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000'
                       }}
                     >
-                      2.49 USD • Premium Booster
+                      {t('dashboard.premium_booster_price')}
                     </span>
                   )}
                 </div>
@@ -659,7 +659,7 @@ if (!profile) {
                     textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
                   }}
                 >
-                  PLAY NOW
+                  {t('dashboard.play_now')}
                 </span>
               </DiamondButton>
             </div>

@@ -9,17 +9,17 @@ export const CategorySelector = ({ onSelectCategory }: CategorySelectorProps) =>
   const { t } = useI18n();
   
   const categories = [
-    { id: 'health', label: t('category.health'), emoji: '🏥' },
-    { id: 'history', label: t('category.history'), emoji: '📜' },
-    { id: 'culture', label: t('category.culture'), emoji: '🎭' },
-    { id: 'finance', label: t('category.finance'), emoji: '💰' },
+    { id: 'health', label: t('game.category.health'), emoji: '🏥' },
+    { id: 'history', label: t('game.category.history'), emoji: '📜' },
+    { id: 'culture', label: t('game.category.culture'), emoji: '🎭' },
+    { id: 'finance', label: t('game.category.finance'), emoji: '💰' },
   ];
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-2xl space-y-6">
         <h2 className="text-3xl font-bold text-center text-foreground mb-8">
-          {t('category.select_title')}
+          {t('game.category.select_title')}
         </h2>
         <div className="grid grid-cols-2 gap-4">
           {categories.map((category) => (
