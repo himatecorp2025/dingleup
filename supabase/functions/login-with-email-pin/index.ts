@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
 import * as bcrypt from 'https://deno.land/x/bcrypt@v0.4.1/mod.ts';
 
 console.log('[login-with-email-pin] Function loaded');
@@ -17,7 +18,8 @@ Deno.serve(async (req) => {
   try {
     const { email, pin } = await req.json();
 
-    if (!email || !pin) {
+    // Input validation
+    if (!email || typeof email !== 'string' || !pin || typeof pin !== 'string') {
       return new Response(
         JSON.stringify({ error: 'E-mail és PIN kötelező' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -26,6 +28,15 @@ Deno.serve(async (req) => {
 
     // PIN validálás: pontosan 6 számjegy
     if (!/^\d{6}$/.test(pin)) {
+      return new Response(
+        JSON.stringify({ error: 'Hibás e-mail vagy PIN kód' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Email validálás
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
       return new Response(
         JSON.stringify({ error: 'Hibás e-mail vagy PIN kód' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -59,6 +70,19 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: 'Hibás e-mail vagy PIN kód' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Rate limiting check - 5 attempts per 15 minutes
+    const rateLimitKey = `login_attempt_${profile.id}`;
+    const { allowed } = await checkRateLimit(
+      supabase,
+      rateLimitKey,
+      RATE_LIMITS.AUTH
+    );
+
+    if (!allowed) {
+      console.error('[login-with-email-pin] Rate limit exceeded for user:', profile.id);
+      return rateLimitExceeded(corsHeaders);
     }
 
     // PIN ellenőrzése bcrypt-tel
