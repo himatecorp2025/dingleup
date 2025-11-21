@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import playNowButtonSvg from '@/assets/play-now-button.svg';
 
 interface PlayNowButtonProps {
   onClick?: () => void;
@@ -9,8 +8,8 @@ interface PlayNowButtonProps {
 }
 
 /**
- * Play Now Button with custom SVG background
- * Maintains text and icon content while replacing button background
+ * Play Now Button with inline SVG background
+ * Maintains text and icon content while displaying SVG button background
  */
 export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
   onClick,
@@ -35,16 +34,80 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         height: '80px',
       }}
     >
-      {/* SVG Background */}
-      <img
-        src={playNowButtonSvg}
-        alt=""
-        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+      {/* Inline SVG Background */}
+      <svg 
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="22.53058 -47.5814116 672.82399 167.3667432"
+        fill="none"
+        shapeRendering="geometricPrecision"
+        colorInterpolationFilters="sRGB"
+        className="absolute inset-0 w-full h-full pointer-events-none"
         style={{
           transform: 'scale(1.25, 1.5)',
         }}
         aria-hidden
-      />
+      >
+        <defs>
+          <path id="HEX" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+
+          <linearGradient id="bg" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#191534"/>
+            <stop offset="100%" stopColor="#0e0b1c"/>
+          </linearGradient>
+
+          <linearGradient id="chromeGrad" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#f8fbff"/>
+            <stop offset="10%" stopColor="#c6ccd3"/>
+            <stop offset="22%" stopColor="#ffffff"/>
+            <stop offset="40%" stopColor="#9ea6b0"/>
+            <stop offset="58%" stopColor="#e7ebf0"/>
+            <stop offset="78%" stopColor="#bfc6cf"/>
+            <stop offset="100%" stopColor="#ffffff"/>
+          </linearGradient>
+
+          <linearGradient id="band20" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#D5FFD6"/>
+            <stop offset="35%" stopColor="#22C55E"/>
+            <stop offset="100%" stopColor="#065F46"/>
+          </linearGradient>
+
+          <linearGradient id="band5" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#E9FFEA"/>
+            <stop offset="50%" stopColor="#4ADE80"/>
+            <stop offset="100%" stopColor="#047857"/>
+          </linearGradient>
+
+          <filter id="pro3d" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
+            <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
+          </filter>
+
+          <mask id="maskOuterOnly" maskUnits="userSpaceOnUse">
+            <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
+            <use href="#HEX" stroke="white" strokeWidth="2" fill="none"/>
+            <use href="#HEX" stroke="black" strokeWidth="25" fill="none"/>
+          </mask>
+        </defs>
+
+        <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
+
+        <g transform="scale(1,1.2)">
+          <use href="#HEX" fill="black" fillOpacity="0.5"/>
+
+          <use href="#HEX" fill="none" stroke="url(#band20)" strokeWidth="20"
+               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d)"
+               vectorEffect="non-scaling-stroke"/>
+
+          <use href="#HEX" fill="none" stroke="url(#band5)" strokeWidth="5"
+               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d)"
+               vectorEffect="non-scaling-stroke"/>
+
+          <g mask="url(#maskOuterOnly)">
+            <use href="#HEX" fill="none" stroke="url(#chromeGrad)" strokeWidth="2"
+                 strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
+          </g>
+        </g>
+      </svg>
 
       {/* Content (Text + Icon) - Centered both horizontally and vertically */}
       <div className="absolute inset-0 z-10 flex items-center justify-center">
