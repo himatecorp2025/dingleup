@@ -6,14 +6,28 @@ import dingleupLogo from '@/assets/dingleup-logo-circle.png';
 
 export default function AccountChoice() {
   const navigate = useNavigate();
-  const { isReady, error } = useAutoRegister();
+  const { isReady, error, userId } = useAutoRegister();
 
   const handleNoAccount = () => {
     if (!isReady) return;
-    navigate('/dashboard');
+    
+    console.log('[AccountChoice] No account button clicked, userId:', userId);
+    
+    if (error) {
+      console.error('[AccountChoice] Error present, not navigating:', error);
+      return;
+    }
+    
+    if (userId) {
+      console.log('[AccountChoice] Navigating to dashboard with userId:', userId);
+      navigate('/dashboard');
+    } else {
+      console.error('[AccountChoice] No userId, cannot navigate');
+    }
   };
 
   const handleHasAccount = () => {
+    console.log('[AccountChoice] Has account button clicked');
     navigate('/auth/login');
   };
 
@@ -53,8 +67,9 @@ export default function AccountChoice() {
           
           {/* Error indicator */}
           {error && (
-            <div className="flex items-center justify-center gap-2 text-red-400 py-2">
-              <span className="text-sm">{error}</span>
+            <div className="flex flex-col items-center justify-center gap-2 text-red-400 py-2 px-4 bg-red-500/10 rounded-lg border border-red-500/20">
+              <span className="text-sm font-semibold">⚠️ Hiba</span>
+              <span className="text-xs text-center">{error}</span>
             </div>
           )}
         </div>
