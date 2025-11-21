@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Trophy } from 'lucide-react';
+import { useI18n } from '@/i18n/useI18n';
 
 interface DailyRankingsCountdownProps {
   compact?: boolean;
@@ -7,6 +8,7 @@ interface DailyRankingsCountdownProps {
 }
 
 export const DailyRankingsCountdown = ({ compact = false, className = '' }: DailyRankingsCountdownProps) => {
+  const { t } = useI18n();
   const [timeRemaining, setTimeRemaining] = useState('');
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
       const diff = tomorrow.getTime() - now.getTime();
       
       if (diff <= 0) {
-        setTimeRemaining('Díjazás folyamatban...');
+        setTimeRemaining(t('countdown.processing'));
         return;
       }
       
@@ -30,7 +32,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       
       setTimeRemaining(
-        `${hours} óra ${minutes} perc ${seconds} másodperc`
+        `${hours} ${t('countdown.hours')} ${minutes} ${t('countdown.minutes')} ${seconds} ${t('countdown.seconds')}`
       );
     };
     
@@ -44,7 +46,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
     return (
       <div 
         className={`bg-primary border border-primary/60 rounded px-1 py-0.5 shadow-[0_0_8px_hsl(var(--primary)/0.6)] ${className}`}
-        title="Napi verseny vége"
+        title={t('countdown.dailyEndTitle')}
       >
         <span className="text-[8px] font-extrabold text-foreground drop-shadow leading-none whitespace-nowrap">
           {timeRemaining}
@@ -131,7 +133,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
         <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-primary-dark drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
         <div className="flex flex-col items-center">
           <span className="text-[9px] sm:text-[10px] font-bold text-primary-dark/90 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] leading-tight whitespace-nowrap">
-            HOLNAP 00:00
+            {t('countdown.tomorrow')}
           </span>
           <span className="text-[7px] sm:text-[8px] font-extrabold text-primary-dark drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] leading-none whitespace-nowrap mt-0.5">
             {timeRemaining}

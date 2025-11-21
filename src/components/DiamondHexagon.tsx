@@ -1,4 +1,5 @@
 import React from 'react';
+import { useI18n } from '@/i18n/useI18n';
 
 interface DiamondHexagonProps {
   type: 'rank' | 'coins' | 'lives';
@@ -11,6 +12,7 @@ interface DiamondHexagonProps {
  * Responsive design with diamond cross pattern
  */
 export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, className = '' }) => {
+  const { t } = useI18n();
   // Color schemes per type
   const colorSchemes = {
     rank: {
@@ -103,11 +105,11 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
   const getAriaLabel = () => {
     switch (type) {
       case 'rank':
-        return `Rangsor pozíció: ${value}`;
+        return `${t('hexagon.rank')}: ${value}`;
       case 'coins':
-        return `Aranyérmék száma: ${value}`;
+        return `${t('hexagon.coins')}: ${value}`;
       case 'lives':
-        return `Életek száma: ${value}`;
+        return `${t('hexagon.lives')}: ${value}`;
       default:
         return '';
     }

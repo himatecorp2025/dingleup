@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
+import { useI18n } from '@/i18n/useI18n';
 
 interface DailyWinnersDialogProps {
   open: boolean;
@@ -17,6 +18,7 @@ interface TopPlayer {
 }
 
 export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) => {
+  const { t } = useI18n();
   const [contentVisible, setContentVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
@@ -179,7 +181,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               <div className="relative px-8 py-4 bg-gradient-to-r from-primary via-accent to-primary rounded-2xl shadow-2xl">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/50 via-accent/50 to-primary/50 rounded-2xl blur-xl animate-pulse" />
                 <h2 className="relative text-2xl md:text-3xl font-bold text-white text-center tracking-wider drop-shadow-lg">
-                  🏆 TEGNAPI TOP 10 🏆
+                  🏆 {t('dailyWinners.title')} 🏆
                 </h2>
               </div>
             </div>
@@ -197,7 +199,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
             >
               {topPlayers.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
-                  <p className="text-lg">Még nincs adat a tegnapi napról</p>
+                  <p className="text-lg">{t('dailyWinners.noData')}</p>
                 </div>
               ) : (
                 topPlayers.map((player, index) => {
@@ -228,7 +230,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               {player.username}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {player.total_correct_answers} helyes válasz
+                              {player.total_correct_answers} {t('dailyWinners.correctAnswers')}
                             </p>
                           </div>
 
@@ -254,7 +256,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s'
               }}
             >
-              Bezárás
+              {t('dailyWinners.close')}
             </button>
           </div>
         </div>
