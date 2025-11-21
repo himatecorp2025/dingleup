@@ -176,7 +176,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         {/* Main Content */}
         <main className="flex-1 min-h-dvh min-h-svh overflow-auto">
           {/* Toggle Sidebar Button */}
-          <div className="p-4">
+          <div className="p-4 flex items-center gap-3">
             <Button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               variant="ghost"
@@ -184,6 +184,16 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               className="text-white/70 hover:text-white hover:bg-white/10"
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+            
+            {/* Vissza a játékba gomb - csak mobilon/tableten, mindig látható */}
+            <Button
+              onClick={() => navigate('/dashboard')}
+              variant="ghost"
+              className="md:hidden text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-2"
+            >
+              <Gamepad2 className="h-5 w-5" />
+              <span className="font-medium">Vissza a játékba</span>
             </Button>
           </div>
 
