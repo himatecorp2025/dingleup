@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Lock } from "lucide-react";
+import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -25,6 +25,7 @@ const LoginNew = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof LoginForm, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [showPin, setShowPin] = useState(false);
 
   useEffect(() => {
     const checkStandalone = () => {
@@ -179,16 +180,24 @@ const LoginNew = () => {
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
                 <Input
-                  type="password"
+                  type={showPin ? "text" : "password"}
                   inputMode="numeric"
                   pattern="[0-9]*"
                   value={formData.pin}
                   onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '').slice(0, 6) })}
-                  className="h-12 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base"
+                  className="h-12 pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base"
                   placeholder="123456"
                   disabled={isLoading}
                   maxLength={6}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPin(!showPin)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
+                  aria-label={showPin ? "PIN elrejtése" : "PIN megjelenítése"}
+                >
+                  {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               {errors.pin && <p className="text-sm text-red-400">{errors.pin}</p>}
             </div>
