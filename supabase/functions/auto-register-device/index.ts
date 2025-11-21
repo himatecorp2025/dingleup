@@ -135,8 +135,8 @@ Deno.serve(async (req) => {
     }
 
     // Update profile with device_id (handle_new_user trigger creates profile)
-    // Reduced wait time for speed optimization
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Minimal wait for trigger execution
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     const { error: updateError } = await supabase
       .from('profiles')
