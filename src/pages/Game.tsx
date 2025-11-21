@@ -7,11 +7,14 @@ import gameBackground from "@/assets/game-background.png";
 import { useAudioStore } from "@/stores/audioStore";
 import { ScreenshotProtection } from "@/components/ScreenshotProtection";
 import { GameErrorBoundary } from "@/components/GameErrorBoundary";
+import { useI18n } from "@/i18n";
+
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [loadTimeout, setLoadTimeout] = useState(false);
   const navigate = useNavigate();
   const { loaded } = useAudioStore();
+  const { t } = useI18n();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -42,17 +45,16 @@ const Game = () => {
         />
         <div className="max-w-2xl w-full bg-background/80 backdrop-blur-sm rounded-2xl p-8 text-center border-2 border-primary/50 relative z-10">
           <Smartphone className="w-24 h-24 mx-auto mb-6 text-primary" />
-          <h1 className="text-4xl font-black text-foreground mb-4">Mobil Játék</h1>
+          <h1 className="text-4xl font-black text-foreground mb-4">{t('game.mobile_only')}</h1>
           <p className="text-xl text-foreground/70 mb-8">
-            Ez a játék kizárólag mobil nézetben érhető el. 
-            Kérjük, nyissa meg telefonján vagy szűkítse le a böngésző ablakát!
+            {t('game.mobile_description')}
           </p>
           <Button 
             onClick={() => navigate('/')}
             size="lg"
             className="bg-primary hover:bg-primary/90"
           >
-            Vissza a főoldalra
+            {t('game.back_home')}
           </Button>
         </div>
       </div>
