@@ -2,12 +2,14 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { useI18n } from '@/i18n';
 
 interface WeeklyWinnerPopupProps {
   userId: string | undefined;
 }
 
 export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [winnerData, setWinnerData] = useState<{
     rank: number;
@@ -167,13 +169,13 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
                        clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%)'
                      }}></div>
                 
-                <div className="text-center space-y-[1vh] relative z-10">
+                 <div className="text-center space-y-[1vh] relative z-10">
                   <h1 className="font-black bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]"
                       style={{ fontSize: 'clamp(1.5rem, 7vw, 2.5rem)' }}>
-                    HETI GYŐZELEM
+                    {t('weekly_winner.title')}
                   </h1>
                   <p className="text-white font-bold drop-shadow-lg" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1.25rem)' }}>
-                    TOP 10 HELYEZÉS
+                    {t('weekly_winner.top_10')}
                   </p>
                 </div>
               </div>
@@ -242,7 +244,7 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
           {/* Bottom text */}
           <div className="bg-black/70 backdrop-blur-sm rounded-2xl border-4 border-purple-600 px-[6vw] py-[2vh] mt-[3vh] max-w-[85vw] shadow-lg z-10">
             <p className="text-white text-center font-bold leading-relaxed drop-shadow-lg" style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1rem)' }}>
-              A múlt heti teljesítményed alapján bekerültél a TOP 10-be! Gratulálunk! 🎉
+              {t('weekly_winner.congratulations')}
             </p>
           </div>
 
@@ -252,7 +254,7 @@ export const WeeklyWinnerPopup = ({ userId }: WeeklyWinnerPopupProps) => {
             className="mt-[3vh] bg-gradient-to-b from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white font-black rounded-full px-[10vw] py-[2.5vh] shadow-[0_6px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1 transition-all border-4 border-yellow-400 z-10"
             style={{ fontSize: 'clamp(1rem, 4.5vw, 1.75rem)' }}
           >
-            RENDBEN
+            {t('common.confirm')}
           </button>
         </div>
       </DialogContent>

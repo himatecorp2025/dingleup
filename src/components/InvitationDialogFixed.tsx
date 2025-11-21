@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Users, Copy, Gift, Coins, Heart } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n';
 
 interface InvitationDialogProps {
   open: boolean;
@@ -19,6 +20,7 @@ const INVITATION_REWARDS = [
 ];
 
 export const InvitationDialogFixed = ({ open, onClose, userId }: InvitationDialogProps) => {
+  const { t } = useI18n();
   const [invitationCode, setInvitationCode] = useState('');
   const [invitationLink, setInvitationLink] = useState('');
   const [invitedCount, setInvitedCount] = useState(0);
@@ -52,38 +54,38 @@ export const InvitationDialogFixed = ({ open, onClose, userId }: InvitationDialo
       setInvitedCount(count || 0);
     } catch (error) {
       console.error('Error fetching invitation data:', error);
-      toast.error('Hiba a meghívó adatok betöltésekor');
+      toast.error(t('invitation.error'));
     }
   };
 
   const copyToClipboard = async (text: string, type: 'code' | 'link') => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success(type === 'code' ? 'Meghívó kód másolva!' : 'Meghívó link másolva!');
+      toast.success(t('invitation.code_copied'));
     } catch (error) {
       console.error('Error copying:', error);
-      toast.error('Hiba a másolás során');
+      toast.error(t('common.error.generic'));
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={(value) => { if (!value) onClose(); }}>
       <DialogContent className="z-[100] max-w-md max-h-[85vh] overflow-y-auto bg-gradient-to-br from-primary-darker via-primary-dark to-primary-darker border-2 border-primary/50">
-        <button onClick={onClose} className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-600 text-white rounded-full border border-red-400/60 z-[110]">Vissza</button>
+        <button onClick={onClose} className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-600 text-white rounded-full border border-red-400/60 z-[110]">{t('common.close')}</button>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl text-white">
             <Users className="w-6 h-6 text-purple-400" />
-            Hívd meg barátaidat!
+            {t('invitation.share_title')}
           </DialogTitle>
           <DialogDescription className="text-white/70">
-            Osztd meg meghívó kódodat vagy linkedet
+            {t('invitation.share_text')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           {/* Invitation Code */}
           <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
-            <label className="text-sm font-medium mb-2 block text-white">Meghívó kód</label>
+            <label className="text-sm font-medium mb-2 block text-white">{t('invitation.your_code')}</label>
             <div className="flex gap-2">
               <input
                 type="text"
@@ -125,14 +127,14 @@ export const InvitationDialogFixed = ({ open, onClose, userId }: InvitationDialo
           <div className="bg-purple-900/30 rounded-xl p-3 sm:p-4 text-center border-2 border-purple-500/30">
             <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
               <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0" />
-              <span className="text-xs sm:text-sm font-medium text-white">Meghívott barátok</span>
+              <span className="text-xs sm:text-sm font-medium text-white">{t('friends.title')}</span>
             </div>
             <p className="text-2xl sm:text-3xl font-bold text-yellow-400">{invitedCount}</p>
           </div>
 
           {/* Rewards */}
           <div className="space-y-2">
-            <h3 className="font-bold text-sm text-white">Jutalmak:</h3>
+            <h3 className="font-bold text-sm text-white">{t('invitation.rewards')}</h3>
             {INVITATION_REWARDS.map((reward) => {
               const achieved = invitedCount >= reward.count;
               return (
@@ -165,7 +167,7 @@ export const InvitationDialogFixed = ({ open, onClose, userId }: InvitationDialo
           </div>
 
           <Button onClick={onClose} className="w-full bg-purple-600 hover:bg-purple-700 text-white">
-            Bezárás
+            {t('common.close')}
           </Button>
         </div>
       </DialogContent>
