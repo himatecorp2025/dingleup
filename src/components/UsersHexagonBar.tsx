@@ -48,7 +48,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
           height: '350%',
           top: '50%',
           left: '50%',
-          transform: 'translate(-40%, -55%)',
+          transform: 'translate(-50%, -55%)',
           zIndex: 0
         }}
         aria-hidden
@@ -116,12 +116,12 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
       </svg>
 
       {/* Rank Hexagon - Blue */}
-      <div className="absolute z-10" style={{ left: '8%', top: '50%', transform: 'translateY(-50%)' }}>
+      <div className="absolute z-10" style={{ left: '12%', top: '50%', transform: 'translateY(-50%)' }}>
         <DiamondHexagon type="rank" value={rank !== null ? rank : '...'} />
       </div>
 
       {/* Coins Hexagon - Gold */}
-      <div className="absolute z-10" style={{ left: '30%', top: '50%', transform: 'translateY(-50%)' }}>
+      <div className="absolute z-10" style={{ left: '32%', top: '50%', transform: 'translateY(-50%)' }}>
         <DiamondHexagon type="coins" value={coins} />
       </div>
 
@@ -131,7 +131,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
       </div>
 
       {/* Avatar Hexagon - Purple */}
-      <div className="absolute z-10" style={{ left: '74%', top: '50%', transform: 'translateY(-50%)' }}>
+      <div className="absolute z-10" style={{ left: '72%', top: '50%', transform: 'translateY(-50%)' }}>
         <DiamondHexagon 
           type="avatar" 
           value={username} 
