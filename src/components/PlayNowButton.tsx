@@ -24,14 +24,15 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
       disabled={disabled}
       aria-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : undefined}
-      className={`relative w-full transition-all ${
-        disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'
+      className={`relative transition-all ${
+        disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
       } ${className}`}
       style={{
         background: 'transparent',
         border: 'none',
         padding: 0,
         height: '80px',
+        width: '95%',
         animation: 'pulse-button 3s ease-in-out infinite',
       }}
     >
@@ -42,7 +43,7 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         fill="none"
         shapeRendering="geometricPrecision"
         colorInterpolationFilters="sRGB"
-        className="absolute pointer-events-none"
+        className="absolute"
         style={{
           width: '100%',
           height: '100%',
