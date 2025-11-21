@@ -362,7 +362,7 @@ const Invitation = () => {
                 <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
                   invitedCount >= 3 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
                 }`}>
-                  <span className="text-white font-bold text-sm">3-9. barát {invitedCount >= 3 && '✓'}</span>
+                  <span className="text-white font-bold text-sm">{t('invitation.tier_3_9')} {invitedCount >= 3 && '✓'}</span>
                   <div className="flex gap-2 text-xs">
                     <span className="flex items-center gap-1 text-white">
                       <svg className="w-3 h-3 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
@@ -370,13 +370,13 @@ const Invitation = () => {
                         <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
                         <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
                       </svg>
-                      1000/fő
+                      {t('invitation.tier_3_9_coins')}
                     </span>
                     <span className="flex items-center gap-1 text-white">
                       <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
                       </svg>
-                      5/fő
+                      {t('invitation.tier_3_9_lives')}
                     </span>
                   </div>
                 </div>
@@ -384,7 +384,7 @@ const Invitation = () => {
                 <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
                   invitedCount >= 10 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
                 }`}>
-                  <span className="text-white font-bold text-sm">10+ barát {invitedCount >= 10 && '✓'}</span>
+                  <span className="text-white font-bold text-sm">{t('invitation.tier_10_plus')} {invitedCount >= 10 && '✓'}</span>
                   <div className="flex gap-2 text-xs">
                     <span className="flex items-center gap-1 text-white">
                       <svg className="w-3 h-3 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
@@ -392,20 +392,20 @@ const Invitation = () => {
                         <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
                         <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
                       </svg>
-                      6000/fő
+                      {t('invitation.tier_10_plus_coins')}
                     </span>
                     <span className="flex items-center gap-1 text-white">
                       <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
                       </svg>
-                      20/fő
+                      {t('invitation.tier_10_plus_lives')}
                     </span>
                   </div>
                 </div>
               </div>
 
               <p className="text-xs text-white/60 mt-4 text-center">
-                A sorozat minden 60 napban nullázódik. Minden elfogadott barát után jutalmat kapsz!
+                {t('invitation.reset_notice')}
               </p>
             </div>
           </div>
@@ -436,11 +436,11 @@ const Invitation = () => {
                   <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                Meghívott barátok ({invitedFriends.length})
+                {t('invitation.invited_friends')} ({invitedFriends.length})
               </h2>
               
               {invitedFriends.length === 0 ? (
-                <p className="text-white/60 text-center py-4">Még nem hívtál meg senkit</p>
+                <p className="text-white/60 text-center py-4">{t('invitation.no_invitations')}</p>
               ) : (
                 <div className="space-y-2 max-h-96 overflow-y-auto">
                   {invitedFriends.map((friend) => (
@@ -464,12 +464,12 @@ const Invitation = () => {
                         )}
                         <div>
                           <p className="text-white font-medium">
-                            {friend.invited_user?.username || friend.invited_email || 'Függőben'}
+                            {friend.invited_user?.username || friend.invited_email || t('invitation.pending')}
                           </p>
                           <p className="text-xs text-white/60">
                             {friend.accepted 
-                              ? `Csatlakozott: ${new Date(friend.accepted_at!).toLocaleDateString()}`
-                              : 'Várakozik a regisztrációra'}
+                              ? `${t('invitation.joined_at')}: ${new Date(friend.accepted_at!).toLocaleDateString()}`
+                              : t('invitation.waiting_registration')}
                           </p>
                         </div>
                       </div>
