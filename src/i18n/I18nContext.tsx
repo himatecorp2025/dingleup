@@ -93,7 +93,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
     initializeLanguage();
   }, []);
 
-  const setLang = async (newLang: LangCode) => {
+  const setLang = async (newLang: LangCode, skipDbUpdate = false) => {
     if (!VALID_LANGUAGES.includes(newLang)) {
       console.warn(`[I18n] Invalid language code: ${newLang}`);
       return;
@@ -101,17 +101,19 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
     setIsLoading(true);
     try {
-      // Update state and localStorage
+      // Update state and localStorage immediately
       setLangState(newLang);
       localStorage.setItem(STORAGE_KEY, newLang);
 
-      // Update user profile if logged in
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from('profiles')
-          .update({ preferred_language: newLang })
-          .eq('id', user.id);
+      // Only update database if not already updated by caller
+      if (!skipDbUpdate) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase
+            .from('profiles')
+            .update({ preferred_language: newLang })
+            .eq('id', user.id);
+        }
       }
 
       // Fetch new translations
