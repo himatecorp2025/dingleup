@@ -108,6 +108,9 @@ verify_jwt = false
 [functions.translate-text]
 verify_jwt = true
 
+[functions.translate-text-batch]
+verify_jwt = true
+
 [functions.get-translations]
 verify_jwt = false
 
