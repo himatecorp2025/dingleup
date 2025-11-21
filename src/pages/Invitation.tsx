@@ -49,7 +49,7 @@ const Invitation = () => {
         setUserId(session.user.id);
         fetchInvitationData(session.user.id);
       } else {
-        navigate('/login');
+        navigate('/auth/choice');
       }
     });
   }, [navigate]);

@@ -62,7 +62,7 @@ const Profile = () => {
       if (session?.user) {
         setUserId(session.user.id);
       } else {
-        navigate('/login');
+        navigate('/auth/choice');
       }
     });
   }, [navigate]);
