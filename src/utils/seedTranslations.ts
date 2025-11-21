@@ -8,6 +8,12 @@ export async function seedTranslationsWithAI() {
   console.log('[seedTranslations] Starting batch translation...');
   
   try {
+    // Get current session for JWT token
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error('Jelentkezz be admin fiókkal a fordítások indításához');
+    }
+
     // 1. Fetch all translations that need translation
     const { data: translations, error: fetchError } = await supabase
       .from('translations')
@@ -32,7 +38,7 @@ export async function seedTranslationsWithAI() {
           {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              'Authorization': `Bearer ${session.access_token}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
