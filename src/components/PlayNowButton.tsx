@@ -117,7 +117,7 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
 
       {/* Content (Text + Icon) - Absolutely centered */}
       <div className="absolute inset-0 z-10 flex items-center justify-center">
-        <div className="flex items-center justify-center gap-3 sm:gap-4 text-foreground font-black text-4xl sm:text-6xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+        <div className="flex items-center justify-center gap-4 sm:gap-6 text-foreground font-black text-8xl sm:text-9xl drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
           {children}
         </div>
       </div>
