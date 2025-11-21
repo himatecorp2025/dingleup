@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Trophy } from 'lucide-react';
 import { useI18n } from '@/i18n/useI18n';
 
@@ -10,8 +10,6 @@ interface DailyRankingsCountdownProps {
 export const DailyRankingsCountdown = ({ compact = false, className = '' }: DailyRankingsCountdownProps) => {
   const { t } = useI18n();
   const [timeRemaining, setTimeRemaining] = useState('');
-  const [containerWidth, setContainerWidth] = useState(260); // default width
-  const timerRowRef = useRef<HTMLDivElement>(null); // Ref for second row only
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -42,28 +40,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
     const interval = setInterval(updateCountdown, 1000);
     
     return () => clearInterval(interval);
-  }, [t]);
-
-  // Measure only the second row (timer row) width and update container width (+5%)
-  useEffect(() => {
-    if (timerRowRef.current) {
-      const measureWidth = () => {
-        const timerRowWidth = timerRowRef.current?.offsetWidth || 260;
-        const newWidth = Math.max(180, timerRowWidth * 1.05); // +5% wider than timer row, min 180px
-        setContainerWidth(newWidth);
-      };
-
-      // Initial measurement
-      measureWidth();
-      
-      // Use requestAnimationFrame to ensure DOM is fully rendered
-      requestAnimationFrame(measureWidth);
-      
-      // Remeasure on window resize
-      window.addEventListener('resize', measureWidth);
-      return () => window.removeEventListener('resize', measureWidth);
-    }
-  }, [timeRemaining, t]); // Re-measure when countdown or language changes
+  }, []);
 
   if (compact) {
     return (
@@ -82,8 +59,8 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
     <div 
       className="relative flex items-center mx-auto"
       style={{ 
-        width: `${containerWidth}px`,
-        minWidth: '180px',
+        width: 'fit-content',
+        minWidth: 'clamp(180px, 50vw, 260px)',
         maxWidth: '90vw',
         height: '80px',
       }}
@@ -179,8 +156,8 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
           <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
         </div>
         
-        {/* Timer countdown with text - this row is measured for width */}
-        <div ref={timerRowRef} className="flex items-center justify-center m-0 p-0 gap-1 leading-none [background:transparent]">
+        {/* Timer countdown with text */}
+        <div className="flex items-center justify-center m-0 p-0 gap-1 leading-none [background:transparent]">
           <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
             {t('countdown.you_can_win')}
           </span>
