@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          error_message: string | null
+          id: string
+          ip_address: string | null
+          new_value: Json | null
+          old_value: Json | null
+          resource_id: string | null
+          resource_type: string
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          new_value?: Json | null
+          old_value?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          status?: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          new_value?: Json | null
+          old_value?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       app_session_events: {
         Row: {
           browser: string | null
@@ -1303,6 +1348,27 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          email: string
+          failed_attempts: number
+          last_attempt_at: string
+          locked_until: string | null
+        }
+        Insert: {
+          email: string
+          failed_attempts?: number
+          last_attempt_at?: string
+          locked_until?: string | null
+        }
+        Update: {
+          email?: string
+          failed_attempts?: number
+          last_attempt_at?: string
+          locked_until?: string | null
+        }
+        Relationships: []
+      }
       message_media: {
         Row: {
           created_at: string | null
@@ -1641,16 +1707,52 @@ export type Database = {
         }
         Relationships: []
       }
+      pin_reset_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          token: string
+          used: boolean
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          token: string
+          used?: boolean
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token?: string
+          used?: boolean
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          age_verified: boolean | null
           avatar_url: string | null
-          birth_date: string
+          biometric_enabled: boolean | null
+          birth_date: string | null
           coins: number | null
           country_code: string
           created_at: string | null
           daily_gift_last_claimed: string | null
           daily_gift_streak: number | null
-          email: string
+          device_id: string | null
+          email: string | null
+          email_pin_setup_completed: boolean | null
+          email_verified: boolean | null
+          first_login_age_gate_completed: boolean | null
           help_2x_answer_active: boolean | null
           help_audience_active: boolean | null
           help_third_active: boolean | null
@@ -1660,25 +1762,36 @@ export type Database = {
           last_invitation_reward_reset: string | null
           last_life_regeneration: string | null
           last_username_change: string | null
+          legal_consent: boolean | null
+          legal_consent_at: string | null
           lives: number | null
           lives_regeneration_rate: number | null
           max_lives: number | null
+          pin_hash: string | null
           preferred_language: string | null
           question_swaps_available: number | null
           total_correct_answers: number
           updated_at: string | null
           username: string
+          webauthn_credential_id: string | null
+          webauthn_public_key: string | null
           welcome_bonus_claimed: boolean | null
         }
         Insert: {
+          age_verified?: boolean | null
           avatar_url?: string | null
-          birth_date: string
+          biometric_enabled?: boolean | null
+          birth_date?: string | null
           coins?: number | null
           country_code?: string
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
-          email: string
+          device_id?: string | null
+          email?: string | null
+          email_pin_setup_completed?: boolean | null
+          email_verified?: boolean | null
+          first_login_age_gate_completed?: boolean | null
           help_2x_answer_active?: boolean | null
           help_audience_active?: boolean | null
           help_third_active?: boolean | null
@@ -1688,25 +1801,36 @@ export type Database = {
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           last_username_change?: string | null
+          legal_consent?: boolean | null
+          legal_consent_at?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
+          pin_hash?: string | null
           preferred_language?: string | null
           question_swaps_available?: number | null
           total_correct_answers?: number
           updated_at?: string | null
           username: string
+          webauthn_credential_id?: string | null
+          webauthn_public_key?: string | null
           welcome_bonus_claimed?: boolean | null
         }
         Update: {
+          age_verified?: boolean | null
           avatar_url?: string | null
-          birth_date?: string
+          biometric_enabled?: boolean | null
+          birth_date?: string | null
           coins?: number | null
           country_code?: string
           created_at?: string | null
           daily_gift_last_claimed?: string | null
           daily_gift_streak?: number | null
-          email?: string
+          device_id?: string | null
+          email?: string | null
+          email_pin_setup_completed?: boolean | null
+          email_verified?: boolean | null
+          first_login_age_gate_completed?: boolean | null
           help_2x_answer_active?: boolean | null
           help_audience_active?: boolean | null
           help_third_active?: boolean | null
@@ -1716,14 +1840,19 @@ export type Database = {
           last_invitation_reward_reset?: string | null
           last_life_regeneration?: string | null
           last_username_change?: string | null
+          legal_consent?: boolean | null
+          legal_consent_at?: string | null
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
+          pin_hash?: string | null
           preferred_language?: string | null
           question_swaps_available?: number | null
           total_correct_answers?: number
           updated_at?: string | null
           username?: string
+          webauthn_credential_id?: string | null
+          webauthn_public_key?: string | null
           welcome_bonus_claimed?: boolean | null
         }
         Relationships: []
@@ -2829,6 +2958,51 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sessions: {
+        Row: {
+          created_at: string
+          device_fingerprint: string | null
+          expires_at: string
+          id: string
+          ip_address: string | null
+          is_active: boolean
+          last_activity_at: string
+          revoked_at: string | null
+          revoked_reason: string | null
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_fingerprint?: string | null
+          expires_at: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean
+          last_activity_at?: string
+          revoked_at?: string | null
+          revoked_reason?: string | null
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_fingerprint?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean
+          last_activity_at?: string
+          revoked_at?: string | null
+          revoked_reason?: string | null
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_topic_stats: {
         Row: {
           answered_count: number
@@ -3264,6 +3438,8 @@ export type Database = {
       claim_daily_gift: { Args: never; Returns: Json }
       claim_welcome_bonus: { Args: never; Returns: Json }
       cleanup_expired_game_sessions: { Args: never; Returns: undefined }
+      cleanup_expired_pin_reset_tokens: { Args: never; Returns: undefined }
+      cleanup_expired_sessions: { Args: never; Returns: undefined }
       cleanup_old_analytics: { Args: never; Returns: undefined }
       cleanup_old_messages: { Args: never; Returns: undefined }
       create_friendship_from_invitation: {
@@ -3335,6 +3511,18 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_admin_action: {
+        Args: {
+          p_action: string
+          p_error_message?: string
+          p_new_value?: Json
+          p_old_value?: Json
+          p_resource_id?: string
+          p_resource_type: string
+          p_status?: string
+        }
+        Returns: string
       }
       mark_users_offline: { Args: never; Returns: undefined }
       normalize_user_ids: {
