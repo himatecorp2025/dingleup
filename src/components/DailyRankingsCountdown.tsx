@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Trophy } from 'lucide-react';
 import { useI18n } from '@/i18n/useI18n';
 
@@ -10,6 +10,8 @@ interface DailyRankingsCountdownProps {
 export const DailyRankingsCountdown = ({ compact = false, className = '' }: DailyRankingsCountdownProps) => {
   const { t } = useI18n();
   const [timeRemaining, setTimeRemaining] = useState('');
+  const [containerWidth, setContainerWidth] = useState(260); // default width
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -40,7 +42,23 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
     const interval = setInterval(updateCountdown, 1000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [t]);
+
+  // Measure content width and update container width (+10%)
+  useEffect(() => {
+    if (contentRef.current) {
+      const measureWidth = () => {
+        const contentWidth = contentRef.current?.scrollWidth || 260;
+        const newWidth = Math.max(180, contentWidth * 1.1); // +10% wider than content, min 180px
+        setContainerWidth(newWidth);
+      };
+
+      measureWidth();
+      // Remeasure on window resize
+      window.addEventListener('resize', measureWidth);
+      return () => window.removeEventListener('resize', measureWidth);
+    }
+  }, [timeRemaining, t]); // Re-measure when countdown or language changes
 
   if (compact) {
     return (
@@ -59,8 +77,8 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
     <div 
       className="relative flex items-center mx-auto"
       style={{ 
-        width: 'fit-content',
-        minWidth: 'clamp(180px, 50vw, 260px)',
+        width: `${containerWidth}px`,
+        minWidth: '180px',
         maxWidth: '90vw',
         height: '80px',
       }}
@@ -146,7 +164,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
       </svg>
 
       {/* Content - Absolutely centered */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center m-0 p-0 bg-transparent gap-1">
+      <div ref={contentRef} className="absolute inset-0 z-10 flex flex-col items-center justify-center m-0 p-0 bg-transparent gap-1">
         {/* TOP 100 title with trophies */}
         <div className="flex items-center justify-center gap-1 [background:transparent]">
           <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
