@@ -98,11 +98,12 @@ export const TranslationSeeder = () => {
         return;
       }
 
-      // Fetch all translations that need translation (only hu column filled)
+      // Fetch all translations that need translation - CRITICAL: specify large limit to override 1000-row default
       const { data: translations, error: fetchError } = await supabase
         .from('translations')
         .select('key, hu')
-        .order('key');
+        .order('key')
+        .limit(10000); // Explicitly set high limit to fetch all translations (2898 currently)
 
       if (fetchError) {
         console.error('[TranslationSeeder] Fetch error:', fetchError);
