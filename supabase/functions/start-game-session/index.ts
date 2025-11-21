@@ -60,12 +60,25 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // Ultra-fast: Simple random selection optimized for 2700-row table (sub-100ms)
-    // Direct ORDER BY random() LIMIT 15 - no overhead, maximum speed
-    const { data: questions, error: questionsError } = await supabaseClient
-      .rpc('get_random_questions', { num_questions: 15 });
+    // Get user's preferred language
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('preferred_language')
+      .eq('id', user.id)
+      .single();
 
-    if (questionsError || !questions || questions.length < 15) {
+    const userLang = profile?.preferred_language || 'en';
+    console.log(`[start-game-session] User ${user.id} language: ${userLang}`);
+
+    // Get random question IDs (need more than 15 to account for missing translations)
+    const { data: baseQuestions, error: questionsError } = await supabaseClient
+      .from('questions')
+      .select('id, correct_answer, audience, third, source_category')
+      .eq('is_active', true)
+      .order('id')
+      .limit(30); // Fetch more to ensure we have 15 after translation filtering
+
+    if (questionsError || !baseQuestions || baseQuestions.length === 0) {
       console.error('[start-game-session] Questions fetch error:', questionsError);
       return new Response(
         JSON.stringify({ error: 'Failed to load questions from database' }),
@@ -73,52 +86,75 @@ serve(async (req) => {
       );
     }
 
-    // CRITICAL: Validate and format questions with proper error handling
+    // Shuffle and get question IDs
+    const shuffled = baseQuestions.sort(() => Math.random() - 0.5);
+    const questionIds = shuffled.map(q => q.id);
+
+    // Fetch translations with fallback chain: userLang -> en -> hu
+    const { data: translationsPreferred } = await supabaseClient
+      .from('question_translations')
+      .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
+      .in('question_id', questionIds)
+      .eq('lang', userLang);
+
+    const { data: translationsEn } = await supabaseClient
+      .from('question_translations')
+      .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
+      .in('question_id', questionIds)
+      .eq('lang', 'en');
+
+    const { data: translationsHu } = await supabaseClient
+      .from('question_translations')
+      .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
+      .in('question_id', questionIds)
+      .eq('lang', 'hu');
+
+    // Build translation map with fallback
+    const translationMap = new Map();
+    
+    // Priority 3: hu (fallback)
+    translationsHu?.forEach(t => translationMap.set(t.question_id, t));
+    // Priority 2: en (fallback)
+    translationsEn?.forEach(t => translationMap.set(t.question_id, t));
+    // Priority 1: user's preferred language
+    translationsPreferred?.forEach(t => translationMap.set(t.question_id, t));
+
+    // Build final questions list with translations
+    const questions = [];
+    for (const baseQ of shuffled) {
+      const translation = translationMap.get(baseQ.id);
+      if (!translation) {
+        console.warn(`[start-game-session] No translation for question ${baseQ.id}, skipping`);
+        continue;
+      }
+
+      questions.push({
+        id: baseQ.id,
+        question: translation.question_text,
+        answers: [
+          { key: 'A', text: translation.answer_a, correct: baseQ.correct_answer === 'A' },
+          { key: 'B', text: translation.answer_b, correct: baseQ.correct_answer === 'B' },
+          { key: 'C', text: translation.answer_c, correct: baseQ.correct_answer === 'C' },
+        ],
+        audience: baseQ.audience || { A: 33, B: 33, C: 34 },
+        third: baseQ.third || 'A',
+        topic: baseQ.source_category || 'mixed'
+      });
+
+      // Stop when we have 15 questions
+      if (questions.length >= 15) break;
+    }
+
     if (questions.length < 15) {
-      console.error('[start-game-session] Insufficient questions:', questions.length);
+      console.error('[start-game-session] Insufficient translated questions:', questions.length);
       return new Response(
-        JSON.stringify({ error: `Not enough questions in database: only ${questions.length} found, need 15` }),
+        JSON.stringify({ error: `Not enough translated questions: only ${questions.length} found, need 15` }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Format questions for client with proper validation
-    const clientQuestions = questions.map((q: any, idx: number) => {
-      // Validate answers structure
-      if (!Array.isArray(q.answers) || q.answers.length !== 3) {
-        console.error(`[start-game-session] Invalid answers for question ${q.id}:`, q.answers);
-        throw new Error(`Question ${q.id} has invalid answers structure`);
-      }
-
-      // Format answers - treat missing 'correct' field as false
-      const formattedAnswers = q.answers.map((ans: any) => {
-        if (!ans.key || !ans.text) {
-          console.error(`[start-game-session] Invalid answer in question ${q.id}:`, ans);
-          throw new Error(`Question ${q.id} has invalid answer (missing key or text)`);
-        }
-        return {
-          key: ans.key,
-          text: ans.text,
-          correct: ans.correct === true // undefined/false treated as false
-        };
-      });
-
-      // Validate at least one correct answer exists
-      const correctIndex = formattedAnswers.findIndex((a: any) => a.correct === true);
-      if (correctIndex === -1) {
-        console.error(`[start-game-session] No correct answer in question ${q.id}`);
-        throw new Error(`Question ${q.id} has no correct answer`);
-      }
-
-      return {
-        id: q.id,
-        question: q.question,
-        answers: formattedAnswers,
-        topic: 'mixed',
-        audience: q.audience || { A: 33, B: 33, C: 34 },
-        third: q.third || 'A'
-      };
-    });
+    // Questions are already properly formatted
+    const clientQuestions = questions.slice(0, 15);
 
     // Create session data for database storage
     const sessionId = crypto.randomUUID();

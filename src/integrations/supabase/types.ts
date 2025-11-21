@@ -1959,6 +1959,7 @@ export type Database = {
         Row: {
           answers: Json
           audience: Json
+          correct_answer: string | null
           created_at: string | null
           dislike_count: number
           id: string
@@ -1971,6 +1972,7 @@ export type Database = {
         Insert: {
           answers: Json
           audience: Json
+          correct_answer?: string | null
           created_at?: string | null
           dislike_count?: number
           id: string
@@ -1983,6 +1985,7 @@ export type Database = {
         Update: {
           answers?: Json
           audience?: Json
+          correct_answer?: string | null
           created_at?: string | null
           dislike_count?: number
           id?: string
@@ -3290,6 +3293,10 @@ export type Database = {
       }
       distribute_weekly_rewards: { Args: never; Returns: undefined }
       generate_invitation_code: { Args: never; Returns: string }
+      get_correct_answer_from_jsonb: {
+        Args: { answers_jsonb: Json }
+        Returns: string
+      }
       get_country_from_request: { Args: never; Returns: string }
       get_current_day_date: { Args: never; Returns: string }
       get_current_week_reward: { Args: never; Returns: Json }
