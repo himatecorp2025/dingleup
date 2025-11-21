@@ -151,6 +151,9 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
+    // Create broadcast channel for real-time progress updates
+    const progressChannel = supabase.channel('question-translation-progress');
+
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
@@ -175,10 +178,45 @@ serve(async (req) => {
     let skippedCount = 0;
     const errors: string[] = [];
 
+    const totalQuestions = questions.length;
+    const totalOperations = totalQuestions * TARGET_LANGUAGES.length;
+
+    // Broadcast initial progress
+    await progressChannel.send({
+      type: 'broadcast',
+      event: 'progress',
+      payload: {
+        progress: 0,
+        status: 'Fordítás indítása...',
+        translated: 0,
+        skipped: 0,
+        errors: 0,
+        total: totalQuestions
+      }
+    });
+
     // Process questions in batches
     for (let i = 0; i < questions.length; i += BATCH_SIZE) {
       const batch = questions.slice(i, i + BATCH_SIZE);
-      console.log(`[generate-question-translations] Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(questions.length / BATCH_SIZE)}`);
+      const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
+      const totalBatches = Math.ceil(questions.length / BATCH_SIZE);
+      
+      console.log(`[generate-question-translations] Processing batch ${batchNumber}/${totalBatches}`);
+
+      // Broadcast batch progress
+      const currentProgress = Math.floor((i / totalQuestions) * 100);
+      await progressChannel.send({
+        type: 'broadcast',
+        event: 'progress',
+        payload: {
+          progress: currentProgress,
+          status: `Batch ${batchNumber}/${totalBatches} feldolgozása...`,
+          translated: translatedCount,
+          skipped: skippedCount,
+          errors: errors.length,
+          total: totalQuestions
+        }
+      });
 
       for (const question of batch) {
         // First, ensure Hungarian source exists
@@ -258,6 +296,22 @@ serve(async (req) => {
             } else {
               translatedCount++;
               console.log(`[generate-question-translations] ✓ Question ${question.id} translated to ${lang}`);
+              
+              // Broadcast progress after each successful translation
+              const processedSoFar = i + batch.indexOf(question) + 1;
+              const currentProgress = Math.floor((processedSoFar / totalQuestions) * 100);
+              await progressChannel.send({
+                type: 'broadcast',
+                event: 'progress',
+                payload: {
+                  progress: Math.min(currentProgress, 99),
+                  status: `${processedSoFar}/${totalQuestions} kérdés feldolgozva...`,
+                  translated: translatedCount,
+                  skipped: skippedCount,
+                  errors: errors.length,
+                  total: totalQuestions
+                }
+              });
             }
 
           } catch (error) {
@@ -275,6 +329,23 @@ serve(async (req) => {
     }
 
     console.log(`[generate-question-translations] Complete! Translated: ${translatedCount}, Skipped: ${skippedCount}, Errors: ${errors.length}`);
+
+    // Broadcast final progress
+    await progressChannel.send({
+      type: 'broadcast',
+      event: 'progress',
+      payload: {
+        progress: 100,
+        status: 'Fordítás befejezve!',
+        translated: translatedCount,
+        skipped: skippedCount,
+        errors: errors.length,
+        total: totalQuestions
+      }
+    });
+
+    // Unsubscribe from channel
+    await supabase.removeChannel(progressChannel);
 
     return new Response(
       JSON.stringify({

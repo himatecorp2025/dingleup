@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,6 +36,15 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Create broadcast channel for real-time progress updates
+    const progressChannel = supabase.channel('ui-translation-progress');
+
     const { items, targetLanguages } = await req.json();
 
     if (!Array.isArray(items) || items.length === 0) {
@@ -59,12 +69,41 @@ serve(async (req) => {
     console.log(`[translate-text-batch] Processing ${items.length} items for languages:`, targetLanguages);
 
     const results: BatchResult[] = [];
+    const totalLanguages = targetLanguages.filter((l: string) => l !== 'hu').length;
+    let completedLanguages = 0;
+
+    // Broadcast initial progress
+    await progressChannel.send({
+      type: 'broadcast',
+      event: 'progress',
+      payload: {
+        progress: 0,
+        status: 'Fordítás indítása...',
+        completed: 0,
+        total: items.length,
+        currentLang: null
+      }
+    });
 
     // Process all items in parallel for each language
     for (const lang of targetLanguages as LangCode[]) {
       if (lang === 'hu') continue; // Skip Hungarian (source language)
 
       console.log(`[translate-text-batch] Starting batch translation to ${lang}`);
+
+      // Broadcast language start progress
+      const currentProgress = Math.floor((completedLanguages / totalLanguages) * 100);
+      await progressChannel.send({
+        type: 'broadcast',
+        event: 'progress',
+        payload: {
+          progress: currentProgress,
+          status: `Fordítás ${LANGUAGE_NAMES[lang]} nyelvre...`,
+          completed: completedLanguages,
+          total: totalLanguages,
+          currentLang: lang
+        }
+      });
 
       // Create batch prompt for all items at once
       const batchTexts = items.map((item: TranslationItem, idx: number) => 
@@ -171,6 +210,21 @@ Do NOT add explanations, notes, or extra formatting. ONLY numbered translations.
         });
 
         console.log(`[translate-text-batch] Completed ${lang} - ${items.length} items`);
+        completedLanguages++;
+
+        // Broadcast completion for this language
+        const updatedProgress = Math.floor((completedLanguages / totalLanguages) * 100);
+        await progressChannel.send({
+          type: 'broadcast',
+          event: 'progress',
+          payload: {
+            progress: Math.min(updatedProgress, 99),
+            status: `${completedLanguages}/${totalLanguages} nyelv kész...`,
+            completed: completedLanguages,
+            total: totalLanguages,
+            currentLang: null
+          }
+        });
 
       } catch (translateError) {
         console.error(`[translate-text-batch] Translation error for ${lang}:`, translateError);
@@ -193,6 +247,22 @@ Do NOT add explanations, notes, or extra formatting. ONLY numbered translations.
     }
 
     console.log(`[translate-text-batch] Batch complete - ${results.length} results`);
+
+    // Broadcast final progress
+    await progressChannel.send({
+      type: 'broadcast',
+      event: 'progress',
+      payload: {
+        progress: 100,
+        status: 'Fordítás befejezve!',
+        completed: totalLanguages,
+        total: totalLanguages,
+        currentLang: null
+      }
+    });
+
+    // Unsubscribe from channel
+    await supabase.removeChannel(progressChannel);
 
     return new Response(
       JSON.stringify({ results }),
