@@ -1,14 +1,45 @@
 import { useEffect, useState } from 'react';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
-import { Building2 } from 'lucide-react';
+import { Building2, Shield } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import { ReportDialog } from '@/components/ReportDialog';
 import { useI18n } from '@/i18n';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 const About = () => {
   const { isHandheld, isStandalone } = usePlatformDetection();
   const [showReportDialog, setShowReportDialog] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { t } = useI18n();
+  const navigate = useNavigate();
+
+  // Check if current user is admin (only for DingleUP! owner)
+  useEffect(() => {
+    const checkAdminRole = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          setIsAdmin(false);
+          return;
+        }
+
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .eq('role', 'admin')
+          .maybeSingle();
+
+        setIsAdmin(!!roleData);
+      } catch (error) {
+        console.error('Admin role check error:', error);
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminRole();
+  }, []);
 
   // Only show on mobile/tablet
   if (!isHandheld) {
@@ -46,6 +77,17 @@ const About = () => {
       <div className="h-full w-full flex flex-col overflow-y-auto overflow-x-hidden px-6 py-4 max-w-4xl mx-auto relative z-10" style={{ paddingBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px)' }}>
       {/* Header */}
       <div className="text-center mb-4">
+        {/* Admin Access Button - Top Left (only for DingleUP! admin) */}
+        {isAdmin && (
+          <button
+            onClick={() => navigate('/admin/dashboard')}
+            className="absolute top-4 left-4 p-2 bg-accent/80 hover:bg-accent rounded-lg transition-colors border border-accent/50 shadow-lg z-10"
+            title="Admin Felület"
+          >
+            <Shield className="w-5 h-5 text-accent-foreground" />
+          </button>
+        )}
+        
         {/* Report Button - Top Right */}
         <button
           onClick={() => setShowReportDialog(true)}
