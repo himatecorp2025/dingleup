@@ -667,20 +667,22 @@ if (!profile) {
                 onClick={() => navigate('/game')}
                 className="w-full"
               >
-                <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] flex items-center justify-center gap-2 sm:gap-3 leading-none tracking-wider text-[clamp(1.125rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)]">
+                <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] flex items-center justify-center gap-4 leading-none tracking-wider">
                   {t('dashboard.play_now')}
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
                     viewBox="0 0 24 24" 
                     fill="none" 
                     stroke="currentColor" 
-                    strokeWidth="3" 
+                    strokeWidth="2.5" 
                     strokeLinecap="round" 
                     strokeLinejoin="round"
-                    className="w-[clamp(1.125rem,4vw,1.5rem)] h-[clamp(1.125rem,4vw,1.5rem)] sm:w-[clamp(1.25rem,4.5vw,2rem)] sm:h-[clamp(1.25rem,4.5vw,2rem)]"
+                    className="w-12 h-12 sm:w-16 sm:h-16"
                   >
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
+                    <path d="M5 12h14"/>
+                    <path d="m12 5 7 7-7 7"/>
+                    <path d="M19 12l-7 7"/>
+                    <path d="M19 12l-7-7"/>
                   </svg>
                 </span>
               </PlayNowButton>
