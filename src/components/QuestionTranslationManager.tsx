@@ -120,34 +120,65 @@ export const QuestionTranslationManager = () => {
         return;
       }
 
-      // FIRE AND FORGET: Don't wait for response, just monitor broadcast channel
-      // The edge function will take 15-20 minutes to complete, which exceeds timeout
-      supabase.functions.invoke('generate-question-translations', {
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      }).then(({ data, error }) => {
+      // ITERATIVE APPROACH: Invoke edge function repeatedly until all translations complete
+      // Each run processes ~150 questions in ~4 minutes, then exits gracefully
+      let continueProcessing = true;
+      let iterationCount = 0;
+
+      while (continueProcessing) {
+        iterationCount++;
+        console.log(`[QuestionTranslationManager] Starting iteration ${iterationCount}...`);
+
+        const { data, error } = await supabase.functions.invoke('generate-question-translations', {
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+
         if (error) {
           console.error('[QuestionTranslationManager] Edge function error:', error);
-          // Don't show error to user if it's timeout - real-time updates will continue
-          if (error.message && !error.message.includes('Failed to send')) {
-            toast.error('Hiba történt a fordítás indításakor');
+          toast.error(`Hiba az ${iterationCount}. futás során`);
+          setIsTranslating(false);
+          break;
+        }
+
+        console.log('[QuestionTranslationManager] Iteration complete:', data);
+
+        // Check if there's more work to do
+        const { data: remainingCheck } = await supabase
+          .from('questions')
+          .select('id')
+          .limit(1);
+
+        if (!remainingCheck || remainingCheck.length === 0) {
+          continueProcessing = false;
+          toast.success('Minden kérdés lefordítva!');
+          setIsTranslating(false);
+        } else {
+          // Check if we actually have untranslated content remaining
+          const { count: totalQuestions } = await supabase
+            .from('questions')
+            .select('id', { count: 'exact', head: true });
+
+          const { count: totalTranslations } = await supabase
+            .from('question_translations')
+            .select('id', { count: 'exact', head: true })
+            .in('lang', ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl']);
+
+          const expectedTranslations = (totalQuestions || 0) * 7;
+          if ((totalTranslations || 0) >= expectedTranslations) {
+            continueProcessing = false;
+            toast.success('Minden kérdés lefordítva!');
             setIsTranslating(false);
+          } else {
+            // Wait 2 seconds between iterations
+            console.log(`[QuestionTranslationManager] ${expectedTranslations - (totalTranslations || 0)} fordítás hiányzik még, folytatás...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
           }
-          return;
         }
-
-        // Final success confirmation (if edge function completes before timeout)
-        console.log('[QuestionTranslationManager] Edge function completed:', data);
-        if (data?.translated !== undefined) {
-          toast.success(`Fordítás befejezve! ${data.translated} új fordítás létrehozva.`);
-        }
-      });
-
-      // Show confirmation that translation started
-      toast.info('Fordítás elindítva! Figyeld a folyamatjelzőt a valós idejű frissítésekhez.');
+      }
 
     } catch (error) {
       console.error('[QuestionTranslationManager] Exception:', error);
-      toast.error('Hiba történt a fordítás indításakor');
+      toast.error('Hiba történt a fordítás során');
       setIsTranslating(false);
     }
   };
@@ -191,13 +222,24 @@ export const QuestionTranslationManager = () => {
             </div>
             <p className="text-xl font-bold text-green-400">{stats.translated}</p>
           </div>
-          <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-            <div className="flex items-center gap-2 mb-1">
-              <CheckCircle className="w-4 h-4 text-blue-400" />
-              <span className="text-xs text-white/60">Kihagyva</span>
-            </div>
-            <p className="text-xl font-bold text-blue-400">{stats.skipped}</p>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg cursor-help">
+                  <div className="flex items-center gap-2 mb-1">
+                    <CheckCircle className="w-4 h-4 text-blue-400" />
+                    <span className="text-xs text-white/60">Kihagyva</span>
+                    <Info className="w-3 h-3 text-blue-400/60" />
+                  </div>
+                  <p className="text-xl font-bold text-blue-400">{stats.skipped}</p>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Ez nyelvfordításokat jelent (nem kérdéseket)</p>
+                <p className="text-xs text-white/60 mt-1">Például: 1 kérdés × 7 nyelv = 7 fordítás</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <XCircle className="w-4 h-4 text-red-400" />

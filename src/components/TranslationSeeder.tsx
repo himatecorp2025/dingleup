@@ -98,22 +98,35 @@ export const TranslationSeeder = () => {
         return;
       }
 
-      // Fetch all translations that need translation - CRITICAL: specify large limit to override 1000-row default
-      const { data: translations, error: fetchError } = await supabase
-        .from('translations')
-        .select('key, hu')
-        .order('key')
-        .limit(10000); // Explicitly set high limit to fetch all translations (2898 currently)
+      // Fetch ALL translations using pagination (1000-row Lovable Cloud backend limit)
+      const translations: Array<{ key: string; hu: string }> = [];
+      const PAGE_SIZE = 500;
+      let page = 0;
+      let hasMore = true;
 
-      if (fetchError) {
-        console.error('[TranslationSeeder] Fetch error:', fetchError);
-        toast.error('Hiba a fordítandó szövegek lekérésekor');
-        setStatus('Hiba történt');
-        setIsTranslating(false);
-        return;
+      while (hasMore) {
+        const { data: batch, error: fetchError } = await supabase
+          .from('translations')
+          .select('key, hu')
+          .order('key')
+          .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+
+        if (fetchError) {
+          console.error('[TranslationSeeder] Fetch error:', fetchError);
+          throw fetchError;
+        }
+
+        if (batch && batch.length > 0) {
+          translations.push(...batch);
+          console.log(`[TranslationSeeder] Fetched page ${page + 1}: ${batch.length} keys (total: ${translations.length})`);
+          page++;
+          hasMore = batch.length === PAGE_SIZE;
+        } else {
+          hasMore = false;
+        }
       }
 
-      if (!translations || translations.length === 0) {
+      if (translations.length === 0) {
         toast.info('Nincs fordítandó szöveg');
         setStatus('Nincs fordítandó szöveg');
         setIsTranslating(false);
