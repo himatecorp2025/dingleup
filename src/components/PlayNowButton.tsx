@@ -31,7 +31,11 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         background: 'transparent',
         border: 'none',
         padding: 0,
-        height: '80px',
+        minHeight: '80px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        animation: 'pulse-button 3s ease-in-out infinite',
       }}
     >
       {/* Inline SVG Background */}
@@ -41,11 +45,14 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         fill="none"
         shapeRendering="geometricPrecision"
         colorInterpolationFilters="sRGB"
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
-          transform: 'scale(1.25, 1.5)',
-          filter: 'drop-shadow(0 0 20px rgba(34, 197, 94, 0.6)) drop-shadow(0 0 40px rgba(34, 197, 94, 0.3))',
-          animation: 'pulse-glow 3s ease-in-out infinite',
+          width: '100%',
+          height: '100%',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%) scale(1.25, 1.5)',
+          filter: 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.9)) drop-shadow(0 0 12px rgba(34, 197, 94, 0.6))',
         }}
         aria-hidden
       >
@@ -112,19 +119,19 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
       </svg>
 
       {/* Content (Text + Icon) - Centered both horizontally and vertically */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center">
+      <div className="relative z-10 flex items-center justify-center">
         <div className="flex items-center justify-center gap-2 sm:gap-3 text-foreground font-black text-base sm:text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
           {children}
         </div>
       </div>
 
       <style>{`
-        @keyframes pulse-glow {
+        @keyframes pulse-button {
           0%, 100% {
-            filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.6)) drop-shadow(0 0 40px rgba(34, 197, 94, 0.3));
+            transform: scale(1);
           }
           50% {
-            filter: drop-shadow(0 0 25px rgba(34, 197, 94, 0.8)) drop-shadow(0 0 50px rgba(34, 197, 94, 0.4));
+            transform: scale(1.03);
           }
         }
       `}</style>
