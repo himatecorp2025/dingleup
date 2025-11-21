@@ -9,10 +9,56 @@ interface I18nProviderProps {
   children: ReactNode;
 }
 
+const CACHE_KEY_PREFIX = 'dingleup_translations_';
+const CACHE_VERSION_KEY = 'dingleup_translations_version';
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+interface CachedTranslations {
+  translations: TranslationMap;
+  timestamp: number;
+  version: string;
+}
+
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   const [lang, setLangState] = useState<LangCode>(DEFAULT_LANG);
   const [translations, setTranslations] = useState<TranslationMap>({});
   const [isLoading, setIsLoading] = useState(true);
+
+  const getCacheKey = (targetLang: LangCode) => `${CACHE_KEY_PREFIX}${targetLang}`;
+
+  const getCachedTranslations = (targetLang: LangCode): TranslationMap | null => {
+    try {
+      const cached = localStorage.getItem(getCacheKey(targetLang));
+      if (!cached) return null;
+
+      const data: CachedTranslations = JSON.parse(cached);
+      const now = Date.now();
+      
+      // Check if cache is still valid (within TTL)
+      if (now - data.timestamp > CACHE_TTL) {
+        localStorage.removeItem(getCacheKey(targetLang));
+        return null;
+      }
+
+      return data.translations;
+    } catch (error) {
+      console.error('[I18n] Cache read error:', error);
+      return null;
+    }
+  };
+
+  const setCachedTranslations = (targetLang: LangCode, translations: TranslationMap) => {
+    try {
+      const data: CachedTranslations = {
+        translations,
+        timestamp: Date.now(),
+        version: '1.0'
+      };
+      localStorage.setItem(getCacheKey(targetLang), JSON.stringify(data));
+    } catch (error) {
+      console.error('[I18n] Cache write error:', error);
+    }
+  };
 
   const fetchTranslations = async (targetLang: LangCode): Promise<TranslationMap> => {
     try {
@@ -30,7 +76,12 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      return data?.translations || {};
+      const fetchedTranslations = data?.translations || {};
+      
+      // Cache the fetched translations
+      setCachedTranslations(targetLang, fetchedTranslations);
+      
+      return fetchedTranslations;
     } catch (error) {
       console.error('[I18n] Failed to fetch translations:', error);
       return {};
@@ -39,52 +90,61 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
 
   const initializeLanguage = async () => {
-    setIsLoading(true);
-    
     try {
       // 1. Check localStorage first
       const storedLang = localStorage.getItem(STORAGE_KEY);
+      let targetLang: LangCode = DEFAULT_LANG;
+
       if (storedLang && VALID_LANGUAGES.includes(storedLang as LangCode)) {
-        const validLang = storedLang as LangCode;
-        setLangState(validLang);
-        const trans = await fetchTranslations(validLang);
-        setTranslations(trans);
-        setIsLoading(false);
-        return;
-      }
+        targetLang = storedLang as LangCode;
+      } else {
+        // 2. Check if user is logged in and has preferred_language
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('preferred_language')
+            .eq('id', user.id)
+            .single();
 
-      // 2. Check if user is logged in and has preferred_language
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('preferred_language')
-          .eq('id', user.id)
-          .single();
-
-        if (profile?.preferred_language && VALID_LANGUAGES.includes(profile.preferred_language as LangCode)) {
-          const preferredLang = profile.preferred_language as LangCode;
-          setLangState(preferredLang);
-          localStorage.setItem(STORAGE_KEY, preferredLang);
-          const trans = await fetchTranslations(preferredLang);
-          setTranslations(trans);
-          setIsLoading(false);
-          return;
+          if (profile?.preferred_language && VALID_LANGUAGES.includes(profile.preferred_language as LangCode)) {
+            targetLang = profile.preferred_language as LangCode;
+            localStorage.setItem(STORAGE_KEY, targetLang);
+          }
         }
       }
 
-      // 3. Default to English
-      setLangState(DEFAULT_LANG);
-      localStorage.setItem(STORAGE_KEY, DEFAULT_LANG);
-      const trans = await fetchTranslations(DEFAULT_LANG);
-      setTranslations(trans);
+      setLangState(targetLang);
+
+      // Try to load from cache first (instant)
+      const cachedTranslations = getCachedTranslations(targetLang);
+      if (cachedTranslations && Object.keys(cachedTranslations).length > 0) {
+        setTranslations(cachedTranslations);
+        setIsLoading(false);
+        
+        // Fetch fresh translations in background (don't await)
+        fetchTranslations(targetLang).then(freshTranslations => {
+          if (Object.keys(freshTranslations).length > 0) {
+            setTranslations(freshTranslations);
+          }
+        });
+      } else {
+        // No cache - must fetch before rendering
+        const trans = await fetchTranslations(targetLang);
+        setTranslations(trans);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error('[I18n] Language initialization failed:', error);
-      // Fallback to default
+      // Fallback to default with cache check
       setLangState(DEFAULT_LANG);
-      const trans = await fetchTranslations(DEFAULT_LANG);
-      setTranslations(trans);
-    } finally {
+      const cachedTranslations = getCachedTranslations(DEFAULT_LANG);
+      if (cachedTranslations && Object.keys(cachedTranslations).length > 0) {
+        setTranslations(cachedTranslations);
+      } else {
+        const trans = await fetchTranslations(DEFAULT_LANG);
+        setTranslations(trans);
+      }
       setIsLoading(false);
     }
   };
@@ -99,29 +159,44 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
       return;
     }
 
-    setIsLoading(true);
     try {
       // Update state and localStorage immediately
       setLangState(newLang);
       localStorage.setItem(STORAGE_KEY, newLang);
 
-      // Only update database if not already updated by caller
-      if (!skipDbUpdate) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          await supabase
-            .from('profiles')
-            .update({ preferred_language: newLang })
-            .eq('id', user.id);
-        }
+      // Try to load from cache first (instant language switch)
+      const cachedTranslations = getCachedTranslations(newLang);
+      if (cachedTranslations && Object.keys(cachedTranslations).length > 0) {
+        setTranslations(cachedTranslations);
+        setIsLoading(false);
+        
+        // Fetch fresh translations in background
+        fetchTranslations(newLang).then(freshTranslations => {
+          if (Object.keys(freshTranslations).length > 0) {
+            setTranslations(freshTranslations);
+          }
+        });
+      } else {
+        // No cache - show loading and fetch
+        setIsLoading(true);
+        const trans = await fetchTranslations(newLang);
+        setTranslations(trans);
+        setIsLoading(false);
       }
 
-      // Fetch new translations
-      const trans = await fetchTranslations(newLang);
-      setTranslations(trans);
+      // Update database in background (don't block UI)
+      if (!skipDbUpdate) {
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (user) {
+            supabase
+              .from('profiles')
+              .update({ preferred_language: newLang })
+              .eq('id', user.id);
+          }
+        });
+      }
     } catch (error) {
       console.error('[I18n] Failed to change language:', error);
-    } finally {
       setIsLoading(false);
     }
   };
