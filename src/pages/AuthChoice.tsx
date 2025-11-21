@@ -2,9 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { UserPlus, LogIn } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useI18n } from "@/i18n";
 
 const AuthChoice = () => {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
@@ -47,10 +49,10 @@ const AuthChoice = () => {
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)]">
-            Üdvözöl a DingleUP!
+            {t('auth.choice.title')}
           </h1>
           <p className="text-center text-white/70 mb-8 text-sm font-medium">
-            Válassz az alábbi lehetőségek közül
+            {t('auth.choice.subtitle')}
           </p>
 
           <div className="space-y-4">
@@ -59,7 +61,7 @@ const AuthChoice = () => {
               className="w-full h-14 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300 text-lg"
             >
               <UserPlus className="w-6 h-6 mr-2" />
-              Nincs fiókom - Regisztráció
+              {t('auth.choice.no_account')}
             </Button>
 
             <Button
@@ -68,7 +70,7 @@ const AuthChoice = () => {
               className="w-full h-14 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300 text-lg"
             >
               <LogIn className="w-6 h-6 mr-2" />
-              Már van fiókom - Belépés
+              {t('auth.choice.have_account')}
             </Button>
           </div>
 
@@ -77,7 +79,7 @@ const AuthChoice = () => {
               onClick={() => navigate('/')}
               className="text-white/60 hover:text-white/90 text-sm transition-colors underline"
             >
-              Vissza a főoldalra
+              {t('auth.choice.back')}
             </button>
           </div>
         </div>
