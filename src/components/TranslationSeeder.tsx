@@ -69,16 +69,36 @@ export const TranslationSeeder: React.FC = () => {
   const fetchDetailedStats = async () => {
     setIsLoadingStats(true);
     try {
-      // Fetch all translations for detailed analysis (no limit - fetch everything)
-      const { data: translations, error } = await supabase
+      // Fetch total count first
+      const { count, error: countError } = await supabase
         .from('translations')
-        .select('key, hu, en, de, fr, es, it, pt, nl')
-        .not('hu', 'is', null)
-        .range(0, 10000); // Explicit large range to override default 1000 limit
+        .select('*', { count: 'exact', head: true })
+        .not('hu', 'is', null);
 
-      if (error) throw error;
-      if (!translations) return;
+      if (countError) throw countError;
+      
+      const totalCount = count || 0;
+      
+      // Fetch all translations in batches (Supabase default limit is 1000)
+      const batchSize = 1000;
+      const allTranslations: any[] = [];
+      
+      for (let offset = 0; offset < totalCount; offset += batchSize) {
+        const { data: batch, error: batchError } = await supabase
+          .from('translations')
+          .select('key, hu, en, de, fr, es, it, pt, nl')
+          .not('hu', 'is', null)
+          .order('key')
+          .range(offset, offset + batchSize - 1);
 
+        if (batchError) throw batchError;
+        
+        if (batch && batch.length > 0) {
+          allTranslations.push(...batch);
+        }
+      }
+
+      const translations = allTranslations;
       const total = translations.length;
       let overallPending = 0;
       const langStats: LanguageStats[] = [];
