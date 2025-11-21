@@ -4,11 +4,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useWallet } from '@/hooks/useWallet';
 import { useBoosterState } from '@/hooks/useBoosterState';
+import { useI18n, LangCode, LANGUAGE_NAMES } from '@/i18n';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings, Globe, Edit2, Eye, EyeOff, Save } from 'lucide-react';
+import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings, Globe, Edit2, Eye, EyeOff, Save, Languages } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
@@ -220,6 +221,7 @@ const Profile = () => {
   const { profile, loading, updateProfile, refreshProfile } = useGameProfile(userId);
   const { walletData, refetchWallet } = useWallet(userId);
   const boosterState = useBoosterState(userId);
+  const { lang, setLang } = useI18n();
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [weeklyCorrectAnswers, setWeeklyCorrectAnswers] = useState<number>(0);
@@ -369,6 +371,16 @@ const Profile = () => {
     } catch (error) {
       console.error('Failed to update country:', error);
       toast.error('Hiba történt az ország módosítása során.');
+    }
+  };
+
+  const handleLanguageChange = async (newLang: string) => {
+    try {
+      await setLang(newLang as LangCode);
+      toast.success('Nyelv sikeresen módosítva!');
+    } catch (error) {
+      console.error('Failed to update language:', error);
+      toast.error('Hiba történt a nyelv módosítása során.');
     }
   };
 
@@ -1033,6 +1045,33 @@ const Profile = () => {
                 </Select>
                 <p className="text-xs text-white/40 mt-1">
                   A ranglista mindig az általad választott ország játékosait jeleníti meg.
+                </p>
+              </div>
+              
+              {/* Language */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-2 flex items-center gap-2">
+                  <Languages className="w-4 h-4" />
+                  Nyelv
+                </p>
+                <Select value={lang} onValueChange={handleLanguageChange}>
+                  <SelectTrigger className="bg-black/30 border-purple-500/30 text-white hover:border-purple-400/50 focus:border-purple-400">
+                    <SelectValue placeholder="Válassz nyelvet" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-purple-500/30 max-h-[300px] z-50">
+                    {(Object.keys(LANGUAGE_NAMES) as LangCode[]).map((langCode) => (
+                      <SelectItem 
+                        key={langCode} 
+                        value={langCode}
+                        className="text-foreground hover:bg-accent focus:bg-accent"
+                      >
+                        {LANGUAGE_NAMES[langCode]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-white/40 mt-1">
+                  Az alkalmazás nyelve. Alapértelmezett: English.
                 </p>
               </div>
               
