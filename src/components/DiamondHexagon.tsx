@@ -2,16 +2,18 @@ import React from 'react';
 import { useI18n } from '@/i18n/useI18n';
 
 interface DiamondHexagonProps {
-  type: 'rank' | 'coins' | 'lives';
+  type: 'rank' | 'coins' | 'lives' | 'avatar';
   value: string | number;
   className?: string;
+  avatarUrl?: string | null;
+  onClick?: () => void;
 }
 
 /**
  * 3D Diamond Hexagon with SVG icons
  * Responsive design with diamond cross pattern
  */
-export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, className = '' }) => {
+export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, className = '', avatarUrl, onClick }) => {
   const { t } = useI18n();
   // Color schemes per type
   const colorSchemes = {
@@ -40,6 +42,15 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       borderColor: 'border-destructive-glow',
       shadowColor: 'shadow-[0_0_20px_hsl(var(--destructive)/0.6),0_8px_25px_rgba(0,0,0,0.5)]',
       glowColor: 'hsl(var(--destructive) / 0.4)',
+      iconColor: 'hsl(var(--foreground))',
+    },
+    avatar: {
+      gradientOuter: 'from-purple-900 via-purple-600 to-purple-800',
+      gradientMiddle: 'from-purple-600 via-purple-400 to-purple-700',
+      gradientInner: 'from-purple-400 via-purple-500 to-purple-700',
+      borderColor: 'border-purple-400',
+      shadowColor: 'shadow-[0_0_20px_rgba(168,85,247,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
+      glowColor: 'rgba(168, 85, 247, 0.4)',
       iconColor: 'hsl(var(--foreground))',
     },
   };
@@ -110,14 +121,25 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         return `${t('hexagon.coins')}: ${value}`;
       case 'lives':
         return `${t('hexagon.lives')}: ${value}`;
+      case 'avatar':
+        return `${t('profile.title')}`;
       default:
         return '';
     }
   };
 
-  // Original hexagon design for all types (rank, coins, lives)
-  return (
-    <div className={`relative ${className}`} role="status" aria-label={getAriaLabel()}>
+  const getInitials = (name: string) => {
+    return name.charAt(0).toUpperCase();
+  };
+
+  // Original hexagon design for all types (rank, coins, lives, avatar)
+  const containerElement = type === 'avatar' && onClick ? 'button' : 'div';
+  const containerProps = type === 'avatar' && onClick ? { onClick, className: `relative ${className} cursor-pointer hover:scale-105 transition-transform` } : { className: `relative ${className}` };
+
+  return React.createElement(
+    containerElement,
+    { ...containerProps, role: "status", "aria-label": getAriaLabel() },
+    <>
       {/* Outer glow */}
       <div
         className="absolute inset-0 rounded-full blur-xl opacity-60 animate-pulse"
@@ -195,13 +217,29 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
         {/* Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-          {renderIcon()}
-          <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-            {value}
-          </span>
+          {type === 'avatar' ? (
+            avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={String(value)}
+                className="w-9 h-9 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full object-cover"
+              />
+            ) : (
+              <span className="text-white text-xl sm:text-2xl md:text-3xl font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                {getInitials(String(value))}
+              </span>
+            )
+          ) : (
+            <>
+              {renderIcon()}
+              <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                {value}
+              </span>
+            </>
+          )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
