@@ -369,9 +369,25 @@ const Profile = () => {
       // Automatically set language based on country
       const newLang = COUNTRY_TO_LANG[newCountryCode] || 'en';
       
-      // Update profile with both country and language
-      await updateProfile({ country_code: newCountryCode });
+      // Update BOTH country_code AND preferred_language in database
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          country_code: newCountryCode,
+          preferred_language: newLang 
+        })
+        .eq('id', userId);
+      
+      if (error) throw error;
+      
+      // Update localStorage for persistence
+      localStorage.setItem('dingleup_lang', newLang);
+      
+      // Update i18n context for immediate UI refresh
       await setLang(newLang);
+      
+      // Refresh profile data
+      await refreshProfile();
       
       toast.success('Ország sikeresen frissítve! A ranglista és a nyelv most az új országodhoz tartozik.');
     } catch (error) {
