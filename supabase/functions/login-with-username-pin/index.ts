@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
-import { compare, hash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,10 +34,18 @@ serve(async (req) => {
       );
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
     
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Hiányzó SUPABASE_URL vagy SUPABASE_ANON_KEY env var');
+      return new Response(
+        JSON.stringify({ error: 'Szerver konfigurációs hiba' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false
@@ -46,7 +53,7 @@ serve(async (req) => {
     });
 
     // Check rate limiting
-    const { data: rateLimitData } = await supabaseAdmin
+    const { data: rateLimitData } = await supabase
       .from('login_attempts_pin')
       .select('*')
       .eq('username', normalizedUsername.toLowerCase())
@@ -68,9 +75,9 @@ serve(async (req) => {
     }
 
     // Find user by username
-    const { data: profile, error: profileError } = await supabaseAdmin
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('id, username, pin_hash')
+      .select('id, username')
       .ilike('username', normalizedUsername)
       .maybeSingle();
 
@@ -84,7 +91,7 @@ serve(async (req) => {
 
     if (!profile) {
       // Record failed attempt
-      await recordFailedAttempt(supabaseAdmin, normalizedUsername);
+      await recordFailedAttempt(supabase, normalizedUsername);
       
       return new Response(
         JSON.stringify({ error: 'Helytelen felhasználónév vagy PIN' }),
@@ -92,12 +99,18 @@ serve(async (req) => {
       );
     }
 
-    // Verify PIN
-    const isValidPin = await compare(pin, profile.pin_hash);
+    // Try to sign in with Supabase Auth
+    const autoEmail = `${normalizedUsername.toLowerCase()}@dingleup.auto`;
+    const password = pin + profile.username;
 
-    if (!isValidPin) {
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      email: autoEmail,
+      password,
+    });
+
+    if (signInError || !signInData.user) {
       // Record failed attempt
-      await recordFailedAttempt(supabaseAdmin, normalizedUsername);
+      await recordFailedAttempt(supabase, normalizedUsername);
       
       return new Response(
         JSON.stringify({ error: 'Helytelen felhasználónév vagy PIN' }),
@@ -106,33 +119,21 @@ serve(async (req) => {
     }
 
     // Clear failed attempts on successful login
-    await supabaseAdmin
+    await supabase
       .from('login_attempts_pin')
       .delete()
       .eq('username', normalizedUsername.toLowerCase());
 
-    // Get user's auth email for session creation
-    const { data: { user: authUser }, error: authUserError } = await supabaseAdmin.auth.admin.getUserById(profile.id);
-
-    if (authUserError || !authUser) {
-      console.error('Auth user lookup error:', authUserError);
-      return new Response(
-        JSON.stringify({ error: 'Hiba történt a bejelentkezés során' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Return user data for frontend to create session
+    // Return user data with session
     return new Response(
       JSON.stringify({ 
         success: true,
         user: {
-          id: profile.id,
+          id: signInData.user.id,
           username: profile.username,
-          email: authUser.email,
+          email: signInData.user.email,
         },
-        // Frontend will use this to sign in with Supabase
-        authPassword: pin + profile.username,
+        session: signInData.session,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -146,11 +147,11 @@ serve(async (req) => {
   }
 });
 
-async function recordFailedAttempt(supabaseAdmin: any, username: string) {
+async function recordFailedAttempt(supabase: any, username: string) {
   const normalizedUsername = username.toLowerCase();
   const now = new Date();
   
-  const { data: existing } = await supabaseAdmin
+  const { data: existing } = await supabase
     .from('login_attempts_pin')
     .select('*')
     .eq('username', normalizedUsername)
@@ -160,7 +161,7 @@ async function recordFailedAttempt(supabaseAdmin: any, username: string) {
     const newAttempts = existing.failed_attempts + 1;
     const shouldLock = newAttempts >= MAX_ATTEMPTS;
     
-    await supabaseAdmin
+    await supabase
       .from('login_attempts_pin')
       .update({
         failed_attempts: newAttempts,
@@ -171,7 +172,7 @@ async function recordFailedAttempt(supabaseAdmin: any, username: string) {
       })
       .eq('username', normalizedUsername);
   } else {
-    await supabaseAdmin
+    await supabase
       .from('login_attempts_pin')
       .insert({
         username: normalizedUsername,
