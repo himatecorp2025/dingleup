@@ -537,18 +537,62 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            <button
-              onClick={() => navigate('/admin/advanced-analytics')}
-              className="w-full backdrop-blur-xl bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl lg:rounded-2xl p-6 lg:p-8 text-left transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 hover:scale-[1.02]"
-            >
-              <div className="flex items-center gap-4">
-                <Activity className="w-10 h-10 lg:w-12 lg:h-12 text-purple-400" />
-                <div>
-                  <h3 className="text-xl lg:text-2xl font-bold text-white mb-2">Fejlett Analitika</h3>
-                  <p className="text-white/60 text-sm lg:text-base">Részletes analitikai dashboardok (Retention, Monetizáció, Teljesítmény, Engagement, User Journey)</p>
-                </div>
+            {/* Analytics Dashboards */}
+            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+              <div className="flex items-center gap-3 mb-4 lg:mb-6">
+                <Activity className="w-8 h-8 text-purple-400" />
+                <h3 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Fejlett Analitika
+                </h3>
               </div>
-            </button>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                <button
+                  onClick={() => navigate('/admin/retention')}
+                  className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
+                >
+                  <Target className="w-8 h-8 lg:w-10 lg:h-10 text-purple-400 mb-3 lg:mb-4" />
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">Retenciós Dashboard</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">DAU/WAU/MAU, kohorsz analízis, lemorzsolódás</p>
+                </button>
+
+                <button
+                  onClick={() => navigate('/admin/monetization')}
+                  className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-green-500/20"
+                >
+                  <DollarSign className="w-8 h-8 lg:w-10 lg:h-10 text-green-400 mb-3 lg:mb-4" />
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">Monetizációs Dashboard</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">Bevétel, ARPU, konverzió, LTV analízis</p>
+                </button>
+
+                <button
+                  onClick={() => navigate('/admin/performance')}
+                  className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
+                >
+                  <Zap className="w-8 h-8 lg:w-10 lg:h-10 text-purple-400 mb-3 lg:mb-4" />
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">Teljesítmény Dashboard</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">Betöltési idők, TTFB, LCP, hibák</p>
+                </button>
+
+                <button
+                  onClick={() => navigate('/admin/engagement')}
+                  className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
+                >
+                  <Activity className="w-8 h-8 lg:w-10 lg:h-10 text-purple-400 mb-3 lg:mb-4" />
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">Engagement Dashboard</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">Session-ök, felhasználói aktivitás, játék engagement</p>
+                </button>
+
+                <button
+                  onClick={() => navigate('/admin/user-journey')}
+                  className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
+                >
+                  <MapIcon className="w-8 h-8 lg:w-10 lg:h-10 text-purple-400 mb-3 lg:mb-4" />
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">User Journey</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">Onboarding, vásárlási és játék tölcsérek</p>
+                </button>
+              </div>
+            </div>
 
             {/* UI Translation Manager */}
             <TranslationSeeder />
