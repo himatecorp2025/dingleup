@@ -5,9 +5,11 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, User, Lock, Eye, EyeOff, Fingerprint } from "lucide-react";
 import { z } from "zod";
 import { useI18n } from "@/i18n";
+import { useWebAuthn } from "@/hooks/useWebAuthn";
+import { BiometricSetupModal } from "@/components/BiometricSetupModal";
 
 const createLoginSchema = (t: (key: string) => string) => z.object({
   username: z.string().trim().min(1, t('auth.login.validationUsernameRequired')).regex(/^[^\s]+$/, t('auth.login.validationUsernameNoSpaces')),
@@ -29,6 +31,9 @@ const LoginNew = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showPin, setShowPin] = useState(false);
+  const [showBiometricModal, setShowBiometricModal] = useState(false);
+  const [biometricAttempted, setBiometricAttempted] = useState(false);
+  const { authenticateBiometric, checkBiometricAvailable, isSupported } = useWebAuthn();
 
   useEffect(() => {
     const checkStandalone = () => {
@@ -38,6 +43,26 @@ const LoginNew = () => {
       setIsStandalone(isPWA);
     };
     checkStandalone();
+
+    // Try biometric login if username is in localStorage
+    const tryBiometricLogin = async () => {
+      const savedUsername = localStorage.getItem('lastUsername');
+      if (savedUsername && isSupported) {
+        const isAvailable = await checkBiometricAvailable(savedUsername);
+        if (isAvailable && !biometricAttempted) {
+          setBiometricAttempted(true);
+          try {
+            await authenticateBiometric(savedUsername);
+            navigate('/dashboard');
+          } catch (error) {
+            // Silently fall back to PIN login
+            console.log('Biometric login failed, showing PIN form');
+          }
+        }
+      }
+    };
+
+    tryBiometricLogin();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,6 +120,23 @@ const LoginNew = () => {
           variant: "destructive",
         });
         return;
+      }
+
+      // Save username for biometric login
+      localStorage.setItem('lastUsername', validated.username);
+
+      // Check if biometric should be offered on new device
+      if (isSupported) {
+        const isAvailable = await checkBiometricAvailable(validated.username);
+        if (!isAvailable) {
+          // Offer biometric setup on new device
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            setFormData({ username: validated.username, pin: '' });
+            setShowBiometricModal(true);
+            return;
+          }
+        }
       }
 
       toast({
@@ -232,6 +274,25 @@ const LoginNew = () => {
           </p>
         </div>
       </div>
+
+      {/* Biometric Setup Modal for new device */}
+      {showBiometricModal && formData.username && (
+        <BiometricSetupModal
+          open={showBiometricModal}
+          onClose={() => {
+            setShowBiometricModal(false);
+            navigate("/dashboard");
+          }}
+          username={formData.username}
+          userId="" // Will be fetched from session
+          onSuccess={() => {
+            toast({
+              title: t('auth.login.successTitle'),
+              description: t('auth.login.successMessage'),
+            });
+          }}
+        />
+      )}
     </div>
   );
 };
