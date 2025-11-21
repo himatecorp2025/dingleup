@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Download, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useI18n } from '@/i18n';
 
 const InstallApp = () => {
   const navigate = useNavigate();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     // Check if already installed
@@ -53,7 +55,7 @@ const InstallApp = () => {
       <button
         onClick={() => navigate('/dashboard')}
         className="absolute top-4 left-4 p-3 rounded-full hover:scale-110 transition-all"
-        title="Vissza a dashboardra"
+        title={t('install.back_to_dashboard')}
       >
         {/* BASE SHADOW */}
         <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
@@ -93,14 +95,14 @@ const InstallApp = () => {
         </svg>
         
         <h1 className="text-3xl font-black text-white mb-4">
-          Telepítsd az alkalmazást!
+          {t('install.title')}
         </h1>
 
         {isInstalled ? (
           <div className="bg-green-600/20 border-2 border-green-500/50 rounded-xl p-6 mb-6">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
             <p className="text-white text-lg">
-              Az alkalmazás már telepítve van!
+              {t('install.already_installed')}
             </p>
           </div>
         ) : (
@@ -111,28 +113,28 @@ const InstallApp = () => {
                 className="w-full py-6 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white font-black text-lg rounded-xl mb-6"
               >
                 <Download className="w-6 h-6 mr-2" />
-                Telepítés most
+                {t('install.install_now')}
               </Button>
             )}
 
             {isIOS && (
               <div className="bg-blue-600/20 border-2 border-blue-500/50 rounded-xl p-6 mb-6 text-left">
-                <h3 className="text-white font-bold text-lg mb-3">iOS telepítés:</h3>
+                <h3 className="text-white font-bold text-lg mb-3">{t('install.ios.title')}</h3>
                 <ol className="text-white/80 space-y-2 text-sm">
-                  <li>1. Nyomd meg a <strong>Megosztás</strong> gombot</li>
-                  <li>2. Görgess le és válaszd a <strong>"Kezdőképernyőhöz"</strong> opciót</li>
-                  <li>3. Nyomd meg a <strong>"Hozzáadás"</strong> gombot</li>
+                  <li>{t('install.ios.step1')}</li>
+                  <li>{t('install.ios.step2')}</li>
+                  <li>{t('install.ios.step3')}</li>
                 </ol>
               </div>
             )}
 
             {isAndroid && !isInstallable && (
               <div className="bg-green-600/20 border-2 border-green-500/50 rounded-xl p-6 mb-6 text-left">
-                <h3 className="text-white font-bold text-lg mb-3">Android telepítés:</h3>
+                <h3 className="text-white font-bold text-lg mb-3">{t('install.android.title')}</h3>
                 <ol className="text-white/80 space-y-2 text-sm">
-                  <li>1. Nyomd meg a böngésző <strong>menü</strong> gombot (⋮)</li>
-                  <li>2. Válaszd a <strong>"Telepítés"</strong> vagy <strong>"Kezdőképernyőhöz adás"</strong> opciót</li>
-                  <li>3. Erősítsd meg a telepítést</li>
+                  <li>{t('install.android.step1')}</li>
+                  <li>{t('install.android.step2')}</li>
+                  <li>{t('install.android.step3')}</li>
                 </ol>
               </div>
             )}
@@ -140,7 +142,7 @@ const InstallApp = () => {
             {!isIOS && !isAndroid && (
               <div className="bg-purple-600/20 border-2 border-purple-500/50 rounded-xl p-6 mb-6">
                 <p className="text-white">
-                  Nyisd meg ezt az oldalt mobilon a telepítéshez!
+                  {t('install.other_platform')}
                 </p>
               </div>
             )}
@@ -148,10 +150,10 @@ const InstallApp = () => {
         )}
 
         <div className="space-y-3 text-white/70 text-sm">
-          <p>✅ Offline működés</p>
-          <p>✅ Gyors betöltés</p>
-          <p>✅ Alkalmazás-szerű élmény</p>
-          <p>✅ Kezdőképernyő ikon</p>
+          <p>{t('install.benefits.offline')}</p>
+          <p>{t('install.benefits.fast')}</p>
+          <p>{t('install.benefits.app_like')}</p>
+          <p>{t('install.benefits.home_icon')}</p>
         </div>
       </div>
     </div>

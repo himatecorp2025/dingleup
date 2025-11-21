@@ -7,10 +7,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
+import { useI18n } from "@/i18n";
 
+// Note: Zod error messages will be translated via t() in the error handler
 const loginSchema = z.object({
-  username: z.string().trim().min(1, "A felhasználónév mező kötelező").max(255),
-  password: z.string().min(1, "A jelszó mező kötelező"),
+  username: z.string().trim().min(1, "username_required").max(255),
+  password: z.string().min(1, "password_required"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -18,6 +20,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 const LoginUsername = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useI18n();
   const [formData, setFormData] = useState<LoginForm>({
     username: "",
     password: "",
@@ -45,8 +48,8 @@ const LoginUsername = () => {
 
       if (error || data?.error || !data?.email) {
         toast({
-          title: "Bejelentkezési hiba",
-          description: data?.error || "Helytelen felhasználónév vagy jelszó",
+          title: t('auth.login.error_title'),
+          description: data?.error || t('auth.login.invalid_credentials'),
           variant: "destructive",
         });
         return;
@@ -60,8 +63,8 @@ const LoginUsername = () => {
 
       if (signInError) {
         toast({
-          title: "Bejelentkezési hiba",
-          description: "Helytelen felhasználónév vagy jelszó",
+          title: t('auth.login.error_title'),
+          description: t('auth.login.invalid_credentials'),
           variant: "destructive",
         });
         return;
@@ -73,14 +76,16 @@ const LoginUsername = () => {
         const fieldErrors: Partial<Record<keyof LoginForm, string>> = {};
         error.errors.forEach((err) => {
           if (err.path[0]) {
-            fieldErrors[err.path[0] as keyof LoginForm] = err.message;
+            // Translate Zod error messages
+            const errorKey = err.message;
+            fieldErrors[err.path[0] as keyof LoginForm] = t(`auth.login.${errorKey}`);
           }
         });
         setErrors(fieldErrors);
       } else {
         toast({
-          title: "Bejelentkezési hiba",
-          description: "Váratlan hiba történt",
+          title: t('auth.login.error_title'),
+          description: t('auth.login.unexpected_error'),
           variant: "destructive",
         });
       }
@@ -95,7 +100,7 @@ const LoginUsername = () => {
       options: { redirectTo: `${window.location.origin}/` },
     });
     if (error) {
-      toast({ title: 'Hiba', description: 'Google bejelentkezés sikertelen', variant: 'destructive' });
+      toast({ title: t('auth.login.error_title'), description: t('auth.login.google_error'), variant: 'destructive' });
     }
   };
 
@@ -111,7 +116,7 @@ const LoginUsername = () => {
       <div className="w-full max-w-md relative z-10">
         <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 sm:mb-8 transition-colors drop-shadow-lg">
           <ArrowLeft className="w-4 h-4" />
-          Vissza a főoldalra
+          {t('auth.login.back_to_home')}
         </Link>
 
         <div className="relative" style={{ perspective: '1200px' }}>
@@ -140,9 +145,9 @@ const LoginUsername = () => {
                 />
               </svg>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 font-poppins px-2">
-                <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">Bejelentkezés</span>
+                <span className="text-transparent bg-clip-text bg-gradient-gold drop-shadow-lg">{t('auth.login.title')}</span>
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-white/80 drop-shadow px-2">Add meg felhasználóneved és jelszavad</p>
+              <p className="text-xs sm:text-sm md:text-base text-white/80 drop-shadow px-2">{t('auth.login.subtitle')}</p>
             </div>
 
             <div className="space-y-3 mb-4">
@@ -165,19 +170,19 @@ const LoginUsername = () => {
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                   </svg>
-                  <span className="truncate">Bejelentkezés Google-lel</span>
+                  <span className="truncate">{t('auth.login.google_signin')}</span>
                 </Button>
               </div>
               <div className="flex items-center gap-2 text-xs text-white/70">
                 <span className="h-px flex-1 bg-white/20"></span>
-                <span>vagy</span>
+                <span>{t('auth.login.or')}</span>
                 <span className="h-px flex-1 bg-white/20"></span>
               </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div>
-                <Label htmlFor="username" className="text-white drop-shadow">Felhasználónév</Label>
+                <Label htmlFor="username" className="text-white drop-shadow">{t('auth.login.username_label')}</Label>
                 <div className="relative mt-1" style={{ perspective: '800px' }}>
                   <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700/40 via-purple-600/40 to-purple-900/40 border border-purple-500/30 shadow-md" style={{ transform: 'translateZ(0px)' }} aria-hidden />
@@ -186,7 +191,7 @@ const LoginUsername = () => {
                   <Input
                     id="username"
                     type="text"
-                    placeholder="pl: JózsiBacsi123"
+                    placeholder={t('auth.login.username_placeholder')}
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                     className={`relative bg-black/60 border-0 ${errors.username ? "ring-2 ring-destructive" : ""}`}
@@ -201,7 +206,7 @@ const LoginUsername = () => {
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-white drop-shadow">Jelszó</Label>
+                <Label htmlFor="password" className="text-white drop-shadow">{t('auth.login.password_label')}</Label>
                 <div className="relative mt-1" style={{ perspective: '800px' }}>
                   <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700/40 via-purple-600/40 to-purple-900/40 border border-purple-500/30 shadow-md" style={{ transform: 'translateZ(0px)' }} aria-hidden />
@@ -211,7 +216,7 @@ const LoginUsername = () => {
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Pl: Jelszó123!"
+                      placeholder={t('auth.login.password_placeholder')}
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       className={`bg-black/60 border-0 pr-10 ${errors.password ? "ring-2 ring-destructive" : ""}`}
@@ -244,15 +249,15 @@ const LoginUsername = () => {
                   disabled={isLoading}
                   style={{ transform: 'translateZ(30px)' }}
                 >
-                  <span className="truncate">{isLoading ? "Bejelentkezés..." : "Bejelentkezés"}</span>
+                  <span className="truncate">{isLoading ? t('auth.login.loading') : t('auth.login.button')}</span>
                 </Button>
               </div>
             </form>
 
             <p className="text-center text-xs sm:text-sm text-white/70 mt-4 sm:mt-6 drop-shadow px-2">
-              Még nincs fiókod?{" "}
+              {t('auth.login.no_account')}{" "}
               <Link to="/register" className="text-accent hover:underline font-semibold whitespace-nowrap">
-                Regisztráció
+                {t('auth.login.register_link')}
               </Link>
             </p>
           </div>
