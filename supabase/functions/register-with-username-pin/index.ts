@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
-import { compare, hash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import { hash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -40,10 +40,18 @@ serve(async (req) => {
       );
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
     
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Hiányzó SUPABASE_URL vagy SUPABASE_ANON_KEY env var');
+      return new Response(
+        JSON.stringify({ error: 'Szerver konfigurációs hiba' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false
@@ -51,7 +59,7 @@ serve(async (req) => {
     });
 
     // Check if username already exists
-    const { data: existingUser, error: checkError } = await supabaseAdmin
+    const { data: existingUser, error: checkError } = await supabase
       .from('profiles')
       .select('id')
       .ilike('username', username)
@@ -72,67 +80,55 @@ serve(async (req) => {
       );
     }
 
-    // Hash PIN with bcrypt
-    const pinHash = await hash(pin);
-
     // Create auth user with auto-generated email
     const autoEmail = `${username.toLowerCase()}@dingleup.auto`;
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    const password = pin + username;
+
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email: autoEmail,
-      password: pin + username, // Combined password for auth
-      email_confirm: true,
-      user_metadata: {
-        username: username,
+      password,
+      options: {
+        data: { username },
       }
     });
 
-    if (authError) {
-      console.error('Auth creation error:', authError);
+    if (signUpError || !signUpData.user) {
+      console.error('SignUp error:', signUpError);
       return new Response(
         JSON.stringify({ error: 'Hiba történt a fiók létrehozása során' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Update profile with username and pin_hash
-    const { error: profileError } = await supabaseAdmin
+    // Hash PIN and save to profiles table
+    const pinHash = await hash(pin);
+
+    const { error: profileError } = await supabase
       .from('profiles')
       .update({ 
-        username: username,
+        username,
         pin_hash: pinHash,
-        email: null, // Clear auto-generated email from profile
+        email: null,
       })
-      .eq('id', authData.user.id);
+      .eq('id', signUpData.user.id);
 
     if (profileError) {
       console.error('Profile update error:', profileError);
-      // Rollback: delete auth user
-      await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
       return new Response(
         JSON.stringify({ error: 'Hiba történt a profil létrehozása során' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Generate session for frontend
-    const { data: sessionData, error: sessionError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'magiclink',
-      email: autoEmail,
-    });
-
-    if (sessionError) {
-      console.error('Session error:', sessionError);
-    }
-
     return new Response(
       JSON.stringify({ 
         success: true,
         user: {
-          id: authData.user.id,
-          username: username,
+          id: signUpData.user.id,
+          username,
         }
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
