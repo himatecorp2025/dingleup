@@ -40,18 +40,10 @@ serve(async (req) => {
       );
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('Hiányzó SUPABASE_URL vagy SUPABASE_ANON_KEY env var');
-      return new Response(
-        JSON.stringify({ error: 'Szerver konfigurációs hiba' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-    
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false
@@ -59,7 +51,7 @@ serve(async (req) => {
     });
 
     // Check if username already exists
-    const { data: existingUser, error: checkError } = await supabase
+    const { data: existingUser, error: checkError } = await supabaseAdmin
       .from('profiles')
       .select('id')
       .ilike('username', username)
@@ -80,40 +72,39 @@ serve(async (req) => {
       );
     }
 
-    // Create auth user with auto-generated email
-    const autoEmail = `${username.toLowerCase()}@dingleup.auto`;
-    const password = pin + username;
+    // Hash PIN
+    const pinHash = await hash(pin);
 
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+    // Create auth user with admin API - AZONNAL MEGERŐSÍTVE
+    const autoEmail = `${username.toLowerCase()}@dingleup.auto`;
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: autoEmail,
-      password,
-      options: {
-        data: { username },
-      }
+      password: pin + username,
+      email_confirm: true, // AZONNAL MEGERŐSÍTETT
+      user_metadata: { username }
     });
 
-    if (signUpError || !signUpData.user) {
-      console.error('SignUp error:', signUpError);
+    if (authError || !authData.user) {
+      console.error('Auth creation error:', authError);
       return new Response(
         JSON.stringify({ error: 'Hiba történt a fiók létrehozása során' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Hash PIN and save to profiles table
-    const pinHash = await hash(pin);
-
-    const { error: profileError } = await supabase
+    // Save username and pin_hash to profiles
+    const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({ 
         username,
         pin_hash: pinHash,
         email: null,
       })
-      .eq('id', signUpData.user.id);
+      .eq('id', authData.user.id);
 
     if (profileError) {
       console.error('Profile update error:', profileError);
+      await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
       return new Response(
         JSON.stringify({ error: 'Hiba történt a profil létrehozása során' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -124,11 +115,11 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true,
         user: {
-          id: signUpData.user.id,
+          id: authData.user.id,
           username,
         }
       }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
