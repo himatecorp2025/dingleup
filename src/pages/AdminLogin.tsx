@@ -137,6 +137,17 @@ const AdminLogin = () => {
             </Button>
           </form>
 
+          {/* Password Reset Link */}
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={() => navigate('/admin/reset-password')}
+              className="text-sm text-purple-400 hover:text-purple-300 transition-colors underline"
+            >
+              Elfelejtett jelszó?
+            </button>
+          </div>
+
           {/* Back to Home */}
           <button
             onClick={() => navigate('/')}
