@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ScrollBehaviorManager } from "@/components/ScrollBehaviorManager";
 import { useAnalytics } from "@/hooks/useAnalytics";
@@ -68,19 +69,7 @@ const PageLoader = () => (
   </div>
 );
 
-// Optimized QueryClient with aggressive caching for mobile performance
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh longer
-      gcTime: 10 * 60 * 1000, // 10 minutes - keep cached data in memory
-      retry: 1, // Reduce retries for faster failures on mobile
-      refetchOnWindowFocus: false, // Disable refetch on focus for mobile
-      refetchOnReconnect: true, // Refetch when connection restored
-      refetchOnMount: false, // Use cached data on mount when available
-    },
-  },
-});
+// QueryClient imported from centralized config (see src/lib/react-query.ts)
 
 // Analytics, Error Tracking, and PWA Install tracking wrapper component
 const AppWithAnalytics = () => {
