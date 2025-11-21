@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { LangCode, TranslationMap, I18nContextValue } from './types';
-import { VALID_LANGUAGES, DEFAULT_LANG, SOURCE_LANG, STORAGE_KEY } from './constants';
+import { VALID_LANGUAGES, DEFAULT_LANG, SOURCE_LANG, STORAGE_KEY, COUNTRY_TO_LANG } from './constants';
 
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
@@ -11,7 +11,7 @@ interface I18nProviderProps {
 
 const CACHE_KEY_PREFIX = 'dingleup_translations_';
 const CACHE_VERSION_KEY = 'dingleup_translations_version';
-const CACHE_VERSION = '1.2'; // Bumped to force cache refresh
+const CACHE_VERSION = '1.3'; // Bumped to force cache refresh + auto language sync with country
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 interface CachedTranslations {
@@ -108,26 +108,42 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
       }
 
-      // 1. Check localStorage first
-      const storedLang = localStorage.getItem(STORAGE_KEY);
+      // 1. Get user profile with country_code and preferred_language
+      const { data: { user } } = await supabase.auth.getUser();
       let targetLang: LangCode = DEFAULT_LANG;
 
-      if (storedLang && VALID_LANGUAGES.includes(storedLang as LangCode)) {
-        targetLang = storedLang as LangCode;
-      } else {
-        // 2. Check if user is logged in and has preferred_language
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('preferred_language')
-            .eq('id', user.id)
-            .single();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('country_code, preferred_language')
+          .eq('id', user.id)
+          .single();
 
-          if (profile?.preferred_language && VALID_LANGUAGES.includes(profile.preferred_language as LangCode)) {
+        if (profile) {
+          // Determine language from country_code
+          const langFromCountry = profile.country_code ? (COUNTRY_TO_LANG[profile.country_code] || DEFAULT_LANG) : DEFAULT_LANG;
+          
+          // If preferred_language differs from country-based language, sync them
+          if (profile.preferred_language !== langFromCountry) {
+            await supabase
+              .from('profiles')
+              .update({ preferred_language: langFromCountry })
+              .eq('id', user.id);
+            
+            targetLang = langFromCountry;
+          } else if (profile.preferred_language && VALID_LANGUAGES.includes(profile.preferred_language as LangCode)) {
             targetLang = profile.preferred_language as LangCode;
-            localStorage.setItem(STORAGE_KEY, targetLang);
+          } else {
+            targetLang = langFromCountry;
           }
+          
+          localStorage.setItem(STORAGE_KEY, targetLang);
+        }
+      } else {
+        // No user logged in, check localStorage
+        const storedLang = localStorage.getItem(STORAGE_KEY);
+        if (storedLang && VALID_LANGUAGES.includes(storedLang as LangCode)) {
+          targetLang = storedLang as LangCode;
         }
       }
 
