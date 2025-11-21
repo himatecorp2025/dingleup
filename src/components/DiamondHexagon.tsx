@@ -123,7 +123,8 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
           <svg 
             viewBox="22.53058 -47.5814116 672.82399 167.3667432"
-            className="absolute inset-0 w-full h-full"
+            className="absolute inset-0"
+            style={{ width: '100%', height: '100%' }}
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             shapeRendering="geometricPrecision"
