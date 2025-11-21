@@ -25,9 +25,8 @@ import { useAutoRegister } from "@/hooks/useAutoRegister";
 // Eager load critical pages
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login";
-import LoginUsername from "./pages/LoginUsername";
-import Register from "./pages/Register";
+import AccountChoice from "./pages/AccountChoice";
+import AuthLogin from "./pages/AuthLogin";
 
 // Lazy load secondary pages
 const Game = lazy(() => import("./pages/Game"));
@@ -145,9 +144,8 @@ const AppCore = () => {
               {/* Public routes - no ErrorBoundary needed */}
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/login-username" element={<LoginUsername />} />
+              <Route path="/account-choice" element={<AccountChoice />} />
+              <Route path="/auth/login" element={<AuthLogin />} />
               <Route path="/intro" element={<IntroVideo />} />
               
               {/* Protected routes wrapped in ErrorBoundary */}

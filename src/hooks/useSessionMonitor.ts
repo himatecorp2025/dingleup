@@ -10,7 +10,7 @@ export const useSessionMonitor = () => {
 
   useEffect(() => {
     // Public pages that don't require session monitoring
-    const publicPaths = ['/', '/desktop', '/login', '/register', '/about', '/intro', '/admin/login', '/login-username'];
+    const publicPaths = ['/', '/desktop', '/account-choice', '/auth/login', '/about', '/intro', '/admin/login', '/legal/aszf', '/legal/privacy'];
     const isPublicPage = publicPaths.some(path => location.pathname === path);
     
     // Skip session monitoring on public pages
@@ -36,7 +36,7 @@ export const useSessionMonitor = () => {
           });
           
           await supabase.auth.signOut();
-          navigate('/login', { replace: true });
+          navigate('/account-choice', { replace: true });
         }
       } catch (err) {
         console.error('[SessionMonitor] Error validating session:', err);

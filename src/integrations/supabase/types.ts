@@ -1645,6 +1645,7 @@ export type Database = {
         Row: {
           age_verified: boolean | null
           avatar_url: string | null
+          biometric_enabled: boolean | null
           birth_date: string
           coins: number | null
           country_code: string
@@ -1653,6 +1654,8 @@ export type Database = {
           daily_gift_streak: number | null
           device_id: string | null
           email: string
+          email_pin_setup_completed: boolean | null
+          email_verified: boolean | null
           first_login_age_gate_completed: boolean | null
           help_2x_answer_active: boolean | null
           help_audience_active: boolean | null
@@ -1668,16 +1671,20 @@ export type Database = {
           lives: number | null
           lives_regeneration_rate: number | null
           max_lives: number | null
+          pin_hash: string | null
           preferred_language: string | null
           question_swaps_available: number | null
           total_correct_answers: number
           updated_at: string | null
           username: string
+          webauthn_credential_id: string | null
+          webauthn_public_key: string | null
           welcome_bonus_claimed: boolean | null
         }
         Insert: {
           age_verified?: boolean | null
           avatar_url?: string | null
+          biometric_enabled?: boolean | null
           birth_date: string
           coins?: number | null
           country_code?: string
@@ -1686,6 +1693,8 @@ export type Database = {
           daily_gift_streak?: number | null
           device_id?: string | null
           email: string
+          email_pin_setup_completed?: boolean | null
+          email_verified?: boolean | null
           first_login_age_gate_completed?: boolean | null
           help_2x_answer_active?: boolean | null
           help_audience_active?: boolean | null
@@ -1701,16 +1710,20 @@ export type Database = {
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
+          pin_hash?: string | null
           preferred_language?: string | null
           question_swaps_available?: number | null
           total_correct_answers?: number
           updated_at?: string | null
           username: string
+          webauthn_credential_id?: string | null
+          webauthn_public_key?: string | null
           welcome_bonus_claimed?: boolean | null
         }
         Update: {
           age_verified?: boolean | null
           avatar_url?: string | null
+          biometric_enabled?: boolean | null
           birth_date?: string
           coins?: number | null
           country_code?: string
@@ -1719,6 +1732,8 @@ export type Database = {
           daily_gift_streak?: number | null
           device_id?: string | null
           email?: string
+          email_pin_setup_completed?: boolean | null
+          email_verified?: boolean | null
           first_login_age_gate_completed?: boolean | null
           help_2x_answer_active?: boolean | null
           help_audience_active?: boolean | null
@@ -1734,11 +1749,14 @@ export type Database = {
           lives?: number | null
           lives_regeneration_rate?: number | null
           max_lives?: number | null
+          pin_hash?: string | null
           preferred_language?: string | null
           question_swaps_available?: number | null
           total_correct_answers?: number
           updated_at?: string | null
           username?: string
+          webauthn_credential_id?: string | null
+          webauthn_public_key?: string | null
           welcome_bonus_claimed?: boolean | null
         }
         Relationships: []
