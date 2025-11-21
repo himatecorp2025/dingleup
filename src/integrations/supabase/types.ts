@@ -1908,6 +1908,53 @@ export type Database = {
           },
         ]
       }
+      question_translations: {
+        Row: {
+          answer_a: string
+          answer_b: string
+          answer_c: string
+          created_at: string
+          explanation: string | null
+          id: string
+          lang: string
+          question_id: string
+          question_text: string
+          updated_at: string
+        }
+        Insert: {
+          answer_a: string
+          answer_b: string
+          answer_c: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          lang: string
+          question_id: string
+          question_text: string
+          updated_at?: string
+        }
+        Update: {
+          answer_a?: string
+          answer_b?: string
+          answer_c?: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          lang?: string
+          question_id?: string
+          question_text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_translations_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       questions: {
         Row: {
           answers: Json

@@ -1,5 +1,8 @@
 project_id = "wdpxmwsxhckazwxufttk"
 
+[functions.generate-question-translations]
+verify_jwt = true
+
 [functions.stripe-webhook]
 verify_jwt = false
 
