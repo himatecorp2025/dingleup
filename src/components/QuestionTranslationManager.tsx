@@ -7,6 +7,26 @@ import { Languages, Loader2, CheckCircle, XCircle, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
+interface LanguageStats {
+  total: number;
+  translated: number;
+  percentage: number;
+}
+
+interface InitialStats {
+  totalQuestions: number;
+  totalAnswers: number;
+  languages: {
+    en: LanguageStats;
+    de: LanguageStats;
+    fr: LanguageStats;
+    es: LanguageStats;
+    it: LanguageStats;
+    pt: LanguageStats;
+    nl: LanguageStats;
+  };
+}
+
 export const QuestionTranslationManager = () => {
   const [isTranslating, setIsTranslating] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -16,18 +36,18 @@ export const QuestionTranslationManager = () => {
     skipped: number;
     errors: number;
   } | null>(null);
+  const [initialStats, setInitialStats] = useState<InitialStats | null>(null);
   const [hasUntranslated, setHasUntranslated] = useState<boolean | null>(null);
   const [isCheckingContent, setIsCheckingContent] = useState(true);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
-  // Check if there are untranslated questions
+  // Load initial statistics with per-language breakdown
   useEffect(() => {
-    const checkUntranslatedQuestions = async () => {
+    const loadInitialStats = async () => {
       try {
         setIsCheckingContent(true);
 
-        // OPTIMIZED: Single aggregated query instead of 2748 separate queries
-        const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
+        const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'] as const;
         
         // Get total questions count
         const { count: totalQuestions, error: questionsError } = await supabase
@@ -35,40 +55,60 @@ export const QuestionTranslationManager = () => {
           .select('id', { count: 'exact', head: true });
 
         if (questionsError || !totalQuestions) {
-          setHasUntranslated(false);
+          console.error('[QuestionTranslationManager] Error fetching questions:', questionsError);
           return;
         }
 
-        // Count translations for each target language
-        const { count: totalTranslations, error: translationsError } = await supabase
-          .from('question_translations')
-          .select('id', { count: 'exact', head: true })
-          .in('lang', TARGET_LANGUAGES);
+        // Total answers = total questions * 3 (A, B, C)
+        const totalAnswers = totalQuestions * 3;
 
-        if (translationsError) {
-          setHasUntranslated(false);
-          return;
+        // Get per-language statistics
+        const languageStats: Partial<InitialStats['languages']> = {};
+        let hasAnyUntranslated = false;
+
+        for (const lang of TARGET_LANGUAGES) {
+          const { count: translatedCount, error } = await supabase
+            .from('question_translations')
+            .select('id', { count: 'exact', head: true })
+            .eq('lang', lang);
+
+          if (error) {
+            console.error(`[QuestionTranslationManager] Error fetching ${lang} stats:`, error);
+            continue;
+          }
+
+          const translated = translatedCount || 0;
+          const total = totalQuestions;
+          const percentage = total > 0 ? Math.round((translated / total) * 100) : 0;
+
+          languageStats[lang] = {
+            total,
+            translated,
+            percentage
+          };
+
+          if (translated < total) {
+            hasAnyUntranslated = true;
+          }
         }
 
-        // Calculate expected translations (totalQuestions * 7 languages)
-        const expectedTranslations = totalQuestions * TARGET_LANGUAGES.length;
-        const hasUntranslated = (totalTranslations || 0) < expectedTranslations;
+        setInitialStats({
+          totalQuestions,
+          totalAnswers,
+          languages: languageStats as InitialStats['languages']
+        });
 
-        setHasUntranslated(hasUntranslated);
-
-        if (hasUntranslated) {
-          console.log(`[QuestionTranslationManager] Untranslated questions found: ${expectedTranslations - (totalTranslations || 0)} translations missing`);
-        }
+        setHasUntranslated(hasAnyUntranslated);
 
       } catch (error) {
-        console.error('[QuestionTranslationManager] Error checking content:', error);
+        console.error('[QuestionTranslationManager] Exception loading stats:', error);
         setHasUntranslated(false);
       } finally {
         setIsCheckingContent(false);
       }
     };
 
-    checkUntranslatedQuestions();
+    loadInitialStats();
   }, []);
 
   // Subscribe to real-time progress updates
@@ -193,6 +233,16 @@ export const QuestionTranslationManager = () => {
     }
   };
 
+  const LANGUAGE_NAMES: Record<string, string> = {
+    en: 'Angol',
+    de: 'Német',
+    fr: 'Francia',
+    es: 'Spanyol',
+    it: 'Olasz',
+    pt: 'Portugál',
+    nl: 'Holland'
+  };
+
   return (
     <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -206,6 +256,42 @@ export const QuestionTranslationManager = () => {
         AI-alapú automatikus fordítás generálása mind a 7 támogatott nyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
         A folyamat eltarthat néhány percig.
       </p>
+
+      {/* Initial Statistics Display */}
+      {initialStats && (
+        <div className="mb-4 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-white">Összes kérdés:</span>
+                <span className="text-lg font-bold text-purple-400">{initialStats.totalQuestions}</span>
+              </div>
+            </div>
+            <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-white">Összes válasz:</span>
+                <span className="text-lg font-bold text-purple-400">{initialStats.totalAnswers}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2">
+            {Object.entries(initialStats.languages).map(([lang, langStats]) => (
+              <div key={lang} className="p-3 bg-white/5 rounded-lg">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-white">{LANGUAGE_NAMES[lang]}:</span>
+                  <span className="text-sm font-bold text-purple-400">{langStats.percentage}%</span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-white/60">
+                  <span>{langStats.translated} / {langStats.total} kérdés lefordítva</span>
+                  <span>{langStats.total - langStats.translated} hátra</span>
+                </div>
+                <Progress value={langStats.percentage} className="h-1.5 mt-2" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {status && (
         <div className="mb-4 p-3 bg-white/5 rounded-lg">
