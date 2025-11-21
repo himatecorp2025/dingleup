@@ -43,8 +43,10 @@ const LoginNew = () => {
                     (window.navigator as any).standalone === true ||
                     document.referrer.includes('android-app://');
       setIsStandalone(isPWA);
+      return isPWA;
     };
-    checkStandalone();
+    
+    const isPWA = checkStandalone();
 
     // Check if biometric is available for saved username
     const checkBiometric = async () => {
@@ -53,8 +55,9 @@ const LoginNew = () => {
         const isAvailable = await checkBiometricAvailable(savedUsername);
         setBiometricAvailable(isAvailable);
         
-        // Auto-attempt biometric login on first load
-        if (isAvailable && !biometricAttempted) {
+        // PWA módban automatikus biometrikus login minden betöltéskor
+        // Web módban csak első alkalommal próbálkozunk
+        if (isAvailable && (!biometricAttempted || isPWA)) {
           setBiometricAttempted(true);
           handleBiometricLogin(savedUsername);
         }
@@ -236,8 +239,8 @@ const LoginNew = () => {
             {t('auth.login.subtitle')}
           </p>
 
-          {/* Biometric Login Button */}
-          {biometricAvailable && (
+          {/* Biometric Login Button - csak web módban látható */}
+          {biometricAvailable && !isStandalone && (
             <div className="mb-4">
               <Button
                 type="button"
@@ -257,6 +260,16 @@ const LoginNew = () => {
                     vagy PIN kóddal
                   </span>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* PWA módban biometrikus azonosítás visszajelzés */}
+          {isStandalone && isBiometricLoading && (
+            <div className="mb-4 text-center">
+              <div className="inline-flex items-center gap-2 text-purple-400 animate-pulse">
+                <Fingerprint className="w-6 h-6" />
+                <span className="font-medium">Biometrikus azonosítás...</span>
               </div>
             </div>
           )}
