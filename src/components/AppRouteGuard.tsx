@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, Navigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AppRouteGuardProps {
   children: React.ReactNode;
@@ -7,6 +8,7 @@ interface AppRouteGuardProps {
 
 export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+  const [hasSession, setHasSession] = useState<boolean | null>(null);
   const location = useLocation();
 
   // Detect device type
@@ -18,6 +20,19 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     checkDevice();
     window.addEventListener('resize', checkDevice);
     return () => window.removeEventListener('resize', checkDevice);
+  }, []);
+
+  // Check session
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setHasSession(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setHasSession(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Standalone intro-first guard (no landing page in app)
@@ -46,12 +61,21 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     ? sessionStorage.getItem('app_intro_shown') === '1' 
     : false;
 
-  // Mobile/tablet: skip landing page, go directly to intro or dashboard
+  // Mobile/tablet: skip landing page, go directly to intro or auth/dashboard based on session
   if (isMobileOrTablet && location.pathname === '/') {
+    if (hasSession === null) {
+      // Still checking session - show nothing
+      return null;
+    }
+
     if (!introShown) {
       return <Navigate to="/intro" replace />;
-    } else {
+    }
+
+    if (hasSession) {
       return <Navigate to="/dashboard" replace />;
+    } else {
+      return <Navigate to="/auth/choice" replace />;
     }
   }
 
