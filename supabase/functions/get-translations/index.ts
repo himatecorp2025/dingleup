@@ -36,7 +36,8 @@ serve(async (req) => {
     const { data: translations, error } = await supabase
       .from('translations')
       .select(`key, hu, ${lang}`)
-      .order('key');
+      .order('key')
+      .limit(5000);
 
     if (error) {
       console.error('[get-translations] Database error:', error);
