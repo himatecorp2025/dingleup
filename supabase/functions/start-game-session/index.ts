@@ -74,7 +74,6 @@ serve(async (req) => {
     const { data: baseQuestions, error: questionsError } = await supabaseClient
       .from('questions')
       .select('id, correct_answer, audience, third, source_category')
-      .eq('is_active', true)
       .order('id')
       .limit(30); // Fetch more to ensure we have 15 after translation filtering
 
