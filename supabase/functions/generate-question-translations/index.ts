@@ -24,7 +24,7 @@ const BATCH_SIZE = 10; // Increased batch size for faster processing
 const DELAY_BETWEEN_BATCHES = 3000; // 3 seconds delay
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 10000; // 10 seconds between retries
-const MAX_QUESTIONS_PER_RUN = 500; // Process max 500 questions per invocation
+const MAX_QUESTIONS_PER_RUN = 5; // CRITICAL: Low limit to stay under 60s edge function timeout (5 questions × 7 languages × ~1.5s ≈ 52s)
 
 async function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
