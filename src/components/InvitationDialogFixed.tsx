@@ -105,7 +105,7 @@ export const InvitationDialogFixed = ({ open, onClose, userId }: InvitationDialo
 
           {/* Invitation Link - RESPONSIVE FIX */}
           <div className="bg-purple-900/30 rounded-xl p-4 border-2 border-purple-500/30">
-            <label className="text-sm font-medium mb-2 block text-white">Meghívó link</label>
+            <label className="text-sm font-medium mb-2 block text-white">{t('invitation.share_link_label')}</label>
             <div className="flex gap-2 items-stretch">
               <input
                 type="text"
@@ -127,14 +127,14 @@ export const InvitationDialogFixed = ({ open, onClose, userId }: InvitationDialo
           <div className="bg-purple-900/30 rounded-xl p-3 sm:p-4 text-center border-2 border-purple-500/30">
             <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
               <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0" />
-              <span className="text-xs sm:text-sm font-medium text-white">{t('friends.title')}</span>
+              <span className="text-xs sm:text-sm font-medium text-white">{t('invitation.friends_invited')}</span>
             </div>
             <p className="text-2xl sm:text-3xl font-bold text-yellow-400">{invitedCount}</p>
           </div>
 
           {/* Rewards */}
           <div className="space-y-2">
-            <h3 className="font-bold text-sm text-white">{t('invitation.rewards')}</h3>
+            <h3 className="font-bold text-sm text-white">{t('invitation.rewards_title')}</h3>
             {INVITATION_REWARDS.map((reward) => {
               const achieved = invitedCount >= reward.count;
               return (
@@ -148,7 +148,7 @@ export const InvitationDialogFixed = ({ open, onClose, userId }: InvitationDialo
                 >
                   <div className="flex items-center gap-2">
                     <span className={`text-sm font-medium ${achieved ? 'text-purple-300' : 'text-white/70'}`}>
-                      {reward.count} barát
+                      {t('invitation.reward_friends').replace('{count}', reward.count.toString())}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
