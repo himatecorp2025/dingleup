@@ -32,13 +32,13 @@ const Profile = () => {
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [newUsername, setNewUsername] = useState('');
   
-  // Password fields
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  // PIN fields
+  const [showCurrentPin, setShowCurrentPin] = useState(false);
+  const [showNewPin, setShowNewPin] = useState(false);
+  const [showConfirmPin, setShowConfirmPin] = useState(false);
+  const [currentPin, setCurrentPin] = useState('');
+  const [newPin, setNewPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   
   // Platform detection for conditional padding
@@ -243,36 +243,25 @@ const Profile = () => {
     }
   };
 
-  const validatePassword = (password: string): string | null => {
-    const rules = [
-      { test: (p: string) => p.length >= 8, msg: t('common.error.password_min_8') },
-      { test: (p: string) => /[a-z]/.test(p), msg: t('common.error.password_lowercase') },
-      { test: (p: string) => /[A-Z]/.test(p), msg: t('common.error.password_uppercase') },
-      { test: (p: string) => /\d/.test(p), msg: t('common.error.password_number') },
-      { test: (p: string) => /[@$!%*?&.]/.test(p), msg: t('common.error.password_special') },
-    ];
-
-    for (const rule of rules) {
-      if (!rule.test(password)) {
-        return rule.msg;
-      }
+  const validatePin = (pin: string): string | null => {
+    if (!/^\d{6}$/.test(pin)) {
+      return t('profile.pin.errorInvalidFormat');
     }
-    
     return null;
   };
 
-  const handlePasswordSave = async () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error(t('common.error.password_all_required'));
+  const handlePinSave = async () => {
+    if (!currentPin || !newPin || !confirmPin) {
+      toast.error(t('profile.pin.errorAllRequired'));
       return;
     }
 
-    if (newPassword !== confirmPassword) {
-      toast.error(t('common.error.password_mismatch'));
+    if (newPin !== confirmPin) {
+      toast.error(t('profile.pin.errorMismatch'));
       return;
     }
 
-    const validationError = validatePassword(newPassword);
+    const validationError = validatePin(newPin);
     if (validationError) {
       toast.error(validationError);
       return;
@@ -286,23 +275,28 @@ const Profile = () => {
         return;
       }
 
-      const response = await supabase.functions.invoke('update-password', {
-        body: { currentPassword, newPassword },
+      const response = await supabase.functions.invoke('update-pin', {
+        body: { currentPin, newPin },
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }
       });
 
       if (response.error) {
-        throw new Error(response.error.message || t('profile.password_update_failed'));
+        throw new Error(response.error.message || t('profile.pin.errorIncorrectCurrentPin'));
       }
 
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      toast.success(t('profile.password_updated'));
+      const responseData = response.data;
+      if (responseData?.error) {
+        throw new Error(responseData.error);
+      }
+
+      setCurrentPin('');
+      setNewPin('');
+      setConfirmPin('');
+      toast.success(t('profile.pin.successMessage'));
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error.message || t('common.error.generic'));
     } finally {
       setIsSaving(false);
     }
@@ -766,65 +760,83 @@ const Profile = () => {
                 </p>
               </div>
 
-              {/* Current Password (masked) */}
+              {/* Current PIN */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.current_password_label')}</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.pin.currentPinLabel')}</p>
                 <div className="relative">
                   <Input
-                    type={showCurrentPassword ? 'text' : 'password'}
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder={t('profile.current_password_placeholder')}
+                    type={showCurrentPin ? 'text' : 'password'}
+                    value={currentPin}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                      setCurrentPin(value);
+                    }}
+                    placeholder={t('profile.pin.currentPinPlaceholder')}
                     className="bg-black/30 border-purple-500/30 text-white pr-10"
+                    maxLength={6}
+                    inputMode="numeric"
+                    pattern="\d{6}"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    onClick={() => setShowCurrentPin(!showCurrentPin)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
                   >
-                    {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showCurrentPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              {/* New Password */}
+              {/* New PIN */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.new_password_label')}</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.pin.newPinLabel')}</p>
                 <div className="relative">
                   <Input
-                    type={showNewPassword ? 'text' : 'password'}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder={t('profile.new_password_placeholder')}
+                    type={showNewPin ? 'text' : 'password'}
+                    value={newPin}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                      setNewPin(value);
+                    }}
+                    placeholder={t('profile.pin.newPinPlaceholder')}
                     className="bg-black/30 border-purple-500/30 text-white pr-10"
+                    maxLength={6}
+                    inputMode="numeric"
+                    pattern="\d{6}"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    onClick={() => setShowNewPin(!showNewPin)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
                   >
-                    {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showNewPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              {/* Confirm Password */}
+              {/* Confirm PIN */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.confirm_password_label')}</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.pin.confirmPinLabel')}</p>
                 <div className="relative">
                   <Input
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder={t('profile.confirm_password_placeholder')}
+                    type={showConfirmPin ? 'text' : 'password'}
+                    value={confirmPin}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                      setConfirmPin(value);
+                    }}
+                    placeholder={t('profile.pin.confirmPinPlaceholder')}
                     className="bg-black/30 border-purple-500/30 text-white pr-10"
+                    maxLength={6}
+                    inputMode="numeric"
+                    pattern="\d{6}"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() => setShowConfirmPin(!showConfirmPin)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
                   >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showConfirmPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
@@ -874,7 +886,7 @@ const Profile = () => {
               {/* Save Button */}
               <div className="pt-2">
                 <Button
-                  onClick={handlePasswordSave}
+                  onClick={handlePinSave}
                   disabled={isSaving}
                   className="w-full bg-accent hover:bg-accent/90 text-white font-bold py-3 px-6 rounded-lg
                     shadow-[0_4px_12px_hsl(var(--accent)/0.6),0_0_24px_hsl(var(--accent)/0.4)]
@@ -884,12 +896,12 @@ const Profile = () => {
                   {isSaving ? (
                     <span className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      {t('profile.saving')}
+                      {t('profile.pin.saving')}
                     </span>
                   ) : (
                     <span className="flex items-center gap-2">
                       <Save className="w-4 h-4" />
-                      {t('profile.save_button')}
+                      {t('profile.pin.changeButton')}
                     </span>
                   )}
                 </Button>
