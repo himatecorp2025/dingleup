@@ -618,30 +618,32 @@ if (!profile) {
                 disabled={!profile || boosterState.loading}
                 className="transition-all duration-300 hover:scale-105 active:scale-95"
               >
-                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] mr-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
+                <svg className="inline w-[clamp(2rem,6vw,3rem)] h-[clamp(2rem,6vw,3rem)] sm:w-[clamp(2.5rem,7vw,4rem)] sm:h-[clamp(2.5rem,7vw,4rem)] mr-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))', background: 'transparent' }}>
                   <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center bg-transparent">
                   <span 
-                    className="relative font-black text-[clamp(0.85rem,2.5vw,1.15rem)] sm:text-[clamp(1rem,3vw,1.5rem)] tracking-[0.05em] sm:tracking-[0.1em]" 
+                    className="relative font-black text-[clamp(1.275rem,3.75vw,1.725rem)] sm:text-[clamp(1.5rem,4.5vw,2.25rem)] tracking-[0.05em] sm:tracking-[0.1em]" 
                     style={{ 
-                      textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(234,179,8,0.8)'
+                      textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(234,179,8,0.8)',
+                      background: 'transparent'
                     }}
                   >
                     {boosterState.hasPendingPremium ? t('dashboard.premium_speed_activate') : t('dashboard.speed_booster')}
                   </span>
                   {!boosterState.hasPendingPremium && (
                     <span 
-                      className="block text-[clamp(0.65rem,2vw,0.85rem)] sm:text-[clamp(0.75rem,2.5vw,1rem)] font-semibold mt-0.5 opacity-90"
+                      className="block text-[clamp(0.975rem,3vw,1.275rem)] sm:text-[clamp(1.125rem,3.75vw,1.5rem)] font-semibold mt-0.5 opacity-90"
                       style={{ 
-                        textShadow: '-0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000'
+                        textShadow: '-0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000',
+                        background: 'transparent'
                       }}
                     >
                       {t('dashboard.premium_booster_price')}
                     </span>
                   )}
                 </div>
-                <svg className="inline w-[clamp(1rem,3vw,1.5rem)] h-[clamp(1rem,3vw,1.5rem)] sm:w-[clamp(1.25rem,3.5vw,2rem)] sm:h-[clamp(1.25rem,3.5vw,2rem)] ml-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))' }}>
+                <svg className="inline w-[clamp(2rem,6vw,3rem)] h-[clamp(2rem,6vw,3rem)] sm:w-[clamp(2.5rem,7vw,4rem)] sm:h-[clamp(2.5rem,7vw,4rem)] ml-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.9))', background: 'transparent' }}>
                   <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </BoosterButton>
