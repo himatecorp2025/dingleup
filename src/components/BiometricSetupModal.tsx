@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Fingerprint, X, AlertCircle } from 'lucide-react';
 import { useWebAuthn } from '@/hooks/useWebAuthn';
 import { useToast } from '@/hooks/use-toast';
+import { useI18n } from '@/i18n';
 
 interface BiometricSetupModalProps {
   open: boolean;
@@ -31,12 +32,13 @@ export function BiometricSetupModal({
   const [error, setError] = useState<string | null>(null);
   const { registerBiometric, isProcessing, isSupported } = useWebAuthn();
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const handleEnableBiometric = async () => {
     if (!isSupported) {
       toast({
-        title: 'Nem támogatott',
-        description: 'Ez az eszköz nem támogatja a biometrikus azonosítást.',
+        title: t('biometric.not_supported_title'),
+        description: t('biometric.not_supported_description'),
         variant: 'destructive',
       });
       return;
@@ -47,8 +49,8 @@ export function BiometricSetupModal({
       await registerBiometric(username, userId);
       
       toast({
-        title: 'Sikeres beállítás',
-        description: 'A biometrikus belépés sikeresen engedélyezve!',
+        title: t('biometric.success_title'),
+        description: t('biometric.success_description'),
       });
       
       onSuccess?.();
@@ -60,22 +62,22 @@ export function BiometricSetupModal({
       if (newAttemptCount >= 2) {
         // After 2 failed attempts, close modal and continue with normal login
         toast({
-          title: 'Biometrikus beállítás sikertelen',
-          description: 'Folytathatod a normál bejelentkezéssel. Később a profilodban is beállíthatod.',
+          title: t('biometric.setup_failed_title'),
+          description: t('biometric.setup_failed_description'),
           variant: 'destructive',
         });
         onClose();
       } else {
         // Allow retry
-        setError('A biometrikus azonosítást nem sikerült beállítani. Kérlek, próbáld újra!');
+        setError(t('biometric.setup_error_retry'));
       }
     }
   };
 
   const handleSkip = () => {
     toast({
-      title: 'Átugorva',
-      description: 'Később a profilodban engedélyezheted a biometrikus belépést.',
+      title: t('biometric.skipped_title'),
+      description: t('biometric.skipped_description'),
     });
     onClose();
   };
@@ -88,10 +90,10 @@ export function BiometricSetupModal({
             <Fingerprint className="w-8 h-8 text-primary" />
           </div>
           <DialogTitle className="text-center text-2xl">
-            Engedélyezed a biometrikus belépést?
+            {t('biometric.enable_title')}
           </DialogTitle>
           <DialogDescription className="text-center text-base pt-2">
-            Ha engedélyezed, a DingleUP! a készüléked Face ID, Touch ID, Ujjlenyomat vagy Windows Hello azonosítóját fogja használni a gyorsabb belépéshez.
+            {t('biometric.enable_description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -104,7 +106,7 @@ export function BiometricSetupModal({
 
         {attemptCount > 0 && attemptCount < 2 && (
           <p className="text-center text-sm text-muted-foreground">
-            Próbálkozás: {attemptCount + 1}/3
+            {t('biometric.attempt_count').replace('{current}', String(attemptCount + 1)).replace('{total}', '3')}
           </p>
         )}
 
@@ -117,10 +119,10 @@ export function BiometricSetupModal({
           >
             {isProcessing ? (
               <>
-                <span className="animate-pulse">Beállítás...</span>
+                <span className="animate-pulse">{t('biometric.setting_up')}</span>
               </>
             ) : (
-              'Biometrikus belépés engedélyezése'
+              t('biometric.enable_button')
             )}
           </Button>
           
@@ -130,7 +132,7 @@ export function BiometricSetupModal({
             disabled={isProcessing}
             className="w-full"
           >
-            Később beállítom
+            {t('biometric.later_button')}
           </Button>
         </DialogFooter>
       </DialogContent>

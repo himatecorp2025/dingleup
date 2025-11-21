@@ -74,7 +74,7 @@ const LoginNew = () => {
       if (!savedUsername) {
         toast({
           title: t('auth.login.errorTitle'),
-          description: 'Nincs mentett felhasználónév',
+          description: t('auth.login.noSavedUsername'),
           variant: "destructive",
         });
         return;
@@ -86,7 +86,7 @@ const LoginNew = () => {
       console.error('Biometric login failed:', error);
       toast({
         title: t('auth.login.errorTitle'),
-        description: 'A biometrikus bejelentkezés sikertelen',
+        description: t('auth.login.biometricFailed'),
         variant: "destructive",
       });
     } finally {
@@ -249,7 +249,7 @@ const LoginNew = () => {
                 className="w-full h-12 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:from-purple-600 hover:via-purple-700 hover:to-purple-800 text-white font-bold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all duration-300 text-base flex items-center justify-center gap-2"
               >
                 <Fingerprint className="w-5 h-5" />
-                {isBiometricLoading ? 'Biometrikus azonosítás...' : 'Biometrikus bejelentkezés'}
+                {isBiometricLoading ? t('auth.login.biometricAuthenticating') : t('auth.login.biometricLogin')}
               </Button>
               <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
@@ -257,7 +257,7 @@ const LoginNew = () => {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] px-2 text-white/60">
-                    vagy PIN kóddal
+                    {t('auth.login.orWithPin')}
                   </span>
                 </div>
               </div>
@@ -269,7 +269,7 @@ const LoginNew = () => {
             <div className="mb-4 text-center">
               <div className="inline-flex items-center gap-2 text-purple-400 animate-pulse">
                 <Fingerprint className="w-6 h-6" />
-                <span className="font-medium">Biometrikus azonosítás...</span>
+                <span className="font-medium">{t('auth.login.biometricAuthenticating')}</span>
               </div>
             </div>
           )}
