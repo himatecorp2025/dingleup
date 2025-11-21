@@ -491,6 +491,110 @@ if (!profile) {
                 onClick={() => navigate('/profile')}
                 className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 aspect-square hover:scale-105 transition-transform"
               >
+                {/* Purple SVG Background - Duplicated twice */}
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="22.53058 -47.5814116 672.82399 167.3667432"
+                  fill="none"
+                  shapeRendering="geometricPrecision"
+                  colorInterpolationFilters="sRGB"
+                  className="absolute inset-0 w-full h-full"
+                  style={{ zIndex: 0 }}
+                  aria-hidden
+                >
+                  <defs>
+                    <path id="HEX_AVATAR_1" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+                    <linearGradient id="band20_avatar_1" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#E8D9FF"/>
+                      <stop offset="35%" stopColor="#A855F7"/>
+                      <stop offset="100%" stopColor="#5B21B6"/>
+                    </linearGradient>
+                    <linearGradient id="band5_avatar_1" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#F3E9FF"/>
+                      <stop offset="50%" stopColor="#C084FC"/>
+                      <stop offset="100%" stopColor="#7C3AED"/>
+                    </linearGradient>
+                    <linearGradient id="chromeGrad_avatar_1" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#f8fbff"/>
+                      <stop offset="10%" stopColor="#c6ccd3"/>
+                      <stop offset="22%" stopColor="#ffffff"/>
+                      <stop offset="40%" stopColor="#9ea6b0"/>
+                      <stop offset="58%" stopColor="#e7ebf0"/>
+                      <stop offset="78%" stopColor="#bfc6cf"/>
+                      <stop offset="100%" stopColor="#ffffff"/>
+                    </linearGradient>
+                    <filter id="pro3d_avatar_1" x="-50%" y="-50%" width="200%" height="200%">
+                      <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
+                      <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
+                    </filter>
+                    <mask id="maskOuterOnly_avatar_1" maskUnits="userSpaceOnUse">
+                      <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
+                      <use href="#HEX_AVATAR_1" stroke="white" strokeWidth="2" fill="none"/>
+                      <use href="#HEX_AVATAR_1" stroke="black" strokeWidth="25" fill="none"/>
+                    </mask>
+                  </defs>
+                  <g transform="scale(1,1.2)">
+                    <use href="#HEX_AVATAR_1" fill="black" fillOpacity="0.5"/>
+                    <use href="#HEX_AVATAR_1" fill="none" stroke="url(#band20_avatar_1)" strokeWidth="20" strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_avatar_1)" vectorEffect="non-scaling-stroke"/>
+                    <use href="#HEX_AVATAR_1" fill="none" stroke="url(#band5_avatar_1)" strokeWidth="5" strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_avatar_1)" vectorEffect="non-scaling-stroke"/>
+                    <g mask="url(#maskOuterOnly_avatar_1)">
+                      <use href="#HEX_AVATAR_1" fill="none" stroke="url(#chromeGrad_avatar_1)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
+                    </g>
+                  </g>
+                </svg>
+                
+                {/* Purple SVG Background - Second duplicate */}
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="22.53058 -47.5814116 672.82399 167.3667432"
+                  fill="none"
+                  shapeRendering="geometricPrecision"
+                  colorInterpolationFilters="sRGB"
+                  className="absolute inset-0 w-full h-full"
+                  style={{ zIndex: 1 }}
+                  aria-hidden
+                >
+                  <defs>
+                    <path id="HEX_AVATAR_2" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+                    <linearGradient id="band20_avatar_2" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#E8D9FF"/>
+                      <stop offset="35%" stopColor="#A855F7"/>
+                      <stop offset="100%" stopColor="#5B21B6"/>
+                    </linearGradient>
+                    <linearGradient id="band5_avatar_2" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#F3E9FF"/>
+                      <stop offset="50%" stopColor="#C084FC"/>
+                      <stop offset="100%" stopColor="#7C3AED"/>
+                    </linearGradient>
+                    <linearGradient id="chromeGrad_avatar_2" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#f8fbff"/>
+                      <stop offset="10%" stopColor="#c6ccd3"/>
+                      <stop offset="22%" stopColor="#ffffff"/>
+                      <stop offset="40%" stopColor="#9ea6b0"/>
+                      <stop offset="58%" stopColor="#e7ebf0"/>
+                      <stop offset="78%" stopColor="#bfc6cf"/>
+                      <stop offset="100%" stopColor="#ffffff"/>
+                    </linearGradient>
+                    <filter id="pro3d_avatar_2" x="-50%" y="-50%" width="200%" height="200%">
+                      <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
+                      <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
+                    </filter>
+                    <mask id="maskOuterOnly_avatar_2" maskUnits="userSpaceOnUse">
+                      <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
+                      <use href="#HEX_AVATAR_2" stroke="white" strokeWidth="2" fill="none"/>
+                      <use href="#HEX_AVATAR_2" stroke="black" strokeWidth="25" fill="none"/>
+                    </mask>
+                  </defs>
+                  <g transform="scale(1,1.2)">
+                    <use href="#HEX_AVATAR_2" fill="black" fillOpacity="0.5"/>
+                    <use href="#HEX_AVATAR_2" fill="none" stroke="url(#band20_avatar_2)" strokeWidth="20" strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_avatar_2)" vectorEffect="non-scaling-stroke"/>
+                    <use href="#HEX_AVATAR_2" fill="none" stroke="url(#band5_avatar_2)" strokeWidth="5" strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_avatar_2)" vectorEffect="non-scaling-stroke"/>
+                    <g mask="url(#maskOuterOnly_avatar_2)">
+                      <use href="#HEX_AVATAR_2" fill="none" stroke="url(#chromeGrad_avatar_2)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
+                    </g>
+                  </g>
+                </svg>
+
                 {/* BASE SHADOW (3D depth) */}
                 <div
                   className="absolute clip-hexagon"
@@ -501,6 +605,7 @@ if (!profile) {
                     bottom: '-3px',
                     background: 'rgba(0,0,0,0.35)',
                     filter: 'blur(3px)',
+                    zIndex: 2,
                   }}
                   aria-hidden
                 />
@@ -508,13 +613,14 @@ if (!profile) {
                 {/* OUTER FRAME */}
                 <div
                   className="absolute inset-0 clip-hexagon bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 border-2 sm:border-4 border-purple-400 shadow-lg shadow-purple-500/50"
+                  style={{ zIndex: 3 }}
                   aria-hidden
                 />
 
                 {/* MIDDLE FRAME */}
                 <div
                   className="absolute inset-[3px] clip-hexagon bg-gradient-to-b from-purple-600 via-purple-500 to-purple-800"
-                  style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }}
+                  style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)', zIndex: 4 }}
                   aria-hidden
                 />
 
@@ -527,6 +633,7 @@ if (!profile) {
                     right: '5px',
                     bottom: '5px',
                     boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)',
+                    zIndex: 5,
                   }}
                   aria-hidden
                 />
@@ -540,6 +647,7 @@ if (!profile) {
                     right: '5px',
                     bottom: '5px',
                     background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)',
+                    zIndex: 6,
                   }}
                   aria-hidden
                 />
@@ -554,12 +662,13 @@ if (!profile) {
                     right: '5px',
                     bottom: '5px',
                     boxShadow: 'inset 0 0 10px rgba(0,0,0,0.25)',
+                    zIndex: 7,
                   }}
                   aria-hidden
                 />
 
                 {/* Content - Avatar */}
-                <div className="absolute inset-0 clip-hexagon flex items-center justify-center z-10 overflow-hidden">
+                <div className="absolute inset-0 clip-hexagon flex items-center justify-center overflow-hidden" style={{ zIndex: 10 }}>
                   {profile.avatar_url ? (
                     <img 
                       src={profile.avatar_url} 
