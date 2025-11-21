@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { useAdminGameProfiles } from '@/hooks/useAdminGameProfiles';
 import { Brain, Search, Info } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 
@@ -124,77 +124,72 @@ export default function AdminGameProfiles() {
           </CardContent>
         </Card>
 
-        {/* Table */}
+        {/* Optimized Scrollable Table */}
         <Card>
           <CardHeader>
             <CardTitle>Játékosok ({filteredAndSorted.length})</CardTitle>
             <CardDescription>Összes profil adatok és státuszok</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4">Felhasználó</th>
-                    <th className="text-right py-3 px-4">Összes válasz</th>
-                    <th className="text-right py-3 px-4">Helyes %</th>
-                    <th className="text-right py-3 px-4">Like/Dislike</th>
-                    <th className="text-center py-3 px-4">AI Státusz</th>
-                    <th className="text-left py-3 px-4">TOP3 Témák</th>
-                    <th className="text-center py-3 px-4">Műveletek</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredAndSorted.map((profile) => (
-                    <tr key={profile.userId} className="border-b hover:bg-muted/50">
-                      <td className="py-3 px-4">
-                        <div>
-                          <p className="font-semibold">{profile.username}</p>
-                          <p className="text-xs text-muted-foreground">{profile.userId.slice(0, 8)}...</p>
-                        </div>
-                      </td>
-                      <td className="text-right py-3 px-4">{profile.totalAnswered}</td>
-                      <td className="text-right py-3 px-4">
-                        {(profile.overallCorrectRatio * 100).toFixed(1)}%
-                      </td>
-                      <td className="text-right py-3 px-4">
-                        {profile.totalLikes} / {profile.totalDislikes}
-                      </td>
-                      <td className="text-center py-3 px-4">
-                        {profile.personalizationActive ? (
-                          <Badge variant="default" className="bg-green-500">
-                            Személyre szabás aktív (70/20/10)
-                          </Badge>
-                        ) : profile.totalAnswered < 1000 ? (
-                          <Badge variant="secondary">
-                            Tanulási fázis ({profile.totalAnswered}/1000)
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline">AI kikapcsolva</Badge>
-                        )}
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex flex-col gap-1">
-                          {profile.topTopics.slice(0, 2).map((topic, idx) => (
-                            <span key={topic.topicId} className="text-xs">
-                              {idx + 1}. {topic.topicName} ({topic.score.toFixed(1)})
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="text-center py-3 px-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => navigate(`/admin/game-profiles/${profile.userId}`)}
-                        >
-                          Részletek
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {/* Table Header */}
+            <div className="grid grid-cols-7 gap-4 border-b pb-3 mb-2 font-semibold text-sm sticky top-0 bg-background z-10">
+              <div className="text-left">Felhasználó</div>
+              <div className="text-right">Összes válasz</div>
+              <div className="text-right">Helyes %</div>
+              <div className="text-right">Like/Dislike</div>
+              <div className="text-center">AI Státusz</div>
+              <div className="text-left">TOP3 Témák</div>
+              <div className="text-center">Műveletek</div>
+            </div>
+            
+            {/* Scrollable Container */}
+            <div className="max-h-[600px] overflow-y-auto">
+              {filteredAndSorted.map((profile) => (
+                <div key={profile.userId} className="grid grid-cols-7 gap-4 items-center border-b py-3 hover:bg-muted/50">
+                  <div>
+                    <p className="font-semibold text-sm">{profile.username}</p>
+                    <p className="text-xs text-muted-foreground">{profile.userId.slice(0, 8)}...</p>
+                  </div>
+                  <div className="text-right text-sm">{profile.totalAnswered}</div>
+                  <div className="text-right text-sm">
+                    {(profile.overallCorrectRatio * 100).toFixed(1)}%
+                  </div>
+                  <div className="text-right text-sm">
+                    {profile.totalLikes} / {profile.totalDislikes}
+                  </div>
+                  <div className="text-center">
+                    {profile.personalizationActive ? (
+                      <Badge variant="default" className="bg-green-500 text-xs">
+                        AI aktív
+                      </Badge>
+                    ) : profile.totalAnswered < 1000 ? (
+                      <Badge variant="secondary" className="text-xs">
+                        Tanulás ({profile.totalAnswered}/1000)
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-xs">AI ki</Badge>
+                    )}
+                  </div>
+                  <div>
+                    <div className="flex flex-col gap-1">
+                      {profile.topTopics.slice(0, 2).map((topic, idx) => (
+                        <span key={topic.topicId} className="text-xs">
+                          {idx + 1}. {topic.topicName.slice(0, 15)}... ({topic.score.toFixed(1)})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/admin/game-profiles/${profile.userId}`)}
+                    >
+                      Részletek
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>

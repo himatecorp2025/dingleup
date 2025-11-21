@@ -123,82 +123,82 @@ export default defineConfig(({ mode }) => ({
           { url: '/assets/game-background.png', revision: null }
         ],
         runtimeCaching: [
-          // Supabase API - Optimized Network first with shorter timeout for mobile
+          // Supabase API - Aggressive cache-first with network fallback for maximum speed
           {
             urlPattern: ({ url }) => url.origin === 'https://wdpxmwsxhckazwxufttk.supabase.co',
-            handler: 'NetworkFirst',
+            handler: 'CacheFirst',
             options: {
-              cacheName: 'supabase-api',
+              cacheName: 'supabase-api-cache',
               expiration: {
-                maxEntries: 150,
-                maxAgeSeconds: 60 * 60 * 24 * 2 // 2 days cache
+                maxEntries: 300,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days aggressive cache
               },
-              networkTimeoutSeconds: 5, // Faster timeout for mobile (5s instead of 10s)
+              networkTimeoutSeconds: 3, // Ultra-fast timeout (3s)
               cacheableResponse: {
                 statuses: [0, 200]
               }
             }
           },
-          // Images - Aggressive cache first for mobile performance
+          // Images - Maximum aggressive cache first
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'images',
+              cacheName: 'images-cache',
               expiration: {
-                maxEntries: 200, // More images cached
-                maxAgeSeconds: 60 * 60 * 24 * 60 // 60 days cache
+                maxEntries: 500, // Much more images cached
+                maxAgeSeconds: 60 * 60 * 24 * 90 // 90 days aggressive cache
               },
               cacheableResponse: {
                 statuses: [0, 200]
               }
             }
           },
-          // Videos - Network first, cache for offline
+          // Videos - Cache first with network fallback
           {
             urlPattern: /\.(?:mp4|webm)$/,
-            handler: 'NetworkFirst',
+            handler: 'CacheFirst',
             options: {
-              cacheName: 'videos',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 7
-              }
-            }
-          },
-          // Audio - Network first, cache for offline
-          {
-            urlPattern: /\.(?:mp3|wav|ogg)$/,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'audio',
+              cacheName: 'videos-cache',
               expiration: {
                 maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 7
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
               }
             }
           },
-          // Fonts - Aggressive cache with long expiration
+          // Audio - Cache first with network fallback
+          {
+            urlPattern: /\.(?:mp3|wav|ogg)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'audio-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              }
+            }
+          },
+          // Fonts - Maximum aggressive cache
           {
             urlPattern: /\.(?:woff|woff2|ttf|otf)$/,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'fonts',
+              cacheName: 'fonts-cache',
               expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 365 * 2 // 2 years
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 365 * 3 // 3 years
               }
             }
           },
-          // Static JS/CSS bundles - Cache first for faster loads
+          // Static JS/CSS bundles - Cache first for instant loads
           {
             urlPattern: /\.(?:js|css)$/,
-            handler: 'StaleWhileRevalidate',
+            handler: 'CacheFirst',
             options: {
-              cacheName: 'static-resources',
+              cacheName: 'static-resources-cache',
               expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+                maxEntries: 200,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
               }
             }
           }

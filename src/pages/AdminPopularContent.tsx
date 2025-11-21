@@ -1,16 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo, useMemo, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Heart, ThumbsDown, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import AdminLayout from '@/components/admin/AdminLayout';
 
 interface TopicPopularityRow {
@@ -171,83 +163,78 @@ const AdminPopularContent = () => {
             </Button>
           </div>
         ) : (
-          <div className="bg-background/80 backdrop-blur-sm rounded-lg border border-primary/20 overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent border-primary/20">
-                  <TableHead className="text-foreground font-bold">#</TableHead>
-                  <TableHead 
-                    className="text-foreground font-bold cursor-pointer hover:text-primary"
-                    onClick={() => handleSort('topicName')}
-                  >
-                    Témakör {sortField === 'topicName' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </TableHead>
-                  <TableHead 
-                    className="text-foreground font-bold cursor-pointer hover:text-primary text-center"
-                    onClick={() => handleSort('totalLikes')}
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <Heart className="w-4 h-4 text-red-500" />
-                      Összes lájk {sortField === 'totalLikes' && (sortDirection === 'asc' ? '↑' : '↓')}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="text-foreground font-bold cursor-pointer hover:text-primary text-center"
-                    onClick={() => handleSort('totalDislikes')}
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <ThumbsDown className="w-4 h-4 text-orange-500" />
-                      Összes dislike {sortField === 'totalDislikes' && (sortDirection === 'asc' ? '↑' : '↓')}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="text-foreground font-bold cursor-pointer hover:text-primary text-center"
-                    onClick={() => handleSort('netScore')}
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-accent" />
-                      Netto népszerűség {sortField === 'netScore' && (sortDirection === 'asc' ? '↑' : '↓')}
-                    </div>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedData.map((row, index) => (
-                  <TableRow 
-                    key={row.topicId}
-                    className="border-primary/10 hover:bg-primary/5"
-                  >
-                    <TableCell className="text-foreground font-medium">
-                      {index + 1}
-                    </TableCell>
-                    <TableCell className="text-foreground">
-                      {row.topicName}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <span className="inline-flex items-center gap-1 text-red-500 font-bold">
-                        {row.totalLikes}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <span className="inline-flex items-center gap-1 text-orange-500 font-bold">
-                        {row.totalDislikes}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <span className={`font-bold ${
-                        row.netScore > 0 
-                          ? 'text-success' 
-                          : row.netScore < 0 
-                            ? 'text-destructive' 
-                            : 'text-muted-foreground'
-                      }`}>
-                        {row.netScore > 0 ? '+' : ''}{row.netScore}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          <div className="bg-background/80 backdrop-blur-sm rounded-lg border border-primary/20 overflow-hidden p-4">
+            {/* Table Headers */}
+            <div className="grid grid-cols-6 gap-4 pb-3 mb-2 border-b border-primary/20 font-bold sticky top-0 bg-background z-10">
+              <div className="text-foreground">#</div>
+              <div 
+                className="text-foreground cursor-pointer hover:text-primary"
+                onClick={() => handleSort('topicName')}
+              >
+                Témakör {sortField === 'topicName' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </div>
+              <div 
+                className="text-center text-foreground cursor-pointer hover:text-primary"
+                onClick={() => handleSort('totalLikes')}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <Heart className="w-4 h-4 text-red-500" />
+                  Lájk {sortField === 'totalLikes' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </div>
+              </div>
+              <div 
+                className="text-center text-foreground cursor-pointer hover:text-primary"
+                onClick={() => handleSort('totalDislikes')}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <ThumbsDown className="w-4 h-4 text-orange-500" />
+                  Dislike {sortField === 'totalDislikes' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </div>
+              </div>
+              <div 
+                className="text-center text-foreground cursor-pointer hover:text-primary col-span-2"
+                onClick={() => handleSort('netScore')}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-accent" />
+                  Netto {sortField === 'netScore' && (sortDirection === 'asc' ? '↑' : '↓')}
+                </div>
+              </div>
+            </div>
+
+            {/* Scrollable Container */}
+            <div className="max-h-[500px] overflow-y-auto">
+              {sortedData.map((row, index) => (
+                <div 
+                  key={row.topicId}
+                  className="grid grid-cols-6 gap-4 items-center border-b border-primary/10 hover:bg-primary/5 py-3"
+                >
+                  <div className="text-foreground font-medium">{index + 1}</div>
+                  <div className="text-foreground">{row.topicName}</div>
+                  <div className="text-center">
+                    <span className="inline-flex items-center gap-1 text-red-500 font-bold">
+                      {row.totalLikes}
+                    </span>
+                  </div>
+                  <div className="text-center">
+                    <span className="inline-flex items-center gap-1 text-orange-500 font-bold">
+                      {row.totalDislikes}
+                    </span>
+                  </div>
+                  <div className="text-center col-span-2">
+                    <span className={`font-bold ${
+                      row.netScore > 0 
+                        ? 'text-success' 
+                        : row.netScore < 0 
+                          ? 'text-destructive' 
+                          : 'text-muted-foreground'
+                    }`}>
+                      {row.netScore > 0 ? '+' : ''}{row.netScore}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
