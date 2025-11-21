@@ -42,10 +42,10 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          width: '200%',
-          height: '120%',
-          top: '-10%',
-          left: '-50%',
+          width: '400%',
+          height: '150%',
+          top: '-25%',
+          left: '-150%',
         }}
         aria-hidden
       />
