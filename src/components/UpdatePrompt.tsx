@@ -7,29 +7,43 @@ export const UpdatePrompt = () => {
   const { t } = useI18n();
   const [showPrompt, setShowPrompt] = useState(false);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, setDismissed] = useState(() => {
+    // Check if user dismissed update in last 24 hours
+    const dismissedUntil = localStorage.getItem('update_dismissed_until');
+    if (dismissedUntil) {
+      return Date.now() < parseInt(dismissedUntil);
+    }
+    return false;
+  });
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then((reg) => {
         setRegistration(reg);
 
-        // Check for updates every 60 seconds
+        // Check for updates every 30 minutes (not 60 seconds)
         const interval = setInterval(() => {
           reg.update();
-        }, 60000);
+        }, 30 * 60 * 1000);
 
         return () => clearInterval(interval);
       });
 
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        setShowPrompt(true);
+        // Only show if not dismissed
+        const dismissedUntil = localStorage.getItem('update_dismissed_until');
+        if (!dismissedUntil || Date.now() >= parseInt(dismissedUntil)) {
+          setShowPrompt(true);
+        }
       });
 
       // Listen for waiting service worker
       navigator.serviceWorker.getRegistration().then((reg) => {
         if (reg?.waiting) {
-          setShowPrompt(true);
+          const dismissedUntil = localStorage.getItem('update_dismissed_until');
+          if (!dismissedUntil || Date.now() >= parseInt(dismissedUntil)) {
+            setShowPrompt(true);
+          }
         }
       });
     }
@@ -43,6 +57,9 @@ export const UpdatePrompt = () => {
   };
 
   const handleDismiss = () => {
+    // Dismiss for 24 hours
+    const dismissUntil = Date.now() + (24 * 60 * 60 * 1000);
+    localStorage.setItem('update_dismissed_until', dismissUntil.toString());
     setDismissed(true);
     setShowPrompt(false);
   };
