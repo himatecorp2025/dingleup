@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import BottomNav from '@/components/BottomNav';
+import { useI18n } from '@/i18n';
 
 interface InvitedFriend {
   id: string;
@@ -22,6 +23,7 @@ interface InvitedFriend {
 
 const Invitation = () => {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [userId, setUserId] = useState<string>('');
   const [invitationCode, setInvitationCode] = useState('');
   const [invitationLink, setInvitationLink] = useState('');
@@ -85,17 +87,17 @@ const Invitation = () => {
       setInvitedCount(invitations?.filter(i => i.accepted).length || 0);
     } catch (error) {
       console.error('Error fetching invitation data:', error);
-      toast.error('Hiba a meghívó adatok betöltésekor');
+      toast.error(t('invitation.load_error'));
     }
   };
 
   const copyToClipboard = async (text: string, type: 'code' | 'link') => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success(type === 'code' ? 'Meghívó kód másolva!' : 'Meghívó link másolva!');
+      toast.success(type === 'code' ? t('invitation.code_copied') : t('invitation.link_copied'));
     } catch (error) {
       console.error('Error copying:', error);
-      toast.error('Hiba a másolás során');
+      toast.error(t('invitation.copy_error'));
     }
   };
 
@@ -135,7 +137,7 @@ const Invitation = () => {
         <button
           onClick={() => navigate('/dashboard')}
           className="relative p-3 rounded-full hover:scale-110 transition-all"
-          title="Vissza a dashboardra"
+          title={t('invitation.back_to_dashboard')}
         >
           {/* BASE SHADOW */}
           <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
@@ -168,9 +170,9 @@ const Invitation = () => {
               <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <h1 className="text-3xl font-black text-white">Hívd meg barátaidat!</h1>
+            <h1 className="text-3xl font-black text-white">{t('invitation.header_title')}</h1>
           </div>
-          <p className="text-white/70">Oszd meg meghívó kódodat vagy linkedet</p>
+          <p className="text-white/70">{t('invitation.header_subtitle')}</p>
         </div>
 
         <div className="space-y-4">
@@ -192,7 +194,7 @@ const Invitation = () => {
             <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
             
             <div className="relative z-10">
-              <label className="text-sm font-bold mb-2 block text-white drop-shadow-lg">Meghívó kód</label>
+              <label className="text-sm font-bold mb-2 block text-white drop-shadow-lg">{t('invitation.code_label')}</label>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -231,7 +233,7 @@ const Invitation = () => {
             <div className="absolute inset-[5px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 120% 80% at 30% 10%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 40%, transparent 70%)' }} aria-hidden />
             
             <div className="relative z-10">
-              <label className="text-sm font-bold mb-2 block text-white drop-shadow-lg">Meghívó link</label>
+              <label className="text-sm font-bold mb-2 block text-white drop-shadow-lg">{t('invitation.link_label')}</label>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -279,7 +281,7 @@ const Invitation = () => {
                   <path d="M12 7H7.5C6.83696 7 6.20107 6.73661 5.73223 6.26777C5.26339 5.79893 5 5.16304 5 4.5C5 3.83696 5.26339 3.20107 5.73223 2.73223C6.20107 2.26339 6.83696 2 7.5 2C11 2 12 7 12 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M12 7H16.5C17.163 7 17.7989 6.73661 18.2678 6.26777C18.7366 5.79893 19 5.16304 19 4.5C19 3.83696 18.7366 3.20107 18.2678 2.73223C17.7989 2.26339 17.163 2 16.5 2C13 2 12 7 12 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <h2 className="text-xl font-black text-white">Összes jutalom</h2>
+                <h2 className="text-xl font-black text-white">{t('invitation.total_rewards')}</h2>
               </div>
               <div className="flex justify-center gap-6">
                 <div className="text-center">
@@ -291,7 +293,7 @@ const Invitation = () => {
                     </svg>
                     {totalCoins}
                   </div>
-                  <p className="text-xs text-white/70">Aranyérmék</p>
+                  <p className="text-xs text-white/70">{t('invitation.gold_coins')}</p>
                 </div>
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 text-red-400 text-2xl font-black">
@@ -300,7 +302,7 @@ const Invitation = () => {
                     </svg>
                     {totalLives}
                   </div>
-                  <p className="text-xs text-white/70">Életek</p>
+                  <p className="text-xs text-white/70">{t('invitation.lives')}</p>
                 </div>
               </div>
             </div>
@@ -331,14 +333,14 @@ const Invitation = () => {
                   <path d="M12 3L6 9H18L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M12 9V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <h2 className="text-xl font-black text-white">Jutalom szintek</h2>
+                <h2 className="text-xl font-black text-white">{t('invitation.reward_levels')}</h2>
               </div>
               
               <div className="space-y-2">
                 <div className={`flex items-center justify-between p-3 rounded-lg border-2 ${
                   invitedCount >= 1 ? 'bg-purple-600/30 border-purple-400' : 'bg-black/40 border-purple-500/30'
                 }`}>
-                  <span className="text-white font-bold text-sm">1-2. barát {invitedCount >= 1 && '✓'}</span>
+                  <span className="text-white font-bold text-sm">{t('invitation.tier_1_2')} {invitedCount >= 1 && '✓'}</span>
                   <div className="flex gap-2 text-xs">
                     <span className="flex items-center gap-1 text-white">
                       <svg className="w-3 h-3 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
@@ -346,13 +348,13 @@ const Invitation = () => {
                         <circle cx="12" cy="12" r="6" fill="none" stroke="#d97706" strokeWidth="1.5" opacity="0.5"/>
                         <text x="12" y="16" textAnchor="middle" fill="#d97706" fontSize="10" fontWeight="bold">$</text>
                       </svg>
-                      200/fő
+                      {t('invitation.per_person')}
                     </span>
                     <span className="flex items-center gap-1 text-white">
                       <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#dc2626" strokeWidth="1.5"/>
                       </svg>
-                      3/fő
+                      {t('invitation.per_person_lives')}
                     </span>
                   </div>
                 </div>
