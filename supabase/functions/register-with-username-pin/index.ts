@@ -65,20 +65,13 @@ serve(async (req) => {
       }
     });
 
-    // Check if username already exists
-    const { data: existingUser, error: checkError } = await supabaseAdmin
+    // Check if username already exists (optimized query)
+    const { data: existingUser } = await supabaseAdmin
       .from('profiles')
       .select('id')
       .ilike('username', username)
+      .limit(1)
       .maybeSingle();
-
-    if (checkError) {
-      console.error('Database check error:', checkError);
-      return new Response(
-        JSON.stringify({ error: 'Hiba történt a regisztráció során' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
 
     if (existingUser) {
       return new Response(
