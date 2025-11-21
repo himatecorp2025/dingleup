@@ -66,8 +66,15 @@ export const TranslationSeeder = () => {
     channel
       .on('broadcast', { event: 'progress' }, (payload: any) => {
         console.log('[TranslationSeeder] Progress update:', payload);
-        setProgress(payload.payload.progress || 0);
-        setStatus(payload.payload.status || '');
+        const newProgress = payload.payload.progress || 0;
+        const newStatus = payload.payload.status || '';
+        setProgress(newProgress);
+        setStatus(newStatus);
+        
+        // Ha befejezett, állítsuk le a loading állapotot
+        if (newProgress === 100 || newStatus.includes('befejezve')) {
+          setIsTranslating(false);
+        }
       })
       .subscribe();
 
