@@ -32,19 +32,39 @@ serve(async (req) => {
 
     console.log('[get-translations] Fetching translations for language:', lang);
 
-    // Fetch all translations with fallback logic
-    const { data: translations, error } = await supabase
+    // Fetch all translations with fallback logic (handle >1000 row limit)
+    const { count, error: countError } = await supabase
       .from('translations')
-      .select(`key, hu, ${lang}`)
-      .order('key')
-      .limit(5000);
+      .select('key', { count: 'exact', head: true });
 
-    if (error) {
-      console.error('[get-translations] Database error:', error);
-      throw error;
+    if (countError) {
+      console.error('[get-translations] Count error:', countError);
+      throw countError;
     }
 
-    if (!translations || translations.length === 0) {
+    const total = count ?? 0;
+    const pageSize = 1000;
+    let allRows: any[] = [];
+
+    for (let from = 0; from < total; from += pageSize) {
+      const to = Math.min(from + pageSize - 1, total - 1);
+      const { data, error } = await supabase
+        .from('translations')
+        .select(`key, hu, ${lang}`)
+        .order('key')
+        .range(from, to);
+
+      if (error) {
+        console.error('[get-translations] Database error on range', from, to, error);
+        throw error;
+      }
+
+      if (data && data.length > 0) {
+        allRows = allRows.concat(data);
+      }
+    }
+
+    if (!allRows.length) {
       console.log('[get-translations] No translations found in database');
       return new Response(
         JSON.stringify({ translations: {} }),
@@ -55,7 +75,7 @@ serve(async (req) => {
     // Build translation map with fallback to Hungarian
     const translationMap: Record<string, string> = {};
     
-    for (const row of translations) {
+    for (const row of allRows) {
       const key = row.key;
       const rowData = row as any; // Type assertion for dynamic column access
       const targetLangText = rowData[lang] as string | null;
