@@ -116,7 +116,7 @@ export const BoosterButton: React.FC<BoosterButtonProps> = ({
 
       {/* Content (Text + Icons) - Absolutely centered */}
       <div className="absolute inset-0 z-10 flex items-center justify-center m-0 p-0 bg-transparent">
-        <div className="flex items-center justify-center m-0 p-0 gap-0 leading-none [background:transparent]">
+        <div className="flex items-center justify-center m-0 p-0 gap-0 leading-none [background:transparent] translate-y-[6px]">
           {children}
         </div>
       </div>
