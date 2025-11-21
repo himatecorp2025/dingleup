@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TutorialStep } from '@/data/tutorialSteps';
+import { useI18n } from '@/i18n';
 
 interface TutorialOverlayProps {
   steps: TutorialStep[];
@@ -20,6 +21,7 @@ export const TutorialOverlay = ({
   onPrev,
   onClose
 }: TutorialOverlayProps) => {
+  const { t } = useI18n();
   const [highlightRect, setHighlightRect] = useState<DOMRect | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -179,7 +181,7 @@ export const TutorialOverlay = ({
                   className="flex-1 bg-foreground/10 border-foreground/30 hover:bg-foreground/20 text-foreground"
                 >
                   <ChevronLeft className="w-4 h-4 mr-1" />
-                  Vissza
+                  {t('tutorial.prev')}
                 </Button>
               )}
               <Button
@@ -187,7 +189,7 @@ export const TutorialOverlay = ({
                 size="sm"
                 className="flex-1 bg-[#138F5E] hover:bg-[#1AA56B] text-white font-bold"
               >
-                {currentStep === steps.length - 1 ? 'Értem!' : 'Következő'}
+                {currentStep === steps.length - 1 ? t('tutorial.finish') : t('tutorial.next')}
                 {currentStep < steps.length - 1 && (
                   <ChevronRight className="w-4 h-4 ml-1" />
                 )}
