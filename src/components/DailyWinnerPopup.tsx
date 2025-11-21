@@ -93,10 +93,10 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
   if (!winnerData || !isHandheld) return null;
 
   const getRankDisplay = (rank: number) => {
-    if (rank === 1) return '🥇 1. HELYEZETT';
-    if (rank === 2) return '🥈 2. HELYEZETT';
-    if (rank === 3) return '🥉 3. HELYEZETT';
-    return `🏆 ${rank}. HELYEZETT`;
+    if (rank === 1) return t('daily_winner.rank_1st');
+    if (rank === 2) return t('daily_winner.rank_2nd');
+    if (rank === 3) return t('daily_winner.rank_3rd');
+    return t('daily_winner.rank_nth').replace('{rank}', rank.toString());
   };
 
   const getRankBadgeColor = (rank: number) => {
@@ -161,13 +161,13 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
               <div className="flex items-center justify-center gap-3 px-6 py-3 bg-white/10 rounded-xl backdrop-blur-sm">
                 <span className="text-3xl">💰</span>
                 <span className="text-2xl font-bold text-accent">
-                  +{winnerData.gold} arany
+                  {t('daily_winner.gold_reward').replace('{amount}', winnerData.gold.toString())}
                 </span>
               </div>
               <div className="flex items-center justify-center gap-3 px-6 py-3 bg-white/10 rounded-xl backdrop-blur-sm">
                 <span className="text-3xl">❤️</span>
                 <span className="text-2xl font-bold text-red-400">
-                  +{winnerData.lives} élet
+                  {t('daily_winner.lives_reward').replace('{amount}', winnerData.lives.toString())}
                 </span>
               </div>
             </div>
@@ -182,7 +182,7 @@ export const DailyWinnerPopup = ({ userId }: DailyWinnerPopupProps) => {
               onClick={handleClose}
               className="mt-6 px-12 py-4 bg-gradient-to-r from-accent to-accent-dark text-white text-xl font-bold rounded-xl shadow-xl hover:scale-105 transition-transform"
             >
-              OK
+              {t('common.ok')}
             </button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { useI18n } from '@/i18n';
 
 interface GameStateScreenProps {
   type: 'out-of-lives';
@@ -18,15 +19,16 @@ export const GameStateScreen = ({
   reward = 0
 }: GameStateScreenProps) => {
   const isHandheld = usePlatformDetection();
+  const { t } = useI18n();
   
   const config = {
     'out-of-lives': {
-      title: 'YOU LOSE!',
+      title: t('game_state.you_lose'),
       bgColor: 'from-destructive to-destructive-dark',
       titleColor: 'from-foreground to-destructive-glow',
       borderColor: 'border-muted',
       stars: [false, false, false],
-      buttonText: 'Vásárolj +5 életet',
+      buttonText: t('game_state.buy_lives'),
       buttonColor: 'from-success to-success/90'
     }
   };
@@ -109,10 +111,10 @@ export const GameStateScreen = ({
             {/* Score display */}
             <div className="text-center space-y-[1vh]">
               <p className="text-white font-black drop-shadow-lg" style={{ fontSize: 'clamp(1rem, 4.5vw, 1.5rem)' }}>
-                YOUR SCORE: {score}
+                {t('game_state.your_score').replace('{score}', score.toString())}
               </p>
               <p className="text-white/80 font-bold drop-shadow-md" style={{ fontSize: 'clamp(0.875rem, 4vw, 1.25rem)' }}>
-                TOTAL SCORE: {totalScore}
+                {t('game_state.total_score').replace('{score}', totalScore.toString())}
               </p>
             </div>
 
@@ -136,7 +138,7 @@ export const GameStateScreen = ({
                 style={{ width: 'clamp(50px, 15vw, 80px)', height: 'clamp(50px, 15vw, 80px)' }}
               >
                 <span className="font-black text-white drop-shadow-lg" style={{ fontSize: 'clamp(1rem, 4.5vw, 1.75rem)' }}>
-                  OK
+                  {t('common.ok')}
                 </span>
               </button>
 
