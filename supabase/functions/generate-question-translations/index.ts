@@ -20,8 +20,8 @@ const LANGUAGE_NAMES: Record<LangCode, string> = {
 };
 
 const TARGET_LANGUAGES: LangCode[] = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
-const BATCH_SIZE = 5; // Smaller batch for better reliability
-const DELAY_BETWEEN_BATCHES = 5000; // 5 seconds delay
+const BATCH_SIZE = 10; // Increased batch size for faster processing
+const DELAY_BETWEEN_BATCHES = 3000; // 3 seconds delay
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 10000; // 10 seconds between retries
 
@@ -159,11 +159,12 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    // Get all questions that need translation
+    // Get all questions that need translation - CRITICAL: specify large limit to override 1000-row default
     const { data: questions, error: questionsError } = await supabase
       .from('questions')
       .select('id, question, answers, correct_answer')
-      .order('created_at', { ascending: true });
+      .order('created_at', { ascending: true })
+      .limit(10000); // Explicitly set high limit to fetch all questions (2748 currently)
 
     if (questionsError) throw questionsError;
     if (!questions || questions.length === 0) {
