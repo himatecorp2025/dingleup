@@ -7,26 +7,29 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
+import { useI18n } from "@/i18n";
 
-const registerSchema = z.object({
+const createRegisterSchema = (t: (key: string) => string) => z.object({
   username: z.string()
     .trim()
-    .min(3, 'A felhasználónév legalább 3 karakter hosszú kell legyen')
-    .max(30, 'A felhasználónév maximum 30 karakter lehet')
-    .regex(/^[^\s]+$/, 'A felhasználónév nem tartalmazhat szóközt'),
+    .min(3, t('auth.register.validationUsernameMinLength'))
+    .max(30, t('auth.register.validationUsernameMaxLength'))
+    .regex(/^[^\s]+$/, t('auth.register.validationUsernameNoSpaces')),
   pin: z.string()
-    .regex(/^\d{6}$/, 'A PIN pontosan 6 számjegyből kell álljon'),
+    .regex(/^\d{6}$/, t('auth.register.validationPinFormat')),
   pinConfirm: z.string()
 }).refine(data => data.pin === data.pinConfirm, {
-  message: "A PIN kódok nem egyeznek",
+  message: t('auth.register.validationPinMismatch'),
   path: ["pinConfirm"],
 });
-
-type RegisterForm = z.infer<typeof registerSchema>;
 
 const RegisterNew = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useI18n();
+  
+  const registerSchema = createRegisterSchema(t);
+  type RegisterForm = z.infer<typeof registerSchema>;
   const [formData, setFormData] = useState<RegisterForm>({
     username: "",
     pin: "",
@@ -66,8 +69,8 @@ const RegisterNew = () => {
 
       if (regError || regData?.error) {
         toast({
-          title: "Hiba",
-          description: regData?.error || "Hiba történt a regisztráció során",
+          title: t('auth.register.errorTitle'),
+          description: regData?.error || t('auth.register.errorRegisterFailed'),
           variant: "destructive",
         });
         return;
@@ -75,8 +78,8 @@ const RegisterNew = () => {
 
       if (!regData?.success || !regData?.user) {
         toast({
-          title: "Hiba",
-          description: "Sikertelen regisztráció",
+          title: t('auth.register.errorTitle'),
+          description: t('auth.register.errorRegisterUnsuccessful'),
           variant: "destructive",
         });
         return;
@@ -92,16 +95,16 @@ const RegisterNew = () => {
       if (signInError) {
         console.error('Auto-login error:', signInError);
         toast({
-          title: "Sikeres regisztráció",
-          description: "Kérlek jelentkezz be a fiókodba",
+          title: t('auth.register.successTitle'),
+          description: t('auth.register.successPleaseLogin'),
         });
         navigate('/auth/login');
         return;
       }
 
       toast({
-        title: "Sikeres regisztráció!",
-        description: "Üdvözlünk a DingleUP! családban",
+        title: t('auth.register.successTitle'),
+        description: t('auth.register.successMessage'),
       });
       navigate("/dashboard");
     } catch (error) {
@@ -116,8 +119,8 @@ const RegisterNew = () => {
       } else {
         console.error('Registration error:', error);
         toast({
-          title: "Hiba",
-          description: "Váratlan hiba történt",
+          title: t('auth.register.errorTitle'),
+          description: t('auth.register.errorUnexpected'),
           variant: "destructive",
         });
       }
@@ -146,7 +149,7 @@ const RegisterNew = () => {
           <button 
             onClick={() => navigate('/auth/choice')} 
             className="absolute left-4 top-4 p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors duration-200 group z-10 min-w-[44px] min-h-[44px] flex items-center justify-center" 
-            aria-label="Vissza"
+            aria-label={t('auth.register.backButton')}
           >
             <ArrowLeft className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
           </button>
@@ -164,15 +167,15 @@ const RegisterNew = () => {
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)]">
-            Regisztráció
+            {t('auth.register.title')}
           </h1>
           <p className="text-center text-white/70 mb-6 text-sm font-medium">
-            Hozd létre a fiókodat
+            {t('auth.register.subtitle')}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-white/80">Felhasználónév</Label>
+              <Label className="text-sm font-medium text-white/80">{t('auth.register.usernameLabel')}</Label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
                 <Input
@@ -180,7 +183,7 @@ const RegisterNew = () => {
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   className="h-12 pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base"
-                  placeholder="pelda_felhasznalo"
+                  placeholder={t('auth.register.usernamePlaceholder')}
                   disabled={isLoading}
                   maxLength={30}
                 />
@@ -189,7 +192,7 @@ const RegisterNew = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-white/80">6 számjegyű PIN</Label>
+              <Label className="text-sm font-medium text-white/80">{t('auth.register.pinLabel')}</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
                 <Input
@@ -199,7 +202,7 @@ const RegisterNew = () => {
                   value={formData.pin}
                   onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '').slice(0, 6) })}
                   className="h-12 pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base"
-                  placeholder="123456"
+                  placeholder={t('auth.register.pinPlaceholder')}
                   disabled={isLoading}
                   maxLength={6}
                 />
@@ -207,7 +210,7 @@ const RegisterNew = () => {
                   type="button"
                   onClick={() => setShowPin(!showPin)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
-                  aria-label={showPin ? "PIN elrejtése" : "PIN megjelenítése"}
+                  aria-label={showPin ? t('auth.register.hidePin') : t('auth.register.showPin')}
                 >
                   {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -216,7 +219,7 @@ const RegisterNew = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-white/80">PIN megerősítése</Label>
+              <Label className="text-sm font-medium text-white/80">{t('auth.register.pinConfirmLabel')}</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-400 transition-colors" />
                 <Input
@@ -226,7 +229,7 @@ const RegisterNew = () => {
                   value={formData.pinConfirm}
                   onChange={(e) => setFormData({ ...formData, pinConfirm: e.target.value.replace(/\D/g, '').slice(0, 6) })}
                   className="h-12 pl-10 pr-10 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-yellow-400 focus:ring-yellow-400/20 text-base"
-                  placeholder="123456"
+                  placeholder={t('auth.register.pinPlaceholder')}
                   disabled={isLoading}
                   maxLength={6}
                 />
@@ -234,7 +237,7 @@ const RegisterNew = () => {
                   type="button"
                   onClick={() => setShowPinConfirm(!showPinConfirm)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
-                  aria-label={showPinConfirm ? "PIN elrejtése" : "PIN megjelenítése"}
+                  aria-label={showPinConfirm ? t('auth.register.hidePin') : t('auth.register.showPin')}
                 >
                   {showPinConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -247,17 +250,17 @@ const RegisterNew = () => {
               className="w-full h-12 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300 text-base"
               disabled={isLoading}
             >
-              {isLoading ? 'Fiók létrehozása...' : 'Fiók létrehozása'}
+              {isLoading ? t('auth.register.submittingButton') : t('auth.register.submitButton')}
             </Button>
           </form>
 
           <p className="text-center text-white/60 mt-6 text-sm">
-            Már van fiókod?{' '}
+            {t('auth.register.alreadyHaveAccount')}{' '}
             <button
               onClick={() => navigate('/auth/login')}
               className="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors"
             >
-              Belépés
+              {t('auth.register.loginLink')}
             </button>
           </p>
         </div>
