@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Trophy } from 'lucide-react';
 import { useI18n } from '@/i18n/useI18n';
 
 interface DailyRankingsCountdownProps {
@@ -143,8 +144,18 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
       </svg>
 
       {/* Content - Absolutely centered */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center m-0 p-0 bg-transparent">
-        <div className="flex items-center justify-center m-0 p-0 gap-0 leading-none [background:transparent] translate-y-[6px]">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center m-0 p-0 bg-transparent gap-1">
+        {/* TOP 100 title with trophies */}
+        <div className="flex items-center justify-center gap-1 [background:transparent]">
+          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
+          <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
+            {t('leaderboard.carousel_title')}
+          </span>
+          <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
+        </div>
+        
+        {/* Timer countdown */}
+        <div className="flex items-center justify-center m-0 p-0 gap-0 leading-none [background:transparent]">
           <span className="text-[7px] sm:text-[8px] font-extrabold text-primary-dark drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] leading-none whitespace-nowrap">
             {timeRemaining}
           </span>
