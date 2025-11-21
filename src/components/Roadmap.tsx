@@ -1,70 +1,73 @@
 import { Card } from "@/components/ui/card";
 import { CheckCircle2, Circle, Clock } from "lucide-react";
-
-const roadmapItems = [
-  {
-    title: "Játék Alaprendszer",
-    status: "completed",
-    date: "2024 Q4",
-    items: [
-      "15 kérdéses játékmenet",
-      "Aranyérme rendszer",
-      "Segítségek (50:50, Közönség, Dupla válasz)",
-      "Életek és regeneráció",
-      "Alapvető UI/UX"
-    ]
-  },
-  {
-    title: "Közösségi Funkciók",
-    status: "completed",
-    date: "2025 Q1",
-    items: [
-      "Napi rangsor rendszer",
-      "Meghívó rendszer",
-      "Napi ajándék streak",
-      "Üdvözlő bónusz",
-      "Felhasználói profilok"
-    ]
-  },
-  {
-    title: "Tartalom Bővítés",
-    status: "in-progress",
-    date: "2025 Q2",
-    items: [
-      "1000+ kérdés négy kategóriában",
-      "Véletlenszerű kérdés/válasz sorrend",
-      "Új témakörök hozzáadása",
-      "Nehézségi szintek",
-      "Szezonális kérdések"
-    ]
-  },
-  {
-    title: "Többjátékos & Verseny",
-    status: "planned",
-    date: "2025 Q3",
-    items: [
-      "Valós idejű párbajok",
-      "Napi kihívások",
-      "Tornák és események",
-      "Globális rangsor",
-      "Klán rendszer"
-    ]
-  },
-  {
-    title: "Prémium Funkciók",
-    status: "planned",
-    date: "2025 Q4",
-    items: [
-      "VIP tagság",
-      "Exkluzív témák",
-      "Korlátlan életek opcióként",
-      "Egyedi avatárok",
-      "Részletes statisztikák"
-    ]
-  }
-];
+import { useI18n } from "@/i18n";
 
 const Roadmap = () => {
+  const { t } = useI18n();
+  
+  const roadmapItems = [
+    {
+      title: t('landing.roadmap.phase1_title'),
+      status: "completed",
+      date: "2024 Q4",
+      items: [
+        t('landing.roadmap.phase1_item1'),
+        t('landing.roadmap.phase1_item2'),
+        t('landing.roadmap.phase1_item3'),
+        t('landing.roadmap.phase1_item4'),
+        t('landing.roadmap.phase1_item5')
+      ]
+    },
+    {
+      title: t('landing.roadmap.phase2_title'),
+      status: "completed",
+      date: "2025 Q1",
+      items: [
+        t('landing.roadmap.phase2_item1'),
+        t('landing.roadmap.phase2_item2'),
+        t('landing.roadmap.phase2_item3'),
+        t('landing.roadmap.phase2_item4'),
+        t('landing.roadmap.phase2_item5')
+      ]
+    },
+    {
+      title: t('landing.roadmap.phase3_title'),
+      status: "in-progress",
+      date: "2025 Q2",
+      items: [
+        t('landing.roadmap.phase3_item1'),
+        t('landing.roadmap.phase3_item2'),
+        t('landing.roadmap.phase3_item3'),
+        t('landing.roadmap.phase3_item4'),
+        t('landing.roadmap.phase3_item5')
+      ]
+    },
+    {
+      title: t('landing.roadmap.phase4_title'),
+      status: "planned",
+      date: "2025 Q3",
+      items: [
+        t('landing.roadmap.phase4_item1'),
+        t('landing.roadmap.phase4_item2'),
+        t('landing.roadmap.phase4_item3'),
+        t('landing.roadmap.phase4_item4'),
+        t('landing.roadmap.phase4_item5')
+      ]
+    },
+    {
+      title: t('landing.roadmap.phase5_title'),
+      status: "planned",
+      date: "2025 Q4",
+      items: [
+        t('landing.roadmap.phase5_item1'),
+        t('landing.roadmap.phase5_item2'),
+        t('landing.roadmap.phase5_item3'),
+        t('landing.roadmap.phase5_item4'),
+        t('landing.roadmap.phase5_item5')
+      ]
+    }
+  ];
+  
   const getStatusIcon = (status: string) => {
     if (status === "completed") return <CheckCircle2 className="w-6 h-6 text-success" />;
     if (status === "in-progress") return <Clock className="w-6 h-6 text-accent animate-pulse" />;
@@ -78,9 +81,9 @@ const Roadmap = () => {
   };
 
   const getStatusLabel = (status: string) => {
-    if (status === "completed") return "Kész";
-    if (status === "in-progress") return "Folyamatban";
-    return "Tervezett";
+    if (status === "completed") return t('landing.roadmap.status_completed');
+    if (status === "in-progress") return t('landing.roadmap.status_progress');
+    return t('landing.roadmap.status_planned');
   };
 
   return (
@@ -88,10 +91,10 @@ const Roadmap = () => {
       <div className="container mx-auto max-w-5xl">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 font-poppins">
-            Fejlesztési <span className="text-transparent bg-clip-text bg-gradient-gold">Ütemterv</span>
+            {t('landing.roadmap.title_part1')} <span className="text-transparent bg-clip-text bg-gradient-gold">{t('landing.roadmap.title_part2')}</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Így épül a Legyen Ön is Milliomos játék - múlt, jelen és jövő
+            {t('landing.roadmap.subtitle')}
           </p>
         </div>
 
