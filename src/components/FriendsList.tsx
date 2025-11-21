@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useI18n } from '@/i18n';
 
 interface Friend {
   id: string;
@@ -19,6 +20,7 @@ interface FriendsListProps {
 }
 
 export const FriendsList = ({ userId, onSelectFriend, selectedFriendId }: FriendsListProps) => {
+  const { t } = useI18n();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -87,7 +89,7 @@ export const FriendsList = ({ userId, onSelectFriend, selectedFriendId }: Friend
       <div className="flex flex-col items-center py-3 gap-3">
         {friends.length === 0 ? (
           <div className="text-foreground/40 text-xs px-2 text-center">
-            Nincs
+            {t('friends.no_friends')}
           </div>
         ) : (
           friends.map((friend) => (
