@@ -123,7 +123,7 @@ export default defineConfig(({ mode }) => ({
           { url: '/assets/game-background.png', revision: null }
         ],
         runtimeCaching: [
-          // Supabase API - Aggressive cache-first with network fallback for maximum speed
+          // Supabase API - Aggressive cache-first for maximum speed
           {
             urlPattern: ({ url }) => url.origin === 'https://wdpxmwsxhckazwxufttk.supabase.co',
             handler: 'CacheFirst',
@@ -133,7 +133,6 @@ export default defineConfig(({ mode }) => ({
                 maxEntries: 300,
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days aggressive cache
               },
-              networkTimeoutSeconds: 3, // Ultra-fast timeout (3s)
               cacheableResponse: {
                 statuses: [0, 200]
               }
