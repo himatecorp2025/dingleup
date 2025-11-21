@@ -32,18 +32,41 @@ serve(async (req) => {
 
     console.log('[get-translations] Fetching translations for language:', lang);
 
-    // Fetch all translations with fallback logic
-    const { data: translations, error } = await supabase
+    // Get total count first
+    const { count, error: countError } = await supabase
       .from('translations')
-      .select(`key, hu, ${lang}`)
-      .order('key');
+      .select('*', { count: 'exact', head: true });
 
-    if (error) {
-      console.error('[get-translations] Database error:', error);
-      throw error;
+    if (countError) {
+      console.error('[get-translations] Count error:', countError);
+      throw countError;
     }
 
-    if (!translations || translations.length === 0) {
+    const totalCount = count || 0;
+    console.log('[get-translations] Total translations in database:', totalCount);
+
+    // Fetch all translations in batches (Supabase default limit is 1000)
+    const batchSize = 1000;
+    const allTranslations: any[] = [];
+    
+    for (let offset = 0; offset < totalCount; offset += batchSize) {
+      const { data: batch, error: batchError } = await supabase
+        .from('translations')
+        .select(`key, hu, ${lang}`)
+        .order('key')
+        .range(offset, offset + batchSize - 1);
+
+      if (batchError) {
+        console.error('[get-translations] Batch error at offset', offset, ':', batchError);
+        throw batchError;
+      }
+
+      if (batch && batch.length > 0) {
+        allTranslations.push(...batch);
+      }
+    }
+
+    if (allTranslations.length === 0) {
       console.log('[get-translations] No translations found in database');
       return new Response(
         JSON.stringify({ translations: {} }),
@@ -51,10 +74,12 @@ serve(async (req) => {
       );
     }
 
+    console.log('[get-translations] Fetched', allTranslations.length, 'translations total');
+
     // Build translation map with fallback to Hungarian
     const translationMap: Record<string, string> = {};
     
-    for (const row of translations) {
+    for (const row of allTranslations) {
       const key = row.key;
       const rowData = row as any; // Type assertion for dynamic column access
       const targetLangText = rowData[lang] as string | null;
