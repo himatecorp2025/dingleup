@@ -430,7 +430,7 @@ const Profile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || 'Felhasználónév frissítése sikertelen');
+        throw new Error(response.error.message || t('profile.username_update_failed'));
       }
 
       await updateProfile({ username: newUsername });
@@ -443,11 +443,11 @@ const Profile = () => {
 
   const validatePassword = (password: string): string | null => {
     const rules = [
-      { test: (p: string) => p.length >= 8, msg: 'Legalább 8 karakter' },
-      { test: (p: string) => /[a-z]/.test(p), msg: 'Kisbetű szükséges' },
-      { test: (p: string) => /[A-Z]/.test(p), msg: 'Nagybetű szükséges' },
-      { test: (p: string) => /\d/.test(p), msg: 'Szám szükséges' },
-      { test: (p: string) => /[@$!%*?&.]/.test(p), msg: 'Speciális karakter (@$!%*?&.) szükséges' },
+      { test: (p: string) => p.length >= 8, msg: t('common.error.password_min_8') },
+      { test: (p: string) => /[a-z]/.test(p), msg: t('common.error.password_lowercase') },
+      { test: (p: string) => /[A-Z]/.test(p), msg: t('common.error.password_uppercase') },
+      { test: (p: string) => /\d/.test(p), msg: t('common.error.password_number') },
+      { test: (p: string) => /[@$!%*?&.]/.test(p), msg: t('common.error.password_special') },
     ];
 
     for (const rule of rules) {
@@ -492,13 +492,13 @@ const Profile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || 'Jelszó frissítése sikertelen');
+        throw new Error(response.error.message || t('profile.password_update_failed'));
       }
 
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      toast.success('Jelszó sikeresen módosítva');
+      toast.success(t('profile.password_updated'));
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -509,7 +509,7 @@ const Profile = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-        <p className="text-lg text-white">Betöltés...</p>
+        <p className="text-lg text-white">{t('profile.loading')}</p>
       </div>
     );
   }
@@ -517,7 +517,7 @@ const Profile = () => {
   if (!profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-        <p className="text-lg text-white">Hiba a profil betöltésekor</p>
+        <p className="text-lg text-white">{t('profile.load_error')}</p>
       </div>
     );
   }
@@ -607,7 +607,7 @@ const Profile = () => {
           <button
             onClick={() => navigate('/dashboard')}
             className="relative p-3 rounded-full hover:scale-110 transition-all"
-            title="Vissza a dashboardra"
+            title={t('profile.back_to_dashboard')}
           >
             {/* BASE SHADOW */}
             <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
@@ -701,7 +701,7 @@ const Profile = () => {
             {/* Content */}
             <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <HeartIcon />
-              <p className="text-xs sm:text-sm text-foreground/90 mb-1 font-semibold drop-shadow-lg">Életek</p>
+              <p className="text-xs sm:text-sm text-foreground/90 mb-1 font-semibold drop-shadow-lg">{t('profile.lives')}</p>
               <p className="text-xl sm:text-2xl font-black text-foreground drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.lives}/{profile.max_lives}</p>
             </div>
           </div>
@@ -726,7 +726,7 @@ const Profile = () => {
             {/* Content */}
             <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <CoinsIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Aranyérmék</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">{t('profile.gold_coins')}</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.coins}</p>
             </div>
           </div>
@@ -751,7 +751,7 @@ const Profile = () => {
             {/* Content */}
             <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <TrophyIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Aktuális Napi Helyes válaszok száma:</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">{t('profile.daily_correct_answers')}</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{weeklyCorrectAnswers}</p>
             </div>
           </div>
@@ -776,8 +776,8 @@ const Profile = () => {
             {/* Content */}
             <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <CalendarIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Napi sorozat</p>
-              <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.daily_gift_streak} nap</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">{t('profile.daily_streak')}</p>
+              <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.daily_gift_streak} {t('profile.days')}</p>
             </div>
           </div>
 
@@ -785,7 +785,7 @@ const Profile = () => {
           <div 
             onClick={() => {
               navigator.clipboard.writeText(profile.invitation_code || '');
-              toast.success('Meghívókód vágólapra másolva!');
+              toast.success(t('profile.invitation_code_copied'));
             }}
             className="relative rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer transition-transform active:scale-95 transform-gpu hover:scale-105 hover:-translate-y-0.5"
             style={{ perspective: '1000px' }}
@@ -808,7 +808,7 @@ const Profile = () => {
             {/* Content */}
             <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
               <ShareIcon />
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Meghívó kód (kattints a másoláshoz)</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">{t('profile.invitation_code_tap')}</p>
               <p className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{profile.invitation_code}</p>
             </div>
           </div>
@@ -838,54 +838,54 @@ const Profile = () => {
               <svg className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 drop-shadow-[0_2px_8px_rgba(234,179,8,0.8)]" viewBox="0 0 24 24" fill="hsl(var(--foreground))" xmlns="http://www.w3.org/2000/svg">
                 <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="hsl(47, 96%, 53%)" strokeWidth="2" strokeLinejoin="round" />
               </svg>
-              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">Free Booster</p>
-              <p className="text-[10px] sm:text-xs text-white/70 leading-tight">+300 arany<br />+15 élet<br />4× 30' Speed</p>
+              <p className="text-xs sm:text-sm text-white/90 mb-1 font-semibold drop-shadow-lg">{t('profile.free_booster')}</p>
+              <p className="text-[10px] sm:text-xs text-white/70 leading-tight" dangerouslySetInnerHTML={{ __html: t('profile.free_booster_rewards') }} />
               {boosterState.pendingSpeedTokensCount > 0 ? (
                 <button
                   onClick={async () => {
                     try {
-                      toast.loading('Speed aktiválás...', { id: 'speed-activate' });
+                      toast.loading(t('profile.speed_activating'), { id: 'speed-activate' });
                       const { data, error } = await supabase.functions.invoke('activate-speed-token');
                       if (error) throw error;
                       if (data?.success) {
-                        toast.success(`Speed aktiválva! ${data.activeSpeedToken?.durationMinutes}' gyorsítás`, { id: 'speed-activate' });
+                        toast.success(t('profile.speed_activated').replace('{minutes}', data.activeSpeedToken?.durationMinutes), { id: 'speed-activate' });
                         refetchWallet();
                         refreshProfile();
                       }
                     } catch (e) {
-                      toast.error('Hiba történt', { id: 'speed-activate' });
+                      toast.error(t('profile.purchase_error'), { id: 'speed-activate' });
                     }
                   }}
                   className="w-full mt-2 px-2 py-1.5 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white transition-all shadow-lg"
                 >
-                  Aktiválom ({boosterState.pendingSpeedTokensCount} token)
+                  {t('profile.activate_speed')} ({boosterState.pendingSpeedTokensCount} {t('profile.speed_tokens')})
                 </button>
               ) : (
                 <button
                   onClick={async () => {
                     if ((walletData?.coinsCurrent || 0) < 900) {
-                      toast.error('Nincs elég aranyad');
+                      toast.error(t('profile.not_enough_gold'));
                       return;
                     }
                     try {
-                      toast.loading('Vásárlás...', { id: 'free-booster' });
+                      toast.loading(t('profile.purchasing'), { id: 'free-booster' });
                       const { data, error } = await supabase.functions.invoke('purchase-booster', {
                         body: { boosterCode: 'FREE' }
                       });
                       if (error) throw error;
                       if (data?.success) {
-                        toast.success(`Sikeres vásárlás! +${data.grantedRewards?.gold} arany, +${data.grantedRewards?.lives} élet`, { id: 'free-booster' });
+                        toast.success(t('profile.purchase_success').replace('{gold}', data.grantedRewards?.gold).replace('{lives}', data.grantedRewards?.lives), { id: 'free-booster' });
                         refetchWallet();
                         refreshProfile();
                       }
                     } catch (e) {
-                      toast.error('Hiba történt', { id: 'free-booster' });
+                      toast.error(t('profile.purchase_error'), { id: 'free-booster' });
                     }
                   }}
                   disabled={(walletData?.coinsCurrent || 0) < 900}
                   className="w-full mt-2 px-2 py-1.5 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
                 >
-                  {(walletData?.coinsCurrent || 0) < 900 ? 'Nincs elég aranyad' : '900 arany'}
+                  {(walletData?.coinsCurrent || 0) < 900 ? t('profile.not_enough_gold') : t('profile.free_booster_price')}
                 </button>
               )}
             </div>
@@ -913,13 +913,13 @@ const Profile = () => {
           <div className="relative z-10">
             <h2 className="text-lg sm:text-xl font-black text-white mb-3 sm:mb-4 flex items-center gap-2">
               <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500 drop-shadow-[0_2px_8px_rgba(168,85,247,0.8)]" />
-              Fiók információk
+              {t('profile.account_info')}
             </h2>
             
             <div className="space-y-3 sm:space-y-4">
               {/* Username with edit */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">Felhasználónév</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.username_label')}</p>
                 {isEditingUsername ? (
                   <div className="flex items-center gap-2">
                     <Input
@@ -947,18 +947,18 @@ const Profile = () => {
                     </button>
                   </div>
                 )}
-                <p className="text-xs text-white/40 mt-1">A felhasználónév 7 naponta csak 1x módosítható</p>
+                <p className="text-xs text-white/40 mt-1">{t('profile.username_cooldown')}</p>
               </div>
               
               {/* Email */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">E-mail cím</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.email_label')}</p>
                 <p className="text-sm sm:text-base text-white font-bold break-all drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{profile.email}</p>
               </div>
 
               {/* Birth Date (read-only) */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">Születési dátum</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.birth_date_label')}</p>
                 <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                   {profile.birth_date ? new Date(profile.birth_date).toLocaleDateString('hu-HU') : '1991. 05. 05.'}
                 </p>
@@ -966,13 +966,13 @@ const Profile = () => {
 
               {/* Current Password (masked) */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">Jelenlegi jelszó</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.current_password_label')}</p>
                 <div className="relative">
                   <Input
                     type={showCurrentPassword ? 'text' : 'password'}
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Írd be a jelenlegi jelszavad"
+                    placeholder={t('profile.current_password_placeholder')}
                     className="bg-black/30 border-purple-500/30 text-white pr-10"
                   />
                   <button
@@ -987,13 +987,13 @@ const Profile = () => {
 
               {/* New Password */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">Új jelszó</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.new_password_label')}</p>
                 <div className="relative">
                   <Input
                     type={showNewPassword ? 'text' : 'password'}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Min. 8 karakter, kis/nagybetű, szám, spec. karakter"
+                    placeholder={t('profile.new_password_placeholder')}
                     className="bg-black/30 border-purple-500/30 text-white pr-10"
                   />
                   <button
@@ -1008,13 +1008,13 @@ const Profile = () => {
 
               {/* Confirm Password */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">Jelszó megerősítése</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.confirm_password_label')}</p>
                 <div className="relative">
                   <Input
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Írd be újra az új jelszavad"
+                    placeholder={t('profile.confirm_password_placeholder')}
                     className="bg-black/30 border-purple-500/30 text-white pr-10"
                   />
                   <button
@@ -1031,11 +1031,11 @@ const Profile = () => {
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-2 flex items-center gap-2">
                   <Globe className="w-4 h-4" />
-                  Ország (Ranglista alapja)
+                  {t('profile.country_label')}
                 </p>
                 <Select value={profile.country_code || 'HU'} onValueChange={handleCountryChange}>
                   <SelectTrigger className="bg-black/30 border-purple-500/30 text-white hover:border-purple-400/50 focus:border-purple-400">
-                    <SelectValue placeholder="Válassz országot" />
+                    <SelectValue placeholder={t('profile.country_placeholder')} />
                   </SelectTrigger>
                   <SelectContent className="bg-background border-purple-500/30 max-h-[300px] z-50">
                     {COUNTRIES.map((country) => (
@@ -1050,20 +1050,20 @@ const Profile = () => {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-white/40 mt-1">
-                  A ranglista mindig az általad választott ország játékosait jeleníti meg. A nyelv automatikusan beállítódik az ország alapján.
+                  {t('profile.country_notice')}
                 </p>
               </div>
               
               
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">Élet regeneráció</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.life_regeneration_label')}</p>
                 <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {profile.lives_regeneration_rate} perc / 1 élet
+                  {t('profile.life_regeneration_value').replace('{rate}', profile.lives_regeneration_rate.toString())}
                 </p>
               </div>
               
               <div>
-                <p className="text-xs sm:text-sm text-white/50 mb-1">Regisztráció dátuma</p>
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.registration_date_label')}</p>
                 <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                   {new Date(profile.created_at).toLocaleDateString('hu-HU')}
                 </p>
@@ -1082,12 +1082,12 @@ const Profile = () => {
                   {isSaving ? (
                     <span className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Mentés...
+                      {t('profile.saving')}
                     </span>
                   ) : (
                     <span className="flex items-center gap-2">
                       <Save className="w-4 h-4" />
-                      Változtatások mentése
+                      {t('profile.save_button')}
                     </span>
                   )}
                 </Button>
