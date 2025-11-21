@@ -96,7 +96,7 @@ export const BoosterButton: React.FC<BoosterButtonProps> = ({
 
         <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
 
-        <g transform="scale(1,1.44)">
+        <g transform="scale(1,1.2)">
           <use href="#HEX_BOOSTER" fill="black" fillOpacity="0.5"/>
 
           <use href="#HEX_BOOSTER" fill="none" stroke="url(#band20_booster)" strokeWidth="20"
