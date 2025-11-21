@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AgeGateModal } from '@/components/AgeGateModal';
 import { DiamondHexagon } from '@/components/DiamondHexagon';
 import { DiamondButton } from '@/components/DiamondButton';
+import { PlayNowButton } from '@/components/PlayNowButton';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
@@ -661,41 +662,28 @@ if (!profile) {
           {/* Play Now Button - Boosters felett */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
             <div className="w-full max-w-screen-lg">
-              <DiamondButton
+              <PlayNowButton
                 data-tutorial="play-button"
                 onClick={() => navigate('/game')}
-                variant="play"
-                size="lg"
-                className="!py-[clamp(1.25rem,5vw,2rem)] sm:!py-[clamp(1.5rem,6vw,2.5rem)]"
-                style={{
-                  width: '100%',
-                  transform: 'scale(1)',
-                }}
+                className="w-full"
               >
-                <svg
-                  className="inline w-[clamp(1.25rem,3.5vw,2rem)] h-[clamp(1.25rem,3.5vw,2rem)] sm:w-[clamp(1.5rem,4vw,2.5rem)] sm:h-[clamp(1.5rem,4vw,2.5rem)] mr-3 drop-shadow-[0_0_14px_rgba(255,255,255,0.95)]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ filter: 'drop-shadow(0 0 6px rgba(0,0,0,1))' }}
-                >
-                  <path
-                    d="M8 5v14l11-7z"
-                    fill="white"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span
-                  className="font-black text-[clamp(1rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)] md:text-[clamp(1.5rem,5vw,2.5rem)]" 
-                  style={{ 
-                    textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 4px rgba(0,0,0,0.8)'
-                  }}
-                >
+                <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] flex items-center justify-center gap-2 sm:gap-3 leading-none tracking-wider text-[clamp(1.125rem,4vw,1.5rem)] sm:text-[clamp(1.25rem,4.5vw,2rem)]">
                   {t('dashboard.play_now')}
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="3" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    className="w-[clamp(1.125rem,4vw,1.5rem)] h-[clamp(1.125rem,4vw,1.5rem)] sm:w-[clamp(1.25rem,4.5vw,2rem)] sm:h-[clamp(1.25rem,4.5vw,2rem)]"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
                 </span>
-              </DiamondButton>
+              </PlayNowButton>
             </div>
           </div>
 
