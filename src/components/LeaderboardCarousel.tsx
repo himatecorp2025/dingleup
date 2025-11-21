@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Crown } from 'lucide-react';
 import { DailyRankingsCountdown } from './DailyRankingsCountdown';
 import { LeaderboardSkeleton } from './LeaderboardSkeleton';
+import { useI18n } from '@/i18n';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -12,6 +13,7 @@ interface LeaderboardEntry {
 }
 
 const LeaderboardCarouselComponent = () => {
+  const { t } = useI18n();
   const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollPausedRef = useRef(false);
@@ -190,7 +192,7 @@ const LeaderboardCarouselComponent = () => {
 
   return (
     <div className="w-full py-1">
-      <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-foreground mb-1 drop-shadow-lg">🏆 TOP 100 JÁTÉKOS 🏆</h3>
+      <h3 className="text-center text-xs sm:text-sm md:text-base font-black text-foreground mb-1 drop-shadow-lg">🏆 {t('leaderboard.carousel_title')} 🏆</h3>
       
       {/* Daily Rankings Countdown moved here from top section */}
       <div className="flex justify-center mb-2">

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, MessageCircle, Info, UserPlus } from 'lucide-react';
 import { useFriendshipStatus } from '@/hooks/useFriendshipStatus';
+import { useI18n } from '@/i18n';
 
 interface UserSearchDialogProps {
   open: boolean;
@@ -32,6 +33,7 @@ interface FriendActionProps {
 }
 
 const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionProps) => {
+  const { t } = useI18n();
   const { status, sendRequest, loading } = useFriendshipStatus(currentUserId, targetUserId);
 
   if (!currentUserId) return null;
@@ -41,7 +43,7 @@ const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionPro
     return (
       <div className="px-2 py-1 bg-destructive/20 border border-destructive/50 rounded text-xs text-destructive flex items-center gap-1">
         <Info className="w-3 h-3" />
-        Nem elérhető
+        {t('search.not_available')}
       </div>
     );
   }
@@ -49,7 +51,7 @@ const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionPro
   if (status === 'pending_sent') {
     return (
       <div className="px-2 py-1 bg-accent/20 border border-accent/50 rounded text-xs text-accent-foreground">
-        Folyamatban
+        {t('search.pending')}
       </div>
     );
   }
@@ -57,7 +59,7 @@ const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionPro
   if (status === 'pending_received') {
     return (
       <div className="px-2 py-1 bg-accent/20 border border-accent/50 rounded text-xs text-accent-foreground">
-        Várakozik jóváhagyásra
+        {t('search.waiting_approval')}
       </div>
     );
   }
@@ -67,9 +69,9 @@ const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionPro
       onClick={async () => {
         try {
           await sendRequest();
-          toast.success(`${username} ismerősnek jelölve – folyamatban`);
+          toast.success(`${username} ${t('search.friend_added')}`);
         } catch (e) {
-          toast.error('Ismerős jelölés sikertelen');
+          toast.error(t('search.friend_add_failed'));
         }
       }}
       size="sm"
@@ -77,12 +79,13 @@ const FriendAction = ({ currentUserId, targetUserId, username }: FriendActionPro
       disabled={loading}
     >
       <UserPlus className="w-4 h-4 mr-1" />
-      Bejelölöm
+      {t('search.add_friend')}
     </Button>
   );
 };
 
 export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearchDialogProps) => {
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
@@ -156,7 +159,7 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
       <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-primary-dark to-primary-darker border-2 border-accent/50 text-foreground">
         <DialogHeader>
           <DialogTitle className="text-2xl font-black text-accent">
-            Felhasználó keresése
+            {t('search.title')}
           </DialogTitle>
         </DialogHeader>
 
@@ -165,7 +168,7 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Felhasználónév vagy meghívókód..."
+              placeholder={t('search.placeholder')}
               className="bg-muted border-primary/50 text-foreground pr-10"
             />
             <Search className="w-5 h-5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -174,13 +177,13 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
           <div className="space-y-2 max-h-[300px] overflow-y-auto">
             {searching && (
               <div className="text-center text-muted-foreground py-4">
-                Keresés...
+                {t('search.searching')}
               </div>
             )}
             
             {!searching && searchTerm && results.length === 0 && (
               <div className="text-center text-muted-foreground py-4">
-                Nincs találat
+                {t('search.no_results')}
               </div>
             )}
             
@@ -209,7 +212,7 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
                   <div>
                     <p className="text-foreground font-semibold">{user.username}</p>
                     <p className="text-xs text-muted-foreground">
-                      {user.is_online ? 'Online' : 'Offline'}
+                      {user.is_online ? t('search.online') : t('search.offline')}
                     </p>
                   </div>
                 </div>
@@ -224,7 +227,7 @@ export const UserSearchDialog = ({ open, onOpenChange, onUserSelect }: UserSearc
                     className="bg-gradient-to-r from-success to-success/80"
                   >
                     <MessageCircle className="w-4 h-4 mr-1" />
-                    Üzenet
+                    {t('search.message')}
                   </Button>
                 </div>
               </div>

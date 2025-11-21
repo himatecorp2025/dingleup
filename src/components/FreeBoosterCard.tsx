@@ -4,6 +4,7 @@ import { Coins, Heart, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useI18n } from "@/i18n";
 
 interface FreeBoosterCardProps {
   currentGold: number;
@@ -13,12 +14,13 @@ interface FreeBoosterCardProps {
 }
 
 export function FreeBoosterCard({ currentGold, pendingSpeedTokensCount, onPurchaseSuccess, onActivateSuccess }: FreeBoosterCardProps) {
+  const { t } = useI18n();
   const [purchasing, setPurchasing] = useState(false);
   const [activating, setActivating] = useState(false);
 
   const handlePurchase = async () => {
     if (currentGold < 900) {
-      toast.error('Nincs elég aranyad a Free Booster megvásárlásához');
+      toast.error(t('booster.free.not_enough_gold'));
       return;
     }
 
@@ -42,7 +44,12 @@ export function FreeBoosterCard({ currentGold, pendingSpeedTokensCount, onPurcha
       if (error) throw error;
 
       if (data?.success) {
-        toast.success(`Sikeres Free Booster vásárlás! +${data.grantedRewards?.gold} arany, +${data.grantedRewards?.lives} élet és ${data.grantedRewards?.speedCount}× ${data.grantedRewards?.speedDurationMinutes} perces Speed Booster jóváírva.`, { 
+        const msg = t('booster.free.success')
+          .replace('{gold}', data.grantedRewards?.gold)
+          .replace('{lives}', data.grantedRewards?.lives)
+          .replace('{count}', data.grantedRewards?.speedCount)
+          .replace('{duration}', data.grantedRewards?.speedDurationMinutes);
+        toast.success(msg, { 
           id: 'free-booster',
           duration: 6000 
         });
@@ -79,7 +86,9 @@ export function FreeBoosterCard({ currentGold, pendingSpeedTokensCount, onPurcha
       if (error) throw error;
 
       if (data?.success) {
-        toast.success(`Speed Booster aktiválva! ${data.activeSpeedToken?.durationMinutes} perc gyorsított életregenerálás.`, { 
+        const msg = t('booster.speed.activated')
+          .replace('{duration}', data.activeSpeedToken?.durationMinutes);
+        toast.success(msg, { 
           id: 'speed-activate',
           duration: 4000 
         });

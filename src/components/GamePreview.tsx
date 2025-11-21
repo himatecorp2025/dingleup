@@ -19,6 +19,7 @@ import { useBroadcastChannel } from "@/hooks/useBroadcastChannel";
 import { Trophy3D } from "./Trophy3D";
 import { getSessionId } from "@/lib/analytics";
 import { GameLoadingScreen } from "./GameLoadingScreen";
+import { useI18n } from "@/i18n";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -36,6 +37,7 @@ const ALL_QUESTIONS: Question[] = [
 ];
 
 const GamePreview = () => {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading: profileLoading, updateProfile, spendLife, refreshProfile } = useGameProfile(userId);
@@ -188,7 +190,7 @@ const GamePreview = () => {
       // Spend life
       const canPlay = await spendLife();
       if (!canPlay) {
-        toast.error('Nincs elég életed a játék indításához!');
+        toast.error(t('game.not_enough_lives'));
         setIsStartingGame(false);
         navigate('/dashboard');
         throw new Error('Insufficient lives');
@@ -202,7 +204,7 @@ const GamePreview = () => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
         console.error('[Game] Session error:', sessionError);
-        toast.error('Munkamenet lejárt, kérlek jelentkezz be újra');
+        toast.error(t('game.session_expired'));
         navigate('/login');
         throw new Error('Session error');
       }
@@ -249,7 +251,7 @@ const GamePreview = () => {
             setQuestions(shuffledWithVariety);
           } catch (error) {
             console.error('[GamePreview] Failed to load questions:', error);
-            toast.error('Hiba történt a kérdések betöltésekor');
+            toast.error(t('game.questions_load_error'));
             setIsStartingGame(false);
             navigate('/dashboard');
             throw error;
@@ -300,13 +302,13 @@ const GamePreview = () => {
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        toast.error('A játék megszakadt, mert elhagytad az alkalmazást');
+        toast.error(t('game.interrupted'));
         navigate('/dashboard');
       }
     };
 
     const handleBlur = () => {
-      toast.error('A játék megszakadt, mert elhagytad az alkalmazást');
+      toast.error(t('game.interrupted'));
       navigate('/dashboard');
     };
 
@@ -499,7 +501,7 @@ const GamePreview = () => {
     
     // Only show restart toast if game was NOT completed (scroll down mid-game)
     if (!gameCompleted) {
-      toast.error('Új játék indítása: -1 élet, +1 arany', {
+      toast.error(t('game.restart'), {
         duration: 2000,
         style: {
           background: 'hsl(var(--destructive))',
@@ -676,7 +678,7 @@ const GamePreview = () => {
     try {
       const { data: { session: rewardSession } } = await supabase.auth.getSession();
       if (!rewardSession) {
-        toast.error('Munkamenet lejárt');
+        toast.error(t('game.session_expired'));
         return;
       }
       
@@ -697,7 +699,7 @@ const GamePreview = () => {
       // Notify other views to refresh wallet immediately
       await broadcast('wallet:update', { source: 'correct_answer', coinsDelta: reward });
     } catch (err) {
-      toast.error('Nem sikerült a jutalom jóváírása, próbáld újra.');
+      toast.error(t('game.reward_failed'));
     }
     
     // Nincs külön toast siker esetén – a zöld válasz jelzi
@@ -828,7 +830,7 @@ const GamePreview = () => {
     if (currentQuestionIndex >= 10) cost = 30;
     
     if (profile.coins < cost) {
-      toast.error(`Nincs elég aranyérméd! (${cost} szükséges)`);
+      toast.error(t('game.not_enough_coins_amount').replace('{amount}', cost.toString()));
       return;
     }
     
@@ -866,7 +868,7 @@ const GamePreview = () => {
     // If game was NOT completed (mid-game exit), coins are lost
     // If game WAS completed, coins already credited by finishGame()
     if (!gameCompleted) {
-      toast.error('Játék megszakítva - az összes eddig összegyűjtött arany elveszett!', {
+      toast.error(t('game.exit_gold_lost'), {
         duration: 3000,
         style: {
           background: 'hsl(var(--destructive))',
@@ -893,7 +895,7 @@ const GamePreview = () => {
       // Server calculates and validates all rewards
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        toast.error('Munkamenet lejárt. Jelentkezz be újra!');
+        toast.error(t('game.session_expired'));
         return;
       }
 
@@ -974,7 +976,7 @@ const GamePreview = () => {
     // Second usage - costs 15 coins
     if (help5050UsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error(`Nincs elég aranyérméd! (${cost} szükséges)`);
+        toast.error(t('game.not_enough_coins_amount').replace('{amount}', cost.toString()));
         return;
       }
       
@@ -1022,7 +1024,7 @@ const GamePreview = () => {
     // Second usage - costs 20 coins
     if (help2xAnswerUsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error(`Nincs elég aranyérméd! (${cost} szükséges)`);
+        toast.error(t('game.not_enough_coins_amount').replace('{amount}', cost.toString()));
         return;
       }
       
@@ -1087,7 +1089,7 @@ const GamePreview = () => {
     // Second usage - costs 30 coins
     if (helpAudienceUsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error(`Nincs elég aranyérméd! (${cost} szükséges)`);
+        toast.error(t('game.not_enough_coins_amount').replace('{amount}', cost.toString()));
         return;
       }
       
@@ -1110,7 +1112,7 @@ const GamePreview = () => {
     
     // Check if user has enough coins
     if (!profile || profile.coins < skipCost) {
-      toast.error(`Nincs elég aranyérméd! (${skipCost} szükséges)`);
+      toast.error(t('game.skip_not_enough_coins').replace('{amount}', skipCost.toString()));
       return;
     }
     
