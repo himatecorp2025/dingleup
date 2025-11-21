@@ -1,5 +1,6 @@
 import { LogOut } from "lucide-react";
 import { DiamondHexagon } from "@/components/DiamondHexagon";
+import { useI18n } from "@/i18n";
 
 interface GameHeaderProps {
   lives: number;
@@ -9,14 +10,16 @@ interface GameHeaderProps {
 }
 
 export const GameHeader = ({ lives, maxLives, coins, onExit }: GameHeaderProps) => {
+  const { t } = useI18n();
+  
   return (
     <div className="flex justify-between items-center mb-2 px-2 sm:px-3 md:px-4">
       {/* Exit button with 3D Box Style matching Leaderboard back button */}
       <button
         onClick={onExit}
         className="relative p-3 rounded-full hover:scale-110 transition-all"
-        title="Kilépés a játékból"
-        aria-label="Kilépés a játékból"
+        title={t('game.exit_title')}
+        aria-label={t('game.exit_aria')}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {

@@ -1,22 +1,25 @@
 import { Card } from "@/components/ui/card";
+import { useI18n } from "@/i18n";
 
 interface CategorySelectorProps {
   onSelectCategory: (category: string) => void;
 }
 
-const categories = [
-  { id: 'health', label: 'Egészség', emoji: '🏥' },
-  { id: 'history', label: 'Történelem', emoji: '📜' },
-  { id: 'culture', label: 'Kultúra', emoji: '🎭' },
-  { id: 'finance', label: 'Pénzügy', emoji: '💰' },
-];
-
 export const CategorySelector = ({ onSelectCategory }: CategorySelectorProps) => {
+  const { t } = useI18n();
+  
+  const categories = [
+    { id: 'health', label: t('category.health'), emoji: '🏥' },
+    { id: 'history', label: t('category.history'), emoji: '📜' },
+    { id: 'culture', label: t('category.culture'), emoji: '🎭' },
+    { id: 'finance', label: t('category.finance'), emoji: '💰' },
+  ];
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-2xl space-y-6">
         <h2 className="text-3xl font-bold text-center text-foreground mb-8">
-          Válassz kategóriát
+          {t('category.select_title')}
         </h2>
         <div className="grid grid-cols-2 gap-4">
           {categories.map((category) => (
