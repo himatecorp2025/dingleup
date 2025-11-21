@@ -23,10 +23,12 @@ export async function fetchQuestionTranslationStats() {
   // @ts-ignore - Supabase types too deep
   const { count: totalQuestions, error: countError } = await supabase
     .from('questions')
-    .select('*', { count: 'exact', head: true })
-    .eq('is_active', true);
+    .select('*', { count: 'exact', head: true });
 
-  if (countError) throw countError;
+  if (countError) {
+    console.error('Error counting questions:', countError);
+    throw countError;
+  }
   
   const total = totalQuestions || 0;
 
