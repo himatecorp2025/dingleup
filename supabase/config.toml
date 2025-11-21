@@ -117,6 +117,3 @@ verify_jwt = true
 [functions.get-translations]
 verify_jwt = false
 
-[functions.migrate-legacy-users]
-verify_jwt = false
-
