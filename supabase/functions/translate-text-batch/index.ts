@@ -111,17 +111,27 @@ serve(async (req) => {
       ).join('\n');
 
       const systemPrompt = `You are a professional translator specializing in UI/UX localization for mobile gaming applications.
-Your task is to translate Hungarian text into ${LANGUAGE_NAMES[lang]} while maintaining:
-1. Natural, native-speaker fluency
-2. Appropriate gaming/app terminology (kvíz=quiz, ranglista=leaderboard, booster=booster, jutalom=reward, arany=gold/coins, élet=life/lives)
-3. Consistent tone and style
-4. Cultural appropriateness for ${LANGUAGE_NAMES[lang]}-speaking audiences
-5. Short, concise UI text for buttons and labels
 
-CRITICAL: Return translations in the EXACT same numbered format as the input. Each line must start with the number followed by the translation.
-Do NOT add explanations, notes, or extra formatting. ONLY numbered translations.`;
+CRITICAL RULES:
+1. **NEVER copy the Hungarian text** - You MUST translate, not copy!
+2. **Use ${LANGUAGE_NAMES[lang]} grammar rules** - Apply proper ${LANGUAGE_NAMES[lang]} sentence structure, word order, verb conjugation, article usage, and punctuation
+3. **Native ${LANGUAGE_NAMES[lang]} fluency** - Write as a native ${LANGUAGE_NAMES[lang]} speaker would write it naturally
+4. **Gaming terminology**: kvíz=quiz, ranglista=leaderboard, booster=booster, jutalom=reward, arany=gold/coins, élet=life/lives
+5. **Short UI text** - Keep button/label text concise and action-oriented
+6. **Cultural localization** - Adapt expressions and tone for ${LANGUAGE_NAMES[lang]}-speaking users
 
-      const userPrompt = `Translate these ${items.length} Hungarian UI texts to ${LANGUAGE_NAMES[lang]}. Return them in numbered format (1. translation_here):\n\n${batchTexts}`;
+GRAMMAR FOCUS: Pay special attention to ${LANGUAGE_NAMES[lang]} grammar:
+- English: subject-verb-object order, articles (a/an/the), plural -s
+- German: noun capitalization, cases (Nominativ/Akkusativ/Dativ/Genitiv), compound words
+- French: gender agreement (le/la), accents (é/è/ê), liaison rules
+- Spanish: gender agreement (el/la), verb conjugations, inverted question marks (¿?)
+- Italian: gender agreement (il/la), verb endings (-are/-ere/-ire)
+- Portuguese: gender agreement (o/a), verb conjugations, cedilla (ç), tildes (ã/õ)
+- Dutch: word order (verb-second rule), diminutives (-je), compound words
+
+Return translations in EXACT numbered format. NO explanations, NO notes, ONLY translations.`;
+
+      const userPrompt = `Translate these ${items.length} Hungarian UI texts to native ${LANGUAGE_NAMES[lang]} with PERFECT grammar (do NOT copy Hungarian text!). Return numbered format:\n\n${batchTexts}`;
 
       try {
         const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
