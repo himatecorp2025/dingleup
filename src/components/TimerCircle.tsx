@@ -27,7 +27,7 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
   
   return (
     <div className="relative flex items-center justify-center" style={{ 
-      width: '110%', 
+      width: '30%', 
       height: 'auto',
       aspectRatio: '1 / 1',
       perspective: '1500px', 
