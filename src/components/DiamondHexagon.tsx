@@ -134,7 +134,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
   // Original hexagon design for all types (rank, coins, lives, avatar)
   const containerElement = type === 'avatar' && onClick ? 'button' : 'div';
-  const containerProps = type === 'avatar' && onClick ? { onClick, className: `relative ${className} cursor-pointer hover:scale-105 transition-transform` } : { className: `relative ${className}` };
+  const containerProps = type === 'avatar' && onClick ? { onClick, className: `relative ${className}` } : { className: `relative ${className}` };
 
   return React.createElement(
     containerElement,
