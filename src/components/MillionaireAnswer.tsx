@@ -36,12 +36,12 @@ export const MillionaireAnswer = ({
         >
           <div className="flex items-center justify-center w-full">
             <div 
-              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-muted/80 border-2 border-muted flex items-center justify-center flex-shrink-0 text-sm sm:text-base font-bold font-poppins"
+              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-muted/80 border-2 border-muted flex items-center justify-center flex-shrink-0 text-lg sm:text-xl font-bold font-poppins"
               style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
             >
               {letter}:
             </div>
-            <span className="text-sm sm:text-base md:text-lg line-through font-bold font-poppins flex-1 text-center px-2 sm:px-3 md:px-4">{children}</span>
+            <span className="text-xl sm:text-2xl md:text-3xl line-through font-bold font-poppins flex-1 text-center px-2 sm:px-3 md:px-4">{children}</span>
             <div className="w-8 sm:w-9 md:w-10 flex-shrink-0" aria-hidden />
           </div>
         </div>
@@ -267,9 +267,9 @@ export const MillionaireAnswer = ({
                 aria-hidden
               />
 
-              <span className="relative z-10 text-primary-foreground font-bold text-[10px] sm:text-xs leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{letter}:</span>
+              <span className="relative z-10 text-primary-foreground font-bold text-[15px] sm:text-lg leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{letter}:</span>
             </div>
-            <p className="text-sm sm:text-base md:text-lg font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>
               {children}
             </p>
             <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />
