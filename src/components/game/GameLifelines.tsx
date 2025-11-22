@@ -34,18 +34,32 @@ const Lifeline3DButton = ({
 }) => {
   const getColor = () => {
     if (isActive) return "hsl(var(--primary))";
-    if (disabled) return "hsl(var(--muted))";
-    return "hsl(var(--secondary))";
+    if (disabled) return "hsl(var(--muted-foreground))";
+    return "hsl(var(--primary))";
   };
 
   const getGlow = () => {
-    if (isActive) return "rgba(156, 39, 243, 0.8)";
+    if (isActive) return "rgba(156, 39, 243, 0.9)";
     if (disabled) return "rgba(100, 100, 100, 0.3)";
-    return "rgba(150, 150, 200, 0.5)";
+    return "rgba(156, 39, 243, 0.6)";
+  };
+  
+  const getGradient = () => {
+    if (isActive) return "linear-gradient(135deg, #9C27F3 0%, #7B1ED6 50%, #6A0BB8 100%)";
+    if (disabled) return "linear-gradient(135deg, #505050 0%, #3a3a3a 50%, #2a2a2a 100%)";
+    return "linear-gradient(135deg, #B85AFF 0%, #9C27F3 50%, #7B1ED6 100%)";
+  };
+  
+  const getInnerGradient = () => {
+    if (isActive) return "radial-gradient(circle at 30% 30%, rgba(156, 39, 243, 1) 0%, rgba(123, 30, 214, 1) 40%, rgba(106, 11, 184, 1) 100%)";
+    if (disabled) return "radial-gradient(circle at 30% 30%, rgba(80, 80, 90, 1) 0%, rgba(50, 50, 60, 1) 40%, rgba(30, 30, 40, 1) 100%)";
+    return "radial-gradient(circle at 30% 30%, rgba(184, 90, 255, 1) 0%, rgba(156, 39, 243, 1) 40%, rgba(123, 30, 214, 1) 100%)";
   };
 
   const color = getColor();
   const glowColor = getGlow();
+  const gradient = getGradient();
+  const innerGradient = getInnerGradient();
 
   return (
     <button
@@ -75,7 +89,7 @@ const Lifeline3DButton = ({
         className="absolute inset-0 rounded-lg border-2"
         style={{ 
           transform: 'translateZ(3px)',
-          background: 'linear-gradient(135deg, #ffffff 0%, #a0a0a0 25%, #ffffff 50%, #707070 75%, #ffffff 100%)',
+          background: gradient,
           borderColor: 'rgba(255,255,255,0.3)',
           boxShadow: `0 0 20px ${glowColor}, 0 8px 24px rgba(0,0,0,0.7), inset 0 2px 6px rgba(255,255,255,0.5), inset 0 -2px 6px rgba(0,0,0,0.5)`
         }} 
@@ -98,10 +112,7 @@ const Lifeline3DButton = ({
         className="absolute inset-[5px] rounded-lg" 
         style={{ 
           transform: 'translateZ(20px)',
-          background: `radial-gradient(circle at 30% 30%, 
-            rgba(60,60,80,1) 0%, 
-            rgba(30,30,40,1) 40%, 
-            rgba(15,15,20,1) 100%)`,
+          background: innerGradient,
           boxShadow: `inset 0 10px 20px rgba(255,255,255,0.12), 
                       inset 0 -10px 20px rgba(0,0,0,0.8),
                       0 0 15px ${glowColor}`
@@ -162,7 +173,7 @@ export const GameLifelines = ({
   const { t } = useI18n();
   
   return (
-    <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2">
+    <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2 mt-6">
       <Lifeline3DButton
         onClick={onUseHelp5050}
         disabled={help5050UsageCount >= 3}
