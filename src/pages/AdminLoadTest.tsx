@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
 import { AlertCircle, PlayCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useI18n } from '@/i18n';
@@ -35,26 +34,27 @@ interface LoadTestConfig {
   mode: LoadTestMode;
 }
 
-interface ProgressPayload {
-  progressPercent: number;
-  totalRequests: number;
-  success: number;
-  failed: number;
-  lastError: { url: string; status?: number; error?: string } | null;
-  vus: number;
-  scenario: string;
-  mode: string;
-}
-
-interface DonePayload {
-  totalTimeSec: number;
-  totalRequests: number;
-  success: number;
-  failed: number;
-  p50: number;
-  p95: number;
-  p99: number;
-  sampleErrors: Array<{ url: string; status?: number; error?: string; bodySample?: string }>;
+interface LoadTestResults {
+  success: boolean;
+  error?: string;
+  config?: {
+    baseUrl: string;
+    vus: number;
+    requestsPerUser: number;
+    delayMs: number;
+    scenario: string;
+  };
+  summary?: {
+    totalTimeSec: number;
+    totalRequests: number;
+    success: number;
+    failed: number;
+    errorRate: string;
+    p50Ms: string;
+    p95Ms: string;
+    p99Ms: string;
+  };
+  sampleErrors?: Array<{ url: string; status?: number; error?: string; bodySample?: string }>;
 }
 
 export default function AdminLoadTest() {
@@ -71,33 +71,7 @@ export default function AdminLoadTest() {
 
   const [isRunning, setIsRunning] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [progress, setProgress] = useState<ProgressPayload | null>(null);
-  const [results, setResults] = useState<DonePayload | null>(null);
-
-  useEffect(() => {
-    const channel = supabase.channel('admin-load-test-progress');
-
-    channel
-      .on('broadcast', { event: 'progress' }, ({ payload }) => {
-        setProgress(payload as ProgressPayload);
-      })
-      .on('broadcast', { event: 'done' }, ({ payload }) => {
-        setResults(payload as DonePayload);
-        setIsRunning(false);
-        setProgress(null);
-        toast.success(t('admin.loadTest.progressDone'));
-      })
-      .on('broadcast', { event: 'error' }, ({ payload }) => {
-        toast.error(payload.message || 'Load test error');
-        setIsRunning(false);
-        setProgress(null);
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [t]);
+  const [results, setResults] = useState<LoadTestResults | null>(null);
 
   const handleStartTest = async () => {
     if (config.mode === 'full' && config.vus > 2000) {
@@ -109,25 +83,40 @@ export default function AdminLoadTest() {
 
   const executeTest = async () => {
     setIsRunning(true);
-    setProgress(null);
     setResults(null);
     setShowConfirm(false);
 
     try {
-      const { data, error } = await supabase.functions.invoke('admin-load-test', {
-        body: config,
+      const effectiveVus = config.mode === 'test' ? Math.min(config.vus, 50) : config.vus;
+      const effectiveRequests = config.mode === 'test' ? Math.min(config.requestsPerUser, 5) : config.requestsPerUser;
+
+      const { data, error } = await supabase.functions.invoke('simple-load-test', {
+        body: {
+          baseUrl: config.baseUrl,
+          vus: effectiveVus,
+          requestsPerUser: effectiveRequests,
+          delayMs: config.delayMs,
+          scenario: config.scenario,
+        },
       });
 
       if (error) throw error;
       
-      if (!data?.success) {
-        throw new Error(data?.message || 'Load test failed');
+      if (data && !data.success) {
+        throw new Error(data.error || 'Load test failed');
       }
+
+      setResults(data as LoadTestResults);
+      toast.success('Load test completed successfully');
     } catch (error: any) {
       console.error('Load test error:', error);
-      toast.error(error.message || 'Failed to start load test');
+      toast.error(error.message || 'Failed to execute load test');
+      setResults({
+        success: false,
+        error: error.message || 'Unknown error',
+      });
+    } finally {
       setIsRunning(false);
-      setProgress(null);
     }
   };
 
@@ -266,51 +255,9 @@ export default function AdminLoadTest() {
             </CardContent>
           </Card>
 
-          {/* Progress & Results Panel */}
+          {/* Results Panel */}
           <div className="space-y-6">
-            {progress && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.loadTest.progressTitle')}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>{t('admin.loadTest.progressRunning')}</span>
-                      <span>{Math.round(progress.progressPercent)}%</span>
-                    </div>
-                    <Progress value={progress.progressPercent} />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <div className="text-2xl font-bold text-green-600">{progress.success}</div>
-                      <div className="text-xs text-muted-foreground">{t('admin.loadTest.statsSuccess')}</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-red-600">{progress.failed}</div>
-                      <div className="text-xs text-muted-foreground">{t('admin.loadTest.statsFailed')}</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold">{progress.totalRequests}</div>
-                      <div className="text-xs text-muted-foreground">{t('admin.loadTest.statsTotalRequests')}</div>
-                    </div>
-                  </div>
-
-                  {progress.lastError && (
-                    <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Last Error</AlertTitle>
-                      <AlertDescription className="text-xs">
-                        {progress.lastError.url} - {progress.lastError.status || 'Network Error'}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {results && (
+            {results && results.success && results.summary && (
               <Card>
                 <CardHeader>
                   <CardTitle>{t('admin.loadTest.resultsTitle')}</CardTitle>
@@ -319,19 +266,23 @@ export default function AdminLoadTest() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <div className="text-sm text-muted-foreground">{t('admin.loadTest.totalTime')}</div>
-                      <div className="text-2xl font-bold">{results.totalTimeSec.toFixed(2)}s</div>
+                      <div className="text-2xl font-bold">{results.summary.totalTimeSec.toFixed(2)}s</div>
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">{t('admin.loadTest.statsTotalRequests')}</div>
-                      <div className="text-2xl font-bold">{results.totalRequests}</div>
+                      <div className="text-2xl font-bold">{results.summary.totalRequests}</div>
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">{t('admin.loadTest.statsSuccess')}</div>
-                      <div className="text-2xl font-bold text-green-600">{results.success}</div>
+                      <div className="text-2xl font-bold text-green-600">{results.summary.success}</div>
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">{t('admin.loadTest.statsFailed')}</div>
-                      <div className="text-2xl font-bold text-red-600">{results.failed}</div>
+                      <div className="text-2xl font-bold text-red-600">{results.summary.failed}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">Error Rate</div>
+                      <div className="text-2xl font-bold">{results.summary.errorRate}</div>
                     </div>
                   </div>
 
@@ -339,21 +290,21 @@ export default function AdminLoadTest() {
                     <h4 className="font-semibold mb-2">{t('admin.loadTest.latencyStats')}</h4>
                     <div className="grid grid-cols-3 gap-4 text-center">
                       <div>
-                        <div className="text-xl font-bold">{results.p50.toFixed(0)}ms</div>
+                        <div className="text-xl font-bold">{results.summary.p50Ms}ms</div>
                         <div className="text-xs text-muted-foreground">{t('admin.loadTest.statsP50')}</div>
                       </div>
                       <div>
-                        <div className="text-xl font-bold">{results.p95.toFixed(0)}ms</div>
+                        <div className="text-xl font-bold">{results.summary.p95Ms}ms</div>
                         <div className="text-xs text-muted-foreground">{t('admin.loadTest.statsP95')}</div>
                       </div>
                       <div>
-                        <div className="text-xl font-bold">{results.p99.toFixed(0)}ms</div>
+                        <div className="text-xl font-bold">{results.summary.p99Ms}ms</div>
                         <div className="text-xs text-muted-foreground">{t('admin.loadTest.statsP99')}</div>
                       </div>
                     </div>
                   </div>
 
-                  {results.sampleErrors.length > 0 && (
+                  {results.sampleErrors && results.sampleErrors.length > 0 && (
                     <div className="border-t pt-4">
                       <h4 className="font-semibold mb-2">{t('admin.loadTest.sampleErrorsTitle')}</h4>
                       <div className="space-y-2">
@@ -372,6 +323,16 @@ export default function AdminLoadTest() {
                   )}
                 </CardContent>
               </Card>
+            )}
+
+            {results && !results.success && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Load Test Failed</AlertTitle>
+                <AlertDescription>
+                  {results.error || 'Unknown error occurred during load test'}
+                </AlertDescription>
+              </Alert>
             )}
           </div>
         </div>
