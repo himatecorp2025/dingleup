@@ -148,47 +148,10 @@ export const TranslationSeeder = () => {
         return;
       }
 
-      // Fetch ALL translations using pagination (1000-row Lovable Cloud backend limit)
-      const translations: Array<{ key: string; hu: string }> = [];
-      const PAGE_SIZE = 500;
-      let page = 0;
-      let hasMore = true;
+      console.log('[TranslationSeeder] Invoking auto-translate-all edge function');
 
-      while (hasMore) {
-        const { data: batch, error: fetchError } = await supabase
-          .from('translations')
-          .select('key, hu')
-          .order('key')
-          .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-
-        if (fetchError) {
-          console.error('[TranslationSeeder] Fetch error:', fetchError);
-          throw fetchError;
-        }
-
-        if (batch && batch.length > 0) {
-          translations.push(...batch);
-          console.log(`[TranslationSeeder] Fetched page ${page + 1}: ${batch.length} keys (total: ${translations.length})`);
-          page++;
-          hasMore = batch.length === PAGE_SIZE;
-        } else {
-          hasMore = false;
-        }
-      }
-
-      if (translations.length === 0) {
-        toast.info('Nincs fordítandó szöveg');
-        setStatus('Nincs fordítandó szöveg');
-        setIsTranslating(false);
-        return;
-      }
-
-      // Edge function will broadcast progress via channel
-      const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
-      const items = translations.map(t => ({ key: t.key, hu: t.hu }));
-
-      const { data, error } = await supabase.functions.invoke('translate-text-batch', {
-        body: { items, targetLanguages: TARGET_LANGUAGES },
+      // Use auto-translate-all which handles batch processing internally
+      const { data, error } = await supabase.functions.invoke('auto-translate-all', {
         headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
@@ -200,49 +163,24 @@ export const TranslationSeeder = () => {
         return;
       }
 
-      // Update translations in database
-      let successCount = 0;
-      let errorCount = 0;
+      if (data?.stats) {
+        setProgress(100);
+        setStatus('Fordítás befejezve!');
+        setStats({
+          total: data.stats.total || 0,
+          success: data.stats.success || 0,
+          errors: data.stats.errors || 0
+        });
 
-      for (const result of data.results) {
-        if (result.error) {
-          errorCount++;
-          continue;
+        toast.success(`UI fordítás sikeres! ${data.stats.success} szöveg lefordítva.`);
+
+        if (data.stats.errors > 0) {
+          toast.warning(`${data.stats.errors} hiba történt a fordítás során.`);
         }
-
-        const { error: updateError } = await supabase
-          .from('translations')
-          .update({
-            en: result.translations.en || null,
-            de: result.translations.de || null,
-            fr: result.translations.fr || null,
-            es: result.translations.es || null,
-            it: result.translations.it || null,
-            pt: result.translations.pt || null,
-            nl: result.translations.nl || null,
-          })
-          .eq('key', result.key);
-
-        if (updateError) {
-          console.error('[TranslationSeeder] Update error:', updateError);
-          errorCount++;
-        } else {
-          successCount++;
-        }
-      }
-
-      setProgress(100);
-      setStatus('Fordítás befejezve!');
-      setStats({
-        total: translations.length,
-        success: successCount,
-        errors: errorCount
-      });
-
-      toast.success(`UI fordítás sikeres! ${successCount} szöveg lefordítva.`);
-
-      if (errorCount > 0) {
-        toast.warning(`${errorCount} hiba történt a fordítás során.`);
+      } else {
+        setProgress(100);
+        setStatus('Fordítás befejezve!');
+        toast.success('UI fordítás sikeres!');
       }
 
     } catch (error) {
