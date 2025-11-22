@@ -45,10 +45,10 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
         className="absolute pointer-events-none"
         style={{
           width: '100%',
-          height: '346.5%',
+          height: '385%',
           top: '50%',
           left: '50%',
-          transform: 'translate(-50%, -45%)',
+          transform: 'translate(-50%, -55%)',
           zIndex: 0
         }}
         aria-hidden
