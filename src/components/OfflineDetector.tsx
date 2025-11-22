@@ -13,7 +13,7 @@ export const OfflineDetector = () => {
       setIsOnline(true);
       if (wasOffline) {
         toast({
-          title: t('offline.connection_restored'),
+          title: "Kapcsolat helyreállt",
           description: t('offline.connection_available'),
           duration: 3000,
         });
@@ -25,7 +25,7 @@ export const OfflineDetector = () => {
       setIsOnline(false);
       setWasOffline(true);
       toast({
-        title: t('offline.no_connection'),
+        title: "Nincs internetkapcsolat",
         description: t('offline.some_features_unavailable'),
         duration: 5000,
         variant: "destructive",

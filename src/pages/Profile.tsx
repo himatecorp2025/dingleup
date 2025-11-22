@@ -132,13 +132,13 @@ const Profile = () => {
       // Validate file size (max 2MB)
       const maxSizeBytes = 2 * 1024 * 1024;
       if (file.size > maxSizeBytes) {
-        toast.error(t('common.error.file_size_max'));
+        toast.error("A fájl mérete maximum 2 MB lehet");
         return;
       }
       
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        toast.error(t('common.error.image_only'));
+        toast.error("Csak kép fájl engedélyezett");
         return;
       }
 
@@ -156,9 +156,9 @@ const Profile = () => {
         .getPublicUrl(filePath);
 
       await updateProfile({ avatar_url: data.publicUrl });
-      toast.success(t('profile.avatar_uploaded'));
+      toast.success("Profilkép feltöltve");
     } catch (error: any) {
-      toast.error(t('common.error.upload') + ': ' + error.message);
+      toast.error("Feltöltési hiba: " + error.message);
     } finally {
       setUploading(false);
     }
@@ -185,10 +185,10 @@ const Profile = () => {
       // Skip DB update in setLang since we already updated it
       await setLang(newLang, true);
       
-      toast.success(t('profile.country_updated'));
+      toast.success("Ország frissítve");
     } catch (error) {
       console.error('Failed to update country:', error);
-      toast.error(t('profile.country_error'));
+      toast.error("Ország frissítési hiba");
     }
   };
 
@@ -199,7 +199,7 @@ const Profile = () => {
 
   const handleUsernameSave = async () => {
     if (!newUsername.trim()) {
-      toast.error(t('common.error.username_empty'));
+      toast.error("A felhasználónév nem lehet üres");
       return;
     }
 
@@ -211,7 +211,7 @@ const Profile = () => {
       
       if (daysSinceLastChange < 7) {
         const daysRemaining = Math.ceil(7 - daysSinceLastChange);
-        toast.error(t('common.error.username_cooldown').replace('{days}', daysRemaining.toString()));
+        toast.error(`7 naponta módosítható. Még ${daysRemaining} nap van hátra.`);
         setIsEditingUsername(false);
         return;
       }
@@ -220,7 +220,7 @@ const Profile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error(t('auth.login.not_logged_in'));
+        toast.error("Nincs bejelentkezve");
         return;
       }
 
@@ -232,12 +232,12 @@ const Profile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || t('profile.username_update_failed'));
+        throw new Error(response.error.message || "Felhasználónév frissítés sikertelen");
       }
 
       await updateProfile({ username: newUsername });
       setIsEditingUsername(false);
-      toast.success(t('profile.username_updated'));
+      toast.success("Felhasználónév frissítve");
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -245,19 +245,19 @@ const Profile = () => {
 
   const validatePin = (pin: string): string | null => {
     if (!/^\d{6}$/.test(pin)) {
-      return t('profile.pin.errorInvalidFormat');
+      return "A PIN-nek pontosan 6 számjegyből kell állnia";
     }
     return null;
   };
 
   const handlePinSave = async () => {
     if (!currentPin || !newPin || !confirmPin) {
-      toast.error(t('profile.pin.errorAllRequired'));
+      toast.error("Minden mező kitöltése kötelező");
       return;
     }
 
     if (newPin !== confirmPin) {
-      toast.error(t('profile.pin.errorMismatch'));
+      toast.error("Az új PIN-ek nem egyeznek");
       return;
     }
 
@@ -271,7 +271,7 @@ const Profile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error(t('auth.login.not_logged_in'));
+        toast.error("Nincs bejelentkezve");
         return;
       }
 
@@ -283,7 +283,7 @@ const Profile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || t('profile.pin.errorIncorrectCurrentPin'));
+        throw new Error(response.error.message || "Hibás jelenlegi PIN");
       }
 
       const responseData = response.data;
@@ -294,9 +294,9 @@ const Profile = () => {
       setCurrentPin('');
       setNewPin('');
       setConfirmPin('');
-      toast.success(t('profile.pin.successMessage'));
+      toast.success("PIN sikeresen módosítva");
     } catch (error: any) {
-      toast.error(error.message || t('common.error.generic'));
+      toast.error(error.message || "Általános hiba");
     } finally {
       setIsSaving(false);
     }

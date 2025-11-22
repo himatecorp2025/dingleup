@@ -87,17 +87,17 @@ const Invitation = () => {
       setInvitedCount(invitations?.filter(i => i.accepted).length || 0);
     } catch (error) {
       console.error('Error fetching invitation data:', error);
-      toast.error(t('invitation.load_error'));
+      toast.error("Meghívó adatok betöltése sikertelen");
     }
   };
 
   const copyToClipboard = async (text: string, type: 'code' | 'link') => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success(type === 'code' ? t('invitation.code_copied') : t('invitation.link_copied'));
+      toast.success(type === 'code' ? "Meghívó kód másolva" : "Meghívó link másolva");
     } catch (error) {
       console.error('Error copying:', error);
-      toast.error(t('invitation.copy_error'));
+      toast.error("Másolási hiba");
     }
   };
 

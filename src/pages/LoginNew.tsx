@@ -73,7 +73,7 @@ const LoginNew = () => {
       const savedUsername = username || localStorage.getItem('lastUsername');
       if (!savedUsername) {
         toast({
-          title: t('auth.login.errorTitle'),
+          title: "Hiba",
           description: t('auth.login.noSavedUsername'),
           variant: "destructive",
         });
@@ -85,7 +85,7 @@ const LoginNew = () => {
     } catch (error) {
       console.error('Biometric login failed:', error);
       toast({
-        title: t('auth.login.errorTitle'),
+        title: "Hiba",
         description: t('auth.login.biometricFailed'),
         variant: "destructive",
       });
@@ -112,7 +112,7 @@ const LoginNew = () => {
 
       if (loginError || loginData?.error) {
         toast({
-          title: t('auth.login.errorTitle'),
+          title: "Hiba",
           description: loginData?.error || t('auth.login.errorLoginFailed'),
           variant: "destructive",
         });
@@ -121,7 +121,7 @@ const LoginNew = () => {
 
       if (!loginData?.success || !loginData?.user?.email || !loginData?.passwordVariants) {
         toast({
-          title: t('auth.login.errorTitle'),
+          title: "Hiba",
           description: t('auth.login.errorLoginUnsuccessful'),
           variant: "destructive",
         });
@@ -144,7 +144,7 @@ const LoginNew = () => {
 
       if (!signInSuccess) {
         toast({
-          title: t('auth.login.errorTitle'),
+          title: "Hiba",
           description: t('auth.login.errorInvalidCredentials'),
           variant: "destructive",
         });
@@ -169,7 +169,7 @@ const LoginNew = () => {
       }
 
       toast({
-        title: t('auth.login.successTitle'),
+        title: "Sikeres bejelentkezés!",
         description: t('auth.login.successMessage'),
       });
       navigate("/dashboard");
@@ -185,7 +185,7 @@ const LoginNew = () => {
       } else {
         console.error('Login error:', error);
         toast({
-          title: t('auth.login.errorTitle'),
+          title: "Hiba",
           description: t('auth.login.errorUnexpected'),
           variant: "destructive",
         });
@@ -351,7 +351,7 @@ const LoginNew = () => {
           userId="" // Will be fetched from session
           onSuccess={() => {
             toast({
-              title: t('auth.login.successTitle'),
+              title: "Sikeres bejelentkezés!",
               description: t('auth.login.successMessage'),
             });
           }}
