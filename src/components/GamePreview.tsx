@@ -1286,6 +1286,7 @@ const GamePreview = () => {
                 timeLeft={timeLeft}
                 selectedAnswer={selectedAnswer}
                 firstAttempt={firstAttempt}
+                secondAttempt={secondAttempt}
                 removedAnswer={removedAnswer}
                 audienceVotes={audienceVotes}
                 help5050UsageCount={help5050UsageCount}
