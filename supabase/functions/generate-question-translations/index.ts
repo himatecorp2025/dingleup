@@ -142,21 +142,34 @@ serve(async (req) => {
 
     console.log(`[generate-question-translations] Processing ${questions.length} questions (${offset} - ${offset + questions.length})`);
 
-    // Step 3: Fetch existing translations for this chunk (TARGET languages only, not Hungarian)
+    // Step 3: Fetch existing translations for this chunk
     const questionIds = questions.map(q => q.id);
+    
+    // Fetch existing target language translations
     const { data: existingTranslations } = await supabase
       .from('question_translations')
       .select('question_id, lang')
       .in('question_id', questionIds)
-      .in('lang', TARGET_LANGUAGES); // Only check target languages, ignore Hungarian
+      .in('lang', TARGET_LANGUAGES);
 
     const existingSet = new Set<string>();
     if (existingTranslations) {
       for (const t of existingTranslations) {
-        // Only add to set if it's a target language translation
-        if (TARGET_LANGUAGES.includes(t.lang as LangCode)) {
-          existingSet.add(`${t.question_id}|${t.lang}`);
-        }
+        existingSet.add(`${t.question_id}|${t.lang}`);
+      }
+    }
+
+    // Separately check for Hungarian sources
+    const { data: hungarianTranslations } = await supabase
+      .from('question_translations')
+      .select('question_id')
+      .in('question_id', questionIds)
+      .eq('lang', 'hu');
+    
+    const hungarianSet = new Set<string>();
+    if (hungarianTranslations) {
+      for (const t of hungarianTranslations) {
+        hungarianSet.add(t.question_id);
       }
     }
 
@@ -168,7 +181,7 @@ serve(async (req) => {
 
     // Step 4: Ensure Hungarian source exists for all questions
     for (const question of questions) {
-      if (!existingSet.has(`${question.id}|hu`)) {
+      if (!hungarianSet.has(question.id)) {
         const answers = question.answers as any[];
         await supabase
           .from('question_translations')
