@@ -15,6 +15,7 @@ interface LoadTestRequest {
   delayMs: number;
   scenario: LoadTestScenario;
   mode: LoadTestMode;
+  baseFunctionHeaders?: Record<string, string>;
 }
 
 interface ErrorSample {
@@ -98,14 +99,14 @@ async function scenarioAUserFlow(
   stats: Stats
 ): Promise<void> {
   const user = TEST_USERS[userIndex % TEST_USERS.length];
-  const { baseUrl, requestsPerUser, delayMs } = config;
+  const { baseUrl, requestsPerUser, delayMs, baseFunctionHeaders } = config;
 
   // Login
   const loginResponse = await safeFetch(
     `${baseUrl}/functions/v1/login-with-username-pin`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: baseFunctionHeaders || { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: user.username, pin: user.pin }),
     },
     stats
@@ -119,7 +120,7 @@ async function scenarioAUserFlow(
   if (!token) return;
 
   const authHeaders = {
-    'Content-Type': 'application/json',
+    ...(baseFunctionHeaders || {}),
     'Authorization': `Bearer ${token}`,
   };
 
@@ -172,14 +173,14 @@ async function scenarioBUserFlow(
   stats: Stats
 ): Promise<void> {
   const user = TEST_USERS[userIndex % TEST_USERS.length];
-  const { baseUrl, requestsPerUser, delayMs } = config;
+  const { baseUrl, requestsPerUser, delayMs, baseFunctionHeaders } = config;
 
   // Login
   const loginResponse = await safeFetch(
     `${baseUrl}/functions/v1/login-with-username-pin`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: baseFunctionHeaders || { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: user.username, pin: user.pin }),
     },
     stats
@@ -193,7 +194,7 @@ async function scenarioBUserFlow(
   if (!token) return;
 
   const authHeaders = {
-    'Content-Type': 'application/json',
+    ...(baseFunctionHeaders || {}),
     'Authorization': `Bearer ${token}`,
   };
 
@@ -235,14 +236,14 @@ async function scenarioCUserFlow(
   stats: Stats
 ): Promise<void> {
   const user = TEST_USERS[userIndex % TEST_USERS.length];
-  const { baseUrl, requestsPerUser, delayMs } = config;
+  const { baseUrl, requestsPerUser, delayMs, baseFunctionHeaders } = config;
 
   // Login
   const loginResponse = await safeFetch(
     `${baseUrl}/functions/v1/login-with-username-pin`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: baseFunctionHeaders || { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: user.username, pin: user.pin }),
     },
     stats
@@ -256,7 +257,7 @@ async function scenarioCUserFlow(
   if (!token) return;
 
   const authHeaders = {
-    'Content-Type': 'application/json',
+    ...(baseFunctionHeaders || {}),
     'Authorization': `Bearer ${token}`,
   };
 
@@ -311,7 +312,15 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // Base headers for all function calls (simulating client behavior)
+    const baseFunctionHeaders = {
+      'apikey': supabaseAnonKey,
+      'Authorization': `Bearer ${supabaseAnonKey}`,
+      'Content-Type': 'application/json',
+    };
 
     // Auth check
     const authHeader = req.headers.get('Authorization');
@@ -374,11 +383,11 @@ Deno.serve(async (req) => {
     const promises: Promise<void>[] = [];
     for (let i = 0; i < vus; i++) {
       if (scenario === 'A') {
-        promises.push(scenarioAUserFlow(i, { ...body, vus, requestsPerUser }, stats));
+        promises.push(scenarioAUserFlow(i, { ...body, vus, requestsPerUser, baseFunctionHeaders }, stats));
       } else if (scenario === 'B') {
-        promises.push(scenarioBUserFlow(i, { ...body, vus, requestsPerUser }, stats));
+        promises.push(scenarioBUserFlow(i, { ...body, vus, requestsPerUser, baseFunctionHeaders }, stats));
       } else if (scenario === 'C') {
-        promises.push(scenarioCUserFlow(i, { ...body, vus, requestsPerUser }, stats));
+        promises.push(scenarioCUserFlow(i, { ...body, vus, requestsPerUser, baseFunctionHeaders }, stats));
       }
 
       // Send progress every 100 users
