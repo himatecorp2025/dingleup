@@ -152,6 +152,16 @@ export default {
           "0%, 90%, 100%": { opacity: "0" },
           "5%, 15%": { opacity: "1" },
           "10%": { opacity: "0.3" }
+        },
+        "pulse-fast": {
+          "0%, 100%": {
+            opacity: "1",
+            transform: "scale(1)"
+          },
+          "50%": {
+            opacity: "0.8",
+            transform: "scale(1.05)"
+          }
         }
       },
       animation: {
@@ -164,7 +174,8 @@ export default {
         "shimmer": "shimmer 2s infinite",
         "spin-slow": "spin 3s linear infinite",
         "shine": "shine 3s ease-in-out infinite",
-        "flash": "flash 4s ease-in-out infinite"
+        "flash": "flash 4s ease-in-out infinite",
+        "pulse-fast": "pulse-fast 0.6s ease-in-out infinite"
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',

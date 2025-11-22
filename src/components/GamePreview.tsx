@@ -1050,7 +1050,7 @@ const GamePreview = () => {
       return;
     }
     
-    const cost = helpAudienceUsageCount === 0 ? 0 : 30; // First free, second costs 30 coins
+    const cost = helpAudienceUsageCount === 0 ? 0 : 25; // First free, second costs 25 coins
     
     // Generate audience votes with correct answer >= 65% and highest
     const currentQuestion = questions[currentQuestionIndex];
@@ -1086,7 +1086,7 @@ const GamePreview = () => {
       return;
     }
     
-    // Second usage - costs 30 coins
+    // Second usage - costs 25 coins
     if (helpAudienceUsageCount === 1) {
       if (!profile || profile.coins < cost) {
         toast.error(t('game.not_enough_coins_amount').replace('{amount}', cost.toString()));
