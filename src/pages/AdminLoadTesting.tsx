@@ -235,11 +235,28 @@ const AdminLoadTesting = () => {
               Terheléses tesztelési eredmények, bottleneck azonosítás és optimalizálási javaslatok
             </p>
           </div>
-          <Button>
-            <Play className="mr-2 h-4 w-4" />
-            Run K6 Test
-          </Button>
         </div>
+
+        {/* K6 Test Instructions */}
+        <Alert>
+          <Lightbulb className="h-4 w-4" />
+          <AlertTitle>K6 Terheléses Tesztek Futtatása</AlertTitle>
+          <AlertDescription className="space-y-2 mt-2">
+            <p>A K6 tesztek szerveroldalon futó CLI tool-ok, amelyeket nem lehet közvetlenül böngészőből futtatni. Két külön teszt fájl áll rendelkezésre:</p>
+            <div className="mt-3 space-y-2">
+              <div className="font-medium">📊 Teljes Alkalmazás Teszt:</div>
+              <code className="block bg-muted p-2 rounded text-sm">k6 run k6-comprehensive-load-test.js</code>
+              <p className="text-xs">Teszteli: Login, Regisztráció, Dashboard, Játék, Leaderboard, Profil, Bolt, Daily Rewards</p>
+              
+              <div className="font-medium mt-3">🎮 Játék Komponens Teszt:</div>
+              <code className="block bg-muted p-2 rounded text-sm">k6 run k6-game-load-test.js</code>
+              <p className="text-xs">Teszteli: Játékindítás, Kérdések, Válaszok, Segítségek (50/50, 2x Answer, Audience, Question Swap), Like/Dislike</p>
+              
+              <div className="font-medium mt-3">⚙️ Telepítés:</div>
+              <code className="block bg-muted p-2 rounded text-sm">brew install k6  # MacOS{'\n'}choco install k6  # Windows{'\n'}sudo snap install k6  # Linux</code>
+            </div>
+          </AlertDescription>
+        </Alert>
 
         {/* Capacity Progress Card */}
         <Card className="border-2 border-primary/20">
