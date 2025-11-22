@@ -113,7 +113,7 @@ export const QuestionCard = ({
       {/* Wrapper for Timer + Question + Answers + Help - Vertically centered */}
       <div className="flex-grow flex flex-col justify-center space-y-3 sm:space-y-4">
         {/* Timer */}
-        <GameTimer timeLeft={timeLeft} maxTime={30} />
+        <GameTimer timeLeft={timeLeft} maxTime={10} />
 
         {/* Middle section: Question and Answers with Reaction Bar */}
         <div className="relative flex">
