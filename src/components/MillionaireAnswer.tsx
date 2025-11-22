@@ -188,7 +188,7 @@ export const MillionaireAnswer = ({
         >
           <div className="flex items-center justify-center w-full gap-2 sm:gap-3">
             <div 
-              className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center translate-y-[20%]"
+              className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center translate-y-[23%]"
               style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
             >
               {/* Letter hexagon with same 3D effect as question number */}

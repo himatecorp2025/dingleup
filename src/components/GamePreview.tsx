@@ -569,7 +569,7 @@ const GamePreview = () => {
     
     // Always show banner first - DO NOT check for insufficient coins here
     setErrorBannerVisible(true);
-    setErrorBannerMessage(t('game.timeout_message').replace('{cost}', TIMEOUT_CONTINUE_COST.toString()));
+    setErrorBannerMessage(`Lejárt az idő! Folytatáshoz ${TIMEOUT_CONTINUE_COST} aranyérme szükséges.`);
   };
 
   const shuffleAnswers = (questionSet: any[]): Question[] => {
@@ -717,7 +717,7 @@ const GamePreview = () => {
     // DO NOT check for insufficient coins here - only when they try to continue
     setTimeout(() => {
       setErrorBannerVisible(true);
-      setErrorBannerMessage(t('game.wrong_answer_message').replace('{cost}', CONTINUE_AFTER_WRONG_COST.toString()));
+      setErrorBannerMessage(`Rossz válasz! Folytatáshoz ${CONTINUE_AFTER_WRONG_COST} aranyérme szükséges.`);
     }, 500);
   };
 
@@ -1249,10 +1249,10 @@ const GamePreview = () => {
               <div className="relative text-white px-6 py-3 font-bold text-xs text-center animate-fade-in" style={{ transform: 'translateZ(60px)', textShadow: '0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6), 1px 1px 0 rgba(0,0,0,1), -1px -1px 0 rgba(0,0,0,1), 1px -1px 0 rgba(0,0,0,1), -1px 1px 0 rgba(0,0,0,1)' }}>
                 <div className="mb-1">{errorBannerMessage}</div>
                 <div className="text-[10px] opacity-90">
-                  {t('game.swipe_up_continue').replace('{cost}', (continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST).toString())}
+                  Görgess felfelé a folytatáshoz ({continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} aranyérme)
                 </div>
                 <div className="text-[10px] opacity-90">
-                  {t('game.swipe_down_exit')}
+                  Görgess lefelé a kilépéshez
                 </div>
               </div>
             </div>
