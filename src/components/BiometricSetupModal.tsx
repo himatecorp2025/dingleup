@@ -37,7 +37,7 @@ export function BiometricSetupModal({
   const handleEnableBiometric = async () => {
     if (!isSupported) {
       toast({
-        title: t('biometric.not_supported_title'),
+        title: "A biometrikus hitelesítés nem támogatott",
         description: t('biometric.not_supported_description'),
         variant: 'destructive',
       });
@@ -49,7 +49,7 @@ export function BiometricSetupModal({
       await registerBiometric(username, userId);
       
       toast({
-        title: t('biometric.success_title'),
+        title: "Biometrikus bejelentkezés aktiválva!",
         description: t('biometric.success_description'),
       });
       
@@ -62,7 +62,7 @@ export function BiometricSetupModal({
       if (newAttemptCount >= 2) {
         // After 2 failed attempts, close modal and continue with normal login
         toast({
-          title: t('biometric.setup_failed_title'),
+          title: "Biometrikus beállítás sikertelen",
           description: t('biometric.setup_failed_description'),
           variant: 'destructive',
         });
@@ -76,7 +76,7 @@ export function BiometricSetupModal({
 
   const handleSkip = () => {
     toast({
-      title: t('biometric.skipped_title'),
+      title: "Biometrikus hitelesítés kihagyva",
       description: t('biometric.skipped_description'),
     });
     onClose();

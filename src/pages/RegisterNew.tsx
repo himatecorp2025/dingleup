@@ -72,7 +72,7 @@ const RegisterNew = () => {
 
       if (regError || regData?.error) {
         toast({
-          title: t('auth.register.errorTitle'),
+          title: "Hiba",
           description: regData?.error || t('auth.register.errorRegisterFailed'),
           variant: "destructive",
         });
@@ -81,7 +81,7 @@ const RegisterNew = () => {
 
       if (!regData?.success || !regData?.user) {
         toast({
-          title: t('auth.register.errorTitle'),
+          title: "Hiba",
           description: t('auth.register.errorRegisterUnsuccessful'),
           variant: "destructive",
         });
@@ -98,7 +98,7 @@ const RegisterNew = () => {
       if (signInError) {
         console.error('Auto-login error:', signInError);
         toast({
-          title: t('auth.register.successTitle'),
+          title: "Sikeres regisztráció!",
           description: t('auth.register.successPleaseLogin'),
         });
         navigate('/auth/login');
@@ -123,7 +123,7 @@ const RegisterNew = () => {
       } else {
         console.error('Registration error:', error);
         toast({
-          title: t('auth.register.errorTitle'),
+          title: "Hiba",
           description: t('auth.register.errorUnexpected'),
           variant: "destructive",
         });
@@ -282,7 +282,7 @@ const RegisterNew = () => {
           userId={registeredUser.userId}
           onSuccess={() => {
             toast({
-              title: t('auth.register.successTitle'),
+              title: "Sikeres regisztráció!",
               description: t('auth.register.successMessage'),
             });
           }}
