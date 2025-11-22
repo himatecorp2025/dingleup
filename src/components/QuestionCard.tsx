@@ -183,7 +183,7 @@ export const QuestionCard = ({
 
         {/* Bottom section: Help buttons - aligned with reaction buttons */}
         <div className="fixed left-1/2 -translate-x-1/2 z-10" style={{ 
-          bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px) + 8vh)'
+          bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))'
         }}>
           <GameLifelines
             help5050UsageCount={help5050UsageCount}
