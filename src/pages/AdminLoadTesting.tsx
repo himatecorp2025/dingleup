@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { 
   Activity, 
   AlertTriangle, 
@@ -19,7 +21,8 @@ import {
   XCircle,
   Lightbulb,
   Play,
-  BarChart3
+  BarChart3,
+  Loader2
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
@@ -53,7 +56,35 @@ interface OptimizationTask {
 
 const AdminLoadTesting = () => {
   const [selectedTab, setSelectedTab] = useState("overview");
+  const [isRunningTest, setIsRunningTest] = useState(false);
   const { latestResult, bottlenecks, optimizations, loading } = useLoadTestResults();
+
+  const handleStartTest = async () => {
+    setIsRunningTest(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('run-load-test', {
+        body: {
+          targetUsersPerMinute: 10000,
+          durationMinutes: 5,
+          testTypes: ['auth', 'game', 'dashboard', 'leaderboard'],
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success('Load test indítva!', {
+        description: `Test ID: ${data.testId}. Az eredmények 5 perc múlva lesznek elérhetők.`,
+      });
+    } catch (error: any) {
+      console.error('Load test error:', error);
+      toast.error('Hiba a teszt indításakor', {
+        description: error.message,
+      });
+    } finally {
+      setIsRunningTest(false);
+    }
+  };
 
   // Calculate capacity from latest result or use optimized baseline
   const currentCapacity = latestResult?.current_capacity || 8500; // Post-optimization baseline
@@ -160,6 +191,24 @@ const AdminLoadTesting = () => {
               Terheléses tesztelési eredmények, bottleneck azonosítás és optimalizálási javaslatok
             </p>
           </div>
+          <Button 
+            onClick={handleStartTest} 
+            disabled={isRunningTest}
+            size="lg"
+            className="bg-primary hover:bg-primary/90"
+          >
+            {isRunningTest ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Teszt fut...
+              </>
+            ) : (
+              <>
+                <Play className="mr-2 h-5 w-5" />
+                Load Teszt Indítása
+              </>
+            )}
+          </Button>
         </div>
 
         {/* K6 Test Instructions */}
