@@ -82,7 +82,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       </svg>
       
       <div 
-        className="absolute top-[20%] bottom-[20%] left-0 right-0 flex items-center justify-center px-3 sm:px-4 md:px-5 translate-y-[10%]"
+        className="absolute top-[20%] bottom-[20%] left-0 right-0 flex items-center justify-center px-3 sm:px-4 md:px-5 translate-y-[15%]"
       >
         <div className="flex items-center justify-center w-full gap-2 sm:gap-3">
           <div 
