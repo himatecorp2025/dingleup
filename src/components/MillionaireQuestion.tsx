@@ -7,60 +7,82 @@ interface MillionaireQuestionProps {
 
 export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
   return (
-    <div className="relative w-full mb-3" style={{ perspective: '1200px', transformStyle: 'preserve-3d', minHeight: '100px' }}>
-      {/* BASE SHADOW - Enhanced */}
-      <div className="absolute inset-0 bg-background/80 rounded-2xl" style={{ transform: 'translate(8px, 8px) translateZ(-10px)', filter: 'blur(12px)', clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)' }} aria-hidden />
-      
-      {/* OUTER FRAME - Enhanced */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary opacity-95 border-4 border-primary/90 shadow-2xl"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          transform: 'translateZ(0px)',
-          boxShadow: '0 0 30px hsl(var(--primary) / 0.6), 0 15px 40px hsl(var(--background) / 0.7), inset 0 2px 8px hsl(var(--primary-foreground) / 0.4)'
-        }}
+    <div className="relative w-full mb-3" style={{ minHeight: '100px' }}>
+      {/* SVG Background */}
+      <svg 
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="22.53058 -47.5814116 672.82399 250"
+        fill="none"
+        shapeRendering="geometricPrecision"
+        colorInterpolationFilters="sRGB"
+        className="absolute inset-0 w-full h-auto"
+        preserveAspectRatio="none"
         aria-hidden
-      />
-      
-      {/* MIDDLE FRAME - Enhanced */}
-      <div 
-        className="absolute inset-[4px] bg-gradient-to-b from-background/60 via-transparent to-background/80"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          boxShadow: 'inset 0 3px 6px hsl(var(--primary-foreground) / 0.4), inset 0 -3px 6px hsl(var(--background) / 0.6)',
-          transform: 'translateZ(15px)'
-        }}
-        aria-hidden
-      />
-      
-      {/* INNER LAYER - Enhanced */}
-      <div 
-        className="absolute inset-[6px] bg-gradient-to-br from-muted/90 to-background/90"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)',
-          transform: 'translateZ(25px)'
-        }}
-        aria-hidden
-      />
-      
-      {/* SPECULAR HIGHLIGHT - Enhanced */}
-      <div 
-        className="absolute inset-[6px] pointer-events-none"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          background: 'radial-gradient(ellipse 120% 80% at 40% 10%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
-          transform: 'translateZ(35px)'
-        }}
-        aria-hidden
-      />
+      >
+        <defs>
+          <path id="HEX_Q" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+
+          <linearGradient id="bg_q" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#191534"/>
+            <stop offset="100%" stopColor="#0e0b1c"/>
+          </linearGradient>
+
+          <linearGradient id="chromeGrad_q" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#f8fbff"/>
+            <stop offset="10%" stopColor="#c6ccd3"/>
+            <stop offset="22%" stopColor="#ffffff"/>
+            <stop offset="40%" stopColor="#9ea6b0"/>
+            <stop offset="58%" stopColor="#e7ebf0"/>
+            <stop offset="78%" stopColor="#bfc6cf"/>
+            <stop offset="100%" stopColor="#ffffff"/>
+          </linearGradient>
+
+          <linearGradient id="band20_q" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#BFE0FF"/>
+            <stop offset="35%" stopColor="#2196F3"/>
+            <stop offset="100%" stopColor="#0B5DB8"/>
+          </linearGradient>
+
+          <linearGradient id="band5_q" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#E6F2FF"/>
+            <stop offset="50%" stopColor="#5AB6FF"/>
+            <stop offset="100%" stopColor="#1E74D6"/>
+          </linearGradient>
+
+          <filter id="pro3d_q" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
+            <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
+          </filter>
+
+          <mask id="maskOuterOnly_q" maskUnits="userSpaceOnUse">
+            <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
+            <use href="#HEX_Q" stroke="white" strokeWidth="2" fill="none"/>
+            <use href="#HEX_Q" stroke="black" strokeWidth="25" fill="none"/>
+          </mask>
+        </defs>
+
+        <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
+
+        <g transform="scale(1,1.44)">
+          <use href="#HEX_Q" fill="black" fillOpacity="0.5"/>
+
+          <use href="#HEX_Q" fill="none" stroke="url(#band20_q)" strokeWidth="20"
+               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_q)"
+               vectorEffect="non-scaling-stroke"/>
+
+          <use href="#HEX_Q" fill="none" stroke="url(#band5_q)" strokeWidth="5"
+               strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_q)"
+               vectorEffect="non-scaling-stroke"/>
+
+          <g mask="url(#maskOuterOnly_q)">
+            <use href="#HEX_Q" fill="none" stroke="url(#chromeGrad_q)" strokeWidth="2"
+                 strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
+          </g>
+        </g>
+      </svg>
       
       <div 
         className="relative px-3 sm:px-4 md:px-5 py-[32px] sm:py-[40px] md:py-[48px] text-foreground"
-        style={{
-          clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)',
-          transform: 'translateZ(40px)'
-        }}
       >
         <div className="flex items-center justify-center w-full">
           <div 
