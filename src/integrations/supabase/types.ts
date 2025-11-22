@@ -1291,6 +1291,36 @@ export type Database = {
           },
         ]
       }
+      leaderboard_cache: {
+        Row: {
+          avatar_url: string | null
+          cached_at: string | null
+          country_code: string
+          rank: number
+          total_correct_answers: number
+          user_id: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          cached_at?: string | null
+          country_code: string
+          rank: number
+          total_correct_answers: number
+          user_id: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          cached_at?: string | null
+          country_code?: string
+          rank?: number
+          total_correct_answers?: number
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
       leaderboard_public_cache: {
         Row: {
           avatar_url: string | null
@@ -3571,6 +3601,7 @@ export type Database = {
         Args: { p_cost?: number; p_help_type: string }
         Returns: Json
       }
+      refresh_leaderboard_cache: { Args: never; Returns: undefined }
       refresh_leaderboard_public_cache: { Args: never; Returns: undefined }
       regenerate_invitation_code: { Args: never; Returns: string }
       regenerate_lives: { Args: never; Returns: undefined }
