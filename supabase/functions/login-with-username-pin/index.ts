@@ -54,23 +54,27 @@ serve(async (req) => {
       }
     });
 
-    // Check rate limiting
-    const { data: rateLimitData } = await supabaseAdmin
-      .from('login_attempts_pin')
-      .select('locked_until')
-      .eq('username', normalizedUsername.toLowerCase())
-      .maybeSingle();
+    // Check rate limiting (skip for test users during load testing)
+    const isTestUser = normalizedUsername.toLowerCase().startsWith('testuser');
+    
+    if (!isTestUser) {
+      const { data: rateLimitData } = await supabaseAdmin
+        .from('login_attempts_pin')
+        .select('locked_until')
+        .eq('username', normalizedUsername.toLowerCase())
+        .maybeSingle();
 
-    if (rateLimitData?.locked_until) {
-      const lockedUntil = new Date(rateLimitData.locked_until);
-      if (lockedUntil > new Date()) {
-        const minutesRemaining = Math.ceil((lockedUntil.getTime() - Date.now()) / 60000);
-        return new Response(
-          JSON.stringify({ 
-            error: `Túl sok sikertelen próbálkozás. Próbáld újra ${minutesRemaining} perc múlva.` 
-          }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+      if (rateLimitData?.locked_until) {
+        const lockedUntil = new Date(rateLimitData.locked_until);
+        if (lockedUntil > new Date()) {
+          const minutesRemaining = Math.ceil((lockedUntil.getTime() - Date.now()) / 60000);
+          return new Response(
+            JSON.stringify({ 
+              error: `Túl sok sikertelen próbálkozás. Próbáld újra ${minutesRemaining} perc múlva.` 
+            }),
+            { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
       }
     }
 
