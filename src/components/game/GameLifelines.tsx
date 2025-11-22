@@ -154,7 +154,7 @@ const Lifeline3DButton = ({
       {/* ICON AND LABEL */}
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5" style={{ transform: 'translateZ(32px)' }}>
         <Icon 
-          className="w-5 h-5 transition-all duration-300" 
+          className="w-6 h-6 transition-all duration-300" 
           style={{ 
             color: color,
             filter: `drop-shadow(0 0 8px ${glowColor})`,
@@ -162,14 +162,28 @@ const Lifeline3DButton = ({
           }} 
         />
         <span 
-          className="text-[10px] font-bold transition-all duration-300" 
+          className="text-xs font-bold transition-all duration-300" 
           style={{ 
             color: color,
             textShadow: `0 0 10px ${glowColor}`,
             opacity: disabled ? 0.5 : 1
           }}
         >
-          {cost !== undefined ? cost : (label || '')}
+          {cost !== undefined ? (
+            <div className="flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="url(#goldGradient)" stroke="#FFD700" strokeWidth="1"/>
+                <defs>
+                  <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="24">
+                    <stop offset="0%" stopColor="#FFD700"/>
+                    <stop offset="50%" stopColor="#FFA500"/>
+                    <stop offset="100%" stopColor="#FF8C00"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <span>{cost}</span>
+            </div>
+          ) : (label || '')}
         </span>
       </div>
     </button>
@@ -194,29 +208,32 @@ export const GameLifelines = ({
   const { t } = useI18n();
   
   return (
-    <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2 mt-12">
+    <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2 mt-16">
       <Lifeline3DButton
         onClick={onUseHelp5050}
-        disabled={help5050UsageCount >= 3}
+        disabled={help5050UsageCount >= 2}
         isActive={isHelp5050ActiveThisQuestion}
         icon={CircleSlash}
         label="1/3"
+        cost={help5050UsageCount === 1 ? 15 : undefined}
         colorScheme="orange"
       />
       <Lifeline3DButton
         onClick={onUseHelp2xAnswer}
-        disabled={help2xAnswerUsageCount >= 3}
+        disabled={help2xAnswerUsageCount >= 2}
         isActive={isDoubleAnswerActiveThisQuestion}
         icon={CheckCheck}
         label="2x"
+        cost={help2xAnswerUsageCount === 1 ? 20 : undefined}
         colorScheme="green"
       />
       <Lifeline3DButton
         onClick={onUseHelpAudience}
-        disabled={helpAudienceUsageCount >= 3}
+        disabled={helpAudienceUsageCount >= 2}
         isActive={isAudienceActiveThisQuestion}
         icon={Users}
         label={t('game.lifeline_audience')}
+        cost={helpAudienceUsageCount === 1 ? 25 : undefined}
         colorScheme="blue"
       />
       <Lifeline3DButton

@@ -77,7 +77,7 @@ export const MillionaireAnswer = ({
           fill="none"
           shapeRendering="geometricPrecision"
           colorInterpolationFilters="sRGB"
-          className={`absolute inset-0 w-full h-auto pointer-events-none ${showCorrectPulse || isCorrect ? 'animate-pulse' : ''}`}
+          className={`absolute inset-0 w-full h-auto pointer-events-none ${showCorrectPulse || isCorrect ? 'animate-pulse-fast' : ''}`}
           preserveAspectRatio="none"
           aria-hidden
         >
