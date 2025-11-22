@@ -20,11 +20,11 @@ const LANGUAGE_NAMES: Record<LangCode, string> = {
 };
 
 const TARGET_LANGUAGES: LangCode[] = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
-const BATCH_SIZE = 10; // Increased batch size for faster processing
-const DELAY_BETWEEN_BATCHES = 3000; // 3 seconds delay
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 10000; // 10 seconds between retries
-const MAX_QUESTIONS_PER_RUN = 3; // CRITICAL: Conservative limit to stay under 60s edge function timeout (3 questions × 7 languages × ~2s ≈ 42s)
+const BATCH_SIZE = 5; // Conservative batch size
+const DELAY_BETWEEN_BATCHES = 1000; // 1 second delay
+const MAX_RETRIES = 2; // Reduced retries to save time
+const RETRY_DELAY = 5000; // 5 seconds between retries
+const MAX_QUESTIONS_PER_RUN = 1; // CRITICAL: Ultra-conservative - only 1 question per run to prevent CPU timeout
 
 async function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -190,18 +190,28 @@ serve(async (req) => {
       }
     }
 
+    // OPTIMIZED: Batch-fetch all existing translations at once
+    const questionIds = allQuestions.map(q => q.id);
+    const { data: existingTranslations } = await supabase
+      .from('question_translations')
+      .select('question_id, lang')
+      .in('question_id', questionIds)
+      .in('lang', TARGET_LANGUAGES);
+
+    // Create a Set for fast lookup: "questionId|lang"
+    const existingSet = new Set<string>();
+    if (existingTranslations) {
+      for (const t of existingTranslations) {
+        existingSet.add(`${t.question_id}|${t.lang}`);
+      }
+    }
+
     // Filter to questions that need translation (missing at least one target language)
     const questionsNeedingTranslation: typeof allQuestions = [];
     for (const q of allQuestions) {
       let needsTranslation = false;
       for (const lang of TARGET_LANGUAGES) {
-        const { data: existing } = await supabase
-          .from('question_translations')
-          .select('id')
-          .eq('question_id', q.id)
-          .eq('lang', lang)
-          .single();
-        if (!existing) {
+        if (!existingSet.has(`${q.id}|${lang}`)) {
           needsTranslation = true;
           break;
         }
@@ -299,15 +309,8 @@ serve(async (req) => {
         // Translate to each target language
         for (const lang of TARGET_LANGUAGES) {
           try {
-            // Check if translation exists
-            const { data: existing } = await supabase
-              .from('question_translations')
-              .select('id')
-              .eq('question_id', question.id)
-              .eq('lang', lang)
-              .single();
-
-            if (existing) {
+            // OPTIMIZED: Check existence using pre-fetched Set
+            if (existingSet.has(`${question.id}|${lang}`)) {
               skippedCount++;
               continue;
             }
