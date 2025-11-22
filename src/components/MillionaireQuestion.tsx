@@ -89,8 +89,87 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
             className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
             style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
           >
-            {/* Number badge 3D */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary border-2 border-primary" style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)', boxShadow: 'inset 0 2px 4px hsl(var(--primary-foreground) / 0.3), inset 0 -2px 4px hsl(var(--background) / 0.3)' }} aria-hidden />
+            {/* BASE SHADOW (3D depth) */}
+            <div
+              className="absolute"
+              style={{
+                top: '2px',
+                left: '2px',
+                right: '-2px',
+                bottom: '-2px',
+                background: 'rgba(0,0,0,0.35)',
+                filter: 'blur(3px)',
+                clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)'
+              }}
+              aria-hidden
+            />
+
+            {/* OUTER FRAME - gradient with border */}
+            <div
+              className="absolute inset-0 bg-gradient-to-br from-primary-dark via-primary to-primary-darker border-2 border-primary"
+              style={{ 
+                clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)',
+                boxShadow: '0 0 20px hsl(var(--primary)/0.6), 0 8px 25px rgba(0,0,0,0.5)'
+              }}
+              aria-hidden
+            />
+
+            {/* MIDDLE FRAME (bright inner highlight) */}
+            <div
+              className="absolute bg-gradient-to-b from-primary via-primary-glow to-primary-dark"
+              style={{ 
+                top: '2px',
+                left: '2px',
+                right: '2px',
+                bottom: '2px',
+                clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)',
+                boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.15)' 
+              }}
+              aria-hidden
+            />
+
+            {/* INNER CRYSTAL/COLOR LAYER */}
+            <div
+              className="absolute bg-gradient-to-b from-primary-glow via-primary to-primary-dark"
+              style={{
+                top: '3px',
+                left: '3px',
+                right: '3px',
+                bottom: '3px',
+                clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)',
+                boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.15)',
+              }}
+              aria-hidden
+            />
+
+            {/* SPECULAR HIGHLIGHT (top-left) */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: '3px',
+                left: '3px',
+                right: '3px',
+                bottom: '3px',
+                clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)',
+                background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)',
+              }}
+              aria-hidden
+            />
+
+            {/* INNER GLOW (bottom shadow for 3D depth) */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: '3px',
+                left: '3px',
+                right: '3px',
+                bottom: '3px',
+                clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)',
+                boxShadow: 'inset 0 0 5px rgba(0,0,0,0.125)',
+              }}
+              aria-hidden
+            />
+
             {typeof questionNumber === 'number' && (
               <span className="relative z-10 text-primary-foreground font-bold text-[10px] sm:text-xs leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{questionNumber}/15</span>
             )}
