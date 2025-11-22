@@ -67,17 +67,17 @@ export const MillionaireAnswer = ({
       <button
         onClick={onClick}
         disabled={disabled}
-        className={`w-[90%] relative ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'} transition-transform duration-300 ${showCorrectPulse || isCorrect ? 'animate-pulse' : ''}`}
+        className={`w-[90%] relative ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'} transition-transform duration-300`}
         style={{ minHeight: '72px' }}
       >
-        {/* SVG Background */}
+        {/* SVG Background with fast pulse animation on correct answer */}
         <svg 
           xmlns="http://www.w3.org/2000/svg"
           viewBox="22.53058 -47.5814116 672.82399 250"
           fill="none"
           shapeRendering="geometricPrecision"
           colorInterpolationFilters="sRGB"
-          className="absolute inset-0 w-full h-auto pointer-events-none"
+          className={`absolute inset-0 w-full h-auto pointer-events-none ${showCorrectPulse || isCorrect ? 'animate-pulse' : ''}`}
           preserveAspectRatio="none"
           aria-hidden
         >

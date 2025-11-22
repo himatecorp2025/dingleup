@@ -1,4 +1,4 @@
-import { RefreshCw, Users, SkipForward, Slash } from "lucide-react";
+import { Users, SkipForward, CircleSlash, CheckCheck } from "lucide-react";
 import { useI18n } from "@/i18n";
 
 interface GameLifelinesProps {
@@ -23,7 +23,8 @@ const Lifeline3DButton = ({
   isActive, 
   icon: Icon, 
   label, 
-  cost 
+  cost,
+  colorScheme = 'purple'
 }: { 
   onClick: () => void;
   disabled: boolean;
@@ -31,35 +32,55 @@ const Lifeline3DButton = ({
   icon: React.ElementType;
   label?: string;
   cost?: number;
+  colorScheme?: 'orange' | 'green' | 'blue' | 'red' | 'purple';
 }) => {
-  const getColor = () => {
-    if (isActive) return "hsl(var(--primary))";
-    if (disabled) return "hsl(var(--muted-foreground))";
-    return "hsl(var(--primary))";
+  const getColorsByScheme = () => {
+    if (disabled) {
+      return {
+        color: "hsl(var(--muted-foreground))",
+        glow: "rgba(100, 100, 100, 0.3)",
+        gradient: "linear-gradient(135deg, #505050 0%, #3a3a3a 50%, #2a2a2a 100%)",
+        innerGradient: "radial-gradient(circle at 30% 30%, rgba(80, 80, 90, 1) 0%, rgba(50, 50, 60, 1) 40%, rgba(30, 30, 40, 1) 100%)"
+      };
+    }
+    
+    const schemes = {
+      orange: {
+        color: isActive ? "#FF8C00" : "#FFA500",
+        glow: isActive ? "rgba(255, 140, 0, 0.9)" : "rgba(255, 165, 0, 0.6)",
+        gradient: isActive ? "linear-gradient(135deg, #FF8C00 0%, #FF6B00 50%, #FF4500 100%)" : "linear-gradient(135deg, #FFB84D 0%, #FF8C00 50%, #FF6B00 100%)",
+        innerGradient: isActive ? "radial-gradient(circle at 30% 30%, rgba(255, 140, 0, 1) 0%, rgba(255, 107, 0, 1) 40%, rgba(255, 69, 0, 1) 100%)" : "radial-gradient(circle at 30% 30%, rgba(255, 184, 77, 1) 0%, rgba(255, 140, 0, 1) 40%, rgba(255, 107, 0, 1) 100%)"
+      },
+      green: {
+        color: isActive ? "#10B981" : "#34D399",
+        glow: isActive ? "rgba(16, 185, 129, 0.9)" : "rgba(52, 211, 153, 0.6)",
+        gradient: isActive ? "linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%)" : "linear-gradient(135deg, #6EE7B7 0%, #10B981 50%, #059669 100%)",
+        innerGradient: isActive ? "radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 1) 0%, rgba(5, 150, 105, 1) 40%, rgba(4, 120, 87, 1) 100%)" : "radial-gradient(circle at 30% 30%, rgba(110, 231, 183, 1) 0%, rgba(16, 185, 129, 1) 40%, rgba(5, 150, 105, 1) 100%)"
+      },
+      blue: {
+        color: isActive ? "#3B82F6" : "#60A5FA",
+        glow: isActive ? "rgba(59, 130, 246, 0.9)" : "rgba(96, 165, 250, 0.6)",
+        gradient: isActive ? "linear-gradient(135deg, #3B82F6 0%, #2563EB 50%, #1D4ED8 100%)" : "linear-gradient(135deg, #93C5FD 0%, #3B82F6 50%, #2563EB 100%)",
+        innerGradient: isActive ? "radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 1) 0%, rgba(37, 99, 235, 1) 40%, rgba(29, 78, 216, 1) 100%)" : "radial-gradient(circle at 30% 30%, rgba(147, 197, 253, 1) 0%, rgba(59, 130, 246, 1) 40%, rgba(37, 99, 235, 1) 100%)"
+      },
+      red: {
+        color: isActive ? "#EF4444" : "#F87171",
+        glow: isActive ? "rgba(239, 68, 68, 0.9)" : "rgba(248, 113, 113, 0.6)",
+        gradient: isActive ? "linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)" : "linear-gradient(135deg, #FCA5A5 0%, #EF4444 50%, #DC2626 100%)",
+        innerGradient: isActive ? "radial-gradient(circle at 30% 30%, rgba(239, 68, 68, 1) 0%, rgba(220, 38, 38, 1) 40%, rgba(185, 28, 28, 1) 100%)" : "radial-gradient(circle at 30% 30%, rgba(252, 165, 165, 1) 0%, rgba(239, 68, 68, 1) 40%, rgba(220, 38, 38, 1) 100%)"
+      },
+      purple: {
+        color: isActive ? "#9C27F3" : "#B85AFF",
+        glow: isActive ? "rgba(156, 39, 243, 0.9)" : "rgba(184, 90, 255, 0.6)",
+        gradient: isActive ? "linear-gradient(135deg, #9C27F3 0%, #7B1ED6 50%, #6A0BB8 100%)" : "linear-gradient(135deg, #B85AFF 0%, #9C27F3 50%, #7B1ED6 100%)",
+        innerGradient: isActive ? "radial-gradient(circle at 30% 30%, rgba(156, 39, 243, 1) 0%, rgba(123, 30, 214, 1) 40%, rgba(106, 11, 184, 1) 100%)" : "radial-gradient(circle at 30% 30%, rgba(184, 90, 255, 1) 0%, rgba(156, 39, 243, 1) 40%, rgba(123, 30, 214, 1) 100%)"
+      }
+    };
+    
+    return schemes[colorScheme];
   };
 
-  const getGlow = () => {
-    if (isActive) return "rgba(156, 39, 243, 0.9)";
-    if (disabled) return "rgba(100, 100, 100, 0.3)";
-    return "rgba(156, 39, 243, 0.6)";
-  };
-  
-  const getGradient = () => {
-    if (isActive) return "linear-gradient(135deg, #9C27F3 0%, #7B1ED6 50%, #6A0BB8 100%)";
-    if (disabled) return "linear-gradient(135deg, #505050 0%, #3a3a3a 50%, #2a2a2a 100%)";
-    return "linear-gradient(135deg, #B85AFF 0%, #9C27F3 50%, #7B1ED6 100%)";
-  };
-  
-  const getInnerGradient = () => {
-    if (isActive) return "radial-gradient(circle at 30% 30%, rgba(156, 39, 243, 1) 0%, rgba(123, 30, 214, 1) 40%, rgba(106, 11, 184, 1) 100%)";
-    if (disabled) return "radial-gradient(circle at 30% 30%, rgba(80, 80, 90, 1) 0%, rgba(50, 50, 60, 1) 40%, rgba(30, 30, 40, 1) 100%)";
-    return "radial-gradient(circle at 30% 30%, rgba(184, 90, 255, 1) 0%, rgba(156, 39, 243, 1) 40%, rgba(123, 30, 214, 1) 100%)";
-  };
-
-  const color = getColor();
-  const glowColor = getGlow();
-  const gradient = getGradient();
-  const innerGradient = getInnerGradient();
+  const { color, glow: glowColor, gradient, innerGradient } = getColorsByScheme();
 
   return (
     <button
@@ -173,20 +194,22 @@ export const GameLifelines = ({
   const { t } = useI18n();
   
   return (
-    <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2 mt-6">
+    <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2 mt-12">
       <Lifeline3DButton
         onClick={onUseHelp5050}
         disabled={help5050UsageCount >= 3}
         isActive={isHelp5050ActiveThisQuestion}
-        icon={Slash}
+        icon={CircleSlash}
         label="1/3"
+        colorScheme="orange"
       />
       <Lifeline3DButton
         onClick={onUseHelp2xAnswer}
         disabled={help2xAnswerUsageCount >= 3}
         isActive={isDoubleAnswerActiveThisQuestion}
-        icon={RefreshCw}
+        icon={CheckCheck}
         label="2x"
+        colorScheme="green"
       />
       <Lifeline3DButton
         onClick={onUseHelpAudience}
@@ -194,6 +217,7 @@ export const GameLifelines = ({
         isActive={isAudienceActiveThisQuestion}
         icon={Users}
         label={t('game.lifeline_audience')}
+        colorScheme="blue"
       />
       <Lifeline3DButton
         onClick={onUseQuestionSwap}
@@ -201,6 +225,7 @@ export const GameLifelines = ({
         isActive={false}
         icon={SkipForward}
         cost={skipCost}
+        colorScheme="red"
       />
     </div>
   );
