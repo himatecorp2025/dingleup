@@ -1,7 +1,9 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { LangCode, TranslationMap, I18nContextValue } from './types';
-import { VALID_LANGUAGES, DEFAULT_LANG, SOURCE_LANG, STORAGE_KEY, COUNTRY_TO_LANG } from './constants';
+import { VALID_LANGUAGES, DEFAULT_LANG, SOURCE_LANG, STORAGE_KEY } from './constants';
+import { resolveLangFromCountry, ALLOWED_LANGS } from '@/lib/i18n/langMapping';
+import { resolveInitialLang } from '@/lib/i18n/resolveInitialLang';
 
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
@@ -108,43 +110,38 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
       }
 
-      // 1. Get user profile with country_code and preferred_language
+      // 1. Get user profile with preferred_language
       const { data: { user } } = await supabase.auth.getUser();
       let targetLang: LangCode = DEFAULT_LANG;
 
       if (user) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('country_code, preferred_language')
+          .select('preferred_language, preferred_country')
           .eq('id', user.id)
           .single();
 
         if (profile) {
-          // Determine language from country_code
-          const langFromCountry = profile.country_code ? (COUNTRY_TO_LANG[profile.country_code] || DEFAULT_LANG) : DEFAULT_LANG;
+          // Use resolveInitialLang with user's preferred_language
+          targetLang = resolveInitialLang({ 
+            loggedInUserPreferredLanguage: profile.preferred_language 
+          });
           
-          // If preferred_language differs from country-based language, sync them
-          if (profile.preferred_language !== langFromCountry) {
+          // If no preferred_language set, derive from country
+          if (!profile.preferred_language && profile.preferred_country) {
+            targetLang = resolveLangFromCountry(profile.preferred_country);
+            // Update database with derived language
             await supabase
               .from('profiles')
-              .update({ preferred_language: langFromCountry })
+              .update({ preferred_language: targetLang })
               .eq('id', user.id);
-            
-            targetLang = langFromCountry;
-          } else if (profile.preferred_language && VALID_LANGUAGES.includes(profile.preferred_language as LangCode)) {
-            targetLang = profile.preferred_language as LangCode;
-          } else {
-            targetLang = langFromCountry;
           }
           
           localStorage.setItem(STORAGE_KEY, targetLang);
         }
       } else {
-        // No user logged in, check localStorage
-        const storedLang = localStorage.getItem(STORAGE_KEY);
-        if (storedLang && VALID_LANGUAGES.includes(storedLang as LangCode)) {
-          targetLang = storedLang as LangCode;
-        }
+        // No user logged in - use resolveInitialLang with localStorage fallback
+        targetLang = resolveInitialLang({ loggedInUserPreferredLanguage: null });
       }
 
       setLangState(targetLang);
@@ -169,7 +166,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
       }
     } catch (error) {
       console.error('[I18n] Language initialization failed:', error);
-      // Fallback to default with cache check
+      // Fallback to default (en) with cache check
       setLangState(DEFAULT_LANG);
       const cachedTranslations = getCachedTranslations(DEFAULT_LANG);
       if (cachedTranslations && Object.keys(cachedTranslations).length > 0) {
@@ -187,7 +184,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   }, []);
 
   const setLang = async (newLang: LangCode, skipDbUpdate = false) => {
-    if (!VALID_LANGUAGES.includes(newLang)) {
+    if (!ALLOWED_LANGS.includes(newLang)) {
       console.warn(`[I18n] Invalid language code: ${newLang}`);
       return;
     }

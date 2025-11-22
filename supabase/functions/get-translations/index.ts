@@ -52,7 +52,7 @@ serve(async (req) => {
     for (let offset = 0; offset < totalCount; offset += batchSize) {
       const { data: batch, error: batchError } = await supabase
         .from('translations')
-        .select(`key, hu, ${lang}`)
+        .select(`key, hu, en, ${lang}`)
         .order('key')
         .range(offset, offset + batchSize - 1);
 
@@ -76,17 +76,24 @@ serve(async (req) => {
 
     console.log('[get-translations] Fetched', allTranslations.length, 'translations total');
 
-    // Build translation map with fallback to Hungarian
+    // Build translation map with fallback chain: target → en → hu
     const translationMap: Record<string, string> = {};
     
     for (const row of allTranslations) {
       const key = row.key;
       const rowData = row as any; // Type assertion for dynamic column access
       const targetLangText = rowData[lang] as string | null;
-      const fallbackText = row.hu; // Hungarian is always the source/fallback
+      const englishText = row.en as string | null;
+      const hungarianText = row.hu; // Hungarian is always the source
       
-      // Use target language if available, otherwise fallback to Hungarian
-      translationMap[key] = targetLangText || fallbackText || key;
+      // Fallback chain: target language → English → Hungarian → key
+      if (targetLangText && targetLangText.trim() !== '') {
+        translationMap[key] = targetLangText;
+      } else if (englishText && englishText.trim() !== '') {
+        translationMap[key] = englishText;
+      } else {
+        translationMap[key] = hungarianText || key;
+      }
     }
 
     console.log('[get-translations] Returning', Object.keys(translationMap).length, 'translations');
