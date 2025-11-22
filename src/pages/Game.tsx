@@ -8,12 +8,13 @@ import { useAudioStore } from "@/stores/audioStore";
 import { ScreenshotProtection } from "@/components/ScreenshotProtection";
 import { GameErrorBoundary } from "@/components/GameErrorBoundary";
 import { useI18n } from "@/i18n";
+import AudioManager from "@/lib/audioManager";
 
 const Game = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [loadTimeout, setLoadTimeout] = useState(false);
   const navigate = useNavigate();
-  const { loaded } = useAudioStore();
+  const { musicEnabled, volume, loaded } = useAudioStore();
   const { t } = useI18n();
 
   useEffect(() => {
@@ -25,7 +26,32 @@ const Game = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Audio loads in background - no blocking needed for game start
+  // Force play game music when Game page mounts on mobile
+  useEffect(() => {
+    if (!isMobile || !loaded) return;
+
+    console.log('[Game Page] Mounted - forcing game music to play', {
+      musicEnabled,
+      volume,
+      isMobile
+    });
+
+    if (musicEnabled && volume > 0) {
+      const audioManager = AudioManager.getInstance();
+      // Multiple attempts to ensure music starts
+      const attemptPlay = async () => {
+        await audioManager.forcePlay();
+      };
+
+      // Immediate attempt
+      attemptPlay();
+
+      // Retry after 200ms
+      const timer = setTimeout(attemptPlay, 200);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile, musicEnabled, volume, loaded]);
 
   if (!isMobile) {
     return (

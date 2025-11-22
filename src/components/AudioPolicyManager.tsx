@@ -24,6 +24,7 @@ export const AudioPolicyManager = () => {
       const { musicEnabled, volume, loaded } = useAudioStore.getState();
       
       if (!loaded) {
+        console.log('[AudioPolicy] Store not loaded yet, skipping');
         return;
       }
 
@@ -33,7 +34,10 @@ export const AudioPolicyManager = () => {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
                        window.matchMedia('(max-width: 1024px)').matches;
       
+      console.log('[AudioPolicy] Platform check:', { isMobile, userAgent: navigator.userAgent });
+      
       if (!isMobile) {
+        console.log('[AudioPolicy] Desktop detected - music DISABLED');
         audioManager.apply(false, 0);
         return;
       }
@@ -41,13 +45,24 @@ export const AudioPolicyManager = () => {
       // Check if music is allowed on current route (blocks admin & landing page)
       const musicAllowed = isMusicAllowed(location.pathname);
       
+      console.log('[AudioPolicy] Route check:', { 
+        pathname: location.pathname, 
+        musicAllowed 
+      });
+      
       if (!musicAllowed) {
+        console.log('[AudioPolicy] Music blocked on this route');
         audioManager.apply(false, 0);
         return;
       }
       
       // Mobile/Tablet on allowed routes: Switch track based on route
       const isGameRoute = location.pathname === '/game';
+      
+      console.log('[AudioPolicy] Track selection:', { 
+        isGameRoute, 
+        willSwitchTo: isGameRoute ? 'game' : 'general' 
+      });
       
       if (isGameRoute) {
         audioManager.switchTrack('game');
@@ -60,16 +75,19 @@ export const AudioPolicyManager = () => {
       // CRITICAL: On game route, explicitly force play to ensure music starts
       // This works because navigation to /game happens via user interaction (Play Now button click)
       if (isGameRoute && musicEnabled && volume > 0) {
+        console.log('[AudioPolicy] Scheduling forcePlay for game music...');
         // Small delay to ensure AudioManager state is fully updated
         setTimeout(() => {
           audioManager.forcePlay().then(() => {
             const state = audioManager.getState();
-            console.log('[AudioPolicy] Game music force-started', { 
+            console.log('[AudioPolicy] ✅ Game music force-start complete', { 
               track: state.track, 
               paused: state.paused,
               enabled: state.enabled,
               volume: state.volume
             });
+          }).catch((err) => {
+            console.error('[AudioPolicy] ❌ Game music force-start FAILED', err);
           });
         }, 100);
       }
@@ -87,6 +105,46 @@ export const AudioPolicyManager = () => {
       unsubscribe();
     };
   }, [location.pathname]);
+
+  // Handle app lifecycle: pause music when app goes to background, resume when returns
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      const audioManager = AudioManager.getInstance();
+      const { musicEnabled, volume } = useAudioStore.getState();
+
+      if (document.hidden) {
+        // App went to background - pause all music
+        console.log('[AudioPolicy] 🔴 App went to BACKGROUND - pausing all music');
+        audioManager.pauseAll();
+      } else {
+        // App returned to foreground - resume if enabled
+        console.log('[AudioPolicy] 🟢 App returned to FOREGROUND - resuming music if enabled');
+        if (musicEnabled && volume > 0) {
+          audioManager.resumeIfEnabled();
+        }
+      }
+    };
+
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        // Page restored from back/forward cache
+        console.log('[AudioPolicy] 📄 Page restored from cache - resuming music');
+        const audioManager = AudioManager.getInstance();
+        const { musicEnabled, volume } = useAudioStore.getState();
+        if (musicEnabled && volume > 0) {
+          audioManager.resumeIfEnabled();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pageshow', handlePageShow);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
 
   return null;
 };

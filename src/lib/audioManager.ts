@@ -187,8 +187,14 @@ class AudioManager {
    * Force play the current track - use after user interaction to bypass autoplay policy
    */
   async forcePlay(): Promise<void> {
+    console.log('[AudioManager] forcePlay called', { 
+      enabled: this._enabled, 
+      volume: this._volume, 
+      track: this.currentTrack 
+    });
+
     if (!this._enabled || this._volume <= 0 || !this.currentTrack) {
-      console.log('[AudioManager] forcePlay skipped', { enabled: this._enabled, volume: this._volume, track: this.currentTrack });
+      console.log('[AudioManager] forcePlay SKIPPED - conditions not met');
       return;
     }
 
@@ -196,7 +202,7 @@ class AudioManager {
     if (this.audioCtx?.state === 'suspended') {
       try {
         await this.audioCtx.resume();
-        console.log('[AudioManager] AudioContext resumed via forcePlay');
+        console.log('[AudioManager] AudioContext RESUMED via forcePlay');
       } catch (err) {
         console.error('[AudioManager] Failed to resume AudioContext', err);
       }
@@ -204,13 +210,45 @@ class AudioManager {
 
     // Play current track
     const audio = this.currentTrack === 'general' ? this.generalBgm : this.gameBgm;
+    console.log('[AudioManager] Attempting to play:', this.currentTrack, 'paused:', audio.paused);
     try {
       if (audio.paused) {
         await audio.play();
-        console.log('[AudioManager] Force played:', this.currentTrack);
+        console.log('[AudioManager] ✅ Force played successfully:', this.currentTrack);
+      } else {
+        console.log('[AudioManager] Already playing:', this.currentTrack);
       }
     } catch (err) {
-      console.error('[AudioManager] Force play failed', err);
+      console.error('[AudioManager] ❌ Force play FAILED', err);
+    }
+  }
+
+  /**
+   * Pause all music (for background/visibility change)
+   */
+  pauseAll(): void {
+    console.log('[AudioManager] pauseAll called');
+    this.generalBgm.pause();
+    this.gameBgm.pause();
+  }
+
+  /**
+   * Resume current track (for foreground/visibility restore)
+   */
+  async resumeIfEnabled(): Promise<void> {
+    console.log('[AudioManager] resumeIfEnabled called', {
+      enabled: this._enabled,
+      volume: this._volume,
+      track: this.currentTrack
+    });
+
+    if (!this._enabled || this._volume <= 0 || !this.currentTrack) {
+      return;
+    }
+
+    const audio = this.currentTrack === 'general' ? this.generalBgm : this.gameBgm;
+    if (audio.paused) {
+      await this.safePlay(audio);
     }
   }
 
