@@ -153,9 +153,8 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
+    // Use service role client WITHOUT user auth header to bypass RLS
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Create broadcast channel for real-time progress updates
     const progressChannel = supabase.channel('question-translation-progress');
@@ -356,8 +355,8 @@ serve(async (req) => {
               });
 
             if (insertError) {
-              console.error(`[generate-question-translations] Insert error:`, insertError);
-              errors.push(`Insert failed for question ${question.id} (${lang})`);
+              console.error(`[generate-question-translations] Insert error for ${question.id} (${lang}):`, JSON.stringify(insertError, null, 2));
+              errors.push(`Insert failed for question ${question.id} (${lang}): ${insertError.message || insertError.code || 'Unknown error'}`);
             } else {
               translatedCount++;
               console.log(`[generate-question-translations] ✓ Question ${question.id} translated to ${lang}`);
