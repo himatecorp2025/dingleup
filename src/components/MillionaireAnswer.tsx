@@ -63,12 +63,12 @@ export const MillionaireAnswer = ({
   const band5Id = `band5_ans_${gradientSuffix}`;
 
   return (
-    <div className="w-full flex justify-center mb-2">
+    <div className="w-full flex justify-center mb-1">
       <button
         onClick={onClick}
         disabled={disabled}
         className={`w-[90%] relative ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'} transition-transform duration-300`}
-        style={{ minHeight: '80px' }}
+        style={{ minHeight: '72px' }}
       >
         {/* SVG Background */}
         <svg 
