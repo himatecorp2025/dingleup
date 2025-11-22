@@ -1,15 +1,15 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, LogOut, Home, Wallet, Award, Search, AlertTriangle, Star, Activity, Menu, X, BarChart3, PieChart, Zap, Target, Map as MapIcon, Brain, ShoppingBag, Calendar } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, Search, AlertTriangle, Activity, Target, Zap, Map as MapIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserGrowthChart } from '@/components/UserGrowthChart';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { AdminReportActionDialog } from '@/components/AdminReportActionDialog';
 import { QuestionTranslationManager } from '@/components/QuestionTranslationManager';
 import { TranslationSeeder } from '@/components/TranslationSeeder';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'invitations' | 'reports' | 'popular-content';
 type ReportsSubTab = 'development' | 'support';
@@ -37,7 +37,6 @@ const AdminDashboard = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState('0');
   const [totalPayouts, setTotalPayouts] = useState('0');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<{ 
     id: string; 
@@ -243,256 +242,19 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast.success('Kijelentkezve');
-    navigate('/');
-  };
-
   if (loading) {
     return (
-      <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#0f0a1f] flex items-center justify-center">
-        {/* Animated glowing orbs background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        </div>
-        <div className="relative z-10">
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
           <p className="text-white/70 text-lg">Betöltés...</p>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
-  // Sidebar menu component for reuse
-  const SidebarMenu = ({ onItemClick }: { onItemClick?: () => void }) => (
-    <>
-      <div className="mb-6 xl:mb-8">
-        <div className="relative inline-block">
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-lg opacity-30"></div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="48"
-            height="48"
-            viewBox="0 0 1024 1024"
-            className="w-12 h-12 xl:w-16 xl:h-16 mb-2 relative z-10"
-          >
-            <image
-              href="/logo.png"
-              x="0"
-              y="0"
-              width="1024"
-              height="1024"
-              preserveAspectRatio="xMidYMid meet"
-            />
-          </svg>
-        </div>
-        <h2 className="text-white font-bold text-xs xl:text-sm mt-2">Szia, {userName}! ✨</h2>
-      </div>
-
-      <div className="mb-6 xl:mb-8">
-        <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">Főmenü</h3>
-        <nav className="space-y-2">
-          <button
-            onClick={() => { setActiveTab('dashboard'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              activeTab === 'dashboard'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <Home className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Dashboard</span>
-          </button>
-          <button
-            onClick={() => { setActiveTab('users'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              activeTab === 'users'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <Users className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Összes felhasználó</span>
-          </button>
-          <button
-            onClick={() => { navigate('/admin/game-profiles'); onItemClick?.(); }}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm text-white/60 hover:bg-white/5"
-          >
-            <Brain className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Játékos Profilozás</span>
-          </button>
-          <button
-            onClick={() => { navigate('/admin/ad-interests'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              window.location.pathname === '/admin/ad-interests'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <Target className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Reklámprofilok (Előkészítés)</span>
-          </button>
-          <button
-            onClick={() => { setActiveTab('invitations'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              activeTab === 'invitations'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <Users className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Meghívások ({invitations.length})</span>
-          </button>
-          <button
-            onClick={() => { setActiveTab('reports'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              activeTab === 'reports'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <AlertTriangle className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Jelentések ({reports.filter(r => r.status === 'pending' || r.status === 'reviewing').length})</span>
-          </button>
-          <button
-            onClick={() => { navigate('/admin/popular-content'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              window.location.pathname === '/admin/popular-content'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Népszerű tartalmak</span>
-          </button>
-          <button
-            onClick={() => { navigate('/admin/booster-types'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              window.location.pathname === '/admin/booster-types'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <Zap className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Booster Csomagok</span>
-          </button>
-          <button
-            onClick={() => { navigate('/admin/booster-purchases'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              window.location.pathname === '/admin/booster-purchases'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <ShoppingBag className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Booster Vásárlások</span>
-          </button>
-          <button
-            onClick={() => { navigate('/admin/load-test'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              window.location.pathname === '/admin/load-test'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Terheléses Teszt (Load Test)</span>
-          </button>
-          <button
-            onClick={() => { navigate('/admin/advanced-analytics'); onItemClick?.(); }}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm text-white/60 hover:bg-white/5"
-          >
-            <Activity className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Fejlett Analitika</span>
-          </button>
-          <button
-            onClick={() => { navigate('/admin/age-statistics'); onItemClick?.(); }}
-            className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
-              window.location.pathname === '/admin/age-statistics'
-                ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
-                : 'text-white/60 hover:bg-white/5'
-            }`}
-          >
-            <Calendar className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Korcsoport Statisztika</span>
-          </button>
-        </nav>
-      </div>
-
-      <div>
-        <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">Admin fiók szerkesztése</h3>
-        <div className="space-y-2">
-          <button className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm">
-            <Users className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Profil szerkesztése</span>
-          </button>
-          <button 
-            onClick={() => { handleLogout(); onItemClick?.(); }}
-            className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
-          >
-            <LogOut className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-            <span className="font-medium">Kijelentkezés</span>
-          </button>
-        </div>
-      </div>
-    </>
-  );
-
   return (
-    <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#0f0a1f] flex flex-col lg:flex-row">
-      {/* Animated glowing orbs background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-      </div>
-
-      {/* Desktop Sidebar - Tablet+ Shown */}
-      <div className="hidden lg:flex lg:w-64 backdrop-blur-xl bg-white/5 border-r border-white/10 p-4 xl:p-6 flex-col relative z-10">
-        <SidebarMenu />
-      </div>
-
-      {/* Mobile Header with Hamburger Menu */}
-      <div className="lg:hidden backdrop-blur-xl bg-white/5 border-b border-white/10 p-4 relative z-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <button className="p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
-                  <Menu className="w-6 h-6" />
-                </button>
-              </SheetTrigger>
-              <SheetContent 
-                side="left" 
-                className="w-72 backdrop-blur-xl bg-white/5 border-r border-white/10 p-4"
-              >
-                <SidebarMenu onItemClick={() => setMobileMenuOpen(false)} />
-              </SheetContent>
-            </Sheet>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="40"
-              height="40"
-              viewBox="0 0 1024 1024"
-            >
-              <image
-                href="/logo.png"
-                x="0"
-                y="0"
-                width="1024"
-                height="1024"
-                preserveAspectRatio="xMidYMid meet"
-              />
-            </svg>
-            <h2 className="text-white font-bold text-sm">Szia, {userName}! ✨</h2>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto relative z-10">
+    <AdminLayout>
+      <div className="space-y-4 lg:space-y-6">
         {/* Top Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
           <button
@@ -1025,7 +787,7 @@ const AdminDashboard = () => {
         )}
 
       </div>
-
+      
       {/* Action Dialog */}
       {selectedReport && (
         <AdminReportActionDialog
@@ -1039,7 +801,7 @@ const AdminDashboard = () => {
           }}
         />
       )}
-    </div>
+    </AdminLayout>
   );
 };
 
