@@ -32,14 +32,22 @@ Deno.serve(async (req) => {
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-    // Auth client for JWT verification ONLY
+    // OPTIMIZATION: Enable connection pooler for both clients
     const supabaseAuth = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
+      global: { 
+        headers: { 
+          Authorization: authHeader,
+          'X-Connection-Pooler': 'true', // Connection pooling
+        } 
+      },
       auth: { persistSession: false, autoRefreshToken: false }
     });
 
-    // Admin client for DB operations (bypasses RLS)
+    // Admin client for DB operations (bypasses RLS) with pooling
     const supabaseAdmin = createClient(supabaseUrl, serviceKey, {
+      global: {
+        headers: { 'X-Connection-Pooler': 'true' },
+      },
       auth: { persistSession: false, autoRefreshToken: false }
     });
 
