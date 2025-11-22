@@ -190,7 +190,7 @@ const GamePreview = () => {
       // Spend life
       const canPlay = await spendLife();
       if (!canPlay) {
-        toast.error(t('game.not_enough_lives'));
+        toast.error('Nincs elég életed a játék indításához!');
         setIsStartingGame(false);
         navigate('/dashboard');
         throw new Error('Insufficient lives');
@@ -204,7 +204,7 @@ const GamePreview = () => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
         console.error('[Game] Session error:', sessionError);
-        toast.error(t('game.session_expired'));
+        toast.error('A munkameneted lejárt. Kérlek, jelentkezz be újra!');
         navigate('/auth/login');
         throw new Error('Session error');
       }
@@ -212,7 +212,7 @@ const GamePreview = () => {
       // Get session for edge function calls
       const { data: { session: authSession } } = await supabase.auth.getSession();
       if (!authSession) {
-        toast.error(t('game.not_logged_in'));
+        toast.error('Nincs bejelentkezve! Kérlek, jelentkezz be!');
         navigate('/auth/login');
         throw new Error('Not authenticated');
       }
@@ -251,7 +251,7 @@ const GamePreview = () => {
             setQuestions(shuffledWithVariety);
           } catch (error) {
             console.error('[GamePreview] Failed to load questions:', error);
-            toast.error(t('game.questions_load_error'));
+            toast.error('Hiba történt a kérdések betöltésekor!');
             setIsStartingGame(false);
             navigate('/dashboard');
             throw error;
@@ -302,13 +302,13 @@ const GamePreview = () => {
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        toast.error(t('game.interrupted'));
+        toast.error('A játék megszakadt!');
         navigate('/dashboard');
       }
     };
 
     const handleBlur = () => {
-      toast.error(t('game.interrupted'));
+      toast.error('A játék megszakadt!');
       navigate('/dashboard');
     };
 
@@ -501,7 +501,7 @@ const GamePreview = () => {
     
     // Only show restart toast if game was NOT completed (scroll down mid-game)
     if (!gameCompleted) {
-      toast.error(t('game.restart'), {
+      toast.error('Újraindítva! Elvesztetted az összegyűjtött aranyérméidet.', {
         duration: 2000,
         style: {
           background: 'hsl(var(--destructive))',
@@ -678,7 +678,7 @@ const GamePreview = () => {
     try {
       const { data: { session: rewardSession } } = await supabase.auth.getSession();
       if (!rewardSession) {
-        toast.error(t('game.session_expired'));
+        toast.error('A munkameneted lejárt. Kérlek, jelentkezz be újra!');
         return;
       }
       
@@ -699,7 +699,7 @@ const GamePreview = () => {
       // Notify other views to refresh wallet immediately
       await broadcast('wallet:update', { source: 'correct_answer', coinsDelta: reward });
     } catch (err) {
-      toast.error(t('game.reward_failed'));
+      toast.error('Hiba történt a jutalom jóváírásakor!');
     }
     
     // Nincs külön toast siker esetén – a zöld válasz jelzi
@@ -754,27 +754,27 @@ const GamePreview = () => {
       toast.success(
         <div className="flex flex-col gap-2 p-1.5">
           <div className="text-center text-base font-black mb-1 bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent">
-            {t('game.game_over')}
+            Játék vége!
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
               <div className="text-lg mb-0.5">✅</div>
               <div className="font-bold text-green-400">{correctAnswers}/15</div>
-              <div className="text-[10px] opacity-70">{t('game.correct')}</div>
+              <div className="text-[10px] opacity-70">Helyes</div>
             </div>
             <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
               <div className="text-lg mb-0.5">💰</div>
               <div className="font-bold text-yellow-400">{coinsEarned}</div>
-              <div className="text-[10px] opacity-70">{t('game.gold')}</div>
+              <div className="text-[10px] opacity-70">Arany</div>
             </div>
             <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
               <div className="text-lg mb-0.5">⚡</div>
               <div className="font-bold text-blue-400">{avgResponseTime}s</div>
-              <div className="text-[10px] opacity-70">{t('game.time')}</div>
+              <div className="text-[10px] opacity-70">Idő</div>
             </div>
           </div>
           <div className="text-center mt-1 text-xs font-bold animate-pulse text-white/90">
-            {t('game.swipe_up_new_game')}
+            Görgess felfelé új játékhoz
           </div>
         </div>,
         {
@@ -830,7 +830,7 @@ const GamePreview = () => {
     if (currentQuestionIndex >= 10) cost = 30;
     
     if (profile.coins < cost) {
-      toast.error(t('game.not_enough_coins_amount').replace('{amount}', cost.toString()));
+      toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
       return;
     }
     
@@ -868,7 +868,7 @@ const GamePreview = () => {
     // If game was NOT completed (mid-game exit), coins are lost
     // If game WAS completed, coins already credited by finishGame()
     if (!gameCompleted) {
-      toast.error(t('game.exit_gold_lost'), {
+      toast.error('Kilépés... Elvesztetted az összegyűjtött aranyérméidet!', {
         duration: 3000,
         style: {
           background: 'hsl(var(--destructive))',
@@ -895,7 +895,7 @@ const GamePreview = () => {
       // Server calculates and validates all rewards
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        toast.error(t('game.session_expired'));
+        toast.error('A munkameneted lejárt. Kérlek, jelentkezz be újra!');
         return;
       }
 
@@ -976,7 +976,7 @@ const GamePreview = () => {
     // Second usage - costs 15 coins
     if (help5050UsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error(t('game.not_enough_coins_amount').replace('{amount}', cost.toString()));
+        toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
         return;
       }
       
@@ -1024,7 +1024,7 @@ const GamePreview = () => {
     // Second usage - costs 20 coins
     if (help2xAnswerUsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error(t('game.not_enough_coins_amount').replace('{amount}', cost.toString()));
+        toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
         return;
       }
       
@@ -1089,7 +1089,7 @@ const GamePreview = () => {
     // Second usage - costs 25 coins
     if (helpAudienceUsageCount === 1) {
       if (!profile || profile.coins < cost) {
-        toast.error(t('game.not_enough_coins_amount').replace('{amount}', cost.toString()));
+        toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
         return;
       }
       
@@ -1112,7 +1112,7 @@ const GamePreview = () => {
     
     // Check if user has enough coins
     if (!profile || profile.coins < skipCost) {
-      toast.error(t('game.skip_not_enough_coins').replace('{amount}', skipCost.toString()));
+      toast.error(`Nincs elég aranyérméd a kérdés átugrásához! ${skipCost} aranyérme szükséges.`);
       return;
     }
     
@@ -1154,7 +1154,7 @@ const GamePreview = () => {
   if (profileLoading || !userId) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
-        <div className="relative z-10 text-white">{t('game.loading')}</div>
+        <div className="relative z-10 text-white">Betöltés...</div>
       </div>
     );
   }
@@ -1163,9 +1163,9 @@ const GamePreview = () => {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
         <div className="relative z-10 text-white flex flex-col items-center gap-4">
-          <p>{t('game.profile_load_error')}</p>
+          <p>Hiba történt a profil betöltésekor!</p>
           <Button onClick={() => navigate('/dashboard')} variant="outline">
-            {t('common.back')}
+            Vissza
           </Button>
         </div>
       </div>
