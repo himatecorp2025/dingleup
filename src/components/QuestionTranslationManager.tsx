@@ -37,7 +37,6 @@ export const QuestionTranslationManager = () => {
     errors: number;
   } | null>(null);
   const [initialStats, setInitialStats] = useState<InitialStats | null>(null);
-  const [hasUntranslated, setHasUntranslated] = useState<boolean | null>(null);
   const [isCheckingContent, setIsCheckingContent] = useState(true);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
@@ -64,7 +63,6 @@ export const QuestionTranslationManager = () => {
 
         // Get per-language statistics
         const languageStats: Partial<InitialStats['languages']> = {};
-        let hasAnyUntranslated = false;
 
         for (const lang of TARGET_LANGUAGES) {
           const { count: translatedCount, error } = await supabase
@@ -86,10 +84,6 @@ export const QuestionTranslationManager = () => {
             translated,
             percentage
           };
-
-          if (translated < total) {
-            hasAnyUntranslated = true;
-          }
         }
 
         setInitialStats({
@@ -98,11 +92,8 @@ export const QuestionTranslationManager = () => {
           languages: languageStats as InitialStats['languages']
         });
 
-        setHasUntranslated(hasAnyUntranslated);
-
       } catch (error) {
         console.error('[QuestionTranslationManager] Exception loading stats:', error);
-        setHasUntranslated(false);
       } finally {
         setIsCheckingContent(false);
       }
@@ -300,46 +291,28 @@ export const QuestionTranslationManager = () => {
         </div>
       )}
 
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="w-full">
-              <Button
-                onClick={startTranslation}
-                disabled={isTranslating || isCheckingContent || !hasUntranslated}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isCheckingContent ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Tartalom ellenőrzése...
-                  </>
-                ) : isTranslating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Fordítás folyamatban...
-                  </>
-                ) : !hasUntranslated ? (
-                  <>
-                    <Info className="w-4 h-4 mr-2" />
-                    Nincs fordítandó kérdés
-                  </>
-                ) : (
-                  <>
-                    <Languages className="w-4 h-4 mr-2" />
-                    Kérdések fordítása
-                  </>
-                )}
-              </Button>
-            </div>
-          </TooltipTrigger>
-          {!hasUntranslated && !isCheckingContent && (
-            <TooltipContent>
-              <p>Minden kérdés már le van fordítva mind a 7 nyelvre</p>
-            </TooltipContent>
-          )}
-        </Tooltip>
-      </TooltipProvider>
+      <Button
+        onClick={startTranslation}
+        disabled={isTranslating || isCheckingContent}
+        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isCheckingContent ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Tartalom ellenőrzése...
+          </>
+        ) : isTranslating ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Fordítás folyamatban...
+          </>
+        ) : (
+          <>
+            <Languages className="w-4 h-4 mr-2" />
+            Csonka fordítások ellenőrzése és javítása
+          </>
+        )}
+      </Button>
     </div>
   );
 };
