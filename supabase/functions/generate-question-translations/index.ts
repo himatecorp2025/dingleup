@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
+import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,11 +20,43 @@ const LANGUAGE_NAMES: Record<LangCode, string> = {
 };
 
 const TARGET_LANGUAGES: LangCode[] = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
-const BATCH_SIZE = 15; // OPTIMIZED: Increased from 5 to 15 for faster processing
-const DELAY_BETWEEN_BATCHES = 300; // OPTIMIZED: Reduced from 1000ms to 300ms
-const MAX_RETRIES = 3; // Increased retries for reliability
-const RETRY_DELAY = 3000; // Reduced from 5000ms to 3000ms
-const MAX_QUESTIONS_PER_RUN = 100; // OPTIMIZED: Massively increased from 1 to 100 questions per run (700 translations/run)
+
+// ============================================================================
+// PRE-FLIGHT CHECK
+// ============================================================================
+async function preflightCheckQuestions(supabase: SupabaseClient): Promise<string[]> {
+  const errors: string[] = [];
+
+  // 1) Kötelező env változók
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+
+  if (!supabaseUrl) errors.push('SUPABASE_URL is missing');
+  if (!supabaseServiceKey) errors.push('SUPABASE_SERVICE_ROLE_KEY is missing');
+  if (!lovableApiKey) errors.push('LOVABLE_API_KEY is missing');
+
+  // 2) Tábla létezés és alap séma ellenőrzés
+  const { error: questionsError } = await supabase
+    .from('questions')
+    .select('id, question, answers, correct_answer')
+    .limit(1);
+
+  if (questionsError) {
+    errors.push(`questions table not accessible: ${questionsError.message}`);
+  }
+
+  const { error: qTransError } = await supabase
+    .from('question_translations')
+    .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
+    .limit(1);
+
+  if (qTransError) {
+    errors.push(`question_translations table not accessible: ${qTransError.message}`);
+  }
+
+  return errors;
+}
 
 async function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -37,7 +69,7 @@ async function translateWithRetry(
   answers: any[],
   correctAnswer: string,
   lang: LangCode,
-  retries = MAX_RETRIES
+  maxRetries: number
 ): Promise<{ question: string; a: string; b: string; c: string } | null> {
   const systemPrompt = `You are a professional translator specializing in quiz questions and educational content.
 Your task is to translate Hungarian quiz questions into ${LANGUAGE_NAMES[lang]} while maintaining:
@@ -71,7 +103,7 @@ Correct answer: ${correctAnswer}
 
 Remember: Keep the same answer positions (A/B/C). The correct answer is marked as "${correctAnswer}" and must remain in that position after translation.`;
 
-  for (let attempt = 0; attempt < retries; attempt++) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
@@ -90,23 +122,30 @@ Remember: Keep the same answer positions (A/B/C). The correct answer is marked a
         })
       });
 
+      // ================================================================
+      // AI-HIBÁNÁL ÁLLJON LE
+      // ================================================================
       if (!aiResponse.ok) {
         const errorText = await aiResponse.text();
-        console.error(`[translate-retry] AI error for ${lang} (attempt ${attempt + 1}/${retries}):`, aiResponse.status, errorText);
+        console.error(`[translate-retry] AI error for ${lang} (attempt ${attempt + 1}/${maxRetries}):`, aiResponse.status, errorText);
         
-        // If payment required (out of credits), fail immediately without retry
         if (aiResponse.status === 402) {
           throw new Error('PAYMENT_REQUIRED: Lovable AI credits exhausted');
         }
         
-        // For rate limits, retry after delay
         if (aiResponse.status === 429) {
-          if (attempt < retries - 1) {
-            console.log(`[translate-retry] Retrying after ${RETRY_DELAY}ms...`);
-            await delay(RETRY_DELAY);
+          if (attempt < maxRetries - 1) {
+            console.log(`[translate-retry] Rate limit hit, retrying after delay...`);
+            await delay(3000);
             continue;
           }
+          throw new Error('RATE_LIMIT: AI API rate limit hit after retries');
         }
+
+        if (aiResponse.status >= 500) {
+          throw new Error(`AI_SERVER_ERROR: ${aiResponse.status}`);
+        }
+
         return null;
       }
 
@@ -117,9 +156,24 @@ Remember: Keep the same answer positions (A/B/C). The correct answer is marked a
         return null;
       }
 
-      // Parse JSON response
-      const cleanText = translatedText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      const translated = JSON.parse(cleanText);
+      // ================================================================
+      // JSON PARSE – BIZTONSÁGOSABB KINYERÉS
+      // ================================================================
+      const jsonMatch = translatedText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        console.error('[translate-retry] No JSON object found in AI response:', translatedText);
+        return null;
+      }
+
+      const cleanText = jsonMatch[0];
+
+      let translated;
+      try {
+        translated = JSON.parse(cleanText);
+      } catch (e) {
+        console.error('[translate-retry] JSON parse error:', e, 'raw:', cleanText);
+        return null;
+      }
 
       // Validate structure
       if (!translated.question || !translated.a || !translated.b || !translated.c) {
@@ -129,9 +183,15 @@ Remember: Keep the same answer positions (A/B/C). The correct answer is marked a
       return translated;
 
     } catch (error) {
-      console.error(`[translate-retry] Error on attempt ${attempt + 1}/${retries}:`, error);
-      if (attempt < retries - 1) {
-        await delay(RETRY_DELAY);
+      console.error(`[translate-retry] Error on attempt ${attempt + 1}/${maxRetries}:`, error);
+      
+      // Ha payment required vagy rate limit, ne próbálkozz tovább
+      if (error instanceof Error && (error.message.includes('PAYMENT_REQUIRED') || error.message.includes('RATE_LIMIT') || error.message.includes('AI_SERVER_ERROR'))) {
+        throw error;
+      }
+
+      if (attempt < maxRetries - 1) {
+        await delay(3000);
       }
     }
   }
@@ -156,13 +216,41 @@ serve(async (req) => {
     // Use service role client WITHOUT user auth header to bypass RLS
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // ========================================================================
+    // PRE-FLIGHT CHECK
+    // ========================================================================
+    const preflightErrors = await preflightCheckQuestions(supabase);
+    if (preflightErrors.length > 0) {
+      console.error('[generate-question-translations] Preflight check failed:', preflightErrors);
+      return new Response(JSON.stringify({
+        success: false,
+        phase: 'preflight',
+        errors: preflightErrors,
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     // Create broadcast channel for real-time progress updates
     const progressChannel = supabase.channel('question-translation-progress');
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
-    }
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+
+    // ========================================================================
+    // SAFE / TEST MODE SUPPORT
+    // ========================================================================
+    const body = await req.json().catch(() => ({}));
+    const testMode = body.testMode ?? true; // ALAPÉRTELMEZÉS: TEST MODE = TRUE
+    const maxItems = body.maxItems ?? 5; // ALAPÉRTELMEZÉS: 5 kérdés
+
+    const MAX_QUESTIONS_PER_RUN = testMode ? maxItems : 100;
+    const BATCH_SIZE = testMode ? 3 : 15;
+    const DELAY_BETWEEN_BATCHES = 300;
+    const MAX_RETRIES = 3;
+
+    console.log(`[generate-question-translations] Running in ${testMode ? 'TEST' : 'LIVE'} mode`);
+    console.log(`[generate-question-translations] Max questions: ${MAX_QUESTIONS_PER_RUN}, Batch size: ${BATCH_SIZE}`);
 
     // Fetch questions using pagination (1000-row Lovable Cloud backend limit)
     const allQuestions: Array<{ id: string; question: string; answers: any; correct_answer: string | null }> = [];
@@ -170,7 +258,7 @@ serve(async (req) => {
     let page = 0;
     let hasMore = true;
 
-    while (hasMore && allQuestions.length < MAX_QUESTIONS_PER_RUN * 2) { // Fetch up to 2x max to have buffer
+    while (hasMore && allQuestions.length < MAX_QUESTIONS_PER_RUN * 2) {
       const { data: batch, error: batchError } = await supabase
         .from('questions')
         .select('id, question, answers, correct_answer')
@@ -205,7 +293,9 @@ serve(async (req) => {
       }
     }
 
-    // Filter to questions that need translation (missing at least one target language)
+    // ========================================================================
+    // NE ÍRJA FELÜL A MEGLÉVŐ FORDÍTÁSOKAT
+    // ========================================================================
     const questionsNeedingTranslation: typeof allQuestions = [];
     for (const q of allQuestions) {
       let needsTranslation = false;
@@ -218,7 +308,6 @@ serve(async (req) => {
       if (needsTranslation) {
         questionsNeedingTranslation.push(q);
       }
-      // Limit to MAX_QUESTIONS_PER_RUN
       if (questionsNeedingTranslation.length >= MAX_QUESTIONS_PER_RUN) {
         break;
       }
@@ -227,12 +316,24 @@ serve(async (req) => {
     const questions = questionsNeedingTranslation;
 
     if (!questions || questions.length === 0) {
-      return new Response(JSON.stringify({ success: true, message: 'No questions to translate' }), {
+      return new Response(JSON.stringify({ 
+        success: true,
+        mode: testMode ? 'test' : 'live',
+        phase: 'done',
+        message: 'No questions to translate',
+        stats: {
+          totalQuestions: 0,
+          totalTranslationsAttempted: 0,
+          translatedCount: 0,
+          skippedCount: 0,
+          errors: 0
+        }
+      }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    console.log(`[generate-question-translations] Found ${questions.length} active questions`);
+    console.log(`[generate-question-translations] Found ${questions.length} questions needing translation`);
 
     let translatedCount = 0;
     let skippedCount = 0;
@@ -256,7 +357,6 @@ serve(async (req) => {
     });
 
     // Process questions in batches
-    let processedQuestions = 0;
     for (let i = 0; i < questions.length; i += BATCH_SIZE) {
       const batch = questions.slice(i, i + BATCH_SIZE);
       const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
@@ -264,7 +364,6 @@ serve(async (req) => {
       
       console.log(`[generate-question-translations] Processing batch ${batchNumber}/${totalBatches}`);
 
-      // Broadcast batch progress
       const currentProgress = Math.floor((i / totalQuestions) * 100);
       await progressChannel.send({
         type: 'broadcast',
@@ -289,10 +388,8 @@ serve(async (req) => {
           .single();
 
         if (!huExists) {
-          // Extract answers from JSONB array
           const answers = question.answers as any[];
           
-          // Insert Hungarian source
           await supabase
             .from('question_translations')
             .insert({
@@ -308,13 +405,12 @@ serve(async (req) => {
         // Translate to each target language
         for (const lang of TARGET_LANGUAGES) {
           try {
-            // OPTIMIZED: Check existence using pre-fetched Set
+            // Check existence using pre-fetched Set
             if (existingSet.has(`${question.id}|${lang}`)) {
               skippedCount++;
               continue;
             }
 
-            // Extract answers from JSONB array
             const answers = question.answers as any[];
 
             // Translate with retry logic
@@ -326,19 +422,24 @@ serve(async (req) => {
                 question.question,
                 answers,
                 question.correct_answer || 'A',
-                lang
+                lang,
+                MAX_RETRIES
               );
             } catch (error) {
-              // If payment required, stop entire process immediately
-              if (error instanceof Error && error.message.includes('PAYMENT_REQUIRED')) {
-                console.error('[generate-question-translations] CRITICAL: Out of Lovable AI credits');
-                throw new Error('Lovable AI credits exhausted. Please add credits to your workspace at Settings → Workspace → Usage.');
+              // If payment required or critical error, stop entire process
+              if (error instanceof Error && (error.message.includes('PAYMENT_REQUIRED') || error.message.includes('RATE_LIMIT') || error.message.includes('AI_SERVER_ERROR'))) {
+                console.error('[generate-question-translations] CRITICAL ERROR:', error.message);
+                throw error;
               }
               throw error;
             }
 
             if (!translated) {
               errors.push(`Translation failed for question ${question.id} (${lang}) after ${MAX_RETRIES} retries`);
+              if (errors.length >= 3) {
+                // Stop after 3 errors
+                throw new Error('Too many translation errors - stopping');
+              }
               continue;
             }
 
@@ -361,7 +462,6 @@ serve(async (req) => {
               translatedCount++;
               console.log(`[generate-question-translations] ✓ Question ${question.id} translated to ${lang}`);
               
-              // Broadcast progress after each successful translation
               const processedSoFar = i + batch.indexOf(question) + 1;
               const currentProgress = Math.floor((processedSoFar / totalQuestions) * 100);
               await progressChannel.send({
@@ -385,9 +485,6 @@ serve(async (req) => {
         }
       }
 
-      processedQuestions += batch.length;
-
-      // Longer delay between batches to avoid rate limits
       if (i + BATCH_SIZE < questions.length) {
         console.log(`[generate-question-translations] Waiting ${DELAY_BETWEEN_BATCHES}ms before next batch...`);
         await delay(DELAY_BETWEEN_BATCHES);
@@ -396,7 +493,6 @@ serve(async (req) => {
 
     console.log(`[generate-question-translations] Complete! Translated: ${translatedCount}, Skipped: ${skippedCount}, Errors: ${errors.length}`);
 
-    // Broadcast final progress
     await progressChannel.send({
       type: 'broadcast',
       event: 'progress',
@@ -410,15 +506,24 @@ serve(async (req) => {
       }
     });
 
-    // Unsubscribe from channel
     await supabase.removeChannel(progressChannel);
 
+    // ========================================================================
+    // VISSZATÉRŐ RIPORT
+    // ========================================================================
     return new Response(
       JSON.stringify({
         success: true,
-        translated: translatedCount,
-        skipped: skippedCount,
-        errors: errors.length > 0 ? errors : undefined
+        mode: testMode ? 'test' : 'live',
+        phase: 'done',
+        stats: {
+          totalQuestions: totalQuestions,
+          totalTranslationsAttempted: translatedCount + skippedCount,
+          translatedCount: translatedCount,
+          skippedCount: skippedCount,
+          errors: errors.length
+        },
+        errorSamples: errors.length > 0 ? errors.slice(0, 3) : undefined
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -431,6 +536,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: false,
+        phase: 'translate',
         error: error instanceof Error ? error.message : 'Internal server error' 
       }),
       { 

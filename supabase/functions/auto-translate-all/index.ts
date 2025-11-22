@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
+import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,6 +19,36 @@ const LANGUAGE_NAMES: Record<LangCode, string> = {
   nl: 'Dutch'
 };
 
+const TARGET_LANGUAGES: LangCode[] = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
+
+// ============================================================================
+// PRE-FLIGHT CHECK
+// ============================================================================
+async function preflightCheckTranslations(supabase: SupabaseClient): Promise<string[]> {
+  const errors: string[] = [];
+
+  // 1) Kötelező env változók
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+
+  if (!supabaseUrl) errors.push('SUPABASE_URL is missing');
+  if (!supabaseServiceKey) errors.push('SUPABASE_SERVICE_ROLE_KEY is missing');
+  if (!lovableApiKey) errors.push('LOVABLE_API_KEY is missing');
+
+  // 2) Tábla létezés és alap séma ellenőrzés
+  const { error: translationsError } = await supabase
+    .from('translations')
+    .select('key, hu, en, de, fr, es, it, pt, nl')
+    .limit(1);
+
+  if (translationsError) {
+    errors.push(`translations table not accessible: ${translationsError.message}`);
+  }
+
+  return errors;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -31,13 +61,35 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
+    // ========================================================================
+    // PRE-FLIGHT CHECK
+    // ========================================================================
+    const preflightErrors = await preflightCheckTranslations(supabase);
+    if (preflightErrors.length > 0) {
+      console.error('[auto-translate-all] Preflight check failed:', preflightErrors);
+      return new Response(JSON.stringify({
+        success: false,
+        phase: 'preflight',
+        errors: preflightErrors,
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    // Parse request body for chunking parameters
-    const { offset = 0, limit = 300 } = await req.json().catch(() => ({ offset: 0, limit: 300 }));
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+
+    // ========================================================================
+    // SAFE / TEST MODE SUPPORT
+    // ========================================================================
+    const body = await req.json().catch(() => ({}));
+    const testMode = body.testMode ?? true; // ALAPÉRTELMEZÉS: TEST MODE = TRUE
+    const maxItems = body.maxItems ?? 5; // ALAPÉRTELMEZÉS: 5 tétel
+    const offset = body.offset ?? 0;
+
+    const limit = testMode ? maxItems : (body.limit ?? 300);
+
+    console.log(`[auto-translate-all] Running in ${testMode ? 'TEST' : 'LIVE'} mode`);
     console.log(`[auto-translate-all] Processing chunk: offset=${offset}, limit=${limit}`);
 
     // Step 1: Count total translations needing work
@@ -48,10 +100,10 @@ serve(async (req) => {
 
     console.log(`[auto-translate-all] Total translations in database: ${totalCount}`);
 
-    // Step 2: Fetch chunk of translations
+    // Step 2: Fetch chunk of translations INCLUDING existing translations to check
     const { data: translations, error: fetchError } = await supabase
       .from('translations')
-      .select('key, hu')
+      .select('key, hu, en, de, fr, es, it, pt, nl')
       .not('hu', 'is', null)
       .order('key')
       .range(offset, offset + limit - 1);
@@ -64,11 +116,20 @@ serve(async (req) => {
     if (!translations || translations.length === 0) {
       return new Response(
         JSON.stringify({ 
-          success: true, 
+          success: true,
+          mode: testMode ? 'test' : 'live',
+          phase: 'done',
           message: 'No more translations to process',
           hasMore: false,
           totalCount: totalCount || 0,
-          processed: offset
+          processed: offset,
+          stats: {
+            totalFound: 0,
+            attempted: 0,
+            translated: 0,
+            skippedExisting: 0,
+            errors: 0
+          }
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
@@ -76,11 +137,13 @@ serve(async (req) => {
 
     console.log(`[auto-translate-all] Processing ${translations.length} translation keys (${offset} - ${offset + translations.length})`)
 
-    const TARGET_LANGUAGES: LangCode[] = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
     let successCount = 0;
     let errorCount = 0;
+    let skippedExisting = 0;
+    let attemptedCount = 0;
+    const errorSamples: string[] = [];
 
-    // Step 2: Process each target language
+    // Step 3: Process each target language
     for (const lang of TARGET_LANGUAGES) {
       console.log(`[auto-translate-all] Starting translations to ${LANGUAGE_NAMES[lang]}`);
 
@@ -89,8 +152,25 @@ serve(async (req) => {
       for (let i = 0; i < translations.length; i += BATCH_SIZE) {
         const batch = translations.slice(i, i + BATCH_SIZE);
         
+        // ====================================================================
+        // NE ÍRJA FELÜL A MEGLÉVŐ FORDÍTÁSOKAT
+        // ====================================================================
+        const itemsToTranslate = batch.filter(item => {
+          if (item[lang] && item[lang].trim() !== '') {
+            // Már van fordítás, ezt hagyjuk békén
+            skippedExisting++;
+            return false;
+          }
+          return true;
+        });
+
+        if (itemsToTranslate.length === 0) {
+          console.log(`[auto-translate-all] Batch ${Math.floor(i / BATCH_SIZE) + 1}: all items already translated for ${lang}`);
+          continue;
+        }
+
         // Create batch prompt
-        const batchTexts = batch.map((item, idx) => 
+        const batchTexts = itemsToTranslate.map((item, idx) => 
           `${idx + 1}. "${item.hu}"`
         ).join('\n');
 
@@ -178,9 +258,14 @@ Target language: ${LANGUAGE_NAMES[lang]} (${lang})
 
 Your task: Produce professional, native-quality translations that feel natural to ${LANGUAGE_NAMES[lang]} speakers. Return ONLY numbered translations, NO explanations.`;
 
-        const userPrompt = `Translate these ${batch.length} Hungarian UI texts to native ${LANGUAGE_NAMES[lang]} with PERFECT grammar (do NOT copy Hungarian text!). Return numbered format:\n\n${batchTexts}`;
+        const userPrompt = `Translate these ${itemsToTranslate.length} Hungarian UI texts to native ${LANGUAGE_NAMES[lang]} with PERFECT grammar (do NOT copy Hungarian text!). Return numbered format:\n\n${batchTexts}`;
+
+        attemptedCount += itemsToTranslate.length;
 
         try {
+          // ================================================================
+          // AI HÍVÁS - HIBAKEZELÉS
+          // ================================================================
           const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -198,10 +283,29 @@ Your task: Produce professional, native-quality translations that feel natural t
             })
           });
 
+          // ================================================================
+          // AI-HIBÁNÁL ÁLLJON LE AZ EGÉSZ FUTÁS
+          // ================================================================
           if (!aiResponse.ok) {
             const errorText = await aiResponse.text();
             console.error(`[auto-translate-all] AI API error for ${lang}:`, aiResponse.status, errorText);
-            errorCount += batch.length;
+
+            if (aiResponse.status === 402) {
+              throw new Error('PAYMENT_REQUIRED: Lovable AI credits exhausted – STOP ALL TRANSLATIONS');
+            }
+
+            if (aiResponse.status === 429) {
+              throw new Error('RATE_LIMIT: AI API rate limit hit – STOP ALL TRANSLATIONS');
+            }
+
+            if (aiResponse.status >= 500) {
+              throw new Error(`AI_SERVER_ERROR: ${aiResponse.status} – STOP ALL TRANSLATIONS`);
+            }
+
+            errorCount += itemsToTranslate.length;
+            if (errorSamples.length < 3) {
+              errorSamples.push(`AI error ${aiResponse.status} for ${lang}: ${errorText.substring(0, 100)}`);
+            }
             continue;
           }
 
@@ -212,8 +316,8 @@ Your task: Produce professional, native-quality translations that feel natural t
           const lines = translatedText.split('\n').filter((line: string) => line.trim());
           
           // Update each translation in database
-          for (let j = 0; j < batch.length; j++) {
-            const item = batch[j];
+          for (let j = 0; j < itemsToTranslate.length; j++) {
+            const item = itemsToTranslate[j];
             const matchingLine = lines.find((line: string) => 
               line.trim().match(new RegExp(`^${j + 1}\\.\\s*`))
             );
@@ -236,16 +340,22 @@ Your task: Produce professional, native-quality translations that feel natural t
             if (updateError) {
               console.error(`[auto-translate-all] Update error for key ${item.key}:`, updateError);
               errorCount++;
+              if (errorSamples.length < 3) {
+                errorSamples.push(`Update error for ${item.key}: ${updateError.message}`);
+              }
             } else {
               successCount++;
             }
           }
 
-          console.log(`[auto-translate-all] Completed batch ${Math.floor(i / BATCH_SIZE) + 1} for ${lang} (${successCount} success, ${errorCount} errors)`);
+          console.log(`[auto-translate-all] Completed batch ${Math.floor(i / BATCH_SIZE) + 1} for ${lang} (${successCount} success, ${errorCount} errors, ${skippedExisting} skipped)`);
 
         } catch (translateError) {
           console.error(`[auto-translate-all] Translation error for ${lang}:`, translateError);
-          errorCount += batch.length;
+          errorCount += itemsToTranslate.length;
+          if (errorSamples.length < 3) {
+            errorSamples.push(`Translation error for ${lang}: ${translateError instanceof Error ? translateError.message : 'Unknown'}`);
+          }
         }
 
         // Small delay to avoid rate limiting
@@ -255,20 +365,29 @@ Your task: Produce professional, native-quality translations that feel natural t
       console.log(`[auto-translate-all] Completed ${LANGUAGE_NAMES[lang]}`);
     }
 
-    console.log(`[auto-translate-all] Chunk complete - ${successCount} success, ${errorCount} errors`);
+    console.log(`[auto-translate-all] Chunk complete - ${successCount} success, ${errorCount} errors, ${skippedExisting} skipped existing`);
 
     const hasMore = (offset + translations.length) < (totalCount || 0);
 
+    // ========================================================================
+    // VISSZATÉRŐ RIPORT
+    // ========================================================================
     return new Response(
       JSON.stringify({ 
         success: true,
+        mode: testMode ? 'test' : 'live',
+        phase: 'done',
         message: hasMore ? 'Chunk completed, more translations remaining' : 'All translations completed',
         stats: {
-          total: translations.length * TARGET_LANGUAGES.length,
-          success: successCount,
+          totalFound: translations.length,
+          attempted: attemptedCount,
+          translated: successCount,
+          skippedExisting: skippedExisting,
           errors: errorCount,
           languages: TARGET_LANGUAGES
         },
+        sampleKeys: translations.slice(0, 3).map(t => t.key),
+        errorSamples: errorSamples.length > 0 ? errorSamples : undefined,
         hasMore,
         nextOffset: offset + translations.length,
         totalCount: totalCount || 0,
@@ -281,10 +400,11 @@ Your task: Produce professional, native-quality translations that feel natural t
     );
 
   } catch (error) {
-    console.error('[auto-translate-all] Error:', error);
+    console.error('[auto-translate-all] Fatal error:', error);
     return new Response(
       JSON.stringify({ 
         success: false,
+        phase: 'translate',
         error: error instanceof Error ? error.message : 'Internal server error' 
       }),
       { 
