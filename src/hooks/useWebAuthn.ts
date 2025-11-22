@@ -121,10 +121,20 @@ export function useWebAuthn() {
         throw new Error('Biometric authentication failed');
       }
 
-      // Sign in with Supabase Auth using service role (requires backend support)
-      // For now, we'll rely on the verify function to create the session
-      
-      return { success: true, userId: data.user_id };
+      // Set the session returned from backend
+      if (data.session) {
+        const { error: setSessionError } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+
+        if (setSessionError) {
+          console.error('Failed to set session:', setSessionError);
+          throw new Error('Failed to authenticate');
+        }
+      }
+
+      return { success: true, userId: data.user?.id };
     } catch (error) {
       console.error('Biometric authentication error:', error);
       throw error;
