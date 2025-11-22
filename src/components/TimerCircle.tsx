@@ -20,7 +20,9 @@ export const TimerCircle = ({ timeLeft, maxTime = 10 }: TimerCircleProps) => {
   // Determine if blinking animation should be active (3 seconds or less)
   const shouldBlink = timeLeft <= 3;
   
-  const circumference = 2 * Math.PI * 54;
+  // Use correct radius for circumference calculation (matches SVG circle r=42)
+  const radius = 42;
+  const circumference = 2 * Math.PI * radius;
   const progress = (timeLeft / maxTime) * circumference;
   const timerColor = getTimerColor();
   const glowColor = getTimerGlow();

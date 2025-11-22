@@ -126,7 +126,8 @@ export const QuestionCard = ({
             </MillionaireQuestion>
 
             {/* Answers */}
-            <div className="space-y-3 sm:space-y-4">{question.answers.map((answer) => {
+            <div className="space-y-3 sm:space-y-4">
+              {question.answers.map((answer) => {
                 const isRemoved = removedAnswer === answer.key;
                 const isSelected = selectedAnswer === answer.key;
                 const isCorrect = answer.key === correctAnswerKey;
@@ -166,6 +167,8 @@ export const QuestionCard = ({
                   </div>
                 );
               })}
+              {/* Spacer to ensure distance between C answer and lifeline buttons */}
+              <div className="h-4 sm:h-5 md:h-6" aria-hidden="true" />
             </div>
           </div>
 
