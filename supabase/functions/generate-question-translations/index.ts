@@ -144,10 +144,40 @@ serve(async (req) => {
 
     console.log(`[generate-question-translations] Processing ${questions.length} questions (${offset} - ${offset + questions.length})`);
 
-    // Step 3: Fetch existing translations for this chunk
+    // Step 3: Find and DELETE incomplete/truncated translations (< 15 characters)
     const questionIds = questions.map(q => q.id);
     
-    // Fetch existing target language translations
+    // First, identify truncated translations
+    const { data: truncatedTranslations } = await supabase
+      .from('question_translations')
+      .select('question_id, lang, question_text')
+      .in('question_id', questionIds)
+      .in('lang', TARGET_LANGUAGES);
+    
+    const truncatedItems: Array<{question_id: string, lang: string}> = [];
+    if (truncatedTranslations) {
+      for (const t of truncatedTranslations) {
+        if (t.question_text && t.question_text.length < 15) {
+          truncatedItems.push({ question_id: t.question_id, lang: t.lang });
+          console.log(`[generate-question-translations] Found truncated translation: ${t.question_id} (${t.lang}) = "${t.question_text}" (${t.question_text.length} chars)`);
+        }
+      }
+    }
+
+    // Delete truncated translations so they can be re-translated
+    if (truncatedItems.length > 0) {
+      console.log(`[generate-question-translations] Deleting ${truncatedItems.length} truncated translations...`);
+      for (const item of truncatedItems) {
+        await supabase
+          .from('question_translations')
+          .delete()
+          .eq('question_id', item.question_id)
+          .eq('lang', item.lang);
+      }
+      console.log(`[generate-question-translations] Successfully deleted ${truncatedItems.length} truncated translations`);
+    }
+
+    // Now fetch remaining translations (after deletion) to know what still needs translation
     const { data: existingTranslations } = await supabase
       .from('question_translations')
       .select('question_id, lang')
