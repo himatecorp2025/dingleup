@@ -137,7 +137,11 @@ export const QuestionTranslationManager = () => {
         setStatus(`Fordítás folyamatban... ${totalProcessed} kérdés feldolgozva`);
 
         const { data, error } = await supabase.functions.invoke('generate-question-translations', {
-          body: { offset, limit: 50 },
+          body: { 
+            offset, 
+            limit: 50,
+            testMode: false // CRITICAL: Production mode with 50-question batches
+          },
           headers: { Authorization: `Bearer ${session.access_token}` }
         });
 
@@ -163,6 +167,11 @@ export const QuestionTranslationManager = () => {
         offset = data?.nextOffset || (offset + 50);
 
         console.log(`[QuestionTranslationManager] Chunk complete - hasMore: ${hasMore}, nextOffset: ${offset}`);
+
+        // Add delay between chunks to prevent overwhelming the connection
+        if (hasMore) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       }
 
       setProgress(100);
