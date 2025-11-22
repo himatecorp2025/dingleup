@@ -94,7 +94,7 @@ serve(async (req) => {
     const maxItems = body.maxItems ?? 5;
     const offset = body.offset ?? 0;
 
-    const limit = testMode ? maxItems : (body.limit ?? 50); // 50 questions per chunk
+    const limit = testMode ? maxItems : (body.limit ?? 25); // 25 questions per chunk for reliability
 
     console.log(`[generate-question-translations] Running in ${testMode ? 'TEST' : 'LIVE'} mode`);
     console.log(`[generate-question-translations] Processing chunk: offset=${offset}, limit=${limit}`);
