@@ -126,7 +126,7 @@ export const QuestionCard = ({
             </MillionaireQuestion>
 
             {/* Answers */}
-            <div className="space-y-3 sm:space-y-4 mb-[10%]">{question.answers.map((answer) => {
+            <div className="space-y-3 sm:space-y-4">{question.answers.map((answer) => {
                 const isRemoved = removedAnswer === answer.key;
                 const isSelected = selectedAnswer === answer.key;
                 const isCorrect = answer.key === correctAnswerKey;
@@ -182,21 +182,23 @@ export const QuestionCard = ({
         </div>
 
         {/* Bottom section: Help buttons */}
-        <GameLifelines
-          help5050UsageCount={help5050UsageCount}
-          help2xAnswerUsageCount={help2xAnswerUsageCount}
-          helpAudienceUsageCount={helpAudienceUsageCount}
-          isHelp5050ActiveThisQuestion={isHelp5050ActiveThisQuestion}
-          isDoubleAnswerActiveThisQuestion={isDoubleAnswerActiveThisQuestion}
-          isAudienceActiveThisQuestion={isAudienceActiveThisQuestion}
-          usedQuestionSwap={usedQuestionSwap}
-          skipCost={skipCost}
-          coins={coins}
-          onUseHelp5050={onUseHelp5050}
-          onUseHelp2xAnswer={onUseHelp2xAnswer}
-          onUseHelpAudience={onUseHelpAudience}
-          onUseQuestionSwap={onUseQuestionSwap}
-        />
+        <div className="mt-[6%] sm:mt-[7%] md:mt-[8%]">
+          <GameLifelines
+            help5050UsageCount={help5050UsageCount}
+            help2xAnswerUsageCount={help2xAnswerUsageCount}
+            helpAudienceUsageCount={helpAudienceUsageCount}
+            isHelp5050ActiveThisQuestion={isHelp5050ActiveThisQuestion}
+            isDoubleAnswerActiveThisQuestion={isDoubleAnswerActiveThisQuestion}
+            isAudienceActiveThisQuestion={isAudienceActiveThisQuestion}
+            usedQuestionSwap={usedQuestionSwap}
+            skipCost={skipCost}
+            coins={coins}
+            onUseHelp5050={onUseHelp5050}
+            onUseHelp2xAnswer={onUseHelp2xAnswer}
+            onUseHelpAudience={onUseHelpAudience}
+            onUseQuestionSwap={onUseQuestionSwap}
+          />
+        </div>
         </div>
       </div>
       </DoubleTapLikeReaction>

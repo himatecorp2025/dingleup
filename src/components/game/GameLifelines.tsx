@@ -190,6 +190,22 @@ const Lifeline3DButton = ({
   );
 };
 
+const OneThirdIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" aria-hidden>
+    <text
+      x="50%"
+      y="50%"
+      dominantBaseline="middle"
+      textAnchor="middle"
+      fontSize="11"
+      fontWeight="700"
+      fill="currentColor"
+    >
+      1/3
+    </text>
+  </svg>
+);
+
 export const GameLifelines = ({
   help5050UsageCount,
   help2xAnswerUsageCount,
@@ -213,8 +229,8 @@ export const GameLifelines = ({
         onClick={onUseHelp5050}
         disabled={help5050UsageCount >= 2}
         isActive={isHelp5050ActiveThisQuestion}
-        icon={CircleSlash}
-        label={help5050UsageCount >= 1 ? undefined : "1/3"}
+        icon={OneThirdIcon}
+        label={undefined}
         cost={help5050UsageCount === 1 ? 15 : undefined}
         colorScheme="orange"
       />
