@@ -77,12 +77,9 @@ serve(async (req) => {
       );
     }
 
-    if (!question) {
-      return new Response(
-        JSON.stringify({ error: 'Question not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    // If question not in DB yet, use default counts (questions from JSON files)
+    const questionLikeCount = question?.like_count || 0;
+    const questionDislikeCount = question?.dislike_count || 0;
 
     // Check if user has liked this question
     const { data: likeData } = await supabaseClient
@@ -103,8 +100,8 @@ serve(async (req) => {
     const response: QuestionReactionStatus = {
       liked: !!likeData,
       disliked: !!dislikeData,
-      questionLikeCount: question.like_count || 0,
-      questionDislikeCount: question.dislike_count || 0,
+      questionLikeCount,
+      questionDislikeCount,
     };
 
     return new Response(
