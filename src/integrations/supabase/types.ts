@@ -3699,6 +3699,28 @@ export type Database = {
           third: string
         }[]
       }
+      get_random_questions_fast: {
+        Args: { p_count?: number }
+        Returns: {
+          answers: Json
+          audience: Json
+          correct_answer: string | null
+          created_at: string | null
+          dislike_count: number
+          id: string
+          like_count: number
+          question: string
+          source_category: string
+          third: string
+          topic_id: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "questions"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_user_country_rank: { Args: { p_user_id: string }; Returns: number }
       get_user_threads_optimized: {
         Args: { p_user_id: string }
