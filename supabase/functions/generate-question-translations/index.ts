@@ -106,11 +106,13 @@ serve(async (req) => {
 
     console.log(`[generate-question-translations] Total questions in database: ${totalCount}`);
 
-    // Step 2: Fetch chunk of questions
+    // Step 2: Fetch chunk of questions with DETERMINISTIC ordering
+    // CRITICAL: Secondary sort by 'id' ensures consistent results when created_at is same
     const { data: questions, error: fetchError } = await supabase
       .from('questions')
       .select('id, question, answers, correct_answer')
       .order('created_at', { ascending: true })
+      .order('id', { ascending: true })
       .range(offset, offset + limit - 1);
 
     if (fetchError) {
