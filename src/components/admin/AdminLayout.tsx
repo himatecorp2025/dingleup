@@ -73,7 +73,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/booster-types', label: 'Booster Csomagok', icon: Zap },
     { path: '/admin/booster-purchases', label: 'Booster Vásárlások', icon: ShoppingBag },
     { path: '/admin/translations', label: 'Fordítások (UI & Kérdések)', icon: Languages },
-    { path: '/admin/load-testing', label: 'Terheléses Tesztelés & Performance', icon: BarChart3 },
+    { path: '/admin/load-test', label: 'Terheléses Teszt (Load Test)', icon: BarChart3 },
     { path: '/admin/advanced-analytics', label: 'Fejlett Analitika', icon: Activity },
     { path: '/admin/age-statistics', label: 'Korcsoport Statisztika', icon: Calendar },
   ];
