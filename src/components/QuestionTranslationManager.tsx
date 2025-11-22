@@ -118,9 +118,11 @@ export const QuestionTranslationManager = () => {
       setStatus('Kérdés fordítás indítása...');
       setStats(null);
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.error('Admin session expired');
+      // CRITICAL: Refresh session to ensure valid JWT token
+      const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
+      if (sessionError || !session) {
+        console.error('[QuestionTranslationManager] Session refresh failed:', sessionError);
+        toast.error('Admin munkamenet lejárt, kérlek jelentkezz be újra');
         setIsTranslating(false);
         return;
       }
