@@ -154,24 +154,24 @@ const Lifeline3DButton = ({
       {/* ICON AND LABEL */}
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5" style={{ transform: 'translateZ(32px)' }}>
         <Icon 
-          className="w-6 h-6 transition-all duration-300" 
+          className="w-5 h-5 transition-all duration-300" 
           style={{ 
-            color: color,
-            filter: `drop-shadow(0 0 8px ${glowColor})`,
+            color: disabled ? "hsl(var(--muted-foreground))" : "#FFFFFF",
+            filter: `drop-shadow(0 0 8px ${glowColor}) drop-shadow(0 2px 4px rgba(0,0,0,0.5))`,
             opacity: disabled ? 0.5 : 1
           }} 
         />
         <span 
-          className="text-xs font-bold transition-all duration-300" 
+          className="text-[10px] font-bold transition-all duration-300 max-w-full px-1 truncate" 
           style={{ 
-            color: color,
-            textShadow: `0 0 10px ${glowColor}`,
+            color: disabled ? "hsl(var(--muted-foreground))" : "#FFFFFF",
+            textShadow: `0 0 10px ${glowColor}, 0 2px 4px rgba(0,0,0,0.8)`,
             opacity: disabled ? 0.5 : 1
           }}
         >
           {cost !== undefined ? (
             <div className="flex items-center gap-1">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="12" cy="12" r="10" fill="url(#goldGradient)" stroke="#FFD700" strokeWidth="1"/>
                 <defs>
                   <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="24">
@@ -208,7 +208,7 @@ export const GameLifelines = ({
   const { t } = useI18n();
   
   return (
-    <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2 mt-16">
+    <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2 mt-24">
       <Lifeline3DButton
         onClick={onUseHelp5050}
         disabled={help5050UsageCount >= 2}

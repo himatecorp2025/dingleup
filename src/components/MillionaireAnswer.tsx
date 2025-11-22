@@ -188,7 +188,7 @@ export const MillionaireAnswer = ({
         >
           <div className="flex items-center justify-center w-full gap-2 sm:gap-3">
             <div 
-              className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center translate-y-[15%]"
+              className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center translate-y-[20%]"
               style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
             >
               {/* Letter hexagon with same 3D effect as question number */}
@@ -269,7 +269,7 @@ export const MillionaireAnswer = ({
 
               <span className="relative z-10 text-primary-foreground font-bold text-[15px] sm:text-lg leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{letter}:</span>
             </div>
-            <p className="text-xl sm:text-2xl md:text-3xl font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground translate-y-[30%]" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground translate-y-[35%]" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>
               {children}
             </p>
             <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />
