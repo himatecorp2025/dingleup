@@ -187,21 +187,108 @@ export const MillionaireAnswer = ({
             className={`relative w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center flex-shrink-0 text-xs sm:text-sm font-black`}
             style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
           >
-            {/* Letter badge 3D */}
-            <div 
+            {/* BASE SHADOW (3D depth) */}
+            <div
+              className="absolute"
+              style={{
+                top: '2px',
+                left: '2px',
+                right: '-2px',
+                bottom: '-2px',
+                background: 'rgba(0,0,0,0.35)',
+                filter: 'blur(3px)',
+                clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)'
+              }}
+              aria-hidden
+            />
+
+            {/* OUTER FRAME - gradient with border */}
+            <div
               className={`absolute inset-0 border-2 transition-all duration-300 ${
-                showCorrectPulse ? 'bg-gradient-to-br from-green-300 to-green-400 border-green-200' :
-                isDoubleChoiceActive ? 'bg-gradient-to-br from-orange-300 to-orange-400 border-orange-200' :
-                isCorrect ? 'bg-gradient-to-br from-green-300 to-green-400 border-green-200' :
-                isWrong ? 'bg-gradient-to-br from-red-300 to-red-400 border-red-200' :
-                'bg-gradient-to-br from-yellow-400 to-yellow-500 border-yellow-300'
+                showCorrectPulse ? 'bg-gradient-to-br from-green-900 via-green-600 to-green-800 border-green-400' :
+                isDoubleChoiceActive ? 'bg-gradient-to-br from-orange-900 via-orange-600 to-orange-800 border-orange-400' :
+                isCorrect ? 'bg-gradient-to-br from-green-900 via-green-600 to-green-800 border-green-400' :
+                isWrong ? 'bg-gradient-to-br from-red-900 via-red-600 to-red-800 border-red-400' :
+                'bg-gradient-to-br from-yellow-900 via-yellow-600 to-yellow-800 border-yellow-400'
               }`}
               style={{ 
                 clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
-                boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.3)'
-              }} 
-              aria-hidden 
+                boxShadow: showCorrectPulse ? '0 0 20px rgba(74, 222, 128, 0.6), 0 8px 25px rgba(0,0,0,0.5)' :
+                           isCorrect ? '0 0 20px rgba(74, 222, 128, 0.6), 0 8px 25px rgba(0,0,0,0.5)' :
+                           isWrong ? '0 0 20px rgba(248, 113, 113, 0.6), 0 8px 25px rgba(0,0,0,0.5)' :
+                           '0 0 20px rgba(234, 179, 8, 0.6), 0 8px 25px rgba(0,0,0,0.5)'
+              }}
+              aria-hidden
             />
+
+            {/* MIDDLE FRAME (bright inner highlight) */}
+            <div
+              className={`absolute transition-all duration-300 ${
+                showCorrectPulse ? 'bg-gradient-to-b from-green-600 via-green-400 to-green-700' :
+                isDoubleChoiceActive ? 'bg-gradient-to-b from-orange-600 via-orange-400 to-orange-700' :
+                isCorrect ? 'bg-gradient-to-b from-green-600 via-green-400 to-green-700' :
+                isWrong ? 'bg-gradient-to-b from-red-600 via-red-400 to-red-700' :
+                'bg-gradient-to-b from-yellow-600 via-yellow-400 to-yellow-700'
+              }`}
+              style={{ 
+                top: '2px',
+                left: '2px',
+                right: '2px',
+                bottom: '2px',
+                clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
+                boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.15)'
+              }}
+              aria-hidden
+            />
+
+            {/* INNER CRYSTAL/COLOR LAYER */}
+            <div
+              className={`absolute transition-all duration-300 ${
+                showCorrectPulse ? 'bg-gradient-to-b from-green-400 via-green-500 to-green-700' :
+                isDoubleChoiceActive ? 'bg-gradient-to-b from-orange-400 via-orange-500 to-orange-700' :
+                isCorrect ? 'bg-gradient-to-b from-green-400 via-green-500 to-green-700' :
+                isWrong ? 'bg-gradient-to-b from-red-400 via-red-500 to-red-700' :
+                'bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-700'
+              }`}
+              style={{
+                top: '3px',
+                left: '3px',
+                right: '3px',
+                bottom: '3px',
+                clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
+                boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.15)',
+              }}
+              aria-hidden
+            />
+
+            {/* SPECULAR HIGHLIGHT (top-left) */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: '3px',
+                left: '3px',
+                right: '3px',
+                bottom: '3px',
+                clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
+                background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)',
+              }}
+              aria-hidden
+            />
+
+            {/* INNER GLOW (bottom shadow for 3D depth) */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: '3px',
+                left: '3px',
+                right: '3px',
+                bottom: '3px',
+                clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
+                boxShadow: 'inset 0 0 5px rgba(0,0,0,0.125)',
+              }}
+              aria-hidden
+            />
+
             <span className={`relative z-10 font-poppins font-bold ${
               showCorrectPulse || isDoubleChoiceActive || isCorrect || isWrong ? 'text-gray-900' : 'text-gray-100'
             }`} style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
