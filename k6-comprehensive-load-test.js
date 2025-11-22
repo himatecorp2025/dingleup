@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import { check, sleep, group } from 'k6';
 import { Rate, Trend, Counter, Gauge } from 'k6/metrics';
+import { SharedArray } from 'k6/data';
 
 // ============= CUSTOM METRICS =============
 const failRate = new Rate('failed_requests');
