@@ -3742,6 +3742,7 @@ export type Database = {
         Returns: Json
       }
       refresh_leaderboard_cache: { Args: never; Returns: undefined }
+      refresh_leaderboard_cache_optimized: { Args: never; Returns: undefined }
       refresh_leaderboard_public_cache: { Args: never; Returns: undefined }
       regenerate_invitation_code: { Args: never; Returns: string }
       regenerate_lives: { Args: never; Returns: undefined }
