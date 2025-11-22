@@ -378,11 +378,6 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* UI Translation Manager */}
-            <TranslationSeeder />
-
-            {/* Question Translation Manager */}
-            <QuestionTranslationManager />
           </div>
         )}
 
