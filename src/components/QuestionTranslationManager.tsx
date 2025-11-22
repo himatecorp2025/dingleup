@@ -32,8 +32,8 @@ export const QuestionTranslationManager = () => {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<string>('');
   const [stats, setStats] = useState<{
-    translated: number;
-    skipped: number;
+    total: number;
+    success: number;
     errors: number;
   } | null>(null);
   const [initialStats, setInitialStats] = useState<InitialStats | null>(null);
@@ -52,7 +52,7 @@ export const QuestionTranslationManager = () => {
         // Get total questions count
         const { count: totalQuestions, error: questionsError } = await supabase
           .from('questions')
-          .select('id', { count: 'exact', head: true });
+          .select('*', { count: 'exact', head: true });
 
         if (questionsError || !totalQuestions) {
           console.error('[QuestionTranslationManager] Error fetching questions:', questionsError);
@@ -69,7 +69,7 @@ export const QuestionTranslationManager = () => {
         for (const lang of TARGET_LANGUAGES) {
           const { count: translatedCount, error } = await supabase
             .from('question_translations')
-            .select('id', { count: 'exact', head: true })
+            .select('*', { count: 'exact', head: true })
             .eq('lang', lang);
 
           if (error) {
@@ -111,122 +111,80 @@ export const QuestionTranslationManager = () => {
     loadInitialStats();
   }, []);
 
-  // This useEffect is now REMOVED - channel subscription happens in startTranslation BEFORE invoking edge function
-
   const startTranslation = async () => {
     try {
+      setIsTranslating(true);
       setProgress(0);
-      setStatus('Fordítás indítása...');
+      setStatus('Kérdés fordítás indítása...');
       setStats(null);
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast.error('Admin session expired');
+        setIsTranslating(false);
         return;
       }
 
-      // CRITICAL: Subscribe to channel BEFORE setting isTranslating to ensure we catch all broadcasts
-      const channel = supabase.channel('question-translation-progress');
-      channelRef.current = channel;
+      console.log('[QuestionTranslationManager] Starting chunked translation process');
 
-      channel
-        .on('broadcast', { event: 'progress' }, (payload: any) => {
-          console.log('[QuestionTranslationManager] Progress update:', payload);
-          const newProgress = payload.payload.progress || 0;
-          const newStatus = payload.payload.status || '';
-          setProgress(newProgress);
-          setStatus(newStatus);
-          if (payload.payload.translated !== undefined) {
-            setStats({
-              translated: payload.payload.translated,
-              skipped: payload.payload.skipped,
-              errors: payload.payload.errors
-            });
-          }
-        })
-        .subscribe();
+      let offset = 0;
+      let hasMore = true;
+      let totalSuccess = 0;
+      let totalErrors = 0;
+      let totalProcessed = 0;
 
-      // Small delay to ensure subscription is active
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // NOW set isTranslating to show loading state
-      setIsTranslating(true);
-
-      // ITERATIVE APPROACH: Invoke edge function repeatedly until all translations complete
-      let continueProcessing = true;
-      let iterationCount = 0;
-
-      while (continueProcessing) {
-        iterationCount++;
-        console.log(`[QuestionTranslationManager] Starting iteration ${iterationCount}...`);
+      while (hasMore) {
+        setStatus(`Fordítás folyamatban... ${totalProcessed} kérdés feldolgozva`);
 
         const { data, error } = await supabase.functions.invoke('generate-question-translations', {
+          body: { offset, limit: 50 },
           headers: { Authorization: `Bearer ${session.access_token}` }
         });
 
         if (error) {
-          console.error('[QuestionTranslationManager] Edge function error:', error);
-          
-          // Check if payment required (out of credits)
-          const errorMessage = error.message || String(error);
-          if (errorMessage.includes('credits exhausted') || errorMessage.includes('PAYMENT_REQUIRED')) {
-            toast.error('Elfogytak a Lovable AI kredit-ek! Töltsd fel a workspace-t a Settings → Workspace → Usage menüpontban.', {
-              duration: 8000,
-            });
-          } else {
-            toast.error(`Hiba az ${iterationCount}. futás során`);
-          }
-          
+          console.error('[QuestionTranslationManager] Translation error:', error);
+          toast.error('Hiba történt a fordítás közben');
+          setStatus('Hiba történt');
           setIsTranslating(false);
-          break;
+          return;
         }
 
-        console.log('[QuestionTranslationManager] Iteration complete:', data);
+        if (data?.stats) {
+          totalSuccess += data.stats.translated || 0;
+          totalErrors += data.stats.errors || 0;
+          totalProcessed = data.nextOffset || offset;
 
-        // Check if there's more work to do
-        const { data: remainingCheck } = await supabase
-          .from('questions')
-          .select('id')
-          .limit(1);
-
-        if (!remainingCheck || remainingCheck.length === 0) {
-          continueProcessing = false;
-          toast.success('Minden kérdés lefordítva!');
-          setIsTranslating(false);
-        } else {
-          // Check if we actually have untranslated content remaining
-          const { count: totalQuestions } = await supabase
-            .from('questions')
-            .select('id', { count: 'exact', head: true });
-
-          const { count: totalTranslations } = await supabase
-            .from('question_translations')
-            .select('id', { count: 'exact', head: true })
-            .in('lang', ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl']);
-
-          const expectedTranslations = (totalQuestions || 0) * 7;
-          if ((totalTranslations || 0) >= expectedTranslations) {
-            continueProcessing = false;
-            toast.success('Minden kérdés lefordítva!');
-            setIsTranslating(false);
-          } else {
-            // Wait 2 seconds between iterations
-            console.log(`[QuestionTranslationManager] ${expectedTranslations - (totalTranslations || 0)} fordítás hiányzik még, folytatás...`);
-            await new Promise(resolve => setTimeout(resolve, 2000));
-          }
+          const progressPercent = data.progress || 0;
+          setProgress(progressPercent);
+          setStatus(`Fordítás: ${progressPercent}% (${totalProcessed}/${data.totalCount} kérdés)`);
         }
+
+        hasMore = data?.hasMore || false;
+        offset = data?.nextOffset || (offset + 50);
+
+        console.log(`[QuestionTranslationManager] Chunk complete - hasMore: ${hasMore}, nextOffset: ${offset}`);
+      }
+
+      setProgress(100);
+      setStatus('Fordítás befejezve!');
+      setStats({
+        total: totalSuccess + totalErrors,
+        success: totalSuccess,
+        errors: totalErrors
+      });
+
+      toast.success(`Kérdések fordítása sikeres! ${totalSuccess} fordítás elkészült.`);
+
+      if (totalErrors > 0) {
+        toast.warning(`${totalErrors} hiba történt a fordítás során.`);
       }
 
     } catch (error) {
       console.error('[QuestionTranslationManager] Exception:', error);
-      toast.error('Hiba történt a fordítás során');
+      toast.error('Váratlan hiba történt');
+      setStatus('Váratlan hiba');
     } finally {
       setIsTranslating(false);
-      // Cleanup channel
-      if (channelRef.current) {
-        await supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
-      }
     }
   };
 
@@ -308,31 +266,20 @@ export const QuestionTranslationManager = () => {
 
       {stats && (
         <div className="mb-4 grid grid-cols-3 gap-3">
+          <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+            <div className="flex items-center gap-2 mb-1">
+              <Languages className="w-4 h-4 text-purple-400" />
+              <span className="text-xs text-white/60">Összesen</span>
+            </div>
+            <p className="text-xl font-bold text-purple-400">{stats.total}</p>
+          </div>
           <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <CheckCircle className="w-4 h-4 text-green-400" />
-              <span className="text-xs text-white/60">Lefordítva</span>
+              <span className="text-xs text-white/60">Sikeres</span>
             </div>
-            <p className="text-xl font-bold text-green-400">{stats.translated}</p>
+            <p className="text-xl font-bold text-green-400">{stats.success}</p>
           </div>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg cursor-help">
-                  <div className="flex items-center gap-2 mb-1">
-                    <CheckCircle className="w-4 h-4 text-blue-400" />
-                    <span className="text-xs text-white/60">Kihagyva</span>
-                    <Info className="w-3 h-3 text-blue-400/60" />
-                  </div>
-                  <p className="text-xl font-bold text-blue-400">{stats.skipped}</p>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Ez nyelvfordításokat jelent (nem kérdéseket)</p>
-                <p className="text-xs text-white/60 mt-1">Például: 1 kérdés × 7 nyelv = 7 fordítás</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <XCircle className="w-4 h-4 text-red-400" />
