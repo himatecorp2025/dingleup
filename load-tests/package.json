@@ -1,0 +1,16 @@
+{
+  "name": "dingleup-load-tests",
+  "version": "1.0.0",
+  "description": "K6 load testing suite for DingleUP!",
+  "type": "module",
+  "scripts": {
+    "create-users": "node scripts/create-test-users.js",
+    "test:small": "k6 run -e TARGET_VUS=500 -e RAMP_UP_DURATION=60s -e HOLD_DURATION=120s game-load-test.js",
+    "test:medium": "k6 run -e TARGET_VUS=5000 -e RAMP_UP_DURATION=180s -e HOLD_DURATION=300s game-load-test.js",
+    "test:large": "k6 run -e TARGET_VUS=25000 -e RAMP_UP_DURATION=300s -e HOLD_DURATION=180s game-load-test.js",
+    "test:interactive": "./run-tests.sh"
+  },
+  "devDependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
