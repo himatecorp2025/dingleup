@@ -15,7 +15,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
         fill="none"
         shapeRendering="geometricPrecision"
         colorInterpolationFilters="sRGB"
-        className="absolute inset-0 w-full h-auto"
+        className="absolute inset-0 w-full h-auto pointer-events-none"
         preserveAspectRatio="none"
         aria-hidden
       >
@@ -82,9 +82,9 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       </svg>
       
       <div 
-        className="relative px-3 sm:px-4 md:px-5 py-[32px] sm:py-[40px] md:py-[48px] text-foreground"
+        className="absolute inset-0 flex items-center justify-center px-3 sm:px-4 md:px-5"
       >
-        <div className="flex items-center justify-center w-full">
+        <div className="flex items-center justify-center w-full gap-2 sm:gap-3">
           <div 
             className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
             style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
@@ -95,7 +95,7 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
               <span className="relative z-10 text-primary-foreground font-bold text-[10px] sm:text-xs leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{questionNumber}/15</span>
             )}
           </div>
-          <p className="text-sm sm:text-base md:text-lg font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins px-2 sm:px-3 md:px-4" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>
+          <p className="text-sm sm:text-base md:text-lg font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>
             {children}
           </p>
           <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />
