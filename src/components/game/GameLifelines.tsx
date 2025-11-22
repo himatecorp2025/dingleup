@@ -214,7 +214,7 @@ export const GameLifelines = ({
         disabled={help5050UsageCount >= 2}
         isActive={isHelp5050ActiveThisQuestion}
         icon={CircleSlash}
-        label="1/3"
+        label={help5050UsageCount >= 1 ? undefined : "1/3"}
         cost={help5050UsageCount === 1 ? 15 : undefined}
         colorScheme="orange"
       />
@@ -223,7 +223,7 @@ export const GameLifelines = ({
         disabled={help2xAnswerUsageCount >= 2}
         isActive={isDoubleAnswerActiveThisQuestion}
         icon={CheckCheck}
-        label="2x"
+        label={undefined}
         cost={help2xAnswerUsageCount === 1 ? 20 : undefined}
         colorScheme="green"
       />
@@ -232,7 +232,7 @@ export const GameLifelines = ({
         disabled={helpAudienceUsageCount >= 2}
         isActive={isAudienceActiveThisQuestion}
         icon={Users}
-        label={t('game.lifeline_audience')}
+        label={undefined}
         cost={helpAudienceUsageCount === 1 ? 25 : undefined}
         colorScheme="blue"
       />
