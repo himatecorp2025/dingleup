@@ -38,15 +38,15 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
           </linearGradient>
 
           <linearGradient id="band20_q" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#BFE0FF"/>
-            <stop offset="35%" stopColor="#2196F3"/>
-            <stop offset="100%" stopColor="#0B5DB8"/>
+            <stop offset="0%" stopColor="#E0BFFF"/>
+            <stop offset="35%" stopColor="#9C27F3"/>
+            <stop offset="100%" stopColor="#6A0BB8"/>
           </linearGradient>
 
           <linearGradient id="band5_q" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#E6F2FF"/>
-            <stop offset="50%" stopColor="#5AB6FF"/>
-            <stop offset="100%" stopColor="#1E74D6"/>
+            <stop offset="0%" stopColor="#F2E6FF"/>
+            <stop offset="50%" stopColor="#B85AFF"/>
+            <stop offset="100%" stopColor="#7B1ED6"/>
           </linearGradient>
 
           <filter id="pro3d_q" x="-50%" y="-50%" width="200%" height="200%">
