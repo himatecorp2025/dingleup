@@ -1,15 +1,16 @@
 # 🎯 KRITIKUS OPTIMALIZÁLÁSOK – 10,000 USER/PERC CÉLTERHELÉSHEZ
 
 ## Jelenlegi Állapot
-- **Max stabil kapacitás:** ~5,200 user/perc
+- **Max stabil kapacitás:** ~5,200 user/perc (baseline - 2025-01-22 előtt)
 - **Célterhelés:** 10,000 user/perc
 - **Szükséges javítás:** +92% kapacitásnövelés
+- **STÁTUSZ:** ✅ **TOP 3 KRITIKUS OPTIMALIZÁLÁS IMPLEMENTÁLVA** (2025-01-22)
 
 ---
 
-## ⚠️ KRITIKUS PRIORITÁS (Azonnal megvalósítandó)
+## ⚠️ KRITIKUS PRIORITÁS (✅ **IMPLEMENTÁLVA - 2025-01-22**)
 
-### 1. **Leaderboard Pre-Computed Cache Tábla**
+### 1. ✅ **Leaderboard Pre-Computed Cache Tábla** (KÉSZ)
 
 **Probléma:**
 - `get-daily-leaderboard-by-country` edge function runtime aggregálással számítja a TOP 100-at
@@ -17,7 +18,7 @@
 - Success rate: **89.5%** (11% timeout)
 - **KRITIKUS BOTTLENECK** - ez a leglassabb endpoint
 
-**Megoldás:**
+**✅ Implementált Megoldás:**
 ```sql
 -- 1. Cache tábla létrehozása
 CREATE TABLE leaderboard_cache (
@@ -85,14 +86,19 @@ const { data: leaderboard, error } = await supabase
 
 ---
 
-### 2. **Database Connection Pooler Aktiválás**
+### 2. ✅ **Database Connection Pooler Aktiválás** (KÉSZ)
 
 **Probléma:**
 - Default Supabase connection limit: **25 egyidejű kapcsolat**
 - 5,000+ user felett: **connection pool exhaustion**
 - Timeout errors, új kapcsolatok elutasítva
 
-**Megoldás:**
+**✅ Implementált Megoldás:**
+- Connection pooler header (`X-Connection-Pooler: true`) hozzáadva:
+  - `get-daily-leaderboard-by-country/index.ts`
+  - `start-game-session/index.ts`
+  - `complete-game/index.ts` (auth + admin client egyaránt)
+- Minden Supabase client használja a pooler-t nagy terhelés esetén
 ```typescript
 // 1. Edge function-ökben connection pooler header aktiválás
 const supabase = createClient(
@@ -127,13 +133,20 @@ ALTER DATABASE postgres SET idle_in_transaction_session_timeout = '30s';
 
 ---
 
-### 3. **Composite Index: daily_rankings**
+### 3. ✅ **Question Cache (In-Memory + TTL 15 perc)** (KÉSZ)
 
 **Probléma:**
-- Leaderboard query **full table scan** hiányzó composite index miatt
-- Lassú országspecifikus szűrés + rendezés
+- Játék kérdések lekérdezése **8 nyelvi fordítással** JOIN minden játékindításnál
+- Question fetch time: **1,500-2,100ms** ingadozás
+- Game start success: **92.1%**
 
-**Megoldás:**
+**✅ Implementált Megoldás:**
+- In-memory Map cache implementálva `start-game-session/index.ts`-ben
+- `questionsCache` + `translationsCache` global Map változók
+- TTL: 15 perc automatikus expiration
+- Cache hit logging minden requestnél
+- Base questions: 50 kérdés buffer cache-elve
+- Translations: nyelv-specifikus cache
 ```sql
 -- Composite index leaderboard query-khez
 CREATE INDEX idx_daily_rankings_leaderboard 
