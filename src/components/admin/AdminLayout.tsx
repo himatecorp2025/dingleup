@@ -20,6 +20,7 @@ import {
   Languages
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -29,6 +30,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { isHandheld } = usePlatformDetection();
 
   useEffect(() => {
     checkAuth();
@@ -76,7 +78,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/');
+    // Telefonos/tablet módban a Rólunk oldalra irányítunk
+    navigate(isHandheld ? '/about' : '/');
   };
 
   const isActive = (path: string) => {
