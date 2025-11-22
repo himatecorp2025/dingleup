@@ -119,7 +119,7 @@ export const QuestionTranslationManager = () => {
       setStats(null);
 
       // CRITICAL: Refresh session to ensure valid JWT token
-      const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
+      let { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
       if (sessionError || !session) {
         console.error('[QuestionTranslationManager] Session refresh failed:', sessionError);
         toast.error('Admin munkamenet lejárt, kérlek jelentkezz be újra');
@@ -141,8 +141,8 @@ export const QuestionTranslationManager = () => {
         const { data, error } = await supabase.functions.invoke('generate-question-translations', {
           body: { 
             offset, 
-            limit: 50,
-            testMode: false // CRITICAL: Production mode with 50-question batches
+            limit: 25,
+            testMode: false // CRITICAL: Production mode with 25-question batches for reliability
           },
           headers: { Authorization: `Bearer ${session.access_token}` }
         });
@@ -166,13 +166,22 @@ export const QuestionTranslationManager = () => {
         }
 
         hasMore = data?.hasMore || false;
-        offset = data?.nextOffset || (offset + 50);
+        offset = data?.nextOffset || (offset + 25);
 
         console.log(`[QuestionTranslationManager] Chunk complete - hasMore: ${hasMore}, nextOffset: ${offset}`);
 
-        // Add delay between chunks to prevent overwhelming the connection
+        // Add delay between chunks to prevent overwhelming the connection and allow JWT refresh
         if (hasMore) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // Refresh JWT token every 10 chunks to prevent expiration
+          if ((offset / 25) % 10 === 0) {
+            const { data: { session: refreshedSession } } = await supabase.auth.refreshSession();
+            if (refreshedSession) {
+              session = refreshedSession;
+              console.log('[QuestionTranslationManager] JWT token refreshed at offset', offset);
+            }
+          }
         }
       }
 
