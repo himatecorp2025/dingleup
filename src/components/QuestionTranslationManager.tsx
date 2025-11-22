@@ -115,7 +115,7 @@ export const QuestionTranslationManager = () => {
     try {
       setIsTranslating(true);
       setProgress(0);
-      setStatus('Kérdés fordítás indítása...');
+      setStatus('Csonka fordítások keresése...');
       setStats(null);
 
       // CRITICAL: Refresh session to ensure valid JWT token
@@ -127,76 +127,66 @@ export const QuestionTranslationManager = () => {
         return;
       }
 
-      console.log('[QuestionTranslationManager] Starting chunked translation process');
+      console.log('[QuestionTranslationManager] Starting truncated translations scan and re-translation');
 
-      let offset = 0;
-      let hasMore = true;
-      let totalSuccess = 0;
-      let totalErrors = 0;
-      let totalProcessed = 0;
+      // Single invocation - scans ALL question_translations, finds truncated, deletes, and re-translates
+      setStatus('Csonka fordítások törlése és újrafordítása...');
+      setProgress(10);
 
-      while (hasMore) {
-        setStatus(`Fordítás folyamatban... ${totalProcessed} kérdés feldolgozva`);
-
-        const { data, error } = await supabase.functions.invoke('generate-question-translations', {
-          body: { 
-            offset, 
-            limit: 25,
-            testMode: false // CRITICAL: Production mode with 25-question batches for reliability
-          },
-          headers: { Authorization: `Bearer ${session.access_token}` }
-        });
-
-        if (error) {
-          console.error('[QuestionTranslationManager] Translation error:', error);
-          toast.error('Hiba történt a fordítás közben');
-          setStatus('Hiba történt');
-          setIsTranslating(false);
-          return;
-        }
-
-        if (data?.stats) {
-          totalSuccess += data.stats.translated || 0;
-          totalErrors += data.stats.errors || 0;
-          totalProcessed = data.nextOffset || offset;
-
-          const progressPercent = data.progress || 0;
-          setProgress(progressPercent);
-          setStatus(`Fordítás: ${progressPercent}% (${totalProcessed}/${data.totalCount} kérdés)`);
-        }
-
-        hasMore = data?.hasMore || false;
-        offset = data?.nextOffset || (offset + 25);
-
-        console.log(`[QuestionTranslationManager] Chunk complete - hasMore: ${hasMore}, nextOffset: ${offset}`);
-
-        // Add delay between chunks to prevent overwhelming the connection and allow JWT refresh
-        if (hasMore) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          // Refresh JWT token every 10 chunks to prevent expiration
-          if ((offset / 25) % 10 === 0) {
-            const { data: { session: refreshedSession } } = await supabase.auth.refreshSession();
-            if (refreshedSession) {
-              session = refreshedSession;
-              console.log('[QuestionTranslationManager] JWT token refreshed at offset', offset);
-            }
-          }
-        }
-      }
-
-      setProgress(100);
-      setStatus('Fordítás befejezve!');
-      setStats({
-        total: totalSuccess + totalErrors,
-        success: totalSuccess,
-        errors: totalErrors
+      const { data, error } = await supabase.functions.invoke('generate-question-translations', {
+        body: {}, // No parameters needed - scans entire table
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
 
-      toast.success(`Kérdések fordítása sikeres! ${totalSuccess} fordítás elkészült.`);
+      if (error) {
+        console.error('[QuestionTranslationManager] Translation error:', error);
+        toast.error('Hiba történt a fordítás közben');
+        setStatus('Hiba történt');
+        setIsTranslating(false);
+        return;
+      }
 
-      if (totalErrors > 0) {
-        toast.warning(`${totalErrors} hiba történt a fordítás során.`);
+      console.log('[QuestionTranslationManager] Translation response:', data);
+
+      if (data?.phase === 'scan' && data?.stats?.totalTruncated === 0) {
+        setProgress(100);
+        setStatus('Nincs csonka fordítás!');
+        toast.success('Minden kérdés fordítása teljes és rendben van!');
+        setStats({
+          total: 0,
+          success: 0,
+          errors: 0
+        });
+        setIsTranslating(false);
+        return;
+      }
+
+      setProgress(50);
+
+      if (data?.stats) {
+        const totalSuccess = data.stats.retranslated || 0;
+        const totalErrors = data.stats.errors || 0;
+        const totalTruncated = data.stats.totalTruncated || 0;
+
+        setProgress(100);
+        setStatus('Fordítás befejezve!');
+        setStats({
+          total: totalTruncated,
+          success: totalSuccess,
+          errors: totalErrors
+        });
+
+        if (totalTruncated > 0) {
+          toast.success(`${totalTruncated} csonka fordítás törölve és újrafordítva! ${totalSuccess} sikeres.`);
+        }
+
+        if (totalErrors > 0) {
+          toast.warning(`${totalErrors} hiba történt a fordítás során.`);
+        }
+      } else {
+        setProgress(100);
+        setStatus('Ismeretlen eredmény');
+        toast.warning('A fordítás eredménye nem ismert');
       }
 
     } catch (error) {
