@@ -169,6 +169,7 @@ const AppCore = () => {
               <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
               <Route path="/admin/translations" element={<ErrorBoundary><AdminTranslations /></ErrorBoundary>} />
               <Route path="/admin/load-testing" element={<ErrorBoundary><AdminLoadTest /></ErrorBoundary>} />
+              <Route path="/admin/load-test" element={<ErrorBoundary><AdminLoadTest /></ErrorBoundary>} />
               <Route path="/admin/advanced-analytics" element={<ErrorBoundary><AdvancedAnalytics /></ErrorBoundary>} />
               <Route path="/admin/retention" element={<ErrorBoundary><RetentionDashboard /></ErrorBoundary>} />
               <Route path="/admin/monetization" element={<ErrorBoundary><MonetizationDashboard /></ErrorBoundary>} />
