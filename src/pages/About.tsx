@@ -14,9 +14,9 @@ const About = () => {
   const { t } = useI18n();
   const navigate = useNavigate();
 
-  // Check if current user is DingelUP! (only for this specific username)
+  // Check if current user is DingleUP (only for this specific username)
   useEffect(() => {
-    const checkDingelUpUser = async () => {
+    const checkDingleUpUser = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
@@ -30,14 +30,14 @@ const About = () => {
           .eq('id', session.user.id)
           .maybeSingle();
 
-        setIsAdmin(profileData?.username === 'DingelUP!');
+        setIsAdmin(profileData?.username === 'DingleUP');
       } catch (error) {
-        console.error('DingelUP user check error:', error);
+        console.error('DingleUP user check error:', error);
         setIsAdmin(false);
       }
     };
 
-    checkDingelUpUser();
+    checkDingleUpUser();
   }, []);
 
   // Only show on mobile/tablet
