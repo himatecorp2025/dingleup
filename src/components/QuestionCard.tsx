@@ -118,7 +118,7 @@ export const QuestionCard = ({
         {/* Middle section: Question and Answers with Reaction Bar */}
         <div className="relative flex">
           {/* Question and Answers */}
-          <div className="flex-1 flex flex-col space-y-3 sm:space-y-4">
+          <div className="flex-1 flex flex-col space-y-1 sm:space-y-2">
             <MillionaireQuestion questionNumber={questionNumber}>
               {question.question}
             </MillionaireQuestion>
