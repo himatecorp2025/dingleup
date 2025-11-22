@@ -23,7 +23,7 @@ export const QuestionReactionsBar: React.FC<QuestionReactionsBarProps> = ({
 }) => {
   return (
     <div className="fixed right-3 sm:right-4 z-20 flex flex-col gap-4 sm:gap-6" style={{ 
-      bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))'
+      bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px) + 5vh)'
     }}>
       {/* LIKE Button - 50% larger */}
       <button

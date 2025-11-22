@@ -18,6 +18,7 @@ interface QuestionCardProps {
   timeLeft: number;
   selectedAnswer: string | null;
   firstAttempt: string | null;
+  secondAttempt: string | null;
   removedAnswer: string | null;
   audienceVotes: Record<string, number>;
   help5050UsageCount: number;
@@ -48,6 +49,7 @@ export const QuestionCard = ({
   timeLeft,
   selectedAnswer,
   firstAttempt,
+  secondAttempt,
   removedAnswer,
   audienceVotes,
   help5050UsageCount,
@@ -131,7 +133,9 @@ export const QuestionCard = ({
                 const isSelectedCorrect = isSelected && isCorrect;
                 const isSelectedWrong = isSelected && !isCorrect;
                 const isFirstAttempt = firstAttempt === answer.key;
-                const isDoubleChoiceActive = isDoubleAnswerActiveThisQuestion && isFirstAttempt && !selectedAnswer;
+                const isSecondAttempt = secondAttempt === answer.key;
+                // Orange for both first and second attempt when double answer is active and no final answer yet
+                const isDoubleChoiceActive = isDoubleAnswerActiveThisQuestion && (isFirstAttempt || isSecondAttempt) && !selectedAnswer;
                 const showCorrectPulse = selectedAnswer && !isSelected && isCorrect; // Show green pulse on correct when user selected wrong
 
                 return (
