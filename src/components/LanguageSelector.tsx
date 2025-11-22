@@ -1,5 +1,5 @@
 import React from 'react';
-import { useI18n, LangCode, LANGUAGE_NAMES } from '@/i18n';
+import { useI18n, LangCode, LANGUAGE_NAMES, VALID_LANGUAGES } from '@/i18n';
 import {
   Select,
   SelectContent,
@@ -45,7 +45,7 @@ export const LanguageSelector: React.FC = () => {
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {(Object.keys(LANGUAGE_NAMES) as LangCode[]).map((langCode) => (
+        {VALID_LANGUAGES.map((langCode) => (
           <SelectItem key={langCode} value={langCode}>
             <span className="flex items-center gap-2">
               <span>{LANGUAGE_FLAGS[langCode]}</span>
