@@ -148,39 +148,58 @@ export const TranslationSeeder = () => {
         return;
       }
 
-      console.log('[TranslationSeeder] Invoking auto-translate-all edge function');
+      console.log('[TranslationSeeder] Starting chunked translation process');
 
-      // Use auto-translate-all which handles batch processing internally
-      const { data, error } = await supabase.functions.invoke('auto-translate-all', {
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      });
+      let offset = 0;
+      let hasMore = true;
+      let totalSuccess = 0;
+      let totalErrors = 0;
+      let totalProcessed = 0;
 
-      if (error) {
-        console.error('[TranslationSeeder] Translation error:', error);
-        toast.error('Hiba történt a fordítás közben');
-        setStatus('Hiba történt');
-        setIsTranslating(false);
-        return;
-      }
+      while (hasMore) {
+        setStatus(`Fordítás folyamatban... ${totalProcessed} kulcs feldolgozva`);
 
-      if (data?.stats) {
-        setProgress(100);
-        setStatus('Fordítás befejezve!');
-        setStats({
-          total: data.stats.total || 0,
-          success: data.stats.success || 0,
-          errors: data.stats.errors || 0
+        const { data, error } = await supabase.functions.invoke('auto-translate-all', {
+          body: { offset, limit: 300 },
+          headers: { Authorization: `Bearer ${session.access_token}` }
         });
 
-        toast.success(`UI fordítás sikeres! ${data.stats.success} szöveg lefordítva.`);
-
-        if (data.stats.errors > 0) {
-          toast.warning(`${data.stats.errors} hiba történt a fordítás során.`);
+        if (error) {
+          console.error('[TranslationSeeder] Translation error:', error);
+          toast.error('Hiba történt a fordítás közben');
+          setStatus('Hiba történt');
+          setIsTranslating(false);
+          return;
         }
-      } else {
-        setProgress(100);
-        setStatus('Fordítás befejezve!');
-        toast.success('UI fordítás sikeres!');
+
+        if (data?.stats) {
+          totalSuccess += data.stats.success || 0;
+          totalErrors += data.stats.errors || 0;
+          totalProcessed = data.nextOffset || offset;
+
+          const progressPercent = data.progress || 0;
+          setProgress(progressPercent);
+          setStatus(`Fordítás: ${progressPercent}% (${totalProcessed}/${data.totalCount} kulcs)`);
+        }
+
+        hasMore = data?.hasMore || false;
+        offset = data?.nextOffset || (offset + 300);
+
+        console.log(`[TranslationSeeder] Chunk complete - hasMore: ${hasMore}, nextOffset: ${offset}`);
+      }
+
+      setProgress(100);
+      setStatus('Fordítás befejezve!');
+      setStats({
+        total: totalSuccess + totalErrors,
+        success: totalSuccess,
+        errors: totalErrors
+      });
+
+      toast.success(`UI fordítás sikeres! ${totalSuccess} szöveg lefordítva.`);
+
+      if (totalErrors > 0) {
+        toast.warning(`${totalErrors} hiba történt a fordítás során.`);
       }
 
     } catch (error) {

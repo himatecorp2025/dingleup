@@ -36,45 +36,45 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    console.log('[auto-translate-all] Starting automatic translation for all UI texts');
+    // Parse request body for chunking parameters
+    const { offset = 0, limit = 300 } = await req.json().catch(() => ({ offset: 0, limit: 300 }));
+    console.log(`[auto-translate-all] Processing chunk: offset=${offset}, limit=${limit}`);
 
-    // Step 1: Fetch ALL translations using pagination (1000-row backend limit)
-    const translations: Array<{ key: string; hu: string }> = [];
-    const PAGE_SIZE = 500;
-    let page = 0;
-    let hasMore = true;
+    // Step 1: Count total translations needing work
+    const { count: totalCount } = await supabase
+      .from('translations')
+      .select('*', { count: 'exact', head: true })
+      .not('hu', 'is', null);
 
-    while (hasMore) {
-      const { data: batch, error: fetchError } = await supabase
-        .from('translations')
-        .select('key, hu')
-        .not('hu', 'is', null)
-        .order('key')
-        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+    console.log(`[auto-translate-all] Total translations in database: ${totalCount}`);
 
-      if (fetchError) {
-        console.error('[auto-translate-all] Fetch error:', fetchError);
-        throw fetchError;
-      }
+    // Step 2: Fetch chunk of translations
+    const { data: translations, error: fetchError } = await supabase
+      .from('translations')
+      .select('key, hu')
+      .not('hu', 'is', null)
+      .order('key')
+      .range(offset, offset + limit - 1);
 
-      if (batch && batch.length > 0) {
-        translations.push(...batch);
-        console.log(`[auto-translate-all] Fetched page ${page + 1}: ${batch.length} keys (total: ${translations.length})`);
-        page++;
-        hasMore = batch.length === PAGE_SIZE;
-      } else {
-        hasMore = false;
-      }
+    if (fetchError) {
+      console.error('[auto-translate-all] Fetch error:', fetchError);
+      throw fetchError;
     }
 
-    if (translations.length === 0) {
+    if (!translations || translations.length === 0) {
       return new Response(
-        JSON.stringify({ success: true, message: 'No translations to process' }),
+        JSON.stringify({ 
+          success: true, 
+          message: 'No more translations to process',
+          hasMore: false,
+          totalCount: totalCount || 0,
+          processed: offset
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
     }
 
-    console.log(`[auto-translate-all] Processing ${translations.length} translation keys`);
+    console.log(`[auto-translate-all] Processing ${translations.length} translation keys (${offset} - ${offset + translations.length})`)
 
     const TARGET_LANGUAGES: LangCode[] = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
     let successCount = 0;
@@ -84,8 +84,8 @@ serve(async (req) => {
     for (const lang of TARGET_LANGUAGES) {
       console.log(`[auto-translate-all] Starting translations to ${LANGUAGE_NAMES[lang]}`);
 
-      // OPTIMIZED: Smaller batches (10) for higher quality + better grammar focus
-      const BATCH_SIZE = 10;
+      // OPTIMIZED: Batch size 30 for speed + quality balance
+      const BATCH_SIZE = 30;
       for (let i = 0; i < translations.length; i += BATCH_SIZE) {
         const batch = translations.slice(i, i + BATCH_SIZE);
         
@@ -186,24 +186,30 @@ Return translations in EXACT numbered format. NO explanations, NO notes, ONLY tr
         }
 
         // Small delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 200));
       }
 
       console.log(`[auto-translate-all] Completed ${LANGUAGE_NAMES[lang]}`);
     }
 
-    console.log(`[auto-translate-all] All translations complete - ${successCount} success, ${errorCount} errors`);
+    console.log(`[auto-translate-all] Chunk complete - ${successCount} success, ${errorCount} errors`);
+
+    const hasMore = (offset + translations.length) < (totalCount || 0);
 
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: 'Translation process completed',
+        message: hasMore ? 'Chunk completed, more translations remaining' : 'All translations completed',
         stats: {
           total: translations.length * TARGET_LANGUAGES.length,
           success: successCount,
           errors: errorCount,
           languages: TARGET_LANGUAGES
-        }
+        },
+        hasMore,
+        nextOffset: offset + translations.length,
+        totalCount: totalCount || 0,
+        progress: Math.round(((offset + translations.length) / (totalCount || 1)) * 100)
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
