@@ -184,6 +184,37 @@ class AudioManager {
   }
 
   /**
+   * Force play the current track - use after user interaction to bypass autoplay policy
+   */
+  async forcePlay(): Promise<void> {
+    if (!this._enabled || this._volume <= 0 || !this.currentTrack) {
+      console.log('[AudioManager] forcePlay skipped', { enabled: this._enabled, volume: this._volume, track: this.currentTrack });
+      return;
+    }
+
+    // Resume AudioContext if suspended
+    if (this.audioCtx?.state === 'suspended') {
+      try {
+        await this.audioCtx.resume();
+        console.log('[AudioManager] AudioContext resumed via forcePlay');
+      } catch (err) {
+        console.error('[AudioManager] Failed to resume AudioContext', err);
+      }
+    }
+
+    // Play current track
+    const audio = this.currentTrack === 'general' ? this.generalBgm : this.gameBgm;
+    try {
+      if (audio.paused) {
+        await audio.play();
+        console.log('[AudioManager] Force played:', this.currentTrack);
+      }
+    } catch (err) {
+      console.error('[AudioManager] Force play failed', err);
+    }
+  }
+
+  /**
    * Get current state
    */
   getState(): { enabled: boolean; volume: number; paused: boolean; track: 'general' | 'game' | null } {
