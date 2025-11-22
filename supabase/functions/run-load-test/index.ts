@@ -86,7 +86,25 @@ async function runLoadTest(
 
   console.log(`[load-test-${testId}] Execution started`);
 
+  // Create broadcast channel for real-time progress updates
+  const progressChannel = supabase.channel(`load-test-progress-${testId}`);
+  
+  const sendProgress = async (progress: number, status: string, details: any) => {
+    await progressChannel.send({
+      type: 'broadcast',
+      event: 'progress',
+      payload: {
+        testId,
+        progress,
+        status,
+        details,
+        timestamp: new Date().toISOString(),
+      }
+    });
+  };
+
   try {
+    await sendProgress(0, 'initializing', { message: 'Load test indítása...' });
     // Initialize result tracking
     const endpoints = [
       'register-with-username-pin',
@@ -118,6 +136,12 @@ async function runLoadTest(
 
     console.log(`[load-test-${testId}] Running ${totalWaves} waves, ${usersPerWave} users per wave`);
 
+    await sendProgress(5, 'running', { 
+      message: `${totalWaves} hullám, ${usersPerWave} felhasználó/hullám`,
+      totalWaves,
+      usersPerWave
+    });
+
     // Execute test waves
     for (let wave = 0; wave < totalWaves; wave++) {
       const wavePromises: Promise<void>[] = [];
@@ -128,14 +152,32 @@ async function runLoadTest(
 
       await Promise.all(wavePromises);
       
+      // Calculate current progress
+      const progressPercent = Math.round(((wave + 1) / totalWaves) * 100);
+      
+      // Calculate current metrics
+      let currentTotalRequests = 0;
+      let currentFailedRequests = 0;
+      results.forEach(result => {
+        currentTotalRequests += result.totalRequests;
+        currentFailedRequests += result.failedRequests;
+      });
+      const currentErrorRate = currentTotalRequests > 0 ? (currentFailedRequests / currentTotalRequests * 100).toFixed(2) : '0.00';
+
+      // Send progress update after each wave
+      await sendProgress(progressPercent, 'running', {
+        message: `Hullám ${wave + 1}/${totalWaves} befejezve`,
+        completedWaves: wave + 1,
+        totalWaves,
+        totalRequests: currentTotalRequests,
+        failedRequests: currentFailedRequests,
+        errorRate: `${currentErrorRate}%`,
+        estimatedTimeRemaining: Math.round(((totalWaves - wave - 1) * waveDurationMs) / 1000) + ' másodperc'
+      });
+      
       // Small delay between waves
       if (wave < totalWaves - 1) {
         await new Promise(resolve => setTimeout(resolve, waveDurationMs));
-      }
-
-      // Log progress every 10 waves
-      if (wave % 10 === 0) {
-        console.log(`[load-test-${testId}] Completed wave ${wave + 1}/${totalWaves}`);
       }
     }
 
@@ -239,6 +281,18 @@ async function runLoadTest(
       }
     }
 
+    // Send final completion progress
+    await sendProgress(100, 'completed', {
+      message: 'Load test befejezve',
+      totalRequests,
+      failedRequests: totalFailedRequests,
+      avgResponseTime: Math.round(avgResponseTime),
+      errorRate: (errorRate * 100).toFixed(2) + '%',
+      currentCapacity,
+      targetCapacity: config.targetUsersPerMinute,
+      status: errorRate < 0.01 ? 'PASSED' : 'FAILED',
+    });
+
     console.log(`[load-test-${testId}] Completed successfully`, {
       totalRequests,
       failedRequests: totalFailedRequests,
@@ -249,8 +303,20 @@ async function runLoadTest(
       status: errorRate < 0.01 ? 'PASSED' : 'FAILED',
     });
 
+    // Unsubscribe from channel
+    await progressChannel.unsubscribe();
+
   } catch (error: any) {
     console.error(`[load-test-${testId}] Execution error:`, error);
+    
+    // Send error progress
+    await sendProgress(100, 'error', {
+      message: 'Load test hiba',
+      error: error?.message || 'Ismeretlen hiba',
+    });
+
+    // Unsubscribe from channel
+    await progressChannel.unsubscribe();
     
     // Store failed test result
     await supabase.from('load_test_results').insert({

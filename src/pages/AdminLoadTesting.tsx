@@ -57,10 +57,18 @@ interface OptimizationTask {
 const AdminLoadTesting = () => {
   const [selectedTab, setSelectedTab] = useState("overview");
   const [isRunningTest, setIsRunningTest] = useState(false);
+  const [currentTestId, setCurrentTestId] = useState<string | null>(null);
+  const [progressData, setProgressData] = useState<{
+    progress: number;
+    status: string;
+    message: string;
+    details: any;
+  } | null>(null);
   const { latestResult, bottlenecks, optimizations, loading } = useLoadTestResults();
 
   const handleStartTest = async () => {
     setIsRunningTest(true);
+    setProgressData(null);
     
     try {
       const { data, error } = await supabase.functions.invoke('run-load-test', {
@@ -73,15 +81,37 @@ const AdminLoadTesting = () => {
 
       if (error) throw error;
 
+      setCurrentTestId(data.testId);
+
       toast.success('Load test indítva!', {
         description: `Test ID: ${data.testId}. Az eredmények 5 perc múlva lesznek elérhetők.`,
       });
+
+      // Subscribe to progress updates
+      const channel = supabase.channel(`load-test-progress-${data.testId}`);
+      
+      channel
+        .on('broadcast', { event: 'progress' }, (payload: any) => {
+          console.log('Progress update:', payload);
+          setProgressData({
+            progress: payload.payload.progress,
+            status: payload.payload.status,
+            message: payload.payload.details?.message || '',
+            details: payload.payload.details,
+          });
+
+          if (payload.payload.status === 'completed' || payload.payload.status === 'error') {
+            setIsRunningTest(false);
+            channel.unsubscribe();
+          }
+        })
+        .subscribe();
+
     } catch (error: any) {
       console.error('Load test error:', error);
       toast.error('Hiba a teszt indításakor', {
         description: error.message,
       });
-    } finally {
       setIsRunningTest(false);
     }
   };
@@ -210,6 +240,97 @@ const AdminLoadTesting = () => {
             )}
           </Button>
         </div>
+
+        {/* Real-time Progress Card */}
+        {isRunningTest && progressData && (
+          <Card className="border-2 border-primary">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                Load Test Futás - Real-time Progress
+              </CardTitle>
+              <CardDescription>
+                Test ID: {currentTestId}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Progress Bar */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Előrehaladás</span>
+                  <span className="text-sm font-bold text-primary">{progressData.progress}%</span>
+                </div>
+                <Progress value={progressData.progress} className="h-3" />
+              </div>
+
+              {/* Status Message */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium">Aktuális művelet:</span>
+                </div>
+                <p className="text-sm text-muted-foreground pl-6">{progressData.message}</p>
+              </div>
+
+              {/* Details */}
+              {progressData.details && (
+                <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
+                  {progressData.details.completedWaves && (
+                    <div>
+                      <p className="text-xs text-muted-foreground">Befejezett hullámok</p>
+                      <p className="text-sm font-medium">{progressData.details.completedWaves}/{progressData.details.totalWaves}</p>
+                    </div>
+                  )}
+                  {progressData.details.totalRequests && (
+                    <div>
+                      <p className="text-xs text-muted-foreground">Összes kérés</p>
+                      <p className="text-sm font-medium">{progressData.details.totalRequests.toLocaleString()}</p>
+                    </div>
+                  )}
+                  {progressData.details.failedRequests !== undefined && (
+                    <div>
+                      <p className="text-xs text-muted-foreground">Sikertelen kérések</p>
+                      <p className="text-sm font-medium text-red-600">{progressData.details.failedRequests}</p>
+                    </div>
+                  )}
+                  {progressData.details.errorRate && (
+                    <div>
+                      <p className="text-xs text-muted-foreground">Hibaarány</p>
+                      <p className="text-sm font-medium">{progressData.details.errorRate}</p>
+                    </div>
+                  )}
+                  {progressData.details.estimatedTimeRemaining && (
+                    <div className="col-span-2">
+                      <p className="text-xs text-muted-foreground">Becsült hátralévő idő</p>
+                      <p className="text-sm font-medium">{progressData.details.estimatedTimeRemaining}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Completion Status */}
+              {progressData.status === 'completed' && (
+                <Alert className="border-green-500">
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <AlertTitle className="text-green-600">Teszt befejezve!</AlertTitle>
+                  <AlertDescription>
+                    A teszt sikeresen lefutott. Az eredmények lent láthatók.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {progressData.status === 'error' && (
+                <Alert variant="destructive">
+                  <XCircle className="h-4 w-4" />
+                  <AlertTitle>Hiba történt</AlertTitle>
+                  <AlertDescription>
+                    {progressData.details?.error || 'Ismeretlen hiba történt a teszt során'}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* K6 Test Instructions */}
         <Alert>
