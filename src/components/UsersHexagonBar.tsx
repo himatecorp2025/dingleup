@@ -48,7 +48,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
           height: '385%',
           top: '50%',
           left: '50%',
-          transform: 'translate(-50%, -53%)',
+          transform: 'translate(-50%, -54%)',
           zIndex: 0
         }}
         aria-hidden
