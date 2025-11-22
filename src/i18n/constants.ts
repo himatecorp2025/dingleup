@@ -1,6 +1,6 @@
 import { LangCode } from './types';
 
-export const VALID_LANGUAGES: LangCode[] = ['hu', 'en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
+export const VALID_LANGUAGES: LangCode[] = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl', 'hu'];
 
 export const LANGUAGE_NAMES: Record<LangCode, string> = {
   hu: 'Magyar',
