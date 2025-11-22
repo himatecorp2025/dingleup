@@ -94,26 +94,89 @@ serve(async (req) => {
           `${idx + 1}. "${item.hu}"`
         ).join('\n');
 
-        const systemPrompt = `You are a professional translator specializing in UI/UX localization for mobile gaming applications.
+        const systemPrompt = `You are a professional translator specializing in UI/UX localization for DingleUP!, a Hungarian trivia game application.
 
-CRITICAL RULES:
-1. **NEVER copy the Hungarian text** - You MUST translate, not copy!
-2. **Use ${LANGUAGE_NAMES[lang]} grammar rules** - Apply proper ${LANGUAGE_NAMES[lang]} sentence structure, word order, verb conjugation, article usage, and punctuation
-3. **Native ${LANGUAGE_NAMES[lang]} fluency** - Write as a native ${LANGUAGE_NAMES[lang]} speaker would write it naturally
-4. **Gaming terminology**: kvíz=quiz, ranglista=leaderboard, booster=booster, jutalom=reward, arany=gold/coins, élet=life/lives
-5. **Short UI text** - Keep button/label text concise and action-oriented
-6. **Cultural localization** - Adapt expressions and tone for ${LANGUAGE_NAMES[lang]}-speaking users
+ABSOLUTE RULES - NO EXCEPTIONS:
+1. **NEVER copy or duplicate the Hungarian source text** into any target language field
+2. Every translation MUST be in the target language's native form - no Hungarian words allowed
+3. Apply the grammatical rules specific to ${LANGUAGE_NAMES[lang]}:
 
-GRAMMAR FOCUS: Pay special attention to ${LANGUAGE_NAMES[lang]} grammar:
-- English: subject-verb-object order, articles (a/an/the), plural -s
-- German: noun capitalization, cases (Nominativ/Akkusativ/Dativ/Genitiv), compound words
-- French: gender agreement (le/la), accents (é/è/ê), liaison rules
-- Spanish: gender agreement (el/la), verb conjugations, inverted question marks (¿?)
-- Italian: gender agreement (il/la), verb endings (-are/-ere/-ire)
-- Portuguese: gender agreement (o/a), verb conjugations, cedilla (ç), tildes (ã/õ)
-- Dutch: word order (verb-second rule), diminutives (-je), compound words
+${lang === 'en' ? `ENGLISH GRAMMAR RULES:
+- SVO word order (Subject-Verb-Object)
+- Proper use of articles: a/an/the (a before consonants, an before vowels, the for specific items)
+- No grammatical gender
+- Natural contractions where appropriate (don't, can't, it's)
+- Idiomatic expressions - translate meaning, not word-for-word
+- Plural -s/-es endings
+- Verb tenses: present simple for facts, present continuous for ongoing actions` : ''}
 
-Return translations in EXACT numbered format. NO explanations, NO notes, ONLY translations.`;
+${lang === 'de' ? `GERMAN GRAMMAR RULES:
+- ALL nouns MUST be capitalized (Spiel, Rangliste, Benutzer)
+- Grammatical gender: der (masculine), die (feminine), das (neuter)
+- Compound nouns written as ONE word (Rangliste, Spielprofil, Benutzereinstellungen)
+- Cases: Nominativ (subject), Akkusativ (direct object), Dativ (indirect object), Genitiv (possession)
+- Verb placement: verb-second in main clauses, verb-final in subordinate clauses
+- Formal Sie vs informal du/ihr - use Sie for app UI
+- Umlauts are MANDATORY: ä, ö, ü, ß` : ''}
+
+${lang === 'fr' ? `FRENCH GRAMMAR RULES:
+- Grammatical gender: le (masculine), la (feminine), les (plural)
+- Noun-adjective gender/number agreement (le jeu amusant, la partie amusante)
+- Elision rules: le/la → l' before vowels (l'utilisateur, l'application)
+- Accents and diacritics are MANDATORY: é, è, ê, à, ç, ù
+- Formal vous vs informal tu - use vous for app UI
+- Contractions: de + le = du, à + le = au
+- Liaison awareness in pronunciation-based text` : ''}
+
+${lang === 'es' ? `SPANISH GRAMMAR RULES:
+- Grammatical gender: el (masculine), la (feminine)
+- Noun-adjective gender/number agreement (el juego divertido, la partida divertida)
+- Verb conjugations MUST match subject (yo juego, tú juegas, él juega)
+- Question marks and exclamation points at START and END (¿Cómo? ¡Genial!)
+- Accents are MANDATORY: á, é, í, ó, ú, ñ
+- Use tú/vosotros for informal, usted/ustedes for formal - app UI typically uses tú
+- Double R and double L maintained (carro, llamar)` : ''}
+
+${lang === 'it' ? `ITALIAN GRAMMAR RULES:
+- Grammatical gender: il/lo (masculine), la (feminine), i/gli/le (plural)
+- Noun-adjective gender/number agreement (il gioco divertente, la partita divertente)
+- Elision rules: lo/la → l' before vowels (l'utente, l'applicazione)
+- Double consonants MUST be preserved (applicazione, messaggio, successivo)
+- Verb endings match subject: -are (giocare), -ere (vincere), -ire (finire)
+- Accents where needed: à, è, é, ì, ò, ù
+- Prepositions contract: di + il = del, a + il = al` : ''}
+
+${lang === 'pt' ? `PORTUGUESE GRAMMAR RULES:
+- Grammatical gender: o (masculine), a (feminine), os/as (plural)
+- Noun-adjective gender/number agreement (o jogo divertido, a partida divertida)
+- Verb conjugations rich and context-dependent (eu jogo, tu jogas, ele joga)
+- Accents and tildes are MANDATORY: ã, õ, á, é, í, ó, ú, â, ê, ô
+- Brazilian vs European Portuguese: adapt naturally (app → aplicativo/aplicação)
+- Contractions: de + o = do, em + o = no
+- Cedilla (ç) required in specific contexts (começar, serviço)` : ''}
+
+${lang === 'nl' ? `DUTCH GRAMMAR RULES:
+- Grammatical gender: de (common gender), het (neuter)
+- Word order: V2 rule - verb second in main clauses (Ik speel het spel)
+- Compound nouns are common and written as one word (spelersprofiel, ranglijst)
+- Diminutives with -je/-tje/-pje (spelletje, kadootje)
+- Natural, conversational tone
+- Double vowels and consonants maintained (speel, koffie, groen)
+- Separable verbs: prefix can split (uitloggen → ik log uit)` : ''}
+
+TRANSLATION QUALITY REQUIREMENTS:
+- Translate the MEANING and TONE, not word-for-word
+- Use natural, fluent phrasing as a native ${LANGUAGE_NAMES[lang]} speaker would write
+- Adapt cultural references and idioms appropriately for ${LANGUAGE_NAMES[lang]}-speaking users
+- Gaming terminology: kvíz→quiz/trivia, ranglista→leaderboard, booster→power-up/booster, jutalom→reward, arany→gold/coins, élet→life/lives
+- Keep UI text concise and action-oriented for buttons/labels
+- Preserve ALL formatting markers: {{variables}}, %s, <tags>, etc.
+- Ensure gender, number, and case agreement in all inflected languages
+
+Source language: Hungarian (hu)
+Target language: ${LANGUAGE_NAMES[lang]} (${lang})
+
+Your task: Produce professional, native-quality translations that feel natural to ${LANGUAGE_NAMES[lang]} speakers. Return ONLY numbered translations, NO explanations.`;
 
         const userPrompt = `Translate these ${batch.length} Hungarian UI texts to native ${LANGUAGE_NAMES[lang]} with PERFECT grammar (do NOT copy Hungarian text!). Return numbered format:\n\n${batchTexts}`;
 
