@@ -540,10 +540,57 @@ export function engagementHeavyGameFlow() {
 // SUMMARY REPORT HANDLER
 // ============================================
 export function handleSummary(data) {
+  // Submit results to database via edge function
+  submitResultsToDatabase(data, 'game_only');
+  
   return {
     'game-load-test-results.html': htmlReport(data),
     stdout: textSummary(data, { indent: ' ', enableColors: true }),
   };
+}
+
+/**
+ * Submit test results to database
+ */
+function submitResultsToDatabase(data, testType) {
+  const metrics = data.metrics;
+  
+  const payload = {
+    test_type: testType,
+    total_requests: metrics.http_reqs?.values?.count || 0,
+    failed_requests: Math.round((metrics.http_req_failed?.values?.rate || 0) * (metrics.http_reqs?.values?.count || 0)),
+    error_rate: (metrics.http_req_failed?.values?.rate || 0) * 100,
+    avg_response_time: Math.round(metrics.http_req_duration?.values?.avg || 0),
+    p95_response_time: Math.round(metrics.http_req_duration?.values['p(95)'] || 0),
+    p99_response_time: Math.round(metrics.http_req_duration?.values['p(99)'] || 0),
+    current_capacity: Math.round((metrics.http_reqs?.values?.count || 0) / 24), // Assuming 24min test duration
+    metrics: {
+      games_played: metrics.total_games_played?.values?.count || 0,
+      answers_submitted: metrics.total_answers_submitted?.values?.count || 0,
+      likes_toggled: metrics.total_likes_toggled?.values?.count || 0,
+      helpers_used: metrics.total_helpers_used?.values?.count || 0,
+      game_start_success_rate: (metrics.game_start_success_rate?.values?.rate || 0) * 100,
+      answer_submit_success_rate: (metrics.answer_submit_success_rate?.values?.rate || 0) * 100,
+      game_complete_success_rate: (metrics.game_complete_success_rate?.values?.rate || 0) * 100,
+      like_toggle_success_rate: (metrics.like_toggle_success_rate?.values?.rate || 0) * 100,
+    }
+  };
+
+  try {
+    const response = http.post(
+      `${BASE_URL}/functions/v1/submit-load-test-results`,
+      JSON.stringify(payload),
+      { headers }
+    );
+    
+    if (response.status === 200) {
+      console.log('✅ Test results submitted to database successfully');
+    } else {
+      console.error('❌ Failed to submit results:', response.status, response.body);
+    }
+  } catch (error) {
+    console.error('❌ Error submitting results to database:', error);
+  }
 }
 
 function htmlReport(data) {

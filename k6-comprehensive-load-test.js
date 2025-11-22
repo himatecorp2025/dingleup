@@ -729,11 +729,65 @@ export function adminFlow() {
 
 // ============= SUMMARY HANDLER =============
 export function handleSummary(data) {
+  // Submit results to database via edge function
+  submitResultsToDatabase(data, 'comprehensive');
+  
   return {
     'load-test-summary.html': htmlReport(data),
     'load-test-summary.json': JSON.stringify(data, null, 2),
     stdout: textSummary(data),
   };
+}
+
+/**
+ * Submit test results to database
+ */
+function submitResultsToDatabase(data, testType) {
+  const metrics = data.metrics;
+  
+  const payload = {
+    test_type: testType,
+    total_requests: metrics.http_reqs?.values?.count || 0,
+    failed_requests: Math.round((metrics.http_req_failed?.values?.rate || 0) * (metrics.http_reqs?.values?.count || 0)),
+    error_rate: (metrics.http_req_failed?.values?.rate || 0) * 100,
+    avg_response_time: Math.round(metrics.http_req_duration?.values?.avg || 0),
+    p95_response_time: Math.round(metrics.http_req_duration?.values['p(95)'] || 0),
+    p99_response_time: Math.round(metrics.http_req_duration?.values['p(99)'] || 0),
+    current_capacity: Math.round((metrics.http_reqs?.values?.count || 0) / 38), // Assuming 38min total test duration
+    metrics: {
+      auth_success_rate: (metrics.auth_success?.values?.rate || 0) * 100,
+      game_start_success_rate: (metrics.game_start_success?.values?.rate || 0) * 100,
+      leaderboard_load_success_rate: (metrics.leaderboard_load_success?.values?.rate || 0) * 100,
+      daily_reward_success_rate: (metrics.daily_reward_claim_success?.values?.rate || 0) * 100,
+      total_games_played: metrics.total_games_played?.values?.count || 0,
+      total_questions_answered: metrics.total_questions_answered?.values?.count || 0,
+      total_coins_earned: metrics.total_coins_earned?.values?.count || 0,
+    }
+  };
+
+  try {
+    const BASE_URL = 'https://wdpxmwsxhckazwxufttk.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkcHhtd3N4aGNrYXp3eHVmdHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2MDQ3ODUsImV4cCI6MjA3NjE4MDc4NX0.DeAS4ACvq-YVt2ytoOS3NVSg7xFSHVhvyjUEOti_NnA';
+    
+    const headers = {
+      'Content-Type': 'application/json',
+      'apikey': ANON_KEY,
+    };
+    
+    const response = http.post(
+      `${BASE_URL}/functions/v1/submit-load-test-results`,
+      JSON.stringify(payload),
+      { headers }
+    );
+    
+    if (response.status === 200) {
+      console.log('✅ Test results submitted to database successfully');
+    } else {
+      console.error('❌ Failed to submit results:', response.status, response.body);
+    }
+  } catch (error) {
+    console.error('❌ Error submitting results to database:', error);
+  }
 }
 
 function htmlReport(data) {

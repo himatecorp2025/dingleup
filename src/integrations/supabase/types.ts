@@ -1378,6 +1378,146 @@ export type Database = {
         }
         Relationships: []
       }
+      load_test_bottlenecks: {
+        Row: {
+          component: string
+          created_at: string
+          description: string
+          id: string
+          impact: string
+          recommendation: string
+          resolved_at: string | null
+          severity: string
+          status: string
+          test_result_id: string | null
+        }
+        Insert: {
+          component: string
+          created_at?: string
+          description: string
+          id?: string
+          impact: string
+          recommendation: string
+          resolved_at?: string | null
+          severity: string
+          status?: string
+          test_result_id?: string | null
+        }
+        Update: {
+          component?: string
+          created_at?: string
+          description?: string
+          id?: string
+          impact?: string
+          recommendation?: string
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          test_result_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "load_test_bottlenecks_test_result_id_fkey"
+            columns: ["test_result_id"]
+            isOneToOne: false
+            referencedRelation: "load_test_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      load_test_optimizations: {
+        Row: {
+          complexity: string
+          created_at: string
+          description: string
+          estimated_impact: string
+          id: string
+          implemented_at: string | null
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          complexity?: string
+          created_at?: string
+          description: string
+          estimated_impact: string
+          id?: string
+          implemented_at?: string | null
+          priority: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          complexity?: string
+          created_at?: string
+          description?: string
+          estimated_impact?: string
+          id?: string
+          implemented_at?: string | null
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      load_test_results: {
+        Row: {
+          avg_response_time: number
+          created_at: string
+          current_capacity: number
+          error_rate: number
+          failed_requests: number
+          id: string
+          metrics: Json | null
+          p95_response_time: number
+          p99_response_time: number
+          target_capacity: number
+          test_date: string
+          test_status: string
+          test_type: string
+          total_requests: number
+          updated_at: string
+        }
+        Insert: {
+          avg_response_time?: number
+          created_at?: string
+          current_capacity?: number
+          error_rate?: number
+          failed_requests?: number
+          id?: string
+          metrics?: Json | null
+          p95_response_time?: number
+          p99_response_time?: number
+          target_capacity?: number
+          test_date?: string
+          test_status?: string
+          test_type: string
+          total_requests?: number
+          updated_at?: string
+        }
+        Update: {
+          avg_response_time?: number
+          created_at?: string
+          current_capacity?: number
+          error_rate?: number
+          failed_requests?: number
+          id?: string
+          metrics?: Json | null
+          p95_response_time?: number
+          p99_response_time?: number
+          target_capacity?: number
+          test_date?: string
+          test_status?: string
+          test_type?: string
+          total_requests?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       login_attempts: {
         Row: {
           email: string
