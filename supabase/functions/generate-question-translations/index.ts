@@ -20,11 +20,11 @@ const LANGUAGE_NAMES: Record<LangCode, string> = {
 };
 
 const TARGET_LANGUAGES: LangCode[] = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
-const BATCH_SIZE = 5; // Conservative batch size
-const DELAY_BETWEEN_BATCHES = 1000; // 1 second delay
-const MAX_RETRIES = 2; // Reduced retries to save time
-const RETRY_DELAY = 5000; // 5 seconds between retries
-const MAX_QUESTIONS_PER_RUN = 1; // CRITICAL: Ultra-conservative - only 1 question per run to prevent CPU timeout
+const BATCH_SIZE = 15; // OPTIMIZED: Increased from 5 to 15 for faster processing
+const DELAY_BETWEEN_BATCHES = 300; // OPTIMIZED: Reduced from 1000ms to 300ms
+const MAX_RETRIES = 3; // Increased retries for reliability
+const RETRY_DELAY = 3000; // Reduced from 5000ms to 3000ms
+const MAX_QUESTIONS_PER_RUN = 100; // OPTIMIZED: Massively increased from 1 to 100 questions per run (700 translations/run)
 
 async function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
