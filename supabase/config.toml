@@ -129,6 +129,6 @@ verify_jwt = false
 [functions.translate-ui-elements]
 verify_jwt = false
 
-[functions.run-load-test]
-verify_jwt = false
+[functions.admin-load-test]
+verify_jwt = true
 
