@@ -4,7 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useWallet } from '@/hooks/useWallet';
 import { useBoosterState } from '@/hooks/useBoosterState';
-import { useI18n, COUNTRY_TO_LANG } from '@/i18n';
+import { useI18n } from '@/i18n';
+import { resolveLangFromCountry } from '@/lib/i18n/langMapping';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -168,14 +169,15 @@ const Profile = () => {
     if (!userId) return;
     
     try {
-      // Automatically set language based on country
-      const newLang = COUNTRY_TO_LANG[newCountryCode] || 'en';
+      // Automatically set language based on country using new util
+      const newLang = resolveLangFromCountry(newCountryCode);
       
-      // Update database and language in parallel
+      // Update database: both preferred_country and country_code
       const { error } = await supabase
         .from('profiles')
         .update({ 
           country_code: newCountryCode,
+          preferred_country: newCountryCode,
           preferred_language: newLang 
         })
         .eq('id', userId);

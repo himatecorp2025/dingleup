@@ -1791,6 +1791,7 @@ export type Database = {
           lives_regeneration_rate: number | null
           max_lives: number | null
           pin_hash: string
+          preferred_country: string | null
           preferred_language: string | null
           question_swaps_available: number | null
           terms_accepted_at: string | null
@@ -1834,6 +1835,7 @@ export type Database = {
           lives_regeneration_rate?: number | null
           max_lives?: number | null
           pin_hash: string
+          preferred_country?: string | null
           preferred_language?: string | null
           question_swaps_available?: number | null
           terms_accepted_at?: string | null
@@ -1877,6 +1879,7 @@ export type Database = {
           lives_regeneration_rate?: number | null
           max_lives?: number | null
           pin_hash?: string
+          preferred_country?: string | null
           preferred_language?: string | null
           question_swaps_available?: number | null
           terms_accepted_at?: string | null

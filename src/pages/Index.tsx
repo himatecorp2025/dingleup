@@ -6,7 +6,7 @@ import Features from "@/components/Features";
 import DevelopmentStatus from "@/components/DevelopmentStatus";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
-import { AlertCircle } from "lucide-react";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -54,6 +54,11 @@ const Index = () => {
              zIndex: 0
            }} 
       />
+      
+      {/* Language selector - top right corner */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSelector />
+      </div>
       
       <div className="relative z-10">
         <div data-tutorial="hero">

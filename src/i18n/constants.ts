@@ -46,6 +46,6 @@ export const COUNTRY_TO_LANG: Record<string, LangCode> = {
   NL: 'nl',
 };
 
-export const DEFAULT_LANG: LangCode = 'en';
-export const SOURCE_LANG: LangCode = 'hu';
+export const DEFAULT_LANG: LangCode = 'en'; // Runtime default is English
+export const SOURCE_LANG: LangCode = 'hu'; // Source language in database
 export const STORAGE_KEY = 'dingleup_lang';
