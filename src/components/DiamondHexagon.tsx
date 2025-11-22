@@ -147,7 +147,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       />
 
       {/* 3D Hexagon Container */}
-      <div className="relative w-12 h-8 sm:w-16 sm:h-11 md:w-20 md:h-14 lg:w-24 lg:h-17">
+      <div className="relative w-8 h-8 sm:w-11 sm:h-11 md:w-14 md:h-14 lg:w-17 lg:h-17">
         {/* BASE SHADOW (3D depth) */}
         <div
           className="absolute clip-hexagon"
