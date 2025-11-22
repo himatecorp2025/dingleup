@@ -16,7 +16,8 @@ import {
   Zap,
   ShoppingBag,
   Gamepad2,
-  Calendar
+  Calendar,
+  Languages
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -68,6 +69,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: TrendingUp },
     { path: '/admin/booster-types', label: 'Booster Csomagok', icon: Zap },
     { path: '/admin/booster-purchases', label: 'Booster Vásárlások', icon: ShoppingBag },
+    { path: '/admin/translations', label: 'Fordítások (UI & Kérdések)', icon: Languages },
     { path: '/admin/advanced-analytics', label: 'Fejlett Analitika', icon: Activity },
     { path: '/admin/age-statistics', label: 'Korcsoport Statisztika', icon: Calendar },
   ];

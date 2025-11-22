@@ -45,6 +45,7 @@ const About = lazy(() => import("./pages/About"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminAgeStatistics = lazy(() => import("./pages/AdminAgeStatistics"));
+const AdminTranslations = lazy(() => import("./pages/AdminTranslations"));
 const ASZF = lazy(() => import("./pages/ASZF"));
 const Adatkezeles = lazy(() => import("./pages/Adatkezeles"));
 
@@ -165,6 +166,7 @@ const AppCore = () => {
             <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
               <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+              <Route path="/admin/translations" element={<ErrorBoundary><AdminTranslations /></ErrorBoundary>} />
               <Route path="/admin/advanced-analytics" element={<ErrorBoundary><AdvancedAnalytics /></ErrorBoundary>} />
               <Route path="/admin/retention" element={<ErrorBoundary><RetentionDashboard /></ErrorBoundary>} />
               <Route path="/admin/monetization" element={<ErrorBoundary><MonetizationDashboard /></ErrorBoundary>} />
