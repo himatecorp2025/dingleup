@@ -224,7 +224,7 @@ export const GameLifelines = ({
   const { t } = useI18n();
   
   return (
-    <div className="flex justify-center items-center gap-2 sm:gap-3 md:gap-4 mb-2 mt-24">
+    <div className="flex justify-center items-center gap-[5%] mb-2 mt-24">
       <Lifeline3DButton
         onClick={onUseHelp5050}
         disabled={help5050UsageCount >= 2}
