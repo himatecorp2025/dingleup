@@ -56,6 +56,23 @@ export const AudioPolicyManager = () => {
       }
 
       audioManager.apply(musicEnabled, volume);
+      
+      // CRITICAL: On game route, explicitly force play to ensure music starts
+      // This works because navigation to /game happens via user interaction (Play Now button click)
+      if (isGameRoute && musicEnabled && volume > 0) {
+        // Small delay to ensure AudioManager state is fully updated
+        setTimeout(() => {
+          audioManager.forcePlay().then(() => {
+            const state = audioManager.getState();
+            console.log('[AudioPolicy] Game music force-started', { 
+              track: state.track, 
+              paused: state.paused,
+              enabled: state.enabled,
+              volume: state.volume
+            });
+          });
+        }, 100);
+      }
     };
 
     applyAudioPolicy();
