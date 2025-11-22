@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.75.0";
+import { create, getNumericDate } from 'https://deno.land/x/djwt@v3.0.1/mod.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -121,21 +122,88 @@ serve(async (req) => {
       })
       .eq('id', profile.id);
 
-    // Create auth session
+    // Get auth user to retrieve email
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.getUserById(profile.id);
     
     if (authError || !authData.user) {
+      console.error('Failed to get auth user:', authError);
       return new Response(
-        JSON.stringify({ error: 'Failed to create session' }),
+        JSON.stringify({ success: false, error: 'Failed to retrieve user data' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    // Generate JWT tokens manually using service role permissions
+    const jwtSecret = Deno.env.get('SUPABASE_JWT_SECRET');
+    if (!jwtSecret) {
+      console.error('SUPABASE_JWT_SECRET not configured');
+      return new Response(
+        JSON.stringify({ success: false, error: 'Server configuration error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(jwtSecret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+
+    const now = getNumericDate(new Date());
+    const sessionId = crypto.randomUUID();
+
+    // Create access token
+    const accessTokenPayload = {
+      aud: 'authenticated',
+      exp: getNumericDate(new Date(Date.now() + 3600000)), // 1 hour
+      sub: profile.id,
+      email: authData.user.email || '',
+      phone: authData.user.phone || '',
+      app_metadata: authData.user.app_metadata || {},
+      user_metadata: authData.user.user_metadata || {},
+      role: 'authenticated',
+      aal: 'aal1',
+      amr: [{ method: 'webauthn', timestamp: now }],
+      session_id: sessionId,
+      is_anonymous: false,
+      iat: now,
+      iss: `${Deno.env.get('SUPABASE_URL')}/auth/v1`,
+    };
+
+    const accessToken = await create(
+      { alg: 'HS256', typ: 'JWT' },
+      accessTokenPayload,
+      key
+    );
+
+    // Create refresh token (longer expiry)
+    const refreshTokenPayload = {
+      sub: profile.id,
+      session_id: sessionId,
+      exp: getNumericDate(new Date(Date.now() + 30 * 24 * 3600000)), // 30 days
+      iat: now,
+    };
+
+    const refreshToken = await create(
+      { alg: 'HS256', typ: 'JWT' },
+      refreshTokenPayload,
+      key
+    );
+
     return new Response(
       JSON.stringify({ 
-        success: true, 
-        user_id: profile.id,
-        message: 'Biometric authentication successful'
+        success: true,
+        session: {
+          access_token: accessToken,
+          refresh_token: refreshToken,
+          expires_in: 3600,
+          expires_at: Math.floor(Date.now() / 1000) + 3600,
+          token_type: 'bearer',
+          user: authData.user
+        },
+        user: authData.user
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
