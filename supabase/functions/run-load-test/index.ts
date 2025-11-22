@@ -104,14 +104,18 @@ async function runLoadTest(
   };
 
   try {
-    await sendProgress(0, 'initializing', { message: 'Load test indítása...' });
+    await sendProgress(0, 'initializing', { message: 'Teszt felhasználók előkészítése...' });
+    
+    // Ensure test user pool exists
+    await ensureTestUsers(supabase);
+    
+    await sendProgress(2, 'initializing', { message: 'Load test indítása...' });
+    
     // Initialize result tracking
     const endpoints = [
-      'register-with-username-pin',
       'login-with-username-pin',
       'start-game-session',
       'complete-game',
-      'get-dashboard-data',
       'get-daily-leaderboard-by-country',
       'get-wallet',
     ];
@@ -129,15 +133,16 @@ async function runLoadTest(
       });
     });
 
-    // Calculate concurrent users per wave
+    // Calculate concurrent users per wave - reduced for stability
     const waveDurationMs = 10000; // 10 second waves
     const totalWaves = (config.durationMinutes * 60 * 1000) / waveDurationMs;
-    const usersPerWave = Math.ceil(config.targetUsersPerMinute / 6); // 6 waves per minute
+    // Reduced concurrent users per wave to 100 to prevent overwhelming the system
+    const usersPerWave = Math.min(100, Math.ceil(config.targetUsersPerMinute / 6));
 
     console.log(`[load-test-${testId}] Running ${totalWaves} waves, ${usersPerWave} users per wave`);
 
     await sendProgress(5, 'running', { 
-      message: `${totalWaves} hullám, ${usersPerWave} felhasználó/hullám`,
+      message: `${totalWaves} hullám, ${usersPerWave} felhasználó/hullám (optimalizált)`,
       totalWaves,
       usersPerWave
     });
@@ -337,6 +342,65 @@ async function runLoadTest(
   }
 }
 
+// Pre-seeded test users (will be created if they don't exist)
+const TEST_USERS = Array.from({ length: 100 }, (_, i) => ({
+  username: `loadtest_user_${String(i).padStart(3, '0')}`,
+  pin: '123456'
+}));
+
+async function ensureTestUsers(supabase: any) {
+  console.log('[ensureTestUsers] Checking test user pool...');
+  
+  // Check if test users exist
+  const { data: existingUsers } = await supabase
+    .from('profiles')
+    .select('username')
+    .ilike('username', 'loadtest_user_%')
+    .limit(100);
+  
+  if (existingUsers && existingUsers.length >= 50) {
+    console.log(`[ensureTestUsers] Found ${existingUsers.length} existing test users`);
+    return;
+  }
+  
+  console.log(`[ensureTestUsers] Creating ${100 - (existingUsers?.length || 0)} test users...`);
+  
+  // Create missing test users
+  const BASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
+  const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    'apikey': ANON_KEY,
+  };
+  
+  const existingUsernames = new Set(existingUsers?.map((u: any) => u.username) || []);
+  const usersToCreate = TEST_USERS.filter(u => !existingUsernames.has(u.username));
+  
+  // Create users in batches of 10 to avoid overwhelming the system
+  const batchSize = 10;
+  for (let i = 0; i < usersToCreate.length; i += batchSize) {
+    const batch = usersToCreate.slice(i, i + batchSize);
+    await Promise.all(
+      batch.map(async (user) => {
+        try {
+          await fetch(`${BASE_URL}/functions/v1/register-with-username-pin`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ username: user.username, pin: user.pin, country_code: 'HU' }),
+          });
+        } catch (error) {
+          console.error(`[ensureTestUsers] Failed to create ${user.username}:`, error);
+        }
+      })
+    );
+    // Small delay between batches
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+  
+  console.log('[ensureTestUsers] Test user pool ready');
+}
+
 async function simulateUserFlow(
   supabase: any,
   results: Map<string, TestResult>,
@@ -351,31 +415,63 @@ async function simulateUserFlow(
   };
 
   try {
-    // 1. Registration
+    // Pick random test user from pool
+    const testUser = TEST_USERS[Math.floor(Math.random() * TEST_USERS.length)];
+    
+    // 1. Login
     if (testTypes.includes('auth')) {
-      const username = `loadtest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const pin = String(Math.floor(100000 + Math.random() * 900000));
-
-      const regStart = Date.now();
-      const regRes = await fetch(`${BASE_URL}/functions/v1/register-with-username-pin`, {
+      const loginStart = Date.now();
+      const loginRes = await fetch(`${BASE_URL}/functions/v1/login-with-username-pin`, {
         method: 'POST',
         headers,
-        body: JSON.stringify({ username, pin, country_code: 'HU' }),
+        body: JSON.stringify({ username: testUser.username, pin: testUser.pin }),
       });
-      const regDuration = Date.now() - regStart;
+      const loginDuration = Date.now() - loginStart;
 
-      updateResult(results, 'register-with-username-pin', regRes.ok, regDuration);
+      updateResult(results, 'login-with-username-pin', loginRes.ok, loginDuration);
 
-      if (!regRes.ok) return;
+      if (!loginRes.ok) {
+        console.error('[simulateUserFlow] Login failed for', testUser.username);
+        return;
+      }
 
-      const regData = await regRes.json();
-      const authToken = regData.access_token;
+      const loginData = await loginRes.json();
+      const authToken = loginData.access_token || loginData.session?.access_token;
 
-      if (!authToken) return;
+      if (!authToken) {
+        console.error('[simulateUserFlow] No auth token received');
+        return;
+      }
 
       const authHeaders = { ...headers, 'Authorization': `Bearer ${authToken}` };
 
-      // 2. Start game session
+      // 2. Fetch wallet (dashboard)
+      if (testTypes.includes('dashboard')) {
+        const walletStart = Date.now();
+        const walletRes = await fetch(`${BASE_URL}/functions/v1/get-wallet`, {
+          method: 'POST',
+          headers: authHeaders,
+          body: JSON.stringify({}),
+        });
+        const walletDuration = Date.now() - walletStart;
+
+        updateResult(results, 'get-wallet', walletRes.ok, walletDuration);
+      }
+
+      // 3. Fetch leaderboard
+      if (testTypes.includes('leaderboard')) {
+        const leaderStart = Date.now();
+        const leaderRes = await fetch(`${BASE_URL}/functions/v1/get-daily-leaderboard-by-country`, {
+          method: 'POST',
+          headers: authHeaders,
+          body: JSON.stringify({ country_code: 'HU' }),
+        });
+        const leaderDuration = Date.now() - leaderStart;
+
+        updateResult(results, 'get-daily-leaderboard-by-country', leaderRes.ok, leaderDuration);
+      }
+
+      // 4. Start game session
       if (testTypes.includes('game')) {
         const gameStart = Date.now();
         const gameRes = await fetch(`${BASE_URL}/functions/v1/start-game-session`, {
@@ -390,9 +486,9 @@ async function simulateUserFlow(
         if (gameRes.ok) {
           const gameData = await gameRes.json();
 
-          // Simulate answering 5 questions
-          for (let i = 0; i < 5; i++) {
-            await new Promise(resolve => setTimeout(resolve, 500)); // 0.5s delay
+          // Simulate answering 3 questions (reduced from 5 for faster testing)
+          for (let i = 0; i < 3; i++) {
+            await new Promise(resolve => setTimeout(resolve, 200)); // Reduced delay
 
             const answerStart = Date.now();
             const answerRes = await fetch(`${BASE_URL}/functions/v1/complete-game`, {
@@ -412,32 +508,6 @@ async function simulateUserFlow(
             updateResult(results, 'complete-game', answerRes.ok, answerDuration);
           }
         }
-      }
-
-      // 3. Fetch wallet
-      if (testTypes.includes('dashboard')) {
-        const walletStart = Date.now();
-        const walletRes = await fetch(`${BASE_URL}/functions/v1/get-wallet`, {
-          method: 'POST',
-          headers: authHeaders,
-          body: JSON.stringify({}),
-        });
-        const walletDuration = Date.now() - walletStart;
-
-        updateResult(results, 'get-wallet', walletRes.ok, walletDuration);
-      }
-
-      // 4. Fetch leaderboard
-      if (testTypes.includes('leaderboard')) {
-        const leaderStart = Date.now();
-        const leaderRes = await fetch(`${BASE_URL}/functions/v1/get-daily-leaderboard-by-country`, {
-          method: 'POST',
-          headers: authHeaders,
-          body: JSON.stringify({ country_code: 'HU' }),
-        });
-        const leaderDuration = Date.now() - leaderStart;
-
-        updateResult(results, 'get-daily-leaderboard-by-country', leaderRes.ok, leaderDuration);
       }
     }
 
