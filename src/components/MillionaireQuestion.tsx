@@ -7,7 +7,7 @@ interface MillionaireQuestionProps {
 
 export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
   return (
-    <div className="relative w-full mb-3" style={{ minHeight: '100px' }}>
+    <div className="relative w-full mb-1" style={{ minHeight: '100px' }}>
       {/* SVG Background */}
       <svg 
         xmlns="http://www.w3.org/2000/svg"
