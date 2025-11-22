@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.75.0";
-import { create, getNumericDate } from 'https://deno.land/x/djwt@v3.0.1/mod.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -122,7 +121,7 @@ serve(async (req) => {
       })
       .eq('id', profile.id);
 
-    // Get auth user to retrieve email
+    // Get user data and generate session using Supabase Admin API
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.getUserById(profile.id);
     
     if (authError || !authData.user) {
@@ -133,64 +132,33 @@ serve(async (req) => {
       );
     }
 
-    // Generate JWT tokens manually using service role permissions
-    const jwtSecret = Deno.env.get('SUPABASE_JWT_SECRET');
-    if (!jwtSecret) {
-      console.error('SUPABASE_JWT_SECRET not configured');
+    // Generate magic link to extract session tokens
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'magiclink',
+      email: authData.user.email || '',
+    });
+
+    if (linkError || !linkData) {
+      console.error('Failed to generate session:', linkError);
       return new Response(
-        JSON.stringify({ success: false, error: 'Server configuration error' }),
+        JSON.stringify({ success: false, error: 'Failed to generate session' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const key = await crypto.subtle.importKey(
-      'raw',
-      new TextEncoder().encode(jwtSecret),
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    );
+    // Extract tokens from action link
+    const actionLink = linkData.properties.action_link;
+    const url = new URL(actionLink);
+    const accessToken = url.searchParams.get('access_token');
+    const refreshToken = url.searchParams.get('refresh_token');
 
-    const now = getNumericDate(new Date());
-    const sessionId = crypto.randomUUID();
-
-    // Create access token
-    const accessTokenPayload = {
-      aud: 'authenticated',
-      exp: getNumericDate(new Date(Date.now() + 3600000)), // 1 hour
-      sub: profile.id,
-      email: authData.user.email || '',
-      phone: authData.user.phone || '',
-      app_metadata: authData.user.app_metadata || {},
-      user_metadata: authData.user.user_metadata || {},
-      role: 'authenticated',
-      aal: 'aal1',
-      amr: [{ method: 'webauthn', timestamp: now }],
-      session_id: sessionId,
-      is_anonymous: false,
-      iat: now,
-      iss: `${Deno.env.get('SUPABASE_URL')}/auth/v1`,
-    };
-
-    const accessToken = await create(
-      { alg: 'HS256', typ: 'JWT' },
-      accessTokenPayload,
-      key
-    );
-
-    // Create refresh token (longer expiry)
-    const refreshTokenPayload = {
-      sub: profile.id,
-      session_id: sessionId,
-      exp: getNumericDate(new Date(Date.now() + 30 * 24 * 3600000)), // 30 days
-      iat: now,
-    };
-
-    const refreshToken = await create(
-      { alg: 'HS256', typ: 'JWT' },
-      refreshTokenPayload,
-      key
-    );
+    if (!accessToken || !refreshToken) {
+      console.error('Failed to extract tokens from link');
+      return new Response(
+        JSON.stringify({ success: false, error: 'Failed to generate session tokens' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     return new Response(
       JSON.stringify({ 
