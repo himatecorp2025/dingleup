@@ -182,7 +182,7 @@ export const QuestionCard = ({
         </div>
 
         {/* Bottom section: Help buttons */}
-        <div className="mt-[6%] sm:mt-[7%] md:mt-[8%]">
+        <div className="mt-[3%] sm:mt-[3.5%] md:mt-[4%]">
           <GameLifelines
             help5050UsageCount={help5050UsageCount}
             help2xAnswerUsageCount={help2xAnswerUsageCount}
