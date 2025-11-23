@@ -175,7 +175,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         </div>
 
         {/* Booster Options - Enhanced 3D styling */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3 items-stretch">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3 items-stretch">
           {/* Gold Saver Booster - Enhanced 3D */}
           <div className="relative flex flex-col h-full">
             {/* Multi-layer outer glow */}
