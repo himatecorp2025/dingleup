@@ -19,15 +19,26 @@ import { useBoosterState } from '@/hooks/useBoosterState';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useDashboardPopupManager } from '@/hooks/useDashboardPopupManager';
 
-// PERFORMANCE OPTIMIZATION: Prefetch critical game route chunks
-// This loads /game route code in background while user is on Dashboard
+// PERFORMANCE OPTIMIZATION: Prefetch critical game assets
+// This preloads /game route code + intro video in background while user is on Dashboard
 // Result: Instant navigation when user clicks Play Now (80-90% faster perceived load)
-const prefetchGameRoute = () => {
-  const link = document.createElement('link');
-  link.rel = 'prefetch';
-  link.as = 'script';
-  link.href = '/src/pages/Game.tsx';
-  document.head.appendChild(link);
+const prefetchGameAssets = () => {
+  // Prefetch Game route component chunk
+  import('../pages/Game').catch(() => {
+    // Silent fail - prefetch is optimization, not critical
+  });
+  
+  // Prefetch intro video asset
+  const videoLink = document.createElement('link');
+  videoLink.rel = 'prefetch';
+  videoLink.as = 'video';
+  videoLink.href = '/src/assets/loading-video.mp4';
+  document.head.appendChild(videoLink);
+  
+  // Prefetch GamePreview component
+  import('../components/GamePreview').catch(() => {
+    // Silent fail
+  });
 };
 
 import DailyGiftDialog from '@/components/DailyGiftDialog';
@@ -136,10 +147,10 @@ const Dashboard = () => {
     });
   }, [navigate]);
 
-  // PERFORMANCE OPTIMIZATION: Prefetch game route on Dashboard mount
-  // Loads /game route chunks in background for instant navigation
+  // PERFORMANCE OPTIMIZATION: Prefetch game assets on Dashboard mount
+  // Loads /game route chunks + intro video in background for instant navigation
   useEffect(() => {
-    prefetchGameRoute();
+    prefetchGameAssets();
   }, []);
 
   // Check for canceled payment - separate useEffect for searchParams
