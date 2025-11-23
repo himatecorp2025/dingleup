@@ -25,6 +25,8 @@ import { useGameLifecycle } from "@/hooks/useGameLifecycle";
 import { useGameHelperActions } from "@/hooks/useGameHelperActions";
 import { useGameAnswers } from "@/hooks/useGameAnswers";
 import { useGameNavigation } from "@/hooks/useGameNavigation";
+import { useGameErrorHandling } from "@/hooks/useGameErrorHandling";
+import { useGameAnimation } from "@/hooks/useGameAnimation";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -98,20 +100,40 @@ const GamePreview = memo(() => {
   const [firstAttempt, setFirstAttempt] = useState<string | null>(null);
   const [secondAttempt, setSecondAttempt] = useState<string | null>(null);
 
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [canSwipe, setCanSwipe] = useState(true);
-  const [translateY, setTranslateY] = useState(0);
-  const [touchStartY, setTouchStartY] = useState(0);
-  const swipeThreshold = 80;
+  const {
+    isAnimating,
+    setIsAnimating,
+    canSwipe,
+    setCanSwipe,
+    translateY,
+    setTranslateY,
+    touchStartY,
+    setTouchStartY,
+    questionVisible,
+    setQuestionVisible,
+    showExitDialog,
+    setShowExitDialog,
+    swipeThreshold,
+  } = useGameAnimation();
 
-  const [showExitDialog, setShowExitDialog] = useState(false);
-  const [continueType, setContinueType] = useState<'timeout' | 'wrong' | 'out-of-lives'>('wrong');
-  const [errorBannerVisible, setErrorBannerVisible] = useState(false);
-  const [errorBannerMessage, setErrorBannerMessage] = useState('');
-  const [questionVisible, setQuestionVisible] = useState(true);
-  
-  const [showRescuePopup, setShowRescuePopup] = useState(false);
-  const [rescueReason, setRescueReason] = useState<'NO_LIFE' | 'NO_GOLD'>('NO_GOLD');
+  const {
+    continueType,
+    setContinueType,
+    errorBannerVisible,
+    setErrorBannerVisible,
+    errorBannerMessage,
+    setErrorBannerMessage,
+    showRescuePopup,
+    setShowRescuePopup,
+    rescueReason,
+    setRescueReason,
+    handleTimeout,
+  } = useGameErrorHandling({
+    questionStartTime,
+    addResponseTime,
+    setSelectedAnswer,
+    triggerHaptic,
+  });
   
   const {
     coinsEarned,
@@ -173,16 +195,6 @@ const GamePreview = memo(() => {
     questionStartTime,
     gameCompleted,
   });
-
-  const handleTimeout = useCallback(() => {
-    const responseTime = (Date.now() - questionStartTime) / 1000;
-    addResponseTime(responseTime);
-    setSelectedAnswer('__timeout__');
-    setContinueType('timeout');
-    triggerHaptic('warning');
-    setErrorBannerVisible(true);
-    setErrorBannerMessage(`Lejárt az idő! Folytatáshoz ${TIMEOUT_CONTINUE_COST} aranyérme szükséges.`);
-  }, [questionStartTime, addResponseTime, setSelectedAnswer, setContinueType, triggerHaptic, setErrorBannerVisible, setErrorBannerMessage]);
 
   const { timeLeft, resetTimer } = useGameTimer({
     initialTime: 10,
