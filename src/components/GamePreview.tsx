@@ -23,6 +23,8 @@ import { GameSwipeHandler } from "./game/GameSwipeHandler";
 import { trackGameMilestone } from "@/lib/analytics";
 import { useGameLifecycle } from "@/hooks/useGameLifecycle";
 import { useGameHelperActions } from "@/hooks/useGameHelperActions";
+import { useGameAnswers } from "@/hooks/useGameAnswers";
+import { useGameNavigation } from "@/hooks/useGameNavigation";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -172,6 +174,86 @@ const GamePreview = memo(() => {
     gameCompleted,
   });
 
+  const handleTimeout = useCallback(() => {
+    const responseTime = (Date.now() - questionStartTime) / 1000;
+    addResponseTime(responseTime);
+    setSelectedAnswer('__timeout__');
+    setContinueType('timeout');
+    triggerHaptic('warning');
+    setErrorBannerVisible(true);
+    setErrorBannerMessage(`Lejárt az idő! Folytatáshoz ${TIMEOUT_CONTINUE_COST} aranyérme szükséges.`);
+  }, [questionStartTime, addResponseTime, setSelectedAnswer, setContinueType, triggerHaptic, setErrorBannerVisible, setErrorBannerMessage]);
+
+  const { timeLeft, resetTimer } = useGameTimer({
+    initialTime: 10,
+    onTimeout: handleTimeout,
+    enabled: gameState === 'playing' && isGameReady && !selectedAnswer && !isAnimating
+  });
+
+  const {
+    handleAnswer,
+    handleCorrectAnswer,
+    handleWrongAnswer,
+  } = useGameAnswers({
+    selectedAnswer,
+    isAnimating,
+    questionStartTime,
+    questions,
+    currentQuestionIndex,
+    isDoubleAnswerActiveThisQuestion,
+    firstAttempt,
+    setFirstAttempt,
+    setSecondAttempt,
+    setSelectedAnswer,
+    addResponseTime,
+    incrementCorrectAnswers,
+    creditCorrectAnswer,
+    setContinueType,
+    setErrorBannerVisible,
+    setErrorBannerMessage,
+  });
+
+  const {
+    handleNextQuestion,
+    handleSkipQuestion,
+    handleContinueAfterMistake,
+    handleSwipeUp,
+    handleSwipeDown,
+  } = useGameNavigation({
+    profile,
+    userId,
+    isAnimating,
+    selectedAnswer,
+    currentQuestionIndex,
+    questions,
+    correctAnswers,
+    responseTimes,
+    coinsEarned,
+    continueType,
+    errorBannerVisible,
+    gameCompleted,
+    setIsAnimating,
+    setCanSwipe,
+    setErrorBannerVisible,
+    setQuestionVisible,
+    resetRewardAnimation,
+    nextQuestion,
+    resetTimer,
+    setSelectedAnswer,
+    setFirstAttempt,
+    setSecondAttempt,
+    resetQuestionHelpers,
+    setQuestionStartTime,
+    setGameCompleted,
+    refreshProfile,
+    logHelpUsage,
+    finishGame,
+    restartGameImmediately,
+    setRescueReason,
+    setShowRescuePopup,
+    triggerHaptic,
+  });
+
   const {
     useHelp5050,
     useHelp2xAnswer,
@@ -206,22 +288,6 @@ const GamePreview = memo(() => {
     setQuestionStartTime,
     setUsedQuestionSwap,
     ALL_QUESTIONS,
-  });
-
-  const handleTimeout = useCallback(() => {
-    const responseTime = (Date.now() - questionStartTime) / 1000;
-    addResponseTime(responseTime);
-    setSelectedAnswer('__timeout__');
-    setContinueType('timeout');
-    triggerHaptic('warning');
-    setErrorBannerVisible(true);
-    setErrorBannerMessage(`Lejárt az idő! Folytatáshoz ${TIMEOUT_CONTINUE_COST} aranyérme szükséges.`);
-  }, [questionStartTime, addResponseTime, triggerHaptic]);
-
-  const { timeLeft, resetTimer } = useGameTimer({
-    initialTime: 10,
-    onTimeout: handleTimeout,
-    enabled: gameState === 'playing' && isGameReady && !selectedAnswer && !isAnimating
   });
   
   // Auth check
@@ -340,244 +406,6 @@ const GamePreview = memo(() => {
       verifyInGamePayment();
     }
   }, [userId, gameState, refreshProfile]);
-
-  const handleSwipeUp = async () => {
-    // If game completed, restart new game
-    if (gameCompleted) {
-      await restartGameImmediately();
-      return;
-    }
-    
-    // If error banner visible and user wants to continue
-    if (errorBannerVisible && profile) {
-      const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
-      
-      // Check if user has enough coins NOW (when they try to continue)
-      if (profile.coins < cost) {
-        // Not enough coins - show rescue popup
-        setErrorBannerVisible(false);
-        setRescueReason('NO_GOLD');
-        setShowRescuePopup(true);
-        return;
-      }
-      
-      // Has enough coins - continue
-      await handleContinueAfterMistake();
-      return;
-    }
-
-    // If question answered correctly, go to next
-    if (selectedAnswer && !isAnimating) {
-      const currentQuestion = questions[currentQuestionIndex];
-      const selectedAnswerObj = currentQuestion.answers.find(a => a.key === selectedAnswer);
-      if (selectedAnswerObj?.correct) {
-        await handleNextQuestion();
-      }
-    }
-  };
-
-  const handleSwipeDown = async () => {
-    toast.dismiss();
-    
-    if (errorBannerVisible) {
-      setErrorBannerVisible(false);
-    }
-    await restartGameImmediately();
-  };
-
-  const handleAnswer = (answerKey: string) => {
-    if (selectedAnswer || isAnimating) return;
-
-    const responseTime = (Date.now() - questionStartTime) / 1000;
-    const currentQuestion = questions[currentQuestionIndex];
-    const selectedAnswerObj = currentQuestion.answers.find(a => a.key === answerKey);
-    const isCorrect = selectedAnswerObj?.correct || false;
-
-    // 2x answer logic - only if active for this question
-    if (isDoubleAnswerActiveThisQuestion && !firstAttempt) {
-      setFirstAttempt(answerKey);
-      
-      if (isCorrect) {
-        // After 200ms, show correct answer in green - NO cleanup needed, runs before component unmount
-        setTimeout(() => {
-          handleCorrectAnswer(responseTime, answerKey);
-        }, 200);
-      }
-      return;
-    }
-
-    if (isDoubleAnswerActiveThisQuestion && firstAttempt && answerKey !== firstAttempt) {
-      setSecondAttempt(answerKey);
-      const firstAnswerObj = currentQuestion.answers.find(a => a.key === firstAttempt);
-      
-      if (isCorrect || firstAnswerObj?.correct) {
-        // After 200ms, show correct answer in green - NO cleanup needed, runs before component unmount
-        setTimeout(() => {
-          handleCorrectAnswer(responseTime, isCorrect ? answerKey : firstAttempt!);
-        }, 200);
-      } else {
-        // After 200ms, show wrong answer - NO cleanup needed, runs before component unmount
-        setTimeout(() => {
-          handleWrongAnswer(responseTime, answerKey);
-        }, 200);
-      }
-      return;
-    }
-
-    if (isCorrect) {
-      handleCorrectAnswer(responseTime, answerKey);
-    } else {
-      handleWrongAnswer(responseTime, answerKey);
-    }
-  };
-
-  const handleCorrectAnswer = useCallback(async (responseTime: number, answerKey: string) => {
-    addResponseTime(responseTime);
-    setSelectedAnswer(answerKey);
-    incrementCorrectAnswers();
-    triggerHaptic('success');
-    await creditCorrectAnswer();
-  }, [addResponseTime, incrementCorrectAnswers, triggerHaptic, creditCorrectAnswer]);
-
-  const handleWrongAnswer = useCallback((responseTime: number, answerKey: string) => {
-    addResponseTime(responseTime);
-    setSelectedAnswer(answerKey);
-    setContinueType('wrong');
-    triggerHaptic('error');
-    
-    setTimeout(() => {
-      setErrorBannerVisible(true);
-      setErrorBannerMessage(`Rossz válasz! Folytatáshoz ${CONTINUE_AFTER_WRONG_COST} aranyérme szükséges.`);
-    }, 500);
-  }, [addResponseTime, triggerHaptic]);
-
-  const handleNextQuestion = async () => {
-    if (isAnimating) return;
-    
-    setIsAnimating(true);
-    setCanSwipe(false);
-    setErrorBannerVisible(false);
-    setQuestionVisible(false);
-    resetRewardAnimation();
-    
-    if (currentQuestionIndex >= questions.length - 1) {
-      // Game completed - show results toast and wait for swipe up to restart
-      setIsAnimating(false);
-      setCanSwipe(true);
-      setQuestionVisible(true);
-      
-      // Haptic feedback based on performance
-      if (correctAnswers >= 10) {
-        triggerHaptic('success'); // Good performance
-      } else {
-        triggerHaptic('warning'); // Could be better
-      }
-      
-      // Calculate final results
-      const avgResponseTime = responseTimes.length > 0 
-        ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)
-        : '0.0';
-      
-      // Show beautiful results toast with casino aesthetic
-      toast.success(
-        <div className="flex flex-col gap-2 p-1.5">
-          <div className="text-center text-base font-black mb-1 bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent">
-            Játék vége!
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
-              <div className="text-lg mb-0.5">✅</div>
-              <div className="font-bold text-green-400">{correctAnswers}/15</div>
-              <div className="text-[10px] opacity-70">Helyes</div>
-            </div>
-            <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
-              <div className="text-lg mb-0.5">💰</div>
-              <div className="font-bold text-yellow-400">{coinsEarned}</div>
-              <div className="text-[10px] opacity-70">Arany</div>
-            </div>
-            <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
-              <div className="text-lg mb-0.5">⚡</div>
-              <div className="font-bold text-blue-400">{avgResponseTime}s</div>
-              <div className="text-[10px] opacity-70">Idő</div>
-            </div>
-          </div>
-          <div className="text-center mt-1 text-xs font-bold animate-pulse text-white/90">
-            Görgess felfelé új játékhoz
-          </div>
-        </div>,
-        {
-          duration: Infinity, // Never auto-close
-          style: {
-            background: 'linear-gradient(135deg, rgb(88, 28, 135) 0%, rgb(124, 58, 237) 50%, rgb(88, 28, 135) 100%)',
-            color: 'white',
-            border: '2px solid rgba(234, 179, 8, 0.5)',
-            boxShadow: '0 8px 32px rgba(234, 179, 8, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-            maxWidth: '85vw',
-            width: '320px',
-            backdropFilter: 'blur(8px)',
-          }
-        }
-      );
-      
-      // Mark game as completed and save results to backend
-      setGameCompleted(true);
-      await finishGame();
-      return;
-    }
-    
-    setTimeout(() => {
-      nextQuestion();
-      resetTimer(10);
-      setSelectedAnswer(null);
-      setFirstAttempt(null);
-      setSecondAttempt(null);
-      resetQuestionHelpers();
-      setQuestionStartTime(Date.now());
-      
-      setTimeout(() => {
-        setQuestionVisible(true);
-        setIsAnimating(false);
-        setCanSwipe(true);
-      }, 100);
-    }, 400);
-  };
-
-  const handleSkipQuestion = async () => {
-    if (!profile) return;
-    
-    let cost = 10;
-    if (currentQuestionIndex >= 5 && currentQuestionIndex <= 9) cost = 20;
-    if (currentQuestionIndex >= 10) cost = 30;
-    
-    if (profile.coins < cost) {
-      toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
-      return;
-    }
-    
-    const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
-    if (success) {
-      await refreshProfile();
-      await logHelpUsage('skip');
-      // Nincs toast - a felhasználó látja a kérdésváltást
-      await handleNextQuestion();
-    }
-  };
-
-  const handleContinueAfterMistake = async () => {
-    if (!profile) return;
-    
-    const cost = continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST;
-    
-    // This function is now only called when user has enough coins
-    const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
-    if (success) {
-      await refreshProfile();
-      // Nincs toast - a felhasználó látja a következő kérdést
-      await handleNextQuestion();
-    } else {
-      await finishGame();
-    }
-  };
 
   const handleRejectContinue = () => {
     finishGame();
