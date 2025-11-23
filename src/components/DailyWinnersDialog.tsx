@@ -28,7 +28,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   const { t } = useI18n();
   const [contentVisible, setContentVisible] = useState(false);
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
-  const [totalRewards, setTotalRewards] = useState<TotalRewards>({ totalGold: 0, totalLives: 0 });
+  const [totalRewards, setTotalRewards] = useState<TotalRewards>({ totalGold: 150000, totalLives: 20000 });
   const badgeRef = useRef<HTMLDivElement>(null);
 
   // Add keyframes for animations
@@ -596,7 +596,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     )}
                   </div>
 
-                  <div className="mt-auto pt-2 flex justify-center w-full" style={{ transform: 'translateY(-165%)' }}>
+                  <div className="mt-auto pt-2 flex justify-center w-full" style={{ transform: 'translateY(-170%)' }}>
                     <HexAcceptButton 
                       onClick={onClose}
                       className="w-[80%]"
