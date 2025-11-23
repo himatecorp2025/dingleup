@@ -168,10 +168,17 @@ const LoginNew = () => {
         }
       }
 
-      toast({
-        title: "Sikeres bejelentkezés!",
-        description: t('auth.login.successMessage'),
+      const loginToast = toast({
+        title: "🎉 Sikeres bejelentkezés! 🎉",
+        description: "Örülünk, hogy újra látunk! Indulhat a játék?",
+        className: "bg-gradient-to-r from-green-500/90 to-emerald-500/90 border-green-400/50 text-white shadow-2xl shadow-green-500/50",
       });
+      
+      // Auto-dismiss after 3 seconds
+      setTimeout(() => {
+        loginToast.dismiss();
+      }, 3000);
+      
       navigate("/dashboard");
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -350,10 +357,16 @@ const LoginNew = () => {
           username={formData.username}
           userId="" // Will be fetched from session
           onSuccess={() => {
-            toast({
-              title: "Sikeres bejelentkezés!",
-              description: t('auth.login.successMessage'),
+            const loginToast = toast({
+              title: "🎉 Sikeres bejelentkezés! 🎉",
+              description: "Örülünk, hogy újra látunk! Indulhat a játék?",
+              className: "bg-gradient-to-r from-green-500/90 to-emerald-500/90 border-green-400/50 text-white shadow-2xl shadow-green-500/50",
             });
+            
+            // Auto-dismiss after 3 seconds
+            setTimeout(() => {
+              loginToast.dismiss();
+            }, 3000);
           }}
         />
       )}
