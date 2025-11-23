@@ -9,6 +9,7 @@ import { CoinIcon3D } from '@/components/icons/CoinIcon3D';
 import { DiamondIcon3D } from '@/components/icons/DiamondIcon3D';
 import { GoldRewardCoin3D } from '@/components/icons/GoldRewardCoin3D';
 import { LoadingSpinner3D } from '@/components/icons/LoadingSpinner3D';
+import { SlotMachine3D } from '@/components/icons/SlotMachine3D';
 
 interface InGameRescuePopupProps {
   isOpen: boolean;
@@ -126,19 +127,24 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           ))}
         </div>
         {/* Header with enhanced 3D styling */}
-        <DialogHeader className="space-y-1 mb-3">
-          <DialogTitle className="text-2xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent leading-tight tracking-wider" style={{ textShadow: '0 3px 12px rgba(234, 179, 8, 0.8), 0 6px 24px rgba(234, 179, 8, 0.5), 0 0 30px rgba(234, 179, 8, 0.6)', filter: 'drop-shadow(0 4px 10px rgba(234, 179, 8, 0.4))' }}>
+        <DialogHeader className="space-y-1 mb-3 relative">
+          {/* Multi-layer header background */}
+          <div className="absolute inset-0 bg-gradient-to-b from-yellow-600/30 via-yellow-500/20 to-transparent rounded-t-3xl" style={{ boxShadow: 'inset 0 3px 15px rgba(234, 179, 8, 0.4)' }}></div>
+          <div className="absolute inset-0 bg-gradient-radial from-yellow-400/10 via-transparent to-transparent"></div>
+          
+          <DialogTitle className="relative text-2xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent leading-tight tracking-wider" style={{ textShadow: '0 4px 15px rgba(234, 179, 8, 0.9), 0 8px 30px rgba(234, 179, 8, 0.6), 0 0 40px rgba(234, 179, 8, 0.7), 0 2px 5px rgba(0, 0, 0, 0.8)', filter: 'drop-shadow(0 6px 15px rgba(234, 179, 8, 0.5))' }}>
             {t('rescue.title')}
           </DialogTitle>
-          <p className="text-center text-yellow-50 text-sm font-bold" style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(251, 191, 36, 0.3)' }}>
+          <p className="relative text-center text-yellow-50 text-sm font-bold" style={{ textShadow: '0 3px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.4)' }}>
             {t('rescue.subtitle')}
           </p>
         </DialogHeader>
 
         {/* Current Status with 3D icons */}
-        <div className="relative bg-gradient-to-r from-blue-900/70 via-purple-900/80 to-blue-900/70 border-[3px] border-blue-400/60 rounded-xl p-3 mb-3 shadow-xl" style={{ boxShadow: 'inset 0 3px 12px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.2)' }}>
-          {/* Glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 rounded-xl pointer-events-none"></div>
+        <div className="relative bg-gradient-to-r from-blue-900/70 via-purple-900/80 to-blue-900/70 border-[4px] border-blue-400/60 rounded-2xl p-3 mb-3 shadow-xl" style={{ boxShadow: 'inset 0 5px 20px rgba(0, 0, 0, 0.6), inset 0 -3px 15px rgba(59, 130, 246, 0.3), 0 8px 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3), 0 15px 50px rgba(0, 0, 0, 0.8)' }}>
+          {/* Multi-layer glow effects */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 rounded-2xl pointer-events-none"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-purple-600/10 to-blue-600/10 rounded-2xl pointer-events-none"></div>
           
           <div className="relative flex items-center justify-around">
             <div className="flex items-center gap-2">
@@ -171,16 +177,27 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         <div className="grid grid-cols-2 gap-3 mb-3 items-stretch">
           {/* Gold Saver Booster - Enhanced 3D */}
           <div className="relative flex flex-col h-full">
-            {/* Outer glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/40 to-amber-500/40 rounded-2xl blur-xl animate-pulse"></div>
+            {/* Multi-layer outer glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/50 to-amber-500/50 rounded-3xl blur-2xl animate-pulse"></div>
+            <div className="absolute inset-0 bg-yellow-300/30 rounded-3xl blur-xl"></div>
             
-            <div className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-purple-800 border-[5px] border-yellow-300 rounded-3xl p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 5px 20px rgba(0, 0, 0, 0.5), inset 0 -5px 20px rgba(234, 179, 8, 0.3), 0 10px 40px rgba(234, 179, 8, 0.7), 0 0 60px rgba(234, 179, 8, 0.4), 0 15px 50px rgba(0, 0, 0, 0.7)' }}>
+            {/* Main card with multiple depth layers */}
+            <div className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-purple-800 border-[6px] border-yellow-300 rounded-3xl p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(234, 179, 8, 0.4), 0 12px 50px rgba(234, 179, 8, 0.9), 0 0 80px rgba(234, 179, 8, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(234, 179, 8, 0.6)' }}>
+              {/* Inner highlight layer */}
+              <div className="absolute inset-1 rounded-3xl bg-gradient-to-br from-blue-600/20 via-transparent to-purple-700/20 pointer-events-none"></div>
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-transparent via-yellow-400/5 to-yellow-300/10 pointer-events-none"></div>
               {/* Large coin icon at top with enhanced glow */}
               <div className="flex justify-center -mt-8 mb-2">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-yellow-400/50 rounded-full blur-xl animate-pulse"></div>
-                  <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 12px 30px rgba(202, 138, 4, 0.7), inset 0 -4px 12px rgba(0, 0, 0, 0.4), inset 0 4px 12px rgba(255, 255, 255, 0.5)' }}>
-                    <CoinIcon3D size={56} className="drop-shadow-2xl" />
+                  {/* Multi-layer glow rings */}
+                  <div className="absolute inset-0 bg-yellow-400/60 rounded-full blur-2xl animate-pulse"></div>
+                  <div className="absolute inset-0 bg-yellow-300/40 rounded-full blur-xl"></div>
+                  
+                  {/* 3D circle with multiple shadow layers */}
+                  <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(202, 138, 4, 0.9), 0 8px 20px rgba(202, 138, 4, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(234, 179, 8, 0.4)' }}>
+                    {/* Inner ring for depth */}
+                    <div className="absolute inset-2 rounded-full bg-gradient-to-br from-yellow-100/40 to-transparent" style={{ boxShadow: 'inset 0 2px 8px rgba(255, 255, 255, 0.5)' }}></div>
+                    <SlotMachine3D size={56} className="drop-shadow-2xl relative z-10" />
                   </div>
                 </div>
               </div>
@@ -209,12 +226,6 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
               <div className="flex-1"></div>
 
-              {!hasEnoughGold && (
-                <p className="text-yellow-200 text-[9px] text-center mb-2 font-bold" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.8)' }}>
-                  {t('rescue.not_enough_warning')}
-                </p>
-              )}
-
               <Button
                 onClick={handleGoldSaverPurchase}
                 disabled={!hasEnoughGold || loadingGoldSaver}
@@ -231,30 +242,47 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                   <span className="text-xs">{t('rescue.not_enough_short')}</span>
                 )}
               </Button>
+
+              {!hasEnoughGold && (
+                <p className="text-yellow-200 text-[9px] text-center mt-1.5 font-bold" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.8)' }}>
+                  {t('rescue.not_enough_warning')}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Instant Rescue Booster - Premium Enhanced 3D */}
           <div className="relative flex flex-col h-full">
-            {/* Outer animated glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/50 to-blue-500/50 rounded-2xl blur-xl animate-pulse"></div>
+            {/* Multi-layer animated glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/60 to-blue-500/60 rounded-3xl blur-2xl animate-pulse"></div>
+            <div className="absolute inset-0 bg-cyan-300/40 rounded-3xl blur-xl"></div>
             
-            <div className="relative bg-gradient-to-br from-purple-800 via-pink-700 to-purple-800 border-[5px] border-pink-300 rounded-3xl p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 5px 20px rgba(0, 0, 0, 0.5), inset 0 -5px 20px rgba(236, 72, 153, 0.3), 0 10px 40px rgba(236, 72, 153, 0.8), 0 0 60px rgba(236, 72, 153, 0.5), 0 15px 50px rgba(0, 0, 0, 0.7)' }}>
+            {/* Main card with multiple depth layers */}
+            <div className="relative bg-gradient-to-br from-purple-800 via-pink-700 to-purple-800 border-[6px] border-cyan-300 rounded-3xl p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(6, 182, 212, 0.4), 0 12px 50px rgba(6, 182, 212, 0.9), 0 0 80px rgba(59, 130, 246, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(6, 182, 212, 0.6)' }}>
+              {/* Inner highlight layer */}
+              <div className="absolute inset-1 rounded-3xl bg-gradient-to-br from-purple-600/20 via-transparent to-pink-700/20 pointer-events-none"></div>
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-transparent via-cyan-400/5 to-blue-300/10 pointer-events-none"></div>
               {/* Large diamond icon at top with enhanced glow */}
               <div className="flex justify-center -mt-8 mb-2">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-pink-400/60 rounded-full blur-xl animate-pulse"></div>
-                  <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-pink-200 via-pink-300 to-pink-600 flex items-center justify-center" style={{ boxShadow: '0 12px 30px rgba(219, 39, 119, 0.8), inset 0 -4px 12px rgba(0, 0, 0, 0.4), inset 0 4px 12px rgba(255, 255, 255, 0.5)' }}>
-                    <DiamondIcon3D size={112} className="drop-shadow-2xl" />
+                  {/* Multi-layer glow rings */}
+                  <div className="absolute inset-0 bg-cyan-400/70 rounded-full blur-2xl animate-pulse"></div>
+                  <div className="absolute inset-0 bg-blue-300/50 rounded-full blur-xl"></div>
+                  
+                  {/* 3D circle with multiple shadow layers */}
+                  <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(6, 182, 212, 0.9), 0 8px 20px rgba(59, 130, 246, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(6, 182, 212, 0.4)' }}>
+                    {/* Inner ring for depth */}
+                    <div className="absolute inset-2 rounded-full bg-gradient-to-br from-cyan-100/40 to-transparent" style={{ boxShadow: 'inset 0 2px 8px rgba(255, 255, 255, 0.5)' }}></div>
+                    <DiamondIcon3D size={112} className="drop-shadow-2xl relative z-10" />
                   </div>
                 </div>
               </div>
 
-              <h3 className="text-sm font-black text-center bg-gradient-to-r from-pink-100 via-pink-50 to-pink-100 bg-clip-text text-transparent mb-1.5 leading-tight tracking-wider" style={{ textShadow: '0 2px 10px rgba(236, 72, 153, 0.8)' }}>
+              <h3 className="text-sm font-black text-center bg-gradient-to-r from-cyan-100 via-blue-50 to-cyan-100 bg-clip-text text-transparent mb-1.5 leading-tight tracking-wider" style={{ textShadow: '0 3px 12px rgba(6, 182, 212, 0.9), 0 0 20px rgba(59, 130, 246, 0.6)' }}>
                 Instant Rescue
               </h3>
 
-              <p className="text-pink-50 text-[10px] text-center mb-2.5 font-semibold leading-snug px-1" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)' }}>
+              <p className="text-cyan-50 text-[10px] text-center mb-2.5 font-semibold leading-snug px-1" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>
                 {t('rescue.instant_rescue_description')}
               </p>
 
@@ -289,22 +317,25 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 )}
               </Button>
 
-              <p className="text-pink-100/70 text-[8px] text-center mt-1.5 leading-snug font-medium" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.6)' }}>
+              <p className="text-cyan-100/70 text-[8px] text-center mt-1.5 leading-snug font-medium" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.6)' }}>
                 {t('rescue.instant_credit')}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Footer with enhanced styling */}
-        <div className="text-center pt-2 border-t-2 border-yellow-400/30" style={{ boxShadow: '0 -2px 10px rgba(234, 179, 8, 0.2)' }}>
-          <p className="text-yellow-50 text-[10px] mb-2 leading-snug font-semibold" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.8)' }}>
+        {/* Footer with enhanced 3D styling */}
+        <div className="relative text-center pt-3 border-t-[3px] border-yellow-400/40" style={{ boxShadow: '0 -4px 15px rgba(234, 179, 8, 0.3), inset 0 2px 10px rgba(234, 179, 8, 0.2)' }}>
+          {/* Footer background layer */}
+          <div className="absolute inset-0 bg-gradient-to-t from-yellow-600/10 via-transparent to-transparent"></div>
+          
+          <p className="relative text-yellow-50 text-[10px] mb-2 leading-snug font-semibold" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(251, 191, 36, 0.3)' }}>
             {t('rescue.continue_message')}
           </p>
           <Button
             onClick={onClose}
             variant="ghost"
-            className="text-yellow-100 hover:text-yellow-50 hover:bg-white/15 text-sm h-9 px-4 font-bold transition-all" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.8)' }}
+            className="relative text-yellow-100 hover:text-yellow-50 hover:bg-white/15 text-sm h-9 px-4 font-bold transition-all" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.9)' }}
           >
             {t('rescue.cancel_button')}
           </Button>
