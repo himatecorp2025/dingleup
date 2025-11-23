@@ -225,11 +225,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     
                      <h1 className="relative z-10 font-black text-white text-center uppercase"
                         style={{ 
-                          fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
+                          fontSize: 'clamp(1.375rem, 5.72vw, 2.31rem)', 
                           letterSpacing: '0.08em',
                           fontFamily: '"Poppins", system-ui, -apple-system, sans-serif'
                         }}>
-                      {t('dailyWinners.title')}
+                      GÉNIUSZOK
                     </h1>
                     
                     {/* Jackpot info row */}
