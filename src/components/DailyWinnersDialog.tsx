@@ -139,7 +139,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               minWidth: '100vw',
               justifyContent: 'center',
               paddingTop: '0',
-              marginTop: '-3vh'
+              marginTop: '0'
             }}
           >
           <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
