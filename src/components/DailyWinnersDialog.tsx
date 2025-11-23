@@ -206,47 +206,182 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 {/* Content Area - Fixed height to fit exactly 10 players */}
                 <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[6%] pt-[2%]" style={{ height: 'calc(100% - 80px)' }}>
                   
-                  {/* Players List - Fixed height divided by 10 */}
+                  {/* Players List */}
                   <div className="w-full mb-4 overflow-y-auto" style={{ height: 'calc(100% - 60px)' }}>
-                    <div className="space-y-2">
-                      {topPlayers.length === 0 ? (
-                        <div className="text-center text-white py-8">
-                          <p className="text-lg">{t('dailyWinners.noData')}</p>
-                        </div>
-                      ) : (
-                        topPlayers.map((player, index) => {
-                          const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
-                          
-                          return (
-                            <div
-                              key={player.user_id}
-                              className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-purple-900/30 to-purple-800/30 rounded-xl border border-purple-500/20"
-                              style={{ minHeight: 'calc((100% - 36px) / 10)' }}
-                            >
-                              {/* Medal */}
-                              <div className="flex-shrink-0 text-2xl">
-                                {medalEmoji}
-                              </div>
-
-                              {/* Player Info */}
-                              <div className="flex-1 min-w-0">
-                                <p className="text-base font-bold text-white truncate">
-                                  {player.username}
-                                </p>
-                                <p className="text-xs text-gray-300">
-                                  {player.total_correct_answers} {t('dailyWinners.correctAnswers')}
-                                </p>
-                              </div>
-
-                              {/* Rank Number */}
-                              <div className="flex-shrink-0 text-xl font-bold text-yellow-400">
-                                #{player.rank}
-                              </div>
+                    {topPlayers.length === 0 ? (
+                      <div className="text-center text-white py-8">
+                        <p className="text-lg">{t('dailyWinners.noData')}</p>
+                      </div>
+                    ) : (
+                      <>
+                        {/* TOP 3 - Horizontal Layout with Laurel Wreaths */}
+                        <div className="flex justify-center items-end gap-4 mb-6 px-2">
+                          {/* 2nd Place - Silver */}
+                          {topPlayers[1] && (
+                            <div className="flex flex-col items-center" style={{ width: '28%' }}>
+                              <svg viewBox="0 0 120 140" className="w-full">
+                                {/* Silver Laurel Wreath */}
+                                <defs>
+                                  <radialGradient id="silverGrad" cx="50%" cy="50%">
+                                    <stop offset="0%" style={{ stopColor: '#f0f0f0', stopOpacity: 1 }} />
+                                    <stop offset="50%" style={{ stopColor: '#c0c0c0', stopOpacity: 1 }} />
+                                    <stop offset="100%" style={{ stopColor: '#909090', stopOpacity: 1 }} />
+                                  </radialGradient>
+                                </defs>
+                                {/* Wreath circle */}
+                                <circle cx="60" cy="50" r="35" fill="url(#silverGrad)" stroke="#707070" strokeWidth="2" />
+                                <circle cx="60" cy="50" r="32" fill="none" stroke="#e0e0e0" strokeWidth="1.5" opacity="0.6" />
+                                
+                                {/* Laurel leaves - left side */}
+                                <path d="M 30,35 Q 25,40 30,45" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
+                                <path d="M 28,42 Q 23,47 28,52" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
+                                <path d="M 26,50 Q 21,55 26,60" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
+                                
+                                {/* Laurel leaves - right side */}
+                                <path d="M 90,35 Q 95,40 90,45" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
+                                <path d="M 92,42 Q 97,47 92,52" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
+                                <path d="M 94,50 Q 99,55 94,60" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
+                                
+                                {/* Rank number */}
+                                <text x="60" y="58" textAnchor="middle" fill="#fff" fontSize="24" fontWeight="bold">2</text>
+                                
+                                {/* Username */}
+                                <text x="60" y="90" textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">
+                                  {topPlayers[1].username.length > 12 ? topPlayers[1].username.substring(0, 12) + '...' : topPlayers[1].username}
+                                </text>
+                                
+                                {/* Correct answers */}
+                                <text x="60" y="105" textAnchor="middle" fill="#e0e0e0" fontSize="8">
+                                  {topPlayers[1].total_correct_answers} {t('dailyWinners.correctAnswers')}
+                                </text>
+                              </svg>
                             </div>
-                          );
-                        })
-                      )}
-                    </div>
+                          )}
+
+                          {/* 1st Place - Gold (larger) */}
+                          {topPlayers[0] && (
+                            <div className="flex flex-col items-center" style={{ width: '36%' }}>
+                              <svg viewBox="0 0 120 150" className="w-full">
+                                {/* Gold Laurel Wreath */}
+                                <defs>
+                                  <radialGradient id="goldGrad" cx="50%" cy="50%">
+                                    <stop offset="0%" style={{ stopColor: '#ffd700', stopOpacity: 1 }} />
+                                    <stop offset="50%" style={{ stopColor: '#ffb700', stopOpacity: 1 }} />
+                                    <stop offset="100%" style={{ stopColor: '#cc8800', stopOpacity: 1 }} />
+                                  </radialGradient>
+                                </defs>
+                                {/* Wreath circle */}
+                                <circle cx="60" cy="55" r="40" fill="url(#goldGrad)" stroke="#cc8800" strokeWidth="2.5" />
+                                <circle cx="60" cy="55" r="37" fill="none" stroke="#ffe44d" strokeWidth="2" opacity="0.7" />
+                                
+                                {/* Laurel leaves - left side */}
+                                <path d="M 25,38 Q 20,43 25,48" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                <path d="M 23,46 Q 18,51 23,56" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                <path d="M 21,54 Q 16,59 21,64" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                <path d="M 23,62 Q 18,67 23,72" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                
+                                {/* Laurel leaves - right side */}
+                                <path d="M 95,38 Q 100,43 95,48" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                <path d="M 97,46 Q 102,51 97,56" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                <path d="M 99,54 Q 104,59 99,64" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                <path d="M 97,62 Q 102,67 97,72" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                
+                                {/* Rank number */}
+                                <text x="60" y="63" textAnchor="middle" fill="#fff" fontSize="28" fontWeight="bold" stroke="#cc8800" strokeWidth="0.5">1</text>
+                                
+                                {/* Username */}
+                                <text x="60" y="100" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="bold">
+                                  {topPlayers[0].username.length > 12 ? topPlayers[0].username.substring(0, 12) + '...' : topPlayers[0].username}
+                                </text>
+                                
+                                {/* Correct answers */}
+                                <text x="60" y="116" textAnchor="middle" fill="#ffd700" fontSize="9" fontWeight="bold">
+                                  {topPlayers[0].total_correct_answers} {t('dailyWinners.correctAnswers')}
+                                </text>
+                              </svg>
+                            </div>
+                          )}
+
+                          {/* 3rd Place - Bronze */}
+                          {topPlayers[2] && (
+                            <div className="flex flex-col items-center" style={{ width: '28%' }}>
+                              <svg viewBox="0 0 120 140" className="w-full">
+                                {/* Bronze Laurel Wreath */}
+                                <defs>
+                                  <radialGradient id="bronzeGrad" cx="50%" cy="50%">
+                                    <stop offset="0%" style={{ stopColor: '#e89b5a', stopOpacity: 1 }} />
+                                    <stop offset="50%" style={{ stopColor: '#cd7f32', stopOpacity: 1 }} />
+                                    <stop offset="100%" style={{ stopColor: '#8b5a2b', stopOpacity: 1 }} />
+                                  </radialGradient>
+                                </defs>
+                                {/* Wreath circle */}
+                                <circle cx="60" cy="50" r="35" fill="url(#bronzeGrad)" stroke="#8b5a2b" strokeWidth="2" />
+                                <circle cx="60" cy="50" r="32" fill="none" stroke="#d4a574" strokeWidth="1.5" opacity="0.6" />
+                                
+                                {/* Laurel leaves - left side */}
+                                <path d="M 30,35 Q 25,40 30,45" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
+                                <path d="M 28,42 Q 23,47 28,52" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
+                                <path d="M 26,50 Q 21,55 26,60" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
+                                
+                                {/* Laurel leaves - right side */}
+                                <path d="M 90,35 Q 95,40 90,45" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
+                                <path d="M 92,42 Q 97,47 92,52" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
+                                <path d="M 94,50 Q 99,55 94,60" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
+                                
+                                {/* Rank number */}
+                                <text x="60" y="58" textAnchor="middle" fill="#fff" fontSize="24" fontWeight="bold">3</text>
+                                
+                                {/* Username */}
+                                <text x="60" y="90" textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">
+                                  {topPlayers[2].username.length > 12 ? topPlayers[2].username.substring(0, 12) + '...' : topPlayers[2].username}
+                                </text>
+                                
+                                {/* Correct answers */}
+                                <text x="60" y="105" textAnchor="middle" fill="#d4a574" fontSize="8">
+                                  {topPlayers[2].total_correct_answers} {t('dailyWinners.correctAnswers')}
+                                </text>
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 4-10th Place - Original List Design */}
+                        {topPlayers.slice(3).length > 0 && (
+                          <div className="space-y-2">
+                            {topPlayers.slice(3).map((player, index) => {
+                              const actualRank = index + 4;
+                              
+                              return (
+                                <div
+                                  key={player.user_id}
+                                  className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-purple-900/30 to-purple-800/30 rounded-xl border border-purple-500/20"
+                                >
+                                  {/* Medal */}
+                                  <div className="flex-shrink-0 text-2xl">
+                                    🏅
+                                  </div>
+
+                                  {/* Player Info */}
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-base font-bold text-white truncate">
+                                      {player.username}
+                                    </p>
+                                    <p className="text-xs text-gray-300">
+                                      {player.total_correct_answers} {t('dailyWinners.correctAnswers')}
+                                    </p>
+                                  </div>
+
+                                  {/* Rank Number */}
+                                  <div className="flex-shrink-0 text-xl font-bold text-yellow-400">
+                                    #{player.rank}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
 
                   {/* Close Button */}
