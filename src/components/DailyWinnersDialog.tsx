@@ -237,7 +237,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     </div>
                   </div>
 
-                  {/* Casino Billboard - Total Rewards Panel */}
+                  {/* Total Rewards Panel - Completely Redesigned */}
                   <div 
                     className="relative z-20"
                     style={{
@@ -246,55 +246,76 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       transformOrigin: 'center center'
                     }}
                   >
+                    {/* Outer Hexagon Frame with Premium 3D Gold Effect */}
                     <div className="relative" style={{ 
-                      clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)'
+                      clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
+                      padding: '0'
                     }}>
-                      <div className="absolute inset-0 translate-y-1 translate-x-1"
+                      {/* Shadow */}
+                      <div className="absolute inset-0 translate-y-2 translate-x-2"
                            style={{
                              clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                             background: 'rgba(0,0,0,0.6)',
-                             filter: 'blur(6px)',
+                             background: 'rgba(0,0,0,0.7)',
+                             filter: 'blur(8px)',
                              zIndex: -1
                            }} />
                       
+                      {/* Gold Border Frame - Outer */}
                       <div className="absolute inset-0"
                            style={{
                              clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
                              background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                             boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 4px 12px rgba(0,0,0,0.3)'
+                             boxShadow: 'inset 0 0 0 3px hsl(var(--dup-gold-900)), 0 6px 16px rgba(0,0,0,0.4)'
                            }} />
                       
-                      <div className="absolute inset-[3px]"
+                      {/* Gold Border Frame - Inner Bevel */}
+                      <div className="absolute inset-[4px]"
                            style={{
                              clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
                              background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-                             boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                             boxShadow: 'inset 0 2px 0 hsl(var(--dup-gold-300))'
                            }} />
                       
-                      <div className="relative px-6 py-4"
+                      {/* Dark Content Area */}
+                      <div className="relative px-8 py-5"
                            style={{
                              clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)'
                            }}>
-                        <div className="absolute inset-[6px]"
+                        {/* Dark Background with Texture */}
+                        <div className="absolute inset-[8px]"
                              style={{
                                clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
-                               boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.6)'
+                               background: 'linear-gradient(135deg, #1a1820 0%, #0f0e14 50%, #1a1820 100%)',
+                               boxShadow: 'inset 0 4px 12px rgba(0,0,0,0.8), inset 0 -2px 8px rgba(0,0,0,0.6)'
                              }} />
                         
-                        <div className="relative z-10">
-                          <div className="text-center mb-3">
-                            <h3 className="text-white font-black uppercase tracking-wider" style={{
-                              fontSize: '0.75rem',
-                              textShadow: '0 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 215, 0, 0.5)',
-                              letterSpacing: '0.1em'
+                        {/* Subtle Pattern Overlay */}
+                        <div className="absolute inset-[8px] pointer-events-none"
+                             style={{
+                               clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
+                               background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 12px)',
+                               opacity: 0.5
+                             }} />
+                        
+                        <div className="relative z-10 space-y-4">
+                          {/* Title */}
+                          <div className="text-center">
+                            <h3 className="font-black uppercase tracking-widest" style={{
+                              fontSize: '0.9rem',
+                              background: 'linear-gradient(180deg, #ffd700 0%, #ffed4e 50%, #daa520 100%)',
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              textShadow: '0 2px 8px rgba(255, 215, 0, 0.4)',
+                              letterSpacing: '0.15em'
                             }}>
-                              Tegnapi Jutalmaink
+                              JUTALMAK
                             </h3>
                           </div>
 
-                          <div className="flex items-center justify-center gap-3 mb-2">
-                            <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                          {/* Gold Coins Row */}
+                          <div className="flex items-center justify-center gap-4">
+                            {/* Realistic 3D Gold Coin (KEPT AS IS) */}
+                            <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                               <ellipse cx="50" cy="55" rx="45" ry="42" fill="rgba(0,0,0,0.3)" opacity="0.6"/>
                               <circle cx="50" cy="50" r="45" fill="url(#goldGradient)"/>
                               <circle cx="50" cy="50" r="38" fill="none" stroke="url(#goldRing)" strokeWidth="2"/>
@@ -325,39 +346,118 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               </defs>
                             </svg>
                             
-                            <span className="text-yellow-300 font-black text-2xl" style={{
-                              textShadow: '0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 215, 0, 0.6)',
-                              fontFamily: '"Poppins", sans-serif'
+                            {/* Gold Amount */}
+                            <span className="font-black" style={{
+                              fontSize: '1.8rem',
+                              background: 'linear-gradient(180deg, #fff9c4 0%, #ffd700 50%, #ffb300 100%)',
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              textShadow: '0 3px 10px rgba(255, 215, 0, 0.8)',
+                              fontFamily: '"Poppins", sans-serif',
+                              letterSpacing: '0.02em'
                             }}>
                               {totalRewards.totalGold.toLocaleString()}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-center gap-3">
-                            <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                          {/* Lives Row */}
+                          <div className="flex items-center justify-center gap-4">
+                            {/* Ultra-Realistic 3D Heart - COMPLETELY REDESIGNED */}
+                            <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                              {/* Drop Shadow */}
+                              <path d="M50,90 C50,90 15,62 15,38 C15,20 28,14 40,22 C45,25.5 50,35 50,35 C50,35 55,25.5 60,22 C72,14 85,20 85,38 C85,62 50,90 50,90 Z" 
+                                    fill="rgba(0,0,0,0.4)" transform="translate(3, 5)" opacity="0.7" filter="blur(4)"/>
+                              
+                              {/* Heart Base - Main Body with Multi-Layer Gradient */}
+                              <path d="M50,90 C50,90 15,62 15,38 C15,20 28,14 40,22 C45,25.5 50,35 50,35 C50,35 55,25.5 60,22 C72,14 85,20 85,38 C85,62 50,90 50,90 Z" 
+                                    fill="url(#heartBase)"/>
+                              
+                              {/* Heart Mid-Layer - Adds Depth */}
                               <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
-                                    fill="rgba(0,0,0,0.3)" transform="translate(2, 4)" opacity="0.5"/>
-                              <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
-                                    fill="url(#heartGradient)"/>
-                              <ellipse cx="38" cy="35" rx="12" ry="10" fill="rgba(255,255,255,0.5)" opacity="0.8"/>
-                              <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
-                                    fill="none" stroke="url(#heartEdge)" strokeWidth="2" opacity="0.6"/>
+                                    fill="url(#heartMid)" opacity="0.8"/>
+                              
+                              {/* Inner Light - Adds Volume */}
+                              <path d="M50,80 C50,80 25,58 25,42 C25,30 33,26 42,30 C46,32 50,38 50,38 C50,38 54,32 58,30 C67,26 75,30 75,42 C75,58 50,80 50,80 Z" 
+                                    fill="url(#heartInner)" opacity="0.6"/>
+                              
+                              {/* Top Specular Highlight - Left Lobe */}
+                              <ellipse cx="32" cy="28" rx="14" ry="11" 
+                                       fill="url(#heartHighlight)" opacity="0.9"/>
+                              
+                              {/* Top Specular Highlight - Right Lobe */}
+                              <ellipse cx="68" cy="28" rx="12" ry="9" 
+                                       fill="url(#heartHighlight2)" opacity="0.7"/>
+                              
+                              {/* Edge Shine - Left Side */}
+                              <path d="M20,40 C20,30 28,22 38,24 C32,26 28,32 28,40 C28,52 40,68 50,80 C45,75 20,55 20,40 Z" 
+                                    fill="url(#heartEdgeShine)" opacity="0.4"/>
+                              
+                              {/* Subtle Stroke for Definition */}
+                              <path d="M50,90 C50,90 15,62 15,38 C15,20 28,14 40,22 C45,25.5 50,35 50,35 C50,35 55,25.5 60,22 C72,14 85,20 85,38 C85,62 50,90 50,90 Z" 
+                                    fill="none" stroke="url(#heartStroke)" strokeWidth="1.5" opacity="0.5"/>
+                              
                               <defs>
-                                <radialGradient id="heartGradient" cx="40%" cy="30%">
-                                  <stop offset="0%" stopColor="#ff6b9d"/>
-                                  <stop offset="40%" stopColor="#ff0055"/>
-                                  <stop offset="100%" stopColor="#c41e3a"/>
+                                {/* Base Heart Gradient - Deep Rich Red */}
+                                <radialGradient id="heartBase" cx="45%" cy="30%">
+                                  <stop offset="0%" stopColor="#ff4d6d"/>
+                                  <stop offset="30%" stopColor="#e63946"/>
+                                  <stop offset="70%" stopColor="#c1121f"/>
+                                  <stop offset="100%" stopColor="#800f2f"/>
                                 </radialGradient>
-                                <linearGradient id="heartEdge" x1="0%" y1="0%" x2="100%" y2="100%">
-                                  <stop offset="0%" stopColor="#ff6b9d" stopOpacity="1"/>
-                                  <stop offset="100%" stopColor="#8b0000" stopOpacity="0.8"/>
+                                
+                                {/* Mid Layer - Brighter Core */}
+                                <radialGradient id="heartMid" cx="50%" cy="35%">
+                                  <stop offset="0%" stopColor="#ff758f"/>
+                                  <stop offset="40%" stopColor="#ff4d6d"/>
+                                  <stop offset="100%" stopColor="#e63946"/>
+                                </radialGradient>
+                                
+                                {/* Inner Light - Center Glow */}
+                                <radialGradient id="heartInner" cx="50%" cy="40%">
+                                  <stop offset="0%" stopColor="#ffb3c1"/>
+                                  <stop offset="50%" stopColor="#ff758f"/>
+                                  <stop offset="100%" stopColor="transparent"/>
+                                </radialGradient>
+                                
+                                {/* Specular Highlight - Realistic Light Reflection */}
+                                <radialGradient id="heartHighlight" cx="40%" cy="30%">
+                                  <stop offset="0%" stopColor="rgba(255,255,255,0.9)"/>
+                                  <stop offset="40%" stopColor="rgba(255,255,255,0.5)"/>
+                                  <stop offset="100%" stopColor="transparent"/>
+                                </radialGradient>
+                                
+                                {/* Second Highlight for Right Lobe */}
+                                <radialGradient id="heartHighlight2" cx="50%" cy="30%">
+                                  <stop offset="0%" stopColor="rgba(255,255,255,0.7)"/>
+                                  <stop offset="50%" stopColor="rgba(255,255,255,0.3)"/>
+                                  <stop offset="100%" stopColor="transparent"/>
+                                </radialGradient>
+                                
+                                {/* Edge Shine - Left Side Light Reflection */}
+                                <linearGradient id="heartEdgeShine" x1="0%" y1="0%" x2="100%" y2="100%">
+                                  <stop offset="0%" stopColor="rgba(255,255,255,0.4)"/>
+                                  <stop offset="50%" stopColor="rgba(255,200,220,0.2)"/>
+                                  <stop offset="100%" stopColor="transparent"/>
+                                </linearGradient>
+                                
+                                {/* Stroke for Edge Definition */}
+                                <linearGradient id="heartStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                                  <stop offset="0%" stopColor="#ff4d6d"/>
+                                  <stop offset="50%" stopColor="#c1121f"/>
+                                  <stop offset="100%" stopColor="#800f2f"/>
                                 </linearGradient>
                               </defs>
                             </svg>
                             
-                            <span className="text-red-400 font-black text-2xl" style={{
-                              textShadow: '0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 0, 85, 0.5)',
-                              fontFamily: '"Poppins", sans-serif'
+                            {/* Lives Amount */}
+                            <span className="font-black" style={{
+                              fontSize: '1.8rem',
+                              background: 'linear-gradient(180deg, #ffc1cc 0%, #ff4d6d 50%, #e63946 100%)',
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              textShadow: '0 3px 10px rgba(255, 77, 109, 0.7)',
+                              fontFamily: '"Poppins", sans-serif',
+                              letterSpacing: '0.02em'
                             }}>
                               {totalRewards.totalLives}
                             </span>
