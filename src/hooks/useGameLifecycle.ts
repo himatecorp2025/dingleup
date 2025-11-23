@@ -35,7 +35,6 @@ interface UseGameLifecycleOptions {
   coinsEarned: number;
   questions: Question[];
   questionStartTime: number;
-  isStartingGame: boolean;
   gameCompleted: boolean;
 }
 
@@ -70,7 +69,6 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     coinsEarned,
     questions,
     questionStartTime,
-    isStartingGame,
     gameCompleted,
   } = options;
 
