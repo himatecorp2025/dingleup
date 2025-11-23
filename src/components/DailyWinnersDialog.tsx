@@ -28,6 +28,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   const { t } = useI18n();
   const [contentVisible, setContentVisible] = useState(false);
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
+  const [totalRewards, setTotalRewards] = useState<TotalRewards>({ totalGold: 0, totalLives: 0 });
   const badgeRef = useRef<HTMLDivElement>(null);
 
   // Add keyframes for animations
@@ -112,6 +113,19 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
       setTopPlayers(players as TopPlayer[]);
       console.log('[DAILY-WINNERS] Loaded yesterday TOP 10 from snapshot:', players.length, 'players');
+      
+      // Fetch total rewards for yesterday
+      const { data: rewards, error: rewardsError } = await supabase
+        .from('daily_winner_awarded')
+        .select('gold_awarded, lives_awarded')
+        .eq('day_date', yesterdayDate);
+      
+      if (!rewardsError && rewards) {
+        const totalGold = rewards.reduce((sum, r) => sum + r.gold_awarded, 0);
+        const totalLives = rewards.reduce((sum, r) => sum + r.lives_awarded, 0);
+        setTotalRewards({ totalGold, totalLives });
+        console.log('[DAILY-WINNERS] Total rewards:', { totalGold, totalLives });
+      }
     } catch (error) {
       console.error('[DAILY-WINNERS] Exception fetching yesterday TOP 10:', error);
       setTopPlayers([]);
@@ -209,7 +223,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
                     }} />
                     
-                    <h1 className="relative z-10 font-black text-white text-center uppercase"
+                     <h1 className="relative z-10 font-black text-white text-center uppercase"
                         style={{ 
                           fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
                           letterSpacing: '0.08em',
@@ -217,6 +231,58 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         }}>
                       {t('dailyWinners.title')}
                     </h1>
+                    
+                    {/* Jackpot info row */}
+                    <div className="relative z-10 mt-2 flex items-center justify-center gap-4 text-white"
+                         style={{
+                           fontSize: 'clamp(0.75rem, 3vw, 1rem)',
+                           fontFamily: '"Poppins", system-ui, -apple-system, sans-serif',
+                           fontWeight: 700
+                         }}>
+                      <span style={{
+                        textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(255,255,255,0.3)',
+                        letterSpacing: '0.05em'
+                      }}>TEGNAPI JACKPOT:</span>
+                      
+                      {/* Gold coin icon + amount */}
+                      <div className="flex items-center gap-1">
+                        <svg width="20" height="20" viewBox="0 0 24 24" className="inline-block">
+                          <defs>
+                            <radialGradient id="coinGold" cx="30%" cy="30%">
+                              <stop offset="0%" stopColor="#fffacd" />
+                              <stop offset="30%" stopColor="#ffd700" />
+                              <stop offset="60%" stopColor="#ffb700" />
+                              <stop offset="100%" stopColor="#d4af37" />
+                            </radialGradient>
+                          </defs>
+                          <circle cx="12" cy="12" r="10" fill="url(#coinGold)" stroke="#8b6914" strokeWidth="1.5"
+                                  style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }} />
+                        </svg>
+                        <span style={{
+                          background: 'linear-gradient(180deg, #ffd700 0%, #ffb700 50%, #d4af37 100%)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          textShadow: '0 2px 4px rgba(0,0,0,0.6)',
+                          filter: 'drop-shadow(0 1px 2px rgba(255,215,0,0.8))'
+                        }}>{totalRewards.totalGold}</span>
+                      </div>
+                      
+                      {/* Heart icon + amount */}
+                      <div className="flex items-center gap-1">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="inline-block">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" 
+                                fill="#ff1744" stroke="#b71c1c" strokeWidth="1.5"
+                                style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }} />
+                        </svg>
+                        <span style={{
+                          background: 'linear-gradient(180deg, #ff5252 0%, #ff1744 50%, #d50000 100%)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          textShadow: '0 2px 4px rgba(0,0,0,0.6)',
+                          filter: 'drop-shadow(0 1px 2px rgba(255,23,68,0.8))'
+                        }}>{totalRewards.totalLives}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

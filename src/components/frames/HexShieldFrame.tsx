@@ -26,12 +26,12 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine
         <div 
           className="absolute pointer-events-none"
           style={{
-            top: '46px',
-            left: '34px',
-            right: '34px', 
-            bottom: '46px',
+            top: '0',
+            left: '0',
+            right: '0', 
+            bottom: '0',
             clipPath: 'polygon(50% 0%, 100% 4.756%, 100% 95.244%, 50% 100%, 0% 95.244%, 0% 4.756%)',
-            overflow: 'hidden',
+            overflow: 'visible',
             zIndex: 5
           }}
         >
