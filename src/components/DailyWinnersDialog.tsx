@@ -527,23 +527,24 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                         <div style={{ transform: 'translateY(-12%)' }}>
                         {topPlayers.slice(3, 10).map((player) => (
-                          <div key={player.user_id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg backdrop-blur-sm"
+                          <div key={player.user_id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg backdrop-blur-md"
                                style={{
-                                 background: 'linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)',
-                                 borderLeft: '3px solid rgba(255,215,0,0.4)',
-                                 marginBottom: '4px'
+                                 background: 'linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)',
+                                 borderLeft: '3px solid rgba(255,215,0,0.6)',
+                                 marginBottom: '4px',
+                                 boxShadow: '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)'
                                }}>
                             <div className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs"
                                  style={{
-                                   background: 'linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.1) 100%)',
+                                   background: 'linear-gradient(135deg, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.15) 100%)',
                                    color: 'hsl(var(--dup-gold-500))',
-                                   border: '1px solid rgba(255,215,0,0.3)',
+                                   border: '1px solid rgba(255,215,0,0.5)',
                                    WebkitTextStroke: '0.5px rgba(0,0,0,0.6)',
                                    textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
                                  }}>
                               {player.rank}
                             </div>
-                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700 flex-shrink-0 border-2 border-gray-600">
+                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700 flex-shrink-0 border-2 border-white/30">
                               {player.avatar_url ? (
                                 <img 
                                   src={player.avatar_url} 
