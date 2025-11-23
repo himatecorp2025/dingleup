@@ -178,12 +178,9 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3 items-stretch mt-[5%]">
           {/* Gold Saver Booster - Enhanced 3D */}
           <div className="relative flex flex-col h-full">
-            {/* Multi-layer outer glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/12.5 to-amber-500/12.5 rounded-3xl blur-xl animate-pulse"></div>
-            <div className="absolute inset-0 bg-yellow-300/7.5 rounded-3xl blur-lg"></div>
             
             {/* Main card with multiple depth layers */}
-            <div className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-yellow-300 rounded-2xl sm:rounded-3xl p-2 sm:p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(234, 179, 8, 0.4), 0 12px 50px rgba(234, 179, 8, 0.9), 0 0 80px rgba(234, 179, 8, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(234, 179, 8, 0.6)' }}>
+            <div className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-yellow-300 rounded-2xl sm:rounded-3xl p-2 sm:p-3 shadow-2xl flex-1 flex flex-col min-h-[260px] sm:min-h-[280px] md:min-h-[300px]" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(234, 179, 8, 0.4), 0 12px 50px rgba(234, 179, 8, 0.9), 0 0 80px rgba(234, 179, 8, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(234, 179, 8, 0.6)' }}>
               {/* Inner highlight layer */}
               <div className="absolute inset-1 rounded-3xl bg-gradient-to-br from-blue-600/20 via-transparent to-purple-700/20 pointer-events-none"></div>
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-transparent via-yellow-400/5 to-yellow-300/10 pointer-events-none"></div>
@@ -250,12 +247,9 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
           {/* Instant Rescue Booster - Premium Enhanced 3D */}
           <div className="relative flex flex-col h-full">
-            {/* Multi-layer animated glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/15 to-blue-500/15 rounded-3xl blur-xl animate-pulse"></div>
-            <div className="absolute inset-0 bg-cyan-300/10 rounded-3xl blur-lg"></div>
             
             {/* Main card with multiple depth layers */}
-            <div className="relative bg-gradient-to-br from-purple-800 via-pink-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-cyan-300 rounded-2xl sm:rounded-3xl p-2 sm:p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(6, 182, 212, 0.4), 0 12px 50px rgba(6, 182, 212, 0.9), 0 0 80px rgba(59, 130, 246, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(6, 182, 212, 0.6)' }}>
+            <div className="relative bg-gradient-to-br from-purple-800 via-pink-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-cyan-300 rounded-2xl sm:rounded-3xl p-2 sm:p-3 shadow-2xl flex-1 flex flex-col min-h-[260px] sm:min-h-[280px] md:min-h-[300px]" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(6, 182, 212, 0.4), 0 12px 50px rgba(6, 182, 212, 0.9), 0 0 80px rgba(59, 130, 246, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(6, 182, 212, 0.6)' }}>
               {/* Inner highlight layer */}
               <div className="absolute inset-1 rounded-3xl bg-gradient-to-br from-purple-600/20 via-transparent to-pink-700/20 pointer-events-none"></div>
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-transparent via-cyan-400/5 to-blue-300/10 pointer-events-none"></div>
