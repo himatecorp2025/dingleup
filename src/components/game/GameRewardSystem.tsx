@@ -8,7 +8,7 @@ interface UseGameRewardsOptions {
   gameInstanceId: string;
   currentQuestionIndex: number;
   coinsEarned: number;
-  broadcast: (event: string, data: any) => Promise<void>;
+  broadcast: (event: string, data: any) => Promise<boolean>;
 }
 
 export const useGameRewards = ({

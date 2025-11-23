@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Coins } from "lucide-react";
 import gameBackground from "@/assets/game-background.png";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -8,18 +7,19 @@ import { useGameProfile } from "@/hooks/useGameProfile";
 import { useWallet } from "@/hooks/useWallet";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 import { supabase } from "@/integrations/supabase/client";
-import { GameCategory, Question, Answer, getSkipCost, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST, getCoinsForQuestion, START_GAME_REWARD } from "@/types/game";
-import { HexagonButton } from "./HexagonButton";
-import { DiamondButton } from "./DiamondButton";
+import { Question, Answer, getSkipCost, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from "@/types/game";
 import { GameStateScreen } from "./GameStateScreen";
 import { QuestionCard } from "./QuestionCard";
 import { ExitGameDialog } from "./ExitGameDialog";
 import { InGameRescuePopup } from "./InGameRescuePopup";
 import { useBroadcastChannel } from "@/hooks/useBroadcastChannel";
-import { Trophy3D } from "./Trophy3D";
-import { getSessionId } from "@/lib/analytics";
 import { GameLoadingScreen } from "./GameLoadingScreen";
 import { useI18n } from "@/i18n";
+import { useGameState } from "@/hooks/useGameState";
+import { useGameHelpers } from "@/hooks/useGameHelpers";
+import { useGameTimer } from "@/hooks/useGameTimer";
+import { useGameRewards } from "./game/GameRewardSystem";
+import { GameSwipeHandler } from "./game/GameSwipeHandler";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -36,106 +36,129 @@ const ALL_QUESTIONS: Question[] = [
   ...(financeQuestions as Question[])
 ];
 
-const GamePreview = () => {
+const GamePreview = memo(() => {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
-  const { profile, loading: profileLoading, updateProfile, spendLife, refreshProfile } = useGameProfile(userId);
+  const { profile, loading: profileLoading, spendLife, refreshProfile } = useGameProfile(userId);
   const { walletData, refetchWallet } = useWallet(userId);
   const { triggerHaptic } = useHapticFeedback();
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { broadcast } = useBroadcastChannel({ channelName: 'wallet', onMessage: () => {}, enabled: true });
   
-  const [gameState, setGameState] = useState<GameState>('playing');
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(10);
+  const {
+    gameState,
+    setGameState,
+    questions,
+    setQuestions,
+    currentQuestionIndex,
+    setCurrentQuestionIndex,
+    correctAnswers,
+    incrementCorrectAnswers,
+    responseTimes,
+    addResponseTime,
+    nextQuestion,
+    resetGameState: resetGameStateHook
+  } = useGameState();
+  
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [coinsEarned, setCoinsEarned] = useState(0);
-  const [responseTimes, setResponseTimes] = useState<number[]>([]);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
+  const [gameInstanceId] = useState(() => crypto.randomUUID());
 
-  // Lifelines - GAME-LEVEL usage counters (not per-question)
+  const {
+    help5050UsageCount,
+    setHelp5050UsageCount,
+    help2xAnswerUsageCount,
+    setHelp2xAnswerUsageCount,
+    helpAudienceUsageCount,
+    setHelpAudienceUsageCount,
+    isHelp5050ActiveThisQuestion,
+    setIsHelp5050ActiveThisQuestion,
+    isDoubleAnswerActiveThisQuestion,
+    setIsDoubleAnswerActiveThisQuestion,
+    isAudienceActiveThisQuestion,
+    setIsAudienceActiveThisQuestion,
+    usedQuestionSwap,
+    setUsedQuestionSwap,
+    removedAnswer,
+    setRemovedAnswer,
+    audienceVotes,
+    setAudienceVotes,
+    logHelpUsage,
+    resetQuestionHelpers
+  } = useGameHelpers(userId, currentQuestionIndex);
   
-  // Helper function to log help usage
-  const logHelpUsage = async (helpType: 'third' | 'skip' | 'audience' | '2x_answer') => {
-    if (!userId) return;
-    
-    try {
-      await supabase.from('game_help_usage').insert({
-        user_id: userId,
-        category: 'mixed', // All categories mixed
-        help_type: helpType,
-        question_index: currentQuestionIndex
-      });
-    } catch (error) {
-      // Silent fail - non-critical logging
-    }
-  };
-  const [help5050UsageCount, setHelp5050UsageCount] = useState(0); // 0=first free, 1=second paid, 2=disabled
-  const [help2xAnswerUsageCount, setHelp2xAnswerUsageCount] = useState(0);
-  const [helpAudienceUsageCount, setHelpAudienceUsageCount] = useState(0);
-  const [isHelp5050ActiveThisQuestion, setIsHelp5050ActiveThisQuestion] = useState(false);
-  const [isDoubleAnswerActiveThisQuestion, setIsDoubleAnswerActiveThisQuestion] = useState(false);
-  const [isAudienceActiveThisQuestion, setIsAudienceActiveThisQuestion] = useState(false);
-  const [usedQuestionSwap, setUsedQuestionSwap] = useState(false);
   const [firstAttempt, setFirstAttempt] = useState<string | null>(null);
   const [secondAttempt, setSecondAttempt] = useState<string | null>(null);
-  const [removedAnswer, setRemovedAnswer] = useState<string | null>(null);
-  const [audienceVotes, setAudienceVotes] = useState<Record<string, number>>({});
 
-  // Scroll states
   const [isAnimating, setIsAnimating] = useState(false);
   const [canSwipe, setCanSwipe] = useState(true);
   const [translateY, setTranslateY] = useState(0);
   const [touchStartY, setTouchStartY] = useState(0);
   const swipeThreshold = 80;
 
-  // UI states
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [continueType, setContinueType] = useState<'timeout' | 'wrong' | 'out-of-lives'>('wrong');
-  const [gameInstanceId] = useState(() => crypto.randomUUID()); // Unique ID per game instance
   const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const [errorBannerMessage, setErrorBannerMessage] = useState('');
   const [questionVisible, setQuestionVisible] = useState(true);
   
-  // Rescue popup states
   const [showRescuePopup, setShowRescuePopup] = useState(false);
   const [rescueReason, setRescueReason] = useState<'NO_LIFE' | 'NO_GOLD'>('NO_GOLD');
   
-  // Coin reward animation states
-  const [coinRewardAmount, setCoinRewardAmount] = useState(0);
-  const [coinRewardTrigger, setCoinRewardTrigger] = useState(0);
-  
-  // Game start guard - prevents multiple simultaneous starts
   const [isStartingGame, setIsStartingGame] = useState(false);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
   const [showLoadingVideo, setShowLoadingVideo] = useState(false);
-  const [isGameReady, setIsGameReady] = useState(false); // NEW: Prevents timer from starting during video
-
-  // Game initialization promise - runs in background while video plays
+  const [isGameReady, setIsGameReady] = useState(false);
   const gameInitPromiseRef = useRef<Promise<void> | null>(null);
+  
+  const {
+    coinsEarned,
+    coinRewardAmount,
+    coinRewardTrigger,
+    creditStartReward,
+    creditCorrectAnswer,
+    resetRewardAnimation,
+    setCoinsEarned
+  } = useGameRewards({
+    userId,
+    gameInstanceId,
+    currentQuestionIndex,
+    coinsEarned: 0,
+    broadcast
+  });
 
-  // Stable callback for video end - prevents re-render loop
+  const handleTimeout = useCallback(() => {
+    const responseTime = (Date.now() - questionStartTime) / 1000;
+    addResponseTime(responseTime);
+    setSelectedAnswer('__timeout__');
+    setContinueType('timeout');
+    triggerHaptic('warning');
+    setErrorBannerVisible(true);
+    setErrorBannerMessage(`Lejárt az idő! Folytatáshoz ${TIMEOUT_CONTINUE_COST} aranyérme szükséges.`);
+  }, [questionStartTime, addResponseTime, triggerHaptic]);
+
+  const { timeLeft, resetTimer } = useGameTimer({
+    initialTime: 10,
+    onTimeout: handleTimeout,
+    enabled: gameState === 'playing' && isGameReady && !selectedAnswer && !isAnimating
+  });
+  
   const handleVideoEnd = useCallback(async () => {
-    // Wait for game initialization to complete if still running
     if (gameInitPromiseRef.current) {
       try {
         await gameInitPromiseRef.current;
       } catch (error) {
-        // Error already handled in gameInitPromise
         return;
       }
     }
     
-    // CRITICAL: Only NOW can the timer start - game is fully loaded and video ended
     setIsGameReady(true);
     setVideoEnded(true);
-    setIsStartingGame(false); // Release game start lock
+    setIsStartingGame(false);
   }, []);
 
   // Auth check
@@ -217,24 +240,8 @@ const GamePreview = () => {
         throw new Error('Not authenticated');
       }
       
-      // Run start reward and questions in parallel
       await Promise.all([
-        (async () => {
-          try {
-            const startSourceId = `${Date.now()}-start`;
-            await supabase.functions.invoke('credit-gameplay-reward', {
-              body: { amount: START_GAME_REWARD, sourceId: startSourceId, reason: 'game_start' },
-              headers: { Authorization: `Bearer ${authSession.access_token}` }
-            });
-            setCoinsEarned(START_GAME_REWARD);
-            // Trigger coin animation for game start
-            setCoinRewardAmount(START_GAME_REWARD);
-            setCoinRewardTrigger(prev => prev + 1);
-            await broadcast('wallet:update', { source: 'game_start', coinsDelta: START_GAME_REWARD });
-          } catch (err) {
-            console.error('[GameStart] Start reward credit failed:', err);
-          }
-        })(),
+        creditStartReward(),
         (async () => {
           try {
             const { data, error } = await supabase.functions.invoke('start-game-session', {
@@ -260,25 +267,14 @@ const GamePreview = () => {
         refreshProfile()
       ]);
 
-      // Initialize game state
-      setGameState('playing');
-      setCurrentQuestionIndex(0);
-      setTimeLeft(10);
-      
-      setCorrectAnswers(0);
-      setResponseTimes([]);
-      setSelectedAnswer(null);
+      resetGameStateHook();
+      resetTimer(10);
       setHelp5050UsageCount(0);
       setHelp2xAnswerUsageCount(0);
       setHelpAudienceUsageCount(0);
-      setIsHelp5050ActiveThisQuestion(false);
-      setIsDoubleAnswerActiveThisQuestion(false);
-      setIsAudienceActiveThisQuestion(false);
-      setUsedQuestionSwap(false);
+      resetQuestionHelpers();
       setFirstAttempt(null);
       setSecondAttempt(null);
-      setRemovedAnswer(null);
-      setAudienceVotes({});
       setQuestionStartTime(Date.now());
       setCanSwipe(true);
       setIsAnimating(false);
@@ -369,83 +365,7 @@ const GamePreview = () => {
     }
   }, [userId, gameState]);
 
-  // Timer countdown - ONLY starts when game is ready (video ended + backend loaded)
-  useEffect(() => {
-    if (gameState === 'playing' && isGameReady && timeLeft > 0 && !selectedAnswer && !isAnimating) {
-      const timer = setTimeout(() => {
-        setTimeLeft(timeLeft - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && !selectedAnswer && gameState === 'playing' && isGameReady && !isAnimating) {
-      handleTimeout();
-    }
-  }, [timeLeft, gameState, isGameReady, selectedAnswer, isAnimating]);
 
-  // Touch gesture handler - OPTIMIZED FOR SMOOTH 60FPS SCROLLING
-  useEffect(() => {
-    if (gameState !== 'playing' || !canSwipe) return;
-
-    let rafId: number | null = null;
-    let currentTranslateY = 0;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      if (isAnimating || showExitDialog) return;
-      setTouchStartY(e.touches[0].clientY);
-      currentTranslateY = 0;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (isAnimating || showExitDialog) return;
-      
-      const currentY = e.touches[0].clientY;
-      const delta = currentY - touchStartY;
-      
-      // Use requestAnimationFrame for smooth 60fps updates
-      if (rafId) cancelAnimationFrame(rafId);
-      
-      rafId = requestAnimationFrame(() => {
-        currentTranslateY = delta * 0.35; // Smooth damped movement
-        setTranslateY(currentTranslateY);
-      });
-    };
-
-    const handleTouchEnd = async (e: TouchEvent) => {
-      if (isAnimating || showExitDialog) return;
-      
-      if (rafId) cancelAnimationFrame(rafId);
-      
-      const touchEndY = e.changedTouches[0].clientY;
-      const delta = touchStartY - touchEndY;
-
-      if (Math.abs(delta) < swipeThreshold) {
-        // Smooth reset with spring animation
-        setTranslateY(0);
-        return;
-      }
-
-      if (delta > 0) {
-        // Swipe up
-        await handleSwipeUp();
-      } else {
-        // Swipe down
-        await handleSwipeDown();
-      }
-      
-      setTranslateY(0);
-    };
-
-    // Use passive listeners for better scroll performance
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd, { passive: true });
-
-    return () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [gameState, canSwipe, touchStartY, isAnimating, showExitDialog, swipeThreshold]);
 
   const handleSwipeUp = async () => {
     // If game completed, restart new game
@@ -519,25 +439,17 @@ const GamePreview = () => {
     // Don't animate out - keep current question visible during backend load
     // This prevents any "loading" screen from showing
     
-    // Reset all game state in background
     setGameCompleted(false);
-    setCorrectAnswers(0);
+    resetGameStateHook();
     setCoinsEarned(0);
-    setResponseTimes([]);
     setHelp5050UsageCount(0);
     setHelp2xAnswerUsageCount(0);
     setHelpAudienceUsageCount(0);
-    setIsHelp5050ActiveThisQuestion(false);
-    setIsDoubleAnswerActiveThisQuestion(false);
-    setIsAudienceActiveThisQuestion(false);
-    setUsedQuestionSwap(false);
+    resetQuestionHelpers();
     setFirstAttempt(null);
     setSecondAttempt(null);
-    setRemovedAnswer(null);
-    setAudienceVotes({});
     setErrorBannerVisible(false);
-    // Hide coin reward animation on restart
-    setCoinRewardTrigger(0);
+    resetRewardAnimation();
     
     // Start new game in background (seamless - skip video)
     // This will fetch new questions while current one stays visible
@@ -550,7 +462,7 @@ const GamePreview = () => {
     
     setTimeout(() => {
       setCurrentQuestionIndex(0);
-      setTimeLeft(10);
+      resetTimer(10);
       setSelectedAnswer(null);
       setQuestionVisible(true);
       setIsAnimating(false);
@@ -558,19 +470,6 @@ const GamePreview = () => {
     }, 300);
   };
 
-  const handleTimeout = () => {
-    const responseTime = (Date.now() - questionStartTime) / 1000;
-    setResponseTimes([...responseTimes, responseTime]);
-    setSelectedAnswer('__timeout__');
-    setContinueType('timeout');
-    
-    // Haptic feedback for timeout
-    triggerHaptic('warning');
-    
-    // Always show banner first - DO NOT check for insufficient coins here
-    setErrorBannerVisible(true);
-    setErrorBannerMessage(`Lejárt az idő! Folytatáshoz ${TIMEOUT_CONTINUE_COST} aranyérme szükséges.`);
-  };
 
   const shuffleAnswers = (questionSet: any[]): Question[] => {
     let lastCorrectIndex = -1;
@@ -664,62 +563,25 @@ const GamePreview = () => {
     }
   };
 
-  const handleCorrectAnswer = async (responseTime: number, answerKey: string) => {
-    setResponseTimes([...responseTimes, responseTime]);
+  const handleCorrectAnswer = useCallback(async (responseTime: number, answerKey: string) => {
+    addResponseTime(responseTime);
     setSelectedAnswer(answerKey);
-    setCorrectAnswers(correctAnswers + 1);
-    
-    // Haptic feedback for correct answer
+    incrementCorrectAnswers();
     triggerHaptic('success');
-    
-    // Használjuk a progresszív jutalom rendszert
-    const reward = getCoinsForQuestion(currentQuestionIndex);
+    await creditCorrectAnswer();
+  }, [addResponseTime, incrementCorrectAnswers, triggerHaptic, creditCorrectAnswer]);
 
-    try {
-      const { data: { session: rewardSession } } = await supabase.auth.getSession();
-      if (!rewardSession) {
-        toast.error('A munkameneted lejárt. Kérlek, jelentkezz be újra!');
-        return;
-      }
-      
-      // Use gameInstanceId to ensure unique sourceId per game, not session
-      const sourceId = `${gameInstanceId}-q${currentQuestionIndex}`;
-      const { data, error } = await supabase.functions.invoke('credit-gameplay-reward', {
-        body: { amount: reward, sourceId, reason: 'correct_answer' },
-        headers: {
-          Authorization: `Bearer ${rewardSession.access_token}`,
-        },
-      });
-      if (error) throw error;
-      // Optimistic local counter (UI), server is authoritative
-      setCoinsEarned(coinsEarned + reward);
-      // Trigger coin animation for correct answer
-      setCoinRewardAmount(reward);
-      setCoinRewardTrigger(prev => prev + 1);
-      // Notify other views to refresh wallet immediately
-      await broadcast('wallet:update', { source: 'correct_answer', coinsDelta: reward });
-    } catch (err) {
-      toast.error('Hiba történt a jutalom jóváírásakor!');
-    }
-    
-    // Nincs külön toast siker esetén – a zöld válasz jelzi
-  };
-
-  const handleWrongAnswer = (responseTime: number, answerKey: string) => {
-    setResponseTimes([...responseTimes, responseTime]);
+  const handleWrongAnswer = useCallback((responseTime: number, answerKey: string) => {
+    addResponseTime(responseTime);
     setSelectedAnswer(answerKey);
     setContinueType('wrong');
-    
-    // Haptic feedback for wrong answer
     triggerHaptic('error');
     
-    // Always show banner first - let user see the red highlight
-    // DO NOT check for insufficient coins here - only when they try to continue
     setTimeout(() => {
       setErrorBannerVisible(true);
       setErrorBannerMessage(`Rossz válasz! Folytatáshoz ${CONTINUE_AFTER_WRONG_COST} aranyérme szükséges.`);
     }, 500);
-  };
+  }, [addResponseTime, triggerHaptic]);
 
   const handleNextQuestion = async () => {
     if (isAnimating) return;
@@ -728,9 +590,7 @@ const GamePreview = () => {
     setCanSwipe(false);
     setErrorBannerVisible(false);
     setQuestionVisible(false);
-    
-    // Hide coin reward animation when moving to next question
-    setCoinRewardTrigger(0);
+    resetRewardAnimation();
     
     if (currentQuestionIndex >= questions.length - 1) {
       // Game completed - show results toast and wait for swipe up to restart
@@ -797,23 +657,15 @@ const GamePreview = () => {
       return;
     }
     
-    // Animate current module out
     setTimeout(() => {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setTimeLeft(10);
+      nextQuestion();
+      resetTimer(10);
       setSelectedAnswer(null);
       setFirstAttempt(null);
       setSecondAttempt(null);
-      setRemovedAnswer(null);
-      setAudienceVotes({});
-      // Reset per-question activation states (not usage counts!)
-      setIsHelp5050ActiveThisQuestion(false);
-      setIsDoubleAnswerActiveThisQuestion(false);
-      setIsAudienceActiveThisQuestion(false);
-      setUsedQuestionSwap(false);
+      resetQuestionHelpers();
       setQuestionStartTime(Date.now());
       
-      // End animation and show question content
       setTimeout(() => {
         setQuestionVisible(true);
         setIsAnimating(false);
@@ -1140,7 +992,7 @@ const GamePreview = () => {
     // Log skip usage
     await logHelpUsage('skip');
     
-    setTimeLeft(10);
+    resetTimer(10);
     setRemovedAnswer(null);
     setAudienceVotes({});
     setFirstAttempt(null);
@@ -1199,11 +1051,8 @@ const GamePreview = () => {
   }
 
   if (gameState === 'playing') {
-    
-    // During seamless restart, show previous question until new one loads
     const currentQuestion = questions[currentQuestionIndex];
     
-    // If no question yet (seamless loading), show empty state but keep UI structure
     if (!currentQuestion) {
       return (
         <div 
@@ -1215,14 +1064,22 @@ const GamePreview = () => {
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed',
           }}
-        >
-          {/* Keep UI structure but hide content during seamless load */}
-        </div>
+        />
       );
     }
     
     return (
-      <>
+      <GameSwipeHandler
+        enabled={gameState === 'playing' && canSwipe}
+        isAnimating={isAnimating}
+        showExitDialog={showExitDialog}
+        swipeThreshold={swipeThreshold}
+        translateY={translateY}
+        onTranslateYChange={setTranslateY}
+        onTouchStartYChange={setTouchStartY}
+        onSwipeUp={handleSwipeUp}
+        onSwipeDown={handleSwipeDown}
+      >
         {/* Scrollable question container - background is now in parent Game.tsx as fixed layer */}
         <div 
           ref={containerRef}
@@ -1347,11 +1204,13 @@ const GamePreview = () => {
             await handleNextQuestion();
           }}
         />
-      </>
+      </GameSwipeHandler>
     );
   }
 
   return null;
-};
+});
+
+GamePreview.displayName = 'GamePreview';
 
 export default GamePreview;
