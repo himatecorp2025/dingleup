@@ -6,15 +6,12 @@ import { BoosterButton } from '@/components/BoosterButton';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
-import { useDailyGift } from '@/hooks/useDailyGift';
-import { useWelcomeBonus } from '@/hooks/useWelcomeBonus';
 import { useScrollBehavior } from '@/hooks/useScrollBehavior';
 import { useI18n } from '@/i18n';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
 import { useWallet } from '@/hooks/useWallet';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
-import { useDailyWinnersPopup } from '@/hooks/useDailyWinnersPopup';
 import { useBoosterState } from '@/hooks/useBoosterState';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useDashboardPopupManager } from '@/hooks/useDashboardPopupManager';
@@ -71,21 +68,14 @@ const Dashboard = () => {
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
-  const { canClaim, weeklyEntryCount, nextReward, claiming, claimDailyGift, checkDailyGift, handleLater } = useDailyGift(userId, false);
-  const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
-  const { showPopup: canShowDailyWinners, closePopup: closeDailyWinnersHook } = useDailyWinnersPopup(userId, false);
   const boosterState = useBoosterState(userId);
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
-  // PERFORMANCE OPTIMIZATION: Centralized popup manager
-  // Eliminates race conditions, ensures proper sequencing
-  const { popupState, closeAgeGate, closeWelcomeBonus, closeDailyGift, closeDailyWinners } = useDashboardPopupManager({
+  // PERFORMANCE OPTIMIZATION: Centralized popup manager (eliminates 150+ lines of duplicate state)
+  const popupManager = useDashboardPopupManager({
     canMountModals,
     needsAgeVerification: !profile?.age_verified || !profile?.birth_date,
-    canClaimWelcome,
-    canClaimDailyGift: canClaim,
-    canShowDailyWinners,
     userId,
   });
   
@@ -230,36 +220,34 @@ const Dashboard = () => {
   }, [userId]);
 
   const handleClaimDailyGift = async (): Promise<boolean> => {
-    const success = await claimDailyGift(refetchWallet);
+    const success = await popupManager.dailyGift.claimDailyGift(refetchWallet);
     if (success) {
-      await checkDailyGift();
+      await popupManager.dailyGift.checkDailyGift();
       await refreshProfile();
-      closeDailyGift();
+      popupManager.closeDailyGift();
     }
     return success;
   };
 
   const handleCloseDailyGift = () => {
-    handleLater();
-    closeDailyGift();
+    popupManager.dailyGift.handleLater();
+    popupManager.closeDailyGift();
   };
 
   const handleClaimWelcomeBonus = async () => {
-    const success = await claimWelcomeBonus();
+    const success = await popupManager.welcomeBonus.claimWelcomeBonus();
     if (success) {
-      closeWelcomeBonus();
-      // Reload profile and wallet to show updated coins and lives
+      popupManager.closeWelcomeBonus();
       await refreshProfile();
       await refetchWallet();
-      // Check if Daily Gift should appear after Welcome Bonus (instant, 0 seconds delay)
-      await checkDailyGift();
+      await popupManager.dailyGift.checkDailyGift();
     }
     return success;
   };
 
   const handleWelcomeLaterClick = () => {
-    handleWelcomeLater();
-    closeWelcomeBonus();
+    popupManager.welcomeBonus.handleLater();
+    popupManager.closeWelcomeBonus();
   };
 
   const handleSpeedBoost = async () => {
@@ -403,11 +391,11 @@ if (!profile) {
     {/* Age-gate modal (ABSOLUTE PRIORITY - blocks ALL popups until completed) */}
     {userId && (
       <AgeGateModal 
-        open={popupState.showAgeGate} 
+        open={popupManager.popupState.showAgeGate} 
         userId={userId} 
         onSuccess={() => {
           console.log('[Dashboard] Age gate completed successfully');
-          closeAgeGate();
+          popupManager.closeAgeGate();
           refreshProfile();
         }} 
       />
@@ -422,8 +410,8 @@ if (!profile) {
     
     {/* Daily Winners Dialog - tegnapi TOP 10 (csak az első napi bejelentkezéskor) */}
     <DailyWinnersDialog 
-      open={popupState.showDailyWinners} 
-      onClose={closeDailyWinners} 
+      open={popupManager.popupState.showDailyWinners} 
+      onClose={popupManager.closeDailyWinners} 
     />
     
     {/* Falling coins background */}
@@ -604,21 +592,21 @@ if (!profile) {
 
       {/* Welcome bonus dialog - FIRST (only after age gate completed) */}
         <WelcomeBonusDialog
-          open={popupState.showWelcomeBonus}
+          open={popupManager.popupState.showWelcomeBonus}
           onClaim={handleClaimWelcomeBonus}
           onLater={handleWelcomeLaterClick}
-          claiming={claimingWelcome}
+          claiming={popupManager.welcomeBonus.claiming}
         />
  
        {/* Daily gift dialog - SECOND - manual trigger (only after age gate completed) */}
        <DailyGiftDialog
-        open={popupState.showDailyGift}
+        open={popupManager.popupState.showDailyGift}
         onClaim={handleClaimDailyGift}
         onLater={handleCloseDailyGift}
-        weeklyEntryCount={weeklyEntryCount}
-        nextReward={nextReward}
-        canClaim={canClaim}
-        claiming={claiming}
+        weeklyEntryCount={popupManager.dailyGift.weeklyEntryCount}
+        nextReward={popupManager.dailyGift.nextReward}
+        canClaim={popupManager.dailyGift.canClaim}
+        claiming={popupManager.dailyGift.claiming}
       />
 
       <div data-tutorial="bottom-nav">
