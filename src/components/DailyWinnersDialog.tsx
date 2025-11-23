@@ -64,24 +64,18 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
       const userCountry = profileData.country_code;
 
-      // Calculate yesterday's date
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayDate = yesterday.toISOString().split('T')[0];
+      console.log('[DAILY-WINNERS] Fetching current TOP 10 for testing, country:', userCountry);
 
-      console.log('[DAILY-WINNERS] Fetching yesterday winners for:', yesterdayDate, 'country:', userCountry);
-
-      // Fetch from daily_leaderboard_snapshot for yesterday (country-specific)
+      // TEMP: Fetch from leaderboard_cache (current TOP 10) for testing
       const { data, error } = await supabase
-        .from('daily_leaderboard_snapshot' as any)
+        .from('leaderboard_cache')
         .select('user_id, username, total_correct_answers, avatar_url, rank')
-        .eq('snapshot_date', yesterdayDate)
         .eq('country_code', userCountry)
         .order('rank', { ascending: true })
         .limit(10);
 
       if (error) {
-        console.error('[DAILY-WINNERS] Error fetching yesterday winners:', error);
+        console.error('[DAILY-WINNERS] Error fetching current TOP 10:', error);
         setTopPlayers([]);
         return;
       }
@@ -95,9 +89,9 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       }));
 
       setTopPlayers(rankedData as TopPlayer[]);
-      console.log('[DAILY-WINNERS] Loaded yesterday TOP 10:', rankedData.length, 'players');
+      console.log('[DAILY-WINNERS] Loaded current TOP 10:', rankedData.length, 'players');
     } catch (error) {
-      console.error('[DAILY-WINNERS] Exception fetching yesterday winners:', error);
+      console.error('[DAILY-WINNERS] Exception fetching current TOP 10:', error);
       setTopPlayers([]);
     }
   };
@@ -215,58 +209,62 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         style={{ 
                           fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
                           letterSpacing: '0.05em',
-                          textShadow: '0 0 12px rgba(255,255,255,0.25)'
+                          textShadow: '0 0 12px rgba(255,255,255,0.25)',
+                          fontFamily: 'system-ui, -apple-system, sans-serif'
                         }}>
                       {t('dailyWinners.title')}
                     </h1>
                   </div>
                 </div>
 
-                {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
+                {/* Content Area - Fixed height to fit exactly 10 players */}
+                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[6%] pt-[2%]" style={{ height: 'calc(100% - 80px)' }}>
                   
-                  {/* Players List */}
-                  <div className="w-full space-y-3 mb-6 max-h-[50vh] overflow-y-auto">
-                    {topPlayers.length === 0 ? (
-                      <div className="text-center text-white py-8">
-                        <p className="text-lg">{t('dailyWinners.noData')}</p>
-                      </div>
-                    ) : (
-                      topPlayers.map((player, index) => {
-                        const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
-                        
-                        return (
-                          <div
-                            key={player.user_id}
-                            className="flex items-center gap-4 px-6 py-4 bg-gradient-to-r from-purple-900/30 to-purple-800/30 rounded-xl border border-purple-500/20"
-                          >
-                            {/* Medal */}
-                            <div className="flex-shrink-0 text-3xl">
-                              {medalEmoji}
-                            </div>
+                  {/* Players List - Fixed height divided by 10 */}
+                  <div className="w-full mb-4 overflow-y-auto" style={{ height: 'calc(100% - 60px)' }}>
+                    <div className="space-y-2">
+                      {topPlayers.length === 0 ? (
+                        <div className="text-center text-white py-8">
+                          <p className="text-lg">{t('dailyWinners.noData')}</p>
+                        </div>
+                      ) : (
+                        topPlayers.map((player, index) => {
+                          const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
+                          
+                          return (
+                            <div
+                              key={player.user_id}
+                              className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-purple-900/30 to-purple-800/30 rounded-xl border border-purple-500/20"
+                              style={{ minHeight: 'calc((100% - 36px) / 10)' }}
+                            >
+                              {/* Medal */}
+                              <div className="flex-shrink-0 text-2xl">
+                                {medalEmoji}
+                              </div>
 
-                            {/* Player Info */}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-lg font-bold text-white truncate">
-                                {player.username}
-                              </p>
-                              <p className="text-sm text-gray-300">
-                                {player.total_correct_answers} {t('dailyWinners.correctAnswers')}
-                              </p>
-                            </div>
+                              {/* Player Info */}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-base font-bold text-white truncate">
+                                  {player.username}
+                                </p>
+                                <p className="text-xs text-gray-300">
+                                  {player.total_correct_answers} {t('dailyWinners.correctAnswers')}
+                                </p>
+                              </div>
 
-                            {/* Rank Number */}
-                            <div className="flex-shrink-0 text-2xl font-bold text-yellow-400">
-                              #{player.rank}
+                              {/* Rank Number */}
+                              <div className="flex-shrink-0 text-xl font-bold text-yellow-400">
+                                #{player.rank}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })
-                    )}
+                          );
+                        })
+                      )}
+                    </div>
                   </div>
 
                   {/* Close Button */}
-                  <div className="flex justify-center w-full">
+                  <div className="flex justify-center w-full" style={{ height: '60px' }}>
                     <HexAcceptButton
                       onClick={onClose}
                       style={{ width: '100%', maxWidth: '300px' }}
