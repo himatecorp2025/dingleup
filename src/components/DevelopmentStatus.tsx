@@ -41,12 +41,6 @@ const DevelopmentStatus = () => {
       badge: t('landing.status.badge_soon')
     },
     {
-      icon: Users,
-      title: t('landing.status.feature_multiplayer_title'),
-      description: t('landing.status.feature_multiplayer_desc'),
-      badge: t('landing.status.badge_development')
-    },
-    {
       icon: TrendingUp,
       title: t('landing.status.feature_analytics_title'),
       description: t('landing.status.feature_analytics_desc'),

@@ -76,19 +76,13 @@ const Hero = () => {
           {/* Title */}
           <div className="text-center mb-8 sm:mb-12 space-y-4 sm:space-y-6 animate-fade-in px-4" style={{ animationDelay: '0.2s' }}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 leading-tight tracking-tight">
-              <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
-                {t('landing.hero.title_line1')}
-              </span>
-              <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 drop-shadow-[0_0_40px_rgba(234,179,8,0.8)] animate-pulse">
-                {t('landing.hero.title_line2')}
+                {t('landing.hero.title_line1')}
               </span>
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed font-light px-2 drop-shadow-lg">
-              {t('landing.hero.subtitle_line1')}<br className="hidden sm:block" />
-              {t('landing.hero.subtitle_line2')}<br className="hidden sm:block" />
-              <span className="font-semibold text-pink-300">{t('landing.hero.subtitle_cta')}</span>
+              {t('landing.hero.subtitle_line1')}
             </p>
           </div>
 

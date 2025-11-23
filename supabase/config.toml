@@ -132,3 +132,6 @@ verify_jwt = false
 [functions.admin-load-test]
 verify_jwt = true
 
+[functions.translate-landing-page]
+verify_jwt = false
+
