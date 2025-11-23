@@ -235,7 +235,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           {/* 2nd Place - Silver */}
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '30%',
+                              width: '31.5%',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -314,7 +314,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           {/* 1st Place - Gold (larger) */}
                           {topPlayers[0] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '36%',
+                              width: '37.8%',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -392,7 +392,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           {/* 3rd Place - Bronze */}
                           {topPlayers[2] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '30%',
+                              width: '31.5%',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
