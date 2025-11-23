@@ -169,15 +169,6 @@ const DailyGiftDialog = ({
           <DialogTitle className="sr-only">Daily Gift</DialogTitle>
           <DialogDescription className="sr-only">{t('daily_gift.show_reward_description')}</DialogDescription>
 
-          {/* Háttér gradiens */}
-          <div
-            className="absolute inset-0 -z-10 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(120% 80% at 50% 10%, rgba(20,30,60,0.6), rgba(10,14,28,0.95))",
-            }}
-          />
-
           {/* Bezáró X - közelebb a pajzshoz (top: 2vh helyett 1vh) */}
           <button
             onClick={onLater}
