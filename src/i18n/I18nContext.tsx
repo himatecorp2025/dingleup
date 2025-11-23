@@ -13,7 +13,7 @@ interface I18nProviderProps {
 
 const CACHE_KEY_PREFIX = 'dingleup_translations_';
 const CACHE_VERSION_KEY = 'dingleup_translations_version';
-const CACHE_VERSION = '1.3'; // Bumped to force cache refresh + auto language sync with country
+const CACHE_VERSION = '1.4'; // Bumped to force cache refresh for new translation keys
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 interface CachedTranslations {
