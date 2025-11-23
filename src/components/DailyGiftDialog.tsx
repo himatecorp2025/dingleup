@@ -155,79 +155,39 @@ const DailyGiftDialog = ({
           zIndex: 99999
         }}
       >
-        {/* Középre igazító, teljes képernyős konténer (fix + flex) */}
+        {/* Tökéletesen középre igazító, teljes képernyős konténer (fix + flex) */}
         <div 
-          className="fixed inset-0 flex flex-col items-center overflow-hidden"
+          className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
           style={{ 
             minHeight: '100dvh', 
-            minWidth: '100vw',
-            justifyContent: 'center',
-            paddingTop: '0',
-            marginTop: '-3vh'  // 3% feljebb, vertikális center javítás
+            minWidth: '100vw'
           }}
         >
           <DialogTitle className="sr-only">Daily Gift</DialogTitle>
           <DialogDescription className="sr-only">{t('daily_gift.show_reward_description')}</DialogDescription>
 
-          {/* Professzionális 3D Bezáró X - Welcome Bonus stílusú */}
+          {/* Close X button - PONTOSAN ugyanaz, mint Welcome Bonus */}
           <button
             onClick={onLater}
+            disabled={claiming}
+            className={`absolute top-[8vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '0ms' }}
             aria-label={t('daily_gift.close_aria')}
-            className="absolute z-[10001] rounded-full transition-all flex items-center justify-center group"
-            style={{
-              top: "max(1vh, env(safe-area-inset-top))",
-              right: "max(1vh, env(safe-area-inset-right))",
-              width: "clamp(36px, 8svw, 48px)",
-              height: "clamp(36px, 8svw, 48px)",
-            }}
           >
-            {/* Árnyék réteg */}
-            <div className="absolute inset-0 rounded-full translate-y-1 translate-x-1"
-                 style={{
-                   background: 'rgba(0,0,0,0.6)',
-                   filter: 'blur(6px)'
-                 }} />
-            
-            {/* Külső arany keret */}
-            <div className="absolute inset-0 rounded-full"
-                 style={{
-                   background: 'linear-gradient(135deg, #d97706, #f59e0b 50%, #d97706)',
-                   boxShadow: '0 0 0 2px #b45309, inset 0 0 0 1px rgba(0,0,0,0.3)'
-                 }} />
-            
-            {/* Belső gradiens */}
-            <div className="absolute inset-[2px] rounded-full"
-                 style={{
-                   background: 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)',
-                   boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.1), inset 0 -2px 6px rgba(0,0,0,0.4)'
-                 }} />
-            
-            {/* Fénysugár hatás */}
-            <div className="absolute inset-[2px] rounded-full pointer-events-none"
-                 style={{
-                   background: 'radial-gradient(ellipse 100% 60% at 30% 10%, rgba(255,255,255,0.3), transparent 60%)'
-                 }} />
-            
-            {/* X ikon */}
-            <span className="relative z-10 text-white font-bold transition-transform group-hover:scale-110"
-                  style={{
-                    fontSize: "clamp(18px, 5svw, 28px)",
-                    lineHeight: 1,
-                    textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(255,255,255,0.2)'
-                  }}>
-              ×
-            </span>
+            ×
           </button>
 
-          {/* Zoom animáció wrapper - 1.5mp scale-in középről */}
+          {/* Zoom animáció wrapper - 1.5mp scale-in középről, TELJESEN KÖZÉPRE */}
           <div 
-            className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center"
+            className="relative z-10 w-full flex items-center justify-center"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
               transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto'
+              willChange: contentVisible ? 'transform, opacity' : 'auto',
+              maxWidth: 'min(95vw, 600px)',
+              margin: '0 auto'
             }}
           >
             <div className="relative w-full">
