@@ -238,52 +238,61 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
               <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                 
                 {/* MARKETING banner - 10% szélesebb, magasabb minőségű 3D crystal effect */}
-                <div className="relative mb-2" style={{ width: '110%', maxWidth: '110%' }}>
+                <div className="relative mb-2 flex items-center justify-center" style={{ width: '110%', maxWidth: '110%' }}>
                   {/* Árnyék réteg - mély 3D */}
                   <div className="absolute inset-0 translate-y-2 translate-x-2 rounded-full"
                        style={{
                          background: 'rgba(0,0,0,0.5)',
-                         filter: 'blur(8px)'
+                         filter: 'blur(8px)',
+                         animation: 'offerPulse 1.5s ease-in-out infinite'
                        }} />
                   
                   {/* Külső arany keret - box-shadow módszer */}
                   <div className="absolute inset-0 rounded-full"
                        style={{ 
-                         boxShadow: '0 0 0 2px #d97706, 0 0 0 4px #b45309, 0 12px 24px rgba(220,38,38,0.6)'
+                         boxShadow: '0 0 0 2px #d97706, 0 0 0 4px #b45309, 0 12px 24px rgba(220,38,38,0.6)',
+                         animation: 'offerPulse 1.5s ease-in-out infinite'
                        }} />
                   
                   {/* Fő gradiens réteg */}
                   <div className="absolute inset-[2px] rounded-full"
                        style={{ 
                          background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #dc2626 100%)',
-                         boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)'
+                         boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)',
+                         animation: 'offerPulse 1.5s ease-in-out infinite'
                        }} />
                   
                   {/* Belső fény réteg */}
                   <div className="absolute inset-[4px] rounded-full"
                        style={{ 
                          background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 40%, rgba(0,0,0,0.2) 100%)',
-                         boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.4), inset 0 -4px 12px rgba(0,0,0,0.4)'
+                         boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.4), inset 0 -4px 12px rgba(0,0,0,0.4)',
+                         animation: 'offerPulse 1.5s ease-in-out infinite'
                        }} />
                   
                   {/* Kristály rácsminta */}
                   <div className="absolute inset-[4px] rounded-full pointer-events-none"
                        style={{
                          background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.12) 10px, rgba(255,255,255,0.12) 15px, transparent 15px, transparent 25px, rgba(255,255,255,0.08) 25px, rgba(255,255,255,0.08) 30px)',
-                         opacity: 0.8
+                         opacity: 0.8,
+                         animation: 'offerPulse 1.5s ease-in-out infinite'
                        }} />
                   
                   {/* Fénysugár hatás */}
                   <div className="absolute inset-[4px] rounded-full pointer-events-none"
                        style={{
-                         background: 'radial-gradient(ellipse 100% 60% at 35% 10%, rgba(255,255,255,0.7), transparent 65%)'
+                         background: 'radial-gradient(ellipse 100% 60% at 35% 10%, rgba(255,255,255,0.7), transparent 65%)',
+                         animation: 'offerPulse 1.5s ease-in-out infinite'
                        }} />
                   
-                   <div className="relative px-8 py-2 rounded-full"
-                        style={{ 
-                          transform: 'perspective(600px) rotateX(4deg)',
-                          animation: 'offerPulse 1.5s ease-in-out infinite'
-                        }}>
+                  <div className="relative px-8 py-2 rounded-full flex items-center justify-center gap-2"
+                       style={{ 
+                         transform: 'perspective(600px) rotateX(4deg)',
+                         animation: 'offerPulse 1.5s ease-in-out infinite'
+                       }}>
+                     <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0" fill="#fbbf24">
+                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                     </svg>
                      <p className="text-white font-black text-center tracking-wider"
                         style={{ 
                           fontSize: 'clamp(0.75rem, 3.5cqw, 1.1rem)',
@@ -292,6 +301,9 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                         }}>
                         {t('welcome.special_offer')}
                       </p>
+                     <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0" fill="#fbbf24">
+                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                     </svg>
                    </div>
                   <style>{`
                     @keyframes offerPulse {
