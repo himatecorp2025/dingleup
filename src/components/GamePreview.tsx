@@ -20,6 +20,7 @@ import { useGameHelpers } from "@/hooks/useGameHelpers";
 import { useGameTimer } from "@/hooks/useGameTimer";
 import { useGameRewards } from "./game/GameRewardSystem";
 import { GameSwipeHandler } from "./game/GameSwipeHandler";
+import { trackFeatureUsage } from "@/lib/analytics";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -183,6 +184,14 @@ const GamePreview = memo(() => {
 
   const startGame = async (skipLoadingVideo: boolean = false) => {
     if (!profile || isStartingGame) return;
+    
+    // Track game start feature usage
+    if (userId) {
+      await trackFeatureUsage(userId, 'game_action', 'game', 'start', {
+        skipLoadingVideo,
+        category: 'mixed'
+      });
+    }
     
     // Set loading video visibility based on skipLoadingVideo parameter
     setIsStartingGame(true);

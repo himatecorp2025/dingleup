@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
-import { trackBonusEvent } from '@/lib/analytics';
+import { trackBonusEvent, trackFeatureUsage } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import HexAcceptButton from './ui/HexAcceptButton';
@@ -117,6 +117,14 @@ const DailyGiftDialog = ({
   }, [open, userId, nextReward, weeklyEntryCount]);
 
   const handleClaim = async () => {
+    if (!userId) return;
+    
+    // Track feature usage - claim attempt
+    await trackFeatureUsage(userId, 'user_action', 'daily_gift', 'claim_attempt', {
+      coins_amount: nextReward,
+      streak_day: weeklyEntryCount + 1
+    });
+    
     // Track claim attempt
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'reward_attempt', {
@@ -130,6 +138,12 @@ const DailyGiftDialog = ({
     const success = await onClaim();
     
     if (success) {
+      // Track feature usage - successful claim
+      await trackFeatureUsage(userId, 'user_action', 'daily_gift', 'claim_success', {
+        coins_amount: nextReward,
+        streak_day: weeklyEntryCount + 1
+      });
+      
       // Track successful claim
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'reward_granted', {
