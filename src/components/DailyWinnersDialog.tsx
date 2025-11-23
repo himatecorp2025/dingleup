@@ -205,7 +205,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 </div>
 
                 {/* Content Area - Fixed height to fit exactly 10 players */}
-                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[6%] pt-0" style={{ height: 'calc(100% - 60px)' }}>
+                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[6%]" style={{ height: 'calc(100% - 60px)', paddingTop: '0' }}>
                   
                   {/* Players List */}
                   <div className="w-full mb-4 overflow-y-auto" style={{ height: 'calc(100% - 60px)' }}>
@@ -216,7 +216,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     ) : (
                       <>
                         {/* TOP 3 - Horizontal Layout with Realistic Laurel Wreaths */}
-                        <div className="flex justify-center items-end gap-2 mb-6 px-1">
+                        <div className="flex justify-center items-end gap-2 mb-4 px-1">
                           {/* 2nd Place - Silver */}
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ width: '30%' }}>
@@ -285,8 +285,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               </div>
                               {/* Username below wreath */}
-                              <div className="mt-1 text-center w-full">
-                                <p className="text-white font-bold text-[0.65rem] leading-tight truncate px-1">
+                              <div className="mt-0.5 text-center w-full">
+                                <p className="text-white font-bold text-[0.65rem] leading-none truncate px-1">
                                   {topPlayers[1].username}
                                 </p>
                               </div>
@@ -360,8 +360,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               </div>
                               {/* Username below wreath */}
-                              <div className="mt-1 text-center w-full">
-                                <p className="text-white font-bold text-[0.7rem] leading-tight truncate px-1">
+                              <div className="mt-0.5 text-center w-full">
+                                <p className="text-white font-bold text-[0.7rem] leading-none truncate px-1">
                                   {topPlayers[0].username}
                                 </p>
                               </div>
@@ -434,8 +434,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               </div>
                               {/* Username below wreath */}
-                              <div className="mt-1 text-center w-full">
-                                <p className="text-white font-bold text-[0.65rem] leading-tight truncate px-1">
+                              <div className="mt-0.5 text-center w-full">
+                                <p className="text-white font-bold text-[0.65rem] leading-none truncate px-1">
                                   {topPlayers[2].username}
                                 </p>
                               </div>
