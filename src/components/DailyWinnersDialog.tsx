@@ -285,7 +285,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               </div>
                               {/* Username below wreath */}
-                              <div className="mt-0.5 text-center w-full">
+                              <div className="text-center w-full" style={{ marginTop: '-4px' }}>
                                 <p className="text-white font-bold text-[0.65rem] leading-none truncate px-1">
                                   {topPlayers[1].username}
                                 </p>
@@ -360,7 +360,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               </div>
                               {/* Username below wreath */}
-                              <div className="mt-0.5 text-center w-full">
+                              <div className="text-center w-full" style={{ marginTop: '-4px' }}>
                                 <p className="text-white font-bold text-[0.7rem] leading-none truncate px-1">
                                   {topPlayers[0].username}
                                 </p>
@@ -434,7 +434,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               </div>
                               {/* Username below wreath */}
-                              <div className="mt-0.5 text-center w-full">
+                              <div className="text-center w-full" style={{ marginTop: '-4px' }}>
                                 <p className="text-white font-bold text-[0.65rem] leading-none truncate px-1">
                                   {topPlayers[2].username}
                                 </p>
