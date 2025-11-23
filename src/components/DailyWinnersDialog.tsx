@@ -76,18 +76,41 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
   const fetchYesterdayTopPlayers = async () => {
     try {
+      // Get current user's country code
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error('[DAILY-WINNERS] No authenticated user');
+        setTopPlayers([]);
+        return;
+      }
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('country_code')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError || !profileData?.country_code) {
+        console.error('[DAILY-WINNERS] Error fetching user country:', profileError);
+        setTopPlayers([]);
+        return;
+      }
+
+      const userCountry = profileData.country_code;
+
       // Calculate yesterday's date
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayDate = yesterday.toISOString().split('T')[0];
 
-      console.log('[DAILY-WINNERS] Fetching yesterday winners for:', yesterdayDate);
+      console.log('[DAILY-WINNERS] Fetching yesterday winners for:', yesterdayDate, 'country:', userCountry);
 
-      // Fetch from daily_leaderboard_snapshot for yesterday
+      // Fetch from daily_leaderboard_snapshot for yesterday (country-specific)
       const { data, error } = await supabase
         .from('daily_leaderboard_snapshot' as any)
         .select('user_id, username, total_correct_answers, avatar_url, rank')
         .eq('snapshot_date', yesterdayDate)
+        .eq('country_code', userCountry)
         .order('rank', { ascending: true })
         .limit(10);
 
