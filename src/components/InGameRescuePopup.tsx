@@ -142,13 +142,14 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         </DialogHeader>
 
         {/* Current Status with 3D icons */}
-        <div className="relative bg-gradient-to-r from-blue-900/70 via-purple-900/80 to-blue-900/70 border-[3px] sm:border-[4px] border-blue-400/60 rounded-xl sm:rounded-2xl p-2 sm:p-3 mb-2 sm:mb-3 mt-4 sm:mt-6 shadow-xl" style={{ boxShadow: 'inset 0 5px 20px rgba(0, 0, 0, 0.6), inset 0 -3px 15px rgba(59, 130, 246, 0.3), 0 8px 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3), 0 15px 50px rgba(0, 0, 0, 0.8)' }}>
+        <div className="relative bg-gradient-to-r from-blue-900/70 via-purple-900/80 to-blue-900/70 border-[3px] sm:border-[4px] border-blue-400/60 rounded-3xl p-2 sm:p-3 mb-2 sm:mb-3 mt-4 sm:mt-6 shadow-xl" style={{ boxShadow: 'inset 0 5px 20px rgba(0, 0, 0, 0.6), inset 0 -3px 15px rgba(59, 130, 246, 0.3), 0 8px 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3), 0 15px 50px rgba(0, 0, 0, 0.8)' }}>
           {/* Multi-layer glow effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 rounded-2xl pointer-events-none"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-purple-600/10 to-blue-600/10 rounded-2xl pointer-events-none"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 rounded-3xl pointer-events-none"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-purple-600/10 to-blue-600/10 rounded-3xl pointer-events-none"></div>
           
-          <div className="relative flex items-center">
-            <div className="flex-1 flex items-center justify-end gap-1.5 sm:gap-2 pr-2">
+          <div className="relative grid grid-cols-2 gap-4">
+            {/* Life indicator */}
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2">
               <div className="relative">
                 <div className="absolute inset-0 bg-green-500/30 rounded-full blur-md"></div>
                 <LifeIcon3D size={32} className="relative drop-shadow-2xl sm:w-10 sm:h-10" />
@@ -159,9 +160,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </div>
             </div>
             
-            <div className="h-8 sm:h-10 w-[2px] bg-gradient-to-b from-transparent via-blue-300/40 to-transparent"></div>
-            
-            <div className="flex-1 flex items-center justify-start gap-1.5 sm:gap-2 pl-2">
+            {/* Gold indicator */}
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2">
               <div className="relative">
                 <div className="absolute inset-0 bg-yellow-500/30 rounded-full blur-md"></div>
                 <CoinIcon3D size={32} className="relative drop-shadow-2xl sm:w-10 sm:h-10" />
@@ -188,7 +188,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
                   {/* 3D circle with multiple shadow layers */}
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 10px 25px rgba(0, 0, 0, 0.8), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6)' }}>
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 15px 35px rgba(0, 0, 0, 0.9), 0 8px 20px rgba(0, 0, 0, 0.7), inset 0 -8px 25px rgba(0, 0, 0, 0.6), inset 0 8px 25px rgba(255, 255, 255, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.4)' }}>
                     <GoldRewardCoin3D size={44} className="drop-shadow-2xl relative z-10 sm:w-14 sm:h-14" />
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </p>
 
               {/* Enhanced red highlight bar for rewards */}
-              <div className="relative bg-gradient-to-r from-red-800 via-orange-600 to-red-800 border-[2px] sm:border-[3px] border-red-300/80 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 mb-3 sm:mb-4 shadow-xl" style={{ boxShadow: 'inset 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 -2px 8px rgba(255, 165, 0, 0.3), 0 6px 20px rgba(239, 68, 68, 0.7), 0 0 30px rgba(239, 68, 68, 0.5), 0 8px 30px rgba(0, 0, 0, 0.6)' }}>
+              <div className="relative bg-gradient-to-r from-red-800 via-orange-600 to-red-800 border-[2px] sm:border-[3px] border-red-300/80 rounded-3xl p-1.5 sm:p-2.5 mb-3 sm:mb-4 shadow-xl" style={{ boxShadow: 'inset 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 -2px 8px rgba(255, 165, 0, 0.3), 0 6px 20px rgba(239, 68, 68, 0.7), 0 0 30px rgba(239, 68, 68, 0.5), 0 8px 30px rgba(0, 0, 0, 0.6)' }}>
                 <div className="flex items-center justify-center gap-1.5 sm:gap-2.5">
                   <div className="flex items-center gap-0.5 sm:gap-1">
                     <GoldRewardCoin3D size={18} className="drop-shadow-2xl sm:w-[22px] sm:h-[22px]" />
@@ -219,7 +219,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <Button
                 onClick={handleGoldSaverPurchase}
                 disabled={!hasEnoughGold || loadingGoldSaver}
-                className="w-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 hover:from-green-300 hover:via-green-400 hover:to-green-600 text-white font-black text-xs sm:text-sm py-2 sm:py-3 rounded-lg sm:rounded-xl disabled:opacity-50 border-[2px] sm:border-[3px] border-green-300 shadow-2xl transition-all" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 0, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.5), 0 8px 25px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.5), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
+                className="w-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 hover:from-green-300 hover:via-green-400 hover:to-green-600 text-white font-black text-xs sm:text-sm py-2 sm:py-3 rounded-3xl disabled:opacity-50 border-[2px] sm:border-[3px] border-green-300 shadow-2xl transition-all" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 0, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.5), 0 8px 25px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.5), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
               >
                 {loadingGoldSaver ? (
                   <div className="flex items-center justify-center gap-1.5 sm:gap-2">
@@ -253,7 +253,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
                   {/* 3D circle with multiple shadow layers */}
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 10px 25px rgba(0, 0, 0, 0.8), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6)' }}>
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 15px 35px rgba(0, 0, 0, 0.9), 0 8px 20px rgba(0, 0, 0, 0.7), inset 0 -8px 25px rgba(0, 0, 0, 0.6), inset 0 8px 25px rgba(255, 255, 255, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.4)' }}>
                     <DiamondIcon3D size={88} className="drop-shadow-2xl relative z-10 sm:w-28 sm:h-28" />
                   </div>
                 </div>
@@ -268,7 +268,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </p>
 
               {/* Enhanced red highlight bar for rewards */}
-              <div className="relative bg-gradient-to-r from-red-800 via-orange-600 to-red-800 border-[2px] sm:border-[3px] border-red-300/80 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 mb-3 sm:mb-4 shadow-xl" style={{ boxShadow: 'inset 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 -2px 8px rgba(255, 165, 0, 0.3), 0 6px 20px rgba(239, 68, 68, 0.7), 0 0 30px rgba(239, 68, 68, 0.5), 0 8px 30px rgba(0, 0, 0, 0.6)' }}>
+              <div className="relative bg-gradient-to-r from-red-800 via-orange-600 to-red-800 border-[2px] sm:border-[3px] border-red-300/80 rounded-3xl p-1.5 sm:p-2.5 mb-3 sm:mb-4 shadow-xl" style={{ boxShadow: 'inset 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 -2px 8px rgba(255, 165, 0, 0.3), 0 6px 20px rgba(239, 68, 68, 0.7), 0 0 30px rgba(239, 68, 68, 0.5), 0 8px 30px rgba(0, 0, 0, 0.6)' }}>
                 <div className="flex items-center justify-center gap-1.5 sm:gap-2.5">
                   <div className="flex items-center gap-0.5 sm:gap-1">
                     <GoldRewardCoin3D size={18} className="drop-shadow-2xl sm:w-[22px] sm:h-[22px]" />
@@ -284,7 +284,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <Button
                 onClick={handleInstantRescuePurchase}
                 disabled={loadingInstantRescue}
-                className="w-full bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 hover:from-yellow-200 hover:via-yellow-300 hover:to-yellow-500 text-black font-black text-xs sm:text-sm py-2 sm:py-3 rounded-lg sm:rounded-xl border-[2px] sm:border-[3px] border-yellow-200 shadow-2xl transition-all" style={{ textShadow: '0 1px 3px rgba(255, 255, 255, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.6), 0 8px 25px rgba(234, 179, 8, 0.9), 0 0 40px rgba(234, 179, 8, 0.6), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
+                className="w-full bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 hover:from-yellow-200 hover:via-yellow-300 hover:to-yellow-500 text-black font-black text-xs sm:text-sm py-2 sm:py-3 rounded-3xl border-[2px] sm:border-[3px] border-yellow-200 shadow-2xl transition-all" style={{ textShadow: '0 1px 3px rgba(255, 255, 255, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.6), 0 8px 25px rgba(234, 179, 8, 0.9), 0 0 40px rgba(234, 179, 8, 0.6), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
               >
                 {loadingInstantRescue ? (
                   <div className="flex items-center justify-center gap-1.5 sm:gap-2">
