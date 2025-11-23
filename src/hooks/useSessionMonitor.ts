@@ -1,17 +1,12 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
-import { useAuth } from './useAuth';
 
-/**
- * PERFORMANCE OPTIMIZATION: Session monitoring using centralized useAuth hook
- * Eliminates duplicated session validation logic
- */
 export const useSessionMonitor = () => {
   const [isValidating, setIsValidating] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { getSession } = useAuth();
 
   useEffect(() => {
     // Public pages that don't require session monitoring
@@ -29,9 +24,9 @@ export const useSessionMonitor = () => {
       
       setIsValidating(true);
       try {
-        const session = await getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-        if (!session) {
+        if (error || !session) {
           console.log('[SessionMonitor] Session invalid, redirecting to login');
           toast({
             title: "Munkamenet lejárt",
@@ -39,6 +34,8 @@ export const useSessionMonitor = () => {
             variant: "destructive",
             duration: 4000,
           });
+          
+          await supabase.auth.signOut();
           navigate('/auth/login', { replace: true });
         }
       } catch (err) {
@@ -55,5 +52,5 @@ export const useSessionMonitor = () => {
     const interval = setInterval(validateSession, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [navigate, location.pathname, isValidating, getSession]);
+  }, [navigate, location.pathname, isValidating]);
 };
