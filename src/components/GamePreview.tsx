@@ -169,7 +169,6 @@ const GamePreview = memo(() => {
     coinsEarned,
     questions,
     questionStartTime,
-    isStartingGame,
     gameCompleted,
   });
 
@@ -340,7 +339,7 @@ const GamePreview = memo(() => {
     if (userId) {
       verifyInGamePayment();
     }
-  }, [userId, gameState, refreshProfile, handleNextQuestion]);
+  }, [userId, gameState, refreshProfile]);
 
   const handleSwipeUp = async () => {
     // If game completed, restart new game
@@ -385,52 +384,6 @@ const GamePreview = memo(() => {
     }
     await restartGameImmediately();
   };
-
-  const handleNextQuestion = async () => {
-    let lastCorrectIndex = -1;
-    let lastCorrectCount = 0;
-    
-    return questionSet.map((q) => {
-      // JSON files already have answers as Answer[] objects
-      const existingAnswers = q.answers as Answer[];
-      
-      // Extract just the Answer objects and shuffle them
-      const shuffledAnswers = [...existingAnswers].sort(() => Math.random() - 0.5);
-      
-      // Always assign to A, B, C in order (fixed keys, shuffled content)
-      const newAnswers: Answer[] = [
-        { key: 'A', text: shuffledAnswers[0].text, correct: shuffledAnswers[0].correct },
-        { key: 'B', text: shuffledAnswers[1].text, correct: shuffledAnswers[1].correct },
-        { key: 'C', text: shuffledAnswers[2].text, correct: shuffledAnswers[2].correct }
-      ];
-      
-      const newCorrectIdx = newAnswers.findIndex(a => a.correct);
-      
-      // Check if we need to reshuffle to avoid patterns
-      let attempts = 0;
-      while ((newCorrectIdx === lastCorrectIndex && lastCorrectCount >= 2) && attempts < 10) {
-        const reshuffled = [...existingAnswers].sort(() => Math.random() - 0.5);
-        newAnswers[0] = { key: 'A', text: reshuffled[0].text, correct: reshuffled[0].correct };
-        newAnswers[1] = { key: 'B', text: reshuffled[1].text, correct: reshuffled[1].correct };
-        newAnswers[2] = { key: 'C', text: reshuffled[2].text, correct: reshuffled[2].correct };
-        attempts++;
-      }
-      
-      const finalCorrectIdx = newAnswers.findIndex(a => a.correct);
-      if (finalCorrectIdx === lastCorrectIndex) {
-        lastCorrectCount++;
-      } else {
-        lastCorrectIndex = finalCorrectIdx;
-        lastCorrectCount = 1;
-      }
-      
-      return {
-        ...q,
-        answers: newAnswers
-      } as Question;
-    });
-  };
-
 
   const handleAnswer = (answerKey: string) => {
     if (selectedAnswer || isAnimating) return;
@@ -497,6 +450,8 @@ const GamePreview = memo(() => {
       setErrorBannerMessage(`Rossz válasz! Folytatáshoz ${CONTINUE_AFTER_WRONG_COST} aranyérme szükséges.`);
     }, 500);
   }, [addResponseTime, triggerHaptic]);
+
+  const handleNextQuestion = async () => {
     if (isAnimating) return;
     
     setIsAnimating(true);
@@ -626,210 +581,6 @@ const GamePreview = memo(() => {
 
   const handleRejectContinue = () => {
     finishGame();
-  };
-    if (selectedAnswer || isHelp5050ActiveThisQuestion) return;
-    
-    // Check usage count
-    if (help5050UsageCount >= 2) {
-      // Nincs toast - UI mutatja hogy disabled
-      return;
-    }
-    
-    const cost = help5050UsageCount === 0 ? 0 : 15; // First free, second costs 15 coins
-    
-    // First usage - free
-    if (help5050UsageCount === 0 && profile?.help_third_active) {
-      const currentQuestion = questions[currentQuestionIndex];
-      const thirdAnswerKey = currentQuestion.third;
-      
-      setRemovedAnswer(thirdAnswerKey);
-      setIsHelp5050ActiveThisQuestion(true);
-      setHelp5050UsageCount(1);
-      
-      await supabase.rpc('use_help', { p_help_type: 'third' });
-      await refreshProfile();
-      await logHelpUsage('third');
-      
-      // Nincs toast - a felhasználó látja a segítség aktiválódását
-      return;
-    }
-    
-    // Second usage - costs 15 coins
-    if (help5050UsageCount === 1) {
-      if (!profile || profile.coins < cost) {
-        toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
-        return;
-      }
-      
-      const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
-      if (success) {
-        await refreshProfile();
-        const currentQuestion = questions[currentQuestionIndex];
-        const thirdAnswerKey = currentQuestion.third;
-        
-        setRemovedAnswer(thirdAnswerKey);
-        setIsHelp5050ActiveThisQuestion(true);
-        setHelp5050UsageCount(2);
-        await logHelpUsage('third');
-        // Nincs toast - a felhasználó látja a segítséget aktiválódni
-      }
-    }
-  };
-
-  const useHelp2xAnswer = async () => {
-    if (selectedAnswer || isDoubleAnswerActiveThisQuestion) return;
-    
-    // Check usage count
-    if (help2xAnswerUsageCount >= 2) {
-      // Nincs toast - UI mutatja hogy disabled
-      return;
-    }
-    
-    const cost = help2xAnswerUsageCount === 0 ? 0 : 20; // First free, second costs 20 coins
-    
-    // First usage - free
-    if (help2xAnswerUsageCount === 0 && profile?.help_2x_answer_active) {
-      setIsDoubleAnswerActiveThisQuestion(true);
-      setHelp2xAnswerUsageCount(1);
-      setFirstAttempt(null);
-      setSecondAttempt(null);
-      
-      await supabase.rpc('use_help', { p_help_type: '2x_answer' });
-      await refreshProfile();
-      await logHelpUsage('2x_answer');
-      
-      // Nincs toast - a felhasználó látja a segítség aktiválódását
-      return;
-    }
-    
-    // Second usage - costs 20 coins
-    if (help2xAnswerUsageCount === 1) {
-      if (!profile || profile.coins < cost) {
-        toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
-        return;
-      }
-      
-      const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
-      if (success) {
-        await refreshProfile();
-        setIsDoubleAnswerActiveThisQuestion(true);
-        setHelp2xAnswerUsageCount(2);
-        setFirstAttempt(null);
-        setSecondAttempt(null);
-        await logHelpUsage('2x_answer');
-        // Nincs toast - a felhasználó látja a segítséget aktiválódni
-      }
-    }
-  };
-
-  const useHelpAudience = async () => {
-    if (selectedAnswer || isAudienceActiveThisQuestion) return;
-    
-    // Check usage count
-    if (helpAudienceUsageCount >= 2) {
-      // Nincs toast - UI mutatja hogy disabled
-      return;
-    }
-    
-    const cost = helpAudienceUsageCount === 0 ? 0 : 25; // First free, second costs 25 coins
-    
-    // Generate audience votes with correct answer >= 65% and highest
-    const currentQuestion = questions[currentQuestionIndex];
-    const correctKey = currentQuestion.answers.find(a => a.correct)?.key || 'A';
-    
-    // Generate votes ensuring correct answer has >= 65% and is highest
-    const correctVote = 65 + Math.floor(Math.random() * 20); // 65-84%
-    const remaining = 100 - correctVote;
-    
-    // Distribute remaining votes between wrong answers
-    const wrongKeys = currentQuestion.answers.filter(a => !a.correct).map(a => a.key);
-    const votes: Record<string, number> = {};
-    
-    if (wrongKeys.length === 2) {
-      const first = Math.floor(Math.random() * (remaining - 1)) + 1;
-      const second = remaining - first;
-      votes[wrongKeys[0]] = Math.min(first, second);
-      votes[wrongKeys[1]] = Math.max(first, second);
-    }
-    votes[correctKey] = correctVote;
-    
-    // First usage - free
-    if (helpAudienceUsageCount === 0 && profile?.help_audience_active) {
-      setAudienceVotes(votes);
-      setIsAudienceActiveThisQuestion(true);
-      setHelpAudienceUsageCount(1);
-      
-      await supabase.rpc('use_help', { p_help_type: 'audience' });
-      await refreshProfile();
-      await logHelpUsage('audience');
-      
-      // Nincs toast - a felhasználó látja a segítség aktiválódását
-      return;
-    }
-    
-    // Second usage - costs 25 coins
-    if (helpAudienceUsageCount === 1) {
-      if (!profile || profile.coins < cost) {
-        toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
-        return;
-      }
-      
-      const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
-      if (success) {
-        await refreshProfile();
-        setAudienceVotes(votes);
-        setIsAudienceActiveThisQuestion(true);
-        setHelpAudienceUsageCount(2);
-        await logHelpUsage('audience');
-        // Nincs toast - a felhasználó látja a segítséget aktiválódni
-      }
-    }
-  };
-
-  const useQuestionSwap = async () => {
-    if (usedQuestionSwap || selectedAnswer) return;
-    
-    const skipCost = getSkipCost(currentQuestionIndex);
-    
-    // Check if user has enough coins
-    if (!profile || profile.coins < skipCost) {
-      toast.error(`Nincs elég aranyérméd a kérdés átugrásához! ${skipCost} aranyérme szükséges.`);
-      return;
-    }
-    
-    // Spend coins
-    const success = await supabase.rpc('spend_coins', { amount: skipCost });
-    if (!success.data) {
-      // Nincs toast - error látható a UI-ban
-      return;
-    }
-    
-    // Select from ALL questions pool (not category-specific)
-    const currentIds = questions.map(q => q.id);
-    const availableQuestions = ALL_QUESTIONS.filter(q => !currentIds.includes(q.id));
-    
-    if (availableQuestions.length === 0) {
-      // Nincs toast - nincs több kérdés
-      return;
-    }
-    
-    const newQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-    const updatedQuestions = [...questions];
-    updatedQuestions[currentQuestionIndex] = newQuestion;
-    setQuestions(updatedQuestions);
-    
-    // Log skip usage
-    await logHelpUsage('skip');
-    
-    resetTimer(10);
-    setRemovedAnswer(null);
-    setAudienceVotes({});
-    setFirstAttempt(null);
-    setQuestionStartTime(Date.now());
-    setUsedQuestionSwap(true);
-    
-    await refreshProfile();
-    // Nincs toast - a felhasználó látja az új kérdést
   };
 
   if (profileLoading || !userId) {
