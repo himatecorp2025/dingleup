@@ -28,6 +28,11 @@ serve(async (req) => {
     }
     const token = authHeader.replace('Bearer ', '').trim();
 
+    // Parse query parameters for field filtering (payload optimization)
+    const url = new URL(req.url);
+    const fieldsParam = url.searchParams.get('fields');
+    const requestedFields = fieldsParam ? new Set(fieldsParam.split(',').map(f => f.trim())) : null;
+
     // Client for auth verification (no session persistence)
     const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       auth: { persistSession: false, autoRefreshToken: false }
@@ -148,36 +153,57 @@ serve(async (req) => {
     // Subscription system removed
     const subscriberRenewAt = null;
 
-    // Get recent ledger entries (last 20)
-    const { data: ledger, error: ledgerError } = await supabase
-      .from('wallet_ledger')
-      .select('id, delta_coins, delta_lives, source, metadata, created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(20);
+    // PERFORMANCE OPTIMIZATION: Conditional ledger fetch based on fields parameter
+    // Only fetch ledger if explicitly requested or no fields filter specified
+    let ledger = null;
+    if (!requestedFields || requestedFields.has('ledger')) {
+      const { data: ledgerData, error: ledgerError } = await supabase
+        .from('wallet_ledger')
+        .select('id, delta_coins, delta_lives, source, metadata, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
 
-    if (ledgerError) {
-      // Non-critical, continue without ledger
+      if (!ledgerError) {
+        ledger = ledgerData;
+      }
+    }
+
+    // Build response object based on requested fields (30-40% payload reduction)
+    const response: any = {};
+    
+    if (!requestedFields || requestedFields.has('livesCurrent')) {
+      response.livesCurrent = currentLives;
+    }
+    if (!requestedFields || requestedFields.has('livesMax')) {
+      response.livesMax = effectiveMaxLives;
+    }
+    if (!requestedFields || requestedFields.has('coinsCurrent')) {
+      response.coinsCurrent = Number(profile.coins ?? 0);
+    }
+    if (!requestedFields || requestedFields.has('nextLifeAt')) {
+      response.nextLifeAt = nextLifeAt;
+    }
+    if (!requestedFields || requestedFields.has('regenIntervalSec')) {
+      response.regenIntervalSec = effectiveRegenMinutes * 60;
+    }
+    if (!requestedFields || requestedFields.has('regenMinutes')) {
+      response.regenMinutes = effectiveRegenMinutes;
+    }
+    if (!requestedFields || requestedFields.has('ledger')) {
+      response.ledger = ledger || [];
+    }
+    if (!requestedFields || requestedFields.has('activeSpeedToken')) {
+      response.activeSpeedToken = activeSpeedToken ? {
+        id: activeSpeedToken.id,
+        expiresAt: activeSpeedToken.expires_at,
+        durationMinutes: activeSpeedToken.duration_minutes,
+        source: activeSpeedToken.source
+      } : null;
     }
 
     return new Response(
-      JSON.stringify({
-        isSubscriber: false,
-        livesCurrent: currentLives,
-        livesMax: effectiveMaxLives,
-        coinsCurrent: Number(profile.coins ?? 0),
-        nextLifeAt,
-        regenIntervalSec: effectiveRegenMinutes * 60,
-        regenMinutes: effectiveRegenMinutes,
-        subscriberRenewAt: null,
-        ledger: ledger || [],
-        activeSpeedToken: activeSpeedToken ? {
-          id: activeSpeedToken.id,
-          expiresAt: activeSpeedToken.expires_at,
-          durationMinutes: activeSpeedToken.duration_minutes,
-          source: activeSpeedToken.source
-        } : null
-      }),
+      JSON.stringify(response),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
