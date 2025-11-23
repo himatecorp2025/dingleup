@@ -148,7 +148,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           <div className="absolute inset-0 bg-gradient-to-t from-transparent via-purple-600/10 to-blue-600/10 rounded-2xl pointer-events-none"></div>
           
           <div className="relative flex items-center">
-            <div className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2">
+            <div className="flex-1 flex items-center justify-end gap-1.5 sm:gap-2 pr-2">
               <div className="relative">
                 <div className="absolute inset-0 bg-green-500/30 rounded-full blur-md"></div>
                 <LifeIcon3D size={32} className="relative drop-shadow-2xl sm:w-10 sm:h-10" />
@@ -161,7 +161,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
             
             <div className="h-8 sm:h-10 w-[2px] bg-gradient-to-b from-transparent via-blue-300/40 to-transparent"></div>
             
-            <div className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2">
+            <div className="flex-1 flex items-center justify-start gap-1.5 sm:gap-2 pl-2">
               <div className="relative">
                 <div className="absolute inset-0 bg-yellow-500/30 rounded-full blur-md"></div>
                 <CoinIcon3D size={32} className="relative drop-shadow-2xl sm:w-10 sm:h-10" />
@@ -194,7 +194,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 </div>
               </div>
 
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider" style={{ textShadow: '0 2px 10px rgba(234, 179, 8, 0.8)' }}>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider">
                 Gold<br />Saver
               </h3>
 
@@ -234,7 +234,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </Button>
 
               {!hasEnoughGold && (
-                <p className="text-yellow-200 text-[8px] sm:text-[9px] text-center mt-1 sm:mt-1.5 font-bold" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.8)' }}>
+                <p className="text-yellow-200 text-[8px] sm:text-[9px] text-center mt-1 sm:mt-1.5 font-bold leading-snug" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.8)' }}>
                   {t('rescue.not_enough_warning')}
                 </p>
               )}
@@ -259,7 +259,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 </div>
               </div>
 
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-cyan-100 via-blue-50 to-cyan-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider" style={{ textShadow: '0 3px 12px rgba(6, 182, 212, 0.9), 0 0 20px rgba(59, 130, 246, 0.6)' }}>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-cyan-100 via-blue-50 to-cyan-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider">
                 Instant<br />Rescue
               </h3>
 
@@ -296,7 +296,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 )}
               </Button>
 
-              <p className="text-cyan-100/70 text-[7px] sm:text-[8px] text-center mt-1 sm:mt-1.5 leading-snug font-medium" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.6)' }}>
+              <p className="text-cyan-100/70 text-[8px] sm:text-[9px] text-center mt-1 sm:mt-1.5 leading-snug font-bold" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.6)' }}>
                 Azonnali jóváírás
               </p>
             </div>
