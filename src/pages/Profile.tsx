@@ -906,7 +906,9 @@ const Profile = () => {
         </div>
 
         {/* Background Music Control - Moved below Account Info */}
-        <BackgroundMusicControl />
+        <div style={{ marginTop: '5vh' }}>
+          <BackgroundMusicControl />
+        </div>
       </div>
 
       <BottomNav />
