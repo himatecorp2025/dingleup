@@ -1,163 +1,65 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Wallet } from 'lucide-react';
+import { LifeIcon3D } from './icons/LifeIcon3D';
+import { CoinIcon3D } from './icons/CoinIcon3D';
+import { DiamondIcon3D } from './icons/DiamondIcon3D';
 import { useI18n } from '@/i18n';
-import { LifeIcon3D } from '@/components/icons/LifeIcon3D';
-import { CoinIcon3D } from '@/components/icons/CoinIcon3D';
-import { DiamondIcon3D } from '@/components/icons/DiamondIcon3D';
-import { BellIcon3D } from '@/components/icons/BellIcon3D';
 
 interface InGameRescuePopupProps {
-  isOpen: boolean;
+  open: boolean;
   onClose: () => void;
-  triggerReason: 'NO_LIFE' | 'NO_GOLD';
-  currentLives: number;
-  currentGold: number;
-  onStateRefresh: () => Promise<void>;
+  lives: number;
+  gold: number;
+  purchasing: boolean;
+  onGoldSaverPurchase: () => void;
+  onInstantRescuePurchase: () => void;
 }
 
-export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
-  isOpen,
+export const InGameRescuePopup = ({
+  open,
   onClose,
-  triggerReason,
-  currentLives,
-  currentGold,
-  onStateRefresh,
-}) => {
+  lives,
+  gold,
+  purchasing,
+  onGoldSaverPurchase,
+  onInstantRescuePurchase,
+}: InGameRescuePopupProps) => {
   const { t } = useI18n();
-  const [loadingGoldSaver, setLoadingGoldSaver] = useState(false);
-  const [loadingInstantRescue, setLoadingInstantRescue] = useState(false);
-
-  const handleGoldSaverPurchase = async () => {
-    if (currentGold < 500) {
-      toast.error('Nincs elég aranyérméd a mentőcsomag megvásárlásához!');
-      return;
-    }
-
-    setLoadingGoldSaver(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.error('Nincs bejelentkezve! Kérlek, jelentkezz be!');
-        setLoadingGoldSaver(false);
-        return;
-      }
-      
-      const { data, error } = await supabase.functions.invoke('purchase-booster', {
-        body: { boosterCode: 'GOLD_SAVER' },
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      });
-
-      if (error) throw error;
-
-      if (data?.success) {
-        toast.success('Sikeres vásárlás! +30 aranyérme és +3 élet hozzáadva!');
-        await onStateRefresh();
-        onClose();
-      } else {
-        toast.error(data?.error || 'Sikertelen vásárlás!');
-      }
-    } catch (error) {
-      console.error('Gold Saver purchase error:', error);
-      toast.error('Hiba történt a vásárlás során!');
-    } finally {
-      setLoadingGoldSaver(false);
-    }
-  };
-
-  const handleInstantRescuePurchase = async () => {
-    setLoadingInstantRescue(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.error('Nincs bejelentkezve! Kérlek, jelentkezz be!');
-        setLoadingInstantRescue(false);
-        return;
-      }
-      
-      const { data, error } = await supabase.functions.invoke('purchase-booster', {
-        body: { boosterCode: 'INSTANT_RESCUE' },
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      });
-
-      if (error) throw error;
-
-      if (data?.success) {
-        toast.success('Sikeres vásárlás! +1500 aranyérme és +50 élet hozzáadva!');
-        await onStateRefresh();
-        onClose();
-      } else {
-        if (data?.error === 'PAYMENT_FAILED') {
-          toast.error('A fizetés sikertelen volt!');
-        } else {
-          toast.error(data?.error || 'Sikertelen vásárlás!');
-        }
-      }
-    } catch (error) {
-      console.error('Instant Rescue purchase error:', error);
-      toast.error('Hiba történt a vásárlás során!');
-    } finally {
-      setLoadingInstantRescue(false);
-    }
-  };
-
-  const hasEnoughGold = currentGold >= 500;
-
-  const [starsVisible, setStarsVisible] = useState(false);
+  const [contentVisible, setContentVisible] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => setStarsVisible(true), 50);
+    if (open) {
+      const timer = setTimeout(() => setContentVisible(true), 100);
       return () => {
         clearTimeout(timer);
-        setStarsVisible(false);
+        setContentVisible(false);
       };
+    } else {
+      setContentVisible(false);
     }
-  }, [isOpen]);
+  }, [open]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent 
-        className="max-w-[95vw] w-full h-[90vh] overflow-y-auto border-0 p-0 shadow-2xl !fixed !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2 !m-0" 
+        overlayClassName="bg-black/60 backdrop-blur-md"
+        className="overflow-hidden p-0 border-0 bg-transparent w-[92vw] max-w-none [&>button[data-dialog-close]]:hidden z-[99999]"
         style={{ 
-          clipPath: 'polygon(50% 0%, 100% 4.756%, 100% 95.244%, 50% 100%, 0% 95.244%, 0% 4.756%)',
-          background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-          boxShadow: 'inset 0 0 0 6px hsl(var(--dup-gold-800)), 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 60px rgba(234, 179, 8, 0.5)'
+          height: '90vh',
+          zIndex: 99999,
         }}
       >
-        {/* Inner Gold Frame Layer */}
-        <div 
-          className="absolute inset-[6px]"
-          style={{
-            clipPath: 'polygon(50% 0.5%, 99.5% 4.756%, 99.5% 95.244%, 50% 99.5%, 0.5% 95.244%, 0.5% 4.756%)',
-            background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-            boxShadow: 'inset 0 2px 0 hsl(var(--dup-gold-300))'
-          }}
-        />
-
-        {/* Crystal Panel Background */}
-        <div 
-          className="absolute inset-[12px]"
-          style={{
-            clipPath: 'polygon(50% 1%, 99% 5%, 99% 95%, 50% 99%, 1% 95%, 1% 5%)',
-            background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(280 95% 75%) 0%, hsl(285 90% 65%) 30%, hsl(290 85% 55%) 60%, hsl(295 78% 48%) 100%)',
-            boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.15), inset 0 -8px 16px rgba(0,0,0,0.3)'
-          }}
-        />
-
-        {/* Animated golden stars background */}
-        {starsVisible && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ clipPath: 'polygon(50% 1%, 99% 5%, 99% 95%, 50% 99%, 1% 95%, 1% 5%)' }}>
+        {/* Animated golden stars background - 80 stars */}
+        {contentVisible && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 1 }}>
             {[...Array(80)].map((_, i) => {
               const delay = Math.random() * 3;
               const duration = 1.5 + Math.random() * 1;
               const startX = Math.random() * 100;
               const startY = Math.random() * 100;
-              const moveX = (Math.random() - 0.5) * 30;
-              const moveY = (Math.random() - 0.5) * 30;
+              const moveX = (Math.random() - 0.5) * 20;
+              const moveY = (Math.random() - 0.5) * 20;
               
               return (
                 <div
@@ -170,7 +72,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                     zIndex: 1
                   }}
                 >
-                  <svg viewBox="0 0 24 24" className="w-3 h-3" fill="#fbbf24">
+                  <svg viewBox="0 0 24 24" className="w-2.5 h-2.5" fill="#fbbf24">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                   <style>{`
@@ -180,7 +82,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                         opacity: 0;
                       }
                       50% { 
-                        transform: translate(${moveX}px, ${moveY}px) scale(1.8);
+                        transform: translate(${moveX}px, ${moveY}px) scale(1.5);
                         opacity: 1;
                       }
                     }
@@ -191,334 +93,370 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           </div>
         )}
 
-        {/* Main content */}
-        <div className="relative z-10 p-5 h-full flex flex-col" style={{
-          clipPath: 'polygon(50% 1.5%, 98.5% 5.5%, 98.5% 94.5%, 50% 98.5%, 1.5% 94.5%, 1.5% 5.5%)'
-        }}>
-          {/* Header */}
-          <DialogHeader className="space-y-1.5 mb-4">
-            <div className="flex items-center justify-center gap-2">
-              <DialogTitle className="text-3xl font-black text-center text-white leading-tight tracking-wider" style={{ 
-                textShadow: '0 0 30px rgba(255, 255, 255, 1), 0 0 60px rgba(255, 255, 255, 0.8), 0 4px 20px rgba(0, 0, 0, 1), 0 8px 40px rgba(0, 0, 0, 0.8)'
-              }}>
-                {t('rescue.title')}
-              </DialogTitle>
-              <BellIcon3D size={40} style={{ filter: 'drop-shadow(0 4px 12px rgba(234, 179, 8, 0.8))' }} />
-            </div>
-            <p className="text-center text-white text-base font-black tracking-wide" style={{ 
-              textShadow: '0 0 20px rgba(255, 255, 255, 0.9), 0 0 40px rgba(255, 255, 255, 0.6), 0 3px 15px rgba(0, 0, 0, 1), 0 6px 30px rgba(0, 0, 0, 0.8)'
-            }}>
-              {t('rescue.subtitle')}
-            </p>
-          </DialogHeader>
+        {/* Main popup box with 3D frame - RECTANGULAR VERSION */}
+        <div 
+          className="relative w-full h-full flex flex-col"
+          style={{
+            transform: contentVisible ? 'scale(1)' : 'scale(0)',
+            opacity: contentVisible ? 1 : 0,
+            transition: 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.8s ease-in-out',
+            transformOrigin: 'center center',
+            zIndex: 2,
+          }}
+        >
+          {/* 3D Shadow Base */}
+          <div className="absolute inset-0 rounded-2xl translate-x-1 translate-y-2"
+               style={{
+                 background: 'rgba(0,0,0,0.4)',
+                 filter: 'blur(8px)',
+                 zIndex: -1
+               }} />
 
-          {/* Current Status with hex badge border styling */}
-          <div className="relative p-4 mb-4" style={{ width: '90%', margin: '0 auto' }}>
-            {/* Shadow layer */}
-            <div className="absolute inset-0 translate-y-1 translate-x-1"
-                 style={{
-                   clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                   background: 'rgba(0,0,0,0.4)',
-                   filter: 'blur(4px)',
-                   zIndex: -1
-                 }} />
+          {/* Outer Gold Frame - dark gold gradient */}
+          <div className="absolute inset-0 rounded-2xl"
+               style={{
+                 background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                 boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 12px 32px rgba(0,0,0,0.5)',
+                 filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.4))',
+               }} />
+          
+          {/* Middle Gold Frame - bright gold with top highlight */}
+          <div className="absolute inset-[5px] rounded-2xl"
+               style={{
+                 background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                 boxShadow: 'inset 0 2px 0 hsl(var(--dup-gold-300))'
+               }} />
+          
+          {/* Inner Crystal Panel - purple radial gradient */}
+          <div className="absolute inset-[10px] rounded-2xl overflow-hidden"
+               style={{
+                 background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(var(--dup-purple-300)) 0%, hsl(var(--dup-purple-400)) 30%, hsl(var(--dup-purple-600)) 60%, hsl(var(--dup-purple-800)) 100%)',
+                 boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.15), inset 0 -8px 20px rgba(0,0,0,0.3)',
+               }} />
+          
+          {/* Diagonal Light Streaks Overlay */}
+          <div className="absolute inset-[10px] rounded-2xl pointer-events-none overflow-hidden"
+               style={{
+                 background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.08) 10px, rgba(255,255,255,0.08) 15px, transparent 15px, transparent 25px, rgba(255,255,255,0.05) 25px, rgba(255,255,255,0.05) 30px)',
+                 opacity: 0.7
+               }} />
+          
+          {/* Specular Highlight - top-left conic glow */}
+          <div className="absolute inset-[10px] rounded-2xl pointer-events-none overflow-hidden"
+               style={{
+                 background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)',
+               }} />
+
+          {/* Content container */}
+          <div className="relative z-10 flex flex-col h-full p-6 gap-4"
+               style={{
+                 paddingTop: '5%',
+                 paddingBottom: '5%',
+               }}>
             
-            {/* Outer gold frame */}
-            <div className="absolute inset-0"
+            {/* Header with realistic bell icon */}
+            <div className="flex items-center justify-center gap-3 mb-2">
+              {/* 3D Realistic Bell SVG */}
+              <svg viewBox="0 0 100 120" className="w-10 h-10 flex-shrink-0">
+                <defs>
+                  <linearGradient id="bellGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFD700" />
+                    <stop offset="50%" stopColor="#FFA500" />
+                    <stop offset="100%" stopColor="#FF8C00" />
+                  </linearGradient>
+                  <radialGradient id="bellHighlight" cx="30%" cy="20%">
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+                    <stop offset="50%" stopColor="rgba(255,255,255,0.3)" />
+                    <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                  </radialGradient>
+                  <filter id="bellShadow">
+                    <feDropShadow dx="0" dy="4" stdDeviation="3" floodColor="#000" floodOpacity="0.5"/>
+                  </filter>
+                </defs>
+                {/* Bell body */}
+                <path d="M 50 20 Q 35 20, 30 35 L 25 75 Q 25 85, 30 90 L 70 90 Q 75 85, 75 75 L 70 35 Q 65 20, 50 20 Z" 
+                      fill="url(#bellGold)" stroke="#B8860B" strokeWidth="2" filter="url(#bellShadow)" />
+                {/* Bell clapper */}
+                <ellipse cx="50" cy="95" rx="6" ry="8" fill="url(#bellGold)" stroke="#B8860B" strokeWidth="1.5" />
+                {/* Bell top knob */}
+                <ellipse cx="50" cy="18" rx="5" ry="4" fill="url(#bellGold)" stroke="#B8860B" strokeWidth="1.5" />
+                {/* Highlight */}
+                <ellipse cx="42" cy="35" rx="12" ry="18" fill="url(#bellHighlight)" opacity="0.8" />
+              </svg>
+
+              <h2 className="text-3xl font-black text-center"
+                  style={{
+                    background: 'linear-gradient(180deg, #ffffff 0%, #f0f0f0 50%, #d0d0d0 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    textShadow: '0 0 20px rgba(255,215,0,0.6), 0 4px 8px rgba(0,0,0,0.8)',
+                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.9))'
+                  }}>
+                {t('inGameRescue.title')}
+              </h2>
+            </div>
+
+            {/* Current Status - using Daily Gift badge style */}
+            <div className="rounded-xl overflow-hidden"
                  style={{
-                   clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                   background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                   boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
-                 }} />
-            
-            {/* Inner gold highlight */}
-            <div className="absolute inset-[3px]"
-                 style={{
-                   clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                   background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-                   boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
-                 }} />
-            
-            {/* Blue crystal content area */}
-            <div className="relative px-6 py-4"
-                 style={{
-                   clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")'
+                   position: 'relative',
                  }}>
-              <div className="absolute inset-[6px]"
+              {/* Outer gold frame */}
+              <div className="absolute inset-0 rounded-xl"
                    style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                     background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                     boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
+                   }} />
+              
+              {/* Inner gradient */}
+              <div className="absolute inset-[3px] rounded-xl"
+                   style={{
+                     background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                     boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                   }} />
+              
+              {/* Inner blue crystal panel */}
+              <div className="absolute inset-[6px] rounded-xl"
+                   style={{
                      background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(220 95% 75%) 0%, hsl(225 90% 65%) 30%, hsl(230 85% 55%) 60%, hsl(235 78% 48%) 100%)',
                      boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
                    }} />
               
-              <div className="absolute inset-[6px] pointer-events-none"
+              {/* Diagonal stripes */}
+              <div className="absolute inset-[6px] rounded-xl pointer-events-none"
                    style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                     background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px)',
+                     background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
                      opacity: 0.7
                    }} />
               
-              <div className="absolute inset-[6px] pointer-events-none" style={{
-                clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
-              }} />
+              {/* Specular highlight */}
+              <div className="absolute inset-[6px] rounded-xl pointer-events-none"
+                   style={{
+                     background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
+                   }} />
               
-              <div className="relative z-10 flex items-center justify-around">
-                <div className="flex items-center gap-3">
-                  <LifeIcon3D size={48} className="drop-shadow-2xl" style={{ filter: 'drop-shadow(0 8px 20px rgba(34, 197, 94, 0.6))' }} />
-                  <div>
-                    <p className="text-white text-sm font-black tracking-wide" style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.9)' }}>{t('rescue.life_label')}</p>
-                    <p className="text-white font-black text-3xl" style={{ textShadow: '0 3px 12px rgba(0, 0, 0, 1)' }}>{currentLives}</p>
+              {/* Content */}
+              <div className="relative z-10 p-4">
+                <p className="text-sm font-bold text-foreground mb-3 text-center"
+                   style={{
+                     textShadow: '0 0 8px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.6)'
+                   }}>
+                  {t('inGameRescue.currentStatus')}
+                </p>
+                <div className="flex justify-around items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <LifeIcon3D size={32} />
+                    <span className="text-2xl font-black text-white"
+                          style={{
+                            textShadow: '0 0 12px rgba(239, 68, 68, 0.8), 0 2px 6px rgba(0,0,0,0.9)'
+                          }}>
+                      {lives}
+                    </span>
                   </div>
-                </div>
-                
-                <div className="h-14 w-[3px] bg-gradient-to-b from-transparent via-white/50 to-transparent"></div>
-                
-                <div className="flex items-center gap-3">
-                  <CoinIcon3D size={48} className="drop-shadow-2xl" style={{ filter: 'drop-shadow(0 8px 20px rgba(234, 179, 8, 0.6))' }} />
-                  <div>
-                    <p className="text-white text-sm font-black tracking-wide" style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.9)' }}>{t('rescue.gold_label')}</p>
-                    <p className="text-white font-black text-3xl" style={{ textShadow: '0 3px 12px rgba(0, 0, 0, 1)' }}>{currentGold}</p>
+                  <div className="flex items-center gap-2">
+                    <CoinIcon3D size={32} />
+                    <span className="text-2xl font-black"
+                          style={{
+                            color: '#FFD700',
+                            textShadow: '0 0 12px rgba(255, 215, 0, 0.8), 0 2px 6px rgba(0,0,0,0.9)'
+                          }}>
+                      {gold}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Booster Options - Hex badge border styling */}
-          <div className="grid grid-cols-2 gap-4 mb-4 items-stretch">
-            {/* Gold Saver Booster */}
-            <div className="relative flex flex-col h-full">
-              {/* Shadow layer */}
-              <div className="absolute inset-0 translate-y-1 translate-x-1"
-                   style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                     background: 'rgba(0,0,0,0.4)',
-                     filter: 'blur(4px)',
-                     zIndex: -1
-                   }} />
+            {/* Booster Options */}
+            <div className="flex flex-col gap-4 flex-1">
               
-              {/* Outer gold frame */}
-              <div className="absolute inset-0"
+              {/* Gold Saver Booster - using Daily Gift badge style */}
+              <div className="rounded-xl overflow-hidden flex-1 flex flex-col justify-between"
                    style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                     background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                     boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
-                   }} />
-              
-              {/* Inner gold highlight */}
-              <div className="absolute inset-[3px]"
-                   style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                     background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-                     boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
-                   }} />
-              
-              {/* Blue crystal content area */}
-              <div className="relative px-4 py-6 h-full flex flex-col"
-                   style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")'
+                     position: 'relative',
                    }}>
-                <div className="absolute inset-[6px]"
+                {/* Outer gold frame */}
+                <div className="absolute inset-0 rounded-xl"
                      style={{
-                       clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(220 95% 75%) 0%, hsl(225 90% 65%) 30%, hsl(230 85% 55%) 60%, hsl(235 78% 48%) 100%)',
+                       background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                       boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
+                     }} />
+                
+                {/* Inner gradient */}
+                <div className="absolute inset-[3px] rounded-xl"
+                     style={{
+                       background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                       boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                     }} />
+                
+                {/* Inner green crystal panel */}
+                <div className="absolute inset-[6px] rounded-xl"
+                     style={{
+                       background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(150 80% 65%) 0%, hsl(155 75% 55%) 30%, hsl(160 70% 45%) 60%, hsl(165 65% 35%) 100%)',
                        boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
                      }} />
                 
-                <div className="absolute inset-[6px] pointer-events-none"
+                {/* Diagonal stripes */}
+                <div className="absolute inset-[6px] rounded-xl pointer-events-none"
                      style={{
-                       clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px)',
+                       background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
                        opacity: 0.7
                      }} />
                 
-                <div className="absolute inset-[6px] pointer-events-none" style={{
-                  clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                  background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
-                }} />
-                
-                {/* Coin icon */}
-                <div className="relative z-10 flex justify-center mb-3">
-                  <CoinIcon3D size={64} style={{ filter: 'drop-shadow(0 8px 20px rgba(234, 179, 8, 0.7))' }} />
-                </div>
-
-                <h3 className="relative z-10 text-base font-black text-center text-white mb-2 leading-tight tracking-widest" style={{ textShadow: '0 3px 12px rgba(0, 0, 0, 1)' }}>
-                  Gold Saver
-                </h3>
-
-                <p className="relative z-10 text-white text-xs text-center mb-3 font-bold leading-snug px-2" style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.9)' }}>
-                  {t('rescue.gold_saver_description')}
-                </p>
-
-                {/* Reward display */}
-                <div className="relative z-10 flex items-center justify-center gap-2 mb-3">
-                  <div className="flex items-center gap-1">
-                    <CoinIcon3D size={24} />
-                    <span className="text-white text-sm font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 1)' }}>250</span>
-                  </div>
-                  <span className="text-white text-sm">+</span>
-                  <div className="flex items-center gap-1">
-                    <LifeIcon3D size={24} />
-                    <span className="text-white text-sm font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 1)' }}>3</span>
-                  </div>
-                </div>
-
-                <div className="relative z-10 flex-1"></div>
-
-                {!hasEnoughGold && (
-                  <p className="relative z-10 text-white text-[10px] text-center mb-2.5 font-black" style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 1)' }}>
-                    {t('rescue.not_enough_warning')}
-                  </p>
-                )}
-
-                <Button
-                  onClick={handleGoldSaverPurchase}
-                  disabled={!hasEnoughGold || loadingGoldSaver}
-                  className="relative z-10 w-full bg-gradient-to-b from-green-400 via-green-600 to-green-800 hover:from-green-300 hover:via-green-500 hover:to-green-700 text-white font-black text-base py-4 rounded-xl disabled:opacity-50 transition-all" 
-                  style={{ 
-                    textShadow: '0 3px 8px rgba(0, 0, 0, 0.9)',
-                    boxShadow: '0 6px 20px rgba(34, 197, 94, 0.6)'
-                  }}
-                >
-                  {loadingGoldSaver ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      <span className="text-sm">{t('rescue.processing')}</span>
-                    </>
-                  ) : hasEnoughGold ? (
-                    <span className="text-base tracking-widest">500 ARANY</span>
-                  ) : (
-                    <span className="text-sm">{t('rescue.not_enough_short')}</span>
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            {/* Instant Rescue Booster */}
-            <div className="relative flex flex-col h-full">
-              {/* Shadow layer */}
-              <div className="absolute inset-0 translate-y-1 translate-x-1"
-                   style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                     background: 'rgba(0,0,0,0.4)',
-                     filter: 'blur(4px)',
-                     zIndex: -1
-                   }} />
-              
-              {/* Outer gold frame */}
-              <div className="absolute inset-0"
-                   style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                     background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                     boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
-                   }} />
-              
-              {/* Inner gold highlight */}
-              <div className="absolute inset-[3px]"
-                   style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                     background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-                     boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
-                   }} />
-              
-              {/* Blue crystal content area */}
-              <div className="relative px-4 py-6 h-full flex flex-col"
-                   style={{
-                     clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")'
-                   }}>
-                <div className="absolute inset-[6px]"
+                {/* Specular highlight */}
+                <div className="absolute inset-[6px] rounded-xl pointer-events-none"
                      style={{
-                       clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(220 95% 75%) 0%, hsl(225 90% 65%) 30%, hsl(230 85% 55%) 60%, hsl(235 78% 48%) 100%)',
+                       background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
+                     }} />
+                
+                {/* Content */}
+                <div className="relative z-10 p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h3 className="text-xl font-black mb-2 text-center"
+                        style={{
+                          color: '#10b981',
+                          textShadow: '0 0 16px rgba(16, 185, 129, 0.8), 0 2px 8px rgba(0,0,0,0.9)'
+                        }}>
+                      {t('inGameRescue.goldSaver.title')}
+                    </h3>
+                    <div className="flex justify-center items-center gap-3 mb-2">
+                      <div className="flex items-center gap-1">
+                        <span className="text-white/90 text-sm">+</span>
+                        <CoinIcon3D size={28} />
+                        <span className="text-xl font-bold"
+                              style={{
+                                color: '#FFD700',
+                                textShadow: '0 0 10px rgba(255, 215, 0, 0.7), 0 2px 4px rgba(0,0,0,0.8)'
+                              }}>
+                          250
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-white/80 text-center"
+                       style={{
+                         textShadow: '0 1px 3px rgba(0,0,0,0.6)'
+                       }}>
+                      {t('inGameRescue.goldSaver.description')}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={onGoldSaverPurchase}
+                    disabled={purchasing}
+                    className="w-full py-3 rounded-xl font-bold text-base transition-all transform active:scale-95 disabled:opacity-50"
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: '#ffffff',
+                      boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.2), 0 4px 12px rgba(16, 185, 129, 0.5), 0 2px 6px rgba(0,0,0,0.4)',
+                      textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(16, 185, 129, 0.5)',
+                      border: '2px solid rgba(74, 222, 128, 0.6)',
+                    }}
+                  >
+                    {purchasing ? t('inGameRescue.goldSaver.purchasing') : `🎁 ${t('inGameRescue.goldSaver.buy')} - 100 ${t('inGameRescue.gold')}`}
+                  </button>
+                </div>
+              </div>
+
+              {/* Instant Rescue Booster - using Daily Gift badge style */}
+              <div className="rounded-xl overflow-hidden flex-1 flex flex-col justify-between"
+                   style={{
+                     position: 'relative',
+                   }}>
+                {/* Outer gold frame */}
+                <div className="absolute inset-0 rounded-xl"
+                     style={{
+                       background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                       boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
+                     }} />
+                
+                {/* Inner gradient */}
+                <div className="absolute inset-[3px] rounded-xl"
+                     style={{
+                       background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                       boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                     }} />
+                
+                {/* Inner red crystal panel */}
+                <div className="absolute inset-[6px] rounded-xl"
+                     style={{
+                       background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 85% 70%) 0%, hsl(0 80% 60%) 30%, hsl(0 75% 50%) 60%, hsl(0 70% 40%) 100%)',
                        boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
                      }} />
                 
-                <div className="absolute inset-[6px] pointer-events-none"
+                {/* Diagonal stripes */}
+                <div className="absolute inset-[6px] rounded-xl pointer-events-none"
                      style={{
-                       clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px)',
+                       background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
                        opacity: 0.7
                      }} />
                 
-                <div className="absolute inset-[6px] pointer-events-none" style={{
-                  clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                  background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
-                }} />
+                {/* Specular highlight */}
+                <div className="absolute inset-[6px] rounded-xl pointer-events-none"
+                     style={{
+                       background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
+                     }} />
                 
-                {/* Diamond icon */}
-                <div className="relative z-10 flex justify-center mb-3">
-                  <DiamondIcon3D size={64} style={{ filter: 'drop-shadow(0 8px 20px rgba(236, 72, 153, 0.7))' }} />
-                </div>
-
-                <h3 className="relative z-10 text-base font-black text-center text-white mb-2 leading-tight tracking-widest" style={{ textShadow: '0 3px 12px rgba(0, 0, 0, 1)' }}>
-                  Instant Resource
-                </h3>
-
-                <p className="relative z-10 text-white text-xs text-center mb-3 font-bold leading-snug px-2" style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.9)' }}>
-                  {t('rescue.instant_rescue_description')}
-                </p>
-
-                {/* Reward display */}
-                <div className="relative z-10 flex items-center justify-center gap-2 mb-3">
-                  <div className="flex items-center gap-1">
-                    <CoinIcon3D size={24} />
-                    <span className="text-white text-sm font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 1)' }}>1000</span>
+                {/* Content */}
+                <div className="relative z-10 p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h3 className="text-xl font-black mb-2 text-center"
+                        style={{
+                          color: '#ef4444',
+                          textShadow: '0 0 16px rgba(239, 68, 68, 0.8), 0 2px 8px rgba(0,0,0,0.9)'
+                        }}>
+                      {t('inGameRescue.instantRescue.title')}
+                    </h3>
+                    <div className="flex justify-center items-center gap-3 mb-2 flex-wrap">
+                      <div className="flex items-center gap-1">
+                        <span className="text-white/90 text-sm">+</span>
+                        <CoinIcon3D size={28} />
+                        <span className="text-xl font-bold"
+                              style={{
+                                color: '#FFD700',
+                                textShadow: '0 0 10px rgba(255, 215, 0, 0.7), 0 2px 4px rgba(0,0,0,0.8)'
+                              }}>
+                          1000
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-white/90 text-sm">+</span>
+                        <LifeIcon3D size={28} />
+                        <span className="text-xl font-bold text-white"
+                              style={{
+                                textShadow: '0 0 10px rgba(239, 68, 68, 0.7), 0 2px 4px rgba(0,0,0,0.8)'
+                              }}>
+                          50
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-white/80 text-center"
+                       style={{
+                         textShadow: '0 1px 3px rgba(0,0,0,0.6)'
+                       }}>
+                      {t('inGameRescue.instantRescue.description')}
+                    </p>
                   </div>
-                  <span className="text-white text-sm">+</span>
-                  <div className="flex items-center gap-1">
-                    <LifeIcon3D size={24} />
-                    <span className="text-white text-sm font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 1)' }}>50</span>
-                  </div>
+
+                  <button
+                    onClick={onInstantRescuePurchase}
+                    disabled={purchasing}
+                    className="w-full py-3 rounded-xl font-bold text-base transition-all transform active:scale-95 disabled:opacity-50"
+                    style={{
+                      background: 'linear-gradient(135deg, #FFA500, #FF8C00)',
+                      color: '#000000',
+                      boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.2), 0 4px 12px rgba(255,165,0,0.6), 0 2px 6px rgba(0,0,0,0.4)',
+                      textShadow: '0 1px 2px rgba(255,255,255,0.3)',
+                      border: '2px solid rgba(255,215,0,0.7)',
+                    }}
+                  >
+                    {purchasing ? t('inGameRescue.instantRescue.purchasing') : `💎 ${t('inGameRescue.instantRescue.buy')} - $1.49`}
+                  </button>
                 </div>
-
-                <div className="relative z-10 flex-1"></div>
-
-                <Button
-                  onClick={handleInstantRescuePurchase}
-                  disabled={loadingInstantRescue}
-                  className="relative z-10 w-full bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-500 text-black font-black text-base py-4 rounded-xl disabled:opacity-50 transition-all" 
-                  style={{ 
-                    textShadow: '0 2px 4px rgba(255, 255, 255, 0.5)',
-                    boxShadow: '0 6px 20px rgba(234, 179, 8, 0.7)'
-                  }}
-                >
-                  {loadingInstantRescue ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      <span className="text-sm">{t('rescue.processing')}</span>
-                    </>
-                  ) : (
-                    <span className="text-base tracking-widest">$1.49</span>
-                  )}
-                </Button>
               </div>
             </div>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center pt-3">
-            <p className="text-white text-xs mb-3 leading-snug font-black tracking-wide" style={{ 
-              textShadow: '0 0 20px rgba(255, 255, 255, 0.9), 0 0 40px rgba(255, 255, 255, 0.6), 0 3px 15px rgba(0, 0, 0, 1)'
-            }}>
-              {t('rescue.continue_message')}
-            </p>
-            <Button
-              onClick={onClose}
-              variant="ghost"
-              className="text-white hover:text-white hover:bg-white/20 text-base h-11 px-6 font-black transition-all rounded-xl" 
-              style={{ 
-                textShadow: '0 2px 6px rgba(0, 0, 0, 0.9)', 
-                boxShadow: '0 4px 15px rgba(250, 204, 21, 0.2)' 
-              }}
-            >
-              {t('rescue.cancel_button')}
-            </Button>
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
-
-export default InGameRescuePopup;
