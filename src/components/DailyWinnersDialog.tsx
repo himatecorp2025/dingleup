@@ -216,7 +216,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     ) : (
                       <>
                         {/* TOP 3 - Horizontal Layout with Realistic Laurel Wreaths */}
-                        <div className="flex justify-center items-end gap-2 mb-4 px-1 -mt-8">
+                        <div className="flex justify-center items-end gap-2 mb-4 px-1 -mt-3">
                           {/* 2nd Place - Silver */}
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ width: '30%' }}>
