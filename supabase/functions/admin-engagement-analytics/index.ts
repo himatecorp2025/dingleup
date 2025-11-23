@@ -78,14 +78,22 @@ Deno.serve(async (req) => {
     const avgSessionDuration = totalSessions > 0 ? Math.round(totalDuration / totalSessions) : 0;
     const avgSessionsPerUser = sessionMap.size > 0 ? Math.round(totalSessions / sessionMap.size) : 0;
 
-    // Feature usage
-    const featureUsageMap = new Map<string, Set<string>>();
+    // Feature usage - count total usage and unique users
+    const featureUsageMap = new Map<string, { count: number; users: Set<string> }>();
     (featureEvents || []).forEach((e: any) => {
-      if (!featureUsageMap.has(e.feature_name)) featureUsageMap.set(e.feature_name, new Set());
-      featureUsageMap.get(e.feature_name)!.add(e.user_id);
+      if (!featureUsageMap.has(e.feature_name)) {
+        featureUsageMap.set(e.feature_name, { count: 0, users: new Set() });
+      }
+      const feature = featureUsageMap.get(e.feature_name)!;
+      feature.count++;
+      feature.users.add(e.user_id);
     });
     const featureUsage = Array.from(featureUsageMap.entries())
-      .map(([feature_name, users]) => ({ feature_name, usage_count: users.size, unique_users: users.size }))
+      .map(([feature_name, data]) => ({ 
+        feature_name, 
+        usage_count: data.count, 
+        unique_users: data.users.size 
+      }))
       .sort((a, b) => b.usage_count - a.usage_count)
       .slice(0, 10);
 
