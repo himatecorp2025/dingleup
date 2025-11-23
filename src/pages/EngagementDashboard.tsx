@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEngagementAnalytics } from "@/hooks/useEngagementAnalytics";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { MetricInfo } from '@/components/admin/MetricInfo';
 
 const EngagementDashboard = () => {
   const navigate = useNavigate();
@@ -57,6 +58,16 @@ const EngagementDashboard = () => {
           </Button>
         </div>
 
+        <Card className="bg-primary-dark/30 border border-primary/20">
+          <CardContent className="pt-6">
+            <p className="text-foreground/80 leading-relaxed">
+              Az Engagement Dashboard azt mutatja, hogy a felhasználók mennyire aktívak az alkalmazásban.
+              Láthatod a session hosszakat, funkció használatot, játék aktivitást és a legaktívabb felhasználókat.
+              Az adatok valós időben frissülnek minden felhasználói tevékenység után.
+            </p>
+          </CardContent>
+        </Card>
+
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="backdrop-blur-xl bg-white/5 border border-white/10 p-1 flex-wrap h-auto gap-1">
             <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
@@ -77,7 +88,14 @@ const EngagementDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               <Card className="backdrop-blur-xl bg-white/5 border border-white/10">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-foreground text-base sm:text-lg">Átlagos Session Hossz</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-foreground text-base sm:text-lg">Átlagos Session Hossz</CardTitle>
+                    <MetricInfo
+                      title="Átlagos Session Hossz"
+                      description="Az összes felhasználói session átlagos időtartama másodpercben mérve. Egy session akkor kezdődik, amikor a felhasználó megnyitja az alkalmazást, és akkor ér véget, amikor bezárja."
+                      interpretation="Jó érték: >180s (3 perc). Minél hosszabb a session, annál jobban elkötelezett a felhasználó."
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl sm:text-4xl font-bold text-foreground">{analytics.avgSessionDuration}s</p>
@@ -86,7 +104,14 @@ const EngagementDashboard = () => {
 
               <Card className="bg-primary-dark/50 border border-primary/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-foreground text-base sm:text-lg">Átlagos Session / Felhasználó</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-foreground text-base sm:text-lg">Átlagos Session / Felhasználó</CardTitle>
+                    <MetricInfo
+                      title="Átlagos Session / Felhasználó"
+                      description="Az egy felhasználóra jutó átlagos sessionök száma. Ez mutatja, hogy a felhasználók átlagosan hányszor nyitják meg az alkalmazást."
+                      interpretation="Jó érték: >3. Minél többször nyitják meg az alkalmazást, annál inkább visszatérő, hű felhasználók."
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl sm:text-4xl font-bold text-foreground">{analytics.avgSessionsPerUser}</p>
@@ -95,7 +120,14 @@ const EngagementDashboard = () => {
 
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-white text-base sm:text-lg">Összes Session</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-white text-base sm:text-lg">Összes Session</CardTitle>
+                    <MetricInfo
+                      title="Összes Session"
+                      description="Az összes felhasználói session teljes száma az alkalmazásban. Ez az összes alkalommal számolva, amikor egy felhasználó megnyitotta az alkalmazást."
+                      interpretation="Ez a szám folyamatosan növekszik az idő múlásával, ahogy egyre több felhasználó nyitja meg az alkalmazást."
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.totalSessions}</p>
@@ -105,7 +137,14 @@ const EngagementDashboard = () => {
 
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Engagement Időszakonként (óránkénti bontás)</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-white">Engagement Időszakonként (óránkénti bontás)</CardTitle>
+                  <MetricInfo
+                    title="Engagement Időszakonként"
+                    description="Ez a grafikon mutatja, hogy a nap melyik órájában mennyi session kezdődik. A vízszintes tengely az órát (0-23), a függőleges tengely a sessionök számát jelenti."
+                    interpretation="A csúcsidők megmutatják, mikor aktívak legjobban a felhasználók. Ezt felhasználhatod promóciók vagy új funkciók időzítésére."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -124,7 +163,14 @@ const EngagementDashboard = () => {
           <TabsContent value="features" className="space-y-6">
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Funkció Használat</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-white">Funkció Használat</CardTitle>
+                  <MetricInfo
+                    title="Funkció Használat"
+                    description="Ez a grafikon mutatja, hogy az egyes funkciók (Játék, Ranglista, Profil, Bolt, stb.) hányszor használták a felhasználók. Minden funkciónál látható a teljes használati szám."
+                    interpretation="A legnépszerűbb funkciók megmutatják, mi érdekli leginkább a felhasználókat. Ha egy funkció kevés használatot kap, érdemes megvizsgálni, hogy miért."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
@@ -143,7 +189,14 @@ const EngagementDashboard = () => {
           <TabsContent value="users" className="space-y-6">
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Legaktívabb Felhasználók</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-white">Legaktívabb Felhasználók</CardTitle>
+                  <MetricInfo
+                    title="Legaktívabb Felhasználók"
+                    description="Azok a felhasználók, akik a legtöbbet használták az alkalmazást. Minden felhasználónál látható a sessionök száma és az összesen töltött idő percekben."
+                    interpretation="Ezek a 'super user'-ek, akik a legelkötelezettebben használják az alkalmazást. Érdemes követni őket, mert ők adnak visszajelzést leggyakrabban és leghasznosabban."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -167,7 +220,14 @@ const EngagementDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-white text-base sm:text-lg">Átlagos Játék / Felhasználó</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-white text-base sm:text-lg">Átlagos Játék / Felhasználó</CardTitle>
+                    <MetricInfo
+                      title="Átlagos Játék / Felhasználó"
+                      description="Az egy felhasználóra jutó átlagos játékok száma. Ez mutatja, hogy a felhasználók átlagosan hányszor játszottak (indítottak új játékot)."
+                      interpretation="Jó érték: >5. Minél többször játszanak, annál inkább visszatérő játékosok. Ha alacsony ez a szám, érdemes jutalmazni a visszatérést."
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.gameEngagement.avgGamesPerUser}</p>
@@ -176,7 +236,14 @@ const EngagementDashboard = () => {
 
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-white text-base sm:text-lg">Átlagos Helyes Válaszok</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-white text-base sm:text-lg">Átlagos Helyes Válaszok</CardTitle>
+                    <MetricInfo
+                      title="Átlagos Helyes Válaszok"
+                      description="Az összes játék átlagában hány helyes választ adtak a játékosok a 15 kérdésből. Ez a játék nehézségi szintjének és a játékosok tudásának mutatója."
+                      interpretation="Jó érték: 8-12 helyes válasz (53-80%). Ha túl alacsony, a játék túl nehéz. Ha túl magas, túl könnyű."
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.gameEngagement.avgCorrectAnswers}</p>
@@ -186,7 +253,14 @@ const EngagementDashboard = () => {
 
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Legnépszerűbb Témakörök</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-white">Legnépszerűbb Témakörök</CardTitle>
+                  <MetricInfo
+                    title="Legnépszerűbb Témakörök"
+                    description="Azok a témakörök (Történelem, Kultúra, Egészség, Pénzügyek), ahol a legtöbb játékot játszották. Minden témakör mellett látható az összes játékszám."
+                    interpretation="A legnépszerűbb témakörök megmutatják, mi érdekli leginkább a játékosokat. Érdemes több kérdést készíteni a népszerű témákból."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>

@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserJourneyAnalytics } from "@/hooks/useUserJourneyAnalytics";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { MetricInfo } from '@/components/admin/MetricInfo';
 
 const COLORS = ['#a78bfa', '#60a5fa', '#34d399', '#fbbf24'];
 
@@ -59,6 +60,16 @@ const UserJourneyDashboard = () => {
           </Button>
         </div>
 
+        <Card className="bg-primary-dark/30 border border-primary/20">
+          <CardContent className="pt-6">
+            <p className="text-foreground/80 leading-relaxed">
+              A User Journey Dashboard segít megérteni, hogyan navigálnak a felhasználók az alkalmazásban. 
+              Láthatod, hol lépnek be, milyen útvonalakon haladnak, és hol lépnek ki. 
+              Az adatok valós időben frissülnek minden felhasználói interakció után.
+            </p>
+          </CardContent>
+        </Card>
+
         <Tabs defaultValue="onboarding" className="space-y-6">
           <TabsList className="bg-primary-dark/50 p-1 flex-wrap h-auto gap-1">
             <TabsTrigger value="onboarding" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
@@ -81,7 +92,14 @@ const UserJourneyDashboard = () => {
           <TabsContent value="onboarding" className="space-y-6">
             <Card className="bg-primary-dark/50 border border-primary/30">
               <CardHeader>
-                <CardTitle className="text-foreground">Onboarding Funnel</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-foreground">Onboarding Funnel</CardTitle>
+                  <MetricInfo
+                    title="Onboarding Tölcsér"
+                    description="Az onboarding folyamat során végigkövetjük, hogy a felhasználók hány lépésben jutnak el a regisztrációtól a játék megkezdéséig. Minden lépésnél látható, hány felhasználó halad tovább, és hol morzsolódnak le a legtöbben."
+                    interpretation="Minél alacsonyabb a lemorzsolódási arány, annál sikeresebb az onboarding folyamat. Ha egy lépésnél magas a lemorzsolódás, érdemes megvizsgálni, hogy mi okozza a problémát."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
@@ -119,7 +137,14 @@ const UserJourneyDashboard = () => {
           <TabsContent value="purchase" className="space-y-6">
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Vásárlási Funnel</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-white">Vásárlási Funnel</CardTitle>
+                  <MetricInfo
+                    title="Vásárlási Tölcsér"
+                    description="A vásárlási folyamat három fő lépése: (1) Booster megtekintés - a felhasználó megnézi a Bolt oldalt, (2) Vásárlás indítás - rákattint egy boosterre, (3) Sikeres vásárlás - befejezi a vásárlást és az arany/élet jóváírásra kerül."
+                    interpretation="A magas konverziós arány azt jelenti, hogy sokan vásárolnak. Ha sok felhasználó nézi meg a Bolt oldalt, de kevesen vásárolnak, akkor érdemes az árakat vagy az ajánlatokat felülvizsgálni."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
@@ -157,7 +182,14 @@ const UserJourneyDashboard = () => {
           <TabsContent value="game" className="space-y-6">
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Játék Funnel</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-white">Játék Funnel</CardTitle>
+                  <MetricInfo
+                    title="Játék Tölcsér"
+                    description="A játék tölcsér mutatja, hogy a felhasználók hányan jutnak el az 5. kérdésig, a 10. kérdésig, és hányan fejezik be sikeresen mind a 15 kérdést. Ez segít azonosítani, hogy melyik szakaszban adják fel legtöbben a játékot."
+                    interpretation="Ha az 5. kérdésnél magas a lemorzsolódás, lehet, hogy túl nehéz a játék eleje. Ha a 10. kérdésnél sokan feladják, lehet, hogy a játék túl hosszú vagy unalmas. A cél, hogy minél többen fejezzék be mind a 15 kérdést."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
@@ -195,7 +227,14 @@ const UserJourneyDashboard = () => {
           <TabsContent value="paths" className="space-y-6">
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Leggyakoribb Útvonalak</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-white">Leggyakoribb Útvonalak</CardTitle>
+                  <MetricInfo
+                    title="Gyakori Útvonalak"
+                    description="Ez a lista mutatja, hogy a felhasználók milyen sorrendben keresik fel az oldalakon keresztül az alkalmazást. Például: Dashboard → Játék → Ranglista. Minden útvonal mellett látható, hogy hányan követték azt az útvonalat."
+                    interpretation="A leggyakoribb útvonalak megmutatják, hogy a felhasználók hogyan használják az alkalmazást a gyakorlatban. Ha váratlan útvonalakat látsz, érdemes megvizsgálni, hogy miért választják azokat."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -213,7 +252,14 @@ const UserJourneyDashboard = () => {
           <TabsContent value="exits" className="space-y-6">
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Kilépési Pontok</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-white">Kilépési Pontok</CardTitle>
+                  <MetricInfo
+                    title="Kilépési Pontok"
+                    description="Ezek azok az oldalak, ahol a felhasználók leggyakrabban kilépnek az alkalmazásból vagy bezárják azt. Minden oldal mellett látható, hány kilépés történt onnan."
+                    interpretation="Magas kilépési arány egy adott oldalon azt jelezheti, hogy ott valami probléma van, vagy a felhasználók elvégezték, amit akartak (pl. megnézték a ranglistát és kiléptek). A Játék oldalról történő kilépések normálisak, ha befejezték a játékot."
+                  />
+                </div>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
