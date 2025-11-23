@@ -203,7 +203,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </p>
 
               {/* Enhanced red highlight bar for rewards */}
-              <div className="relative bg-gradient-to-r from-red-800 via-orange-600 to-red-800 border-[2px] sm:border-[3px] border-red-300/80 rounded-[30px] p-1.5 sm:p-2.5 mb-3 sm:mb-4 shadow-xl" style={{ boxShadow: 'inset 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 -2px 8px rgba(255, 165, 0, 0.3), 0 6px 20px rgba(239, 68, 68, 0.7), 0 0 30px rgba(239, 68, 68, 0.5), 0 8px 30px rgba(0, 0, 0, 0.6)' }}>
+              <div className="relative bg-gradient-to-r from-red-800 via-orange-600 to-red-800 border-[2px] sm:border-[3px] border-red-300/80 rounded-[20px] p-1.5 sm:p-2.5 mb-3 sm:mb-4 shadow-xl" style={{ boxShadow: 'inset 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 -2px 8px rgba(255, 165, 0, 0.3), 0 6px 20px rgba(239, 68, 68, 0.7), 0 0 30px rgba(239, 68, 68, 0.5), 0 8px 30px rgba(0, 0, 0, 0.6)' }}>
                 <div className="flex items-center justify-center gap-1.5 sm:gap-2.5">
                   <div className="flex items-center gap-0.5 sm:gap-1">
                     <GoldRewardCoin3D size={18} className="drop-shadow-2xl sm:w-[22px] sm:h-[22px]" />
@@ -219,7 +219,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <Button
                 onClick={handleGoldSaverPurchase}
                 disabled={!hasEnoughGold || loadingGoldSaver}
-                className="w-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 hover:from-green-300 hover:via-green-400 hover:to-green-600 text-white font-black text-xs sm:text-sm py-2 sm:py-3 rounded-[30px] disabled:opacity-50 border-[2px] sm:border-[3px] border-green-300 shadow-2xl transition-all" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 0, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.5), 0 8px 25px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.5), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
+                className="w-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 hover:from-green-300 hover:via-green-400 hover:to-green-600 text-white font-black text-xs sm:text-sm py-2 sm:py-3 rounded-[20px] disabled:opacity-50 border-[2px] sm:border-[3px] border-green-300 shadow-2xl transition-all" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 0, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.5), 0 8px 25px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.5), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
               >
                 {loadingGoldSaver ? (
                   <div className="flex items-center justify-center gap-1.5 sm:gap-2">
@@ -227,9 +227,9 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                     <span className="text-[10px] sm:text-xs">{t('rescue.processing')}</span>
                   </div>
                 ) : hasEnoughGold ? (
-                  <span className="text-xs sm:text-sm tracking-wider">500 ARANY</span>
+                  <span className="text-sm sm:text-base tracking-wider">500 ARANY</span>
                 ) : (
-                  <span className="text-[10px] sm:text-xs">{t('rescue.not_enough_short')}</span>
+                  <span className="text-xs sm:text-sm">{t('rescue.not_enough_short')}</span>
                 )}
               </Button>
 
@@ -284,7 +284,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <Button
                 onClick={handleInstantRescuePurchase}
                 disabled={loadingInstantRescue}
-                className="w-full bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 hover:from-yellow-200 hover:via-yellow-300 hover:to-yellow-500 text-black font-black text-xs sm:text-sm py-2 sm:py-3 rounded-[30px] border-[2px] sm:border-[3px] border-yellow-200 shadow-2xl transition-all" style={{ textShadow: '0 1px 3px rgba(255, 255, 255, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.6), 0 8px 25px rgba(234, 179, 8, 0.9), 0 0 40px rgba(234, 179, 8, 0.6), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
+                className="w-full bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 hover:from-yellow-200 hover:via-yellow-300 hover:to-yellow-500 text-black font-black text-xs sm:text-sm py-2 sm:py-3 rounded-[20px] border-[2px] sm:border-[3px] border-yellow-200 shadow-2xl transition-all" style={{ textShadow: '0 1px 3px rgba(255, 255, 255, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.6), 0 8px 25px rgba(234, 179, 8, 0.9), 0 0 40px rgba(234, 179, 8, 0.6), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
               >
                 {loadingInstantRescue ? (
                   <div className="flex items-center justify-center gap-1.5 sm:gap-2">
@@ -292,7 +292,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                     <span className="text-[10px] sm:text-xs">{t('rescue.processing')}</span>
                   </div>
                 ) : (
-                  <span className="text-xs sm:text-sm tracking-wider">1,49 $</span>
+                  <span className="text-base sm:text-xl tracking-wider">CSAK 1,49$</span>
                 )}
               </Button>
 
