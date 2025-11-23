@@ -1,6 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.75.0";
-import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+};
+
+const handleCorsPreflight = () => {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders
+  });
+};
 
 /**
  * SAFE MODE Translation: Landing Page Content
@@ -95,13 +107,9 @@ const LANDING_PAGE_KEYS = [
 ];
 
 serve(async (req) => {
-  const origin = req.headers.get('origin');
-  
   if (req.method === 'OPTIONS') {
-    return handleCorsPreflight(origin);
+    return handleCorsPreflight();
   }
-  
-  const corsHeaders = getCorsHeaders(origin);
 
   try {
     const { testMode = true, maxItems = 5 } = await req.json().catch(() => ({ testMode: true, maxItems: 5 }));
@@ -190,7 +198,7 @@ ${GRAMMAR_RULES[lang]}
 
 Return ONLY the translated text, no explanations.`;
 
-          const response = await fetch('https://api.lovable.app/v1/ai', {
+          const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${lovableApiKey}`,
