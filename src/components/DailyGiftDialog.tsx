@@ -169,21 +169,54 @@ const DailyGiftDialog = ({
           <DialogTitle className="sr-only">Daily Gift</DialogTitle>
           <DialogDescription className="sr-only">{t('daily_gift.show_reward_description')}</DialogDescription>
 
-          {/* Bezáró X - közelebb a pajzshoz (top: 2vh helyett 1vh) */}
+          {/* Professzionális 3D Bezáró X - Welcome Bonus stílusú */}
           <button
             onClick={onLater}
             aria-label={t('daily_gift.close_aria')}
-            className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
+            className="absolute z-[10001] rounded-full transition-all flex items-center justify-center group"
             style={{
               top: "max(1vh, env(safe-area-inset-top))",
               right: "max(1vh, env(safe-area-inset-right))",
               width: "clamp(36px, 8svw, 48px)",
               height: "clamp(36px, 8svw, 48px)",
-              fontSize: "clamp(18px, 5svw, 28px)",
-              lineHeight: 1,
             }}
           >
-            ×
+            {/* Árnyék réteg */}
+            <div className="absolute inset-0 rounded-full translate-y-1 translate-x-1"
+                 style={{
+                   background: 'rgba(0,0,0,0.6)',
+                   filter: 'blur(6px)'
+                 }} />
+            
+            {/* Külső arany keret */}
+            <div className="absolute inset-0 rounded-full"
+                 style={{
+                   background: 'linear-gradient(135deg, #d97706, #f59e0b 50%, #d97706)',
+                   boxShadow: '0 0 0 2px #b45309, inset 0 0 0 1px rgba(0,0,0,0.3)'
+                 }} />
+            
+            {/* Belső gradiens */}
+            <div className="absolute inset-[2px] rounded-full"
+                 style={{
+                   background: 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)',
+                   boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.1), inset 0 -2px 6px rgba(0,0,0,0.4)'
+                 }} />
+            
+            {/* Fénysugár hatás */}
+            <div className="absolute inset-[2px] rounded-full pointer-events-none"
+                 style={{
+                   background: 'radial-gradient(ellipse 100% 60% at 30% 10%, rgba(255,255,255,0.3), transparent 60%)'
+                 }} />
+            
+            {/* X ikon */}
+            <span className="relative z-10 text-white font-bold transition-transform group-hover:scale-110"
+                  style={{
+                    fontSize: "clamp(18px, 5svw, 28px)",
+                    lineHeight: 1,
+                    textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(255,255,255,0.2)'
+                  }}>
+              ×
+            </span>
           </button>
 
           {/* Zoom animáció wrapper - 1.5mp scale-in középről */}
@@ -264,17 +297,52 @@ const DailyGiftDialog = ({
               {/* Content Area */}
               <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                 
-                {/* DAY Counter with fire emoji */}
-                <p className="font-black text-white text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] mb-[3%]"
-                   style={{ 
-                     fontSize: 'clamp(1.5rem, 13cqw, 2.6rem)', 
-                     letterSpacing: '0.06em',
-                     textShadow: '0 0 16px rgba(255,255,255,0.2)'
-                   }}>
-                  {t('daily.day_label')} {weeklyEntryCount + 1} 🔥
-                </p>
+                {/* DAY Counter with 3D SVG fire */}
+                <div className="flex items-center justify-center gap-2 mb-[3%]">
+                  <p className="font-black text-white text-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]"
+                     style={{ 
+                       fontSize: 'clamp(1.5rem, 13cqw, 2.6rem)', 
+                       letterSpacing: '0.06em',
+                       textShadow: '0 0 16px rgba(255,255,255,0.2)'
+                     }}>
+                    {t('daily.day_label')} {weeklyEntryCount + 1}
+                  </p>
+                  
+                  {/* 3D Fire SVG */}
+                  <svg viewBox="0 0 100 120" className="flex-shrink-0" style={{ width: 'clamp(24px, 6vw, 40px)', height: 'auto' }}>
+                    <defs>
+                      <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#FFD700" />
+                        <stop offset="30%" stopColor="#FF8C00" />
+                        <stop offset="60%" stopColor="#FF4500" />
+                        <stop offset="100%" stopColor="#B22222" />
+                      </linearGradient>
+                      <radialGradient id="fireHighlight" cx="35%" cy="30%">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+                        <stop offset="50%" stopColor="rgba(255,255,255,0.3)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                      </radialGradient>
+                      <filter id="fireShadow">
+                        <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#FF4500" floodOpacity="0.8"/>
+                      </filter>
+                    </defs>
+                    {/* Fire shape */}
+                    <path d="M50 10 C40 25, 30 40, 30 60 C30 80, 40 95, 50 100 C60 95, 70 80, 70 60 C70 40, 60 25, 50 10 Z
+                             M45 25 C40 35, 38 48, 42 60 C44 68, 48 75, 50 78 C52 75, 56 68, 58 60 C62 48, 60 35, 55 25 Z" 
+                          fill="url(#fireGrad)" stroke="#8B0000" strokeWidth="1.5" filter="url(#fireShadow)" 
+                          style={{ animation: 'fireFlicker 0.8s ease-in-out infinite' }} />
+                    {/* Highlight */}
+                    <ellipse cx="45" cy="35" rx="12" ry="18" fill="url(#fireHighlight)" opacity="0.7" />
+                    <style>{`
+                      @keyframes fireFlicker {
+                        0%, 100% { transform: scale(1) translateY(0); }
+                        50% { transform: scale(1.05) translateY(-2px); }
+                      }
+                    `}</style>
+                  </svg>
+                </div>
 
-                {/* Weekly Rewards Preview - 7 boxes */}
+                {/* Weekly Rewards Preview - 7 boxes with 3D SVG stars and coins */}
                 <div className="flex gap-[2.5%] justify-center mb-[4%] flex-wrap w-full">
                   {DAILY_REWARDS.map((reward, index) => {
                     const dayNumber = index + 1;
@@ -283,15 +351,32 @@ const DailyGiftDialog = ({
                     
                     return (
                       <div key={dayNumber} className="flex flex-col items-center gap-[1.5%]">
-                        <div
-                          style={{ 
-                            fontSize: 'clamp(0.875rem, 6.5cqw, 1.2rem)',
-                            filter: isActive 
-                              ? `drop-shadow(0 0 6px hsl(var(--dup-gold-500)))` 
-                              : 'grayscale(100%) brightness(1.2) drop-shadow(0 0 4px rgba(192,192,192,0.6))'
-                          }}>
-                          ⭐
-                        </div>
+                        {/* 3D Star SVG */}
+                        <svg viewBox="0 0 100 100" style={{ 
+                          width: 'clamp(14px, 6.5cqw, 24px)', 
+                          height: 'auto',
+                          filter: isActive 
+                            ? `drop-shadow(0 0 6px #FBBF24) drop-shadow(0 0 12px rgba(251,191,36,0.6))` 
+                            : 'grayscale(100%) brightness(1.2) drop-shadow(0 0 4px rgba(192,192,192,0.6))'
+                        }}>
+                          <defs>
+                            <linearGradient id={`starGrad${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor={isActive ? "#FFD700" : "#C0C0C0"} />
+                              <stop offset="50%" stopColor={isActive ? "#FFA500" : "#A0A0A0"} />
+                              <stop offset="100%" stopColor={isActive ? "#FF8C00" : "#808080"} />
+                            </linearGradient>
+                            <radialGradient id={`starHigh${index}`} cx="30%" cy="25%">
+                              <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+                              <stop offset="50%" stopColor="rgba(255,255,255,0.3)" />
+                              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                            </radialGradient>
+                          </defs>
+                          <path d="M50 5 L60 35 L92 35 L67 55 L77 85 L50 65 L23 85 L33 55 L8 35 L40 35 Z" 
+                                fill={`url(#starGrad${index})`} 
+                                stroke={isActive ? "#B8860B" : "#696969"} 
+                                strokeWidth="2" />
+                          <ellipse cx="42" cy="25" rx="10" ry="8" fill={`url(#starHigh${index})`} opacity="0.8" />
+                        </svg>
                         
                         <div className="relative rounded-lg" style={{ padding: '1.2% 3.5%' }}>
                           <div className="absolute inset-0 rounded-lg"
@@ -310,7 +395,22 @@ const DailyGiftDialog = ({
                                }} />
                           
                           <div className="relative z-10 flex items-center justify-center gap-[0.3em]">
-                            <span style={{ fontSize: 'clamp(0.625rem, 5.2cqw, 0.9rem)' }}>🪙</span>
+                            {/* Mini 3D Coin SVG */}
+                            <svg viewBox="0 0 100 100" style={{ width: 'clamp(10px, 5.2cqw, 18px)', height: 'auto' }}>
+                              <defs>
+                                <linearGradient id={`miniCoinGrad${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                                  <stop offset="0%" stopColor="#FFD700" />
+                                  <stop offset="50%" stopColor="#FFA500" />
+                                  <stop offset="100%" stopColor="#FF8C00" />
+                                </linearGradient>
+                                <radialGradient id={`miniCoinHigh${index}`} cx="35%" cy="30%">
+                                  <stop offset="0%" stopColor="rgba(255,255,255,0.8)" />
+                                  <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                                </radialGradient>
+                              </defs>
+                              <circle cx="50" cy="50" r="45" fill={`url(#miniCoinGrad${index})`} stroke="#B8860B" strokeWidth="3" />
+                              <ellipse cx="45" cy="40" rx="18" ry="15" fill={`url(#miniCoinHigh${index})`} opacity="0.7" />
+                            </svg>
                             <span className="font-bold text-white"
                                   style={{ 
                                     fontSize: 'clamp(0.625rem, 5.2cqw, 0.9rem)',
@@ -325,7 +425,7 @@ const DailyGiftDialog = ({
                   })}
                 </div>
 
-                {/* Today's Reward - BIG DISPLAY */}
+                {/* Today's Reward - BIG DISPLAY with large 3D coin */}
                 <div className="relative rounded-xl mb-[4%]" style={{ padding: '2.5% 8%' }}>
                   <div className="absolute inset-0 rounded-xl translate-y-0.5 translate-x-0.5"
                        style={{
@@ -364,7 +464,38 @@ const DailyGiftDialog = ({
                        }} />
                   
                   <div className="relative z-10 flex items-center justify-center gap-[0.4em]">
-                    <span style={{ fontSize: 'clamp(1.25rem, 10cqw, 2rem)' }}>🪙</span>
+                    {/* Large 3D Coin SVG with pulse animation */}
+                    <svg viewBox="0 0 100 100" style={{ 
+                      width: 'clamp(32px, 10cqw, 64px)', 
+                      height: 'auto',
+                      animation: 'bigCoinPulse 1.5s ease-in-out infinite'
+                    }}>
+                      <defs>
+                        <linearGradient id="bigCoinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#FFD700" />
+                          <stop offset="25%" stopColor="#FFC700" />
+                          <stop offset="50%" stopColor="#FFA500" />
+                          <stop offset="75%" stopColor="#FF8C00" />
+                          <stop offset="100%" stopColor="#FFD700" />
+                        </linearGradient>
+                        <radialGradient id="bigCoinHighlight" cx="35%" cy="30%">
+                          <stop offset="0%" stopColor="rgba(255,255,255,0.95)" />
+                          <stop offset="40%" stopColor="rgba(255,255,255,0.4)" />
+                          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                        </radialGradient>
+                        <filter id="bigCoinShadow">
+                          <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#FF8C00" floodOpacity="0.8"/>
+                        </filter>
+                      </defs>
+                      {/* Outer rim - 3D effect */}
+                      <circle cx="50" cy="50" r="48" fill="url(#bigCoinGrad)" stroke="#B8860B" strokeWidth="3" filter="url(#bigCoinShadow)" />
+                      {/* Inner circle with depth */}
+                      <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(139,69,19,0.4)" strokeWidth="2" />
+                      {/* Highlight effect */}
+                      <ellipse cx="42" cy="38" rx="22" ry="18" fill="url(#bigCoinHighlight)" opacity="0.85" />
+                      {/* Center emblem */}
+                      <circle cx="50" cy="50" r="28" fill="none" stroke="rgba(139,69,19,0.3)" strokeWidth="1.5" />
+                    </svg>
                     <span className="font-black text-white"
                           style={{ 
                             fontSize: 'clamp(1.5rem, 12cqw, 2.5rem)',
@@ -374,6 +505,18 @@ const DailyGiftDialog = ({
                       +{nextReward}
                     </span>
                   </div>
+                  <style>{`
+                    @keyframes bigCoinPulse {
+                      0%, 100% { 
+                        transform: scale(1) rotate(0deg);
+                        filter: drop-shadow(0 0 12px rgba(251,191,36,0.8));
+                      }
+                      50% { 
+                        transform: scale(1.08) rotate(5deg);
+                        filter: drop-shadow(0 0 20px rgba(251,191,36,1)) drop-shadow(0 0 32px rgba(251,191,36,0.6));
+                      }
+                    }
+                  `}</style>
                 </div>
 
                 {/* Hex Accept Button */}
