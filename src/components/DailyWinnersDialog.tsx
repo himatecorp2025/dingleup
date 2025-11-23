@@ -233,7 +233,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   }}
                                 />
                                 {/* Avatar in center */}
-                                <div className="absolute" style={{ left: '18.5%', top: '18%', width: '63%', height: '45%' }}>
+                                <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
                                   <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
                                     {/* 3D Silver Border Effect */}
                                     <div className="absolute inset-0 rounded-full" style={{
@@ -308,7 +308,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   }}
                                 />
                                 {/* Avatar in center */}
-                                <div className="absolute" style={{ left: '18.5%', top: '18%', width: '63%', height: '45%' }}>
+                                <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
                                   <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
                                     {/* 3D Gold Border Effect */}
                                     <div className="absolute inset-0 rounded-full" style={{
@@ -384,7 +384,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   }}
                                 />
                                 {/* Avatar in center */}
-                                <div className="absolute" style={{ left: '18.5%', top: '18%', width: '63%', height: '45%' }}>
+                                <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
                                   <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
                                     {/* 3D Bronze Border Effect */}
                                     <div className="absolute inset-0 rounded-full" style={{
