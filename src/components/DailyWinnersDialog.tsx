@@ -146,7 +146,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
 
           <div 
-            className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center"
+            className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center overflow-hidden"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
