@@ -14,13 +14,44 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
     return now.toISOString().split('T')[0]; // YYYY-MM-DD format
   };
 
+  // Check if popup can be shown today
   useEffect(() => {
     if (!userId) {
       setCanShowToday(false);
       return;
     }
 
-    checkIfCanShowToday(forceAlwaysShow);
+    const checkIfCanShowToday = async () => {
+      try {
+        if (forceAlwaysShow) {
+          setCanShowToday(true);
+          return;
+        }
+
+        const currentDay = getCurrentDay();
+
+        // Check if user has seen popup today
+        const { data, error } = await supabase
+          .from('daily_winners_popup_views')
+          .select('last_shown_day')
+          .eq('user_id', userId)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('[DAILY-WINNERS-POPUP] Error checking popup status:', error);
+          setCanShowToday(false);
+          return;
+        }
+
+        // Can show if not seen today
+        setCanShowToday(!data || data.last_shown_day !== currentDay);
+      } catch (error) {
+        console.error('[DAILY-WINNERS-POPUP] Error in checkIfCanShowToday:', error);
+        setCanShowToday(false);
+      }
+    };
+
+    checkIfCanShowToday();
   }, [userId, forceAlwaysShow]);
 
   // Auto-trigger popup when canShowToday becomes true
@@ -29,37 +60,6 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
       setShowPopup(true);
     }
   }, [canShowToday, showPopup]);
-
-  const checkIfCanShowToday = async (force = false) => {
-    try {
-      if (force) {
-        // TEMP: force popup to be allowed regardless of last_shown_day
-        setCanShowToday(true);
-        return;
-      }
-
-      const currentDay = getCurrentDay();
-
-      // Check if user has seen popup today
-      const { data, error } = await supabase
-        .from('daily_winners_popup_views')
-        .select('last_shown_day')
-        .eq('user_id', userId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('[DAILY-WINNERS-POPUP] Error checking popup status:', error);
-        setCanShowToday(false);
-        return;
-      }
-
-      // Can show if not seen today
-      setCanShowToday(!data || data.last_shown_day !== currentDay);
-    } catch (error) {
-      console.error('[DAILY-WINNERS-POPUP] Error in checkIfCanShowToday:', error);
-      setCanShowToday(false);
-    }
-  };
 
   const closePopup = async () => {
     if (!userId) return;
