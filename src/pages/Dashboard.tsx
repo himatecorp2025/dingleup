@@ -138,12 +138,12 @@ const Dashboard = () => {
   }, [searchParams, setSearchParams]);
 
   // Check age-gate FIRST (ABSOLUTE PRIORITY) - blocks ALL other popups until completed
-  // TEMP: Force always show for testing - minden frissítésnél megjelenik
   useEffect(() => {
     if (profile && !loading && userId) {
-      // TEMP: Always show age-gate for testing
-      setShowAgeGate(true);
-      setAgeGateCompleted(false); // Block all other popups
+      // Check if user needs age verification
+      const needsAgeVerification = !profile.age_verified || !profile.birth_date;
+      setShowAgeGate(needsAgeVerification);
+      setAgeGateCompleted(!needsAgeVerification);
     }
   }, [profile, loading, userId]);
 
@@ -382,15 +382,14 @@ if (!profile) {
         }}
       />
     {/* Age-gate modal (ABSOLUTE PRIORITY - blocks ALL popups until completed) */}
-    {/* TEMP: Testing mode - modal won't close on success to allow multiple displays */}
     {userId && (
       <AgeGateModal 
         open={showAgeGate} 
         userId={userId} 
         onSuccess={() => {
-          // TEMP: Don't close modal, just refresh profile
-          // setShowAgeGate(false);
-          // setAgeGateCompleted(true);
+          console.log('[Dashboard] Age gate completed successfully');
+          setShowAgeGate(false);
+          setAgeGateCompleted(true);
           refreshProfile();
         }} 
       />
