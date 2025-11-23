@@ -182,7 +182,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
             {/* Main card with multiple depth layers */}
             <div className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-yellow-300 rounded-[30px] p-2 sm:p-3 shadow-2xl flex-1 flex flex-col min-h-[260px] sm:min-h-[280px] md:min-h-[300px]" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(234, 179, 8, 0.4)' }}>
               {/* Inner highlight layer */}
-              <div className="absolute inset-[5px] sm:inset-[6px] rounded-[26px] sm:rounded-[25px] bg-gradient-to-br from-blue-600/20 via-transparent to-purple-700/20 pointer-events-none"></div>
+              <div className="absolute inset-[5px] sm:inset-[6px] rounded-[30px] sm:rounded-[30px] bg-gradient-to-br from-blue-600/20 via-transparent to-purple-700/20 pointer-events-none"></div>
               <div className="absolute inset-0 rounded-[30px] bg-gradient-to-t from-transparent via-yellow-400/5 to-yellow-300/10 pointer-events-none"></div>
               {/* Large coin icon at top */}
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
@@ -247,7 +247,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
             {/* Main card with multiple depth layers */}
             <div className="relative bg-gradient-to-br from-purple-800 via-pink-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-cyan-300 rounded-[30px] p-2 sm:p-3 shadow-2xl flex-1 flex flex-col min-h-[260px] sm:min-h-[280px] md:min-h-[300px]" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(6, 182, 212, 0.4)' }}>
               {/* Inner highlight layer */}
-              <div className="absolute inset-[5px] sm:inset-[6px] rounded-[26px] sm:rounded-[25px] bg-gradient-to-br from-purple-600/20 via-transparent to-pink-700/20 pointer-events-none"></div>
+              <div className="absolute inset-[5px] sm:inset-[6px] rounded-[30px] sm:rounded-[30px] bg-gradient-to-br from-purple-600/20 via-transparent to-pink-700/20 pointer-events-none"></div>
               <div className="absolute inset-0 rounded-[30px] bg-gradient-to-t from-transparent via-cyan-400/5 to-blue-300/10 pointer-events-none"></div>
               {/* Large diamond icon at top */}
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
@@ -314,7 +314,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           <Button
             onClick={onClose}
             variant="ghost"
-            className="relative text-yellow-100 hover:text-yellow-50 hover:bg-white/15 text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 font-bold transition-all" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.9)' }}
+            className="relative rounded-[30px] text-yellow-100 hover:text-yellow-50 hover:bg-white/15 text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 font-bold transition-all" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.9)' }}
           >
             {t('rescue.cancel_button')}
           </Button>
