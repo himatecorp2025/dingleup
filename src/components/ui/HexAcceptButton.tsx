@@ -177,7 +177,7 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
       <span
         className="relative z-[1] font-black text-white tracking-[0.08em] px-4"
         style={{
-          fontSize: "clamp(0.7rem, 3.5cqw, 1.45rem)",
+          fontSize: "clamp(1.4rem, 7cqw, 2.9rem)",
           textShadow:
             "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
           animation: "text-pulse 1.125s ease-in-out infinite",

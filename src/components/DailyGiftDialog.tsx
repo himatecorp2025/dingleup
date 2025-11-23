@@ -170,28 +170,25 @@ const DailyGiftDialog = ({
           <button
             onClick={onLater}
             disabled={claiming}
-            className={`absolute top-[8vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            className={`absolute top-[8vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out focus:outline-none focus-visible:ring-0 ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
             style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '0ms' }}
             aria-label={t('daily_gift.close_aria')}
           >
             ×
           </button>
 
-          {/* Zoom animáció wrapper - 1.5mp scale-in középről, TELJESEN KÖZÉPRE */}
+          {/* Zoom animáció wrapper - 1.5mp scale-in középről */}
           <div 
-            className="relative z-10 w-full flex items-center justify-center"
+            className="relative z-10"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
               transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto',
-              maxWidth: 'min(95vw, 600px)',
-              margin: '0 auto'
+              willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
           >
-            <div className="relative w-full">
-              <HexShieldFrame showShine={true}>
+            <HexShieldFrame showShine={true}>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
                 ref={badgeRef}
@@ -498,7 +495,6 @@ const DailyGiftDialog = ({
                 </div>
               </div>
             </HexShieldFrame>
-            </div>
           </div>
         </div>
       </DialogContent>
