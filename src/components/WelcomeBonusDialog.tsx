@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { trackBonusEvent } from '@/lib/analytics';
+import { trackBonusEvent, trackFeatureUsage } from '@/lib/analytics';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import { useI18n } from '@/i18n';
@@ -58,8 +58,22 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
   }, [open]);
 
   const handleClaim = async () => {
+    if (!userId) return;
+    
+    // Track feature usage - claim attempt
+    await trackFeatureUsage(userId, 'user_action', 'welcome_bonus', 'claim_attempt', {
+      coins_amount: 2500,
+      lives_amount: 50
+    });
+    
     const success = await onClaim();
     if (success && userId) {
+      // Track feature usage - successful claim
+      await trackFeatureUsage(userId, 'user_action', 'welcome_bonus', 'claim_success', {
+        coins_amount: 2500,
+        lives_amount: 50
+      });
+      
       trackBonusEvent(userId, 'welcome_claimed', 'welcome', {
         coins_amount: 2500,
         lives_amount: 50

@@ -1,5 +1,7 @@
 import { Users, SkipForward, CircleSlash, CheckCheck } from "lucide-react";
 import { useI18n } from "@/i18n";
+import { trackFeatureUsage } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
 
 interface GameLifelinesProps {
   help5050UsageCount: number;
@@ -223,10 +225,22 @@ export const GameLifelines = ({
 }: GameLifelinesProps) => {
   const { t } = useI18n();
   
+  const trackLifelineUsage = async (lifelineName: string, cost?: number) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      await trackFeatureUsage(session.user.id, 'lifeline_usage', 'lifeline', lifelineName, {
+        cost: cost || 0
+      });
+    }
+  };
+  
   return (
     <div className="flex justify-center items-center gap-[5%] mb-2">
       <Lifeline3DButton
-        onClick={onUseHelp5050}
+        onClick={async () => {
+          await trackLifelineUsage('50_50', help5050UsageCount === 1 ? 15 : 0);
+          onUseHelp5050();
+        }}
         disabled={help5050UsageCount >= 2}
         isActive={isHelp5050ActiveThisQuestion}
         icon={OneThirdIcon}
@@ -235,7 +249,10 @@ export const GameLifelines = ({
         colorScheme="orange"
       />
       <Lifeline3DButton
-        onClick={onUseHelp2xAnswer}
+        onClick={async () => {
+          await trackLifelineUsage('double_answer', help2xAnswerUsageCount === 1 ? 20 : 0);
+          onUseHelp2xAnswer();
+        }}
         disabled={help2xAnswerUsageCount >= 2}
         isActive={isDoubleAnswerActiveThisQuestion}
         icon={CheckCheck}
@@ -244,7 +261,10 @@ export const GameLifelines = ({
         colorScheme="green"
       />
       <Lifeline3DButton
-        onClick={onUseHelpAudience}
+        onClick={async () => {
+          await trackLifelineUsage('audience', helpAudienceUsageCount === 1 ? 25 : 0);
+          onUseHelpAudience();
+        }}
         disabled={helpAudienceUsageCount >= 2}
         isActive={isAudienceActiveThisQuestion}
         icon={Users}
@@ -253,7 +273,10 @@ export const GameLifelines = ({
         colorScheme="blue"
       />
       <Lifeline3DButton
-        onClick={onUseQuestionSwap}
+        onClick={async () => {
+          await trackLifelineUsage('question_swap', skipCost);
+          onUseQuestionSwap();
+        }}
         disabled={usedQuestionSwap || coins < skipCost}
         isActive={false}
         icon={SkipForward}
