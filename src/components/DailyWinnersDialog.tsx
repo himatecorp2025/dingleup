@@ -506,6 +506,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           )}
                         </div>
 
+                        <div style={{ transform: 'translateY(-20%)' }}>
                         {topPlayers.slice(3, 10).map((player) => (
                           <div key={player.user_id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg backdrop-blur-sm"
                                style={{
@@ -542,6 +543,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                             </div>
                           </div>
                         ))}
+                        </div>
                       </>
                     )}
                   </div>
