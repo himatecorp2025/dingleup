@@ -30,8 +30,6 @@ import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { IdleWarning } from '@/components/IdleWarning';
 
-import { DailyWinnerPopup } from '@/components/DailyWinnerPopup';
-
 import BottomNav from '@/components/BottomNav';
 import gameBackground from '@/assets/game-background.png';
 import { toast } from 'sonner';
@@ -52,11 +50,10 @@ const Dashboard = () => {
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
   const { canClaim, showPopup, weeklyEntryCount, nextReward, claiming, claimDailyGift, checkDailyGift, handleLater, showDailyGiftPopup, setShowPopup } = useDailyGift(userId, false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
-  const { showPopup: showDailyWinnersPopup, triggerPopup: triggerDailyWinnersPopup, closePopup: closeDailyWinnersPopup, canShowToday: canShowDailyPopup } = useDailyWinnersPopup(userId, profile?.username === 'DingleUP');
+  const { showPopup: showDailyWinnersPopup, closePopup: closeDailyWinnersPopup } = useDailyWinnersPopup(userId, false);
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   const boosterState = useBoosterState(userId);
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
-  const [dailyGiftJustClaimed, setDailyGiftJustClaimed] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
   // Age-gate modal state - ABSOLUTE PRIORITY GATE
@@ -169,34 +166,6 @@ const Dashboard = () => {
     }
   }, [canMountModals, canClaim, ageGateCompleted, showAgeGate, showWelcomeBonus, userId]);
 
-  // Show Daily Winners popup FOURTH (after age-gate COMPLETED, Daily Gift is handled)
-  useEffect(() => {
-    if (!canMountModals || !ageGateCompleted || showAgeGate || showWelcomeBonus || showPopup || !userId || showDailyWinnersPopup) {
-      return;
-    }
-
-    // TEMP: for admin "DingleUP" force showing on every refresh/login
-    if (profile?.username === 'DingleUP') {
-      triggerDailyWinnersPopup();
-      return;
-    }
-
-    if (canShowDailyPopup && dailyGiftJustClaimed) {
-      triggerDailyWinnersPopup();
-    }
-  }, [
-    canMountModals,
-    canShowDailyPopup,
-    ageGateCompleted,
-    showAgeGate,
-    showWelcomeBonus,
-    showPopup,
-    userId,
-    dailyGiftJustClaimed,
-    triggerDailyWinnersPopup,
-    showDailyWinnersPopup,
-    profile,
-  ]);
 
 
 
@@ -256,9 +225,6 @@ const Dashboard = () => {
     if (success) {
       await checkDailyGift();
       await refreshProfile();
-      setDailyGiftJustClaimed(true);
-      triggerDailyWinnersPopup();
-      setTimeout(() => setDailyGiftJustClaimed(false), 2000);
     }
     return success;
   };
@@ -266,9 +232,6 @@ const Dashboard = () => {
   const handleCloseDailyGift = () => {
     handleLater();
     setShowPopup(false);
-    setDailyGiftJustClaimed(true);
-    // Trigger daily winners popup 3 seconds after dismissing
-    triggerDailyWinnersPopup();
   };
 
   const handleClaimWelcomeBonus = async () => {
@@ -442,12 +405,7 @@ if (!profile) {
       onStayActive={handleStayActive} 
     />
     
-    {/* Daily winner popup - shows if user won yesterday (only after age gate completed) */}
-    {ageGateCompleted && !showAgeGate && (
-      <DailyWinnerPopup userId={userId} />
-    )}
-    
-    {/* Daily Winners Dialog - tegnapi TOP 10 (only after age gate completed) */}
+    {/* Daily Winners Dialog - tegnapi TOP 10 (csak az első napi bejelentkezéskor) */}
     <DailyWinnersDialog 
       open={ageGateCompleted && !showAgeGate && showDailyWinnersPopup} 
       onClose={closeDailyWinnersPopup} 
