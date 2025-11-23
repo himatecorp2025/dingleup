@@ -224,7 +224,7 @@ const DailyGiftDialog = ({
                   <div className="absolute inset-[6px]"
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 95% 75%) 0%, hsl(0 90% 65%) 30%, hsl(0 85% 55%) 60%, hsl(0 78% 48%) 100%)',
+                         background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(220 95% 75%) 0%, hsl(225 90% 65%) 30%, hsl(230 85% 55%) 60%, hsl(235 78% 48%) 100%)',
                          boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
                        }} />
                   
@@ -347,7 +347,7 @@ const DailyGiftDialog = ({
                           <div className="absolute inset-[1.5px] rounded-lg"
                                style={{
                                  background: isActive
-                                   ? 'linear-gradient(180deg, rgba(139, 92, 246, 0.3), rgba(109, 40, 217, 0.4))'
+                                   ? 'linear-gradient(180deg, rgba(65, 105, 225, 0.3), rgba(30, 64, 175, 0.4))'
                                    : 'linear-gradient(180deg, rgba(100, 100, 100, 0.3), rgba(80, 80, 80, 0.4))',
                                }} />
                           
