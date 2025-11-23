@@ -74,8 +74,8 @@ const Hero = () => {
           </div>
 
           {/* Title */}
-          <div className="text-center mb-8 sm:mb-12 space-y-4 sm:space-y-6 animate-fade-in px-4" style={{ animationDelay: '0.2s' }}>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 leading-tight tracking-tight">
+          <div className="text-center mb-12 sm:mb-16 space-y-4 sm:space-y-6 animate-fade-in px-4" style={{ animationDelay: '0.2s' }}>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 sm:mb-8 leading-tight tracking-tight">
               <span className="text-white/90 drop-shadow-lg">
                 {t('landing.hero.title_line1')}
               </span>
@@ -90,17 +90,17 @@ const Hero = () => {
           <div className="relative mb-12 sm:mb-16 animate-fade-in hidden sm:block" style={{ animationDelay: '0.4s' }}>
             <div className="flex justify-center items-center gap-4 perspective-1000">
               {/* Game screenshot mockups */}
-              <div className="relative w-64 h-[500px] bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-3xl border-4 border-white/20 shadow-2xl backdrop-blur-sm transform -rotate-6 hover:rotate-0 transition-transform duration-500">
+              <div className="relative w-64 h-[350px] bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-3xl border-4 border-white/20 shadow-2xl backdrop-blur-sm transform -rotate-6 hover:rotate-0 transition-transform duration-500">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Trophy className="w-20 h-20 text-yellow-400 drop-shadow-lg animate-pulse" />
                 </div>
               </div>
-              <div className="relative w-64 h-[500px] bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-3xl border-4 border-white/20 shadow-2xl backdrop-blur-sm transform scale-110 hover:scale-115 transition-transform duration-500 z-10">
+              <div className="relative w-64 h-[350px] bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-3xl border-4 border-white/20 shadow-2xl backdrop-blur-sm transform scale-110 hover:scale-115 transition-transform duration-500 z-10">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Sparkles className="w-20 h-20 text-pink-400 drop-shadow-lg animate-pulse" />
                 </div>
               </div>
-              <div className="relative w-64 h-[500px] bg-gradient-to-br from-pink-600/20 to-purple-600/20 rounded-3xl border-4 border-white/20 shadow-2xl backdrop-blur-sm transform rotate-6 hover:rotate-0 transition-transform duration-500">
+              <div className="relative w-64 h-[350px] bg-gradient-to-br from-pink-600/20 to-purple-600/20 rounded-3xl border-4 border-white/20 shadow-2xl backdrop-blur-sm transform rotate-6 hover:rotate-0 transition-transform duration-500">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Zap className="w-20 h-20 text-blue-400 drop-shadow-lg animate-pulse" />
                 </div>
