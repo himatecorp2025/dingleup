@@ -76,7 +76,7 @@ const Hero = () => {
           {/* Title */}
           <div className="text-center mb-8 sm:mb-12 space-y-4 sm:space-y-6 animate-fade-in px-4" style={{ animationDelay: '0.2s' }}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 leading-tight tracking-tight">
-              <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+              <span className="text-white/90 drop-shadow-lg">
                 {t('landing.hero.title_line1')}
               </span>
             </h1>
