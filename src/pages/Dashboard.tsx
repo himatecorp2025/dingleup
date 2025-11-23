@@ -52,7 +52,7 @@ const Dashboard = () => {
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
   const { canClaim, showPopup, weeklyEntryCount, nextReward, claiming, claimDailyGift, checkDailyGift, handleLater, showDailyGiftPopup, setShowPopup } = useDailyGift(userId, false);
   const { canClaim: canClaimWelcome, claiming: claimingWelcome, claimWelcomeBonus, handleLater: handleWelcomeLater } = useWelcomeBonus(userId);
-  const { showPopup: showDailyWinnersPopup, triggerPopup: triggerDailyWinnersPopup, closePopup: closeDailyWinnersPopup, canShowToday: canShowDailyPopup } = useDailyWinnersPopup(userId);
+  const { showPopup: showDailyWinnersPopup, triggerPopup: triggerDailyWinnersPopup, closePopup: closeDailyWinnersPopup, canShowToday: canShowDailyPopup } = useDailyWinnersPopup(userId, profile?.username === 'DingleUP');
   const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
   const boosterState = useBoosterState(userId);
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
@@ -171,10 +171,32 @@ const Dashboard = () => {
 
   // Show Daily Winners popup FOURTH (after age-gate COMPLETED, Daily Gift is handled)
   useEffect(() => {
-    if (canMountModals && canShowDailyPopup && ageGateCompleted && !showAgeGate && !showWelcomeBonus && !showPopup && userId && dailyGiftJustClaimed) {
+    if (!canMountModals || !ageGateCompleted || showAgeGate || showWelcomeBonus || showPopup || !userId || showDailyWinnersPopup) {
+      return;
+    }
+
+    // TEMP: for admin "DingleUP" force showing on every refresh/login
+    if (profile?.username === 'DingleUP') {
+      triggerDailyWinnersPopup();
+      return;
+    }
+
+    if (canShowDailyPopup && dailyGiftJustClaimed) {
       triggerDailyWinnersPopup();
     }
-  }, [canMountModals, canShowDailyPopup, ageGateCompleted, showAgeGate, showWelcomeBonus, showPopup, userId, dailyGiftJustClaimed, triggerDailyWinnersPopup]);
+  }, [
+    canMountModals,
+    canShowDailyPopup,
+    ageGateCompleted,
+    showAgeGate,
+    showWelcomeBonus,
+    showPopup,
+    userId,
+    dailyGiftJustClaimed,
+    triggerDailyWinnersPopup,
+    showDailyWinnersPopup,
+    profile,
+  ]);
 
 
 
