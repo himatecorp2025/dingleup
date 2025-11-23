@@ -208,11 +208,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
                     }} />
                     
-                    <h1 className="relative z-10 font-normal text-white text-center"
+                    <h1 className="relative z-10 font-black text-white text-center uppercase"
                         style={{ 
                           fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
-                          letterSpacing: '0.02em',
-                          fontFamily: 'Arial, Helvetica, sans-serif'
+                          letterSpacing: '0.08em',
+                          fontFamily: '"Poppins", system-ui, -apple-system, sans-serif'
                         }}>
                       {t('dailyWinners.title')}
                     </h1>
