@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
@@ -24,48 +24,59 @@ interface TotalRewards {
   totalLives: number;
 }
 
+// Generate unique IDs for SVG gradients to prevent conflicts
+const generateUniqueId = (prefix: string) => `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
+
 export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) => {
   const { t } = useI18n();
   const [contentVisible, setContentVisible] = useState(false);
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
   const [totalRewards, setTotalRewards] = useState<TotalRewards>({ totalGold: 150000, totalLives: 20000 });
+  const [isLoading, setIsLoading] = useState(false);
   const badgeRef = useRef<HTMLDivElement>(null);
+  const isMountedRef = useRef(true);
+  
+  // Generate unique IDs once per component instance
+  const svgIds = useMemo(() => ({
+    coinGold: generateUniqueId('coinGold3D'),
+    coinInner: generateUniqueId('coinInner'),
+    coinShadow: generateUniqueId('coinShadow'),
+    heartGradient: generateUniqueId('heartGradient3D'),
+    heartHighlight: generateUniqueId('heartHighlight'),
+    heartShadow: generateUniqueId('heartShadow'),
+  }), []);
 
-  // Add keyframes for animations
+  // Cleanup on unmount
   useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes pulse-scale {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
-    `;
-    document.head.appendChild(style);
+    isMountedRef.current = true;
     return () => {
-      document.head.removeChild(style);
+      isMountedRef.current = false;
     };
   }, []);
 
+  // Add keyframes for animations only once
   useEffect(() => {
-    if (open) {
-      fetchYesterdayTopPlayers();
-      const t = setTimeout(() => {
-        setContentVisible(true);
-      }, 10);
-      
-      return () => {
-        clearTimeout(t);
-        setContentVisible(false);
-      };
-    } else {
-      setContentVisible(false);
+    const styleId = 'daily-winners-keyframes';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        @keyframes pulse-scale {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+      `;
+      document.head.appendChild(style);
     }
-  }, [open]);
+  }, []);
 
-  const fetchYesterdayTopPlayers = async () => {
+  const fetchYesterdayTopPlayers = useCallback(async () => {
+    if (!isMountedRef.current) return;
+    
+    setIsLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      if (!user || !isMountedRef.current) {
         console.error('[DAILY-WINNERS] No authenticated user');
         setTopPlayers([]);
         return;
@@ -76,6 +87,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         .select('country_code')
         .eq('id', user.id)
         .single();
+
+      if (!isMountedRef.current) return;
 
       if (profileError || !profileData?.country_code) {
         console.error('[DAILY-WINNERS] Error fetching user country:', profileError);
@@ -99,6 +112,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         .order('rank', { ascending: true })
         .limit(10);
 
+      if (!isMountedRef.current) return;
+
       if (error) {
         console.error('[DAILY-WINNERS] Error fetching yesterday TOP 10:', error);
         setTopPlayers([]);
@@ -121,7 +136,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         .select('gold_awarded, lives_awarded')
         .eq('day_date', yesterdayDate);
       
-      if (!rewardsError && rewards) {
+      if (!rewardsError && rewards && isMountedRef.current) {
         const totalGold = rewards.reduce((sum, r) => sum + r.gold_awarded, 0);
         const totalLives = rewards.reduce((sum, r) => sum + r.lives_awarded, 0);
         setTotalRewards({ totalGold, totalLives });
@@ -130,10 +145,37 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       */
       console.log('[DAILY-WINNERS] Using test values: 150000 gold, 20000 lives');
     } catch (error) {
-      console.error('[DAILY-WINNERS] Exception fetching yesterday TOP 10:', error);
-      setTopPlayers([]);
+      if (isMountedRef.current) {
+        console.error('[DAILY-WINNERS] Exception fetching yesterday TOP 10:', error);
+        setTopPlayers([]);
+      }
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      fetchYesterdayTopPlayers();
+      const timer = setTimeout(() => {
+        if (isMountedRef.current) {
+          setContentVisible(true);
+        }
+      }, 10);
+      
+      return () => {
+        clearTimeout(timer);
+        setContentVisible(false);
+      };
+    } else {
+      setContentVisible(false);
+    }
+  }, [open, fetchYesterdayTopPlayers]);
+
+  // Memoize players 4-10 to avoid re-renders
+  const rankFourToTen = useMemo(() => topPlayers.slice(3, 10), [topPlayers]);
 
   if (!open) return null;
 
@@ -264,27 +306,27 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           color: '#ffd700',
                           WebkitTextStroke: '1px rgba(0,0,0,0.8)',
                           textShadow: '2px 2px 4px rgba(0,0,0,0.9)'
-                        }}>{totalRewards.totalGold}</span>
+                        }}>{totalRewards.totalGold.toLocaleString()}</span>
                         <svg width="22" height="22" viewBox="0 0 100 100" className="inline-block">
                           <defs>
-                            <radialGradient id="coinGold3DRealistic" cx="35%" cy="30%">
+                            <radialGradient id={svgIds.coinGold} cx="35%" cy="30%">
                               <stop offset="0%" stopColor="#fff9cc" />
                               <stop offset="20%" stopColor="#ffe066" />
                               <stop offset="50%" stopColor="#ffd700" />
                               <stop offset="80%" stopColor="#d4af37" />
                               <stop offset="100%" stopColor="#a67c00" />
                             </radialGradient>
-                            <radialGradient id="coinInner" cx="50%" cy="50%">
+                            <radialGradient id={svgIds.coinInner} cx="50%" cy="50%">
                               <stop offset="0%" stopColor="#ffeaa7" />
                               <stop offset="50%" stopColor="#f9ca24" />
                               <stop offset="100%" stopColor="#d4af37" />
                             </radialGradient>
-                            <filter id="coinShadow">
+                            <filter id={svgIds.coinShadow}>
                               <feDropShadow dx="2" dy="2" stdDeviation="3" floodOpacity="0.5"/>
                             </filter>
                           </defs>
-                          <circle cx="50" cy="50" r="45" fill="url(#coinGold3DRealistic)" stroke="#8b6914" strokeWidth="2" filter="url(#coinShadow)" />
-                          <circle cx="50" cy="50" r="35" fill="url(#coinInner)" stroke="#d4af37" strokeWidth="1.5" opacity="0.9" />
+                          <circle cx="50" cy="50" r="45" fill={`url(#${svgIds.coinGold})`} stroke="#8b6914" strokeWidth="2" filter={`url(#${svgIds.coinShadow})`} />
+                          <circle cx="50" cy="50" r="35" fill={`url(#${svgIds.coinInner})`} stroke="#d4af37" strokeWidth="1.5" opacity="0.9" />
                           <circle cx="50" cy="50" r="28" fill="none" stroke="#ffd700" strokeWidth="1" opacity="0.6" />
                           <ellipse cx="38" cy="35" rx="12" ry="8" fill="rgba(255,255,255,0.4)" opacity="0.7" />
                         </svg>
@@ -299,27 +341,27 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           color: '#ff1744',
                           WebkitTextStroke: '1px rgba(0,0,0,0.8)',
                           textShadow: '2px 2px 4px rgba(0,0,0,0.9)'
-                        }}>{totalRewards.totalLives}</span>
+                        }}>{totalRewards.totalLives.toLocaleString()}</span>
                         <svg width="22" height="22" viewBox="0 0 100 100" fill="none" className="inline-block">
                           <defs>
-                            <linearGradient id="heartGradient3DRealistic" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <linearGradient id={svgIds.heartGradient} x1="0%" y1="0%" x2="0%" y2="100%">
                               <stop offset="0%" stopColor="#ff6b6b" />
                               <stop offset="30%" stopColor="#ff5252" />
                               <stop offset="60%" stopColor="#ff1744" />
                               <stop offset="100%" stopColor="#c41c00" />
                             </linearGradient>
-                            <radialGradient id="heartHighlight" cx="30%" cy="25%">
+                            <radialGradient id={svgIds.heartHighlight} cx="30%" cy="25%">
                               <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
                               <stop offset="50%" stopColor="rgba(255,255,255,0.2)" />
                               <stop offset="100%" stopColor="rgba(255,255,255,0)" />
                             </radialGradient>
-                            <filter id="heartShadow">
+                            <filter id={svgIds.heartShadow}>
                               <feDropShadow dx="2" dy="2" stdDeviation="3" floodOpacity="0.5"/>
                             </filter>
                           </defs>
                           <path d="M50 85 L20 55 C10 45 10 28 20 18 C30 8 45 8 50 18 C55 8 70 8 80 18 C90 28 90 45 80 55 Z" 
-                                fill="url(#heartGradient3DRealistic)" stroke="#b71c1c" strokeWidth="2" filter="url(#heartShadow)" />
-                          <ellipse cx="35" cy="30" rx="12" ry="10" fill="url(#heartHighlight)" opacity="0.7" />
+                                fill={`url(#${svgIds.heartGradient})`} stroke="#b71c1c" strokeWidth="2" filter={`url(#${svgIds.heartShadow})`} />
+                          <ellipse cx="35" cy="30" rx="12" ry="10" fill={`url(#${svgIds.heartHighlight})`} opacity="0.7" />
                         </svg>
                       </div>
                     </div>
@@ -556,7 +598,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         </div>
 
                         <div style={{ transform: 'translateY(-12%)' }}>
-                        {topPlayers.slice(3, 10).map((player) => (
+                        {rankFourToTen.map((player) => (
                           <div key={player.user_id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg backdrop-blur-md"
                                style={{
                                  background: 'linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)',
@@ -578,8 +620,9 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               {player.avatar_url ? (
                                 <img 
                                   src={player.avatar_url} 
-                                  alt={player.username}
+                                  alt={`${player.username} avatar`}
                                   className="w-full h-full object-cover"
+                                  loading="lazy"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-sm">
