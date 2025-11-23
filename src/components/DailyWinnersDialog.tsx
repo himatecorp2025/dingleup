@@ -150,29 +150,32 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         }}
       >
           <div 
-            className="fixed inset-0 flex flex-col items-center overflow-visible backdrop-blur-md"
+            className="fixed inset-0 flex flex-col items-center justify-center overflow-visible backdrop-blur-md"
             style={{ 
               minHeight: '100dvh', 
               minWidth: '100vw',
-              justifyContent: 'center',
-              paddingTop: '0',
-              marginTop: '0'
+              paddingLeft: '0',
+              paddingRight: '0',
+              marginLeft: '0',
+              marginRight: '0'
             }}
           >
           <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
           <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
 
           <div 
-            className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center overflow-hidden"
+            className="relative z-10 w-full max-w-[min(95vw,600px)] flex items-center justify-center overflow-hidden"
             style={{ 
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
               transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto'
+              willChange: contentVisible ? 'transform, opacity' : 'auto',
+              marginLeft: 'auto',
+              marginRight: 'auto'
             }}
           >
-            <div className="relative w-full">
+            <div className="relative w-full flex justify-center">
               <HexShieldFrame showShine={true}>
                 <div style={{ transform: 'translateY(-7.5%)' }}>
                 {/* Top Hex Badge - "TEGNAPI GÉNIUSZOK" */}
