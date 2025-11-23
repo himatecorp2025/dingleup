@@ -127,7 +127,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           ))}
         </div>
         {/* Header with enhanced 3D styling */}
-        <DialogHeader className="space-y-1 mb-3 relative -mt-[20%]">
+        <DialogHeader className="space-y-1 mb-3 relative mt-[5%]">
           {/* Multi-layer header background */}
           <div className="absolute inset-0 bg-gradient-to-b from-yellow-600/30 via-yellow-500/20 to-transparent rounded-t-3xl" style={{ boxShadow: 'inset 0 3px 15px rgba(234, 179, 8, 0.4)' }}></div>
           <div className="absolute inset-0 bg-gradient-radial from-yellow-400/10 via-transparent to-transparent"></div>
@@ -216,11 +216,11 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 <div className="flex items-center justify-center gap-2.5">
                   <div className="flex items-center gap-1">
                     <GoldRewardCoin3D size={22} className="drop-shadow-2xl" />
-                    <span className="text-yellow-50 text-xs font-black" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(234, 179, 8, 0.5)' }}>{t('rescue.gold_saver_reward_gold')}</span>
+                    <span className="text-yellow-50 text-xs font-black" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(234, 179, 8, 0.5)' }}>+30</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <LifeIcon3D size={22} className="drop-shadow-2xl" />
-                    <span className="text-green-50 text-xs font-black" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(34, 197, 94, 0.5)' }}>{t('rescue.gold_saver_reward_lives')}</span>
+                    <span className="text-green-50 text-xs font-black" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(34, 197, 94, 0.5)' }}>+3</span>
                   </div>
                 </div>
               </div>
@@ -292,11 +292,11 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 <div className="flex items-center justify-center gap-2.5">
                   <div className="flex items-center gap-1">
                     <GoldRewardCoin3D size={22} className="drop-shadow-2xl" />
-                    <span className="text-yellow-50 text-xs font-black" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(234, 179, 8, 0.5)' }}>{t('rescue.instant_rescue_reward_gold')}</span>
+                    <span className="text-yellow-50 text-xs font-black" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(234, 179, 8, 0.5)' }}>+1500</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <LifeIcon3D size={22} className="drop-shadow-2xl" />
-                    <span className="text-green-50 text-xs font-black" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(34, 197, 94, 0.5)' }}>{t('rescue.instant_rescue_reward_lives')}</span>
+                    <span className="text-green-50 text-xs font-black" style={{ textShadow: '0 3px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(34, 197, 94, 0.5)' }}>+50</span>
                   </div>
                 </div>
               </div>
@@ -319,7 +319,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </Button>
 
               <p className="text-cyan-100/70 text-[8px] text-center mt-1.5 leading-snug font-medium" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.6)' }}>
-                {t('rescue.instant_credit')}
+                Azonnali jóváírás
               </p>
             </div>
           </div>
