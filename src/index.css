@@ -139,17 +139,6 @@ button, a {
   --cyan: 187 100% 50%;             /* Bright cyan */
   --cyan-dark: 187 100% 45%;
   
-  /* Vibrant gradients */
-  --gradient-gold: linear-gradient(135deg, hsl(45, 100%, 60%), hsl(38, 100%, 65%));
-  --gradient-blue: linear-gradient(135deg, hsl(240, 65%, 11%), hsl(221, 48%, 16%));
-  --gradient-royal: linear-gradient(135deg, hsl(240, 65%, 11%), hsl(231, 61%, 15%));
-  --gradient-cyan: linear-gradient(135deg, hsl(187, 100%, 50%), hsl(195, 100%, 55%));
-  --gradient-card: linear-gradient(135deg, hsl(221, 48%, 16%), hsl(231, 61%, 15%));
-  --gradient-hero: linear-gradient(180deg, hsl(240, 65%, 11%), hsl(231, 61%, 15%));
-  
-  /* Shadows - reduced by half */
-  --shadow-elegant: 0 5px 15px -5px hsl(225 73% 57% / 0.15);
-  --shadow-glow: 0 0 20px hsl(225 73% 57% / 0.2);
   
   /* Transitions */
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
