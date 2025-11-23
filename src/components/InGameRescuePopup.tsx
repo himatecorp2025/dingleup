@@ -132,7 +132,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           <div className="absolute inset-0 bg-gradient-to-b from-yellow-600/30 via-yellow-500/20 to-transparent rounded-t-3xl" style={{ boxShadow: 'inset 0 3px 15px rgba(234, 179, 8, 0.4)' }}></div>
           <div className="absolute inset-0 bg-gradient-radial from-yellow-400/10 via-transparent to-transparent"></div>
           
-          <DialogTitle className="relative text-lg sm:text-xl md:text-2xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent leading-tight tracking-wider" style={{ textShadow: '0 4px 15px rgba(234, 179, 8, 0.9), 0 8px 30px rgba(234, 179, 8, 0.6), 0 0 40px rgba(234, 179, 8, 0.7), 0 2px 5px rgba(0, 0, 0, 0.8)', filter: 'drop-shadow(0 6px 15px rgba(234, 179, 8, 0.5))' }}>
+          <DialogTitle className="relative text-lg sm:text-xl md:text-2xl font-black text-center text-yellow-50 leading-tight tracking-wider" style={{ textShadow: '0 4px 15px rgba(0, 0, 0, 0.9), 0 6px 25px rgba(0, 0, 0, 0.8)', filter: 'drop-shadow(0 6px 15px rgba(0, 0, 0, 0.8))' }}>
             {t('rescue.title')}
           </DialogTitle>
           <p className="relative text-center text-yellow-50 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 sm:gap-2" style={{ textShadow: '0 3px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.4)' }}>
@@ -147,8 +147,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 rounded-2xl pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-transparent via-purple-600/10 to-blue-600/10 rounded-2xl pointer-events-none"></div>
           
-          <div className="relative flex items-center justify-around">
-            <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="relative flex items-center">
+            <div className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2">
               <div className="relative">
                 <div className="absolute inset-0 bg-green-500/30 rounded-full blur-md"></div>
                 <LifeIcon3D size={32} className="relative drop-shadow-2xl sm:w-10 sm:h-10" />
@@ -161,7 +161,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
             
             <div className="h-8 sm:h-10 w-[2px] bg-gradient-to-b from-transparent via-blue-300/40 to-transparent"></div>
             
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2">
               <div className="relative">
                 <div className="absolute inset-0 bg-yellow-500/30 rounded-full blur-md"></div>
                 <CoinIcon3D size={32} className="relative drop-shadow-2xl sm:w-10 sm:h-10" />
@@ -188,7 +188,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
                   {/* 3D circle with multiple shadow layers */}
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(202, 138, 4, 0.9), 0 8px 20px rgba(202, 138, 4, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6)' }}>
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 10px 25px rgba(0, 0, 0, 0.8), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6)' }}>
                     <GoldRewardCoin3D size={44} className="drop-shadow-2xl relative z-10 sm:w-14 sm:h-14" />
                   </div>
                 </div>
@@ -253,7 +253,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
                   {/* 3D circle with multiple shadow layers */}
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(6, 182, 212, 0.9), 0 8px 20px rgba(59, 130, 246, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6)' }}>
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 10px 25px rgba(0, 0, 0, 0.8), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6)' }}>
                     <DiamondIcon3D size={88} className="drop-shadow-2xl relative z-10 sm:w-28 sm:h-28" />
                   </div>
                 </div>
