@@ -205,7 +205,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 </div>
 
                 {/* Content Area - Fixed height to fit exactly 10 players */}
-                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[6%] pt-[2%]" style={{ height: 'calc(100% - 80px)' }}>
+                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[6%] pt-0" style={{ height: 'calc(100% - 60px)' }}>
                   
                   {/* Players List */}
                   <div className="w-full mb-4 overflow-y-auto" style={{ height: 'calc(100% - 60px)' }}>
@@ -233,25 +233,54 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   }}
                                 />
                                 {/* Avatar in center */}
-                                <div className="absolute" style={{ left: '31%', top: '35%', width: '38%', height: '27%' }}>
-                                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-gray-300 bg-gray-800">
-                                    {topPlayers[1].avatar_url ? (
-                                      <img 
-                                        src={topPlayers[1].avatar_url} 
-                                        alt={topPlayers[1].username}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-2xl">
-                                        {topPlayers[1].username.substring(0, 2).toUpperCase()}
-                                      </div>
-                                    )}
+                                <div className="absolute" style={{ left: '21%', top: '28%', width: '58%', height: '41%' }}>
+                                  <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
+                                    {/* 3D Silver Border Effect */}
+                                    <div className="absolute inset-0 rounded-full" style={{
+                                      background: 'linear-gradient(135deg, #f0f0f0 0%, #d0d0d0 25%, #b8b8b8 50%, #a0a0a0 75%, #c8c8c8 100%)',
+                                      boxShadow: '0 8px 16px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(0,0,0,0.3)'
+                                    }} />
+                                    <div className="absolute inset-[6px] rounded-full overflow-hidden">
+                                      {topPlayers[1].avatar_url ? (
+                                        <img 
+                                          src={topPlayers[1].avatar_url} 
+                                          alt={topPlayers[1].username}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-2xl bg-gray-800">
+                                          {topPlayers[1].username.substring(0, 2).toUpperCase()}
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                                {/* Rank badge at bottom */}
+                                {/* Rank badge at bottom - 3D Effect */}
                                 <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
-                                  <div className="aspect-square rounded-full bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 flex items-center justify-center border-4 border-white shadow-lg">
-                                    <span className="text-black font-black" style={{ fontSize: '3.5vw' }}>2</span>
+                                  <div className="aspect-square rounded-full relative">
+                                    {/* Outer shadow */}
+                                    <div className="absolute inset-0 rounded-full" style={{
+                                      background: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e0e0e0 30%, #b0b0b0 60%, #888888 100%)',
+                                      boxShadow: '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+                                    }} />
+                                    {/* Inner highlight ring */}
+                                    <div className="absolute inset-[3px] rounded-full" style={{
+                                      background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
+                                      boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
+                                    }} />
+                                    {/* Number container */}
+                                    <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                      background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e8e8e8 40%, #c0c0c0 100%)',
+                                      boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
+                                    }}>
+                                      <span className="font-black relative" style={{ 
+                                        fontSize: '3.5vw',
+                                        background: 'linear-gradient(180deg, #333333 0%, #000000 100%)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        filter: 'drop-shadow(0 1px 1px rgba(255,255,255,0.3))'
+                                      }}>2</span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -259,9 +288,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               <div className="mt-1 text-center w-full">
                                 <p className="text-white font-bold text-[0.65rem] leading-tight truncate px-1">
                                   {topPlayers[1].username}
-                                </p>
-                                <p className="text-gray-400 text-[0.5rem] leading-tight">
-                                  {topPlayers[1].total_correct_answers} {t('dailyWinners.correctAnswers')}
                                 </p>
                               </div>
                             </div>
@@ -282,25 +308,54 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   }}
                                 />
                                 {/* Avatar in center */}
-                                <div className="absolute" style={{ left: '31%', top: '35%', width: '38%', height: '27%' }}>
-                                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-yellow-400 bg-gray-800">
-                                    {topPlayers[0].avatar_url ? (
-                                      <img 
-                                        src={topPlayers[0].avatar_url} 
-                                        alt={topPlayers[0].username}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center text-yellow-400 font-bold text-3xl">
-                                        {topPlayers[0].username.substring(0, 2).toUpperCase()}
-                                      </div>
-                                    )}
+                                <div className="absolute" style={{ left: '21%', top: '28%', width: '58%', height: '41%' }}>
+                                  <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
+                                    {/* 3D Gold Border Effect */}
+                                    <div className="absolute inset-0 rounded-full" style={{
+                                      background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 25%, #ffb700 50%, #ff9500 75%, #ffd700 100%)',
+                                      boxShadow: '0 8px 16px rgba(218,165,32,0.6), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(139,69,0,0.5)'
+                                    }} />
+                                    <div className="absolute inset-[6px] rounded-full overflow-hidden">
+                                      {topPlayers[0].avatar_url ? (
+                                        <img 
+                                          src={topPlayers[0].avatar_url} 
+                                          alt={topPlayers[0].username}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-yellow-400 font-bold text-3xl bg-gray-800">
+                                          {topPlayers[0].username.substring(0, 2).toUpperCase()}
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                                {/* Rank badge at bottom */}
+                                {/* Rank badge at bottom - 3D Effect */}
                                 <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
-                                  <div className="aspect-square rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 flex items-center justify-center border-4 border-white shadow-lg">
-                                    <span className="text-black font-black" style={{ fontSize: '3.8vw' }}>1</span>
+                                  <div className="aspect-square rounded-full relative">
+                                    {/* Outer shadow */}
+                                    <div className="absolute inset-0 rounded-full" style={{
+                                      background: 'radial-gradient(circle at 30% 30%, #fffacd 0%, #ffd700 30%, #ffb700 60%, #d4af37 100%)',
+                                      boxShadow: '0 6px 12px rgba(218,165,32,0.6), 0 2px 4px rgba(0,0,0,0.3)'
+                                    }} />
+                                    {/* Inner highlight ring */}
+                                    <div className="absolute inset-[3px] rounded-full" style={{
+                                      background: 'linear-gradient(135deg, #fff9c4 0%, #ffd700 50%, #d4af37 100%)',
+                                      boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.9), inset 0 -2px 6px rgba(139,69,0,0.5)'
+                                    }} />
+                                    {/* Number container */}
+                                    <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                      background: 'radial-gradient(circle at 35% 35%, #fffacd 0%, #ffd700 40%, #d4af37 100%)',
+                                      boxShadow: 'inset 0 1px 3px rgba(255,255,255,1), inset 0 -1px 3px rgba(139,69,0,0.3)'
+                                    }}>
+                                      <span className="font-black relative" style={{ 
+                                        fontSize: '3.8vw',
+                                        background: 'linear-gradient(180deg, #333333 0%, #000000 100%)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        filter: 'drop-shadow(0 1px 1px rgba(255,215,0,0.5))'
+                                      }}>1</span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -308,9 +363,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               <div className="mt-1 text-center w-full">
                                 <p className="text-white font-bold text-[0.7rem] leading-tight truncate px-1">
                                   {topPlayers[0].username}
-                                </p>
-                                <p className="text-yellow-400 text-[0.55rem] leading-tight font-semibold">
-                                  {topPlayers[0].total_correct_answers} {t('dailyWinners.correctAnswers')}
                                 </p>
                               </div>
                             </div>
@@ -332,25 +384,52 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   }}
                                 />
                                 {/* Avatar in center */}
-                                <div className="absolute" style={{ left: '31%', top: '35%', width: '38%', height: '27%' }}>
-                                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-orange-600 bg-gray-800">
-                                    {topPlayers[2].avatar_url ? (
-                                      <img 
-                                        src={topPlayers[2].avatar_url} 
-                                        alt={topPlayers[2].username}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center text-orange-400 font-bold text-2xl">
-                                        {topPlayers[2].username.substring(0, 2).toUpperCase()}
-                                      </div>
-                                    )}
+                                <div className="absolute" style={{ left: '21%', top: '28%', width: '58%', height: '41%' }}>
+                                  <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
+                                    {/* 3D Bronze Border Effect */}
+                                    <div className="absolute inset-0 rounded-full" style={{
+                                      background: 'linear-gradient(135deg, #cd7f32 0%, #e89757 25%, #b5651d 50%, #8b4513 75%, #cd7f32 100%)',
+                                      boxShadow: '0 8px 16px rgba(139,69,19,0.5), inset 0 2px 4px rgba(255,200,150,0.6), inset 0 -2px 4px rgba(80,40,10,0.4)'
+                                    }} />
+                                    <div className="absolute inset-[6px] rounded-full overflow-hidden">
+                                      {topPlayers[2].avatar_url ? (
+                                        <img 
+                                          src={topPlayers[2].avatar_url} 
+                                          alt={topPlayers[2].username}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-orange-400 font-bold text-2xl bg-gray-800">
+                                          {topPlayers[2].username.substring(0, 2).toUpperCase()}
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                                {/* Rank badge at bottom */}
+                                {/* Rank badge at bottom - 3D Effect */}
                                 <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
-                                  <div className="aspect-square rounded-full bg-gradient-to-br from-orange-400 via-orange-600 to-orange-800 flex items-center justify-center border-4 border-white shadow-lg">
-                                    <span className="text-white font-black" style={{ fontSize: '3.5vw' }}>3</span>
+                                  <div className="aspect-square rounded-full relative">
+                                    {/* Outer shadow */}
+                                    <div className="absolute inset-0 rounded-full" style={{
+                                      background: 'radial-gradient(circle at 30% 30%, #ffb347 0%, #cd7f32 30%, #b5651d 60%, #8b4513 100%)',
+                                      boxShadow: '0 6px 12px rgba(139,69,19,0.5), 0 2px 4px rgba(0,0,0,0.3)'
+                                    }} />
+                                    {/* Inner highlight ring */}
+                                    <div className="absolute inset-[3px] rounded-full" style={{
+                                      background: 'linear-gradient(135deg, #e89757 0%, #cd7f32 50%, #8b4513 100%)',
+                                      boxShadow: 'inset 0 2px 6px rgba(255,200,150,0.7), inset 0 -2px 6px rgba(80,40,10,0.5)'
+                                    }} />
+                                    {/* Number container */}
+                                    <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                      background: 'radial-gradient(circle at 35% 35%, #ffb347 0%, #cd7f32 40%, #8b4513 100%)',
+                                      boxShadow: 'inset 0 1px 3px rgba(255,200,150,0.8), inset 0 -1px 3px rgba(80,40,10,0.3)'
+                                    }}>
+                                      <span className="font-black relative" style={{ 
+                                        fontSize: '3.5vw',
+                                        color: '#ffffff',
+                                        textShadow: '0 1px 2px rgba(0,0,0,0.5), 0 0 3px rgba(255,180,70,0.3)'
+                                      }}>3</span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -358,9 +437,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               <div className="mt-1 text-center w-full">
                                 <p className="text-white font-bold text-[0.65rem] leading-tight truncate px-1">
                                   {topPlayers[2].username}
-                                </p>
-                                <p className="text-orange-400 text-[0.5rem] leading-tight">
-                                  {topPlayers[2].total_correct_answers} {t('dailyWinners.correctAnswers')}
                                 </p>
                               </div>
                             </div>
@@ -395,9 +471,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   {player.username}
                                 </span>
                               </div>
-                              <span className="text-gray-300 text-sm flex-shrink-0 ml-2">
-                                {player.total_correct_answers}
-                              </span>
                             </div>
                           ))}
                         </div>
