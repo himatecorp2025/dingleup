@@ -264,7 +264,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     className="relative z-20"
                     style={{
                       animation: 'pulse-scale 2s ease-in-out infinite',
-                      transform: 'scale(0.26)',
+                      transform: 'scale(0.18)',
                       transformOrigin: 'center center',
                       perspective: '1000px'
                     }}
