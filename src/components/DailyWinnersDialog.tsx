@@ -229,7 +229,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           letterSpacing: '0.08em',
                           fontFamily: '"Poppins", system-ui, -apple-system, sans-serif'
                         }}>
-                      GÉNIUSZOK
+                      {t('dailyWinners.geniuses')}
                     </h1>
                     
                     {/* Jackpot info row */}
@@ -242,7 +242,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       <span style={{
                         textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(255,255,255,0.3)',
                         letterSpacing: '0.05em'
-                      }}>TEGNAPI JACKPOT:</span>
+                      }}>{t('dailyWinners.jackpot')}</span>
                       
                       {/* Gold coin icon + amount */}
                       <div className="flex items-center gap-1">
@@ -553,7 +553,9 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       onClick={onClose}
                       className="w-[80%]"
                       style={{ transform: 'scale(0.88)' }}
-                    />
+                    >
+                      {t('common.accept')}
+                    </HexAcceptButton>
                   </div>
                 </div>
                 </div>
