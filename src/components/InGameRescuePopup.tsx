@@ -107,7 +107,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[95vw] w-full h-[60vh] overflow-y-auto bg-gradient-to-br from-red-900/50 via-purple-900/70 to-red-900/50 border-[4px] border-yellow-400 p-4 shadow-2xl rounded-2xl !fixed !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2 !m-0" style={{ boxShadow: '0 0 30px rgba(250, 204, 21, 0.5), 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 2px 10px rgba(0, 0, 0, 0.4)' }}>
+      <DialogContent className="max-w-[95vw] w-full h-[75vh] overflow-y-auto bg-gradient-to-br from-red-900/50 via-purple-900/70 to-red-900/50 border-[4px] border-yellow-400 p-4 shadow-2xl rounded-2xl !fixed !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2 !m-0" style={{ boxShadow: '0 0 30px rgba(250, 204, 21, 0.5), 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 2px 10px rgba(0, 0, 0, 0.4)' }}>
         {/* Header with enhanced 3D styling */}
         <DialogHeader className="space-y-1 mb-3">
           <DialogTitle className="text-2xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent leading-tight tracking-wider" style={{ textShadow: '0 3px 12px rgba(234, 179, 8, 0.8), 0 6px 24px rgba(234, 179, 8, 0.5), 0 0 30px rgba(234, 179, 8, 0.6)', filter: 'drop-shadow(0 4px 10px rgba(234, 179, 8, 0.4))' }}>
@@ -222,7 +222,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 <div className="relative">
                   <div className="absolute inset-0 bg-pink-400/60 rounded-full blur-xl animate-pulse"></div>
                   <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-pink-200 via-pink-300 to-pink-600 flex items-center justify-center" style={{ boxShadow: '0 12px 30px rgba(219, 39, 119, 0.8), inset 0 -4px 12px rgba(0, 0, 0, 0.4), inset 0 4px 12px rgba(255, 255, 255, 0.5)' }}>
-                    <DiamondIcon3D size={56} className="drop-shadow-2xl" />
+                    <DiamondIcon3D size={112} className="drop-shadow-2xl" />
                   </div>
                 </div>
               </div>
