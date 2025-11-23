@@ -22,6 +22,43 @@ const createRegisterSchema = (t: (key: string) => string) => z.object({
 }).refine(data => data.pin === data.pinConfirm, {
   message: t('auth.register.validationPinMismatch'),
   path: ["pinConfirm"],
+}).refine(data => {
+  const pin = data.pin;
+  if (pin.length !== 6) return true;
+  
+  // 1. Nem kezdődhet 20-szal vagy 19-cel
+  if (pin.startsWith('20') || pin.startsWith('19')) {
+    return false;
+  }
+  
+  // 2. Nem lehet három egymást követően ugyanaz a szám
+  for (let i = 0; i < pin.length - 2; i++) {
+    if (pin[i] === pin[i+1] && pin[i+1] === pin[i+2]) {
+      return false;
+    }
+  }
+  
+  // 3. Nem lehet növekvő vagy csökkenő sorrendben (három egymást követő szám)
+  for (let i = 0; i < pin.length - 2; i++) {
+    const a = parseInt(pin[i]);
+    const b = parseInt(pin[i+1]);
+    const c = parseInt(pin[i+2]);
+    
+    // Növekvő sorrend ellenőrzése (pl. 1-2-3, 2-3-4)
+    if (b === a + 1 && c === b + 1) {
+      return false;
+    }
+    
+    // Csökkenő sorrend ellenőrzése (pl. 7-6-5, 6-5-4)
+    if (b === a - 1 && c === b - 1) {
+      return false;
+    }
+  }
+  
+  return true;
+}, {
+  message: "A PIN kód nem felel meg a biztonsági követelményeknek: nem kezdődhet 19-cel vagy 20-szal, nem tartalmazhat három azonos számot egymás után, és nem lehet növekvő vagy csökkenő sorrendben",
+  path: ["pin"]
 });
 
 const RegisterNew = () => {

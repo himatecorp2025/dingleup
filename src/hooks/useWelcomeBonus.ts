@@ -15,35 +15,12 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     }
 
     try {
-      // SECURITY FIX: Check server-side instead of localStorage
-      // Query the database directly instead of trusting client storage
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('welcome_bonus_claimed')
-        .eq('id', userId)
-        .single();
-
-      if (!profile || profile.welcome_bonus_claimed) {
-        setCanClaim(false);
-        setLoading(false);
-        return;
-      }
-
-      // Check if user clicked "later" in this session (keep this for UX)
-      const laterKey = `welcome_bonus_later_${userId}`;
-      const clickedLater = sessionStorage.getItem(laterKey);
-      if (clickedLater) {
-        setCanClaim(false);
-        setLoading(false);
-        return;
-      }
-
-      // User is eligible - show the dialog
+      // TEMP: Force always show for admin testing - minden frissítésnél megjelenik
       setCanClaim(true);
       trackEvent('popup_impression', 'welcome');
+      setLoading(false);
     } catch (error) {
       setCanClaim(false);
-    } finally {
       setLoading(false);
     }
   }, [userId]);
