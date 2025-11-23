@@ -187,8 +187,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               {/* Large coin icon at top */}
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
-                  {/* 3D circle with inner shadow only (no outer shadow) */}
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: 'inset 0 -12px 35px rgba(0, 0, 0, 0.7), inset 0 12px 35px rgba(255, 255, 255, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.6)' }}>
+                  {/* Vivid 3D circle with inner shading only */}
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-700 flex items-center justify-center" style={{ boxShadow: 'inset 0 -14px 40px rgba(0, 0, 0, 0.75), inset 0 14px 40px rgba(255, 255, 255, 0.9), inset 0 0 30px rgba(255, 255, 255, 0.7)' }}>
                     <GoldRewardCoin3D size={44} className="drop-shadow-2xl relative z-10 sm:w-14 sm:h-14" />
                   </div>
                 </div>
@@ -252,8 +252,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               {/* Large diamond icon at top */}
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
-                  {/* 3D circle with inner shadow only (no outer shadow) */}
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: 'inset 0 -12px 35px rgba(0, 0, 0, 0.7), inset 0 12px 35px rgba(255, 255, 255, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.6)' }}>
+                  {/* Vivid 3D circle with inner shading only */}
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 flex items-center justify-center" style={{ boxShadow: 'inset 0 -14px 40px rgba(0, 0, 0, 0.75), inset 0 14px 40px rgba(255, 255, 255, 0.9), inset 0 0 30px rgba(255, 255, 255, 0.7)' }}>
                     <DiamondIcon3D size={88} className="drop-shadow-2xl relative z-10 sm:w-28 sm:h-28" />
                   </div>
                 </div>
@@ -292,7 +292,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                     <span className="text-[10px] sm:text-xs">{t('rescue.processing')}</span>
                   </div>
                 ) : (
-                  <span className="text-base sm:text-xl tracking-wider">CSAK 1,49$</span>
+                  <span className="text-base sm:text-xl tracking-wider">{t('rescue.only_price_prefix')} 1,49$</span>
                 )}
               </Button>
 
