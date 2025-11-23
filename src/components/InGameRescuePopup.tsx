@@ -187,8 +187,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               {/* Large coin icon at top */}
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
-                  {/* 3D circle with multiple shadow layers */}
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 15px 35px rgba(0, 0, 0, 0.9), 0 8px 20px rgba(0, 0, 0, 0.7), inset 0 -8px 25px rgba(0, 0, 0, 0.6), inset 0 8px 25px rgba(255, 255, 255, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.4)' }}>
+                  {/* Enhanced 3D circle with stronger shadow layers */}
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 20px 50px rgba(0, 0, 0, 1), 0 12px 30px rgba(0, 0, 0, 0.9), 0 6px 15px rgba(0, 0, 0, 0.8), inset 0 -12px 35px rgba(0, 0, 0, 0.7), inset 0 12px 35px rgba(255, 255, 255, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.6), 0 0 40px rgba(234, 179, 8, 0.6)' }}>
                     <GoldRewardCoin3D size={44} className="drop-shadow-2xl relative z-10 sm:w-14 sm:h-14" />
                   </div>
                 </div>
@@ -252,8 +252,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               {/* Large diamond icon at top */}
               <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
-                  {/* 3D circle with multiple shadow layers */}
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 15px 35px rgba(0, 0, 0, 0.9), 0 8px 20px rgba(0, 0, 0, 0.7), inset 0 -8px 25px rgba(0, 0, 0, 0.6), inset 0 8px 25px rgba(255, 255, 255, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.4)' }}>
+                  {/* Enhanced 3D circle with stronger shadow layers */}
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 20px 50px rgba(0, 0, 0, 1), 0 12px 30px rgba(0, 0, 0, 0.9), 0 6px 15px rgba(0, 0, 0, 0.8), inset 0 -12px 35px rgba(0, 0, 0, 0.7), inset 0 12px 35px rgba(255, 255, 255, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.6), 0 0 40px rgba(6, 182, 212, 0.6)' }}>
                     <DiamondIcon3D size={88} className="drop-shadow-2xl relative z-10 sm:w-28 sm:h-28" />
                   </div>
                 </div>
