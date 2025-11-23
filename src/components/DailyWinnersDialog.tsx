@@ -548,7 +548,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     )}
                   </div>
 
-                  <div className="mt-auto pt-2 flex justify-center w-full" style={{ transform: 'translateY(-135%)' }}>
+                  <div className="mt-auto pt-2 flex justify-center w-full" style={{ transform: 'translateY(-165%)' }}>
                     <HexAcceptButton 
                       onClick={onClose}
                       className="w-[80%]"
