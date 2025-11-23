@@ -20,7 +20,9 @@ import { useGameHelpers } from "@/hooks/useGameHelpers";
 import { useGameTimer } from "@/hooks/useGameTimer";
 import { useGameRewards } from "./game/GameRewardSystem";
 import { GameSwipeHandler } from "./game/GameSwipeHandler";
-import { trackFeatureUsage, trackGameMilestone } from "@/lib/analytics";
+import { trackGameMilestone } from "@/lib/analytics";
+import { useGameLifecycle } from "@/hooks/useGameLifecycle";
+import { useGameHelperActions } from "@/hooks/useGameHelperActions";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -109,13 +111,6 @@ const GamePreview = memo(() => {
   const [showRescuePopup, setShowRescuePopup] = useState(false);
   const [rescueReason, setRescueReason] = useState<'NO_LIFE' | 'NO_GOLD'>('NO_GOLD');
   
-  const [isStartingGame, setIsStartingGame] = useState(false);
-  const [hasAutoStarted, setHasAutoStarted] = useState(false);
-  const [videoEnded, setVideoEnded] = useState(false);
-  const [showLoadingVideo, setShowLoadingVideo] = useState(false);
-  const [isGameReady, setIsGameReady] = useState(false);
-  const gameInitPromiseRef = useRef<Promise<void> | null>(null);
-  
   const {
     coinsEarned,
     coinRewardAmount,
@@ -130,6 +125,88 @@ const GamePreview = memo(() => {
     currentQuestionIndex,
     coinsEarned: 0,
     broadcast
+  });
+
+  const {
+    showLoadingVideo,
+    videoEnded,
+    isGameReady,
+    hasAutoStarted,
+    setHasAutoStarted,
+    isStarting: isStartingGame,
+    startGame,
+    handleVideoEnd,
+    restartGameImmediately,
+    finishGame,
+    resetGameState,
+  } = useGameLifecycle({
+    userId,
+    profile,
+    spendLife,
+    refreshProfile,
+    refetchWallet,
+    broadcast,
+    creditStartReward,
+    setQuestions,
+    resetGameStateHook,
+    resetTimer: (time: number) => resetTimer(time),
+    setHelp5050UsageCount,
+    setHelp2xAnswerUsageCount,
+    setHelpAudienceUsageCount,
+    resetQuestionHelpers,
+    setQuestionStartTime,
+    setCanSwipe,
+    setIsAnimating,
+    setCoinsEarned,
+    resetRewardAnimation,
+    setFirstAttempt,
+    setSecondAttempt,
+    setErrorBannerVisible,
+    setCurrentQuestionIndex,
+    setQuestionVisible,
+    correctAnswers,
+    responseTimes,
+    coinsEarned,
+    questions,
+    questionStartTime,
+    isStartingGame,
+    gameCompleted,
+  });
+
+  const {
+    useHelp5050,
+    useHelp2xAnswer,
+    useHelpAudience,
+    useQuestionSwap,
+  } = useGameHelperActions({
+    profile,
+    refreshProfile,
+    logHelpUsage,
+    questions,
+    currentQuestionIndex,
+    selectedAnswer,
+    help5050UsageCount,
+    help2xAnswerUsageCount,
+    helpAudienceUsageCount,
+    isHelp5050ActiveThisQuestion,
+    isDoubleAnswerActiveThisQuestion,
+    isAudienceActiveThisQuestion,
+    usedQuestionSwap,
+    setRemovedAnswer,
+    setIsHelp5050ActiveThisQuestion,
+    setHelp5050UsageCount,
+    setIsDoubleAnswerActiveThisQuestion,
+    setHelp2xAnswerUsageCount,
+    setFirstAttempt,
+    setSecondAttempt,
+    setAudienceVotes,
+    setIsAudienceActiveThisQuestion,
+    setHelpAudienceUsageCount,
+    setQuestions,
+    resetTimer: (time: number) => resetTimer(time),
+    setQuestionStartTime,
+    setUsedQuestionSwap,
+    ALL_QUESTIONS,
   });
 
   const handleTimeout = useCallback(() => {
@@ -148,20 +225,6 @@ const GamePreview = memo(() => {
     enabled: gameState === 'playing' && isGameReady && !selectedAnswer && !isAnimating
   });
   
-  const handleVideoEnd = useCallback(async () => {
-    if (gameInitPromiseRef.current) {
-      try {
-        await gameInitPromiseRef.current;
-      } catch (error) {
-        return;
-      }
-    }
-    
-    setIsGameReady(true);
-    setVideoEnded(true);
-    setIsStartingGame(false);
-  }, []);
-
   // Auth check
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -179,8 +242,7 @@ const GamePreview = memo(() => {
       setHasAutoStarted(true);
       startGame();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState]);
+  }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState, startGame]);
 
   // Track game funnel milestones (5th, 10th, 15th question reached)
   useEffect(() => {
@@ -205,131 +267,6 @@ const GamePreview = memo(() => {
 
     trackMilestone();
   }, [currentQuestionIndex, userId, isGameReady, correctAnswers]);
-
-  const startGame = async (skipLoadingVideo: boolean = false) => {
-    if (!profile || isStartingGame) return;
-    
-    // Track game start feature usage
-    if (userId) {
-      await trackFeatureUsage(userId, 'game_action', 'game', 'start', {
-        skipLoadingVideo,
-        category: 'mixed'
-      });
-
-      // Track game start milestone for game funnel
-      await trackGameMilestone(userId, 'game_start', {
-        category: 'mixed',
-        question_index: 0,
-        correct_answers: 0,
-      });
-    }
-    
-    // Set loading video visibility based on skipLoadingVideo parameter
-    setIsStartingGame(true);
-    if (!skipLoadingVideo) {
-      setShowLoadingVideo(true);
-      setVideoEnded(false);
-      setIsGameReady(false); // CRITICAL: Timer won't start until video ends
-    } else {
-      // Seamless restart - skip video and mark as ended immediately
-      setShowLoadingVideo(false);
-      setVideoEnded(true);
-      setIsGameReady(true); // Seamless restart - timer can start immediately
-    }
-    
-    // Start all backend operations in parallel IMMEDIATELY while video plays
-    // Store promise in ref so handleVideoEnd can wait for it
-    const backendStartTime = performance.now();
-    console.log('[GamePreview] Backend loading started');
-    
-    gameInitPromiseRef.current = (async () => {
-      try {
-        // Reset helps
-        await supabase.rpc('reset_game_helps');
-      } catch (error) {
-        console.error('Error resetting helps:', error);
-      }
-      
-      // Spend life
-      const canPlay = await spendLife();
-      if (!canPlay) {
-        toast.error('Nincs elég életed a játék indításához!');
-        setIsStartingGame(false);
-        navigate('/dashboard');
-        throw new Error('Insufficient lives');
-      }
-      
-      // Run wallet/profile updates in parallel
-      await refetchWallet();
-      await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
-      
-      // Ensure fresh auth session before invoking edge functions
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !session) {
-        console.error('[Game] Session error:', sessionError);
-        toast.error('A munkameneted lejárt. Kérlek, jelentkezz be újra!');
-        navigate('/auth/login');
-        throw new Error('Session error');
-      }
-      
-      // Get session for edge function calls
-      const { data: { session: authSession } } = await supabase.auth.getSession();
-      if (!authSession) {
-        toast.error('Nincs bejelentkezve! Kérlek, jelentkezz be!');
-        navigate('/auth/login');
-        throw new Error('Not authenticated');
-      }
-      
-      await Promise.all([
-        creditStartReward(),
-        (async () => {
-          try {
-            const { data, error } = await supabase.functions.invoke('start-game-session', {
-              headers: { Authorization: `Bearer ${authSession.access_token}` }
-            });
-
-            if (error) throw error;
-            
-            if (!data?.questions || data.questions.length === 0) {
-              throw new Error('No questions received from backend');
-            }
-
-            const shuffledWithVariety = shuffleAnswers(data.questions);
-            setQuestions(shuffledWithVariety);
-          } catch (error) {
-            console.error('[GamePreview] Failed to load questions:', error);
-            toast.error('Hiba történt a kérdések betöltésekor!');
-            setIsStartingGame(false);
-            navigate('/dashboard');
-            throw error;
-          }
-        })(),
-        refreshProfile()
-      ]);
-
-      resetGameStateHook();
-      resetTimer(10);
-      setHelp5050UsageCount(0);
-      setHelp2xAnswerUsageCount(0);
-      setHelpAudienceUsageCount(0);
-      resetQuestionHelpers();
-      setFirstAttempt(null);
-      setSecondAttempt(null);
-      setQuestionStartTime(Date.now());
-      setCanSwipe(true);
-      setIsAnimating(false);
-      
-      // Clear starting guard after game is fully initialized
-      setIsStartingGame(false);
-      gameInitPromiseRef.current = null;
-      
-      const backendEndTime = performance.now();
-      const backendDuration = backendEndTime - backendStartTime;
-      console.log(`[GamePreview] Backend loading completed in ${backendDuration.toFixed(0)}ms`);
-    })();
-
-    // DO NOT AWAIT - let it run in background while video plays
-  };
 
   // Background detection - exit game if app goes to background (only after video ended)
   useEffect(() => {
@@ -403,9 +340,7 @@ const GamePreview = memo(() => {
     if (userId) {
       verifyInGamePayment();
     }
-  }, [userId, gameState]);
-
-
+  }, [userId, gameState, refreshProfile, handleNextQuestion]);
 
   const handleSwipeUp = async () => {
     // If game completed, restart new game
@@ -443,75 +378,15 @@ const GamePreview = memo(() => {
   };
 
   const handleSwipeDown = async () => {
-    // Dismiss all toasts immediately on swipe down
     toast.dismiss();
     
-    // Swipe down restarts game immediately without showing results
     if (errorBannerVisible) {
       setErrorBannerVisible(false);
     }
     await restartGameImmediately();
   };
 
-  const restartGameImmediately = async () => {
-    if (!profile || isStartingGame) return;
-
-    // Dismiss any visible toasts (including results toast)
-    toast.dismiss();
-    
-    // Only show restart toast if game was NOT completed (scroll down mid-game)
-    if (!gameCompleted) {
-      toast.error('Újraindítva! Elvesztetted az összegyűjtött aranyérméidet.', {
-        duration: 2000,
-        style: {
-          background: 'hsl(var(--destructive))',
-          color: 'hsl(var(--destructive-foreground))',
-          border: '1px solid hsl(var(--destructive))',
-        }
-      });
-      
-      // Wait briefly so user sees the toast
-      await new Promise(resolve => setTimeout(resolve, 800));
-      // Dismiss the restart toast before animating
-      toast.dismiss();
-    }
-    
-    // Don't animate out - keep current question visible during backend load
-    // This prevents any "loading" screen from showing
-    
-    setGameCompleted(false);
-    resetGameStateHook();
-    setCoinsEarned(0);
-    setHelp5050UsageCount(0);
-    setHelp2xAnswerUsageCount(0);
-    setHelpAudienceUsageCount(0);
-    resetQuestionHelpers();
-    setFirstAttempt(null);
-    setSecondAttempt(null);
-    setErrorBannerVisible(false);
-    resetRewardAnimation();
-    
-    // Start new game in background (seamless - skip video)
-    // This will fetch new questions while current one stays visible
-    await startGame(true);
-    
-    // Now animate to new first question with same effect as next question
-    setIsAnimating(true);
-    setCanSwipe(false);
-    setQuestionVisible(false);
-    
-    setTimeout(() => {
-      setCurrentQuestionIndex(0);
-      resetTimer(10);
-      setSelectedAnswer(null);
-      setQuestionVisible(true);
-      setIsAnimating(false);
-      setCanSwipe(true);
-    }, 300);
-  };
-
-
-  const shuffleAnswers = (questionSet: any[]): Question[] => {
+  const handleNextQuestion = async () => {
     let lastCorrectIndex = -1;
     let lastCorrectCount = 0;
     
@@ -622,8 +497,6 @@ const GamePreview = memo(() => {
       setErrorBannerMessage(`Rossz válasz! Folytatáshoz ${CONTINUE_AFTER_WRONG_COST} aranyérme szükséges.`);
     }, 500);
   }, [addResponseTime, triggerHaptic]);
-
-  const handleNextQuestion = async () => {
     if (isAnimating) return;
     
     setIsAnimating(true);
@@ -747,7 +620,6 @@ const GamePreview = memo(() => {
       // Nincs toast - a felhasználó látja a következő kérdést
       await handleNextQuestion();
     } else {
-      // Nincs toast - error banner látható
       await finishGame();
     }
   };
@@ -755,99 +627,6 @@ const GamePreview = memo(() => {
   const handleRejectContinue = () => {
     finishGame();
   };
-
-  const resetGameState = () => {
-    // If game was NOT completed (mid-game exit), coins are lost
-    // If game WAS completed, coins already credited by finishGame()
-    if (!gameCompleted) {
-      toast.error('Kilépés... Elvesztetted az összegyűjtött aranyérméidet!', {
-        duration: 3000,
-        style: {
-          background: 'hsl(var(--destructive))',
-          color: 'hsl(var(--destructive-foreground))',
-        }
-      });
-    }
-    
-    // Exit to dashboard
-    navigate('/dashboard');
-  };
-
-  const finishGame = async () => {
-    if (!profile) return;
-
-    // Don't change gameState - keep it 'playing' so toast shows on current screen
-
-    const avgResponseTime = responseTimes.length > 0 
-      ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length 
-      : 0;
-
-    try {
-      // Track game completion milestone
-      if (userId && correctAnswers > 0) {
-        await trackGameMilestone(userId, 'game_complete', {
-          category: 'mixed',
-          question_index: 15,
-          correct_answers: correctAnswers,
-          time_played_seconds: Math.floor((Date.now() - questionStartTime) / 1000),
-        });
-      }
-
-      // SECURITY: Use secure edge function for game completion
-      // Server calculates and validates all rewards
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) {
-        toast.error('A munkameneted lejárt. Kérlek, jelentkezz be újra!');
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke('complete-game', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        },
-        body: {
-          category: 'mixed', // All categories mixed together
-          correctAnswers: correctAnswers,
-          totalQuestions: questions.length,
-          averageResponseTime: avgResponseTime
-        }
-      });
-
-      if (error) throw error;
-
-      // Server returns the validated coins earned
-      const serverCoinsEarned = data?.coinsEarned || 0;
-      setCoinsEarned(serverCoinsEarned);
-
-      await refreshProfile();
-
-      if (correctAnswers > 0) {
-        const { data: currentProfile } = await supabase
-          .from('profiles')
-          .select('total_correct_answers')
-          .eq('id', userId!)
-          .single();
-
-        if (currentProfile) {
-          await supabase
-            .from('profiles')
-            .update({ 
-              total_correct_answers: (currentProfile.total_correct_answers || 0) + correctAnswers 
-            })
-            .eq('id', userId!);
-        }
-      }
-
-      // Backend processing complete - results shown in toast
-    } catch (error) {
-      console.error('Error finishing game:', error);
-      // Error handling - refresh profile anyway
-      await refreshProfile();
-    }
-  };
-
-  // UseHelp functions - NEW LOGIC
-  const useHelp5050 = async () => {
     if (selectedAnswer || isHelp5050ActiveThisQuestion) return;
     
     // Check usage count
