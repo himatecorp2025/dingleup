@@ -1325,21 +1325,24 @@ const GamePreview = () => {
         
         {/* In-Game Rescue Popup */}
         <InGameRescuePopup
-          open={showRescuePopup}
+          isOpen={showRescuePopup}
           onClose={() => {
             setShowRescuePopup(false);
+            // Exit game when user closes without purchasing
             resetGameState();
           }}
-          lives={walletData?.livesCurrent || 0}
-          gold={profile?.coins || 0}
-          purchasing={false}
-          onGoldSaverPurchase={async () => {
-            await Promise.all([refreshProfile(), refetchWallet()]);
+          triggerReason={rescueReason}
+          currentLives={walletData?.livesCurrent || 0}
+          currentGold={profile?.coins || 0}
+          onStateRefresh={async () => {
+            // Refresh wallet and profile after booster purchase
+            await Promise.all([
+              refreshProfile(),
+              refetchWallet()
+            ]);
+            // Close popup
             setShowRescuePopup(false);
-          }}
-          onInstantRescuePurchase={async () => {
-            await Promise.all([refreshProfile(), refetchWallet()]);
-            setShowRescuePopup(false);
+            // Continue game automatically after purchase
             setErrorBannerVisible(false);
             await handleNextQuestion();
           }}
