@@ -133,19 +133,38 @@ async function scenarioAUserFlow(
   userIndex: number,
   config: LoadTestRequest,
   endpoints: ReturnType<typeof ENDPOINTS>,
+  supabaseClient: any,
 ) {
   const user = TEST_USERS[userIndex % TEST_USERS.length];
 
-  // Login
+  // Step 1: Call login-with-username-pin
   const loginRes = await safeFetch(endpoints.login.url, {
     method: 'POST',
     headers: endpoints.login.headers,
     body: JSON.stringify({ username: user.username, pin: user.pin }),
   });
 
-  if (!loginRes?.session?.access_token) return;
+  if (!loginRes?.success || !loginRes?.user?.email || !loginRes?.passwordVariants) {
+    return;
+  }
 
-  const token = loginRes.session.access_token;
+  // Step 2: Try signInWithPassword with passwordVariants
+  let session = null;
+  for (const password of loginRes.passwordVariants) {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: loginRes.user.email,
+      password: password,
+    });
+    
+    if (data?.session) {
+      session = data.session;
+      break;
+    }
+  }
+
+  if (!session?.access_token) return;
+
+  const token = session.access_token;
   const authHeaders = {
     ...endpoints.login.headers,
     'Authorization': `Bearer ${token}`,
@@ -183,19 +202,38 @@ async function scenarioBUserFlow(
   userIndex: number,
   config: LoadTestRequest,
   endpoints: ReturnType<typeof ENDPOINTS>,
+  supabaseClient: any,
 ) {
   const user = TEST_USERS[userIndex % TEST_USERS.length];
 
-  // Login
+  // Step 1: Call login-with-username-pin
   const loginRes = await safeFetch(endpoints.login.url, {
     method: 'POST',
     headers: endpoints.login.headers,
     body: JSON.stringify({ username: user.username, pin: user.pin }),
   });
 
-  if (!loginRes?.session?.access_token) return;
+  if (!loginRes?.success || !loginRes?.user?.email || !loginRes?.passwordVariants) {
+    return;
+  }
 
-  const token = loginRes.session.access_token;
+  // Step 2: Try signInWithPassword with passwordVariants
+  let session = null;
+  for (const password of loginRes.passwordVariants) {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: loginRes.user.email,
+      password: password,
+    });
+    
+    if (data?.session) {
+      session = data.session;
+      break;
+    }
+  }
+
+  if (!session?.access_token) return;
+
+  const token = session.access_token;
   const authHeaders = {
     ...endpoints.login.headers,
     'Authorization': `Bearer ${token}`,
@@ -228,19 +266,38 @@ async function scenarioCUserFlow(
   userIndex: number,
   config: LoadTestRequest,
   endpoints: ReturnType<typeof ENDPOINTS>,
+  supabaseClient: any,
 ) {
   const user = TEST_USERS[userIndex % TEST_USERS.length];
 
-  // Login
+  // Step 1: Call login-with-username-pin
   const loginRes = await safeFetch(endpoints.login.url, {
     method: 'POST',
     headers: endpoints.login.headers,
     body: JSON.stringify({ username: user.username, pin: user.pin }),
   });
 
-  if (!loginRes?.session?.access_token) return;
+  if (!loginRes?.success || !loginRes?.user?.email || !loginRes?.passwordVariants) {
+    return;
+  }
 
-  const token = loginRes.session.access_token;
+  // Step 2: Try signInWithPassword with passwordVariants
+  let session = null;
+  for (const password of loginRes.passwordVariants) {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: loginRes.user.email,
+      password: password,
+    });
+    
+    if (data?.session) {
+      session = data.session;
+      break;
+    }
+  }
+
+  if (!session?.access_token) return;
+
+  const token = session.access_token;
   const authHeaders = {
     ...endpoints.login.headers,
     'Authorization': `Bearer ${token}`,
@@ -249,14 +306,6 @@ async function scenarioCUserFlow(
   // Focus on rewards and leaderboard
   for (let i = 0; i < config.requestsPerUser; i++) {
     await safeFetch(endpoints.wallet.url, {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify({}),
-    });
-
-    await sleep(config.delayMs);
-
-    await safeFetch(endpoints.leaderboard.url, {
       method: 'POST',
       headers: authHeaders,
       body: JSON.stringify({}),
@@ -321,6 +370,9 @@ Deno.serve(async (req) => {
     stats.latencies = [];
     stats.errors = [];
 
+    // Create Supabase client for auth
+    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+
     // Get endpoints
     const endpoints = ENDPOINTS(supabaseUrl, supabaseAnonKey);
 
@@ -330,11 +382,11 @@ Deno.serve(async (req) => {
 
     for (let i = 0; i < vus; i++) {
       if (config.scenario === 'A') {
-        promises.push(scenarioAUserFlow(i, config, endpoints));
+        promises.push(scenarioAUserFlow(i, config, endpoints, supabaseClient));
       } else if (config.scenario === 'B') {
-        promises.push(scenarioBUserFlow(i, config, endpoints));
+        promises.push(scenarioBUserFlow(i, config, endpoints, supabaseClient));
       } else if (config.scenario === 'C') {
-        promises.push(scenarioCUserFlow(i, config, endpoints));
+        promises.push(scenarioCUserFlow(i, config, endpoints, supabaseClient));
       }
     }
 
