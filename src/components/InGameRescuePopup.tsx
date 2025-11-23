@@ -137,6 +137,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           </DialogTitle>
           <p className="relative text-center text-yellow-50 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 sm:gap-2" style={{ textShadow: '0 3px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.4)' }}>
             {t('rescue.last_chance')}
+            <DiamondIcon3D size={20} className="drop-shadow-2xl sm:w-6 sm:h-6" />
           </p>
         </DialogHeader>
 
