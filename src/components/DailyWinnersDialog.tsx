@@ -19,19 +19,34 @@ interface TopPlayer {
   total_correct_answers: number;
 }
 
+interface TotalRewards {
+  totalGold: number;
+  totalLives: number;
+}
+
 export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) => {
   const { t } = useI18n();
   const [contentVisible, setContentVisible] = useState(false);
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
+  const [totalRewards, setTotalRewards] = useState<TotalRewards>({ totalGold: 0, totalLives: 0 });
   const badgeRef = useRef<HTMLDivElement>(null);
 
-  // Add keyframes for scale pulse animation
+  // Add keyframes for scale pulse animation and glow
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
       @keyframes pulse-scale {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.05); }
+      }
+      
+      @keyframes pulse-glow {
+        0%, 100% { 
+          filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+        }
+        50% { 
+          filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 40px rgba(255, 165, 0, 0.5));
+        }
       }
     `;
     document.head.appendChild(style);
@@ -110,6 +125,22 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
       setTopPlayers(players as TopPlayer[]);
       console.log('[DAILY-WINNERS] Loaded yesterday TOP 10 from snapshot:', players.length, 'players');
+      
+      // Calculate total rewards for TOP 10
+      const { data: prizesData, error: prizesError } = await supabase
+        .from('daily_prize_table')
+        .select('gold, lives, rank')
+        .lte('rank', 10)
+        .order('rank', { ascending: true });
+      
+      if (prizesError) {
+        console.error('[DAILY-WINNERS] Error fetching prize data:', prizesError);
+      } else if (prizesData) {
+        const totalGold = prizesData.reduce((sum, prize) => sum + (prize.gold || 0), 0);
+        const totalLives = prizesData.reduce((sum, prize) => sum + (prize.lives || 0), 0);
+        setTotalRewards({ totalGold, totalLives });
+        console.log('[DAILY-WINNERS] Total rewards calculated:', { totalGold, totalLives });
+      }
     } catch (error) {
       console.error('[DAILY-WINNERS] Exception fetching yesterday TOP 10:', error);
       setTopPlayers([]);
@@ -143,6 +174,131 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         >
           <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
           <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
+
+          {/* Casino Billboard - Total Rewards Panel (Top Right) */}
+          <div 
+            className="absolute top-4 right-4 z-30"
+            style={{
+              animation: 'pulse-glow 2s ease-in-out infinite',
+              filter: 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.6))'
+            }}
+          >
+            <div className="relative px-6 py-4 rounded-lg overflow-hidden" style={{
+              background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+              border: '3px solid',
+              borderImage: 'linear-gradient(135deg, #ffd700, #ffed4e, #ffa500) 1',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), inset 0 2px 8px rgba(255, 215, 0, 0.3)'
+            }}>
+              {/* Title */}
+              <div className="text-center mb-3">
+                <h3 className="text-white font-black uppercase tracking-wider" style={{
+                  fontSize: '0.75rem',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 215, 0, 0.5)',
+                  letterSpacing: '0.1em'
+                }}>
+                  Tegnapi Jutalmaink
+                </h3>
+              </div>
+
+              {/* Gold Coins Row */}
+              <div className="flex items-center justify-center gap-3 mb-2">
+                {/* Realistic 3D Gold Coin SVG */}
+                <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  {/* Outer shadow */}
+                  <ellipse cx="50" cy="55" rx="45" ry="42" fill="rgba(0,0,0,0.3)" opacity="0.6"/>
+                  
+                  {/* Base coin body */}
+                  <circle cx="50" cy="50" r="45" fill="url(#goldGradient)"/>
+                  
+                  {/* Inner ring highlight */}
+                  <circle cx="50" cy="50" r="38" fill="none" stroke="url(#goldRing)" strokeWidth="2"/>
+                  
+                  {/* Center emboss */}
+                  <circle cx="50" cy="48" r="28" fill="url(#goldCenter)"/>
+                  
+                  {/* Specular highlight */}
+                  <ellipse cx="38" cy="35" rx="18" ry="14" fill="rgba(255,255,255,0.4)" opacity="0.8"/>
+                  
+                  {/* Edge shading */}
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="url(#goldEdge)" strokeWidth="3"/>
+                  
+                  <defs>
+                    <radialGradient id="goldGradient" cx="40%" cy="40%">
+                      <stop offset="0%" stopColor="#fffacd"/>
+                      <stop offset="50%" stopColor="#ffd700"/>
+                      <stop offset="100%" stopColor="#b8860b"/>
+                    </radialGradient>
+                    
+                    <linearGradient id="goldRing" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#ffed4e"/>
+                      <stop offset="50%" stopColor="#ffd700"/>
+                      <stop offset="100%" stopColor="#daa520"/>
+                    </linearGradient>
+                    
+                    <radialGradient id="goldCenter" cx="45%" cy="40%">
+                      <stop offset="0%" stopColor="#ffffe0"/>
+                      <stop offset="60%" stopColor="#ffd700"/>
+                      <stop offset="100%" stopColor="#daa520"/>
+                    </radialGradient>
+                    
+                    <linearGradient id="goldEdge" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#ffd700" stopOpacity="0.8"/>
+                      <stop offset="50%" stopColor="#b8860b" stopOpacity="0.4"/>
+                      <stop offset="100%" stopColor="#8b6914" stopOpacity="0.9"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                
+                <span className="text-yellow-300 font-black text-2xl" style={{
+                  textShadow: '0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 215, 0, 0.6)',
+                  fontFamily: '"Poppins", sans-serif'
+                }}>
+                  {totalRewards.totalGold.toLocaleString()}
+                </span>
+              </div>
+
+              {/* Heart/Lives Row */}
+              <div className="flex items-center justify-center gap-3">
+                {/* Realistic 3D Heart SVG */}
+                <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  {/* Shadow */}
+                  <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
+                        fill="rgba(0,0,0,0.3)" transform="translate(2, 4)" opacity="0.5"/>
+                  
+                  {/* Main heart body */}
+                  <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
+                        fill="url(#heartGradient)"/>
+                  
+                  {/* Specular highlight */}
+                  <ellipse cx="38" cy="35" rx="12" ry="10" fill="rgba(255,255,255,0.5)" opacity="0.8"/>
+                  
+                  {/* Edge shine */}
+                  <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
+                        fill="none" stroke="url(#heartEdge)" strokeWidth="2" opacity="0.6"/>
+                  
+                  <defs>
+                    <radialGradient id="heartGradient" cx="40%" cy="30%">
+                      <stop offset="0%" stopColor="#ff6b9d"/>
+                      <stop offset="40%" stopColor="#ff0055"/>
+                      <stop offset="100%" stopColor="#c41e3a"/>
+                    </radialGradient>
+                    
+                    <linearGradient id="heartEdge" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#ff6b9d" stopOpacity="1"/>
+                      <stop offset="100%" stopColor="#8b0000" stopOpacity="0.8"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                
+                <span className="text-red-400 font-black text-2xl" style={{
+                  textShadow: '0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 0, 85, 0.5)',
+                  fontFamily: '"Poppins", sans-serif'
+                }}>
+                  {totalRewards.totalLives}
+                </span>
+              </div>
+            </div>
+          </div>
 
           {/* Zoom animáció wrapper */}
           <div 
