@@ -232,54 +232,125 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       {t('dailyWinners.geniuses')}
                     </h1>
                     
-                    {/* Jackpot info row */}
+                    {/* Jackpot info row - Professional 3D Casino Style Title */}
                     <div className="relative z-10 mt-2 flex items-center justify-center gap-4 text-white"
                          style={{
-                           fontSize: 'clamp(0.75rem, 3vw, 1rem)',
-                           fontFamily: '"Poppins", system-ui, -apple-system, sans-serif',
-                           fontWeight: 700
+                           fontSize: 'clamp(0.85rem, 3.5vw, 1.1rem)',
+                           fontFamily: '"Poppins", "Impact", system-ui, sans-serif',
+                           fontWeight: 900
                          }}>
                       <span style={{
-                        textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(255,255,255,0.3)',
-                        letterSpacing: '0.05em'
+                        background: 'linear-gradient(180deg, #ffffff 0%, #ffd700 20%, #ffb700 50%, #d4af37 80%, #b8941f 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        textShadow: '0 3px 6px rgba(0,0,0,0.9), 0 0 12px rgba(255,215,0,0.8), 0 0 20px rgba(255,215,0,0.4)',
+                        filter: 'drop-shadow(0 2px 4px rgba(255,215,0,0.9)) drop-shadow(0 0 8px rgba(255,215,0,0.5))',
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase'
                       }}>{t('dailyWinners.jackpot')}</span>
                       
-                      {/* Gold coin icon + amount */}
-                      <div className="flex items-center gap-1">
-                        <svg width="20" height="20" viewBox="0 0 24 24" className="inline-block">
+                      {/* Gold coin icon + amount - Professional 3D Casino Style */}
+                      <div className="flex items-center gap-1.5">
+                        <svg width="24" height="24" viewBox="0 0 24 24" className="inline-block" style={{ filter: 'drop-shadow(0 4px 8px rgba(255,215,0,0.6))' }}>
                           <defs>
-                            <radialGradient id="coinGold" cx="30%" cy="30%">
-                              <stop offset="0%" stopColor="#fffacd" />
-                              <stop offset="30%" stopColor="#ffd700" />
-                              <stop offset="60%" stopColor="#ffb700" />
-                              <stop offset="100%" stopColor="#d4af37" />
+                            <radialGradient id="coinGold3D" cx="35%" cy="25%">
+                              <stop offset="0%" stopColor="#fff9e6" stopOpacity="1" />
+                              <stop offset="20%" stopColor="#fffacd" stopOpacity="1" />
+                              <stop offset="40%" stopColor="#ffd700" stopOpacity="1" />
+                              <stop offset="60%" stopColor="#ffb700" stopOpacity="1" />
+                              <stop offset="80%" stopColor="#d4af37" stopOpacity="1" />
+                              <stop offset="100%" stopColor="#b8941f" stopOpacity="1" />
                             </radialGradient>
+                            <filter id="coinShadow3D">
+                              <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+                              <feOffset dx="0" dy="2" result="offsetblur"/>
+                              <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.7"/>
+                              </feComponentTransfer>
+                              <feMerge>
+                                <feMergeNode/>
+                                <feMergeNode in="SourceGraphic"/>
+                              </feMerge>
+                            </filter>
+                            <linearGradient id="coinHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+                              <stop offset="50%" stopColor="#ffffff" stopOpacity="0" />
+                            </linearGradient>
                           </defs>
-                          <circle cx="12" cy="12" r="10" fill="url(#coinGold)" stroke="#8b6914" strokeWidth="1.5"
-                                  style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }} />
+                          {/* Outer glow ring */}
+                          <circle cx="12" cy="12" r="11" fill="none" stroke="#ffd700" strokeWidth="0.5" opacity="0.4" />
+                          {/* Main coin body with 3D gradient */}
+                          <circle cx="12" cy="12" r="10" fill="url(#coinGold3D)" stroke="#8b6914" strokeWidth="2"
+                                  filter="url(#coinShadow3D)" />
+                          {/* Inner rim detail */}
+                          <circle cx="12" cy="12" r="8.5" fill="none" stroke="#b8941f" strokeWidth="0.8" opacity="0.5" />
+                          {/* Specular highlight */}
+                          <ellipse cx="9" cy="8" rx="4" ry="3" fill="url(#coinHighlight)" opacity="0.6" />
+                          {/* Center emboss */}
+                          <circle cx="12" cy="12" r="5" fill="none" stroke="#d4af37" strokeWidth="1.5" opacity="0.7" />
                         </svg>
                         <span style={{
-                          background: 'linear-gradient(180deg, #ffd700 0%, #ffb700 50%, #d4af37 100%)',
+                          fontSize: 'clamp(0.9rem, 3.5vw, 1.2rem)',
+                          fontWeight: 900,
+                          fontFamily: '"Poppins", "Impact", system-ui, sans-serif',
+                          background: 'linear-gradient(180deg, #fff9e6 0%, #ffd700 20%, #ffb700 50%, #d4af37 80%, #b8941f 100%)',
                           WebkitBackgroundClip: 'text',
                           WebkitTextFillColor: 'transparent',
-                          textShadow: '0 2px 4px rgba(0,0,0,0.6)',
-                          filter: 'drop-shadow(0 1px 2px rgba(255,215,0,0.8))'
+                          textShadow: '0 3px 6px rgba(0,0,0,0.8), 0 0 12px rgba(255,215,0,0.9), 0 0 20px rgba(255,215,0,0.5)',
+                          filter: 'drop-shadow(0 2px 4px rgba(255,215,0,1)) drop-shadow(0 0 8px rgba(255,215,0,0.6))',
+                          letterSpacing: '0.05em',
+                          position: 'relative'
                         }}>{totalRewards.totalGold}</span>
                       </div>
                       
-                      {/* Heart icon + amount */}
-                      <div className="flex items-center gap-1">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="inline-block">
+                      {/* Heart icon + amount - Professional 3D Casino Style */}
+                      <div className="flex items-center gap-1.5">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="inline-block" style={{ filter: 'drop-shadow(0 4px 8px rgba(255,23,68,0.6))' }}>
+                          <defs>
+                            <linearGradient id="heartGradient3D" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="#ff6b6b" />
+                              <stop offset="20%" stopColor="#ff5252" />
+                              <stop offset="50%" stopColor="#ff1744" />
+                              <stop offset="80%" stopColor="#d50000" />
+                              <stop offset="100%" stopColor="#b71c1c" />
+                            </linearGradient>
+                            <filter id="heartShadow3D">
+                              <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+                              <feOffset dx="0" dy="2" result="offsetblur"/>
+                              <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.7"/>
+                              </feComponentTransfer>
+                              <feMerge>
+                                <feMergeNode/>
+                                <feMergeNode in="SourceGraphic"/>
+                              </feMerge>
+                            </filter>
+                            <radialGradient id="heartHighlight" cx="30%" cy="20%">
+                              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.7" />
+                              <stop offset="50%" stopColor="#ffffff" stopOpacity="0" />
+                            </radialGradient>
+                          </defs>
+                          {/* Outer glow */}
                           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" 
-                                fill="#ff1744" stroke="#b71c1c" strokeWidth="1.5"
-                                style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }} />
+                                fill="none" stroke="#ff1744" strokeWidth="1" opacity="0.3" />
+                          {/* Main heart with 3D gradient */}
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" 
+                                fill="url(#heartGradient3D)" stroke="#b71c1c" strokeWidth="1.5"
+                                filter="url(#heartShadow3D)" />
+                          {/* Specular highlight overlay */}
+                          <ellipse cx="10" cy="8" rx="3" ry="2.5" fill="url(#heartHighlight)" opacity="0.6" />
                         </svg>
                         <span style={{
-                          background: 'linear-gradient(180deg, #ff5252 0%, #ff1744 50%, #d50000 100%)',
+                          fontSize: 'clamp(0.9rem, 3.5vw, 1.2rem)',
+                          fontWeight: 900,
+                          fontFamily: '"Poppins", "Impact", system-ui, sans-serif',
+                          background: 'linear-gradient(180deg, #ff6b6b 0%, #ff5252 20%, #ff1744 50%, #d50000 80%, #b71c1c 100%)',
                           WebkitBackgroundClip: 'text',
                           WebkitTextFillColor: 'transparent',
-                          textShadow: '0 2px 4px rgba(0,0,0,0.6)',
-                          filter: 'drop-shadow(0 1px 2px rgba(255,23,68,0.8))'
+                          textShadow: '0 3px 6px rgba(0,0,0,0.8), 0 0 12px rgba(255,23,68,0.9), 0 0 20px rgba(255,23,68,0.5)',
+                          filter: 'drop-shadow(0 2px 4px rgba(255,23,68,1)) drop-shadow(0 0 8px rgba(255,23,68,0.6))',
+                          letterSpacing: '0.05em',
+                          position: 'relative'
                         }}>{totalRewards.totalLives}</span>
                       </div>
                     </div>
