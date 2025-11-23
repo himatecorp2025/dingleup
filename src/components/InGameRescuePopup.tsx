@@ -137,7 +137,6 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           </DialogTitle>
           <p className="relative text-center text-yellow-50 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 sm:gap-2" style={{ textShadow: '0 3px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.4)' }}>
             {t('rescue.last_chance')}
-            <DiamondIcon3D size={20} className="drop-shadow-2xl sm:w-6 sm:h-6" />
           </p>
         </DialogHeader>
 
@@ -189,15 +188,13 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 <div className="relative">
                   {/* 3D circle with multiple shadow layers */}
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(202, 138, 4, 0.9), 0 8px 20px rgba(202, 138, 4, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(234, 179, 8, 0.4)' }}>
-                    {/* Inner ring for depth */}
-                    <div className="absolute inset-2 rounded-full bg-gradient-to-br from-yellow-100/40 to-transparent" style={{ boxShadow: 'inset 0 2px 8px rgba(255, 255, 255, 0.5)' }}></div>
                     <GoldRewardCoin3D size={44} className="drop-shadow-2xl relative z-10 sm:w-14 sm:h-14" />
                   </div>
                 </div>
               </div>
 
-              <h3 className="text-xs sm:text-sm font-black text-center bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider" style={{ textShadow: '0 2px 10px rgba(234, 179, 8, 0.8)' }}>
-                Gold Saver
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider" style={{ textShadow: '0 2px 10px rgba(234, 179, 8, 0.8)' }}>
+                Gold<br />Saver
               </h3>
 
               <p className="text-blue-50 text-[9px] sm:text-[10px] text-center mb-3 sm:mb-4 font-semibold leading-snug px-1" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)' }}>
@@ -256,15 +253,13 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 <div className="relative">
                   {/* 3D circle with multiple shadow layers */}
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(6, 182, 212, 0.9), 0 8px 20px rgba(59, 130, 246, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(6, 182, 212, 0.4)' }}>
-                    {/* Inner ring for depth */}
-                    <div className="absolute inset-2 rounded-full bg-gradient-to-br from-cyan-100/40 to-transparent" style={{ boxShadow: 'inset 0 2px 8px rgba(255, 255, 255, 0.5)' }}></div>
                     <DiamondIcon3D size={88} className="drop-shadow-2xl relative z-10 sm:w-28 sm:h-28" />
                   </div>
                 </div>
               </div>
 
-              <h3 className="text-xs sm:text-sm font-black text-center bg-gradient-to-r from-cyan-100 via-blue-50 to-cyan-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider" style={{ textShadow: '0 3px 12px rgba(6, 182, 212, 0.9), 0 0 20px rgba(59, 130, 246, 0.6)' }}>
-                Instant Rescue
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-cyan-100 via-blue-50 to-cyan-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider" style={{ textShadow: '0 3px 12px rgba(6, 182, 212, 0.9), 0 0 20px rgba(59, 130, 246, 0.6)' }}>
+                Instant<br />Rescue
               </h3>
 
               <p className="text-cyan-50 text-[9px] sm:text-[10px] text-center mb-3 sm:mb-4 font-semibold leading-snug px-1" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>
