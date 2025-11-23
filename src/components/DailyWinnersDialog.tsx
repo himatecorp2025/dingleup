@@ -64,37 +64,38 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
       const userCountry = profileData.country_code;
 
-      console.log('[DAILY-WINNERS] Fetching current daily TOP 10 from edge function, country:', userCountry);
+      // Calculate yesterday's date
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayDate = yesterday.toISOString().split('T')[0];
 
-      // Fetch from the same edge function used on the Leaderboard page
-      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country');
+      console.log('[DAILY-WINNERS] Fetching yesterday TOP 10 from daily_leaderboard_snapshot, country:', userCountry, 'date:', yesterdayDate);
+
+      // Fetch top 10 from daily_leaderboard_snapshot for user's country and yesterday's date
+      const { data: players, error } = await supabase
+        .from('daily_leaderboard_snapshot')
+        .select('user_id, rank, username, avatar_url, total_correct_answers')
+        .eq('country_code', userCountry)
+        .eq('snapshot_date', yesterdayDate)
+        .order('rank', { ascending: true })
+        .limit(10);
 
       if (error) {
-        console.error('[DAILY-WINNERS] Error fetching current daily TOP 10:', error);
+        console.error('[DAILY-WINNERS] Error fetching yesterday TOP 10:', error);
         setTopPlayers([]);
         return;
       }
 
-      if (!data || !data.leaderboard) {
-        console.error('[DAILY-WINNERS] No leaderboard data returned from edge function');
+      if (!players || players.length === 0) {
+        console.log('[DAILY-WINNERS] No snapshot data found for yesterday');
         setTopPlayers([]);
         return;
       }
 
-      const leaderboardEntries = (data.leaderboard || []) as any[];
-
-      const rankedData = leaderboardEntries.slice(0, 10).map((entry, index) => ({
-        user_id: entry.user_id ?? `rank-${index + 1}`,
-        username: entry.username,
-        total_correct_answers: entry.total_correct_answers ?? 0,
-        avatar_url: entry.avatar_url ?? null,
-        rank: entry.rank ?? index + 1,
-      }));
-
-      setTopPlayers(rankedData as TopPlayer[]);
-      console.log('[DAILY-WINNERS] Loaded current daily TOP 10 from edge function:', rankedData.length, 'players');
+      setTopPlayers(players as TopPlayer[]);
+      console.log('[DAILY-WINNERS] Loaded yesterday TOP 10 from snapshot:', players.length, 'players');
     } catch (error) {
-      console.error('[DAILY-WINNERS] Exception fetching current TOP 10:', error);
+      console.error('[DAILY-WINNERS] Exception fetching yesterday TOP 10:', error);
       setTopPlayers([]);
     }
   };
