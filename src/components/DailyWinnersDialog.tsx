@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import HexAcceptButton from './ui/HexAcceptButton';
 import { useI18n } from '@/i18n/useI18n';
+import laurelWreathGold from '@/assets/laurel_wreath_gold.svg';
 
 interface DailyWinnersDialogProps {
   open: boolean;
@@ -141,7 +142,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           >
             <div className="relative w-full">
               <HexShieldFrame showShine={true}>
-                {/* Top Hex Badge - "TEGNAPI TOP 10" - UGYANAZ mint Daily Gift */}
+                {/* Top Hex Badge - "TEGNAPI TOP 10" */}
                 <div 
                   ref={badgeRef}
                   className="relative -mt-12 mb-3 mx-auto z-20" 
@@ -214,247 +215,202 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       </div>
                     ) : (
                       <>
-                        {/* TOP 3 - Horizontal Layout with Laurel Wreaths */}
-                        <div className="flex justify-center items-center gap-3 mb-6 px-2">
+                        {/* TOP 3 - Horizontal Layout with Realistic Laurel Wreaths */}
+                        <div className="flex justify-center items-end gap-2 mb-6 px-1">
                           {/* 2nd Place - Silver */}
                           {topPlayers[1] && (
-                            <div className="flex flex-col items-center" style={{ width: '30%' }}>
-                              <svg viewBox="0 0 140 180" className="w-full">
-                                <defs>
-                                  <radialGradient id="silverGrad" cx="50%" cy="50%">
-                                    <stop offset="0%" style={{ stopColor: '#f5f5f5', stopOpacity: 1 }} />
-                                    <stop offset="50%" style={{ stopColor: '#d0d0d0', stopOpacity: 1 }} />
-                                    <stop offset="100%" style={{ stopColor: '#a0a0a0', stopOpacity: 1 }} />
-                                  </radialGradient>
-                                  <clipPath id="circleClip2">
-                                    <circle cx="70" cy="65" r="32" />
-                                  </clipPath>
-                                </defs>
-                                
-                                {/* Left laurel branch */}
-                                <path d="M 35,45 Q 28,50 32,56 L 30,54 Q 24,59 28,65 L 26,63 Q 20,68 24,74 L 22,72 Q 16,77 20,83" 
-                                      fill="none" stroke="#b8b8b8" strokeWidth="3" strokeLinecap="round"/>
-                                {/* Left leaves */}
-                                <ellipse cx="32" cy="52" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(-30 32 52)"/>
-                                <ellipse cx="28" cy="60" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(-25 28 60)"/>
-                                <ellipse cx="24" cy="69" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(-20 24 69)"/>
-                                <ellipse cx="20" cy="78" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(-15 20 78)"/>
-                                
-                                {/* Right laurel branch */}
-                                <path d="M 105,45 Q 112,50 108,56 L 110,54 Q 116,59 112,65 L 114,63 Q 120,68 116,74 L 118,72 Q 124,77 120,83" 
-                                      fill="none" stroke="#b8b8b8" strokeWidth="3" strokeLinecap="round"/>
-                                {/* Right leaves */}
-                                <ellipse cx="108" cy="52" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(30 108 52)"/>
-                                <ellipse cx="112" cy="60" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(25 112 60)"/>
-                                <ellipse cx="116" cy="69" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(20 116 69)"/>
-                                <ellipse cx="120" cy="78" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(15 120 78)"/>
-                                
-                                {/* Avatar background circle */}
-                                <circle cx="70" cy="65" r="34" fill="url(#silverGrad)" stroke="#e0e0e0" strokeWidth="2"/>
-                                <circle cx="70" cy="65" r="32" fill="#1a1a1a" stroke="#c0c0c0" strokeWidth="2"/>
-                                
-                                {/* Avatar image or placeholder */}
-                                {topPlayers[1].avatar_url ? (
-                                  <image href={topPlayers[1].avatar_url} x="38" y="33" width="64" height="64" clipPath="url(#circleClip2)" preserveAspectRatio="xMidYMid slice"/>
-                                ) : (
-                                  <text x="70" y="72" textAnchor="middle" fill="#888" fontSize="14" fontWeight="bold">
-                                    {topPlayers[1].username.substring(0, 2).toUpperCase()}
-                                  </text>
-                                )}
-                                
+                            <div className="flex flex-col items-center relative" style={{ width: '30%' }}>
+                              <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
+                                {/* Background wreath - Silver */}
+                                <div 
+                                  className="absolute inset-0"
+                                  style={{
+                                    backgroundImage: `url(${laurelWreathGold})`,
+                                    backgroundSize: 'contain',
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat',
+                                    filter: 'grayscale(1) brightness(1.3) contrast(0.9)'
+                                  }}
+                                />
+                                {/* Avatar in center */}
+                                <div className="absolute" style={{ left: '31%', top: '35%', width: '38%', height: '27%' }}>
+                                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-gray-300 bg-gray-800">
+                                    {topPlayers[1].avatar_url ? (
+                                      <img 
+                                        src={topPlayers[1].avatar_url} 
+                                        alt={topPlayers[1].username}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-2xl">
+                                        {topPlayers[1].username.substring(0, 2).toUpperCase()}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
                                 {/* Rank badge at bottom */}
-                                <circle cx="70" cy="110" r="16" fill="url(#silverGrad)" stroke="#fff" strokeWidth="2"/>
-                                <text x="70" y="117" textAnchor="middle" fill="#000" fontSize="20" fontWeight="bold">2</text>
-                                
-                                {/* Username */}
-                                <text x="70" y="140" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="bold">
-                                  {topPlayers[1].username.length > 10 ? topPlayers[1].username.substring(0, 10) + '...' : topPlayers[1].username}
-                                </text>
-                                
-                                {/* Correct answers */}
-                                <text x="70" y="155" textAnchor="middle" fill="#c0c0c0" fontSize="9">
+                                <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
+                                  <div className="aspect-square rounded-full bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 flex items-center justify-center border-4 border-white shadow-lg">
+                                    <span className="text-black font-black" style={{ fontSize: '3.5vw' }}>2</span>
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Username below wreath */}
+                              <div className="mt-1 text-center w-full">
+                                <p className="text-white font-bold text-[0.65rem] leading-tight truncate px-1">
+                                  {topPlayers[1].username}
+                                </p>
+                                <p className="text-gray-400 text-[0.5rem] leading-tight">
                                   {topPlayers[1].total_correct_answers} {t('dailyWinners.correctAnswers')}
-                                </text>
-                              </svg>
+                                </p>
+                              </div>
                             </div>
                           )}
 
                           {/* 1st Place - Gold (larger) */}
                           {topPlayers[0] && (
-                            <div className="flex flex-col items-center" style={{ width: '35%' }}>
-                              <svg viewBox="0 0 140 190" className="w-full">
-                                <defs>
-                                  <radialGradient id="goldGrad2" cx="50%" cy="50%">
-                                    <stop offset="0%" style={{ stopColor: '#ffd700', stopOpacity: 1 }} />
-                                    <stop offset="50%" style={{ stopColor: '#ffb700', stopOpacity: 1 }} />
-                                    <stop offset="100%" style={{ stopColor: '#cc9900', stopOpacity: 1 }} />
-                                  </radialGradient>
-                                  <clipPath id="circleClip1">
-                                    <circle cx="70" cy="70" r="36" />
-                                  </clipPath>
-                                </defs>
-                                
-                                {/* Left laurel branch */}
-                                <path d="M 30,45 Q 22,52 26,60 L 24,58 Q 17,65 21,73 L 19,71 Q 12,78 16,86 L 14,84 Q 7,91 11,99" 
-                                      fill="none" stroke="#ccaa00" strokeWidth="3.5" strokeLinecap="round"/>
-                                {/* Left leaves */}
-                                <ellipse cx="26" cy="54" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-30 26 54)"/>
-                                <ellipse cx="21" cy="64" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-25 21 64)"/>
-                                <ellipse cx="16" cy="75" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-20 16 75)"/>
-                                <ellipse cx="11" cy="86" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-15 11 86)"/>
-                                <ellipse cx="9" cy="95" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-10 9 95)"/>
-                                
-                                {/* Right laurel branch */}
-                                <path d="M 110,45 Q 118,52 114,60 L 116,58 Q 123,65 119,73 L 121,71 Q 128,78 124,86 L 126,84 Q 133,91 129,99" 
-                                      fill="none" stroke="#ccaa00" strokeWidth="3.5" strokeLinecap="round"/>
-                                {/* Right leaves */}
-                                <ellipse cx="114" cy="54" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(30 114 54)"/>
-                                <ellipse cx="119" cy="64" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(25 119 64)"/>
-                                <ellipse cx="124" cy="75" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(20 124 75)"/>
-                                <ellipse cx="129" cy="86" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(15 129 86)"/>
-                                <ellipse cx="131" cy="95" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(10 131 95)"/>
-                                
-                                {/* Avatar background circle */}
-                                <circle cx="70" cy="70" r="38" fill="url(#goldGrad2)" stroke="#ffe44d" strokeWidth="2.5"/>
-                                <circle cx="70" cy="70" r="36" fill="#1a1a1a" stroke="#ffcc00" strokeWidth="2.5"/>
-                                
-                                {/* Avatar image or placeholder */}
-                                {topPlayers[0].avatar_url ? (
-                                  <image href={topPlayers[0].avatar_url} x="34" y="34" width="72" height="72" clipPath="url(#circleClip1)" preserveAspectRatio="xMidYMid slice"/>
-                                ) : (
-                                  <text x="70" y="78" textAnchor="middle" fill="#888" fontSize="16" fontWeight="bold">
-                                    {topPlayers[0].username.substring(0, 2).toUpperCase()}
-                                  </text>
-                                )}
-                                
+                            <div className="flex flex-col items-center relative" style={{ width: '36%' }}>
+                              <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
+                                {/* Background wreath - Gold (exact user SVG) */}
+                                <div 
+                                  className="absolute inset-0"
+                                  style={{
+                                    backgroundImage: `url(${laurelWreathGold})`,
+                                    backgroundSize: 'contain',
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat'
+                                  }}
+                                />
+                                {/* Avatar in center */}
+                                <div className="absolute" style={{ left: '31%', top: '35%', width: '38%', height: '27%' }}>
+                                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-yellow-400 bg-gray-800">
+                                    {topPlayers[0].avatar_url ? (
+                                      <img 
+                                        src={topPlayers[0].avatar_url} 
+                                        alt={topPlayers[0].username}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-yellow-400 font-bold text-3xl">
+                                        {topPlayers[0].username.substring(0, 2).toUpperCase()}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
                                 {/* Rank badge at bottom */}
-                                <circle cx="70" cy="120" r="18" fill="url(#goldGrad2)" stroke="#fff" strokeWidth="2.5"/>
-                                <text x="70" y="128" textAnchor="middle" fill="#000" fontSize="24" fontWeight="bold">1</text>
-                                
-                                {/* Username */}
-                                <text x="70" y="153" textAnchor="middle" fill="#fff" fontSize="12" fontWeight="bold">
-                                  {topPlayers[0].username.length > 10 ? topPlayers[0].username.substring(0, 10) + '...' : topPlayers[0].username}
-                                </text>
-                                
-                                {/* Correct answers */}
-                                <text x="70" y="169" textAnchor="middle" fill="#ffd700" fontSize="10" fontWeight="bold">
+                                <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
+                                  <div className="aspect-square rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 flex items-center justify-center border-4 border-white shadow-lg">
+                                    <span className="text-black font-black" style={{ fontSize: '3.8vw' }}>1</span>
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Username below wreath */}
+                              <div className="mt-1 text-center w-full">
+                                <p className="text-white font-bold text-[0.7rem] leading-tight truncate px-1">
+                                  {topPlayers[0].username}
+                                </p>
+                                <p className="text-yellow-400 text-[0.55rem] leading-tight font-semibold">
                                   {topPlayers[0].total_correct_answers} {t('dailyWinners.correctAnswers')}
-                                </text>
-                              </svg>
+                                </p>
+                              </div>
                             </div>
                           )}
 
                           {/* 3rd Place - Bronze */}
                           {topPlayers[2] && (
-                            <div className="flex flex-col items-center" style={{ width: '30%' }}>
-                              <svg viewBox="0 0 140 180" className="w-full">
-                                <defs>
-                                  <radialGradient id="bronzeGrad2" cx="50%" cy="50%">
-                                    <stop offset="0%" style={{ stopColor: '#e89b5a', stopOpacity: 1 }} />
-                                    <stop offset="50%" style={{ stopColor: '#cd7f32', stopOpacity: 1 }} />
-                                    <stop offset="100%" style={{ stopColor: '#8b5a2b', stopOpacity: 1 }} />
-                                  </radialGradient>
-                                  <clipPath id="circleClip3">
-                                    <circle cx="70" cy="65" r="32" />
-                                  </clipPath>
-                                </defs>
-                                
-                                {/* Left laurel branch */}
-                                <path d="M 35,45 Q 28,50 32,56 L 30,54 Q 24,59 28,65 L 26,63 Q 20,68 24,74 L 22,72 Q 16,77 20,83" 
-                                      fill="none" stroke="#9d6b3a" strokeWidth="3" strokeLinecap="round"/>
-                                {/* Left leaves */}
-                                <ellipse cx="32" cy="52" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(-30 32 52)"/>
-                                <ellipse cx="28" cy="60" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(-25 28 60)"/>
-                                <ellipse cx="24" cy="69" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(-20 24 69)"/>
-                                <ellipse cx="20" cy="78" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(-15 20 78)"/>
-                                
-                                {/* Right laurel branch */}
-                                <path d="M 105,45 Q 112,50 108,56 L 110,54 Q 116,59 112,65 L 114,63 Q 120,68 116,74 L 118,72 Q 124,77 120,83" 
-                                      fill="none" stroke="#9d6b3a" strokeWidth="3" strokeLinecap="round"/>
-                                {/* Right leaves */}
-                                <ellipse cx="108" cy="52" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(30 108 52)"/>
-                                <ellipse cx="112" cy="60" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(25 112 60)"/>
-                                <ellipse cx="116" cy="69" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(20 116 69)"/>
-                                <ellipse cx="120" cy="78" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(15 120 78)"/>
-                                
-                                {/* Avatar background circle */}
-                                <circle cx="70" cy="65" r="34" fill="url(#bronzeGrad2)" stroke="#e89b5a" strokeWidth="2"/>
-                                <circle cx="70" cy="65" r="32" fill="#1a1a1a" stroke="#cd7f32" strokeWidth="2"/>
-                                
-                                {/* Avatar image or placeholder */}
-                                {topPlayers[2].avatar_url ? (
-                                  <image href={topPlayers[2].avatar_url} x="38" y="33" width="64" height="64" clipPath="url(#circleClip3)" preserveAspectRatio="xMidYMid slice"/>
-                                ) : (
-                                  <text x="70" y="72" textAnchor="middle" fill="#888" fontSize="14" fontWeight="bold">
-                                    {topPlayers[2].username.substring(0, 2).toUpperCase()}
-                                  </text>
-                                )}
-                                
+                            <div className="flex flex-col items-center relative" style={{ width: '30%' }}>
+                              <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
+                                {/* Background wreath - Bronze */}
+                                <div 
+                                  className="absolute inset-0"
+                                  style={{
+                                    backgroundImage: `url(${laurelWreathGold})`,
+                                    backgroundSize: 'contain',
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat',
+                                    filter: 'hue-rotate(-30deg) saturate(0.8) brightness(0.9)'
+                                  }}
+                                />
+                                {/* Avatar in center */}
+                                <div className="absolute" style={{ left: '31%', top: '35%', width: '38%', height: '27%' }}>
+                                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-orange-600 bg-gray-800">
+                                    {topPlayers[2].avatar_url ? (
+                                      <img 
+                                        src={topPlayers[2].avatar_url} 
+                                        alt={topPlayers[2].username}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-orange-400 font-bold text-2xl">
+                                        {topPlayers[2].username.substring(0, 2).toUpperCase()}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
                                 {/* Rank badge at bottom */}
-                                <circle cx="70" cy="110" r="16" fill="url(#bronzeGrad2)" stroke="#fff" strokeWidth="2"/>
-                                <text x="70" y="117" textAnchor="middle" fill="#000" fontSize="20" fontWeight="bold">3</text>
-                                
-                                {/* Username */}
-                                <text x="70" y="140" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="bold">
-                                  {topPlayers[2].username.length > 10 ? topPlayers[2].username.substring(0, 10) + '...' : topPlayers[2].username}
-                                </text>
-                                
-                                {/* Correct answers */}
-                                <text x="70" y="155" textAnchor="middle" fill="#d4a574" fontSize="9">
+                                <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
+                                  <div className="aspect-square rounded-full bg-gradient-to-br from-orange-400 via-orange-600 to-orange-800 flex items-center justify-center border-4 border-white shadow-lg">
+                                    <span className="text-white font-black" style={{ fontSize: '3.5vw' }}>3</span>
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Username below wreath */}
+                              <div className="mt-1 text-center w-full">
+                                <p className="text-white font-bold text-[0.65rem] leading-tight truncate px-1">
+                                  {topPlayers[2].username}
+                                </p>
+                                <p className="text-orange-400 text-[0.5rem] leading-tight">
                                   {topPlayers[2].total_correct_answers} {t('dailyWinners.correctAnswers')}
-                                </text>
-                              </svg>
+                                </p>
+                              </div>
                             </div>
                           )}
                         </div>
 
-                        {/* 4-10th Place - Original List Design */}
-                        {topPlayers.slice(3).length > 0 && (
-                          <div className="space-y-2">
-                            {topPlayers.slice(3).map((player, index) => {
-                              const actualRank = index + 4;
-                              
-                              return (
-                                <div
-                                  key={player.user_id}
-                                  className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-purple-900/30 to-purple-800/30 rounded-xl border border-purple-500/20"
-                                >
-                                  {/* Medal */}
-                                  <div className="flex-shrink-0 text-2xl">
-                                    🏅
-                                  </div>
-
-                                  {/* Player Info */}
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-base font-bold text-white truncate">
-                                      {player.username}
-                                    </p>
-                                    <p className="text-xs text-gray-300">
-                                      {player.total_correct_answers} {t('dailyWinners.correctAnswers')}
-                                    </p>
-                                  </div>
-
-                                  {/* Rank Number */}
-                                  <div className="flex-shrink-0 text-xl font-bold text-yellow-400">
-                                    #{player.rank}
-                                  </div>
+                        {/* Players 4-10 - Ranked List */}
+                        <div className="space-y-2">
+                          {topPlayers.slice(3).map((player) => (
+                            <div 
+                              key={player.user_id} 
+                              className="flex items-center justify-between bg-black/30 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/10"
+                            >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <span className="text-white font-bold text-lg flex-shrink-0 w-6">
+                                  {player.rank}
+                                </span>
+                                <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700 flex-shrink-0">
+                                  {player.avatar_url ? (
+                                    <img 
+                                      src={player.avatar_url} 
+                                      alt={player.username}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs font-bold">
+                                      {player.username.substring(0, 2).toUpperCase()}
+                                    </div>
+                                  )}
                                 </div>
-                              );
-                            })}
-                          </div>
-                        )}
+                                <span className="text-white font-medium text-sm truncate flex-1">
+                                  {player.username}
+                                </span>
+                              </div>
+                              <span className="text-gray-300 text-sm flex-shrink-0 ml-2">
+                                {player.total_correct_answers}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
                       </>
                     )}
                   </div>
 
-                  {/* Close Button */}
-                  <div className="flex justify-center w-full" style={{ height: '60px' }}>
-                    <HexAcceptButton
+                  {/* Accept Button */}
+                  <div className="mt-auto pt-4 flex justify-center w-full">
+                    <HexAcceptButton 
                       onClick={onClose}
-                      style={{ width: '100%', maxWidth: '300px' }}
-                    >
-                      {t('dailyWinners.close')}
-                    </HexAcceptButton>
+                      className="w-[90%]"
+                    />
                   </div>
                 </div>
               </HexShieldFrame>
@@ -465,3 +421,5 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
     </Dialog>
   );
 };
+
+export default DailyWinnersDialog;
