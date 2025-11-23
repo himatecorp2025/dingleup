@@ -304,6 +304,88 @@ export const trackGameMilestone = async (
   }
 };
 
+// =====================================================
+// PERFORMANCE TRACKING (Web Vitals)
+// =====================================================
+
+export const trackPerformanceMetric = async (
+  userId: string | null,
+  route: string,
+  metrics: {
+    loadTime: number;
+    ttfb?: number;
+    fcp?: number;
+    lcp?: number;
+    fid?: number;
+    cls?: number;
+    tti?: number;
+  }
+) => {
+  try {
+    const deviceInfo = getDeviceInfo();
+    const connectionInfo = (navigator as any).connection;
+    
+    await supabase.from('performance_metrics').insert({
+      user_id: userId,
+      session_id: getSessionId(),
+      page_route: route,
+      load_time_ms: Math.round(metrics.loadTime),
+      ttfb_ms: metrics.ttfb ? Math.round(metrics.ttfb) : null,
+      fcp_ms: metrics.fcp ? Math.round(metrics.fcp) : null,
+      lcp_ms: metrics.lcp ? Math.round(metrics.lcp) : null,
+      fid_ms: metrics.fid ? Math.round(metrics.fid) : null,
+      cls: metrics.cls || null,
+      tti_ms: metrics.tti ? Math.round(metrics.tti) : null,
+      device_type: deviceInfo.is_mobile ? 'mobile' : 'desktop',
+      browser: navigator.userAgent.match(/Chrome|Safari|Firefox|Edge|Opera/)?.[0] || 'Unknown',
+      connection_type: connectionInfo?.effectiveType || null,
+    });
+  } catch (error) {
+    console.error('[Analytics] Failed to track performance metric:', error);
+  }
+};
+
+// =====================================================
+// ERROR TRACKING
+// =====================================================
+
+export const trackError = async (
+  userId: string | null,
+  route: string,
+  error: {
+    type: string;
+    message: string;
+    stack?: string;
+    component?: string;
+    severity?: 'low' | 'medium' | 'high' | 'critical';
+    isFatal?: boolean;
+    userAction?: string;
+    metadata?: Record<string, any>;
+  }
+) => {
+  try {
+    const deviceInfo = getDeviceInfo();
+    
+    await supabase.from('error_logs').insert({
+      user_id: userId,
+      session_id: getSessionId(),
+      page_route: route,
+      error_type: error.type,
+      error_message: error.message.substring(0, 500),
+      error_stack: error.stack?.substring(0, 2000) || null,
+      error_component: error.component || null,
+      severity: error.severity || 'medium',
+      is_fatal: error.isFatal || false,
+      user_action: error.userAction || null,
+      device_type: deviceInfo.is_mobile ? 'mobile' : 'desktop',
+      browser: navigator.userAgent.match(/Chrome|Safari|Firefox|Edge|Opera/)?.[0] || 'Unknown',
+      metadata: error.metadata || null,
+    });
+  } catch (err) {
+    console.error('[Analytics] Failed to track error:', err);
+  }
+};
+
 interface AnalyticsData {
   userId?: string;
   route?: string;
