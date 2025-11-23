@@ -555,24 +555,13 @@ if (!profile) {
 
           {/* Logo - legfelső, Play Now felett */}
           <div className="flex justify-center w-full" style={{ marginBottom: '2vh', pointerEvents: 'none' }}>
-            <div className="relative w-[clamp(146px,45.36vw,308px)] h-[clamp(146px,45.36vw,308px)]">
+            <div className="relative w-[clamp(120px,35vw,280px)] h-[clamp(120px,35vw,280px)]">
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
-              <svg 
-                xmlns="http://www.w3.org/2000/svg"
-                width="400"
-                height="400"
-                viewBox="0 0 1024 1024"
+              <img 
+                src="/logo.png"
+                alt="DingleUP! Logo"
                 className="relative w-full h-full object-contain drop-shadow-2xl gold-glow"
-              >
-                <image
-                  href="/logo.png"
-                  x="0"
-                  y="0"
-                  width="1024"
-                  height="1024"
-                  preserveAspectRatio="xMidYMid meet"
-                />
-              </svg>
+              />
             </div>
           </div>
         </div>
