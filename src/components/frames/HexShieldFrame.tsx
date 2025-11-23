@@ -18,6 +18,10 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine
            height: '100dvh'
          }}>
       
+      {/* Inner container - 90% of canvas size, centered */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="relative" style={{ width: '90%', height: '90%' }}>
+      
       {showShine && (
         <div 
           className="absolute pointer-events-none"
@@ -161,6 +165,9 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine
       {/* Content Container (positioned over crystal panel) */}
       <div className="absolute inset-0 flex flex-col z-10" style={{ padding: '64px 52px 52px 52px' }}>
         {children}
+      </div>
+      
+        </div>
       </div>
     </div>
   );
