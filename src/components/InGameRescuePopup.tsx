@@ -8,6 +8,7 @@ import { useI18n } from '@/i18n';
 import { LifeIcon3D } from '@/components/icons/LifeIcon3D';
 import { CoinIcon3D } from '@/components/icons/CoinIcon3D';
 import { DiamondIcon3D } from '@/components/icons/DiamondIcon3D';
+import { GoldRewardCoin3D } from '@/components/icons/GoldRewardCoin3D';
 
 interface InGameRescuePopupProps {
   isOpen: boolean;
@@ -155,7 +156,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           {/* Gold Saver Booster - Enhanced 3D */}
           <div className="relative flex flex-col h-full">
             {/* Outer glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/50 to-orange-500/50 rounded-2xl blur-lg"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/40 to-amber-500/40 rounded-2xl blur-xl animate-pulse"></div>
             
             <div className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-purple-800 border-[4px] border-yellow-300 rounded-2xl p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 3px 15px rgba(0, 0, 0, 0.4), 0 8px 30px rgba(234, 179, 8, 0.5), 0 0 40px rgba(234, 179, 8, 0.3)' }}>
               {/* Large coin icon at top with enhanced glow */}
@@ -179,8 +180,14 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               {/* Enhanced red highlight bar for rewards */}
               <div className="relative bg-gradient-to-r from-red-700 via-orange-600 to-red-700 border-[2px] border-red-400/60 rounded-xl p-2 mb-2.5 shadow-xl" style={{ boxShadow: 'inset 0 3px 8px rgba(0, 0, 0, 0.4), 0 4px 15px rgba(239, 68, 68, 0.5), 0 0 20px rgba(239, 68, 68, 0.3)' }}>
                 <div className="flex items-center justify-center gap-2.5">
-                  <span className="text-yellow-50 text-xs font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>{t('rescue.gold_saver_reward_gold')}</span>
-                  <span className="text-green-50 text-xs font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>{t('rescue.gold_saver_reward_lives')}</span>
+                  <div className="flex items-center gap-1">
+                    <GoldRewardCoin3D size={20} className="drop-shadow-lg" />
+                    <span className="text-yellow-50 text-xs font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>{t('rescue.gold_saver_reward_gold')}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <LifeIcon3D size={20} className="drop-shadow-lg" />
+                    <span className="text-green-50 text-xs font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>{t('rescue.gold_saver_reward_lives')}</span>
+                  </div>
                 </div>
               </div>
 
@@ -214,7 +221,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           {/* Instant Rescue Booster - Premium Enhanced 3D */}
           <div className="relative flex flex-col h-full">
             {/* Outer animated glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-500/60 to-purple-500/60 rounded-2xl blur-lg animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/50 to-blue-500/50 rounded-2xl blur-xl animate-pulse"></div>
             
             <div className="relative bg-gradient-to-br from-purple-800 via-pink-700 to-purple-800 border-[4px] border-pink-300 rounded-2xl p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 3px 15px rgba(0, 0, 0, 0.4), 0 8px 30px rgba(236, 72, 153, 0.6), 0 0 40px rgba(236, 72, 153, 0.4)' }}>
               {/* Large diamond icon at top with enhanced glow */}
@@ -238,8 +245,14 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               {/* Enhanced red highlight bar for rewards */}
               <div className="relative bg-gradient-to-r from-red-700 via-orange-600 to-red-700 border-[2px] border-red-400/60 rounded-xl p-2 mb-2.5 shadow-xl" style={{ boxShadow: 'inset 0 3px 8px rgba(0, 0, 0, 0.4), 0 4px 15px rgba(239, 68, 68, 0.5), 0 0 20px rgba(239, 68, 68, 0.3)' }}>
                 <div className="flex items-center justify-center gap-2.5">
-                  <span className="text-yellow-50 text-xs font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>{t('rescue.instant_rescue_reward_gold')}</span>
-                  <span className="text-green-50 text-xs font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>{t('rescue.instant_rescue_reward_lives')}</span>
+                  <div className="flex items-center gap-1">
+                    <GoldRewardCoin3D size={20} className="drop-shadow-lg" />
+                    <span className="text-yellow-50 text-xs font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>{t('rescue.instant_rescue_reward_gold')}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <LifeIcon3D size={20} className="drop-shadow-lg" />
+                    <span className="text-green-50 text-xs font-black" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>{t('rescue.instant_rescue_reward_lives')}</span>
+                  </div>
                 </div>
               </div>
 

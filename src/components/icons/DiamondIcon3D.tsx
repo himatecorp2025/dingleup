@@ -13,122 +13,147 @@ export const DiamondIcon3D = ({ className = "", size = 32 }: DiamondIcon3DProps)
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <linearGradient id="diamondGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#fce7f3" />
-          <stop offset="30%" stopColor="#fbcfe8" />
-          <stop offset="70%" stopColor="#f472b6" />
-          <stop offset="100%" stopColor="#ec4899" />
+        <linearGradient id="diamondFacet1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#e0f2fe" />
+          <stop offset="50%" stopColor="#bae6fd" />
+          <stop offset="100%" stopColor="#7dd3fc" />
         </linearGradient>
-        <linearGradient id="diamondGradient2" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#fce7f3" />
-          <stop offset="50%" stopColor="#f9a8d4" />
-          <stop offset="100%" stopColor="#db2777" />
+        <linearGradient id="diamondFacet2" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#f0f9ff" />
+          <stop offset="50%" stopColor="#e0f2fe" />
+          <stop offset="100%" stopColor="#0ea5e9" />
         </linearGradient>
-        <radialGradient id="diamondShine" cx="50%" cy="30%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-          <stop offset="50%" stopColor="#fce7f3" stopOpacity="0.7" />
-          <stop offset="100%" stopColor="transparent" />
+        <linearGradient id="diamondFacet3" x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="50%" stopColor="#dbeafe" />
+          <stop offset="100%" stopColor="#93c5fd" />
+        </linearGradient>
+        <radialGradient id="diamondCore" cx="50%" cy="40%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+          <stop offset="30%" stopColor="#dbeafe" stopOpacity="0.7" />
+          <stop offset="70%" stopColor="#60a5fa" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.2" />
         </radialGradient>
-        <filter id="diamondShadow">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
-          <feOffset dx="0" dy="3" result="offsetblur" />
-          <feComponentTransfer>
-            <feFuncA type="linear" slope="0.4" />
-          </feComponentTransfer>
-          <feMerge>
-            <feMergeNode />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
         <filter id="diamondGlow">
-          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
           <feMerge>
             <feMergeNode in="coloredBlur"/>
             <feMergeNode in="SourceGraphic"/>
           </feMerge>
         </filter>
+        <filter id="innerShadow">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+          <feOffset dx="0" dy="2" result="offsetblur"/>
+          <feComponentTransfer>
+            <feFuncA type="linear" slope="0.3"/>
+          </feComponentTransfer>
+          <feMerge>
+            <feMergeNode/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
       </defs>
       
-      {/* Outer glow */}
-      <path
-        d="M 32 8 L 48 24 L 32 56 L 16 24 Z"
-        fill="#ec4899"
-        opacity="0.3"
-        filter="blur(6px)"
+      {/* Outer glow effect */}
+      <ellipse
+        cx="32"
+        cy="32"
+        rx="28"
+        ry="28"
+        fill="#3b82f6"
+        opacity="0.2"
+        filter="blur(8px)"
       />
       
-      {/* Left facet */}
+      {/* Bottom facets - darker sides */}
       <path
-        d="M 32 10 L 18 26 L 32 54 Z"
-        fill="url(#diamondGradient1)"
-        filter="url(#diamondShadow)"
+        d="M 32 12 L 18 28 L 32 52 Z"
+        fill="url(#diamondFacet2)"
+        opacity="0.85"
       />
-      
-      {/* Right facet */}
       <path
-        d="M 32 10 L 46 26 L 32 54 Z"
-        fill="url(#diamondGradient2)"
-        filter="url(#diamondShadow)"
-      />
-      
-      {/* Top facet */}
-      <path
-        d="M 32 10 L 46 26 L 32 32 L 18 26 Z"
-        fill="#fce7f3"
+        d="M 32 12 L 46 28 L 32 52 Z"
+        fill="url(#diamondFacet1)"
         opacity="0.9"
       />
       
-      {/* Inner facets for depth */}
+      {/* Middle belt facets */}
       <path
-        d="M 32 10 L 25 22 L 32 32 Z"
-        fill="#fbcfe8"
-        opacity="0.6"
+        d="M 18 28 L 12 32 L 32 52 Z"
+        fill="#7dd3fc"
+        opacity="0.75"
       />
       <path
-        d="M 32 10 L 39 22 L 32 32 Z"
-        fill="#f9a8d4"
-        opacity="0.7"
+        d="M 46 28 L 52 32 L 32 52 Z"
+        fill="#38bdf8"
+        opacity="0.8"
       />
       
-      {/* Shine overlay */}
+      {/* Top crown facets */}
+      <path
+        d="M 32 12 L 18 28 L 26 28 Z"
+        fill="url(#diamondFacet3)"
+        opacity="0.95"
+      />
+      <path
+        d="M 32 12 L 46 28 L 38 28 Z"
+        fill="url(#diamondFacet3)"
+        opacity="0.9"
+      />
+      <path
+        d="M 32 12 L 26 28 L 38 28 Z"
+        fill="#ffffff"
+        opacity="0.95"
+      />
+      
+      {/* Table facet (top flat surface) */}
+      <polygon
+        points="26,28 38,28 42,30 22,30"
+        fill="#f0f9ff"
+        opacity="0.95"
+      />
+      
+      {/* Center refraction core */}
       <ellipse
         cx="32"
-        cy="18"
-        rx="10"
-        ry="8"
-        fill="url(#diamondShine)"
+        cy="30"
+        rx="12"
+        ry="10"
+        fill="url(#diamondCore)"
         filter="url(#diamondGlow)"
       />
       
-      {/* Bright sparkle */}
-      <circle
-        cx="28"
-        cy="16"
-        r="3"
-        fill="#ffffff"
-        opacity="0.9"
-      />
-      <circle
-        cx="36"
-        cy="20"
-        r="2"
-        fill="#ffffff"
-        opacity="0.7"
-      />
+      {/* Sparkle highlights */}
+      <circle cx="28" cy="18" r="2.5" fill="#ffffff" opacity="0.95">
+        <animate attributeName="opacity" values="0.95;0.6;0.95" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="36" cy="22" r="1.5" fill="#ffffff" opacity="0.85">
+        <animate attributeName="opacity" values="0.85;0.5;0.85" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="30" cy="35" r="1.2" fill="#dbeafe" opacity="0.7">
+        <animate attributeName="opacity" values="0.7;0.3;0.7" dur="3s" repeatCount="indefinite"/>
+      </circle>
       
-      {/* Edge highlights */}
+      {/* Edge highlights for definition */}
       <path
-        d="M 32 10 L 18 26"
+        d="M 32 12 L 18 28"
         fill="none"
         stroke="#ffffff"
-        strokeWidth="1"
+        strokeWidth="0.8"
+        opacity="0.6"
+      />
+      <path
+        d="M 32 12 L 46 28"
+        fill="none"
+        stroke="#f0f9ff"
+        strokeWidth="0.8"
         opacity="0.5"
       />
       <path
-        d="M 32 10 L 46 26"
+        d="M 18 28 L 32 52"
         fill="none"
-        stroke="#fce7f3"
-        strokeWidth="1"
+        stroke="#93c5fd"
+        strokeWidth="0.5"
         opacity="0.4"
       />
     </svg>
