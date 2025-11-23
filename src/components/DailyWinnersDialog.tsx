@@ -215,43 +215,64 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     ) : (
                       <>
                         {/* TOP 3 - Horizontal Layout with Laurel Wreaths */}
-                        <div className="flex justify-center items-end gap-4 mb-6 px-2">
+                        <div className="flex justify-center items-center gap-3 mb-6 px-2">
                           {/* 2nd Place - Silver */}
                           {topPlayers[1] && (
-                            <div className="flex flex-col items-center" style={{ width: '28%' }}>
-                              <svg viewBox="0 0 120 140" className="w-full">
-                                {/* Silver Laurel Wreath */}
+                            <div className="flex flex-col items-center" style={{ width: '30%' }}>
+                              <svg viewBox="0 0 140 180" className="w-full">
                                 <defs>
                                   <radialGradient id="silverGrad" cx="50%" cy="50%">
-                                    <stop offset="0%" style={{ stopColor: '#f0f0f0', stopOpacity: 1 }} />
-                                    <stop offset="50%" style={{ stopColor: '#c0c0c0', stopOpacity: 1 }} />
-                                    <stop offset="100%" style={{ stopColor: '#909090', stopOpacity: 1 }} />
+                                    <stop offset="0%" style={{ stopColor: '#f5f5f5', stopOpacity: 1 }} />
+                                    <stop offset="50%" style={{ stopColor: '#d0d0d0', stopOpacity: 1 }} />
+                                    <stop offset="100%" style={{ stopColor: '#a0a0a0', stopOpacity: 1 }} />
                                   </radialGradient>
+                                  <clipPath id="circleClip2">
+                                    <circle cx="70" cy="65" r="32" />
+                                  </clipPath>
                                 </defs>
-                                {/* Wreath circle */}
-                                <circle cx="60" cy="50" r="35" fill="url(#silverGrad)" stroke="#707070" strokeWidth="2" />
-                                <circle cx="60" cy="50" r="32" fill="none" stroke="#e0e0e0" strokeWidth="1.5" opacity="0.6" />
                                 
-                                {/* Laurel leaves - left side */}
-                                <path d="M 30,35 Q 25,40 30,45" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
-                                <path d="M 28,42 Q 23,47 28,52" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
-                                <path d="M 26,50 Q 21,55 26,60" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
+                                {/* Left laurel branch */}
+                                <path d="M 35,45 Q 28,50 32,56 L 30,54 Q 24,59 28,65 L 26,63 Q 20,68 24,74 L 22,72 Q 16,77 20,83" 
+                                      fill="none" stroke="#b8b8b8" strokeWidth="3" strokeLinecap="round"/>
+                                {/* Left leaves */}
+                                <ellipse cx="32" cy="52" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(-30 32 52)"/>
+                                <ellipse cx="28" cy="60" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(-25 28 60)"/>
+                                <ellipse cx="24" cy="69" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(-20 24 69)"/>
+                                <ellipse cx="20" cy="78" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(-15 20 78)"/>
                                 
-                                {/* Laurel leaves - right side */}
-                                <path d="M 90,35 Q 95,40 90,45" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
-                                <path d="M 92,42 Q 97,47 92,52" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
-                                <path d="M 94,50 Q 99,55 94,60" fill="#b0b0b0" stroke="#909090" strokeWidth="1"/>
+                                {/* Right laurel branch */}
+                                <path d="M 105,45 Q 112,50 108,56 L 110,54 Q 116,59 112,65 L 114,63 Q 120,68 116,74 L 118,72 Q 124,77 120,83" 
+                                      fill="none" stroke="#b8b8b8" strokeWidth="3" strokeLinecap="round"/>
+                                {/* Right leaves */}
+                                <ellipse cx="108" cy="52" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(30 108 52)"/>
+                                <ellipse cx="112" cy="60" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(25 112 60)"/>
+                                <ellipse cx="116" cy="69" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(20 116 69)"/>
+                                <ellipse cx="120" cy="78" rx="6" ry="10" fill="#c8c8c8" stroke="#a0a0a0" strokeWidth="1" transform="rotate(15 120 78)"/>
                                 
-                                {/* Rank number */}
-                                <text x="60" y="58" textAnchor="middle" fill="#fff" fontSize="24" fontWeight="bold">2</text>
+                                {/* Avatar background circle */}
+                                <circle cx="70" cy="65" r="34" fill="url(#silverGrad)" stroke="#e0e0e0" strokeWidth="2"/>
+                                <circle cx="70" cy="65" r="32" fill="#1a1a1a" stroke="#c0c0c0" strokeWidth="2"/>
+                                
+                                {/* Avatar image or placeholder */}
+                                {topPlayers[1].avatar_url ? (
+                                  <image href={topPlayers[1].avatar_url} x="38" y="33" width="64" height="64" clipPath="url(#circleClip2)" preserveAspectRatio="xMidYMid slice"/>
+                                ) : (
+                                  <text x="70" y="72" textAnchor="middle" fill="#888" fontSize="14" fontWeight="bold">
+                                    {topPlayers[1].username.substring(0, 2).toUpperCase()}
+                                  </text>
+                                )}
+                                
+                                {/* Rank badge at bottom */}
+                                <circle cx="70" cy="110" r="16" fill="url(#silverGrad)" stroke="#fff" strokeWidth="2"/>
+                                <text x="70" y="117" textAnchor="middle" fill="#000" fontSize="20" fontWeight="bold">2</text>
                                 
                                 {/* Username */}
-                                <text x="60" y="90" textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">
-                                  {topPlayers[1].username.length > 12 ? topPlayers[1].username.substring(0, 12) + '...' : topPlayers[1].username}
+                                <text x="70" y="140" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="bold">
+                                  {topPlayers[1].username.length > 10 ? topPlayers[1].username.substring(0, 10) + '...' : topPlayers[1].username}
                                 </text>
                                 
                                 {/* Correct answers */}
-                                <text x="60" y="105" textAnchor="middle" fill="#e0e0e0" fontSize="8">
+                                <text x="70" y="155" textAnchor="middle" fill="#c0c0c0" fontSize="9">
                                   {topPlayers[1].total_correct_answers} {t('dailyWinners.correctAnswers')}
                                 </text>
                               </svg>
@@ -260,42 +281,63 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {/* 1st Place - Gold (larger) */}
                           {topPlayers[0] && (
-                            <div className="flex flex-col items-center" style={{ width: '36%' }}>
-                              <svg viewBox="0 0 120 150" className="w-full">
-                                {/* Gold Laurel Wreath */}
+                            <div className="flex flex-col items-center" style={{ width: '35%' }}>
+                              <svg viewBox="0 0 140 190" className="w-full">
                                 <defs>
-                                  <radialGradient id="goldGrad" cx="50%" cy="50%">
+                                  <radialGradient id="goldGrad2" cx="50%" cy="50%">
                                     <stop offset="0%" style={{ stopColor: '#ffd700', stopOpacity: 1 }} />
                                     <stop offset="50%" style={{ stopColor: '#ffb700', stopOpacity: 1 }} />
-                                    <stop offset="100%" style={{ stopColor: '#cc8800', stopOpacity: 1 }} />
+                                    <stop offset="100%" style={{ stopColor: '#cc9900', stopOpacity: 1 }} />
                                   </radialGradient>
+                                  <clipPath id="circleClip1">
+                                    <circle cx="70" cy="70" r="36" />
+                                  </clipPath>
                                 </defs>
-                                {/* Wreath circle */}
-                                <circle cx="60" cy="55" r="40" fill="url(#goldGrad)" stroke="#cc8800" strokeWidth="2.5" />
-                                <circle cx="60" cy="55" r="37" fill="none" stroke="#ffe44d" strokeWidth="2" opacity="0.7" />
                                 
-                                {/* Laurel leaves - left side */}
-                                <path d="M 25,38 Q 20,43 25,48" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
-                                <path d="M 23,46 Q 18,51 23,56" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
-                                <path d="M 21,54 Q 16,59 21,64" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
-                                <path d="M 23,62 Q 18,67 23,72" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                {/* Left laurel branch */}
+                                <path d="M 30,45 Q 22,52 26,60 L 24,58 Q 17,65 21,73 L 19,71 Q 12,78 16,86 L 14,84 Q 7,91 11,99" 
+                                      fill="none" stroke="#ccaa00" strokeWidth="3.5" strokeLinecap="round"/>
+                                {/* Left leaves */}
+                                <ellipse cx="26" cy="54" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-30 26 54)"/>
+                                <ellipse cx="21" cy="64" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-25 21 64)"/>
+                                <ellipse cx="16" cy="75" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-20 16 75)"/>
+                                <ellipse cx="11" cy="86" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-15 11 86)"/>
+                                <ellipse cx="9" cy="95" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(-10 9 95)"/>
                                 
-                                {/* Laurel leaves - right side */}
-                                <path d="M 95,38 Q 100,43 95,48" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
-                                <path d="M 97,46 Q 102,51 97,56" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
-                                <path d="M 99,54 Q 104,59 99,64" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
-                                <path d="M 97,62 Q 102,67 97,72" fill="#e6b800" stroke="#cc9900" strokeWidth="1.2"/>
+                                {/* Right laurel branch */}
+                                <path d="M 110,45 Q 118,52 114,60 L 116,58 Q 123,65 119,73 L 121,71 Q 128,78 124,86 L 126,84 Q 133,91 129,99" 
+                                      fill="none" stroke="#ccaa00" strokeWidth="3.5" strokeLinecap="round"/>
+                                {/* Right leaves */}
+                                <ellipse cx="114" cy="54" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(30 114 54)"/>
+                                <ellipse cx="119" cy="64" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(25 119 64)"/>
+                                <ellipse cx="124" cy="75" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(20 124 75)"/>
+                                <ellipse cx="129" cy="86" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(15 129 86)"/>
+                                <ellipse cx="131" cy="95" rx="7" ry="11" fill="#e6c200" stroke="#cc9900" strokeWidth="1" transform="rotate(10 131 95)"/>
                                 
-                                {/* Rank number */}
-                                <text x="60" y="63" textAnchor="middle" fill="#fff" fontSize="28" fontWeight="bold" stroke="#cc8800" strokeWidth="0.5">1</text>
+                                {/* Avatar background circle */}
+                                <circle cx="70" cy="70" r="38" fill="url(#goldGrad2)" stroke="#ffe44d" strokeWidth="2.5"/>
+                                <circle cx="70" cy="70" r="36" fill="#1a1a1a" stroke="#ffcc00" strokeWidth="2.5"/>
+                                
+                                {/* Avatar image or placeholder */}
+                                {topPlayers[0].avatar_url ? (
+                                  <image href={topPlayers[0].avatar_url} x="34" y="34" width="72" height="72" clipPath="url(#circleClip1)" preserveAspectRatio="xMidYMid slice"/>
+                                ) : (
+                                  <text x="70" y="78" textAnchor="middle" fill="#888" fontSize="16" fontWeight="bold">
+                                    {topPlayers[0].username.substring(0, 2).toUpperCase()}
+                                  </text>
+                                )}
+                                
+                                {/* Rank badge at bottom */}
+                                <circle cx="70" cy="120" r="18" fill="url(#goldGrad2)" stroke="#fff" strokeWidth="2.5"/>
+                                <text x="70" y="128" textAnchor="middle" fill="#000" fontSize="24" fontWeight="bold">1</text>
                                 
                                 {/* Username */}
-                                <text x="60" y="100" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="bold">
-                                  {topPlayers[0].username.length > 12 ? topPlayers[0].username.substring(0, 12) + '...' : topPlayers[0].username}
+                                <text x="70" y="153" textAnchor="middle" fill="#fff" fontSize="12" fontWeight="bold">
+                                  {topPlayers[0].username.length > 10 ? topPlayers[0].username.substring(0, 10) + '...' : topPlayers[0].username}
                                 </text>
                                 
                                 {/* Correct answers */}
-                                <text x="60" y="116" textAnchor="middle" fill="#ffd700" fontSize="9" fontWeight="bold">
+                                <text x="70" y="169" textAnchor="middle" fill="#ffd700" fontSize="10" fontWeight="bold">
                                   {topPlayers[0].total_correct_answers} {t('dailyWinners.correctAnswers')}
                                 </text>
                               </svg>
@@ -304,40 +346,61 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {/* 3rd Place - Bronze */}
                           {topPlayers[2] && (
-                            <div className="flex flex-col items-center" style={{ width: '28%' }}>
-                              <svg viewBox="0 0 120 140" className="w-full">
-                                {/* Bronze Laurel Wreath */}
+                            <div className="flex flex-col items-center" style={{ width: '30%' }}>
+                              <svg viewBox="0 0 140 180" className="w-full">
                                 <defs>
-                                  <radialGradient id="bronzeGrad" cx="50%" cy="50%">
+                                  <radialGradient id="bronzeGrad2" cx="50%" cy="50%">
                                     <stop offset="0%" style={{ stopColor: '#e89b5a', stopOpacity: 1 }} />
                                     <stop offset="50%" style={{ stopColor: '#cd7f32', stopOpacity: 1 }} />
                                     <stop offset="100%" style={{ stopColor: '#8b5a2b', stopOpacity: 1 }} />
                                   </radialGradient>
+                                  <clipPath id="circleClip3">
+                                    <circle cx="70" cy="65" r="32" />
+                                  </clipPath>
                                 </defs>
-                                {/* Wreath circle */}
-                                <circle cx="60" cy="50" r="35" fill="url(#bronzeGrad)" stroke="#8b5a2b" strokeWidth="2" />
-                                <circle cx="60" cy="50" r="32" fill="none" stroke="#d4a574" strokeWidth="1.5" opacity="0.6" />
                                 
-                                {/* Laurel leaves - left side */}
-                                <path d="M 30,35 Q 25,40 30,45" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
-                                <path d="M 28,42 Q 23,47 28,52" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
-                                <path d="M 26,50 Q 21,55 26,60" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
+                                {/* Left laurel branch */}
+                                <path d="M 35,45 Q 28,50 32,56 L 30,54 Q 24,59 28,65 L 26,63 Q 20,68 24,74 L 22,72 Q 16,77 20,83" 
+                                      fill="none" stroke="#9d6b3a" strokeWidth="3" strokeLinecap="round"/>
+                                {/* Left leaves */}
+                                <ellipse cx="32" cy="52" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(-30 32 52)"/>
+                                <ellipse cx="28" cy="60" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(-25 28 60)"/>
+                                <ellipse cx="24" cy="69" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(-20 24 69)"/>
+                                <ellipse cx="20" cy="78" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(-15 20 78)"/>
                                 
-                                {/* Laurel leaves - right side */}
-                                <path d="M 90,35 Q 95,40 90,45" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
-                                <path d="M 92,42 Q 97,47 92,52" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
-                                <path d="M 94,50 Q 99,55 94,60" fill="#b8793e" stroke="#8b5a2b" strokeWidth="1"/>
+                                {/* Right laurel branch */}
+                                <path d="M 105,45 Q 112,50 108,56 L 110,54 Q 116,59 112,65 L 114,63 Q 120,68 116,74 L 118,72 Q 124,77 120,83" 
+                                      fill="none" stroke="#9d6b3a" strokeWidth="3" strokeLinecap="round"/>
+                                {/* Right leaves */}
+                                <ellipse cx="108" cy="52" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(30 108 52)"/>
+                                <ellipse cx="112" cy="60" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(25 112 60)"/>
+                                <ellipse cx="116" cy="69" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(20 116 69)"/>
+                                <ellipse cx="120" cy="78" rx="6" ry="10" fill="#cd7f32" stroke="#8b5a2b" strokeWidth="1" transform="rotate(15 120 78)"/>
                                 
-                                {/* Rank number */}
-                                <text x="60" y="58" textAnchor="middle" fill="#fff" fontSize="24" fontWeight="bold">3</text>
+                                {/* Avatar background circle */}
+                                <circle cx="70" cy="65" r="34" fill="url(#bronzeGrad2)" stroke="#e89b5a" strokeWidth="2"/>
+                                <circle cx="70" cy="65" r="32" fill="#1a1a1a" stroke="#cd7f32" strokeWidth="2"/>
+                                
+                                {/* Avatar image or placeholder */}
+                                {topPlayers[2].avatar_url ? (
+                                  <image href={topPlayers[2].avatar_url} x="38" y="33" width="64" height="64" clipPath="url(#circleClip3)" preserveAspectRatio="xMidYMid slice"/>
+                                ) : (
+                                  <text x="70" y="72" textAnchor="middle" fill="#888" fontSize="14" fontWeight="bold">
+                                    {topPlayers[2].username.substring(0, 2).toUpperCase()}
+                                  </text>
+                                )}
+                                
+                                {/* Rank badge at bottom */}
+                                <circle cx="70" cy="110" r="16" fill="url(#bronzeGrad2)" stroke="#fff" strokeWidth="2"/>
+                                <text x="70" y="117" textAnchor="middle" fill="#000" fontSize="20" fontWeight="bold">3</text>
                                 
                                 {/* Username */}
-                                <text x="60" y="90" textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">
-                                  {topPlayers[2].username.length > 12 ? topPlayers[2].username.substring(0, 12) + '...' : topPlayers[2].username}
+                                <text x="70" y="140" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="bold">
+                                  {topPlayers[2].username.length > 10 ? topPlayers[2].username.substring(0, 10) + '...' : topPlayers[2].username}
                                 </text>
                                 
                                 {/* Correct answers */}
-                                <text x="60" y="105" textAnchor="middle" fill="#d4a574" fontSize="8">
+                                <text x="70" y="155" textAnchor="middle" fill="#d4a574" fontSize="9">
                                   {topPlayers[2].total_correct_answers} {t('dailyWinners.correctAnswers')}
                                 </text>
                               </svg>
