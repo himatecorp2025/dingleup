@@ -154,7 +154,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           >
             <div className="relative w-full">
               <HexShieldFrame showShine={true}>
-                {/* Top Hex Badge - "TEGNAPI TOP 10" - UGYANAZ mint Daily Gift */}
+                {/* Top Hex Badge - "TEGNAPI GENIUSZOK" */}
                 <div 
                   ref={badgeRef}
                   className="relative -mt-12 mb-3 mx-auto z-20" 
@@ -171,15 +171,15 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                   <div className="absolute inset-0"
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                         boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
+                         background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)) 50%, hsl(var(--primary)))',
+                         boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.1), 0 3px 8px rgba(0,0,0,0.175)'
                        }} />
                   
                   <div className="absolute inset-[3px]"
                        style={{
                          clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-                         boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                         background: 'linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary)) 40%, hsl(var(--primary)))',
+                         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)'
                        }} />
                   
                   <div className="relative px-[5vw] py-[1.2vh]"
@@ -189,28 +189,15 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     <div className="absolute inset-[6px]"
                          style={{
                            clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                           background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 95% 75%) 0%, hsl(0 90% 65%) 30%, hsl(0 85% 55%) 60%, hsl(0 78% 48%) 100%)',
-                           boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
+                           background: 'linear-gradient(180deg, hsl(var(--secondary)), hsl(var(--secondary)) 50%, hsl(var(--secondary)))',
+                           boxShadow: 'inset 0 6px 12px rgba(0,0,0,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
                          }} />
                     
-                    <div className="absolute inset-[6px] pointer-events-none"
-                         style={{
-                           clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                           background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
-                           opacity: 0.7
-                         }} />
-                    
-                    <div className="absolute inset-[6px] pointer-events-none" style={{
-                      clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                      background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
-                    }} />
-                    
-                    <h1 className="relative z-10 font-black text-foreground text-center drop-shadow-[0_0_18px_hsl(var(--foreground)/0.3),0_2px_8px_rgba(0,0,0,0.9)]"
+                    <h1 className="relative z-10 font-bold text-white text-center"
                         style={{ 
                           fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
-                          letterSpacing: '0.05em',
-                          textShadow: '0 0 12px rgba(255,255,255,0.25)',
-                          fontFamily: 'system-ui, -apple-system, sans-serif'
+                          letterSpacing: '0.02em',
+                          fontFamily: 'Arial, Helvetica, sans-serif'
                         }}>
                       {t('dailyWinners.title')}
                     </h1>
