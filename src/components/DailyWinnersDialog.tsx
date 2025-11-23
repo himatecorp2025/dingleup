@@ -264,7 +264,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     className="relative z-20"
                     style={{
                       animation: 'pulse-scale 2s ease-in-out infinite',
-                      transform: 'scale(0.5)',
+                      transform: 'scale(0.35)',
                       transformOrigin: 'center center',
                       perspective: '1000px'
                     }}
@@ -273,8 +273,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     <div 
                       className="relative"
                       style={{
-                        width: '280px',
-                        height: '160px',
+                        width: '220px',
+                        height: '130px',
                         transformStyle: 'preserve-3d',
                         transform: 'rotateX(2deg) rotateY(-2deg)'
                       }}
@@ -386,7 +386,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         />
 
                         {/* Content Container */}
-                        <div className="relative z-10 h-full flex flex-col justify-center px-6 py-4 space-y-3">
+                        <div className="relative z-10 h-full flex flex-col justify-center px-4 py-2.5 space-y-2">
                           
                           {/* Title Banner with Marquee Light Effect */}
                           <div className="relative">
@@ -400,13 +400,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                             <h3 
                               className="relative font-black uppercase text-center tracking-[0.25em]"
                               style={{
-                                fontSize: '1.1rem',
+                                fontSize: '0.75rem',
                                 background: 'linear-gradient(180deg, #ffffff 0%, #ffd700 30%, #ffed4e 50%, #ffd700 70%, #daa520 100%)',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 filter: 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9))',
                                 textShadow: '0 0 20px rgba(255, 215, 0, 0.6)',
-                                letterSpacing: '0.2em'
+                                letterSpacing: '0.15em'
                               }}
                             >
                               JACKPOT
@@ -414,11 +414,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           </div>
 
                           {/* Rewards Display - Slot Machine Style */}
-                          <div className="space-y-2">
+                          <div className="space-y-1.5">
                             
                             {/* Gold Coins Display */}
                             <div 
-                              className="relative flex items-center justify-between px-4 py-2"
+                              className="relative flex items-center justify-between px-3 py-1.5"
                               style={{
                                 background: 'linear-gradient(90deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0.15) 50%, rgba(255, 215, 0, 0.05) 100%)',
                                 borderRadius: '8px',
@@ -427,7 +427,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               }}
                             >
                               {/* Ultra Premium 3D Gold Coin */}
-                              <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                              <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
                                   <radialGradient id="coinGold" cx="35%" cy="35%">
                                     <stop offset="0%" stopColor="#fffef0"/>
@@ -460,13 +460,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 <span 
                                   className="font-black tabular-nums"
                                   style={{
-                                    fontSize: '1.6rem',
+                                    fontSize: '1.1rem',
                                     background: 'linear-gradient(180deg, #fffef0 0%, #ffd700 40%, #daa520 100%)',
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
-                                    filter: 'drop-shadow(0 0 12px rgba(255, 215, 0, 0.9)) drop-shadow(0 2px 4px rgba(0, 0, 0, 1))',
+                                    filter: 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.9)) drop-shadow(0 2px 4px rgba(0, 0, 0, 1))',
                                     fontFamily: '"Orbitron", "Courier New", monospace',
-                                    letterSpacing: '0.05em'
+                                    letterSpacing: '0.02em'
                                   }}
                                 >
                                   {totalRewards.totalGold.toLocaleString()}
@@ -476,7 +476,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                             {/* Lives Display */}
                             <div 
-                              className="relative flex items-center justify-between px-4 py-2"
+                              className="relative flex items-center justify-between px-3 py-1.5"
                               style={{
                                 background: 'linear-gradient(90deg, rgba(255, 20, 20, 0.05) 0%, rgba(255, 20, 20, 0.15) 50%, rgba(255, 20, 20, 0.05) 100%)',
                                 borderRadius: '8px',
@@ -485,7 +485,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               }}
                             >
                               {/* Premium Glossy Heart */}
-                              <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                              <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
                                   <radialGradient id="heartGloss" cx="35%" cy="28%">
                                     <stop offset="0%" stopColor="#ff90a8"/>
@@ -514,13 +514,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 <span 
                                   className="font-black tabular-nums"
                                   style={{
-                                    fontSize: '1.6rem',
+                                    fontSize: '1.1rem',
                                     background: 'linear-gradient(180deg, #ffb3c1 0%, #ff4d6d 40%, #c1121f 100%)',
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
-                                    filter: 'drop-shadow(0 0 12px rgba(255, 77, 109, 0.9)) drop-shadow(0 2px 4px rgba(0, 0, 0, 1))',
+                                    filter: 'drop-shadow(0 0 8px rgba(255, 77, 109, 0.9)) drop-shadow(0 2px 4px rgba(0, 0, 0, 1))',
                                     fontFamily: '"Orbitron", "Courier New", monospace',
-                                    letterSpacing: '0.05em'
+                                    letterSpacing: '0.02em'
                                   }}
                                 >
                                   {totalRewards.totalLives}
