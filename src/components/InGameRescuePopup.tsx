@@ -132,7 +132,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           <div className="absolute inset-0 bg-gradient-to-b from-yellow-600/30 via-yellow-500/20 to-transparent rounded-t-3xl" style={{ boxShadow: 'inset 0 3px 15px rgba(234, 179, 8, 0.4)' }}></div>
           <div className="absolute inset-0 bg-gradient-radial from-yellow-400/10 via-transparent to-transparent"></div>
           
-          <DialogTitle className="relative text-2xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent leading-tight tracking-wider" style={{ textShadow: '0 4px 15px rgba(234, 179, 8, 0.9), 0 8px 30px rgba(234, 179, 8, 0.6), 0 0 40px rgba(234, 179, 8, 0.7), 0 2px 5px rgba(0, 0, 0, 0.8)', filter: 'drop-shadow(0 6px 15px rgba(234, 179, 8, 0.5))' }}>
+          <DialogTitle className="relative text-2xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent leading-tight tracking-wider flex items-center justify-center gap-3" style={{ textShadow: '0 4px 15px rgba(234, 179, 8, 0.9), 0 8px 30px rgba(234, 179, 8, 0.6), 0 0 40px rgba(234, 179, 8, 0.7), 0 2px 5px rgba(0, 0, 0, 0.8)', filter: 'drop-shadow(0 6px 15px rgba(234, 179, 8, 0.5))' }}>
+            <SlotMachine3D size={32} className="drop-shadow-2xl" />
             {t('rescue.title')}
           </DialogTitle>
           <p className="relative text-center text-yellow-50 text-sm font-bold" style={{ textShadow: '0 3px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.4)' }}>
@@ -141,7 +142,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         </DialogHeader>
 
         {/* Current Status with 3D icons */}
-        <div className="relative bg-gradient-to-r from-blue-900/70 via-purple-900/80 to-blue-900/70 border-[4px] border-blue-400/60 rounded-2xl p-3 mb-3 shadow-xl" style={{ boxShadow: 'inset 0 5px 20px rgba(0, 0, 0, 0.6), inset 0 -3px 15px rgba(59, 130, 246, 0.3), 0 8px 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3), 0 15px 50px rgba(0, 0, 0, 0.8)' }}>
+        <div className="relative bg-gradient-to-r from-blue-900/70 via-purple-900/80 to-blue-900/70 border-[4px] border-blue-400/60 rounded-2xl p-3 mb-3 -mt-8 shadow-xl" style={{ boxShadow: 'inset 0 5px 20px rgba(0, 0, 0, 0.6), inset 0 -3px 15px rgba(59, 130, 246, 0.3), 0 8px 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3), 0 15px 50px rgba(0, 0, 0, 0.8)' }}>
           {/* Multi-layer glow effects */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 rounded-2xl pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-transparent via-purple-600/10 to-blue-600/10 rounded-2xl pointer-events-none"></div>
@@ -178,8 +179,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           {/* Gold Saver Booster - Enhanced 3D */}
           <div className="relative flex flex-col h-full">
             {/* Multi-layer outer glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/50 to-amber-500/50 rounded-3xl blur-2xl animate-pulse"></div>
-            <div className="absolute inset-0 bg-yellow-300/30 rounded-3xl blur-xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/25 to-amber-500/25 rounded-3xl blur-xl animate-pulse"></div>
+            <div className="absolute inset-0 bg-yellow-300/15 rounded-3xl blur-lg"></div>
             
             {/* Main card with multiple depth layers */}
             <div className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-purple-800 border-[6px] border-yellow-300 rounded-3xl p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(234, 179, 8, 0.4), 0 12px 50px rgba(234, 179, 8, 0.9), 0 0 80px rgba(234, 179, 8, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(234, 179, 8, 0.6)' }}>
@@ -190,14 +191,14 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <div className="flex justify-center -mt-8 mb-2">
                 <div className="relative">
                   {/* Multi-layer glow rings */}
-                  <div className="absolute inset-0 bg-yellow-400/60 rounded-full blur-2xl animate-pulse"></div>
-                  <div className="absolute inset-0 bg-yellow-300/40 rounded-full blur-xl"></div>
+                  <div className="absolute inset-0 bg-yellow-400/30 rounded-full blur-xl animate-pulse"></div>
+                  <div className="absolute inset-0 bg-yellow-300/20 rounded-full blur-lg"></div>
                   
                   {/* 3D circle with multiple shadow layers */}
                   <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(202, 138, 4, 0.9), 0 8px 20px rgba(202, 138, 4, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(234, 179, 8, 0.4)' }}>
                     {/* Inner ring for depth */}
                     <div className="absolute inset-2 rounded-full bg-gradient-to-br from-yellow-100/40 to-transparent" style={{ boxShadow: 'inset 0 2px 8px rgba(255, 255, 255, 0.5)' }}></div>
-                    <SlotMachine3D size={56} className="drop-shadow-2xl relative z-10" />
+                    <GoldRewardCoin3D size={56} className="drop-shadow-2xl relative z-10" />
                   </div>
                 </div>
               </div>
@@ -254,8 +255,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           {/* Instant Rescue Booster - Premium Enhanced 3D */}
           <div className="relative flex flex-col h-full">
             {/* Multi-layer animated glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/60 to-blue-500/60 rounded-3xl blur-2xl animate-pulse"></div>
-            <div className="absolute inset-0 bg-cyan-300/40 rounded-3xl blur-xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/30 to-blue-500/30 rounded-3xl blur-xl animate-pulse"></div>
+            <div className="absolute inset-0 bg-cyan-300/20 rounded-3xl blur-lg"></div>
             
             {/* Main card with multiple depth layers */}
             <div className="relative bg-gradient-to-br from-purple-800 via-pink-700 to-purple-800 border-[6px] border-cyan-300 rounded-3xl p-3 shadow-2xl flex-1 flex flex-col" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(6, 182, 212, 0.4), 0 12px 50px rgba(6, 182, 212, 0.9), 0 0 80px rgba(59, 130, 246, 0.5), 0 20px 60px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(6, 182, 212, 0.6)' }}>
@@ -266,8 +267,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <div className="flex justify-center -mt-8 mb-2">
                 <div className="relative">
                   {/* Multi-layer glow rings */}
-                  <div className="absolute inset-0 bg-cyan-400/70 rounded-full blur-2xl animate-pulse"></div>
-                  <div className="absolute inset-0 bg-blue-300/50 rounded-full blur-xl"></div>
+                  <div className="absolute inset-0 bg-cyan-400/35 rounded-full blur-xl animate-pulse"></div>
+                  <div className="absolute inset-0 bg-blue-300/25 rounded-full blur-lg"></div>
                   
                   {/* 3D circle with multiple shadow layers */}
                   <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(6, 182, 212, 0.9), 0 8px 20px rgba(59, 130, 246, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(6, 182, 212, 0.4)' }}>
