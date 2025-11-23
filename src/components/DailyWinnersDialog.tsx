@@ -162,7 +162,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 <div 
                   ref={badgeRef}
                   className="relative z-20 mx-auto" 
-                  style={{ width: '80%', maxWidth: '400px', transform: 'translateY(-15%)' }}
+                  style={{ width: '80%', maxWidth: '400px', transform: 'translateY(-35%)' }}
                 >
                   <div className="absolute inset-0 translate-y-1 translate-x-1"
                        style={{
