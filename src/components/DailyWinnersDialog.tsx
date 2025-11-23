@@ -157,6 +157,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           >
             <div className="relative w-full">
               <HexShieldFrame showShine={true}>
+                <div style={{ transform: 'translateY(-15%)' }}>
                 {/* Top Hex Badge - "TEGNAPI GÉNIUSZOK" */}
                 <div 
                   ref={badgeRef}
@@ -484,6 +485,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       className="w-[90%]"
                     />
                   </div>
+                </div>
                 </div>
               </HexShieldFrame>
             </div>
