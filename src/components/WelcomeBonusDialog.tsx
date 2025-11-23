@@ -237,20 +237,59 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
               {/* Content */}
               <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
                 
-                {/* MARKETING banner - 3D crystal effect with 3 stars */}
-                <div className="relative mb-2">
-                  <div className="px-6 py-1.5 rounded-full border-2 border-red-300 shadow-[0_8px_16px_rgba(220,38,38,0.5),inset_0_2px_8px_rgba(255,255,255,0.3),inset_0_-2px_8px_rgba(0,0,0,0.3)]"
+                {/* MARKETING banner - 10% szélesebb, magasabb minőségű 3D crystal effect */}
+                <div className="relative mb-2" style={{ width: '110%', maxWidth: '110%' }}>
+                  {/* Árnyék réteg - mély 3D */}
+                  <div className="absolute inset-0 translate-y-2 translate-x-2"
+                       style={{
+                         background: 'rgba(0,0,0,0.5)',
+                         filter: 'blur(8px)',
+                         borderRadius: '9999px'
+                       }} />
+                  
+                  {/* Külső keret - arany */}
+                  <div className="absolute inset-0 rounded-full border-2"
+                       style={{ 
+                         borderImage: 'linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #d97706 100%) 1',
+                         boxShadow: '0 0 0 2px #b45309, 0 12px 24px rgba(220,38,38,0.6)'
+                       }} />
+                  
+                  {/* Fő gradiens réteg */}
+                  <div className="absolute inset-[2px] rounded-full"
                        style={{ 
                          background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #dc2626 100%)',
-                         transform: 'perspective(500px) rotateX(5deg)',
-                         borderTop: '2px solid rgba(255,255,255,0.4)',
-                         borderBottom: '2px solid rgba(0,0,0,0.3)',
+                         boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.3)'
+                       }} />
+                  
+                  {/* Belső fény réteg */}
+                  <div className="absolute inset-[4px] rounded-full"
+                       style={{ 
+                         background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 40%, rgba(0,0,0,0.2) 100%)',
+                         boxShadow: 'inset 0 4px 12px rgba(255,255,255,0.4), inset 0 -4px 12px rgba(0,0,0,0.4)'
+                       }} />
+                  
+                  {/* Kristály rácsminta */}
+                  <div className="absolute inset-[4px] rounded-full pointer-events-none"
+                       style={{
+                         background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.12) 10px, rgba(255,255,255,0.12) 15px, transparent 15px, transparent 25px, rgba(255,255,255,0.08) 25px, rgba(255,255,255,0.08) 30px)',
+                         opacity: 0.8
+                       }} />
+                  
+                  {/* Fénysugár hatás */}
+                  <div className="absolute inset-[4px] rounded-full pointer-events-none"
+                       style={{
+                         background: 'radial-gradient(ellipse 100% 60% at 35% 10%, rgba(255,255,255,0.7), transparent 65%)'
+                       }} />
+                  
+                  <div className="relative px-8 py-2 rounded-full"
+                       style={{ 
+                         transform: 'perspective(600px) rotateX(4deg)',
                          animation: 'offerPulse 1.5s ease-in-out infinite'
                        }}>
                      <p className="text-white font-black text-center tracking-wider flex items-center justify-center gap-2"
                        style={{ 
-                         fontSize: 'clamp(0.65rem, 3cqw, 0.9rem)',
-                         textShadow: '0 2px 6px rgba(0,0,0,0.9), 0 0 12px rgba(255,255,255,0.4)'
+                         fontSize: 'clamp(0.75rem, 3.5cqw, 1.1rem)',
+                         textShadow: '0 3px 8px rgba(0,0,0,0.95), 0 0 16px rgba(255,255,255,0.5), 0 1px 3px rgba(0,0,0,0.8)'
                        }}>
                        {t('welcome.special_offer')}
                      </p>
@@ -258,175 +297,268 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                   <style>{`
                     @keyframes offerPulse {
                       0%, 100% { 
-                        transform: perspective(500px) rotateX(5deg) scale(1);
-                        filter: brightness(1);
+                        transform: perspective(600px) rotateX(4deg) scale(1);
+                        filter: brightness(1) drop-shadow(0 0 12px rgba(220,38,38,0.6));
                       }
                       50% { 
-                        transform: perspective(500px) rotateX(5deg) scale(1.05);
-                        filter: brightness(1.2);
+                        transform: perspective(600px) rotateX(4deg) scale(1.06);
+                        filter: brightness(1.25) drop-shadow(0 0 20px rgba(220,38,38,0.9));
                       }
                     }
                   `}</style>
                 </div>
 
-                {/* Subtitle with 3D gift boxes */}
+                {/* Subtitle with háromszor nagyobb professzionális 3D gift boxes */}
                 <div className="flex items-center justify-center gap-3 mb-4">
-                  {/* Left 3D Gift Box SVG */}
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="drop-shadow-[0_4px_8px_rgba(255,215,0,0.4)] flex-shrink-0">
+                  {/* Left 3D Gift Box SVG - háromszor nagyobb, professzionális 3D */}
+                  <svg width="84" height="84" viewBox="0 0 100 100" fill="none" className="drop-shadow-[0_8px_16px_rgba(255,215,0,0.5)] flex-shrink-0">
                     <defs>
-                      <linearGradient id="giftGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <linearGradient id="giftBoxGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFD700" />
+                        <stop offset="25%" stopColor="#FFC700" />
                         <stop offset="50%" stopColor="#FFA500" />
+                        <stop offset="75%" stopColor="#FF8C00" />
                         <stop offset="100%" stopColor="#FFD700" />
                       </linearGradient>
+                      <linearGradient id="giftBoxInner1" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+                        <stop offset="50%" stopColor="rgba(255,215,0,0.2)" />
+                        <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
+                      </linearGradient>
+                      <linearGradient id="ribbonGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#EF4444" />
+                        <stop offset="50%" stopColor="#DC2626" />
+                        <stop offset="100%" stopColor="#991B1B" />
+                      </linearGradient>
+                      <filter id="giftShadow1">
+                        <feDropShadow dx="2" dy="4" stdDeviation="3" floodOpacity="0.4"/>
+                      </filter>
                     </defs>
-                    <rect x="4" y="10" width="16" height="11" rx="1" fill="url(#giftGrad1)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.5"/>
-                    <rect x="4.5" y="10.5" width="15" height="1.5" fill="rgba(255,255,255,0.3)"/>
-                    <rect x="11" y="10" width="2" height="11" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                    <rect x="4" y="13" width="16" height="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                    <circle cx="9" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                    <circle cx="15" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                    <circle cx="12" cy="7" r="1.5" fill="rgba(220,38,38,1)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    {/* Ajándékdoboz test - mély 3D hatás */}
+                    <rect x="15" y="40" width="70" height="50" rx="3" fill="url(#giftBoxGrad1)" stroke="rgba(0,0,0,0.4)" strokeWidth="1.5" filter="url(#giftShadow1)"/>
+                    {/* Belső fény */}
+                    <rect x="16" y="41" width="68" height="6" rx="2" fill="url(#giftBoxInner1)"/>
+                    {/* Függőleges szalag */}
+                    <rect x="47" y="40" width="6" height="50" fill="url(#ribbonGrad1)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <rect x="48" y="40" width="4" height="50" fill="rgba(255,255,255,0.2)" opacity="0.6"/>
+                    {/* Vízszintes szalag */}
+                    <rect x="15" y="57" width="70" height="8" fill="url(#ribbonGrad1)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <rect x="15" y="58" width="70" height="3" fill="rgba(255,255,255,0.2)" opacity="0.6"/>
+                    {/* Masni - 3D */}
+                    <ellipse cx="35" cy="33" rx="7" ry="6" fill="url(#ribbonGrad1)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <ellipse cx="36" cy="32" rx="3" ry="2.5" fill="rgba(255,255,255,0.4)"/>
+                    <ellipse cx="65" cy="33" rx="7" ry="6" fill="url(#ribbonGrad1)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <ellipse cx="66" cy="32" rx="3" ry="2.5" fill="rgba(255,255,255,0.4)"/>
+                    <circle cx="50" cy="30" r="5" fill="url(#ribbonGrad1)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <circle cx="51" cy="29" r="2" fill="rgba(255,255,255,0.5)"/>
                   </svg>
                   
-                  <p className="text-center text-yellow-200 font-black shadow-[0_4px_8px_rgba(255,215,0,0.3),inset_0_1px_4px_rgba(255,255,255,0.2),inset_0_-1px_4px_rgba(0,0,0,0.2)]"
+                  <p className="text-center text-yellow-200 font-black shadow-[0_6px_12px_rgba(255,215,0,0.4),inset_0_2px_6px_rgba(255,255,255,0.25),inset_0_-2px_6px_rgba(0,0,0,0.25)]"
                      style={{
                        fontSize: 'clamp(1rem, 4.8cqw, 1.4rem)',
-                       textShadow: '0 4px 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)',
-                       background: 'linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.25) 50%, rgba(255,215,0,0.15) 100%)',
-                       transform: 'perspective(300px) rotateX(3deg)',
-                       padding: '6px 12px',
-                       borderRadius: '8px',
-                       borderTop: '1px solid rgba(255,255,255,0.2)',
-                       borderBottom: '1px solid rgba(0,0,0,0.2)'
+                       textShadow: '0 5px 10px rgba(0,0,0,0.85), 0 3px 6px rgba(0,0,0,0.7), 0 0 20px rgba(255,215,0,0.3)',
+                       background: 'linear-gradient(135deg, rgba(255,215,0,0.18) 0%, rgba(255,215,0,0.28) 50%, rgba(255,215,0,0.18) 100%)',
+                       transform: 'perspective(400px) rotateX(3deg)',
+                       padding: '8px 14px',
+                       borderRadius: '10px',
+                       border: '2px solid rgba(255,215,0,0.3)',
+                       borderTop: '2px solid rgba(255,255,255,0.25)',
+                       borderBottom: '2px solid rgba(0,0,0,0.25)',
+                       boxShadow: '0 6px 12px rgba(255,215,0,0.4), inset 0 2px 6px rgba(255,255,255,0.25), inset 0 -2px 6px rgba(0,0,0,0.25)'
                      }}>
                     {t('welcome.gift_for_you')}
                   </p>
                   
-                  {/* Right 3D Gift Box SVG */}
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="drop-shadow-[0_4px_8px_rgba(255,215,0,0.4)] flex-shrink-0">
+                  {/* Right 3D Gift Box SVG - háromszor nagyobb, professzionális 3D */}
+                  <svg width="84" height="84" viewBox="0 0 100 100" fill="none" className="drop-shadow-[0_8px_16px_rgba(255,215,0,0.5)] flex-shrink-0">
                     <defs>
-                      <linearGradient id="giftGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <linearGradient id="giftBoxGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFD700" />
+                        <stop offset="25%" stopColor="#FFC700" />
                         <stop offset="50%" stopColor="#FFA500" />
+                        <stop offset="75%" stopColor="#FF8C00" />
                         <stop offset="100%" stopColor="#FFD700" />
                       </linearGradient>
+                      <linearGradient id="giftBoxInner2" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+                        <stop offset="50%" stopColor="rgba(255,215,0,0.2)" />
+                        <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
+                      </linearGradient>
+                      <linearGradient id="ribbonGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#EF4444" />
+                        <stop offset="50%" stopColor="#DC2626" />
+                        <stop offset="100%" stopColor="#991B1B" />
+                      </linearGradient>
+                      <filter id="giftShadow2">
+                        <feDropShadow dx="2" dy="4" stdDeviation="3" floodOpacity="0.4"/>
+                      </filter>
                     </defs>
-                    <rect x="4" y="10" width="16" height="11" rx="1" fill="url(#giftGrad2)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.5"/>
-                    <rect x="4.5" y="10.5" width="15" height="1.5" fill="rgba(255,255,255,0.3)"/>
-                    <rect x="11" y="10" width="2" height="11" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                    <rect x="4" y="13" width="16" height="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                    <circle cx="9" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                    <circle cx="15" cy="8" r="2" fill="rgba(220,38,38,0.9)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
-                    <circle cx="12" cy="7" r="1.5" fill="rgba(220,38,38,1)" stroke="rgba(0,0,0,0.2)" strokeWidth="0.3"/>
+                    <rect x="15" y="40" width="70" height="50" rx="3" fill="url(#giftBoxGrad2)" stroke="rgba(0,0,0,0.4)" strokeWidth="1.5" filter="url(#giftShadow2)"/>
+                    <rect x="16" y="41" width="68" height="6" rx="2" fill="url(#giftBoxInner2)"/>
+                    <rect x="47" y="40" width="6" height="50" fill="url(#ribbonGrad2)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <rect x="48" y="40" width="4" height="50" fill="rgba(255,255,255,0.2)" opacity="0.6"/>
+                    <rect x="15" y="57" width="70" height="8" fill="url(#ribbonGrad2)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <rect x="15" y="58" width="70" height="3" fill="rgba(255,255,255,0.2)" opacity="0.6"/>
+                    <ellipse cx="35" cy="33" rx="7" ry="6" fill="url(#ribbonGrad2)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <ellipse cx="36" cy="32" rx="3" ry="2.5" fill="rgba(255,255,255,0.4)"/>
+                    <ellipse cx="65" cy="33" rx="7" ry="6" fill="url(#ribbonGrad2)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <ellipse cx="66" cy="32" rx="3" ry="2.5" fill="rgba(255,255,255,0.4)"/>
+                    <circle cx="50" cy="30" r="5" fill="url(#ribbonGrad2)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8"/>
+                    <circle cx="51" cy="29" r="2" fill="rgba(255,255,255,0.5)"/>
                   </svg>
                 </div>
 
-                {/* Rewards - Pulzáló érmék + piros szívek */}
+                {/* Rewards - Magas minőségű 3D érmék + szívek (pajzs minőség) */}
                 <div className="w-full max-w-[85%] space-y-3 mb-4">
-                  {/* Coins - Pulzáló */}
+                  {/* Coins - Professzionális 3D */}
                   <div className="relative">
-                    <div className="absolute inset-0 translate-y-1 translate-x-1 bg-black/40 rounded-2xl blur-sm" />
+                    <div className="absolute inset-0 translate-y-2 translate-x-2 bg-black/50 rounded-2xl blur-md" />
                     <div className="absolute inset-0 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 rounded-2xl" 
-                         style={{ boxShadow: 'inset 0 0 0 2px #b45309, 0 6px 16px rgba(0,0,0,0.35)' }} />
+                         style={{ boxShadow: 'inset 0 0 0 3px #b45309, 0 12px 24px rgba(0,0,0,0.45)' }} />
                     <div className="absolute inset-[3px] bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 rounded-2xl"
-                         style={{ boxShadow: 'inset 0 1px 0 #fef3c7' }} />
+                         style={{ boxShadow: 'inset 0 2px 0 #fef3c7, inset 0 -2px 8px rgba(0,0,0,0.3)' }} />
                     
                     <div className="relative bg-gradient-to-br from-yellow-500/95 via-yellow-600/95 to-orange-600/95 rounded-2xl px-6 py-3 overflow-visible"
-                         style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)' }}>
+                         style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.25), inset 0 -16px 32px rgba(0,0,0,0.35)' }}>
                       <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
-                           style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)' }} />
+                           style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 65%)' }} />
+                      
+                      <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
+                           style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.10) 10px, rgba(255,255,255,0.10) 15px)' }} />
                       
                       <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                           style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)' }}>
+                           style={{ width: 'clamp(40px, 11cqw, 60px)', height: 'clamp(40px, 11cqw, 60px)' }}>
                         <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ animation: 'coinPulse 1.5s ease-in-out infinite' }}>
                           <defs>
-                            <radialGradient id="coinGradL">
-                              <stop offset="0%" stopColor="#fef3c7" />
-                              <stop offset="50%" stopColor="#fbbf24" />
-                              <stop offset="100%" stopColor="#f59e0b" />
+                            <radialGradient id="coinGoldL" cx="35%" cy="30%">
+                              <stop offset="0%" stopColor="#fff9cc" />
+                              <stop offset="20%" stopColor="#ffe066" />
+                              <stop offset="50%" stopColor="#ffd700" />
+                              <stop offset="80%" stopColor="#d4af37" />
+                              <stop offset="100%" stopColor="#a67c00" />
                             </radialGradient>
+                            <radialGradient id="coinInnerL" cx="50%" cy="50%">
+                              <stop offset="0%" stopColor="#ffeaa7" />
+                              <stop offset="50%" stopColor="#f9ca24" />
+                              <stop offset="100%" stopColor="#d4af37" />
+                            </radialGradient>
+                            <filter id="coinShadowL">
+                              <feDropShadow dx="2" dy="3" stdDeviation="4" floodOpacity="0.6"/>
+                            </filter>
                           </defs>
-                          <circle cx="50" cy="50" r="48" fill="url(#coinGradL)" stroke="#d97706" strokeWidth="3" />
-                          <circle cx="50" cy="50" r="38" fill="none" stroke="#fef3c7" strokeWidth="2" opacity="0.6" />
-                          <text x="50" y="65" fontSize="40" fontWeight="bold" fill="#92400e" textAnchor="middle" fontFamily="serif">$</text>
+                          <circle cx="50" cy="50" r="45" fill="url(#coinGoldL)" stroke="#8b6914" strokeWidth="3" filter="url(#coinShadowL)" />
+                          <circle cx="50" cy="50" r="35" fill="url(#coinInnerL)" stroke="#d4af37" strokeWidth="2" opacity="0.9" />
+                          <circle cx="50" cy="50" r="28" fill="none" stroke="#ffd700" strokeWidth="1.5" opacity="0.7" />
+                          <ellipse cx="38" cy="33" rx="14" ry="10" fill="rgba(255,255,255,0.5)" opacity="0.8" />
                         </svg>
                       </div>
 
                       <div className="relative flex items-center justify-center">
-                        <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
-                              style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
+                        <span className="font-black text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.95)]" 
+                              style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 24px rgba(255,255,255,0.6), 0 3px 6px rgba(0,0,0,0.9)' }}>
                           +2,500
                         </span>
                       </div>
 
                       <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2"
-                           style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)' }}>
+                           style={{ width: 'clamp(40px, 11cqw, 60px)', height: 'clamp(40px, 11cqw, 60px)' }}>
                         <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ animation: 'coinPulse 1.5s ease-in-out infinite 0.3s' }}>
                           <defs>
-                            <radialGradient id="coinGradR">
-                              <stop offset="0%" stopColor="#fef3c7" />
-                              <stop offset="50%" stopColor="#fbbf24" />
-                              <stop offset="100%" stopColor="#f59e0b" />
+                            <radialGradient id="coinGoldR" cx="35%" cy="30%">
+                              <stop offset="0%" stopColor="#fff9cc" />
+                              <stop offset="20%" stopColor="#ffe066" />
+                              <stop offset="50%" stopColor="#ffd700" />
+                              <stop offset="80%" stopColor="#d4af37" />
+                              <stop offset="100%" stopColor="#a67c00" />
                             </radialGradient>
+                            <radialGradient id="coinInnerR" cx="50%" cy="50%">
+                              <stop offset="0%" stopColor="#ffeaa7" />
+                              <stop offset="50%" stopColor="#f9ca24" />
+                              <stop offset="100%" stopColor="#d4af37" />
+                            </radialGradient>
+                            <filter id="coinShadowR">
+                              <feDropShadow dx="2" dy="3" stdDeviation="4" floodOpacity="0.6"/>
+                            </filter>
                           </defs>
-                          <circle cx="50" cy="50" r="48" fill="url(#coinGradR)" stroke="#d97706" strokeWidth="3" />
-                          <circle cx="50" cy="50" r="38" fill="none" stroke="#fef3c7" strokeWidth="2" opacity="0.6" />
-                          <text x="50" y="65" fontSize="40" fontWeight="bold" fill="#92400e" textAnchor="middle" fontFamily="serif">$</text>
+                          <circle cx="50" cy="50" r="45" fill="url(#coinGoldR)" stroke="#8b6914" strokeWidth="3" filter="url(#coinShadowR)" />
+                          <circle cx="50" cy="50" r="35" fill="url(#coinInnerR)" stroke="#d4af37" strokeWidth="2" opacity="0.9" />
+                          <circle cx="50" cy="50" r="28" fill="none" stroke="#ffd700" strokeWidth="1.5" opacity="0.7" />
+                          <ellipse cx="38" cy="33" rx="14" ry="10" fill="rgba(255,255,255,0.5)" opacity="0.8" />
                         </svg>
                       </div>
                     </div>
                   </div>
 
-                  {/* Lives - Pulzáló PIROS szívek */}
+                  {/* Lives - Professzionális 3D szívek (pajzs minőség) */}
                   <div className="relative">
-                    <div className="absolute inset-0 translate-y-1 translate-x-1 bg-black/40 rounded-2xl blur-sm" />
+                    <div className="absolute inset-0 translate-y-2 translate-x-2 bg-black/50 rounded-2xl blur-md" />
                     <div className="absolute inset-0 bg-gradient-to-br from-red-700 via-red-600 to-red-800 rounded-2xl"
-                         style={{ boxShadow: 'inset 0 0 0 2px #7f1d1d, 0 6px 16px rgba(0,0,0,0.35)' }} />
+                         style={{ boxShadow: 'inset 0 0 0 3px #7f1d1d, 0 12px 24px rgba(0,0,0,0.45)' }} />
                     <div className="absolute inset-[3px] bg-gradient-to-b from-red-400 via-red-500 to-red-700 rounded-2xl"
-                         style={{ boxShadow: 'inset 0 1px 0 #fca5a5' }} />
+                         style={{ boxShadow: 'inset 0 2px 0 #fca5a5, inset 0 -2px 8px rgba(0,0,0,0.3)' }} />
                     
-                    {/* Hearts inline like coins, overhang 50% via negative margins to match coin placement */}
                     <div className="relative bg-gradient-to-br from-red-600/95 via-red-700/95 to-red-900/95 rounded-2xl px-6 py-3 overflow-visible"
-                         style={{ boxShadow: 'inset 0 12px 24px rgba(255,255,255,0.2), inset 0 -12px 24px rgba(0,0,0,0.3)' }}>
+                         style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.25), inset 0 -16px 32px rgba(0,0,0,0.35)' }}>
                       <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
-                           style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.4), transparent 60%)' }} />
+                           style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 65%)' }} />
                       
-                      {/* Absolute hearts anchored to box edges, 50% overhang */}
+                      <div className="absolute inset-[6px] rounded-2xl pointer-events-none"
+                           style={{ background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.10) 10px, rgba(255,255,255,0.10) 15px)' }} />
+                      
                       <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                           style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)' }}>
+                           style={{ width: 'clamp(40px, 11cqw, 60px)', height: 'clamp(40px, 11cqw, 60px)' }}>
                         <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ animation: 'heartPulse 1.5s ease-in-out infinite' }}>
                           <defs>
-                            <radialGradient id="heartGradRedLeft">
-                              <stop offset="0%" stopColor="#fca5a5" />
-                              <stop offset="50%" stopColor="#dc2626" />
-                              <stop offset="100%" stopColor="#991b1b" />
+                            <linearGradient id="heartGrad3DL" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="#ff6b6b" />
+                              <stop offset="30%" stopColor="#ff5252" />
+                              <stop offset="60%" stopColor="#ff1744" />
+                              <stop offset="100%" stopColor="#c41c00" />
+                            </linearGradient>
+                            <radialGradient id="heartHighL" cx="30%" cy="25%">
+                              <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+                              <stop offset="50%" stopColor="rgba(255,255,255,0.3)" />
+                              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
                             </radialGradient>
+                            <filter id="heartShadL">
+                              <feDropShadow dx="2" dy="3" stdDeviation="4" floodOpacity="0.6"/>
+                            </filter>
                           </defs>
-                          <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
-                                fill="url(#heartGradRedLeft)" stroke="#7f1d1d" strokeWidth="2" />
+                          <path d="M50 85 L20 55 C10 45 10 28 20 18 C30 8 45 8 50 18 C55 8 70 8 80 18 C90 28 90 45 80 55 Z" 
+                                fill="url(#heartGrad3DL)" stroke="#b71c1c" strokeWidth="2.5" filter="url(#heartShadL)" />
+                          <ellipse cx="35" cy="30" rx="14" ry="12" fill="url(#heartHighL)" opacity="0.8" />
                         </svg>
                       </div>
 
                       <div className="relative flex items-center justify-center">
-                        <span className="font-black text-white drop-shadow-[0_3px_6px_rgba(0,0,0,0.9)]" 
-                              style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.5)' }}>
+                        <span className="font-black text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.95)]" 
+                              style={{ fontSize: 'clamp(1.75rem, 8.5cqw, 3rem)', lineHeight: 1, textShadow: '0 0 24px rgba(255,255,255,0.6), 0 3px 6px rgba(0,0,0,0.9)' }}>
                           +50
                         </span>
                       </div>
 
                       <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2"
-                           style={{ width: 'clamp(32px, 9cqw, 48px)', height: 'clamp(32px, 9cqw, 48px)' }}>
+                           style={{ width: 'clamp(40px, 11cqw, 60px)', height: 'clamp(40px, 11cqw, 60px)' }}>
                         <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ animation: 'heartPulse 1.5s ease-in-out infinite 0.3s' }}>
                           <defs>
-                            <radialGradient id="heartGradRedRight">
-                              <stop offset="0%" stopColor="#fca5a5" />
-                              <stop offset="50%" stopColor="#dc2626" />
-                              <stop offset="100%" stopColor="#991b1b" />
+                            <linearGradient id="heartGrad3DR" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="#ff6b6b" />
+                              <stop offset="30%" stopColor="#ff5252" />
+                              <stop offset="60%" stopColor="#ff1744" />
+                              <stop offset="100%" stopColor="#c41c00" />
+                            </linearGradient>
+                            <radialGradient id="heartHighR" cx="30%" cy="25%">
+                              <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+                              <stop offset="50%" stopColor="rgba(255,255,255,0.3)" />
+                              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
                             </radialGradient>
+                            <filter id="heartShadR">
+                              <feDropShadow dx="2" dy="3" stdDeviation="4" floodOpacity="0.6"/>
+                            </filter>
                           </defs>
-                          <path d="M50 85 C20 65, 5 40, 5 25 C5 10, 15 5, 25 5 C35 5, 45 15, 50 20 C55 15, 65 5, 75 5 C85 5, 95 10, 95 25 C95 40, 80 65, 50 85 Z" 
-                                fill="url(#heartGradRedRight)" stroke="#7f1d1d" strokeWidth="2" />
+                          <path d="M50 85 L20 55 C10 45 10 28 20 18 C30 8 45 8 50 18 C55 8 70 8 80 18 C90 28 90 45 80 55 Z" 
+                                fill="url(#heartGrad3DR)" stroke="#b71c1c" strokeWidth="2.5" filter="url(#heartShadR)" />
+                          <ellipse cx="35" cy="30" rx="14" ry="12" fill="url(#heartHighR)" opacity="0.8" />
                         </svg>
                       </div>
                     </div>
@@ -437,21 +569,21 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                   @keyframes coinPulse {
                     0%, 100% { 
                       transform: scale(1);
-                      filter: drop-shadow(0 0 8px rgba(251,191,36,0.6));
+                      filter: drop-shadow(0 0 10px rgba(251,191,36,0.7)) drop-shadow(0 0 20px rgba(251,191,36,0.4));
                     }
                     50% { 
-                      transform: scale(1.1);
-                      filter: drop-shadow(0 0 16px rgba(251,191,36,1));
+                      transform: scale(1.12);
+                      filter: drop-shadow(0 0 16px rgba(251,191,36,1)) drop-shadow(0 0 32px rgba(251,191,36,0.6));
                     }
                   }
                   @keyframes heartPulse {
                     0%, 100% { 
                       transform: scale(1);
-                      filter: drop-shadow(0 0 8px rgba(239,68,68,0.6));
+                      filter: drop-shadow(0 0 10px rgba(239,68,68,0.7)) drop-shadow(0 0 20px rgba(239,68,68,0.4));
                     }
                     50% { 
-                      transform: scale(1.1);
-                      filter: drop-shadow(0 0 16px rgba(239,68,68,1));
+                      transform: scale(1.12);
+                      filter: drop-shadow(0 0 16px rgba(239,68,68,1)) drop-shadow(0 0 32px rgba(239,68,68,0.6));
                     }
                   }
                 `}</style>
