@@ -248,6 +248,62 @@ export const trackFeatureUsage = async (
   }
 };
 
+// =====================================================
+// CONVERSION TRACKING (Purchase Funnel)
+// =====================================================
+
+export const trackConversionEvent = async (
+  userId: string,
+  eventType: 'product_view' | 'add_to_cart' | 'purchase_complete',
+  productType?: string,
+  productId?: string,
+  metadata?: Record<string, any>
+) => {
+  try {
+    await supabase.from('conversion_events').insert({
+      user_id: userId,
+      event_type: eventType,
+      product_type: productType,
+      product_id: productId,
+      session_id: getSessionId(),
+      metadata: metadata || {},
+    });
+  } catch (error) {
+    console.error('[Analytics] Failed to track conversion event:', error);
+  }
+};
+
+// =====================================================
+// GAME MILESTONE TRACKING (Game Funnel)
+// =====================================================
+
+export const trackGameMilestone = async (
+  userId: string,
+  milestone: 'game_start' | 'question_5_reached' | 'question_10_reached' | 'game_complete',
+  gameData: {
+    category: string;
+    question_index: number;
+    correct_answers?: number;
+    time_played_seconds?: number;
+    metadata?: Record<string, any>;
+  }
+) => {
+  try {
+    await supabase.from('game_exit_events').insert({
+      user_id: userId,
+      event_type: milestone,
+      category: gameData.category,
+      question_index: gameData.question_index,
+      correct_answers: gameData.correct_answers || 0,
+      time_played_seconds: gameData.time_played_seconds,
+      session_id: getSessionId(),
+      metadata: gameData.metadata || {},
+    });
+  } catch (error) {
+    console.error('[Analytics] Failed to track game milestone:', error);
+  }
+};
+
 interface AnalyticsData {
   userId?: string;
   route?: string;

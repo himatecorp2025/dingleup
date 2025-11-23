@@ -20,7 +20,7 @@ import { useGameHelpers } from "@/hooks/useGameHelpers";
 import { useGameTimer } from "@/hooks/useGameTimer";
 import { useGameRewards } from "./game/GameRewardSystem";
 import { GameSwipeHandler } from "./game/GameSwipeHandler";
-import { trackFeatureUsage } from "@/lib/analytics";
+import { trackFeatureUsage, trackGameMilestone } from "@/lib/analytics";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -182,6 +182,30 @@ const GamePreview = memo(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState]);
 
+  // Track game funnel milestones (5th, 10th, 15th question reached)
+  useEffect(() => {
+    const trackMilestone = async () => {
+      if (!userId || !isGameReady || currentQuestionIndex < 0) return;
+
+      // Track milestones: 5th question (index 4), 10th question (index 9), 15th question/completion (index 14)
+      if (currentQuestionIndex === 4) {
+        await trackGameMilestone(userId, 'question_5_reached', {
+          category: 'mixed',
+          question_index: 5,
+          correct_answers: correctAnswers,
+        });
+      } else if (currentQuestionIndex === 9) {
+        await trackGameMilestone(userId, 'question_10_reached', {
+          category: 'mixed',
+          question_index: 10,
+          correct_answers: correctAnswers,
+        });
+      }
+    };
+
+    trackMilestone();
+  }, [currentQuestionIndex, userId, isGameReady, correctAnswers]);
+
   const startGame = async (skipLoadingVideo: boolean = false) => {
     if (!profile || isStartingGame) return;
     
@@ -190,6 +214,13 @@ const GamePreview = memo(() => {
       await trackFeatureUsage(userId, 'game_action', 'game', 'start', {
         skipLoadingVideo,
         category: 'mixed'
+      });
+
+      // Track game start milestone for game funnel
+      await trackGameMilestone(userId, 'game_start', {
+        category: 'mixed',
+        question_index: 0,
+        correct_answers: 0,
       });
     }
     
@@ -752,6 +783,16 @@ const GamePreview = memo(() => {
       : 0;
 
     try {
+      // Track game completion milestone
+      if (userId && correctAnswers > 0) {
+        await trackGameMilestone(userId, 'game_complete', {
+          category: 'mixed',
+          question_index: 15,
+          correct_answers: correctAnswers,
+          time_played_seconds: Math.floor((Date.now() - questionStartTime) / 1000),
+        });
+      }
+
       // SECURITY: Use secure edge function for game completion
       // Server calculates and validates all rewards
       const { data: { session } } = await supabase.auth.getSession();

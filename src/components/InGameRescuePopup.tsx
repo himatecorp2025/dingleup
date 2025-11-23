@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +10,7 @@ import { DiamondIcon3D } from '@/components/icons/DiamondIcon3D';
 import { GoldRewardCoin3D } from '@/components/icons/GoldRewardCoin3D';
 import { LoadingSpinner3D } from '@/components/icons/LoadingSpinner3D';
 import { SlotMachine3D } from '@/components/icons/SlotMachine3D';
+import { trackConversionEvent } from '@/lib/analytics';
 
 interface InGameRescuePopupProps {
   isOpen: boolean;
@@ -31,6 +32,34 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
   const { t } = useI18n();
   const [loadingGoldSaver, setLoadingGoldSaver] = useState(false);
   const [loadingInstantRescue, setLoadingInstantRescue] = useState(false);
+  const [hasTrackedView, setHasTrackedView] = useState(false);
+
+  // Track product_view when popup opens
+  useEffect(() => {
+    const trackProductView = async () => {
+      if (isOpen && !hasTrackedView) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          await trackConversionEvent(
+            session.user.id,
+            'product_view',
+            'booster_rescue',
+            triggerReason,
+            { trigger_reason: triggerReason }
+          );
+          setHasTrackedView(true);
+        }
+      }
+    };
+    trackProductView();
+  }, [isOpen, hasTrackedView, triggerReason]);
+
+  // Reset tracking flag when popup closes
+  useEffect(() => {
+    if (!isOpen) {
+      setHasTrackedView(false);
+    }
+  }, [isOpen]);
 
   const handleGoldSaverPurchase = async () => {
     if (currentGold < 500) {
@@ -46,6 +75,15 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         setLoadingGoldSaver(false);
         return;
       }
+
+      // Track add_to_cart
+      await trackConversionEvent(
+        session.user.id,
+        'add_to_cart',
+        'booster',
+        'GOLD_SAVER',
+        { price: 500, currency: 'gold' }
+      );
       
       const { data, error } = await supabase.functions.invoke('purchase-booster', {
         body: { boosterCode: 'GOLD_SAVER' },
@@ -78,6 +116,15 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         setLoadingInstantRescue(false);
         return;
       }
+
+      // Track add_to_cart
+      await trackConversionEvent(
+        session.user.id,
+        'add_to_cart',
+        'booster',
+        'INSTANT_RESCUE',
+        { price: 0, currency: 'real_money' }
+      );
       
       const { data, error } = await supabase.functions.invoke('purchase-booster', {
         body: { boosterCode: 'INSTANT_RESCUE' },
