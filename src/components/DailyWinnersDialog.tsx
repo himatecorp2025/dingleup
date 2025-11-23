@@ -441,10 +441,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         </div>
 
                         {topPlayers.slice(3, 10).map((player) => (
-                          <div key={player.user_id} className="flex items-center gap-3 px-4 py-2 mb-2 rounded-lg backdrop-blur-sm"
+                          <div key={player.user_id} className="flex items-center gap-3 px-4 py-2 rounded-lg backdrop-blur-sm"
                                style={{
                                  background: 'linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)',
                                  borderLeft: '3px solid rgba(255,215,0,0.4)',
+                                 marginBottom: '7.2px'
                                }}>
                             <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
                                  style={{
