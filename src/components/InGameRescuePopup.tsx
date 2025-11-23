@@ -284,7 +284,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <Button
                 onClick={handleInstantRescuePurchase}
                 disabled={loadingInstantRescue}
-                className="w-full bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 hover:from-yellow-200 hover:via-yellow-300 hover:to-yellow-500 text-black font-black text-xs sm:text-sm py-2 sm:py-3 rounded-[20px] border-[2px] sm:border-[3px] border-yellow-200 shadow-2xl transition-all" style={{ textShadow: '0 1px 3px rgba(255, 255, 255, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.6), 0 8px 25px rgba(234, 179, 8, 0.9), 0 0 40px rgba(234, 179, 8, 0.6), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
+                className="w-full bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 hover:from-yellow-200 hover:via-yellow-300 hover:to-yellow-500 text-black font-black text-xs sm:text-sm py-2 sm:py-3 rounded-[20px] border-[2px] sm:border-[3px] border-yellow-200 shadow-2xl transition-all pulse" style={{ textShadow: '0 1px 3px rgba(255, 255, 255, 0.5)', boxShadow: 'inset 0 4px 10px rgba(255, 255, 255, 0.6), 0 8px 25px rgba(234, 179, 8, 0.9), 0 0 40px rgba(234, 179, 8, 0.6), 0 12px 40px rgba(0, 0, 0, 0.6)' }}
               >
                 {loadingInstantRescue ? (
                   <div className="flex items-center justify-center gap-1.5 sm:gap-2">
