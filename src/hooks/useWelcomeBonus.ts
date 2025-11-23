@@ -15,7 +15,23 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     }
 
     try {
-      // TEMP: Force always show for admin testing - minden frissítésnél megjelenik
+      // Ellenőrizzük, hogy a felhasználó már felvette-e a Welcome Bonust
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('welcome_bonus_claimed')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+
+      // Ha már felvette, ne jelenjen meg többé
+      if (profile?.welcome_bonus_claimed) {
+        setCanClaim(false);
+        setLoading(false);
+        return;
+      }
+
+      // Ha még nem vette fel, jelenjen meg
       setCanClaim(true);
       trackEvent('popup_impression', 'welcome');
       setLoading(false);

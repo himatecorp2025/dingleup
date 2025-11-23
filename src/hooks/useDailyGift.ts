@@ -17,7 +17,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
 
     try {
-      // Check server-side profile data (aligned with claim_daily_gift RPC function)
+      // TEMP: Force always show for admin testing - minden frissítésnél megjelenik
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('daily_gift_streak, daily_gift_last_claimed')
@@ -28,38 +28,15 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
       const currentStreak = profile?.daily_gift_streak ?? 0;
       
-      // Check if can claim (24h throttle based on daily_gift_last_claimed)
-      let canClaimNow = true;
-      if (profile?.daily_gift_last_claimed) {
-        const lastClaimed = new Date(profile.daily_gift_last_claimed);
-        const now = new Date();
-        const hoursSince = (now.getTime() - lastClaimed.getTime()) / (1000 * 60 * 60);
-        canClaimNow = hoursSince >= 24;
-      }
-
       // Calculate reward based on cycle position (0-6) - matches edge function logic
       const cyclePosition = currentStreak % 7;
       const rewardCoins = DAILY_GIFT_REWARDS[cyclePosition];
       
       setWeeklyEntryCount(currentStreak);
       setNextReward(rewardCoins);
-      setCanClaim(canClaimNow);
-
-      // Check sessionStorage (AFTER server check)
-      const today = new Date().toISOString().split('T')[0];
-      const dismissedToday = sessionStorage.getItem(`${DAILY_GIFT_SESSION_KEY}${today}`);
-      
-      // User is eligible - show the dialog if not dismissed in session
-      if (canClaimNow) {
-        if (!dismissedToday) {
-          setShowPopup(true);
-          trackEvent('popup_impression', 'daily');
-        } else {
-          setShowPopup(false);
-        }
-      } else {
-        setShowPopup(false);
-      }
+      setCanClaim(true);
+      setShowPopup(true);
+      trackEvent('popup_impression', 'daily');
     } catch (error) {
       // Silent fail
     }
