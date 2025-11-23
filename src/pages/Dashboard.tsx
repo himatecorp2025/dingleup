@@ -138,18 +138,14 @@ const Dashboard = () => {
   }, [searchParams, setSearchParams]);
 
   // Check age-gate FIRST (ABSOLUTE PRIORITY) - blocks ALL other popups until completed
+  // TEMP: Force always show for testing - minden frissítésnél megjelenik
   useEffect(() => {
-    if (profile && !loading) {
-      // Show age-gate if birth_date is missing or age_verified is false
-      if (!profile.age_verified || !profile.birth_date) {
-        setShowAgeGate(true);
-        setAgeGateCompleted(false); // Block all other popups
-      } else {
-        setShowAgeGate(false);
-        setAgeGateCompleted(true); // Age gate already completed - allow other popups
-      }
+    if (profile && !loading && userId) {
+      // TEMP: Always show age-gate for testing
+      setShowAgeGate(true);
+      setAgeGateCompleted(false); // Block all other popups
     }
-  }, [profile, loading]);
+  }, [profile, loading, userId]);
 
   // Show Welcome Bonus dialog SECOND (after age-gate COMPLETED) - instant, 0 seconds delay
   useEffect(() => {
@@ -386,13 +382,15 @@ if (!profile) {
         }}
       />
     {/* Age-gate modal (ABSOLUTE PRIORITY - blocks ALL popups until completed) */}
+    {/* TEMP: Testing mode - modal won't close on success to allow multiple displays */}
     {userId && (
       <AgeGateModal 
         open={showAgeGate} 
         userId={userId} 
         onSuccess={() => {
-          setShowAgeGate(false);
-          setAgeGateCompleted(true); // Unblock other popups ONLY after successful completion
+          // TEMP: Don't close modal, just refresh profile
+          // setShowAgeGate(false);
+          // setAgeGateCompleted(true);
           refreshProfile();
         }} 
       />

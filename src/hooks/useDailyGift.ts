@@ -17,7 +17,17 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
 
     try {
-      // TEMP: Force always show for admin testing - minden frissítésnél megjelenik
+      // Check session storage for today's dismissal/claim
+      const today = new Date().toISOString().split('T')[0];
+      const dismissed = sessionStorage.getItem(`${DAILY_GIFT_SESSION_KEY}${today}`);
+      
+      // If already dismissed or claimed today, don't show
+      if (dismissed) {
+        setCanClaim(false);
+        setShowPopup(false);
+        return;
+      }
+
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('daily_gift_streak, daily_gift_last_claimed')
@@ -25,6 +35,18 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         .single();
 
       if (profileError) throw profileError;
+
+      // Check if already claimed today
+      const lastClaimed = profile?.daily_gift_last_claimed;
+      if (lastClaimed) {
+        const lastClaimedDate = new Date(lastClaimed).toISOString().split('T')[0];
+        if (lastClaimedDate === today) {
+          // Already claimed today
+          setCanClaim(false);
+          setShowPopup(false);
+          return;
+        }
+      }
 
       const currentStreak = profile?.daily_gift_streak ?? 0;
       
