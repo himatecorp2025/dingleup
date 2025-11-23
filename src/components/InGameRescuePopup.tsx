@@ -134,7 +134,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           
           <DialogTitle className="relative text-2xl font-black text-center bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent leading-tight tracking-wider flex items-center justify-center gap-3" style={{ textShadow: '0 4px 15px rgba(234, 179, 8, 0.9), 0 8px 30px rgba(234, 179, 8, 0.6), 0 0 40px rgba(234, 179, 8, 0.7), 0 2px 5px rgba(0, 0, 0, 0.8)', filter: 'drop-shadow(0 6px 15px rgba(234, 179, 8, 0.5))' }}>
             <SlotMachine3D size={32} className="drop-shadow-2xl" />
-            {t('rescue.title')}
+            Majdnem kiestél...
           </DialogTitle>
           <p className="relative text-center text-yellow-50 text-sm font-bold" style={{ textShadow: '0 3px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.4)' }}>
             {t('rescue.subtitle')}
