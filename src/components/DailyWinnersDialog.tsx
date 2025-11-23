@@ -129,21 +129,19 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       setTopPlayers(players as TopPlayer[]);
       console.log('[DAILY-WINNERS] Loaded yesterday TOP 10 from snapshot:', players.length, 'players');
       
-      // Fetch total rewards for yesterday - TEMPORARILY COMMENTED OUT FOR TESTING
-      /*
+      // Fetch total rewards for yesterday's TOP 10 players
       const { data: rewards, error: rewardsError } = await supabase
         .from('daily_winner_awarded')
         .select('gold_awarded, lives_awarded')
-        .eq('day_date', yesterdayDate);
+        .eq('day_date', yesterdayDate)
+        .lte('rank', 10);
       
       if (!rewardsError && rewards && isMountedRef.current) {
         const totalGold = rewards.reduce((sum, r) => sum + r.gold_awarded, 0);
         const totalLives = rewards.reduce((sum, r) => sum + r.lives_awarded, 0);
         setTotalRewards({ totalGold, totalLives });
-        console.log('[DAILY-WINNERS] Total rewards:', { totalGold, totalLives });
+        console.log('[DAILY-WINNERS] Total rewards yesterday TOP 10:', { totalGold, totalLives });
       }
-      */
-      console.log('[DAILY-WINNERS] Using test values: 150000 gold, 20000 lives');
     } catch (error) {
       if (isMountedRef.current) {
         console.error('[DAILY-WINNERS] Exception fetching yesterday TOP 10:', error);
