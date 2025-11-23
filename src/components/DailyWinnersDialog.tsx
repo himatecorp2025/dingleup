@@ -283,7 +283,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     </h1>
                     
                     {/* Jackpot info row */}
-                    <div className="relative z-10 mt-2 flex items-center justify-center gap-2 text-white"
+                    <div className="relative z-10 mt-2 flex items-center justify-center gap-1 text-white"
                          style={{
                            fontSize: 'clamp(0.85rem, 3.5vw, 1.1rem)',
                            fontFamily: '"Poppins", system-ui, sans-serif',
