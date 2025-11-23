@@ -50,10 +50,19 @@ export const UpdatePrompt = () => {
   }, []);
 
   const handleUpdate = () => {
+    // Dismiss the prompt immediately so it doesn't show again
+    const dismissUntil = Date.now() + (24 * 60 * 60 * 1000);
+    localStorage.setItem('update_dismissed_until', dismissUntil.toString());
+    setDismissed(true);
+    setShowPrompt(false);
+    
     if (registration?.waiting) {
       registration.waiting.postMessage({ type: 'SKIP_WAITING' });
     }
-    window.location.reload();
+    // Reload after a short delay to ensure state is saved
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   const handleDismiss = () => {
