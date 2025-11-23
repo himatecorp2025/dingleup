@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
  * Hook to manage daily winners popup visibility
  * Shows popup 3 seconds after daily gift claim/dismiss, once per day
  */
-export const useDailyWinnersPopup = (userId: string | undefined) => {
+export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow = false) => {
   const [showPopup, setShowPopup] = useState(false);
   const [canShowToday, setCanShowToday] = useState(false);
   const [triggerActive, setTriggerActive] = useState(false);
@@ -22,8 +22,8 @@ export const useDailyWinnersPopup = (userId: string | undefined) => {
       return;
     }
 
-    checkIfCanShowToday();
-  }, [userId]);
+    checkIfCanShowToday(forceAlwaysShow);
+  }, [userId, forceAlwaysShow]);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -59,8 +59,14 @@ export const useDailyWinnersPopup = (userId: string | undefined) => {
     };
   }, [triggerActive, canShowToday]);
 
-  const checkIfCanShowToday = async () => {
+  const checkIfCanShowToday = async (force = false) => {
     try {
+      if (force) {
+        // TEMP: force popup to be allowed regardless of last_shown_day
+        setCanShowToday(true);
+        return;
+      }
+
       const currentDay = getCurrentDay();
 
       // Check if user has seen popup today
