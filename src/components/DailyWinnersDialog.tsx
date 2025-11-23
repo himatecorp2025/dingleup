@@ -219,7 +219,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         <div className="flex justify-center items-end gap-2 mb-4 px-1 -mt-3">
                           {/* 2nd Place - Silver */}
                           {topPlayers[1] && (
-                            <div className="flex flex-col items-center relative" style={{ width: '30%' }}>
+                            <div className="flex flex-col items-center relative animate-pulse" style={{ width: '30%', animationDuration: '3s' }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
                                 {/* Background wreath - Silver */}
                                 <div 
@@ -295,7 +295,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {/* 1st Place - Gold (larger) */}
                           {topPlayers[0] && (
-                            <div className="flex flex-col items-center relative" style={{ width: '36%' }}>
+                            <div className="flex flex-col items-center relative animate-pulse" style={{ width: '36%', animationDuration: '3s' }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
                                 {/* Background wreath - Gold (exact user SVG) */}
                                 <div 
@@ -370,7 +370,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {/* 3rd Place - Bronze */}
                           {topPlayers[2] && (
-                            <div className="flex flex-col items-center relative" style={{ width: '30%' }}>
+                            <div className="flex flex-col items-center relative animate-pulse" style={{ width: '30%', animationDuration: '3s' }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
                                 {/* Background wreath - Bronze */}
                                 <div 
