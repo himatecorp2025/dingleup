@@ -123,25 +123,25 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent 
-        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden z-[99999]"
+        className="overflow-visible p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden z-[99999]"
         style={{ 
           margin: 0,
-          maxHeight: '100dvh',
+          maxHeight: 'none',
           minHeight: '100dvh',
           borderRadius: 0,
           zIndex: 99999
         }}
       >
-        <div 
-          className="fixed inset-0 flex flex-col items-center overflow-hidden backdrop-blur-md"
-          style={{ 
-            minHeight: '100dvh', 
-            minWidth: '100vw',
-            justifyContent: 'center',
-            paddingTop: '0',
-            marginTop: '-3vh'
-          }}
-        >
+          <div 
+            className="fixed inset-0 flex flex-col items-center overflow-visible backdrop-blur-md"
+            style={{ 
+              minHeight: '100dvh', 
+              minWidth: '100vw',
+              justifyContent: 'center',
+              paddingTop: '0',
+              marginTop: '-3vh'
+            }}
+          >
           <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
           <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
 
