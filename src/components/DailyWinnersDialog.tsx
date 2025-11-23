@@ -31,22 +31,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   const [totalRewards, setTotalRewards] = useState<TotalRewards>({ totalGold: 0, totalLives: 0 });
   const badgeRef = useRef<HTMLDivElement>(null);
 
-  // Add keyframes for scale pulse animation and glow
+  // Add keyframes for scale pulse animation
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
       @keyframes pulse-scale {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.05); }
-      }
-      
-      @keyframes pulse-glow {
-        0%, 100% { 
-          filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
-        }
-        50% { 
-          filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 40px rgba(255, 165, 0, 0.5));
-        }
       }
     `;
     document.head.appendChild(style);
@@ -73,7 +64,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
   const fetchYesterdayTopPlayers = async () => {
     try {
-      // Get current user's country code
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         console.error('[DAILY-WINNERS] No authenticated user');
@@ -95,14 +85,12 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
       const userCountry = profileData.country_code;
 
-      // Calculate yesterday's date
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayDate = yesterday.toISOString().split('T')[0];
 
       console.log('[DAILY-WINNERS] Fetching yesterday TOP 10 from daily_leaderboard_snapshot, country:', userCountry, 'date:', yesterdayDate);
 
-      // Fetch top 10 from daily_leaderboard_snapshot for user's country and yesterday's date
       const { data: players, error } = await supabase
         .from('daily_leaderboard_snapshot')
         .select('user_id, rank, username, avatar_url, total_correct_answers')
@@ -126,7 +114,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       setTopPlayers(players as TopPlayer[]);
       console.log('[DAILY-WINNERS] Loaded yesterday TOP 10 from snapshot:', players.length, 'players');
       
-      // Calculate total rewards for TOP 10
       const { data: prizesData, error: prizesError } = await supabase
         .from('daily_prize_table')
         .select('gold, lives, rank')
@@ -161,7 +148,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           zIndex: 99999
         }}
       >
-        {/* Középre igazító konténer - blur háttérrel */}
         <div 
           className="fixed inset-0 flex flex-col items-center overflow-hidden backdrop-blur-md"
           style={{ 
@@ -175,147 +161,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
           <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
 
-          {/* Casino Billboard - Total Rewards Panel (Top Right) - Compact Version */}
-          <div 
-            className="absolute top-2 right-2 z-30"
-            style={{
-              animation: 'pulse-glow 2s ease-in-out infinite',
-              transform: 'scale(0.5)',
-              transformOrigin: 'top right'
-            }}
-          >
-            {/* 3D Hexagon-style Frame Container */}
-            <div className="relative" style={{ 
-              clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)'
-            }}>
-              {/* Shadow layer */}
-              <div className="absolute inset-0 translate-y-1 translate-x-1"
-                   style={{
-                     clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                     background: 'rgba(0,0,0,0.6)',
-                     filter: 'blur(6px)',
-                     zIndex: -1
-                   }} />
-              
-              {/* Outer gold border */}
-              <div className="absolute inset-0"
-                   style={{
-                     clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                     background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                     boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 4px 12px rgba(0,0,0,0.3)'
-                   }} />
-              
-              {/* Inner gold highlight */}
-              <div className="absolute inset-[3px]"
-                   style={{
-                     clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                     background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-                     boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
-                   }} />
-              
-              {/* Content area with dark background */}
-              <div className="relative px-6 py-4"
-                   style={{
-                     clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)'
-                   }}>
-                <div className="absolute inset-[6px]"
-                     style={{
-                       clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                       background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
-                       boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.6)'
-                     }} />
-                
-                <div className="relative z-10">
-                  {/* Title */}
-                  <div className="text-center mb-3">
-                    <h3 className="text-white font-black uppercase tracking-wider" style={{
-                      fontSize: '0.75rem',
-                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 215, 0, 0.5)',
-                      letterSpacing: '0.1em'
-                    }}>
-                      Tegnapi Jutalmaink
-                    </h3>
-                  </div>
-
-                  {/* Gold Coins Row */}
-                  <div className="flex items-center justify-center gap-3 mb-2">
-                    {/* Realistic 3D Gold Coin SVG */}
-                    <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                      <ellipse cx="50" cy="55" rx="45" ry="42" fill="rgba(0,0,0,0.3)" opacity="0.6"/>
-                      <circle cx="50" cy="50" r="45" fill="url(#goldGradient)"/>
-                      <circle cx="50" cy="50" r="38" fill="none" stroke="url(#goldRing)" strokeWidth="2"/>
-                      <circle cx="50" cy="48" r="28" fill="url(#goldCenter)"/>
-                      <ellipse cx="38" cy="35" rx="18" ry="14" fill="rgba(255,255,255,0.4)" opacity="0.8"/>
-                      <circle cx="50" cy="50" r="45" fill="none" stroke="url(#goldEdge)" strokeWidth="3"/>
-                      <defs>
-                        <radialGradient id="goldGradient" cx="40%" cy="40%">
-                          <stop offset="0%" stopColor="#fffacd"/>
-                          <stop offset="50%" stopColor="#ffd700"/>
-                          <stop offset="100%" stopColor="#b8860b"/>
-                        </radialGradient>
-                        <linearGradient id="goldRing" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#ffed4e"/>
-                          <stop offset="50%" stopColor="#ffd700"/>
-                          <stop offset="100%" stopColor="#daa520"/>
-                        </linearGradient>
-                        <radialGradient id="goldCenter" cx="45%" cy="40%">
-                          <stop offset="0%" stopColor="#ffffe0"/>
-                          <stop offset="60%" stopColor="#ffd700"/>
-                          <stop offset="100%" stopColor="#daa520"/>
-                        </radialGradient>
-                        <linearGradient id="goldEdge" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" stopColor="#ffd700" stopOpacity="0.8"/>
-                          <stop offset="50%" stopColor="#b8860b" stopOpacity="0.4"/>
-                          <stop offset="100%" stopColor="#8b6914" stopOpacity="0.9"/>
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    
-                    <span className="text-yellow-300 font-black text-2xl" style={{
-                      textShadow: '0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 215, 0, 0.6)',
-                      fontFamily: '"Poppins", sans-serif'
-                    }}>
-                      {totalRewards.totalGold.toLocaleString()}
-                    </span>
-                  </div>
-
-                  {/* Heart/Lives Row */}
-                  <div className="flex items-center justify-center gap-3">
-                    {/* Realistic 3D Heart SVG */}
-                    <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
-                            fill="rgba(0,0,0,0.3)" transform="translate(2, 4)" opacity="0.5"/>
-                      <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
-                            fill="url(#heartGradient)"/>
-                      <ellipse cx="38" cy="35" rx="12" ry="10" fill="rgba(255,255,255,0.5)" opacity="0.8"/>
-                      <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
-                            fill="none" stroke="url(#heartEdge)" strokeWidth="2" opacity="0.6"/>
-                      <defs>
-                        <radialGradient id="heartGradient" cx="40%" cy="30%">
-                          <stop offset="0%" stopColor="#ff6b9d"/>
-                          <stop offset="40%" stopColor="#ff0055"/>
-                          <stop offset="100%" stopColor="#c41e3a"/>
-                        </radialGradient>
-                        <linearGradient id="heartEdge" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#ff6b9d" stopOpacity="1"/>
-                          <stop offset="100%" stopColor="#8b0000" stopOpacity="0.8"/>
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    
-                    <span className="text-red-400 font-black text-2xl" style={{
-                      textShadow: '0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 0, 85, 0.5)',
-                      fontFamily: '"Poppins", sans-serif'
-                    }}>
-                      {totalRewards.totalLives}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Zoom animáció wrapper */}
           <div 
             className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center"
             style={{ 
@@ -328,72 +173,203 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           >
             <div className="relative w-full">
               <HexShieldFrame showShine={true}>
-                {/* Top Hex Badge - "TEGNAPI TOP 10" */}
-                <div 
-                  ref={badgeRef}
-                  className="relative -mt-12 mb-3 mx-auto z-20" 
-                  style={{ width: '78%' }}
-                >
-                  <div className="absolute inset-0 translate-y-1 translate-x-1"
-                       style={{
-                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'rgba(0,0,0,0.4)',
-                         filter: 'blur(4px)',
-                         zIndex: -1
-                       }} />
-                  
-                  <div className="absolute inset-0"
-                       style={{
-                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                         boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
-                       }} />
-                  
-                  <div className="absolute inset-[3px]"
-                       style={{
-                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                         background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-                         boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
-                       }} />
-                  
-                  <div className="relative px-[5vw] py-[1.2vh]"
-                       style={{
-                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                       }}>
-                    <div className="absolute inset-[6px]"
+                {/* Flex container for badge and rewards panel */}
+                <div className="flex flex-row items-center justify-center gap-3 -mt-12 mb-3">
+                  {/* Top Hex Badge - "TEGNAPI GÉNIUSZOK" */}
+                  <div 
+                    ref={badgeRef}
+                    className="relative z-20" 
+                    style={{ width: '60%' }}
+                  >
+                    <div className="absolute inset-0 translate-y-1 translate-x-1"
                          style={{
                            clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                           background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 95% 75%) 0%, hsl(0 90% 65%) 30%, hsl(0 85% 55%) 60%, hsl(0 78% 48%) 100%)',
-                           boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
+                           background: 'rgba(0,0,0,0.4)',
+                           filter: 'blur(4px)',
+                           zIndex: -1
                          }} />
                     
-                    <div className="absolute inset-[6px] pointer-events-none"
+                    <div className="absolute inset-0"
                          style={{
                            clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                           background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
-                           opacity: 0.7
+                           background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                           boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
                          }} />
                     
-                    <div className="absolute inset-[6px] pointer-events-none" style={{
-                      clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
-                      background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
-                    }} />
+                    <div className="absolute inset-[3px]"
+                         style={{
+                           clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                           background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                           boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                         }} />
                     
-                    <h1 className="relative z-10 font-black text-white text-center uppercase"
-                        style={{ 
-                          fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
-                          letterSpacing: '0.08em',
-                          fontFamily: '"Poppins", system-ui, -apple-system, sans-serif'
-                        }}>
-                      {t('dailyWinners.title')}
-                    </h1>
+                    <div className="relative px-[5vw] py-[1.2vh]"
+                         style={{
+                           clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         }}>
+                      <div className="absolute inset-[6px]"
+                           style={{
+                             clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                             background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 95% 75%) 0%, hsl(0 90% 65%) 30%, hsl(0 85% 55%) 60%, hsl(0 78% 48%) 100%)',
+                             boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
+                           }} />
+                      
+                      <div className="absolute inset-[6px] pointer-events-none"
+                           style={{
+                             clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                             background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+                             opacity: 0.7
+                           }} />
+                      
+                      <div className="absolute inset-[6px] pointer-events-none" style={{
+                        clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                        background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
+                      }} />
+                      
+                      <h1 className="relative z-10 font-black text-white text-center uppercase"
+                          style={{ 
+                            fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
+                            letterSpacing: '0.08em',
+                            fontFamily: '"Poppins", system-ui, -apple-system, sans-serif'
+                          }}>
+                        {t('dailyWinners.title')}
+                      </h1>
+                    </div>
+                  </div>
+
+                  {/* Casino Billboard - Total Rewards Panel */}
+                  <div 
+                    className="relative z-20"
+                    style={{
+                      animation: 'pulse-scale 2s ease-in-out infinite',
+                      transform: 'scale(0.45)',
+                      transformOrigin: 'center center'
+                    }}
+                  >
+                    <div className="relative" style={{ 
+                      clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)'
+                    }}>
+                      <div className="absolute inset-0 translate-y-1 translate-x-1"
+                           style={{
+                             clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
+                             background: 'rgba(0,0,0,0.6)',
+                             filter: 'blur(6px)',
+                             zIndex: -1
+                           }} />
+                      
+                      <div className="absolute inset-0"
+                           style={{
+                             clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
+                             background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                             boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 4px 12px rgba(0,0,0,0.3)'
+                           }} />
+                      
+                      <div className="absolute inset-[3px]"
+                           style={{
+                             clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
+                             background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                             boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                           }} />
+                      
+                      <div className="relative px-6 py-4"
+                           style={{
+                             clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)'
+                           }}>
+                        <div className="absolute inset-[6px]"
+                             style={{
+                               clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
+                               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+                               boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.6)'
+                             }} />
+                        
+                        <div className="relative z-10">
+                          <div className="text-center mb-3">
+                            <h3 className="text-white font-black uppercase tracking-wider" style={{
+                              fontSize: '0.75rem',
+                              textShadow: '0 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 215, 0, 0.5)',
+                              letterSpacing: '0.1em'
+                            }}>
+                              Tegnapi Jutalmaink
+                            </h3>
+                          </div>
+
+                          <div className="flex items-center justify-center gap-3 mb-2">
+                            <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                              <ellipse cx="50" cy="55" rx="45" ry="42" fill="rgba(0,0,0,0.3)" opacity="0.6"/>
+                              <circle cx="50" cy="50" r="45" fill="url(#goldGradient)"/>
+                              <circle cx="50" cy="50" r="38" fill="none" stroke="url(#goldRing)" strokeWidth="2"/>
+                              <circle cx="50" cy="48" r="28" fill="url(#goldCenter)"/>
+                              <ellipse cx="38" cy="35" rx="18" ry="14" fill="rgba(255,255,255,0.4)" opacity="0.8"/>
+                              <circle cx="50" cy="50" r="45" fill="none" stroke="url(#goldEdge)" strokeWidth="3"/>
+                              <defs>
+                                <radialGradient id="goldGradient" cx="40%" cy="40%">
+                                  <stop offset="0%" stopColor="#fffacd"/>
+                                  <stop offset="50%" stopColor="#ffd700"/>
+                                  <stop offset="100%" stopColor="#b8860b"/>
+                                </radialGradient>
+                                <linearGradient id="goldRing" x1="0%" y1="0%" x2="100%" y2="100%">
+                                  <stop offset="0%" stopColor="#ffed4e"/>
+                                  <stop offset="50%" stopColor="#ffd700"/>
+                                  <stop offset="100%" stopColor="#daa520"/>
+                                </linearGradient>
+                                <radialGradient id="goldCenter" cx="45%" cy="40%">
+                                  <stop offset="0%" stopColor="#ffffe0"/>
+                                  <stop offset="60%" stopColor="#ffd700"/>
+                                  <stop offset="100%" stopColor="#daa520"/>
+                                </radialGradient>
+                                <linearGradient id="goldEdge" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" stopColor="#ffd700" stopOpacity="0.8"/>
+                                  <stop offset="50%" stopColor="#b8860b" stopOpacity="0.4"/>
+                                  <stop offset="100%" stopColor="#8b6914" stopOpacity="0.9"/>
+                                </linearGradient>
+                              </defs>
+                            </svg>
+                            
+                            <span className="text-yellow-300 font-black text-2xl" style={{
+                              textShadow: '0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 215, 0, 0.6)',
+                              fontFamily: '"Poppins", sans-serif'
+                            }}>
+                              {totalRewards.totalGold.toLocaleString()}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-center gap-3">
+                            <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
+                                    fill="rgba(0,0,0,0.3)" transform="translate(2, 4)" opacity="0.5"/>
+                              <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
+                                    fill="url(#heartGradient)"/>
+                              <ellipse cx="38" cy="35" rx="12" ry="10" fill="rgba(255,255,255,0.5)" opacity="0.8"/>
+                              <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
+                                    fill="none" stroke="url(#heartEdge)" strokeWidth="2" opacity="0.6"/>
+                              <defs>
+                                <radialGradient id="heartGradient" cx="40%" cy="30%">
+                                  <stop offset="0%" stopColor="#ff6b9d"/>
+                                  <stop offset="40%" stopColor="#ff0055"/>
+                                  <stop offset="100%" stopColor="#c41e3a"/>
+                                </radialGradient>
+                                <linearGradient id="heartEdge" x1="0%" y1="0%" x2="100%" y2="100%">
+                                  <stop offset="0%" stopColor="#ff6b9d" stopOpacity="1"/>
+                                  <stop offset="100%" stopColor="#8b0000" stopOpacity="0.8"/>
+                                </linearGradient>
+                              </defs>
+                            </svg>
+                            
+                            <span className="text-red-400 font-black text-2xl" style={{
+                              textShadow: '0 2px 6px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 0, 85, 0.5)',
+                              fontFamily: '"Poppins", sans-serif'
+                            }}>
+                              {totalRewards.totalLives}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Content Area - Fixed height to fit exactly 10 players */}
+                {/* Content Area */}
                 <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[6%]" style={{ height: 'calc(100% - 60px)', paddingTop: '0' }}>
-                  
-                  {/* Players List */}
                   <div className="w-full mb-4 overflow-y-auto" style={{ height: 'calc(100% - 60px)' }}>
                     {topPlayers.length === 0 ? (
                       <div className="text-center text-white py-8">
@@ -401,16 +377,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       </div>
                     ) : (
                       <>
-                        {/* TOP 3 - Horizontal Layout with Realistic Laurel Wreaths */}
                         <div className="flex justify-center items-end gap-2 mb-4 px-1 -mt-3">
-                          {/* 2nd Place - Silver */}
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '31.5%',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
-                                {/* Background wreath - Silver */}
                                 <div 
                                   className="absolute inset-0"
                                   style={{
@@ -418,16 +391,14 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                     backgroundSize: 'contain',
                                     backgroundPosition: 'center',
                                     backgroundRepeat: 'no-repeat',
-                                    filter: 'grayscale(1) brightness(1.3) contrast(0.9)'
+                                    filter: 'grayscale(100%) brightness(1.2) contrast(1.1) hue-rotate(0deg) saturate(0.3)'
                                   }}
                                 />
-                                {/* Avatar in center */}
                                 <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
                                   <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
-                                    {/* 3D Silver Border Effect */}
                                     <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'linear-gradient(135deg, #f0f0f0 0%, #d0d0d0 25%, #b8b8b8 50%, #a0a0a0 75%, #c8c8c8 100%)',
-                                      boxShadow: '0 8px 16px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(0,0,0,0.3)'
+                                      background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
+                                      boxShadow: '0 6px 12px rgba(192,192,192,0.5), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.3)'
                                     }} />
                                     <div className="absolute inset-[6px] rounded-full overflow-hidden">
                                       {topPlayers[1].avatar_url ? (
@@ -444,20 +415,16 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                     </div>
                                   </div>
                                 </div>
-                                {/* Rank badge at bottom - 3D Effect */}
                                 <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
                                   <div className="aspect-square rounded-full relative">
-                                    {/* Outer shadow */}
                                     <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e0e0e0 30%, #b0b0b0 60%, #888888 100%)',
-                                      boxShadow: '0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+                                      background: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e8e8e8 30%, #d0d0d0 60%, #a8a8a8 100%)',
+                                      boxShadow: '0 4px 8px rgba(192,192,192,0.5), 0 2px 4px rgba(0,0,0,0.2)'
                                     }} />
-                                    {/* Inner highlight ring */}
                                     <div className="absolute inset-[3px] rounded-full" style={{
                                       background: 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)',
                                       boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
                                     }} />
-                                    {/* Number container */}
                                     <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
                                       background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e8e8e8 40%, #c0c0c0 100%)',
                                       boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
@@ -473,7 +440,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   </div>
                                 </div>
                               </div>
-                              {/* Username below wreath */}
                               <div className="text-center w-full" style={{ marginTop: '-4px' }}>
                                 <p className="text-white font-bold text-[0.65rem] leading-none truncate px-1">
                                   {topPlayers[1].username}
@@ -482,14 +448,12 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                             </div>
                           )}
 
-                          {/* 1st Place - Gold (larger) */}
                           {topPlayers[0] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '37.8%',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
-                                {/* Background wreath - Gold (exact user SVG) */}
                                 <div 
                                   className="absolute inset-0"
                                   style={{
@@ -499,10 +463,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                     backgroundRepeat: 'no-repeat'
                                   }}
                                 />
-                                {/* Avatar in center */}
                                 <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
                                   <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
-                                    {/* 3D Gold Border Effect */}
                                     <div className="absolute inset-0 rounded-full" style={{
                                       background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 25%, #ffb700 50%, #ff9500 75%, #ffd700 100%)',
                                       boxShadow: '0 8px 16px rgba(218,165,32,0.6), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(139,69,0,0.5)'
@@ -522,36 +484,31 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                     </div>
                                   </div>
                                 </div>
-                                {/* Rank badge at bottom - 3D Effect */}
                                 <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
                                   <div className="aspect-square rounded-full relative">
-                                    {/* Outer shadow */}
                                     <div className="absolute inset-0 rounded-full" style={{
                                       background: 'radial-gradient(circle at 30% 30%, #fffacd 0%, #ffd700 30%, #ffb700 60%, #d4af37 100%)',
                                       boxShadow: '0 6px 12px rgba(218,165,32,0.6), 0 2px 4px rgba(0,0,0,0.3)'
                                     }} />
-                                    {/* Inner highlight ring */}
                                     <div className="absolute inset-[3px] rounded-full" style={{
                                       background: 'linear-gradient(135deg, #fff9c4 0%, #ffd700 50%, #d4af37 100%)',
                                       boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.9), inset 0 -2px 6px rgba(139,69,0,0.5)'
                                     }} />
-                                    {/* Number container */}
                                     <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
-                                      background: 'radial-gradient(circle at 35% 35%, #fffacd 0%, #ffd700 40%, #d4af37 100%)',
-                                      boxShadow: 'inset 0 1px 3px rgba(255,255,255,1), inset 0 -1px 3px rgba(139,69,0,0.3)'
+                                      background: 'radial-gradient(circle at 35% 35%, #ffffe0 0%, #ffd700 40%, #daa520 100%)',
+                                      boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.9), inset 0 -1px 3px rgba(139,69,0,0.3)'
                                     }}>
                                       <span className="font-black relative" style={{ 
-                                        fontSize: '3.8vw',
-                                        background: 'linear-gradient(180deg, #333333 0%, #000000 100%)',
+                                        fontSize: '4vw',
+                                        background: 'linear-gradient(180deg, #8b4513 0%, #4a2511 100%)',
                                         WebkitBackgroundClip: 'text',
                                         WebkitTextFillColor: 'transparent',
-                                        filter: 'drop-shadow(0 1px 1px rgba(255,215,0,0.5))'
+                                        filter: 'drop-shadow(0 1px 2px rgba(255,255,255,0.4))'
                                       }}>1</span>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                              {/* Username below wreath */}
                               <div className="text-center w-full" style={{ marginTop: '-4px' }}>
                                 <p className="text-white font-bold text-[0.7rem] leading-none truncate px-1">
                                   {topPlayers[0].username}
@@ -560,14 +517,12 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                             </div>
                           )}
 
-                          {/* 3rd Place - Bronze */}
                           {topPlayers[2] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '31.5%',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
-                                {/* Background wreath - Bronze */}
                                 <div 
                                   className="absolute inset-0"
                                   style={{
@@ -575,16 +530,14 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                     backgroundSize: 'contain',
                                     backgroundPosition: 'center',
                                     backgroundRepeat: 'no-repeat',
-                                    filter: 'hue-rotate(-30deg) saturate(0.8) brightness(0.9)'
+                                    filter: 'grayscale(20%) brightness(0.95) contrast(1.15) hue-rotate(15deg) saturate(1.3)'
                                   }}
                                 />
-                                {/* Avatar in center */}
                                 <div className="absolute" style={{ left: '19.5%', top: '18%', width: '63%', height: '45%' }}>
                                   <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
-                                    {/* 3D Bronze Border Effect */}
                                     <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'linear-gradient(135deg, #cd7f32 0%, #e89757 25%, #b5651d 50%, #8b4513 75%, #cd7f32 100%)',
-                                      boxShadow: '0 8px 16px rgba(139,69,19,0.5), inset 0 2px 4px rgba(255,200,150,0.6), inset 0 -2px 4px rgba(80,40,10,0.4)'
+                                      background: 'linear-gradient(135deg, #cd7f32 0%, #c87533 25%, #b87333 50%, #a0522d 75%, #8b4513 100%)',
+                                      boxShadow: '0 6px 12px rgba(205,127,50,0.5), inset 0 2px 4px rgba(255,200,150,0.6), inset 0 -2px 4px rgba(0,0,0,0.4)'
                                     }} />
                                     <div className="absolute inset-[6px] rounded-full overflow-hidden">
                                       {topPlayers[2].avatar_url ? (
@@ -594,41 +547,38 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                           className="w-full h-full object-cover"
                                         />
                                       ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-orange-400 font-bold text-2xl bg-gray-800">
+                                        <div className="w-full h-full flex items-center justify-center text-orange-700 font-bold text-2xl bg-gray-800">
                                           {topPlayers[2].username.substring(0, 2).toUpperCase()}
                                         </div>
                                       )}
                                     </div>
                                   </div>
                                 </div>
-                                {/* Rank badge at bottom - 3D Effect */}
                                 <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
                                   <div className="aspect-square rounded-full relative">
-                                    {/* Outer shadow */}
                                     <div className="absolute inset-0 rounded-full" style={{
-                                      background: 'radial-gradient(circle at 30% 30%, #ffb347 0%, #cd7f32 30%, #b5651d 60%, #8b4513 100%)',
-                                      boxShadow: '0 6px 12px rgba(139,69,19,0.5), 0 2px 4px rgba(0,0,0,0.3)'
+                                      background: 'radial-gradient(circle at 30% 30%, #cd7f32 0%, #c87533 30%, #b87333 60%, #a0522d 100%)',
+                                      boxShadow: '0 4px 8px rgba(205,127,50,0.5), 0 2px 4px rgba(0,0,0,0.2)'
                                     }} />
-                                    {/* Inner highlight ring */}
                                     <div className="absolute inset-[3px] rounded-full" style={{
-                                      background: 'linear-gradient(135deg, #e89757 0%, #cd7f32 50%, #8b4513 100%)',
-                                      boxShadow: 'inset 0 2px 6px rgba(255,200,150,0.7), inset 0 -2px 6px rgba(80,40,10,0.5)'
+                                      background: 'linear-gradient(135deg, #d2a679 0%, #cd7f32 50%, #b87333 100%)',
+                                      boxShadow: 'inset 0 2px 6px rgba(255,200,150,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
                                     }} />
-                                    {/* Number container */}
                                     <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
-                                      background: 'radial-gradient(circle at 35% 35%, #ffb347 0%, #cd7f32 40%, #8b4513 100%)',
-                                      boxShadow: 'inset 0 1px 3px rgba(255,200,150,0.8), inset 0 -1px 3px rgba(80,40,10,0.3)'
+                                      background: 'radial-gradient(circle at 35% 35%, #daa06d 0%, #cd7f32 40%, #a0522d 100%)',
+                                      boxShadow: 'inset 0 1px 3px rgba(255,200,150,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
                                     }}>
                                       <span className="font-black relative" style={{ 
                                         fontSize: '3.5vw',
-                                        color: '#ffffff',
-                                        textShadow: '0 1px 2px rgba(0,0,0,0.5), 0 0 3px rgba(255,180,70,0.3)'
+                                        background: 'linear-gradient(180deg, #4a2511 0%, #2d1506 100%)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        filter: 'drop-shadow(0 1px 1px rgba(255,200,150,0.3))'
                                       }}>3</span>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                              {/* Username below wreath */}
                               <div className="text-center w-full" style={{ marginTop: '-4px' }}>
                                 <p className="text-white font-bold text-[0.65rem] leading-none truncate px-1">
                                   {topPlayers[2].username}
@@ -638,42 +588,45 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           )}
                         </div>
 
-                        {/* Players 4-10 - Ranked List */}
-                        <div className="space-y-2">
-                          {topPlayers.slice(3).map((player) => (
-                            <div 
-                              key={player.user_id} 
-                              className="flex items-center justify-between bg-black/30 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/10"
-                            >
-                              <div className="flex items-center gap-3 flex-1 min-w-0">
-                                <span className="text-white font-bold text-lg flex-shrink-0 w-6">
-                                  {player.rank}
-                                </span>
-                                <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700 flex-shrink-0">
-                                  {player.avatar_url ? (
-                                    <img 
-                                      src={player.avatar_url} 
-                                      alt={player.username}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs font-bold">
-                                      {player.username.substring(0, 2).toUpperCase()}
-                                    </div>
-                                  )}
-                                </div>
-                                <span className="text-white font-medium text-sm truncate flex-1">
-                                  {player.username}
-                                </span>
-                              </div>
+                        {topPlayers.slice(3, 10).map((player) => (
+                          <div key={player.user_id} className="flex items-center gap-3 px-4 py-2 mb-2 rounded-lg backdrop-blur-sm"
+                               style={{
+                                 background: 'linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)',
+                                 borderLeft: '3px solid rgba(255,215,0,0.4)',
+                               }}>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                                 style={{
+                                   background: 'linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.1) 100%)',
+                                   color: 'hsl(var(--dup-gold-500))',
+                                   border: '1px solid rgba(255,215,0,0.3)',
+                                   textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+                                 }}>
+                              {player.rank}
                             </div>
-                          ))}
-                        </div>
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex-shrink-0 border-2 border-gray-600">
+                              {player.avatar_url ? (
+                                <img 
+                                  src={player.avatar_url} 
+                                  alt={player.username}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-lg">
+                                  {player.username.substring(0, 2).toUpperCase()}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-grow min-w-0">
+                              <p className="text-white font-semibold text-sm truncate">
+                                {player.username}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
                       </>
                     )}
                   </div>
 
-                  {/* Accept Button */}
                   <div className="mt-auto pt-4 flex justify-center w-full">
                     <HexAcceptButton 
                       onClick={onClose}
