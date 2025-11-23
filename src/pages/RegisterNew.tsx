@@ -8,7 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useI18n } from "@/i18n";
-import { BiometricSetupModal } from "@/components/BiometricSetupModal";
 
 const createRegisterSchema = (t: (key: string) => string) => z.object({
   username: z.string()
@@ -78,8 +77,6 @@ const RegisterNew = () => {
   const [isStandalone, setIsStandalone] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [showPinConfirm, setShowPinConfirm] = useState(false);
-  const [showBiometricModal, setShowBiometricModal] = useState(false);
-  const [registeredUser, setRegisteredUser] = useState<{ username: string; userId: string } | null>(null);
 
   useEffect(() => {
     const checkStandalone = () => {
@@ -142,12 +139,11 @@ const RegisterNew = () => {
         return;
       }
 
-      // Show biometric setup modal after successful registration
-      setRegisteredUser({
-        username: validated.username,
-        userId: regData.user.id,
+      toast({
+        title: "Sikeres regisztráció!",
+        description: t('auth.register.successMessage'),
       });
-      setShowBiometricModal(true);
+      navigate('/dashboard');
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof RegisterForm, string>> = {};
@@ -306,25 +302,6 @@ const RegisterNew = () => {
           </p>
         </div>
       </div>
-
-      {/* Biometric Setup Modal */}
-      {registeredUser && (
-        <BiometricSetupModal
-          open={showBiometricModal}
-          onClose={() => {
-            setShowBiometricModal(false);
-            navigate("/dashboard");
-          }}
-          username={registeredUser.username}
-          userId={registeredUser.userId}
-          onSuccess={() => {
-            toast({
-              title: "Sikeres regisztráció!",
-              description: t('auth.register.successMessage'),
-            });
-          }}
-        />
-      )}
     </div>
   );
 };

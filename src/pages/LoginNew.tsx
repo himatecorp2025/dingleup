@@ -5,11 +5,9 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, User, Lock, Eye, EyeOff, Fingerprint } from "lucide-react";
+import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useI18n } from "@/i18n";
-import { useWebAuthn } from "@/hooks/useWebAuthn";
-import { BiometricSetupModal } from "@/components/BiometricSetupModal";
 
 const createLoginSchema = (t: (key: string) => string) => z.object({
   username: z.string().trim().min(1, t('auth.login.validationUsernameRequired')).regex(/^[^\s]+$/, t('auth.login.validationUsernameNoSpaces')),
@@ -31,11 +29,6 @@ const LoginNew = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showPin, setShowPin] = useState(false);
-  const [showBiometricModal, setShowBiometricModal] = useState(false);
-  const [biometricAttempted, setBiometricAttempted] = useState(false);
-  const [biometricAvailable, setBiometricAvailable] = useState(false);
-  const [isBiometricLoading, setIsBiometricLoading] = useState(false);
-  const { authenticateBiometric, checkBiometricAvailable, isSupported } = useWebAuthn();
 
   useEffect(() => {
     const checkStandalone = () => {
@@ -43,56 +36,10 @@ const LoginNew = () => {
                     (window.navigator as any).standalone === true ||
                     document.referrer.includes('android-app://');
       setIsStandalone(isPWA);
-      return isPWA;
     };
-    
-    const isPWA = checkStandalone();
-
-    // Check if biometric is available for saved username
-    const checkBiometric = async () => {
-      const savedUsername = localStorage.getItem('lastUsername');
-      if (savedUsername && isSupported) {
-        const isAvailable = await checkBiometricAvailable(savedUsername);
-        setBiometricAvailable(isAvailable);
-        
-        // PWA módban automatikus biometrikus login minden betöltéskor
-        // Web módban csak első alkalommal próbálkozunk
-        if (isAvailable && (!biometricAttempted || isPWA)) {
-          setBiometricAttempted(true);
-          handleBiometricLogin(savedUsername);
-        }
-      }
-    };
-
-    checkBiometric();
+    checkStandalone();
   }, []);
 
-  const handleBiometricLogin = async (username?: string) => {
-    setIsBiometricLoading(true);
-    try {
-      const savedUsername = username || localStorage.getItem('lastUsername');
-      if (!savedUsername) {
-        toast({
-          title: "Hiba",
-          description: t('auth.login.noSavedUsername'),
-          variant: "destructive",
-        });
-        return;
-      }
-
-      await authenticateBiometric(savedUsername);
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Biometric login failed:', error);
-      toast({
-        title: "Hiba",
-        description: t('auth.login.biometricFailed'),
-        variant: "destructive",
-      });
-    } finally {
-      setIsBiometricLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,23 +96,6 @@ const LoginNew = () => {
           variant: "destructive",
         });
         return;
-      }
-
-      // Save username for biometric login
-      localStorage.setItem('lastUsername', validated.username);
-
-      // Check if biometric should be offered on new device
-      if (isSupported) {
-        const isAvailable = await checkBiometricAvailable(validated.username);
-        if (!isAvailable) {
-          // Offer biometric setup on new device
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            setFormData({ username: validated.username, pin: '' });
-            setShowBiometricModal(true);
-            return;
-          }
-        }
       }
 
       const loginToast = toast({
@@ -243,43 +173,8 @@ const LoginNew = () => {
             {t('auth.login.title')}
           </h1>
           <p className="text-center text-white/70 mb-6 text-sm font-medium">
-            {t('auth.login.subtitle')}
+          {t('auth.login.subtitle')}
           </p>
-
-          {/* Biometric Login Button - csak web módban látható */}
-          {biometricAvailable && !isStandalone && (
-            <div className="mb-4">
-              <Button
-                type="button"
-                onClick={() => handleBiometricLogin()}
-                disabled={isBiometricLoading}
-                className="w-full h-12 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:from-purple-600 hover:via-purple-700 hover:to-purple-800 text-white font-bold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all duration-300 text-base flex items-center justify-center gap-2"
-              >
-                <Fingerprint className="w-5 h-5" />
-                {isBiometricLoading ? t('auth.login.biometricAuthenticating') : t('auth.login.biometricLogin')}
-              </Button>
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-white/20"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] px-2 text-white/60">
-                    {t('auth.login.orWithPin')}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* PWA módban biometrikus azonosítás visszajelzés */}
-          {isStandalone && isBiometricLoading && (
-            <div className="mb-4 text-center">
-              <div className="inline-flex items-center gap-2 text-purple-400 animate-pulse">
-                <Fingerprint className="w-6 h-6" />
-                <span className="font-medium">{t('auth.login.biometricAuthenticating')}</span>
-              </div>
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
@@ -345,31 +240,6 @@ const LoginNew = () => {
           </p>
         </div>
       </div>
-
-      {/* Biometric Setup Modal for new device */}
-      {showBiometricModal && formData.username && (
-        <BiometricSetupModal
-          open={showBiometricModal}
-          onClose={() => {
-            setShowBiometricModal(false);
-            navigate("/dashboard");
-          }}
-          username={formData.username}
-          userId="" // Will be fetched from session
-          onSuccess={() => {
-            const loginToast = toast({
-              title: "🎉 Sikeres bejelentkezés! 🎉",
-              description: "Örülünk, hogy újra látunk! Indulhat a játék?",
-              className: "bg-gradient-to-r from-green-500/90 to-emerald-500/90 border-green-400/50 text-white shadow-2xl shadow-green-500/50",
-            });
-            
-            // Auto-dismiss after 3 seconds
-            setTimeout(() => {
-              loginToast.dismiss();
-            }, 3000);
-          }}
-        />
-      )}
     </div>
   );
 };
