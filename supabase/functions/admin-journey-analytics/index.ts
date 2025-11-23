@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     const [{ data: navEvents }, { data: profiles }, { data: conversionEvents }, { data: gameExitEvents }] = await Promise.all([
       service.from('navigation_events').select('*').order('created_at', { ascending: true }),
       service.from('profiles').select('id, created_at'),
-      service.from('conversion_events').select('user_id, event_type'),
+      service.from('conversion_events').select('user_id, event_type, product_type, product_id'),
       service.from('game_exit_events').select('*'),
     ]);
 
@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
     const registeredUsers = totalUsers;
     const visitedDashboard = new Set((navEvents || []).filter((e: any) => e.page_route === '/dashboard').map((e: any) => e.user_id)).size;
     const playedFirstGame = new Set((navEvents || []).filter((e: any) => e.page_route === '/game').map((e: any) => e.user_id)).size;
-    const madePurchase = new Set((navEvents || []).filter((e: any) => e.page_route === '/shop').map((e: any) => e.user_id)).size;
+    const madePurchase = new Set((conversionEvents || []).filter((e: any) => e.event_type === 'purchase_complete').map((e: any) => e.user_id)).size;
 
     const onboardingFunnel = [
       { step: 'Regisztráció', users: registeredUsers, dropoffRate: 0 },
@@ -61,22 +61,22 @@ Deno.serve(async (req) => {
       { step: 'Első vásárlás', users: madePurchase, dropoffRate: playedFirstGame > 0 ? ((playedFirstGame - madePurchase) / playedFirstGame) * 100 : 0 },
     ];
 
-    const visitedShop = new Set((navEvents || []).filter((e: any) => e.page_route === '/shop').map((e: any) => e.user_id)).size;
-    const viewedProduct = new Set((conversionEvents || []).filter((e: any) => e.event_type === 'product_viewed').map((e: any) => e.user_id)).size;
+    // Purchase Funnel: termék megtekintés (rescue popup) → kosárba helyezés → vásárlás
+    const viewedProduct = new Set((conversionEvents || []).filter((e: any) => e.event_type === 'product_view').map((e: any) => e.user_id)).size;
     const addedToCart = new Set((conversionEvents || []).filter((e: any) => e.event_type === 'add_to_cart').map((e: any) => e.user_id)).size;
-    const completedPurchase = new Set((conversionEvents || []).filter((e: any) => e.event_type === 'purchase_completed').map((e: any) => e.user_id)).size;
+    const completedPurchase = new Set((conversionEvents || []).filter((e: any) => e.event_type === 'purchase_complete').map((e: any) => e.user_id)).size;
 
     const purchaseFunnel = [
-      { step: 'Bolt látogatás', users: visitedShop, dropoffRate: 0 },
-      { step: 'Termék megtekintés', users: viewedProduct, dropoffRate: visitedShop > 0 ? ((visitedShop - viewedProduct) / visitedShop) * 100 : 0 },
+      { step: 'Termék megtekintés', users: viewedProduct, dropoffRate: 0 },
       { step: 'Kosárba helyezés', users: addedToCart, dropoffRate: viewedProduct > 0 ? ((viewedProduct - addedToCart) / viewedProduct) * 100 : 0 },
       { step: 'Vásárlás', users: completedPurchase, dropoffRate: addedToCart > 0 ? ((addedToCart - completedPurchase) / addedToCart) * 100 : 0 },
     ];
 
-    const startedGame = new Set((navEvents || []).filter((e: any) => e.page_route === '/game').map((e: any) => e.user_id)).size;
-    const reached5Questions = new Set((gameExitEvents || []).filter((e: any) => e.question_index >= 5).map((e: any) => e.user_id)).size;
-    const reached10Questions = new Set((gameExitEvents || []).filter((e: any) => e.question_index >= 10).map((e: any) => e.user_id)).size;
-    const completedGame = new Set((gameExitEvents || []).filter((e: any) => e.question_index >= 15).map((e: any) => e.user_id)).size;
+    // Game Funnel: játék kezdés → 5. kérdés elérése → 10. kérdés elérése → befejezés
+    const startedGame = new Set((gameExitEvents || []).filter((e: any) => e.event_type === 'game_start' || e.question_index >= 0).map((e: any) => e.user_id)).size;
+    const reached5Questions = new Set((gameExitEvents || []).filter((e: any) => e.event_type === 'question_5_reached' || e.question_index >= 5).map((e: any) => e.user_id)).size;
+    const reached10Questions = new Set((gameExitEvents || []).filter((e: any) => e.event_type === 'question_10_reached' || e.question_index >= 10).map((e: any) => e.user_id)).size;
+    const completedGame = new Set((gameExitEvents || []).filter((e: any) => e.event_type === 'game_complete' || e.question_index >= 15).map((e: any) => e.user_id)).size;
 
     const gameFunnel = [
       { step: 'Játék kezdés', users: startedGame, dropoffRate: 0 },

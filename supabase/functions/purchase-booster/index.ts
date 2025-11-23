@@ -209,6 +209,23 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
     console.error("[FREE] Purchase log error:", purchaseError);
   }
 
+  // Track purchase completion
+  await supabaseAdmin
+    .from("conversion_events")
+    .insert({
+      user_id: userId,
+      event_type: "purchase_complete",
+      product_type: "booster",
+      product_id: boosterType.code,
+      session_id: `session_${userId}_${Date.now()}`,
+      metadata: {
+        booster_code: boosterType.code,
+        price_gold: priceGold,
+        reward_gold: rewardGold,
+        reward_lives: rewardLives
+      }
+    });
+
   // Create Speed tokens (but don't activate them yet - user must click "Aktiválom")
   console.log(`[FREE] Creating ${rewardSpeedCount} Speed tokens of ${rewardSpeedDuration} minutes each`);
   
@@ -403,18 +420,35 @@ async function handlePremiumBoosterPurchase(
         }
       });
 
-    // Log purchase
-    await supabaseAdmin
-      .from("booster_purchases")
-      .insert({
-        user_id: userId,
-        booster_type_id: boosterType.id,
-        purchase_source: "IAP",
-        gold_spent: 0,
-        usd_cents_spent: priceUsdCents,
-        iap_transaction_id: `stripe_${Date.now()}`, // TODO: Replace with real Stripe transaction ID
-        purchase_context: "DASHBOARD"
-      });
+  // Log purchase
+  await supabaseAdmin
+    .from("booster_purchases")
+    .insert({
+      user_id: userId,
+      booster_type_id: boosterType.id,
+      purchase_source: "IAP",
+      gold_spent: 0,
+      usd_cents_spent: priceUsdCents,
+      iap_transaction_id: `stripe_${Date.now()}`, // TODO: Replace with real Stripe transaction ID
+      purchase_context: "DASHBOARD"
+    });
+
+  // Track purchase completion
+  await supabaseAdmin
+    .from("conversion_events")
+    .insert({
+      user_id: userId,
+      event_type: "purchase_complete",
+      product_type: "booster",
+      product_id: boosterType.code,
+      session_id: `session_${userId}_${Date.now()}`,
+      metadata: {
+        booster_code: boosterType.code,
+        price_usd_cents: priceUsdCents,
+        reward_gold: rewardGold,
+        reward_lives: rewardLives
+      }
+    });
 
     console.log(`[PREMIUM] Purchase successful, pending activation`);
 
@@ -545,6 +579,24 @@ async function handleGoldSaverPurchase(supabaseAdmin: any, userId: string, boost
     console.error("[GOLD_SAVER] Purchase log error:", purchaseError);
   }
 
+  // Track purchase completion
+  await supabaseAdmin
+    .from("conversion_events")
+    .insert({
+      user_id: userId,
+      event_type: "purchase_complete",
+      product_type: "booster",
+      product_id: boosterType.code,
+      session_id: `session_${userId}_${Date.now()}`,
+      metadata: {
+        booster_code: boosterType.code,
+        price_gold: priceGold,
+        reward_gold: rewardGold,
+        reward_lives: rewardLives,
+        purchase_context: 'INGAME'
+      }
+    });
+
   console.log(`[GOLD_SAVER] Purchase successful, no speed tokens`);
 
   const response: BoosterPurchaseResponse = {
@@ -656,6 +708,24 @@ async function handleInstantRescuePurchase(supabaseAdmin: any, userId: string, b
         usd_cents_spent: priceUsdCents,
         iap_transaction_id: `stripe_instant_rescue_${Date.now()}`, // TODO: Replace with real Stripe transaction ID
         purchase_context: "INGAME"
+      });
+
+    // Track purchase completion
+    await supabaseAdmin
+      .from("conversion_events")
+      .insert({
+        user_id: userId,
+        event_type: "purchase_complete",
+        product_type: "booster",
+        product_id: boosterType.code,
+        session_id: `session_${userId}_${Date.now()}`,
+        metadata: {
+          booster_code: boosterType.code,
+          price_usd_cents: priceUsdCents,
+          reward_gold: rewardGold,
+          reward_lives: rewardLives,
+          purchase_context: 'INGAME'
+        }
       });
 
     console.log(`[INSTANT_RESCUE] Purchase successful`);
