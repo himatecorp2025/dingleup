@@ -23,10 +23,16 @@
     <link rel="icon" type="image/png" href="/dingleup-logo.png" />
     <!-- Preconnect to critical domains for faster loading -->
     <link rel="preconnect" href="https://wdpxmwsxhckazwxufttk.supabase.co" crossorigin>
-    <!-- Preload critical assets for instant game start -->
+    
+    <!-- PERFORMANCE OPTIMIZATION: Preload critical assets for instant game start -->
     <link rel="preload" href="/dingleup-logo.png" as="image">
     <link rel="preload" href="/src/assets/introvideo.mp4" as="video" type="video/mp4">
     <link rel="preload" href="/src/assets/game-background.png" as="image">
+    
+    <!-- PERFORMANCE OPTIMIZATION: Prefetch game route for instant navigation from Dashboard -->
+    <link rel="modulepreload" href="/src/pages/Game.tsx">
+    <link rel="modulepreload" href="/src/components/GamePreview.tsx">
+    
     <link rel="canonical" href="https://dingleup.com/" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     
@@ -89,8 +95,9 @@
       }
     </style>
     
-    <!-- Prefetch intro video for instant game start -->
-    <link rel="prefetch" href="/src/assets/loading-video.mp4" as="video" type="video/mp4" />
+    <!-- PERFORMANCE OPTIMIZATION: Prefetch intro/loading video for instant game start -->
+    <link rel="prefetch" href="/src/assets/loading-video.mp4" as="video" type="video/mp4">
+    <link rel="prefetch" href="/src/assets/DingleUP.mp3" as="audio" type="audio/mpeg">
   </head>
 
   <style>
