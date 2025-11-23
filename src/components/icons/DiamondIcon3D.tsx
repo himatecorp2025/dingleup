@@ -7,7 +7,7 @@ interface DiamondIcon3DProps {
 export const DiamondIcon3D = ({ className = "", size = 32, style }: DiamondIcon3DProps) => {
   return (
     <svg 
-      width={size} 
+      width={size * 2} 
       height={size} 
       viewBox="0 0 64 64" 
       className={className}
