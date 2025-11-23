@@ -221,8 +221,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 </div>
 
                 {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[4%]" style={{ height: 'calc(100% - 60px)', paddingTop: '0' }}>
-                  <div className="w-full mb-3 overflow-y-auto" style={{ height: 'calc(100% - 50px)', maxHeight: 'calc(100vh - 200px)' }}>
+                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[3%]" style={{ height: 'calc(100% - 60px)', paddingTop: '0' }}>
+                  <div className="w-full mb-2 overflow-y-auto" style={{ height: 'calc(100% - 45px)', maxHeight: 'calc(100vh - 180px)' }}>
                     {topPlayers.length === 0 ? (
                       <div className="text-center text-white py-8">
                         <p className="text-lg">{t('dailyWinners.noData')}</p>
@@ -441,13 +441,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         </div>
 
                         {topPlayers.slice(3, 10).map((player) => (
-                          <div key={player.user_id} className="flex items-center gap-3 px-4 py-2 rounded-lg backdrop-blur-sm"
+                          <div key={player.user_id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg backdrop-blur-sm"
                                style={{
                                  background: 'linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)',
                                  borderLeft: '3px solid rgba(255,215,0,0.4)',
-                                 marginBottom: '7.2px'
+                                 marginBottom: '4px'
                                }}>
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                            <div className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs"
                                  style={{
                                    background: 'linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.1) 100%)',
                                    color: 'hsl(var(--dup-gold-500))',
@@ -456,7 +456,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                  }}>
                               {player.rank}
                             </div>
-                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex-shrink-0 border-2 border-gray-600">
+                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700 flex-shrink-0 border-2 border-gray-600">
                               {player.avatar_url ? (
                                 <img 
                                   src={player.avatar_url} 
@@ -464,13 +464,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-lg">
+                                <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-sm">
                                   {player.username.substring(0, 2).toUpperCase()}
                                 </div>
                               )}
                             </div>
                             <div className="flex-grow min-w-0">
-                              <p className="text-white font-semibold text-sm truncate">
+                              <p className="text-white font-semibold text-xs truncate">
                                 {player.username}
                               </p>
                             </div>
@@ -480,11 +480,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     )}
                   </div>
 
-                  <div className="mt-auto pt-3 flex justify-center w-full">
+                  <div className="mt-auto pt-2 flex justify-center w-full">
                     <HexAcceptButton 
                       onClick={onClose}
-                      className="w-[85%]"
-                      style={{ transform: 'scale(0.95)' }}
+                      className="w-[80%]"
+                      style={{ transform: 'scale(0.88)' }}
                     />
                   </div>
                 </div>
