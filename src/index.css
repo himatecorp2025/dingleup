@@ -542,6 +542,15 @@ body {
   }
 }
 
+@keyframes pulse-grow {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
 @keyframes slot-shine {
   0% {
     transform: translateX(-100%) rotate(45deg);
