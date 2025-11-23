@@ -17,7 +17,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
   const [userId, setUserId] = useState<string | null>(null);
   const [contentVisible, setContentVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const starCount = isMobile ? 30 : 80;
+  const starCount = isMobile ? 60 : 160;
 
   useEffect(() => {
     const handleResize = () => {
@@ -240,18 +240,16 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                 {/* MARKETING banner - 10% szélesebb, magasabb minőségű 3D crystal effect */}
                 <div className="relative mb-2" style={{ width: '110%', maxWidth: '110%' }}>
                   {/* Árnyék réteg - mély 3D */}
-                  <div className="absolute inset-0 translate-y-2 translate-x-2"
+                  <div className="absolute inset-0 translate-y-2 translate-x-2 rounded-full"
                        style={{
                          background: 'rgba(0,0,0,0.5)',
-                         filter: 'blur(8px)',
-                         borderRadius: '9999px'
+                         filter: 'blur(8px)'
                        }} />
                   
-                  {/* Külső keret - arany */}
-                  <div className="absolute inset-0 rounded-full border-2"
+                  {/* Külső arany keret - box-shadow módszer */}
+                  <div className="absolute inset-0 rounded-full"
                        style={{ 
-                         borderImage: 'linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #d97706 100%) 1',
-                         boxShadow: '0 0 0 2px #b45309, 0 12px 24px rgba(220,38,38,0.6)'
+                         boxShadow: '0 0 0 2px #d97706, 0 0 0 4px #b45309, 0 12px 24px rgba(220,38,38,0.6)'
                        }} />
                   
                   {/* Fő gradiens réteg */}
@@ -281,19 +279,20 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                          background: 'radial-gradient(ellipse 100% 60% at 35% 10%, rgba(255,255,255,0.7), transparent 65%)'
                        }} />
                   
-                  <div className="relative px-8 py-2 rounded-full"
-                       style={{ 
-                         transform: 'perspective(600px) rotateX(4deg)',
-                         animation: 'offerPulse 1.5s ease-in-out infinite'
-                       }}>
-                     <p className="text-white font-black text-center tracking-wider flex items-center justify-center gap-2"
-                       style={{ 
-                         fontSize: 'clamp(0.75rem, 3.5cqw, 1.1rem)',
-                         textShadow: '0 3px 8px rgba(0,0,0,0.95), 0 0 16px rgba(255,255,255,0.5), 0 1px 3px rgba(0,0,0,0.8)'
-                       }}>
-                       {t('welcome.special_offer')}
-                     </p>
-                  </div>
+                   <div className="relative px-8 py-2 rounded-full"
+                        style={{ 
+                          transform: 'perspective(600px) rotateX(4deg)',
+                          animation: 'offerPulse 1.5s ease-in-out infinite'
+                        }}>
+                     <p className="text-white font-black text-center tracking-wider"
+                        style={{ 
+                          fontSize: 'clamp(0.75rem, 3.5cqw, 1.1rem)',
+                          textShadow: '0 3px 8px rgba(0,0,0,0.95), 0 0 16px rgba(255,255,255,0.5), 0 1px 3px rgba(0,0,0,0.8)',
+                          whiteSpace: 'nowrap'
+                        }}>
+                        {t('welcome.special_offer')}
+                      </p>
+                   </div>
                   <style>{`
                     @keyframes offerPulse {
                       0%, 100% { 
