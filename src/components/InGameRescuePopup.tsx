@@ -180,7 +180,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           <div className="relative flex flex-col h-full">
             
             {/* Main card with multiple depth layers */}
-            <div className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-yellow-300 rounded-2xl sm:rounded-3xl p-2 sm:p-3 shadow-2xl flex-1 flex flex-col min-h-[260px] sm:min-h-[280px] md:min-h-[300px]" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(234, 179, 8, 0.4)' }}>>
+            <div className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-yellow-300 rounded-2xl sm:rounded-3xl p-2 sm:p-3 shadow-2xl flex-1 flex flex-col min-h-[260px] sm:min-h-[280px] md:min-h-[300px]" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(234, 179, 8, 0.4)' }}>
               {/* Inner highlight layer */}
               <div className="absolute inset-1 rounded-3xl bg-gradient-to-br from-blue-600/20 via-transparent to-purple-700/20 pointer-events-none"></div>
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-transparent via-yellow-400/5 to-yellow-300/10 pointer-events-none"></div>
@@ -249,7 +249,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           <div className="relative flex flex-col h-full">
             
             {/* Main card with multiple depth layers */}
-            <div className="relative bg-gradient-to-br from-purple-800 via-pink-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-cyan-300 rounded-2xl sm:rounded-3xl p-2 sm:p-3 shadow-2xl flex-1 flex flex-col min-h-[260px] sm:min-h-[280px] md:min-h-[300px]" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(6, 182, 212, 0.4)' }}>>
+            <div className="relative bg-gradient-to-br from-purple-800 via-pink-700 to-purple-800 border-[4px] sm:border-[5px] md:border-[6px] border-cyan-300 rounded-2xl sm:rounded-3xl p-2 sm:p-3 shadow-2xl flex-1 flex flex-col min-h-[260px] sm:min-h-[280px] md:min-h-[300px]" style={{ boxShadow: 'inset 0 6px 25px rgba(0, 0, 0, 0.6), inset 0 -6px 25px rgba(6, 182, 212, 0.4)' }}>
               {/* Inner highlight layer */}
               <div className="absolute inset-1 rounded-3xl bg-gradient-to-br from-purple-600/20 via-transparent to-pink-700/20 pointer-events-none"></div>
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-transparent via-cyan-400/5 to-blue-300/10 pointer-events-none"></div>
