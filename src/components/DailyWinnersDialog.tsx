@@ -229,7 +229,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       </div>
                     ) : (
                       <>
-                        <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(-30%)' }}>
+                        <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(-20%)' }}>
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
                               width: '31.5%',
