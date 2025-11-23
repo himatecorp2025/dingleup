@@ -31,13 +31,35 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   const [totalRewards, setTotalRewards] = useState<TotalRewards>({ totalGold: 0, totalLives: 0 });
   const badgeRef = useRef<HTMLDivElement>(null);
 
-  // Add keyframes for scale pulse animation
+  // Add keyframes for animations
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
       @keyframes pulse-scale {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.05); }
+      }
+      
+      @keyframes neon-pulse {
+        0%, 100% {
+          box-shadow: 
+            0 0 20px 4px rgba(255, 215, 0, 0.6),
+            0 0 40px 8px rgba(255, 215, 0, 0.4),
+            0 0 60px 12px rgba(255, 215, 0, 0.2),
+            inset 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        50% {
+          box-shadow: 
+            0 0 30px 6px rgba(255, 215, 0, 0.8),
+            0 0 60px 12px rgba(255, 215, 0, 0.6),
+            0 0 90px 18px rgba(255, 215, 0, 0.3),
+            inset 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+      }
+      
+      @keyframes marquee-light {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(200%); }
       }
     `;
     document.head.appendChild(style);
@@ -237,230 +259,275 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     </div>
                   </div>
 
-                  {/* Total Rewards Panel - Completely Redesigned */}
+                  {/* PREMIUM CASINO REWARDS BILLBOARD - TOTAL REDESIGN */}
                   <div 
                     className="relative z-20"
                     style={{
                       animation: 'pulse-scale 2s ease-in-out infinite',
-                      transform: 'scale(0.45)',
-                      transformOrigin: 'center center'
+                      transform: 'scale(0.5)',
+                      transformOrigin: 'center center',
+                      perspective: '1000px'
                     }}
                   >
-                    {/* Outer Hexagon Frame with Premium 3D Gold Effect */}
-                    <div className="relative" style={{ 
-                      clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                      padding: '0'
-                    }}>
-                      {/* Shadow */}
-                      <div className="absolute inset-0 translate-y-2 translate-x-2"
-                           style={{
-                             clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                             background: 'rgba(0,0,0,0.7)',
-                             filter: 'blur(8px)',
-                             zIndex: -1
-                           }} />
-                      
-                      {/* Gold Border Frame - Outer */}
-                      <div className="absolute inset-0"
-                           style={{
-                             clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                             background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
-                             boxShadow: 'inset 0 0 0 3px hsl(var(--dup-gold-900)), 0 6px 16px rgba(0,0,0,0.4)'
-                           }} />
-                      
-                      {/* Gold Border Frame - Inner Bevel */}
-                      <div className="absolute inset-[4px]"
-                           style={{
-                             clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                             background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
-                             boxShadow: 'inset 0 2px 0 hsl(var(--dup-gold-300))'
-                           }} />
-                      
-                      {/* Dark Content Area */}
-                      <div className="relative px-8 py-5"
-                           style={{
-                             clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)'
-                           }}>
-                        {/* Dark Background with Texture */}
-                        <div className="absolute inset-[8px]"
-                             style={{
-                               clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                               background: 'linear-gradient(135deg, #1a1820 0%, #0f0e14 50%, #1a1820 100%)',
-                               boxShadow: 'inset 0 4px 12px rgba(0,0,0,0.8), inset 0 -2px 8px rgba(0,0,0,0.6)'
-                             }} />
-                        
-                        {/* Subtle Pattern Overlay */}
-                        <div className="absolute inset-[8px] pointer-events-none"
-                             style={{
-                               clipPath: 'polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)',
-                               background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 12px)',
-                               opacity: 0.5
-                             }} />
-                        
-                        <div className="relative z-10 space-y-4">
-                          {/* Title */}
-                          <div className="text-center">
-                            <h3 className="font-black uppercase tracking-widest" style={{
-                              fontSize: '0.9rem',
-                              background: 'linear-gradient(180deg, #ffd700 0%, #ffed4e 50%, #daa520 100%)',
-                              WebkitBackgroundClip: 'text',
-                              WebkitTextFillColor: 'transparent',
-                              textShadow: '0 2px 8px rgba(255, 215, 0, 0.4)',
-                              letterSpacing: '0.15em'
-                            }}>
-                              JUTALMAK
+                    {/* Casino Billboard Container with 3D Depth */}
+                    <div 
+                      className="relative"
+                      style={{
+                        width: '280px',
+                        height: '160px',
+                        transformStyle: 'preserve-3d',
+                        transform: 'rotateX(2deg) rotateY(-2deg)'
+                      }}
+                    >
+                      {/* Deep Shadow Base */}
+                      <div 
+                        className="absolute inset-0"
+                        style={{
+                          transform: 'translateZ(-20px) translateY(8px) translateX(8px)',
+                          background: 'rgba(0, 0, 0, 0.8)',
+                          filter: 'blur(16px)',
+                          borderRadius: '16px'
+                        }}
+                      />
+
+                      {/* Outer Glow Ring - Animated Neon */}
+                      <div 
+                        className="absolute inset-0"
+                        style={{
+                          transform: 'translateZ(-10px)',
+                          background: 'transparent',
+                          borderRadius: '16px',
+                          boxShadow: `
+                            0 0 20px 4px rgba(255, 215, 0, 0.6),
+                            0 0 40px 8px rgba(255, 215, 0, 0.4),
+                            0 0 60px 12px rgba(255, 215, 0, 0.2),
+                            inset 0 0 20px rgba(255, 215, 0, 0.3)
+                          `,
+                          animation: 'neon-pulse 2s ease-in-out infinite'
+                        }}
+                      />
+
+                      {/* Main Billboard Frame - Luxurious Gold Chrome */}
+                      <div 
+                        className="absolute inset-0"
+                        style={{
+                          transform: 'translateZ(0px)',
+                          borderRadius: '16px',
+                          background: `
+                            linear-gradient(145deg, 
+                              #d4af37 0%,
+                              #f9d342 15%,
+                              #ffd700 30%,
+                              #ffed4e 45%,
+                              #ffd700 60%,
+                              #daa520 75%,
+                              #b8860b 90%,
+                              #8b6914 100%
+                            )
+                          `,
+                          boxShadow: `
+                            inset 0 2px 4px rgba(255, 255, 255, 0.6),
+                            inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+                            0 4px 12px rgba(0, 0, 0, 0.5)
+                          `,
+                          border: '3px solid rgba(255, 237, 78, 0.8)'
+                        }}
+                      />
+
+                      {/* Inner Beveled Edge */}
+                      <div 
+                        className="absolute inset-[6px]"
+                        style={{
+                          transform: 'translateZ(2px)',
+                          borderRadius: '12px',
+                          background: `
+                            linear-gradient(165deg,
+                              rgba(255, 255, 255, 0.3) 0%,
+                              rgba(255, 237, 78, 0.4) 20%,
+                              transparent 40%
+                            )
+                          `,
+                          boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.5)'
+                        }}
+                      />
+
+                      {/* Dark Content Area with Velvet Texture */}
+                      <div 
+                        className="absolute inset-[10px]"
+                        style={{
+                          transform: 'translateZ(5px)',
+                          borderRadius: '10px',
+                          background: `
+                            radial-gradient(ellipse at top left, #1a0f0f 0%, #0d0505 50%, #000000 100%)
+                          `,
+                          boxShadow: `
+                            inset 0 4px 16px rgba(0, 0, 0, 0.9),
+                            inset 0 -2px 8px rgba(139, 69, 19, 0.2)
+                          `,
+                          border: '1px solid rgba(139, 69, 19, 0.3)'
+                        }}
+                      >
+                        {/* Velvet Pattern Overlay */}
+                        <div 
+                          className="absolute inset-0 pointer-events-none"
+                          style={{
+                            borderRadius: '10px',
+                            background: `
+                              repeating-linear-gradient(
+                                45deg,
+                                transparent,
+                                transparent 2px,
+                                rgba(139, 69, 19, 0.03) 2px,
+                                rgba(139, 69, 19, 0.03) 4px
+                              )
+                            `,
+                            opacity: 0.6
+                          }}
+                        />
+
+                        {/* Content Container */}
+                        <div className="relative z-10 h-full flex flex-col justify-center px-6 py-4 space-y-3">
+                          
+                          {/* Title Banner with Marquee Light Effect */}
+                          <div className="relative">
+                            <div 
+                              className="absolute inset-0 -inset-x-2"
+                              style={{
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.1) 50%, transparent 100%)',
+                                animation: 'marquee-light 3s linear infinite'
+                              }}
+                            />
+                            <h3 
+                              className="relative font-black uppercase text-center tracking-[0.25em]"
+                              style={{
+                                fontSize: '1.1rem',
+                                background: 'linear-gradient(180deg, #ffffff 0%, #ffd700 30%, #ffed4e 50%, #ffd700 70%, #daa520 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                filter: 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9))',
+                                textShadow: '0 0 20px rgba(255, 215, 0, 0.6)',
+                                letterSpacing: '0.2em'
+                              }}
+                            >
+                              JACKPOT
                             </h3>
                           </div>
 
-                          {/* Gold Coins Row */}
-                          <div className="flex items-center justify-center gap-4">
-                            {/* Realistic 3D Gold Coin (KEPT AS IS) */}
-                            <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                              <ellipse cx="50" cy="55" rx="45" ry="42" fill="rgba(0,0,0,0.3)" opacity="0.6"/>
-                              <circle cx="50" cy="50" r="45" fill="url(#goldGradient)"/>
-                              <circle cx="50" cy="50" r="38" fill="none" stroke="url(#goldRing)" strokeWidth="2"/>
-                              <circle cx="50" cy="48" r="28" fill="url(#goldCenter)"/>
-                              <ellipse cx="38" cy="35" rx="18" ry="14" fill="rgba(255,255,255,0.4)" opacity="0.8"/>
-                              <circle cx="50" cy="50" r="45" fill="none" stroke="url(#goldEdge)" strokeWidth="3"/>
-                              <defs>
-                                <radialGradient id="goldGradient" cx="40%" cy="40%">
-                                  <stop offset="0%" stopColor="#fffacd"/>
-                                  <stop offset="50%" stopColor="#ffd700"/>
-                                  <stop offset="100%" stopColor="#b8860b"/>
-                                </radialGradient>
-                                <linearGradient id="goldRing" x1="0%" y1="0%" x2="100%" y2="100%">
-                                  <stop offset="0%" stopColor="#ffed4e"/>
-                                  <stop offset="50%" stopColor="#ffd700"/>
-                                  <stop offset="100%" stopColor="#daa520"/>
-                                </linearGradient>
-                                <radialGradient id="goldCenter" cx="45%" cy="40%">
-                                  <stop offset="0%" stopColor="#ffffe0"/>
-                                  <stop offset="60%" stopColor="#ffd700"/>
-                                  <stop offset="100%" stopColor="#daa520"/>
-                                </radialGradient>
-                                <linearGradient id="goldEdge" x1="0%" y1="0%" x2="0%" y2="100%">
-                                  <stop offset="0%" stopColor="#ffd700" stopOpacity="0.8"/>
-                                  <stop offset="50%" stopColor="#b8860b" stopOpacity="0.4"/>
-                                  <stop offset="100%" stopColor="#8b6914" stopOpacity="0.9"/>
-                                </linearGradient>
-                              </defs>
-                            </svg>
+                          {/* Rewards Display - Slot Machine Style */}
+                          <div className="space-y-2">
                             
-                            {/* Gold Amount */}
-                            <span className="font-black" style={{
-                              fontSize: '1.8rem',
-                              background: 'linear-gradient(180deg, #fff9c4 0%, #ffd700 50%, #ffb300 100%)',
-                              WebkitBackgroundClip: 'text',
-                              WebkitTextFillColor: 'transparent',
-                              textShadow: '0 3px 10px rgba(255, 215, 0, 0.8)',
-                              fontFamily: '"Poppins", sans-serif',
-                              letterSpacing: '0.02em'
-                            }}>
-                              {totalRewards.totalGold.toLocaleString()}
-                            </span>
-                          </div>
+                            {/* Gold Coins Display */}
+                            <div 
+                              className="relative flex items-center justify-between px-4 py-2"
+                              style={{
+                                background: 'linear-gradient(90deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0.15) 50%, rgba(255, 215, 0, 0.05) 100%)',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(255, 215, 0, 0.2)',
+                                boxShadow: 'inset 0 1px 2px rgba(255, 215, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.5)'
+                              }}
+                            >
+                              {/* Ultra Premium 3D Gold Coin */}
+                              <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                  <radialGradient id="coinGold" cx="35%" cy="35%">
+                                    <stop offset="0%" stopColor="#fffef0"/>
+                                    <stop offset="15%" stopColor="#fff9c4"/>
+                                    <stop offset="40%" stopColor="#ffd700"/>
+                                    <stop offset="70%" stopColor="#daa520"/>
+                                    <stop offset="100%" stopColor="#8b6914"/>
+                                  </radialGradient>
+                                  <radialGradient id="coinShine" cx="30%" cy="30%">
+                                    <stop offset="0%" stopColor="rgba(255,255,255,0.9)"/>
+                                    <stop offset="60%" stopColor="rgba(255,255,255,0.3)"/>
+                                    <stop offset="100%" stopColor="transparent"/>
+                                  </radialGradient>
+                                  <linearGradient id="coinEdge" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stopColor="#ffd700"/>
+                                    <stop offset="50%" stopColor="#b8860b"/>
+                                    <stop offset="100%" stopColor="#8b6914"/>
+                                  </linearGradient>
+                                </defs>
+                                <ellipse cx="50" cy="58" rx="42" ry="38" fill="rgba(0,0,0,0.5)" opacity="0.7"/>
+                                <circle cx="50" cy="50" r="44" fill="url(#coinGold)"/>
+                                <circle cx="50" cy="50" r="36" fill="none" stroke="url(#coinEdge)" strokeWidth="2.5"/>
+                                <circle cx="50" cy="48" r="26" fill="#daa520" opacity="0.6"/>
+                                <ellipse cx="35" cy="32" rx="20" ry="16" fill="url(#coinShine)"/>
+                                <text x="50" y="58" fontFamily="Arial Black" fontSize="24" fill="#8b6914" textAnchor="middle" fontWeight="bold">$</text>
+                              </svg>
+                              
+                              {/* Amount with LED Display Effect */}
+                              <div className="flex-1 text-right">
+                                <span 
+                                  className="font-black tabular-nums"
+                                  style={{
+                                    fontSize: '1.6rem',
+                                    background: 'linear-gradient(180deg, #fffef0 0%, #ffd700 40%, #daa520 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    filter: 'drop-shadow(0 0 12px rgba(255, 215, 0, 0.9)) drop-shadow(0 2px 4px rgba(0, 0, 0, 1))',
+                                    fontFamily: '"Orbitron", "Courier New", monospace',
+                                    letterSpacing: '0.05em'
+                                  }}
+                                >
+                                  {totalRewards.totalGold.toLocaleString()}
+                                </span>
+                              </div>
+                            </div>
 
-                          {/* Lives Row */}
-                          <div className="flex items-center justify-center gap-4">
-                            {/* Ultra-Realistic 3D Heart - COMPLETELY REDESIGNED */}
-                            <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                              {/* Drop Shadow */}
-                              <path d="M50,90 C50,90 15,62 15,38 C15,20 28,14 40,22 C45,25.5 50,35 50,35 C50,35 55,25.5 60,22 C72,14 85,20 85,38 C85,62 50,90 50,90 Z" 
-                                    fill="rgba(0,0,0,0.4)" transform="translate(3, 5)" opacity="0.7" filter="blur(4)"/>
+                            {/* Lives Display */}
+                            <div 
+                              className="relative flex items-center justify-between px-4 py-2"
+                              style={{
+                                background: 'linear-gradient(90deg, rgba(255, 20, 20, 0.05) 0%, rgba(255, 20, 20, 0.15) 50%, rgba(255, 20, 20, 0.05) 100%)',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(255, 77, 109, 0.2)',
+                                boxShadow: 'inset 0 1px 2px rgba(255, 77, 109, 0.1), 0 2px 8px rgba(0, 0, 0, 0.5)'
+                              }}
+                            >
+                              {/* Premium Glossy Heart */}
+                              <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                  <radialGradient id="heartGloss" cx="35%" cy="28%">
+                                    <stop offset="0%" stopColor="#ff90a8"/>
+                                    <stop offset="25%" stopColor="#ff4d6d"/>
+                                    <stop offset="60%" stopColor="#e63946"/>
+                                    <stop offset="100%" stopColor="#9d1f2d"/>
+                                  </radialGradient>
+                                  <radialGradient id="heartHighlight" cx="30%" cy="25%">
+                                    <stop offset="0%" stopColor="rgba(255,255,255,1)"/>
+                                    <stop offset="40%" stopColor="rgba(255,255,255,0.6)"/>
+                                    <stop offset="100%" stopColor="transparent"/>
+                                  </radialGradient>
+                                </defs>
+                                <path d="M50,92 C50,92 12,60 12,35 C12,18 25,12 38,20 C44,24 50,34 50,34 C50,34 56,24 62,20 C75,12 88,18 88,35 C88,60 50,92 50,92 Z" 
+                                      fill="rgba(0,0,0,0.5)" transform="translate(3, 6)" opacity="0.7"/>
+                                <path d="M50,92 C50,92 12,60 12,35 C12,18 25,12 38,20 C44,24 50,34 50,34 C50,34 56,24 62,20 C75,12 88,18 88,35 C88,60 50,92 50,92 Z" 
+                                      fill="url(#heartGloss)"/>
+                                <ellipse cx="32" cy="26" rx="16" ry="12" fill="url(#heartHighlight)"/>
+                                <ellipse cx="68" cy="26" rx="13" ry="10" fill="url(#heartHighlight)" opacity="0.7"/>
+                                <path d="M50,92 C50,92 12,60 12,35 C12,18 25,12 38,20 C44,24 50,34 50,34 C50,34 56,24 62,20 C75,12 88,18 88,35 C88,60 50,92 50,92 Z" 
+                                      fill="none" stroke="rgba(157, 31, 45, 0.5)" strokeWidth="1.5"/>
+                              </svg>
                               
-                              {/* Heart Base - Main Body with Multi-Layer Gradient */}
-                              <path d="M50,90 C50,90 15,62 15,38 C15,20 28,14 40,22 C45,25.5 50,35 50,35 C50,35 55,25.5 60,22 C72,14 85,20 85,38 C85,62 50,90 50,90 Z" 
-                                    fill="url(#heartBase)"/>
-                              
-                              {/* Heart Mid-Layer - Adds Depth */}
-                              <path d="M50,85 C50,85 20,60 20,40 C20,25 30,20 40,25 C45,27.5 50,35 50,35 C50,35 55,27.5 60,25 C70,20 80,25 80,40 C80,60 50,85 50,85 Z" 
-                                    fill="url(#heartMid)" opacity="0.8"/>
-                              
-                              {/* Inner Light - Adds Volume */}
-                              <path d="M50,80 C50,80 25,58 25,42 C25,30 33,26 42,30 C46,32 50,38 50,38 C50,38 54,32 58,30 C67,26 75,30 75,42 C75,58 50,80 50,80 Z" 
-                                    fill="url(#heartInner)" opacity="0.6"/>
-                              
-                              {/* Top Specular Highlight - Left Lobe */}
-                              <ellipse cx="32" cy="28" rx="14" ry="11" 
-                                       fill="url(#heartHighlight)" opacity="0.9"/>
-                              
-                              {/* Top Specular Highlight - Right Lobe */}
-                              <ellipse cx="68" cy="28" rx="12" ry="9" 
-                                       fill="url(#heartHighlight2)" opacity="0.7"/>
-                              
-                              {/* Edge Shine - Left Side */}
-                              <path d="M20,40 C20,30 28,22 38,24 C32,26 28,32 28,40 C28,52 40,68 50,80 C45,75 20,55 20,40 Z" 
-                                    fill="url(#heartEdgeShine)" opacity="0.4"/>
-                              
-                              {/* Subtle Stroke for Definition */}
-                              <path d="M50,90 C50,90 15,62 15,38 C15,20 28,14 40,22 C45,25.5 50,35 50,35 C50,35 55,25.5 60,22 C72,14 85,20 85,38 C85,62 50,90 50,90 Z" 
-                                    fill="none" stroke="url(#heartStroke)" strokeWidth="1.5" opacity="0.5"/>
-                              
-                              <defs>
-                                {/* Base Heart Gradient - Deep Rich Red */}
-                                <radialGradient id="heartBase" cx="45%" cy="30%">
-                                  <stop offset="0%" stopColor="#ff4d6d"/>
-                                  <stop offset="30%" stopColor="#e63946"/>
-                                  <stop offset="70%" stopColor="#c1121f"/>
-                                  <stop offset="100%" stopColor="#800f2f"/>
-                                </radialGradient>
-                                
-                                {/* Mid Layer - Brighter Core */}
-                                <radialGradient id="heartMid" cx="50%" cy="35%">
-                                  <stop offset="0%" stopColor="#ff758f"/>
-                                  <stop offset="40%" stopColor="#ff4d6d"/>
-                                  <stop offset="100%" stopColor="#e63946"/>
-                                </radialGradient>
-                                
-                                {/* Inner Light - Center Glow */}
-                                <radialGradient id="heartInner" cx="50%" cy="40%">
-                                  <stop offset="0%" stopColor="#ffb3c1"/>
-                                  <stop offset="50%" stopColor="#ff758f"/>
-                                  <stop offset="100%" stopColor="transparent"/>
-                                </radialGradient>
-                                
-                                {/* Specular Highlight - Realistic Light Reflection */}
-                                <radialGradient id="heartHighlight" cx="40%" cy="30%">
-                                  <stop offset="0%" stopColor="rgba(255,255,255,0.9)"/>
-                                  <stop offset="40%" stopColor="rgba(255,255,255,0.5)"/>
-                                  <stop offset="100%" stopColor="transparent"/>
-                                </radialGradient>
-                                
-                                {/* Second Highlight for Right Lobe */}
-                                <radialGradient id="heartHighlight2" cx="50%" cy="30%">
-                                  <stop offset="0%" stopColor="rgba(255,255,255,0.7)"/>
-                                  <stop offset="50%" stopColor="rgba(255,255,255,0.3)"/>
-                                  <stop offset="100%" stopColor="transparent"/>
-                                </radialGradient>
-                                
-                                {/* Edge Shine - Left Side Light Reflection */}
-                                <linearGradient id="heartEdgeShine" x1="0%" y1="0%" x2="100%" y2="100%">
-                                  <stop offset="0%" stopColor="rgba(255,255,255,0.4)"/>
-                                  <stop offset="50%" stopColor="rgba(255,200,220,0.2)"/>
-                                  <stop offset="100%" stopColor="transparent"/>
-                                </linearGradient>
-                                
-                                {/* Stroke for Edge Definition */}
-                                <linearGradient id="heartStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-                                  <stop offset="0%" stopColor="#ff4d6d"/>
-                                  <stop offset="50%" stopColor="#c1121f"/>
-                                  <stop offset="100%" stopColor="#800f2f"/>
-                                </linearGradient>
-                              </defs>
-                            </svg>
-                            
-                            {/* Lives Amount */}
-                            <span className="font-black" style={{
-                              fontSize: '1.8rem',
-                              background: 'linear-gradient(180deg, #ffc1cc 0%, #ff4d6d 50%, #e63946 100%)',
-                              WebkitBackgroundClip: 'text',
-                              WebkitTextFillColor: 'transparent',
-                              textShadow: '0 3px 10px rgba(255, 77, 109, 0.7)',
-                              fontFamily: '"Poppins", sans-serif',
-                              letterSpacing: '0.02em'
-                            }}>
-                              {totalRewards.totalLives}
-                            </span>
+                              {/* Amount with LED Display Effect */}
+                              <div className="flex-1 text-right">
+                                <span 
+                                  className="font-black tabular-nums"
+                                  style={{
+                                    fontSize: '1.6rem',
+                                    background: 'linear-gradient(180deg, #ffb3c1 0%, #ff4d6d 40%, #c1121f 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    filter: 'drop-shadow(0 0 12px rgba(255, 77, 109, 0.9)) drop-shadow(0 2px 4px rgba(0, 0, 0, 1))',
+                                    fontFamily: '"Orbitron", "Courier New", monospace',
+                                    letterSpacing: '0.05em'
+                                  }}
+                                >
+                                  {totalRewards.totalLives}
+                                </span>
+                              </div>
+                            </div>
+
                           </div>
                         </div>
                       </div>
