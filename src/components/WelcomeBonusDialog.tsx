@@ -86,7 +86,9 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
           className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
           style={{ 
             minHeight: '100dvh', 
-            minWidth: '100vw'
+            minWidth: '100vw',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(4px)'
           }}
         >
           {/* Teljesen átlátszó háttér - NULLA sötétítés, NULLA homályosítás */}
@@ -319,10 +321,10 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                   `}</style>
                 </div>
 
-                {/* Subtitle with háromszor nagyobb professzionális 3D gift boxes */}
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  {/* Left 3D Gift Box SVG - háromszor nagyobb, professzionális 3D */}
-                  <svg width="84" height="84" viewBox="0 0 100 100" fill="none" className="drop-shadow-[0_8px_16px_rgba(255,215,0,0.5)] flex-shrink-0">
+                {/* Subtitle with reszponzív professzionális 3D gift boxes */}
+                <div className="flex items-center justify-center gap-3 mb-4 w-full px-4">
+                  {/* Left 3D Gift Box SVG - reszponzív, professzionális 3D */}
+                  <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" className="drop-shadow-[0_8px_16px_rgba(255,215,0,0.5)] flex-shrink-0" style={{ maxWidth: '15vw', maxHeight: '15vw' }}>
                     <defs>
                       <linearGradient id="giftBoxGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFD700" />
@@ -380,8 +382,8 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                     {t('welcome.gift_for_you')}
                   </p>
                   
-                  {/* Right 3D Gift Box SVG - háromszor nagyobb, professzionális 3D */}
-                  <svg width="84" height="84" viewBox="0 0 100 100" fill="none" className="drop-shadow-[0_8px_16px_rgba(255,215,0,0.5)] flex-shrink-0">
+                  {/* Right 3D Gift Box SVG - reszponzív, professzionális 3D */}
+                  <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" className="drop-shadow-[0_8px_16px_rgba(255,215,0,0.5)] flex-shrink-0" style={{ maxWidth: '15vw', maxHeight: '15vw' }}>
                     <defs>
                       <linearGradient id="giftBoxGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFD700" />
