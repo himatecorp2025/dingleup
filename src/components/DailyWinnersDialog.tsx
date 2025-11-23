@@ -128,23 +128,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
           <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
 
-          {/* Bezáró X */}
-          <button
-            onClick={onClose}
-            aria-label="Bezárás"
-            className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
-            style={{
-              top: "max(1vh, env(safe-area-inset-top))",
-              right: "max(1vh, env(safe-area-inset-right))",
-              width: "clamp(36px, 8svw, 48px)",
-              height: "clamp(36px, 8svw, 48px)",
-              fontSize: "clamp(18px, 5svw, 28px)",
-              lineHeight: 1,
-            }}
-          >
-            ×
-          </button>
-
           {/* Zoom animáció wrapper */}
           <div 
             className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center"
