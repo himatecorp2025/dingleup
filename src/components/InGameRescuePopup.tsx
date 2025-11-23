@@ -185,7 +185,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <div className="absolute inset-1 rounded-3xl bg-gradient-to-br from-blue-600/20 via-transparent to-purple-700/20 pointer-events-none"></div>
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-transparent via-yellow-400/5 to-yellow-300/10 pointer-events-none"></div>
               {/* Large coin icon at top */}
-              <div className="flex justify-center -mt-6 sm:-mt-8 mb-3 sm:mb-3.5">
+              <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
                   {/* 3D circle with multiple shadow layers */}
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(202, 138, 4, 0.9), 0 8px 20px rgba(202, 138, 4, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(234, 179, 8, 0.4)' }}>
@@ -200,7 +200,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 Gold Saver
               </h3>
 
-              <p className="text-blue-50 text-[9px] sm:text-[10px] text-center mb-auto font-semibold leading-snug px-1" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)' }}>
+              <p className="text-blue-50 text-[9px] sm:text-[10px] text-center mb-3 sm:mb-4 font-semibold leading-snug px-1" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)' }}>
                 {t('rescue.gold_saver_description')}
               </p>
 
@@ -252,7 +252,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               <div className="absolute inset-1 rounded-3xl bg-gradient-to-br from-purple-600/20 via-transparent to-pink-700/20 pointer-events-none"></div>
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-transparent via-cyan-400/5 to-blue-300/10 pointer-events-none"></div>
               {/* Large diamond icon at top */}
-              <div className="flex justify-center -mt-6 sm:-mt-8 mb-3 sm:mb-3.5">
+              <div className="flex justify-center -mt-6 sm:-mt-8 mb-auto">
                 <div className="relative">
                   {/* 3D circle with multiple shadow layers */}
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-cyan-200 via-blue-300 to-blue-600 flex items-center justify-center" style={{ boxShadow: '0 15px 40px rgba(6, 182, 212, 0.9), 0 8px 20px rgba(59, 130, 246, 0.7), inset 0 -6px 20px rgba(0, 0, 0, 0.5), inset 0 6px 20px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(6, 182, 212, 0.4)' }}>
@@ -267,7 +267,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                 Instant Rescue
               </h3>
 
-              <p className="text-cyan-50 text-[9px] sm:text-[10px] text-center mb-auto font-semibold leading-snug px-1" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>
+              <p className="text-cyan-50 text-[9px] sm:text-[10px] text-center mb-3 sm:mb-4 font-semibold leading-snug px-1" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>
                 {t('rescue.instant_rescue_description')}
               </p>
 
