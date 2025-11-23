@@ -186,7 +186,7 @@ const DailyGiftDialog = ({
             ×
           </button>
 
-          {/* Zoom animáció wrapper - 1.5mp scale-in középről + mély 3D hatás */}
+          {/* Zoom animáció wrapper - 1.5mp scale-in középről */}
           <div 
             className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center"
             style={{ 
@@ -194,28 +194,10 @@ const DailyGiftDialog = ({
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
               transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto',
-              perspective: '1200px'
+              willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
           >
-            {/* Deep 3D outer wrapper */}
-            <div className="relative w-full" style={{ transform: 'scale(1)' }}>
-              {/* BASE SHADOW */}
-              <div className="absolute inset-0 bg-black/70 rounded-3xl" style={{ transform: 'translate(8px, 8px)', filter: 'blur(12px)' }} aria-hidden />
-              
-              {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary-dark via-primary to-primary-dark opacity-95 border-4 border-primary/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
-              
-              {/* MIDDLE FRAME */}
-              <div className="absolute inset-[6px] rounded-3xl bg-gradient-to-b from-background/50 via-transparent to-background/70" style={{ boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,0.15), inset 0 -1.5px 0 rgba(0,0,0,0.3)', transform: 'translateZ(15px)' }} aria-hidden />
-              
-              {/* INNER LAYER */}
-              <div className="absolute inset-[8px] rounded-3xl bg-gradient-to-br from-primary-dark/60 to-primary-dark/60" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.25)', transform: 'translateZ(30px)' }} aria-hidden />
-              
-              {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute inset-[8px] rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
-              
-              <div className="relative" style={{ transform: 'translateZ(60px)' }}>
+            <div className="relative w-full">
               <HexShieldFrame showShine={true}>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
@@ -413,7 +395,6 @@ const DailyGiftDialog = ({
                 </div>
               </div>
             </HexShieldFrame>
-            </div>
             </div>
           </div>
         </div>
