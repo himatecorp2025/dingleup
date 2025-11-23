@@ -162,7 +162,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 <div 
                   ref={badgeRef}
                   className="relative z-20 mx-auto" 
-                  style={{ width: '80%', maxWidth: '400px' }}
+                  style={{ width: '80%', maxWidth: '400px', transform: 'translateY(-5%)' }}
                 >
                   <div className="absolute inset-0 translate-y-1 translate-x-1"
                        style={{
@@ -221,8 +221,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 </div>
 
                 {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[6%]" style={{ height: 'calc(100% - 60px)', paddingTop: '0' }}>
-                  <div className="w-full mb-4 overflow-y-auto" style={{ height: 'calc(100% - 60px)' }}>
+                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[4%]" style={{ height: 'calc(100% - 60px)', paddingTop: '0' }}>
+                  <div className="w-full mb-3 overflow-y-auto" style={{ height: 'calc(100% - 50px)', maxHeight: 'calc(100vh - 200px)' }}>
                     {topPlayers.length === 0 ? (
                       <div className="text-center text-white py-8">
                         <p className="text-lg">{t('dailyWinners.noData')}</p>
@@ -480,10 +480,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     )}
                   </div>
 
-                  <div className="mt-auto pt-4 flex justify-center w-full">
+                  <div className="mt-auto pt-3 flex justify-center w-full">
                     <HexAcceptButton 
                       onClick={onClose}
-                      className="w-[90%]"
+                      className="w-[85%]"
+                      style={{ transform: 'scale(0.95)' }}
                     />
                   </div>
                 </div>
