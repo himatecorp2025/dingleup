@@ -12,10 +12,10 @@ import React, { PropsWithChildren } from 'react';
  */
 const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine?: boolean }>> = ({ children, className = '', showShine = true }) => {
   return (
-    <div className={`relative overflow-hidden mx-auto ${className}`}
+    <div className={`relative overflow-hidden ${className}`}
          style={{ 
-           width: 'min(92vw, 500px)', 
-           height: 'clamp(540px, 88vh, 680px)'
+           width: '100vw', 
+           height: '100dvh'
          }}>
       
       {showShine && (
