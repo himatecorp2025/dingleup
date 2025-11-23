@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
+import HexAcceptButton from './ui/HexAcceptButton';
 import { useI18n } from '@/i18n/useI18n';
 
 interface DailyWinnersDialogProps {
@@ -20,44 +21,14 @@ interface TopPlayer {
 export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) => {
   const { t } = useI18n();
   const [contentVisible, setContentVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
-  const confettiCount = isMobile ? 25 : 50;
-
-  const listRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const [listHeight, setListHeight] = useState<number | undefined>(undefined);
-  const measureList = () => {
-    try {
-      const list = listRef.current;
-      if (!list) return;
-      const first = list.querySelector('[data-row-index="0"]') as HTMLElement | null;
-      const second = list.querySelector('[data-row-index="1"]') as HTMLElement | null;
-      if (!first) return;
-      const rowH = first.offsetHeight;
-      const gap = second ? parseFloat(getComputedStyle(second).marginTop || '6') : 6;
-      setListHeight(Math.max(0, Math.round((rowH * 7 + gap * 6) * 1.04) - 8));
-    } catch {}
-  };
-
-  useEffect(() => {
-    const handleResize = () => {
-      try {
-        setIsMobile(window.innerWidth <= 768);
-        measureList();
-      } catch {}
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const badgeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
       fetchYesterdayTopPlayers();
       const t = setTimeout(() => {
         setContentVisible(true);
-        measureList();
       }, 10);
       
       return () => {
@@ -68,11 +39,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       setContentVisible(false);
     }
   }, [open]);
-
-  useEffect(() => {
-    if (!contentVisible) return;
-    measureList();
-  }, [topPlayers, contentVisible]);
 
   const fetchYesterdayTopPlayers = async () => {
     try {
@@ -116,7 +82,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
       if (error) {
         console.error('[DAILY-WINNERS] Error fetching yesterday winners:', error);
-        // Fallback to empty array
         setTopPlayers([]);
         return;
       }
@@ -142,145 +107,176 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent 
-        overlayClassName="bg-transparent backdrop-blur-none"
-        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden"
+        className="overflow-hidden p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden z-[99999]"
         style={{ 
           margin: 0,
           maxHeight: '100dvh',
           minHeight: '100dvh',
-          borderRadius: 0
+          borderRadius: 0,
+          zIndex: 99999
         }}
       >
-        <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
-        <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
-        
+        {/* Középre igazító konténer - blur háttérrel */}
         <div 
-          className="relative w-full h-full overflow-hidden"
-          style={{
-            background: 'linear-gradient(180deg, #0a0015 0%, #1a0033 50%, #0f0033 100%)',
+          className="fixed inset-0 flex flex-col items-center overflow-hidden backdrop-blur-md"
+          style={{ 
+            minHeight: '100dvh', 
+            minWidth: '100vw',
+            justifyContent: 'center',
+            paddingTop: '0',
+            marginTop: '-3vh'
           }}
         >
-          {/* Animated background orbs */}
-          {Array.from({ length: confettiCount }).map((_, i) => {
-            const size = Math.random() * 150 + 50;
-            const left = Math.random() * 100;
-            const top = Math.random() * 100;
-            const delay = Math.random() * 5;
-            const duration = Math.random() * 10 + 10;
-            const colors = ['rgba(255,20,147,0.15)', 'rgba(138,43,226,0.15)', 'rgba(75,0,130,0.15)', 'rgba(0,191,255,0.15)'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            
-            return (
-              <div
-                key={i}
-                className="absolute rounded-full blur-3xl animate-pulse"
-                style={{
-                  width: `${size}px`,
-                  height: `${size}px`,
-                  left: `${left}%`,
-                  top: `${top}%`,
-                  background: color,
-                  animationDelay: `${delay}s`,
-                  animationDuration: `${duration}s`,
-                  opacity: contentVisible ? 1 : 0,
-                  transition: 'opacity 0.8s ease-in-out'
-                }}
-              />
-            );
-          })}
+          <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
+          <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
 
-          {/* Main content */}
-          <div className="relative z-10 flex flex-col items-center justify-start w-full h-full px-4 pt-8 pb-20 overflow-y-auto">
-            {/* Title Badge */}
-            <div 
-              ref={headerRef}
-              className="relative mb-6"
-              style={{
-                opacity: contentVisible ? 1 : 0,
-                transform: contentVisible ? 'translateY(0) scale(1)' : 'translateY(-20px) scale(0.9)',
-                transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)'
-              }}
-            >
-              <div className="relative px-8 py-4 bg-gradient-to-r from-primary via-accent to-primary rounded-2xl shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/50 via-accent/50 to-primary/50 rounded-2xl blur-xl animate-pulse" />
-                <h2 className="relative text-2xl md:text-3xl font-bold text-white text-center tracking-wider drop-shadow-lg">
-                  🏆 {t('dailyWinners.title')} 🏆
-                </h2>
-              </div>
-            </div>
+          {/* Bezáró X */}
+          <button
+            onClick={onClose}
+            aria-label="Bezárás"
+            className="absolute z-[10001] rounded-full text-white/80 hover:text-white bg-black/30 hover:bg-black/50 transition-all flex items-center justify-center"
+            style={{
+              top: "max(1vh, env(safe-area-inset-top))",
+              right: "max(1vh, env(safe-area-inset-right))",
+              width: "clamp(36px, 8svw, 48px)",
+              height: "clamp(36px, 8svw, 48px)",
+              fontSize: "clamp(18px, 5svw, 28px)",
+              lineHeight: 1,
+            }}
+          >
+            ×
+          </button>
 
-            {/* Players List */}
-            <div 
-              ref={listRef}
-              className="w-full max-w-2xl space-y-2"
-              style={{
-                maxHeight: listHeight ? `${listHeight}px` : 'auto',
-                opacity: contentVisible ? 1 : 0,
-                transform: contentVisible ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s'
-              }}
-            >
-              {topPlayers.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8">
-                  <p className="text-lg">{t('dailyWinners.noData')}</p>
-                </div>
-              ) : (
-                topPlayers.map((player, index) => {
-                  const delay = index * 0.08;
-                  const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
+          {/* Zoom animáció wrapper */}
+          <div 
+            className="relative z-10 w-full max-w-[min(95vw,600px)] mx-auto flex items-center justify-center"
+            style={{ 
+              transform: contentVisible ? 'scale(1)' : 'scale(0)',
+              opacity: contentVisible ? 1 : 0,
+              transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
+              transformOrigin: 'center center',
+              willChange: contentVisible ? 'transform, opacity' : 'auto'
+            }}
+          >
+            <div className="relative w-full">
+              <HexShieldFrame showShine={true}>
+                {/* Top Hex Badge - "TEGNAPI TOP 10" - UGYANAZ mint Daily Gift */}
+                <div 
+                  ref={badgeRef}
+                  className="relative -mt-12 mb-3 mx-auto z-20" 
+                  style={{ width: '78%' }}
+                >
+                  <div className="absolute inset-0 translate-y-1 translate-x-1"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         background: 'rgba(0,0,0,0.4)',
+                         filter: 'blur(4px)',
+                         zIndex: -1
+                       }} />
                   
-                  return (
-                    <div
-                      key={player.user_id}
-                      data-row-index={index}
-                      className="relative"
-                      style={{
-                        opacity: contentVisible ? 1 : 0,
-                        transform: contentVisible ? 'translateX(0)' : 'translateX(-30px)',
-                        transition: `all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}s`
-                      }}
+                  <div className="absolute inset-0"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         background: 'linear-gradient(135deg, hsl(var(--dup-gold-700)), hsl(var(--dup-gold-600)) 50%, hsl(var(--dup-gold-800)))',
+                         boxShadow: 'inset 0 0 0 2px hsl(var(--dup-gold-900)), 0 3px 8px rgba(0,0,0,0.175)'
+                       }} />
+                  
+                  <div className="absolute inset-[3px]"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                         background: 'linear-gradient(180deg, hsl(var(--dup-gold-400)), hsl(var(--dup-gold-500)) 40%, hsl(var(--dup-gold-700)))',
+                         boxShadow: 'inset 0 1px 0 hsl(var(--dup-gold-300))'
+                       }} />
+                  
+                  <div className="relative px-[5vw] py-[1.2vh]"
+                       style={{
+                         clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                       }}>
+                    <div className="absolute inset-[6px]"
+                         style={{
+                           clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                           background: 'radial-gradient(ellipse 100% 80% at 50% -10%, hsl(0 95% 75%) 0%, hsl(0 90% 65%) 30%, hsl(0 85% 55%) 60%, hsl(0 78% 48%) 100%)',
+                           boxShadow: 'inset 0 6px 12px rgba(255,255,255,0.125), inset 0 -6px 12px rgba(0,0,0,0.2)'
+                         }} />
+                    
+                    <div className="absolute inset-[6px] pointer-events-none"
+                         style={{
+                           clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                           background: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 12px, transparent 12px, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 24px)',
+                           opacity: 0.7
+                         }} />
+                    
+                    <div className="absolute inset-[6px] pointer-events-none" style={{
+                      clipPath: 'path("M 12% 0 L 88% 0 L 100% 50% L 88% 100% L 12% 100% L 0 50% Z")',
+                      background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
+                    }} />
+                    
+                    <h1 className="relative z-10 font-black text-foreground text-center drop-shadow-[0_0_18px_hsl(var(--foreground)/0.3),0_2px_8px_rgba(0,0,0,0.9)]"
+                        style={{ 
+                          fontSize: 'clamp(1.25rem, 5.2vw, 2.1rem)', 
+                          letterSpacing: '0.05em',
+                          textShadow: '0 0 12px rgba(255,255,255,0.25)'
+                        }}>
+                      {t('dailyWinners.title')}
+                    </h1>
+                  </div>
+                </div>
+
+                {/* Content Area */}
+                <div className="relative z-10 flex flex-col items-center justify-between flex-1 px-[8%] pb-[8%] pt-[2%]">
+                  
+                  {/* Players List */}
+                  <div className="w-full space-y-3 mb-6 max-h-[50vh] overflow-y-auto">
+                    {topPlayers.length === 0 ? (
+                      <div className="text-center text-white py-8">
+                        <p className="text-lg">{t('dailyWinners.noData')}</p>
+                      </div>
+                    ) : (
+                      topPlayers.map((player, index) => {
+                        const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
+                        
+                        return (
+                          <div
+                            key={player.user_id}
+                            className="flex items-center gap-4 px-6 py-4 bg-gradient-to-r from-purple-900/30 to-purple-800/30 rounded-xl border border-purple-500/20"
+                          >
+                            {/* Medal */}
+                            <div className="flex-shrink-0 text-3xl">
+                              {medalEmoji}
+                            </div>
+
+                            {/* Player Info */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-lg font-bold text-white truncate">
+                                {player.username}
+                              </p>
+                              <p className="text-sm text-gray-300">
+                                {player.total_correct_answers} {t('dailyWinners.correctAnswers')}
+                              </p>
+                            </div>
+
+                            {/* Rank Number */}
+                            <div className="flex-shrink-0 text-2xl font-bold text-yellow-400">
+                              #{player.rank}
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {/* Close Button */}
+                  <div className="flex justify-center w-full">
+                    <HexAcceptButton
+                      onClick={onClose}
+                      style={{ width: '100%', maxWidth: '300px' }}
                     >
-                      <HexShieldFrame className="w-full">
-                        <div className="flex items-center gap-4 px-6 py-4">
-                          {/* Rank Badge */}
-                          <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-dark text-white font-bold text-xl shadow-lg">
-                            {medalEmoji}
-                          </div>
-
-                          {/* Player Info */}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-lg font-bold text-foreground truncate">
-                              {player.username}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {player.total_correct_answers} {t('dailyWinners.correctAnswers')}
-                            </p>
-                          </div>
-
-                          {/* Rank Number */}
-                          <div className="flex-shrink-0 text-2xl font-bold text-accent">
-                            #{player.rank}
-                          </div>
-                        </div>
-                      </HexShieldFrame>
-                    </div>
-                  );
-                })
-              )}
+                      {t('dailyWinners.close')}
+                    </HexAcceptButton>
+                  </div>
+                </div>
+              </HexShieldFrame>
             </div>
-
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="mt-8 px-12 py-4 bg-gradient-to-r from-accent via-primary to-accent text-white text-xl font-bold rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-300"
-              style={{
-                opacity: contentVisible ? 1 : 0,
-                transform: contentVisible ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s'
-              }}
-            >
-              {t('dailyWinners.close')}
-            </button>
           </div>
         </div>
       </DialogContent>
