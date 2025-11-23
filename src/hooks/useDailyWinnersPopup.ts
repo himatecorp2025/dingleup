@@ -1,15 +1,13 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Hook to manage daily winners popup visibility
- * Shows popup 3 seconds after daily gift claim/dismiss, once per day
+ * Shows popup automatically once per day on first dashboard visit
  */
 export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow = false) => {
   const [showPopup, setShowPopup] = useState(false);
   const [canShowToday, setCanShowToday] = useState(false);
-  const [triggerActive, setTriggerActive] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const getCurrentDay = () => {
     const now = new Date();
@@ -25,39 +23,12 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
     checkIfCanShowToday(forceAlwaysShow);
   }, [userId, forceAlwaysShow]);
 
-  // Cleanup timer on unmount
+  // Auto-trigger popup when canShowToday becomes true
   useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, []);
-
-  // Trigger effect - show popup after 3 seconds
-  useEffect(() => {
-    if (!triggerActive || !canShowToday) return;
-
-    // Clear existing timer
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    // Show popup after 3 seconds
-    timerRef.current = setTimeout(() => {
+    if (canShowToday && !showPopup) {
       setShowPopup(true);
-      setTriggerActive(false);
-      timerRef.current = null;
-    }, 3000);
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [triggerActive, canShowToday]);
+    }
+  }, [canShowToday, showPopup]);
 
   const checkIfCanShowToday = async (force = false) => {
     try {
@@ -89,11 +60,6 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
       setCanShowToday(false);
     }
   };
-
-  const triggerPopup = useCallback(() => {
-    if (!canShowToday) return;
-    setTriggerActive(true);
-  }, [canShowToday]);
 
   const closePopup = async () => {
     if (!userId) return;
@@ -129,7 +95,6 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
   return {
     showPopup,
     canShowToday,
-    triggerPopup,
     closePopup,
   };
 };
