@@ -3635,6 +3635,15 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      get_topics_needing_questions: {
+        Args: never
+        Returns: {
+          current_count: number
+          needed: number
+          topic_id: number
+          topic_name: string
+        }[]
+      }
       get_user_country_rank: { Args: { p_user_id: string }; Returns: number }
       get_user_threads_optimized: {
         Args: { p_user_id: string }
