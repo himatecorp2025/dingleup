@@ -184,8 +184,25 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
         creditStartReward(),
         (async () => {
           try {
-            const { data, error } = await supabase.functions.invoke('start-game-session', {
-              headers: { Authorization: `Bearer ${authSession.access_token}` }
+            // Get last used pool order for this topic from localStorage
+            const topicId = 'mixed';
+            const lastPoolKey = `lastPoolOrder_${topicId}`;
+            const lastPoolOrder = parseInt(localStorage.getItem(lastPoolKey) || '0');
+            const userLang = profile.preferred_language || 'en';
+            
+            console.log('[useGameLifecycle] Loading questions from pool system:', { 
+              topicId, 
+              lastPoolOrder,
+              userLang 
+            });
+
+            const { data, error } = await supabase.functions.invoke('get-game-questions', {
+              headers: { Authorization: `Bearer ${authSession.access_token}` },
+              body: {
+                topicId,
+                lastPoolOrder: lastPoolOrder || null,
+                languageCode: userLang
+              }
             });
 
             if (error) throw error;
@@ -194,50 +211,24 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
               throw new Error('No questions received from backend');
             }
 
-            let questionsToUse = data.questions;
-            
-            // CRITICAL: Apply translations based on user's preferred language
-            const userLang = profile.preferred_language || 'en';
-            console.log('[useGameLifecycle] User language:', userLang);
-            
-            if (userLang !== 'hu' && questionsToUse.length > 0) {
-              const questionIds = questionsToUse.map((q: any) => q.id);
-              
-              const { data: translations, error: translationsError } = await supabase
-                .from('question_translations')
-                .select('question_id, question_text, answer_a, answer_b, answer_c')
-                .eq('lang', userLang)
-                .in('question_id', questionIds);
+            console.log(`[useGameLifecycle] Loaded ${data.questions.length} questions from pool ${data.usedPoolOrder}/${data.totalPools}`);
 
-              if (!translationsError && translations && translations.length > 0) {
-                console.log(`[useGameLifecycle] Translations fetched: ${translations.length} for language: ${userLang}`);
-                
-                // Apply translations to questions
-                questionsToUse = questionsToUse.map((question: any) => {
-                  const translation = translations.find((t: any) => t.question_id === question.id);
-                  
-                  if (translation) {
-                    return {
-                      ...question,
-                      question: translation.question_text || question.question,
-                      answers: question.answers.map((answer: any, index: number) => ({
-                        ...answer,
-                        text: index === 0 ? (translation.answer_a || answer.text) :
-                              index === 1 ? (translation.answer_b || answer.text) :
-                              (translation.answer_c || answer.text)
-                      }))
-                    };
-                  }
-                  
-                  // No translation - keep original Hungarian
-                  return question;
-                });
-              } else {
-                console.log('[useGameLifecycle] No translations found or error:', translationsError);
-              }
-            }
+            // Save the pool order we just used
+            localStorage.setItem(lastPoolKey, data.usedPoolOrder.toString());
 
-            const shuffledWithVariety = shuffleAnswers(questionsToUse);
+            // Convert backend format to game format with answers array
+            const questionsWithAnswers = data.questions.map((q: any) => ({
+              id: q.id,
+              topic: q.topic,
+              question: q.question,
+              answers: [
+                { key: 'A', text: q.answer_a, correct: q.correct_answer === 'A' },
+                { key: 'B', text: q.answer_b, correct: q.correct_answer === 'B' },
+                { key: 'C', text: q.answer_c, correct: q.correct_answer === 'C' }
+              ]
+            }));
+
+            const shuffledWithVariety = shuffleAnswers(questionsWithAnswers);
             setQuestions(shuffledWithVariety);
           } catch (error) {
             console.error('[useGameLifecycle] Failed to load questions:', error);
