@@ -126,28 +126,25 @@ serve(async (req) => {
     for (let poolOrder = 1; poolOrder <= TOTAL_POOLS; poolOrder++) {
       const poolQuestions: Question[] = [];
 
-      // CRITICAL: Get QUESTIONS_PER_TOPIC_PER_POOL (10) questions from EACH topic
+      // CRITICAL: Get EXACTLY 10 questions from EACH topic (with wraparound)
       for (const topicId of topicIds) {
         const topicQuestions = questionsByTopic.get(topicId)!;
         const startIdx = topicPointers.get(topicId)!;
         
-        // Take up to QUESTIONS_PER_TOPIC_PER_POOL questions from this topic
-        const endIdx = Math.min(startIdx + QUESTIONS_PER_TOPIC_PER_POOL, topicQuestions.length);
-        const questionsToAdd = topicQuestions.slice(startIdx, endIdx);
+        // Take EXACTLY QUESTIONS_PER_TOPIC_PER_POOL questions using modulo (wraparound)
+        const questionsToAdd: Question[] = [];
+        for (let i = 0; i < QUESTIONS_PER_TOPIC_PER_POOL; i++) {
+          const idx = (startIdx + i) % topicQuestions.length;
+          questionsToAdd.push(topicQuestions[idx]);
+        }
         
         poolQuestions.push(...questionsToAdd);
         
-        // Update pointer
-        let newPointer = endIdx;
-        
-        // If we've used all questions from this topic, wrap around
-        if (newPointer >= topicQuestions.length) {
-          newPointer = 0;
-        }
-        
+        // Update pointer with wraparound
+        const newPointer = (startIdx + QUESTIONS_PER_TOPIC_PER_POOL) % topicQuestions.length;
         topicPointers.set(topicId, newPointer);
         
-        console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: added ${questionsToAdd.length} questions (pointer now at ${newPointer})`);
+        console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: added EXACTLY ${questionsToAdd.length} questions (pointer now at ${newPointer})`);
       }
 
       // Shuffle the pool so topics are mixed (not grouped)
