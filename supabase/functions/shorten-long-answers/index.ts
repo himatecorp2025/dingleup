@@ -49,11 +49,11 @@ serve(async (req) => {
           throw new Error(`Fetch error: ${fetchError.message}`);
         }
 
-        // Filter for answers longer than 61 characters in TypeScript
+        // Filter for answers longer than 50 characters in TypeScript
         const longAnswers = allTranslations?.filter((item: LongAnswer) => 
-          item.answer_a.length > 61 || 
-          item.answer_b.length > 61 || 
-          item.answer_c.length > 61
+          item.answer_a.length > 50 || 
+          item.answer_b.length > 50 || 
+          item.answer_c.length > 50
         ) || [];
 
         sendProgress({ 
