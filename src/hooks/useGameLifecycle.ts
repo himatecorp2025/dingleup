@@ -185,10 +185,10 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
         (async () => {
           try {
             // Get last used pool order for this topic from localStorage
-            const topicId = 'all'; // All questions in one pool system
+            const topicId = 'mixed';
             const lastPoolKey = `lastPoolOrder_${topicId}`;
             const lastPoolOrder = parseInt(localStorage.getItem(lastPoolKey) || '0');
-            const userLang = profile.preferred_language || 'hu';
+            const userLang = profile.preferred_language || 'en';
             
             console.log('[useGameLifecycle] Loading questions from pool system:', { 
               topicId, 
