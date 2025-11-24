@@ -127,23 +127,25 @@ serve(async (req) => {
     for (let poolOrder = 1; poolOrder <= TOTAL_POOLS; poolOrder++) {
       const poolQuestions: Question[] = [];
 
-      // Get EXACTLY 10 questions from EACH topic (NO wraparound - skip if exhausted)
+      // Get up to 10 questions from EACH topic (use ALL remaining questions even if < 10)
       for (const topicId of topicIds) {
         const topicQuestions = questionsByTopic.get(topicId)!;
         const startIdx = topicPointers.get(topicId)!;
         
-        // Check if we have 10 more questions available (NO wraparound)
-        if (startIdx + QUESTIONS_PER_TOPIC_PER_POOL > topicQuestions.length) {
-          console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: EXHAUSTED (pointer at ${startIdx}/${topicQuestions.length})`);
-          continue; // Skip this topic - no more questions available
+        // Skip if no more questions available
+        if (startIdx >= topicQuestions.length) {
+          continue; // Topic exhausted
         }
         
-        // Take EXACTLY 10 questions (sequential, no wraparound)
-        const questionsToAdd = topicQuestions.slice(startIdx, startIdx + QUESTIONS_PER_TOPIC_PER_POOL);
+        // Take as many questions as available (up to 10)
+        const remainingQuestions = topicQuestions.length - startIdx;
+        const questionsToTake = Math.min(QUESTIONS_PER_TOPIC_PER_POOL, remainingQuestions);
+        const questionsToAdd = topicQuestions.slice(startIdx, startIdx + questionsToTake);
+        
         poolQuestions.push(...questionsToAdd);
         
-        // Update pointer (NO wraparound)
-        const newPointer = startIdx + QUESTIONS_PER_TOPIC_PER_POOL;
+        // Update pointer
+        const newPointer = startIdx + questionsToTake;
         topicPointers.set(topicId, newPointer);
         
         console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: added ${questionsToAdd.length} questions (pointer now at ${newPointer}/${topicQuestions.length})`);
