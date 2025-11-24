@@ -77,6 +77,7 @@ const Dashboard = () => {
     canMountModals,
     needsAgeVerification: !profile?.age_verified || !profile?.birth_date,
     userId,
+    profileLoading: loading,
   });
   
   // Pull-to-refresh functionality
