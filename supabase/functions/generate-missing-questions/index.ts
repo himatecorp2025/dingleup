@@ -26,7 +26,7 @@ serve(async (req) => {
       throw new Error("Missing environment variables");
     }
 
-    // Get topics that need more questions (< 100)
+    // Get topics that need more questions (< 150)
     const topicsResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_topics_needing_questions`, {
       method: "POST",
       headers: {
@@ -65,22 +65,24 @@ serve(async (req) => {
 
       const systemPrompt = `Te egy kvíz kérdés generátor vagy. Generálj magyar nyelvű kvíz kérdéseket a megadott témakörben.
 
-FONTOS SZABÁLYOK:
-1. Minden kérdésnek pontosan 3 válaszlehetősége van (A, B, C)
-2. Csak EGY válasz lehet helyes
-3. A kérdések legyenek érdekesek, változatosak és kihívást jelentők
-4. NE ismételd meg a már létező kérdéseket
-5. A válaszok legyenek világosak és egyértelműek
-6. Kerüld a túl könnyű vagy túl nehéz kérdéseket
+KRITIKUS SZABÁLYOK:
+1. A kérdés szövege MAXIMUM 75 karakter lehet (kötelező!)
+2. Minden válasz szövege MAXIMUM 50 karakter lehet (kötelező!)
+3. Minden kérdésnek pontosan 3 válaszlehetősége van (A, B, C)
+4. Csak EGY válasz lehet helyes
+5. A kérdések legyenek érdekesek, változatosak és kihívást jelentők
+6. NE ismételd meg a már létező kérdéseket
+7. A válaszok legyenek világosak és egyértelműek
+8. Kerüld a túl könnyű vagy túl nehéz kérdéseket
 
 Visszaadási formátum (JSON array):
 [
   {
-    "question": "A kérdés szövege?",
+    "question": "Kérdés max 75 karakter?",
     "answers": [
-      {"key": "A", "text": "Első válasz", "correct": false},
-      {"key": "B", "text": "Második válasz", "correct": true},
-      {"key": "C", "text": "Harmadik válasz", "correct": false}
+      {"key": "A", "text": "Válasz max 50 karakter", "correct": false},
+      {"key": "B", "text": "Helyes válasz max 50 kar", "correct": true},
+      {"key": "C", "text": "Válasz max 50 karakter", "correct": false}
     ]
   }
 ]`;
