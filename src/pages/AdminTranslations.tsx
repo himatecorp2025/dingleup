@@ -133,7 +133,7 @@ const AdminTranslations = () => {
             <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
               <h3 className="text-xl font-bold text-white mb-4">Válaszok rövidítése</h3>
               <p className="text-white/80 mb-4">
-                Automatikusan lerövidíti az összes 61 karakternél hosszabb választ AI segítségével (554 válasz)
+                Automatikusan lerövidíti az összes 50 karakternél hosszabb választ AI segítségével
               </p>
               
               {progress && (
