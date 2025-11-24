@@ -167,6 +167,39 @@ const AdminTranslations = () => {
                 )}
               </Button>
             </div>
+
+            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
+              <h3 className="text-xl font-bold text-white mb-4">Kérdés Poolok Regenerálása</h3>
+              <p className="text-white/80 mb-4">
+                Újragenerálja a "mixed" témakör kérdés pool-jait. Minden pool eltérő kérdéseket tartalmaz, így biztosítva a változatosságot.
+              </p>
+              
+              <Button
+                onClick={async () => {
+                  try {
+                    toast.loading('Pool regenerálás folyamatban...');
+                    const { data: { session } } = await supabase.auth.getSession();
+                    
+                    const { data, error } = await supabase.functions.invoke('regenerate-question-pools', {
+                      headers: { Authorization: `Bearer ${session?.access_token}` },
+                      body: { topicId: 'mixed' }
+                    });
+
+                    if (error) throw error;
+                    
+                    toast.dismiss();
+                    toast.success(`Pool regenerálás sikeres! ${data.poolsCreated} pool létrehozva ${data.totalQuestions} kérdésből`);
+                  } catch (error) {
+                    toast.dismiss();
+                    console.error('Error regenerating pools:', error);
+                    toast.error('Hiba történt a pool regenerálás során');
+                  }
+                }}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                Mixed Poolok Regenerálása
+              </Button>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
