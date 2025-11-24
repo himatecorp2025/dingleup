@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import introVideo from "@/assets/introvideo.mp4";
 
 const IntroVideo = () => {
@@ -10,7 +11,7 @@ const IntroVideo = () => {
   const [fallbackTriggered, setFallbackTriggered] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // PWA/Standalone mode detection with persistent tracking
+  // PWA/Standalone mode detection
   const isStandalone = (() => {
     try {
       return (
@@ -22,56 +23,59 @@ const IntroVideo = () => {
       return false;
     }
   })();
-  
-  // CRITICAL FIX: In standalone mode after cold start (force-stop),
-  // ALWAYS play intro video - don't check sessionStorage flag
-  // This ensures consistent intro experience on every app launch
-  const shouldPlayIntro = isStandalone 
-    ? true // Always play in standalone/PWA mode
-    : !sessionStorage.getItem('app_intro_shown'); // Browser: play only once per session
-  
-  const nextPage = isStandalone ? '/auth/choice' : (searchParams.get('next') || '/auth/choice');
 
   useEffect(() => {
-    // CRITICAL: Skip intro if already shown in browser mode
-    if (!shouldPlayIntro && !isStandalone) {
-      navigate(nextPage);
-      return;
-    }
+    // OPTIMIZED: Check if user is already logged in - skip intro if so
+    const checkSessionAndIntro = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // If user is logged in, go straight to dashboard
+      if (session?.user) {
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+
+      // Check if intro was already shown (use localStorage for persistence across cold starts)
+      const introShown = localStorage.getItem('app_intro_shown');
+      if (introShown && !isStandalone) {
+        navigate('/auth/choice', { replace: true });
+        return;
+      }
+
+      // For standalone mode, only show intro once per install
+      if (isStandalone && introShown) {
+        navigate('/auth/choice', { replace: true });
+        return;
+      }
+    };
+
+    checkSessionAndIntro();
 
     const video = videoRef.current;
     if (!video || fallbackTriggered) return;
 
-    // Soft timeout: 400ms to start playback
-    const softTimeout = setTimeout(() => {
-      if (!videoLoaded && !fallbackTriggered) {
-        console.warn('Video soft timeout - showing poster, continuing to load');
-      }
-    }, 400);
-
-    // Hard timeout: 2000ms fallback to Dashboard
+    // OPTIMIZED: Longer timeout for iOS (5s) to allow video loading
     const hardTimeout = setTimeout(() => {
       if (!videoLoaded && !fallbackTriggered) {
-        console.warn('Video hard timeout - falling back to dashboard');
+        console.warn('Video loading timeout - skipping intro');
         setFallbackTriggered(true);
-        try { sessionStorage.setItem('app_intro_shown', '1'); } catch {}
-        navigate(nextPage);
+        try { localStorage.setItem('app_intro_shown', '1'); } catch {}
+        navigate('/auth/choice', { replace: true });
       }
-    }, 2000);
+    }, 5000);
 
-    // Ensure video is loaded and ready - instant playback
+    // Video loaded and ready - play it
     const handleCanPlay = () => {
       if (fallbackTriggered) return;
-      clearTimeout(softTimeout);
       clearTimeout(hardTimeout);
       setVideoLoaded(true);
-      try { sessionStorage.setItem('app_intro_shown', '1'); } catch {}
-      // Use requestAnimationFrame for smoother start
+      try { localStorage.setItem('app_intro_shown', '1'); } catch {}
+      
       requestAnimationFrame(() => {
         video.play().catch((err) => {
           console.error('Video playback error:', err);
           setFallbackTriggered(true);
-          navigate(nextPage);
+          navigate('/auth/choice', { replace: true });
         });
       });
     };
@@ -79,18 +83,17 @@ const IntroVideo = () => {
     // Navigate when video ends
     const handleEnded = () => {
       if (fallbackTriggered) return;
-      navigate(nextPage);
+      navigate('/auth/choice', { replace: true });
     };
 
-    // Handle errors
+    // Handle errors - skip intro on error
     const handleError = (e: Event) => {
-      console.error('Video loading error:', e);
-      clearTimeout(softTimeout);
+      console.error('Video error:', e);
       clearTimeout(hardTimeout);
       if (!fallbackTriggered) {
         setFallbackTriggered(true);
-        try { sessionStorage.setItem('app_intro_shown', '1'); } catch {}
-        navigate(nextPage);
+        try { localStorage.setItem('app_intro_shown', '1'); } catch {}
+        navigate('/auth/choice', { replace: true });
       }
     };
 
@@ -98,23 +101,21 @@ const IntroVideo = () => {
     video.addEventListener('ended', handleEnded);
     video.addEventListener('error', handleError);
 
-    // Force load the video
     video.load();
 
     return () => {
-      clearTimeout(softTimeout);
       clearTimeout(hardTimeout);
       video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('ended', handleEnded);
       video.removeEventListener('error', handleError);
     };
-  }, [navigate, nextPage, fallbackTriggered, videoLoaded]);
+  }, [navigate, fallbackTriggered, videoLoaded, isStandalone]);
 
   return (
     <>
-      {/* Full-screen background that covers status bar */}
+      {/* Gradient background while loading */}
       <div 
-        className="fixed bg-gradient-to-br from-[#1a0a4e] via-[#2d1b69] to-[#1a0a4e] z-40"
+        className="fixed bg-gradient-to-br from-primary via-primary-dark to-primary z-40"
         style={{
           left: 'calc(-1 * env(safe-area-inset-left, 0px))',
           right: 'calc(-1 * env(safe-area-inset-right, 0px))',
