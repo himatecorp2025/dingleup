@@ -126,12 +126,18 @@ serve(async (req) => {
     for (let poolOrder = 1; poolOrder <= TOTAL_POOLS; poolOrder++) {
       const poolQuestions: Question[] = [];
 
-      // CRITICAL: Get EXACTLY 10 questions from EACH topic (with wraparound)
+      // CRITICAL: Get EXACTLY 10 questions from EACH topic (skip if < 10 available)
       for (const topicId of topicIds) {
         const topicQuestions = questionsByTopic.get(topicId)!;
         const startIdx = topicPointers.get(topicId)!;
         
-        // Take EXACTLY QUESTIONS_PER_TOPIC_PER_POOL questions using modulo (wraparound)
+        // Skip this topic if it doesn't have at least 10 questions
+        if (topicQuestions.length < QUESTIONS_PER_TOPIC_PER_POOL) {
+          console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: SKIPPED (only ${topicQuestions.length} questions, need ${QUESTIONS_PER_TOPIC_PER_POOL})`);
+          continue;
+        }
+        
+        // Take EXACTLY 10 questions using modulo (wraparound)
         const questionsToAdd: Question[] = [];
         for (let i = 0; i < QUESTIONS_PER_TOPIC_PER_POOL; i++) {
           const idx = (startIdx + i) % topicQuestions.length;
