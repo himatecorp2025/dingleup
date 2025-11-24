@@ -106,7 +106,7 @@ export const QuestionTranslationManager = () => {
     try {
       setIsTranslating(true);
       setProgress(0);
-      setStatus('Hiányzó és csonka fordítások keresése...');
+      setStatus('Magyar forrásnyelv ellenőrzése...');
       setStats(null);
 
       // CRITICAL: Refresh session to ensure valid JWT token
@@ -120,8 +120,8 @@ export const QuestionTranslationManager = () => {
 
       console.log('[QuestionTranslationManager] Starting truncated translations scan and re-translation');
 
-      // Single invocation - scans ALL questions, finds missing/truncated translations, and translates
-      setStatus('Hiányzó és csonka fordítások fordítása...');
+      // Single invocation - translates from Hungarian to all target languages
+      setStatus('Fordítás magyarról célnyelvekre...');
       setProgress(10);
 
       const { data, error } = await supabase.functions.invoke('generate-question-translations', {
@@ -139,10 +139,10 @@ export const QuestionTranslationManager = () => {
 
       console.log('[QuestionTranslationManager] Translation response:', data);
 
-      if (data?.phase === 'scan' && data?.stats?.totalMissing === 0 && data?.stats?.truncatedDeleted === 0) {
+      if (data?.stats?.totalMissing === 0) {
         setProgress(100);
-        setStatus('Nincs hiányzó vagy csonka fordítás!');
-        toast.success('Minden kérdés fordítása teljes és rendben van!');
+        setStatus('Nincs hiányzó fordítás!');
+        toast.success('Minden kérdés fordítása teljes!');
         setStats({
           total: 0,
           success: 0,
@@ -158,18 +158,17 @@ export const QuestionTranslationManager = () => {
         const totalSuccess = data.stats.translated || 0;
         const totalErrors = data.stats.errors || 0;
         const totalMissing = data.stats.totalMissing || 0;
-        const truncatedDeleted = data.stats.truncatedDeleted || 0;
 
         setProgress(100);
         setStatus('Fordítás befejezve!');
         setStats({
-          total: totalMissing + truncatedDeleted,
+          total: totalMissing,
           success: totalSuccess,
           errors: totalErrors
         });
 
-        if (totalMissing > 0 || truncatedDeleted > 0) {
-          toast.success(`${totalMissing} hiányzó + ${truncatedDeleted} csonka fordítás kezelve! ${totalSuccess} sikeres.`);
+        if (totalMissing > 0) {
+          toast.success(`${totalMissing} fordítás kezelve! ${totalSuccess} sikeres, ${totalErrors} hiba.`);
         }
 
         if (totalErrors > 0) {
@@ -210,7 +209,7 @@ export const QuestionTranslationManager = () => {
       </div>
 
       <p className="text-sm text-white/60 mb-4">
-        AI-alapú automatikus fordítás generálása mind a 7 támogatott nyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
+        Magyar nyelvről történő AI-alapú automatikus fordítás mind a 7 célnyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
         A folyamat eltarthat néhány percig.
       </p>
 
@@ -310,7 +309,7 @@ export const QuestionTranslationManager = () => {
         ) : (
           <>
             <Languages className="w-4 h-4 mr-2" />
-            Hiányzó fordítások generálása mind a 7 nyelvre
+            Fordítás magyarról 7 célnyelvre
           </>
         )}
       </Button>
