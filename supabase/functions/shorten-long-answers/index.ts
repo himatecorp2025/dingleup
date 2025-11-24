@@ -21,57 +21,103 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
-    
-    const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
+  
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch ALL question_translations and filter in code
-    const { data: allTranslations, error: fetchError } = await supabase
-      .from('question_translations')
-      .select('id, question_id, lang, question_text, answer_a, answer_b, answer_c');
+  // SSE streaming for real-time progress
+  const stream = new ReadableStream({
+    async start(controller) {
+      const sendProgress = (data: any) => {
+        const message = `data: ${JSON.stringify(data)}\n\n`;
+        controller.enqueue(new TextEncoder().encode(message));
+      };
 
-    if (fetchError) {
-      throw new Error(`Fetch error: ${fetchError.message}`);
-    }
+      try {
 
-    // Filter for answers longer than 61 characters in TypeScript
-    const longAnswers = allTranslations?.filter((item: LongAnswer) => 
-      item.answer_a.length > 61 || 
-      item.answer_b.length > 61 || 
-      item.answer_c.length > 61
-    ) || [];
+        sendProgress({ type: 'start', message: 'Adatok betöltése...' });
 
-    console.log(`Found ${longAnswers.length} entries with long answers out of ${allTranslations?.length || 0} total`);
+        // Fetch ALL question_translations and filter in code
+        const { data: allTranslations, error: fetchError } = await supabase
+          .from('question_translations')
+          .select('id, question_id, lang, question_text, answer_a, answer_b, answer_c');
 
-    if (!longAnswers || longAnswers.length === 0) {
-      return new Response(
-        JSON.stringify({ success: true, message: 'No long answers to shorten', processed: 0 }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+        if (fetchError) {
+          throw new Error(`Fetch error: ${fetchError.message}`);
+        }
 
-    // Group by language for batch processing
-    const byLang: Record<string, LongAnswer[]> = {};
-    longAnswers.forEach((item: LongAnswer) => {
-      if (!byLang[item.lang]) byLang[item.lang] = [];
-      byLang[item.lang].push(item);
-    });
+        // Filter for answers longer than 61 characters in TypeScript
+        const longAnswers = allTranslations?.filter((item: LongAnswer) => 
+          item.answer_a.length > 61 || 
+          item.answer_b.length > 61 || 
+          item.answer_c.length > 61
+        ) || [];
 
-    let totalProcessed = 0;
-    let totalSuccess = 0;
-    let totalErrors = 0;
+        sendProgress({ 
+          type: 'loaded', 
+          message: `${longAnswers.length} hosszú válasz találva`,
+          total: longAnswers.length 
+        });
 
-    // Process each language separately
-    for (const [lang, items] of Object.entries(byLang)) {
-      console.log(`Processing ${items.length} entries for language: ${lang}`);
+        if (!longAnswers || longAnswers.length === 0) {
+          sendProgress({ type: 'complete', message: 'Nincs rövidítendő válasz', totalSuccess: 0 });
+          controller.close();
+          return;
+        }
 
-      // Process in batches of 20
-      const batchSize = 20;
-      for (let i = 0; i < items.length; i += batchSize) {
-        const batch = items.slice(i, i + batchSize);
+        // Group by language for batch processing
+        const byLang: Record<string, LongAnswer[]> = {};
+        longAnswers.forEach((item: LongAnswer) => {
+          if (!byLang[item.lang]) byLang[item.lang] = [];
+          byLang[item.lang].push(item);
+        });
+
+        const langNames: Record<string, string> = {
+          'hu': '🇭🇺 Magyar',
+          'en': '🇬🇧 Angol',
+          'de': '🇩🇪 Német',
+          'fr': '🇫🇷 Francia',
+          'es': '🇪🇸 Spanyol',
+          'it': '🇮🇹 Olasz',
+          'nl': '🇳🇱 Holland',
+          'pt': '🇵🇹 Portugál'
+        };
+
+        let totalProcessed = 0;
+        let totalSuccess = 0;
+        let totalErrors = 0;
+
+        // Process each language separately
+        for (const [lang, items] of Object.entries(byLang)) {
+          const langName = langNames[lang] || lang;
+          const totalBatches = Math.ceil(items.length / 20);
+          
+          sendProgress({ 
+            type: 'lang_start', 
+            lang,
+            langName,
+            message: `${langName}: 0/${totalBatches} batch`,
+            total: items.length,
+            processed: 0
+          });
+
+          // Process in batches of 20
+          const batchSize = 20;
+          for (let i = 0; i < items.length; i += batchSize) {
+            const batch = items.slice(i, i + batchSize);
+            const batchNum = Math.floor(i / batchSize) + 1;
+            
+            sendProgress({
+              type: 'batch_start',
+              lang,
+              langName,
+              message: `${langName}: ${batchNum}/${totalBatches} batch`,
+              batchNum,
+              totalBatches,
+              processed: i
+            });
         
         // Prepare prompt for AI
         const promptItems = batch.map((item, idx) => {
@@ -96,8 +142,8 @@ Return ONLY valid JSON array format:
 
         const userPrompt = `Shorten these answers to max 61 characters:\n\n${promptItems}`;
 
-        try {
-          const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+            try {
+              const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${lovableApiKey}`,
@@ -155,38 +201,73 @@ Return ONLY valid JSON array format:
             }
           }
 
-          totalProcessed += batch.length;
-          console.log(`Processed batch ${i}-${i + batch.length} for ${lang}`);
+              totalProcessed += batch.length;
+              
+              sendProgress({
+                type: 'batch_complete',
+                lang,
+                langName,
+                message: `${langName}: ${batchNum}/${totalBatches} batch kész`,
+                batchNum,
+                totalBatches,
+                processed: i + batch.length
+              });
 
-          // Small delay to avoid rate limits
-          await new Promise(resolve => setTimeout(resolve, 500));
+              // Small delay to avoid rate limits
+              await new Promise(resolve => setTimeout(resolve, 500));
 
-        } catch (error) {
-          console.error(`Error processing batch ${i} for ${lang}:`, error);
-          totalErrors += batch.length;
+            } catch (error) {
+              console.error(`Error processing batch ${i} for ${lang}:`, error);
+              totalErrors += batch.length;
+              
+              sendProgress({
+                type: 'batch_error',
+                lang,
+                langName,
+                message: `${langName}: Hiba a ${batchNum}. batch-nél`,
+                error: error instanceof Error ? error.message : 'Unknown error'
+              });
+            }
+          }
+          
+          sendProgress({
+            type: 'lang_complete',
+            lang,
+            langName,
+            message: `${langName}: Kész (${items.length} válasz)`,
+            total: items.length,
+            processed: items.length
+          });
         }
+
+        sendProgress({
+          type: 'complete',
+          message: `Összes rövidítés kész!`,
+          totalProcessed,
+          totalSuccess,
+          totalErrors
+        });
+
+        controller.close();
+
+      } catch (error) {
+        console.error('Fatal error:', error);
+        sendProgress({
+          type: 'error',
+          message: 'Hiba történt',
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+        controller.close();
       }
     }
+  });
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        totalProcessed,
-        totalSuccess,
-        totalErrors,
-        message: `Shortened ${totalSuccess} answers successfully`
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-
-  } catch (error) {
-    console.error('Fatal error:', error);
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  }
+  return new Response(stream, {
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    }
+  });
 });
