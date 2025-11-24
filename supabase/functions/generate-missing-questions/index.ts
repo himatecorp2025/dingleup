@@ -3,7 +3,6 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 
 const corsHeaders = getCorsHeaders();
 const TARGET_QUESTIONS_PER_TOPIC = 150;
-const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'nl', 'pt'];
 const MAX_QUESTION_LENGTH = 120;
 const MAX_ANSWER_LENGTH = 50;
 
@@ -115,8 +114,8 @@ Deno.serve(async (req) => {
       success: true,
       topics_processed: 0,
       questions_generated: 0,
-      questions_translated: 0,
-      errors: [] as string[]
+      errors: [] as string[],
+      message: ''
     };
 
     // Generate questions for each topic
@@ -156,14 +155,17 @@ Példa jó válasz: "1756" - 4 karakter
 
 FONTOS: NE használj hosszú kérdéseket vagy válaszokat!`;
 
-          const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+          if (!lovableApiKey) throw new Error('LOVABLE_API_KEY not configured');
+
+          const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+              'Authorization': `Bearer ${lovableApiKey}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'gpt-4o-mini',
+              model: 'google/gemini-2.5-flash',
               messages: [
                 {
                   role: 'system',
@@ -233,55 +235,6 @@ FONTOS: NE használj hosszú kérdéseket vagy válaszokat!`;
               results.errors.push(`Insert failed for ${topicInfo.name}: ${insertError.message}`);
             } else {
               results.questions_generated++;
-
-              // Translate immediately
-              for (const lang of TARGET_LANGUAGES) {
-                try {
-                  const translatePrompt = `Fordítsd le ${lang} nyelvre. FONTOS: Kérdés max ${MAX_QUESTION_LENGTH}, válaszok max ${MAX_ANSWER_LENGTH} karakter!
-
-Kérdés: ${q.question}
-Válaszok: ${q.answers.join(', ')}
-
-JSON: {"question": "...", "answers": ["...", "...", "..."]}`;
-
-                  const translateResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                      'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      model: 'gpt-4o-mini',
-                      messages: [
-                        { role: 'system', content: 'Te fordító vagy. Tömör, rövid fordításokat készítesz.' },
-                        { role: 'user', content: translatePrompt }
-                      ],
-                      temperature: 0.3,
-                      response_format: { type: 'json_object' }
-                    })
-                  });
-
-                  if (translateResponse.ok) {
-                    const translateData = await translateResponse.json();
-                    const translation = JSON.parse(translateData.choices[0].message.content);
-
-                    await supabaseAdmin
-                      .from('question_translations')
-                      .insert({
-                        question_id: questionId,
-                        lang: lang,
-                        question_text: translation.question.substring(0, MAX_QUESTION_LENGTH),
-                        answer_a: translation.answers[0].substring(0, MAX_ANSWER_LENGTH),
-                        answer_b: translation.answers[1].substring(0, MAX_ANSWER_LENGTH),
-                        answer_c: translation.answers[2].substring(0, MAX_ANSWER_LENGTH)
-                      });
-
-                    results.questions_translated++;
-                  }
-                } catch (translateError) {
-                  console.error(`Translation error for ${lang}:`, translateError);
-                }
-              }
             }
           }
 
@@ -295,6 +248,11 @@ JSON: {"question": "...", "answers": ["...", "...", "..."]}`;
         results.errors.push(`Topic ${topicInfo.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
+
+    // Add translation instruction message
+    results.message = results.questions_generated > 0 
+      ? `${results.questions_generated} kérdés generálva. Most futtasd az auto-translate-all funkciót a fordításokhoz.`
+      : 'Nincs hiányzó kérdés.';
 
     return new Response(
       JSON.stringify(results),
