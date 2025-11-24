@@ -6,9 +6,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const TOTAL_POOLS = 40;
+// CRITICAL: 50 GLOBAL POOLS (not per topic)
+const TOTAL_POOLS = 50;
 const MIN_QUESTIONS_PER_POOL = 15;
-const TARGET_QUESTIONS_PER_POOL = 500;
+const QUESTIONS_PER_TOPIC_PER_POOL = 10; // Each pool gets max 10 questions from each topic
 
 interface Question {
   id: string;
@@ -105,9 +106,7 @@ serve(async (req) => {
       }
     });
 
-    // Calculate how many questions per topic per pool (equal distribution)
-    const questionsPerTopicPerPool = Math.floor(TARGET_QUESTIONS_PER_POOL / topicIds.length);
-    console.log(`Target: ${questionsPerTopicPerPool} questions per topic per pool`);
+    console.log(`[regenerate-pools] Creating ${TOTAL_POOLS} global pools with ${QUESTIONS_PER_TOPIC_PER_POOL} questions per topic per pool`);
 
     // Delete ALL existing pools
     const { error: deleteError } = await supabase
@@ -119,7 +118,7 @@ serve(async (req) => {
       console.error('Error deleting old pools:', deleteError);
     }
 
-    // Create 40 pools with equal topic distribution
+    // Create 50 GLOBAL pools with equal topic distribution
     const pools = [];
     const topicPointers = new Map<number, number>(); // Track position in each topic
     topicIds.forEach(id => topicPointers.set(id, 0));
@@ -127,22 +126,28 @@ serve(async (req) => {
     for (let poolOrder = 1; poolOrder <= TOTAL_POOLS; poolOrder++) {
       const poolQuestions: Question[] = [];
 
-      // Get equal amount from each topic
+      // CRITICAL: Get QUESTIONS_PER_TOPIC_PER_POOL (10) questions from EACH topic
       for (const topicId of topicIds) {
         const topicQuestions = questionsByTopic.get(topicId)!;
         const startIdx = topicPointers.get(topicId)!;
         
-        // Take questionsPerTopicPerPool from this topic
-        const endIdx = Math.min(startIdx + questionsPerTopicPerPool, topicQuestions.length);
+        // Take up to QUESTIONS_PER_TOPIC_PER_POOL questions from this topic
+        const endIdx = Math.min(startIdx + QUESTIONS_PER_TOPIC_PER_POOL, topicQuestions.length);
         const questionsToAdd = topicQuestions.slice(startIdx, endIdx);
         
         poolQuestions.push(...questionsToAdd);
-        topicPointers.set(topicId, endIdx);
-
+        
+        // Update pointer
+        let newPointer = endIdx;
+        
         // If we've used all questions from this topic, wrap around
-        if (endIdx >= topicQuestions.length) {
-          topicPointers.set(topicId, 0);
+        if (newPointer >= topicQuestions.length) {
+          newPointer = 0;
         }
+        
+        topicPointers.set(topicId, newPointer);
+        
+        console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: added ${questionsToAdd.length} questions (pointer now at ${newPointer})`);
       }
 
       // Shuffle the pool so topics are mixed (not grouped)
@@ -157,13 +162,13 @@ serve(async (req) => {
           questions: poolQuestions,
           version: 1,
         });
-        console.log(`Pool ${poolOrder}: ${poolQuestions.length} questions (${topicIds.length} topics mixed)`);
+        console.log(`[regenerate-pools] ✓ Pool ${poolOrder}: ${poolQuestions.length} questions (${topicIds.length} topics mixed)`);
       } else {
-        console.log(`Pool ${poolOrder} skipped (only ${poolQuestions.length} questions, minimum is ${MIN_QUESTIONS_PER_POOL})`);
+        console.log(`[regenerate-pools] ✗ Pool ${poolOrder} skipped (only ${poolQuestions.length} questions, minimum is ${MIN_QUESTIONS_PER_POOL})`);
       }
     }
 
-    console.log(`Created ${pools.length} pools with EQUAL TOPIC DISTRIBUTION`);
+    console.log(`[regenerate-pools] Created ${pools.length} pools with EQUAL TOPIC DISTRIBUTION (${QUESTIONS_PER_TOPIC_PER_POOL} per topic per pool)`);
 
     // Insert all pools
     const { data: insertedPools, error: insertError } = await supabase
@@ -181,15 +186,16 @@ serve(async (req) => {
         total_questions: questions.length,
         pools_created: pools.length,
         topics_count: topicIds.length,
-        questions_per_topic_per_pool: questionsPerTopicPerPool,
+        questions_per_topic_per_pool: QUESTIONS_PER_TOPIC_PER_POOL,
+        expected_questions_per_pool: topicIds.length * QUESTIONS_PER_TOPIC_PER_POOL,
         pools: insertedPools,
-        note: 'Global pools with EQUAL TOPIC DISTRIBUTION created',
+        note: `50 GLOBAL pools created with ${QUESTIONS_PER_TOPIC_PER_POOL} questions per topic per pool (currently ${topicIds.length} topics = ~${topicIds.length * QUESTIONS_PER_TOPIC_PER_POOL} questions/pool)`,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Error regenerating pools:', error);
+    console.error('[regenerate-pools] Error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }

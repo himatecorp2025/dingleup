@@ -60,13 +60,27 @@ serve(async (req) => {
     console.log(`[start-game-session] User ${user.id} starting game`);
 
     // =====================================================
-    // CRITICAL: USE POOL SYSTEM FOR QUESTION LOADING
+    // CRITICAL: USE GLOBAL POOL SYSTEM FOR QUESTION LOADING
     // =====================================================
-    // Call the get-game-questions function to use pool rotation
+    
+    // Get user's last pool order
+    const { data: poolSession } = await supabaseClient
+      .from('game_session_pools')
+      .select('last_pool_order')
+      .eq('user_id', user.id)
+      .single();
+
+    const lastPoolOrder = poolSession?.last_pool_order || null;
+    
+    console.log(`[start-game-session] User ${user.id} last pool: ${lastPoolOrder}`);
+
+    // Call the get-game-questions function to use global pool rotation
     const { data: questionsData, error: questionsError } = await supabaseClient.functions.invoke(
       'get-game-questions',
       {
-        body: {},
+        body: {
+          last_pool_order: lastPoolOrder,
+        },
       }
     );
 
@@ -89,6 +103,21 @@ serve(async (req) => {
     }
 
     console.log(`[start-game-session] Got ${poolQuestions.length} questions from pool ${used_pool_order || 'fallback'}`);
+
+    // Update user's pool session (if not fallback)
+    if (used_pool_order !== null) {
+      await supabaseClient
+        .from('game_session_pools')
+        .upsert({
+          user_id: user.id,
+          last_pool_order: used_pool_order,
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'user_id',
+        });
+      
+      console.log(`[start-game-session] Updated user pool session: pool ${used_pool_order}`);
+    }
 
     // Questions are already properly formatted from pool
     const clientQuestions = poolQuestions.slice(0, 15);

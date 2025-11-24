@@ -61,7 +61,9 @@ export default function AdminQuestionPools() {
 
       if (error) throw error;
 
-      toast.success(`${data.pools_created} pool sikeresen létrehozva (vegyes témák)`);
+      toast.success(`✓ ${data.pools_created} medence létrehozva!`, {
+        description: `${data.topics_count} témakör, ${data.questions_per_topic_per_pool} kérdés/témakör/medence`,
+      });
       await loadPoolStats();
     } catch (error) {
       console.error('Error regenerating pools:', error);
