@@ -87,7 +87,7 @@ export default function AdminQuestionPools() {
           <div>
             <h1 className="text-3xl font-bold">Question Pools (Vegyes Témák)</h1>
             <p className="text-muted-foreground mt-1">
-              40 pool összesen × ~500 vegyes kérdés/pool = rotációs rendszer
+              50 pool összesen × 270 kérdés/pool (27 témakör × 10 kérdés) → cél: 500 kérdés (50 témakör)
             </p>
           </div>
           <Button 
@@ -107,7 +107,7 @@ export default function AdminQuestionPools() {
               Globális Pool Rendszer
             </CardTitle>
             <CardDescription>
-              40 pool vegyes témákkal. Rotáció: 1→2→3→...→40→1 (minden játékos más poolból kap)
+              50 pool vegyes témákkal. Rotáció: 1→2→3→...→50→1 (minden játékos más poolból kap)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -183,10 +183,11 @@ export default function AdminQuestionPools() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <p>✅ 40 pool ÖSSZESEN (nem témakörönként!)</p>
-            <p>✅ Minden pool vegyes témájú kérdéseket tartalmaz (~500 db)</p>
-            <p>✅ Egy kérdés csak egy poolban szerepel → garantált változatosság</p>
-            <p>✅ Pool-rotáció: 1→2→3→...→40→1 (soha nem ugyanaz kétszer egymás után)</p>
+            <p>✅ 50 pool ÖSSZESEN (nem témakörönként!)</p>
+            <p>✅ Minden pool minden témakörből pontosan 10 kérdést tartalmaz</p>
+            <p>✅ Jelenleg: 27 témakör × 10 kérdés = 270 kérdés/pool</p>
+            <p>✅ Cél: 50 témakör × 10 kérdés = 500 kérdés/pool</p>
+            <p>✅ Pool-rotáció: 1→2→3→...→50→1 (soha nem ugyanaz kétszer egymás után)</p>
             <p>✅ Poolok memóriában cache-eltek → 25.000 egyidejű játékos támogatás</p>
             <p>✅ Kis poolok (&lt;15 kérdés) automatikusan átugrásra kerülnek</p>
             <p>✅ Új kérdések hozzáadása után újragenerálással frissíthetők</p>
