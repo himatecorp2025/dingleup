@@ -67,10 +67,11 @@ serve(async (req) => {
       );
     }
 
-    // Get ALL questions grouped by topic
+    // Get ALL questions grouped by topic (NO LIMIT)
     const { data: questions, error: questionsError } = await supabase
       .from('questions')
-      .select('*');
+      .select('*')
+      .limit(10000); // Explicit high limit to get ALL questions
 
     if (questionsError) {
       throw new Error(`Failed to fetch questions: ${questionsError.message}`);
