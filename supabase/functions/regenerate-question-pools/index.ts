@@ -6,9 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const POOLS_PER_TOPIC = 40;
+const TOTAL_POOLS = 40;
 const MIN_QUESTIONS_PER_POOL = 15;
-const TARGET_QUESTIONS_PER_POOL = 500;
 
 interface Question {
   id: string;
@@ -66,13 +65,10 @@ serve(async (req) => {
       );
     }
 
-    const { topic_id } = await req.json();
-
-    // Get all questions for this topic
+    // Get ALL questions from ALL topics (mixed)
     const { data: questions, error: questionsError } = await supabase
       .from('questions')
-      .select('*')
-      .eq('topic_id', topic_id);
+      .select('*');
 
     if (questionsError) {
       throw new Error(`Failed to fetch questions: ${questionsError.message}`);
@@ -80,42 +76,42 @@ serve(async (req) => {
 
     if (!questions || questions.length === 0) {
       return new Response(
-        JSON.stringify({ error: 'No questions found for this topic' }),
+        JSON.stringify({ error: 'No questions found in database' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
-    console.log(`Regenerating pools for topic ${topic_id}, found ${questions.length} questions`);
+    console.log(`Regenerating GLOBAL pools: ${questions.length} total questions (mixed topics)`);
 
-    // Shuffle questions using Fisher-Yates algorithm
+    // Shuffle ALL questions using Fisher-Yates algorithm (MIXED TOPICS)
     const shuffled = [...questions];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
-    // Calculate pool distribution
+    // Calculate pool distribution (~500 questions/pool)
     const totalQuestions = shuffled.length;
-    const questionsPerPool = Math.floor(totalQuestions / POOLS_PER_TOPIC);
-    const remainder = totalQuestions % POOLS_PER_TOPIC;
+    const questionsPerPool = Math.floor(totalQuestions / TOTAL_POOLS);
+    const remainder = totalQuestions % TOTAL_POOLS;
 
-    console.log(`Distributing ${totalQuestions} questions into ${POOLS_PER_TOPIC} pools (~${questionsPerPool} per pool)`);
+    console.log(`Distributing ${totalQuestions} questions into ${TOTAL_POOLS} pools (~${questionsPerPool} per pool)`);
 
-    // Delete existing pools for this topic
+    // Delete ALL existing pools
     const { error: deleteError } = await supabase
       .from('question_pools')
       .delete()
-      .eq('topic_id', topic_id);
+      .neq('pool_order', 0); // Delete all
 
     if (deleteError) {
       console.error('Error deleting old pools:', deleteError);
     }
 
-    // Create new pools
+    // Create 40 new GLOBAL pools with mixed topics
     const pools = [];
     let currentIndex = 0;
 
-    for (let poolOrder = 1; poolOrder <= POOLS_PER_TOPIC; poolOrder++) {
+    for (let poolOrder = 1; poolOrder <= TOTAL_POOLS; poolOrder++) {
       // Calculate questions for this pool
       let poolSize = questionsPerPool;
       if (poolOrder <= remainder) {
@@ -127,7 +123,6 @@ serve(async (req) => {
 
       if (poolQuestions.length >= MIN_QUESTIONS_PER_POOL) {
         pools.push({
-          topic_id,
           pool_order: poolOrder,
           questions: poolQuestions,
           version: 1,
@@ -137,7 +132,7 @@ serve(async (req) => {
       }
     }
 
-    console.log(`Created ${pools.length} usable pools`);
+    console.log(`Created ${pools.length} usable pools (MIXED TOPICS)`);
 
     // Insert all pools
     const { data: insertedPools, error: insertError } = await supabase
@@ -152,10 +147,10 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        topic_id,
         total_questions: totalQuestions,
         pools_created: pools.length,
         pools: insertedPools,
+        note: 'GLOBAL pools with MIXED topics created (not topic-specific)',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
