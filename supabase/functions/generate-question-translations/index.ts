@@ -151,7 +151,7 @@ serve(async (req) => {
             total: missingItems.length
           });
 
-          const BATCH_SIZE = 10;
+          const BATCH_SIZE = 20;
           const totalBatches = Math.ceil(missingItems.length / BATCH_SIZE);
           
           for (let i = 0; i < missingItems.length; i += BATCH_SIZE) {
@@ -328,7 +328,8 @@ ${batchTexts}`;
               });
             }
 
-            await new Promise(resolve => setTimeout(resolve, 300));
+            // Rate limit protection: 500ms delay between batches
+            await new Promise(resolve => setTimeout(resolve, 500));
           }
 
           sendProgress({ 

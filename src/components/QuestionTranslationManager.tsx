@@ -120,7 +120,7 @@ export const QuestionTranslationManager = () => {
 
       console.log('[QuestionTranslationManager] Starting Hungarian to target languages translation');
 
-      // Streaming translation with progress updates
+      // Streaming translation with progress updates (no timeout for long batches)
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-question-translations`,
         {
@@ -129,6 +129,7 @@ export const QuestionTranslationManager = () => {
             'Authorization': `Bearer ${session.access_token}`,
             'Content-Type': 'application/json',
           },
+          // No timeout - allow function to run as long as needed for 4500 questions
         }
       );
 
@@ -170,7 +171,9 @@ export const QuestionTranslationManager = () => {
                 setProgress(15);
               } else if (data.type === 'batch_complete') {
                 setStatus(data.message);
-                const progressPercent = 15 + (data.processed / data.total) * 70;
+                // Calculate progress across all languages: 15% start + 70% translation + 15% completion
+                const languageProgress = data.processed / data.total;
+                const progressPercent = 15 + (languageProgress * 70);
                 setProgress(Math.round(progressPercent));
               } else if (data.type === 'complete') {
                 setProgress(100);
@@ -237,7 +240,7 @@ export const QuestionTranslationManager = () => {
 
       <p className="text-sm text-white/60 mb-4">
         Magyar nyelvről történő AI-alapú automatikus fordítás mind a 7 célnyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
-        A folyamat eltarthat néhány percig.
+        A folyamat a teljes kérdésbázist (~4500 kérdés × 7 nyelv) dolgozza fel batch-ekben. Várható időtartam: 15-30 perc.
       </p>
 
       {/* Initial Statistics Display */}
