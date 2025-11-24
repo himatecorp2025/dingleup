@@ -26,13 +26,22 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    console.log('[generate-question-translations] Starting Hungarian to target languages translation');
-    
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      const sendProgress = (data: any) => {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+      };
+
+      try {
+        console.log('[generate-question-translations] Starting Hungarian to target languages translation');
+        
+        const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+        const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+        const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+        sendProgress({ type: 'start', message: 'Magyar forrásnyelv betöltése...' });
 
     // ========================================================================
     // STEP 1: GET ALL HUNGARIAN SOURCE TRANSLATIONS
@@ -49,12 +58,18 @@ serve(async (req) => {
       throw new Error('Failed to fetch Hungarian sources');
     }
 
-    console.log(`[generate-question-translations] Found ${hungarianSources.length} Hungarian sources`);
+        console.log(`[generate-question-translations] Found ${hungarianSources.length} Hungarian sources`);
+        sendProgress({ 
+          type: 'progress', 
+          message: `${hungarianSources.length} magyar kérdés betöltve`,
+          total: hungarianSources.length 
+        });
 
-    // ========================================================================
-    // STEP 2: CHECK EXISTING TARGET LANGUAGE TRANSLATIONS
-    // ========================================================================
-    console.log('[generate-question-translations] Checking existing translations...');
+        // ========================================================================
+        // STEP 2: CHECK EXISTING TARGET LANGUAGE TRANSLATIONS
+        // ========================================================================
+        console.log('[generate-question-translations] Checking existing translations...');
+        sendProgress({ type: 'progress', message: 'Meglévő fordítások ellenőrzése...' });
     
     const { data: existingTranslations } = await supabase
       .from('question_translations')
@@ -91,52 +106,82 @@ serve(async (req) => {
       }
     }
 
-    const totalMissing = Object.values(missingByLanguage).reduce((sum, arr) => sum + arr.length, 0);
-    console.log(`[generate-question-translations] Total missing translations: ${totalMissing}`);
-    for (const lang of TARGET_LANGUAGES) {
-      console.log(`  - ${LANGUAGE_NAMES[lang]}: ${missingByLanguage[lang].length} missing`);
-    }
+        const totalMissing = Object.values(missingByLanguage).reduce((sum, arr) => sum + arr.length, 0);
+        console.log(`[generate-question-translations] Total missing translations: ${totalMissing}`);
+        
+        sendProgress({ 
+          type: 'progress', 
+          message: `${totalMissing} hiányzó fordítás azonosítva`,
+          totalMissing 
+        });
 
-    if (totalMissing === 0) {
-      return new Response(
-        JSON.stringify({ 
-          success: true,
-          message: 'Minden fordítás teljes - nincs hiányzó fordítás!',
-          stats: { totalMissing: 0, translated: 0, errors: 0 }
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-      );
-    }
+        for (const lang of TARGET_LANGUAGES) {
+          console.log(`  - ${LANGUAGE_NAMES[lang]}: ${missingByLanguage[lang].length} missing`);
+        }
 
-    // ========================================================================
-    // STEP 4: TRANSLATE FROM HUNGARIAN TO TARGET LANGUAGES
-    // ========================================================================
-    let successCount = 0;
-    let errorCount = 0;
-    const errorSamples: string[] = [];
+        if (totalMissing === 0) {
+          sendProgress({ 
+            type: 'complete', 
+            message: 'Minden fordítás teljes!',
+            totalMissing: 0,
+            totalSuccess: 0,
+            totalErrors: 0
+          });
+          controller.close();
+          return;
+        }
 
-    for (const lang of TARGET_LANGUAGES) {
-      const missingItems = missingByLanguage[lang];
-      
-      if (missingItems.length === 0) {
-        console.log(`[generate-question-translations] ${LANGUAGE_NAMES[lang]}: no missing translations`);
-        continue;
-      }
+        // ========================================================================
+        // STEP 4: TRANSLATE FROM HUNGARIAN TO TARGET LANGUAGES
+        // ========================================================================
+        let successCount = 0;
+        let errorCount = 0;
+        const errorSamples: string[] = [];
 
-      console.log(`[generate-question-translations] Translating to ${LANGUAGE_NAMES[lang]} (${missingItems.length} questions)`);
+        for (const lang of TARGET_LANGUAGES) {
+          const missingItems = missingByLanguage[lang];
+          
+          if (missingItems.length === 0) {
+            console.log(`[generate-question-translations] ${LANGUAGE_NAMES[lang]}: no missing translations`);
+            continue;
+          }
 
-      const BATCH_SIZE = 10;
-      for (let i = 0; i < missingItems.length; i += BATCH_SIZE) {
-        const batch = missingItems.slice(i, i + BATCH_SIZE);
+          console.log(`[generate-question-translations] Translating to ${LANGUAGE_NAMES[lang]} (${missingItems.length} questions)`);
+          
+          sendProgress({ 
+            type: 'language_start', 
+            message: `${LANGUAGE_NAMES[lang]} fordítása (${missingItems.length} kérdés)`,
+            lang,
+            langName: LANGUAGE_NAMES[lang],
+            total: missingItems.length
+          });
 
-        const batchTexts = batch.map((item, idx) => {
+          const BATCH_SIZE = 10;
+          const totalBatches = Math.ceil(missingItems.length / BATCH_SIZE);
+          
+          for (let i = 0; i < missingItems.length; i += BATCH_SIZE) {
+            const batch = missingItems.slice(i, i + BATCH_SIZE);
+            const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+
+            sendProgress({ 
+              type: 'batch_start', 
+              message: `${LANGUAGE_NAMES[lang]}: batch ${batchNum}/${totalBatches}`,
+              lang,
+              langName: LANGUAGE_NAMES[lang],
+              batchNum,
+              totalBatches,
+              processed: i,
+              total: missingItems.length
+            });
+
+            const batchTexts = batch.map((item, idx) => {
           return `${idx + 1}. Question: "${item.hu_text}"
    Answer A: "${item.hu_a}"
    Answer B: "${item.hu_b}"
    Answer C: "${item.hu_c}"`;
-        }).join('\n\n');
+            }).join('\n\n');
 
-        const systemPrompt = `You are a professional translator from Hungarian to ${LANGUAGE_NAMES[lang]}.
+            const systemPrompt = `You are a professional translator from Hungarian to ${LANGUAGE_NAMES[lang]}.
 
 CRITICAL RULES:
 1. Translate naturally and idiomatically for ${LANGUAGE_NAMES[lang]}-speaking users
@@ -152,12 +197,12 @@ RESPONSE FORMAT (return ONLY this format):
 
 NO markdown, NO explanations, ONLY the numbered format.`;
 
-        const userPrompt = `Translate these ${batch.length} Hungarian quiz questions to ${LANGUAGE_NAMES[lang]}:
+            const userPrompt = `Translate these ${batch.length} Hungarian quiz questions to ${LANGUAGE_NAMES[lang]}:
 
 ${batchTexts}`;
 
-        try {
-          const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+            try {
+              const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${LOVABLE_API_KEY}`,
@@ -172,138 +217,148 @@ ${batchTexts}`;
               temperature: 0.3,
               max_tokens: 4000
             })
-          });
-
-          if (!aiResponse.ok) {
-            const errorText = await aiResponse.text();
-            console.error(`[generate-question-translations] AI error for ${lang}:`, aiResponse.status, errorText);
-
-            if (aiResponse.status === 402) {
-              throw new Error('PAYMENT_REQUIRED: Lovable AI credits exhausted');
-            }
-            if (aiResponse.status === 429) {
-              throw new Error('RATE_LIMIT: AI API rate limit hit');
-            }
-
-            errorCount += batch.length;
-            if (errorSamples.length < 3) {
-              errorSamples.push(`AI error ${aiResponse.status} for ${lang}`);
-            }
-            continue;
-          }
-
-          const aiData = await aiResponse.json();
-          const translatedText = aiData.choices?.[0]?.message?.content?.trim() || '';
-          
-          if (!translatedText) {
-            errorCount += batch.length;
-            continue;
-          }
-
-          const questionBlocks = translatedText.split(/\n\n+/);
-          
-          for (let j = 0; j < batch.length; j++) {
-            const item = batch[j];
-            
-            const blockPattern = new RegExp(`^${j + 1}\\.\\s*Question:`, 'i');
-            const matchingBlock = questionBlocks.find((block: string) => blockPattern.test(block.trim()));
-
-            if (!matchingBlock) {
-              console.error(`[generate-question-translations] No translation found for question ${j + 1}`);
-              errorCount++;
-              continue;
-            }
-
-            const questionMatch = matchingBlock.match(/Question:\s*["']?([^"\n]+)["']?/i);
-            const answerAMatch = matchingBlock.match(/A:\s*["']?([^"\n]+)["']?/i);
-            const answerBMatch = matchingBlock.match(/B:\s*["']?([^"\n]+)["']?/i);
-            const answerCMatch = matchingBlock.match(/C:\s*["']?([^"\n]+)["']?/i);
-
-            if (!questionMatch || !answerAMatch || !answerBMatch || !answerCMatch) {
-              console.error(`[generate-question-translations] Incomplete translation for question ${j + 1}`);
-              errorCount++;
-              continue;
-            }
-
-            const translatedQuestion = questionMatch[1].trim();
-            const translatedA = answerAMatch[1].trim();
-            const translatedB = answerBMatch[1].trim();
-            const translatedC = answerCMatch[1].trim();
-
-            const { error: insertError } = await supabase
-              .from('question_translations')
-              .insert({
-                question_id: item.question_id,
-                lang,
-                question_text: translatedQuestion,
-                answer_a: translatedA,
-                answer_b: translatedB,
-                answer_c: translatedC,
               });
 
-            if (insertError) {
-              console.error(`[generate-question-translations] Insert error for ${item.question_id} (${lang}):`, insertError);
-              errorCount++;
-              if (errorSamples.length < 3) {
-                errorSamples.push(`Insert error: ${insertError.message}`);
+              if (!aiResponse.ok) {
+                const errorText = await aiResponse.text();
+                console.error(`[generate-question-translations] AI error for ${lang}:`, aiResponse.status, errorText);
+
+                if (aiResponse.status === 402) {
+                  sendProgress({ type: 'error', message: 'AI kreditekfogytak - töltsd fel!' });
+                  throw new Error('PAYMENT_REQUIRED: Lovable AI credits exhausted');
+                }
+                if (aiResponse.status === 429) {
+                  sendProgress({ type: 'error', message: 'Rate limit - várj egy kicsit!' });
+                  throw new Error('RATE_LIMIT: AI API rate limit hit');
+                }
+
+                errorCount += batch.length;
+                if (errorSamples.length < 3) {
+                  errorSamples.push(`AI error ${aiResponse.status} for ${lang}`);
+                }
+                continue;
               }
-            } else {
-              successCount++;
+
+              const aiData = await aiResponse.json();
+              const translatedText = aiData.choices?.[0]?.message?.content?.trim() || '';
+              
+              if (!translatedText) {
+                errorCount += batch.length;
+                continue;
+              }
+
+              const questionBlocks = translatedText.split(/\n\n+/);
+              
+              for (let j = 0; j < batch.length; j++) {
+                const item = batch[j];
+                
+                const blockPattern = new RegExp(`^${j + 1}\\.\\s*Question:`, 'i');
+                const matchingBlock = questionBlocks.find((block: string) => blockPattern.test(block.trim()));
+
+                if (!matchingBlock) {
+                  console.error(`[generate-question-translations] No translation found for question ${j + 1}`);
+                  errorCount++;
+                  continue;
+                }
+
+                const questionMatch = matchingBlock.match(/Question:\s*["']?([^"\n]+)["']?/i);
+                const answerAMatch = matchingBlock.match(/A:\s*["']?([^"\n]+)["']?/i);
+                const answerBMatch = matchingBlock.match(/B:\s*["']?([^"\n]+)["']?/i);
+                const answerCMatch = matchingBlock.match(/C:\s*["']?([^"\n]+)["']?/i);
+
+                if (!questionMatch || !answerAMatch || !answerBMatch || !answerCMatch) {
+                  console.error(`[generate-question-translations] Incomplete translation for question ${j + 1}`);
+                  errorCount++;
+                  continue;
+                }
+
+                const translatedQuestion = questionMatch[1].trim();
+                const translatedA = answerAMatch[1].trim();
+                const translatedB = answerBMatch[1].trim();
+                const translatedC = answerCMatch[1].trim();
+
+                const { error: insertError } = await supabase
+                  .from('question_translations')
+                  .insert({
+                    question_id: item.question_id,
+                    lang,
+                    question_text: translatedQuestion,
+                    answer_a: translatedA,
+                    answer_b: translatedB,
+                    answer_c: translatedC,
+                  });
+
+                if (insertError) {
+                  console.error(`[generate-question-translations] Insert error for ${item.question_id} (${lang}):`, insertError);
+                  errorCount++;
+                  if (errorSamples.length < 3) {
+                    errorSamples.push(`Insert error: ${insertError.message}`);
+                  }
+                } else {
+                  successCount++;
+                }
+              }
+
+              sendProgress({ 
+                type: 'batch_complete', 
+                message: `${LANGUAGE_NAMES[lang]}: batch ${batchNum}/${totalBatches} kész`,
+                lang,
+                langName: LANGUAGE_NAMES[lang],
+                batchNum,
+                totalBatches,
+                processed: Math.min(i + BATCH_SIZE, missingItems.length),
+                total: missingItems.length
+              });
+
+              console.log(`[generate-question-translations] Batch ${batchNum}/${totalBatches} for ${lang} complete`);
+
+            } catch (translateError) {
+              console.error(`[generate-question-translations] Translation error for ${lang}:`, translateError);
+              errorCount += batch.length;
+              if (errorSamples.length < 3) {
+                errorSamples.push(`Error: ${translateError instanceof Error ? translateError.message : 'Unknown'}`);
+              }
+              sendProgress({ 
+                type: 'error', 
+                message: `Hiba: ${translateError instanceof Error ? translateError.message : 'Ismeretlen hiba'}`
+              });
             }
+
+            await new Promise(resolve => setTimeout(resolve, 200));
           }
 
-          console.log(`[generate-question-translations] Batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(missingItems.length / BATCH_SIZE)} for ${lang} complete`);
-
-        } catch (translateError) {
-          console.error(`[generate-question-translations] Translation error for ${lang}:`, translateError);
-          errorCount += batch.length;
-          if (errorSamples.length < 3) {
-            errorSamples.push(`Error: ${translateError instanceof Error ? translateError.message : 'Unknown'}`);
-          }
+          console.log(`[generate-question-translations] Completed ${LANGUAGE_NAMES[lang]}`);
         }
 
-        await new Promise(resolve => setTimeout(resolve, 200));
-      }
+        console.log(`[generate-question-translations] Translation complete - ${successCount} success, ${errorCount} errors`);
 
-      console.log(`[generate-question-translations] Completed ${LANGUAGE_NAMES[lang]}`);
-    }
-
-    console.log(`[generate-question-translations] Translation complete - ${successCount} success, ${errorCount} errors`);
-
-    return new Response(
-      JSON.stringify({ 
-        success: true,
-        message: `${totalMissing} fordítás kezelve: ${successCount} sikeres, ${errorCount} hiba`,
-        stats: {
+        sendProgress({ 
+          type: 'complete', 
+          message: `Fordítás kész! ${successCount} sikeres, ${errorCount} hiba`,
           totalMissing,
-          translated: successCount,
-          errors: errorCount,
-          byLanguage: Object.fromEntries(
-            TARGET_LANGUAGES.map(lang => [lang, {
-              missing: missingByLanguage[lang].length,
-              name: LANGUAGE_NAMES[lang]
-            }])
-          )
-        },
-        errorSamples: errorSamples.length > 0 ? errorSamples : undefined
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
-        status: 200 
-      }
-    );
+          totalSuccess: successCount,
+          totalErrors: errorCount
+        });
 
-  } catch (error) {
-    console.error('[generate-question-translations] Fatal error:', error);
-    return new Response(
-      JSON.stringify({ 
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown fatal error'
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
-        status: 500 
+        controller.close();
+
+      } catch (error) {
+        console.error('[generate-question-translations] Fatal error:', error);
+        sendProgress({ 
+          type: 'error', 
+          message: error instanceof Error ? error.message : 'Ismeretlen hiba'
+        });
+        controller.close();
       }
-    );
-  }
+    }
+  });
+
+  return new Response(stream, {
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    },
+  });
 });

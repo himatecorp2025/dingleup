@@ -118,66 +118,93 @@ export const QuestionTranslationManager = () => {
         return;
       }
 
-      console.log('[QuestionTranslationManager] Starting truncated translations scan and re-translation');
+      console.log('[QuestionTranslationManager] Starting Hungarian to target languages translation');
 
-      // Single invocation - translates from Hungarian to all target languages
-      setStatus('Fordítás magyarról célnyelvekre...');
-      setProgress(10);
+      // Streaming translation with progress updates
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-question-translations`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-      const { data, error } = await supabase.functions.invoke('generate-question-translations', {
-        body: {}, // No parameters needed - scans entire table
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      });
-
-      if (error) {
-        console.error('[QuestionTranslationManager] Translation error:', error);
-        toast.error('Hiba történt a fordítás közben');
-        setStatus('Hiba történt');
-        setIsTranslating(false);
-        return;
+      if (!response.ok || !response.body) {
+        throw new Error('Streaming hiba');
       }
 
-      console.log('[QuestionTranslationManager] Translation response:', data);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = '';
 
-      if (data?.stats?.totalMissing === 0) {
-        setProgress(100);
-        setStatus('Nincs hiányzó fordítás!');
-        toast.success('Minden kérdés fordítása teljes!');
-        setStats({
-          total: 0,
-          success: 0,
-          errors: 0
-        });
-        setIsTranslating(false);
-        return;
-      }
+      let totalMissing = 0;
+      let totalSuccess = 0;
+      let totalErrors = 0;
 
-      setProgress(50);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      if (data?.stats) {
-        const totalSuccess = data.stats.translated || 0;
-        const totalErrors = data.stats.errors || 0;
-        const totalMissing = data.stats.totalMissing || 0;
+        textBuffer += decoder.decode(value, { stream: true });
+        const lines = textBuffer.split('\n');
 
-        setProgress(100);
-        setStatus('Fordítás befejezve!');
-        setStats({
-          total: totalMissing,
-          success: totalSuccess,
-          errors: totalErrors
-        });
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.type === 'start') {
+                setStatus(data.message);
+                setProgress(5);
+              } else if (data.type === 'progress') {
+                setStatus(data.message);
+                if (data.totalMissing) {
+                  totalMissing = data.totalMissing;
+                  setProgress(10);
+                }
+              } else if (data.type === 'language_start') {
+                setStatus(data.message);
+                setProgress(15);
+              } else if (data.type === 'batch_complete') {
+                setStatus(data.message);
+                const progressPercent = 15 + (data.processed / data.total) * 70;
+                setProgress(Math.round(progressPercent));
+              } else if (data.type === 'complete') {
+                setProgress(100);
+                setStatus(data.message);
+                totalSuccess = data.totalSuccess || 0;
+                totalErrors = data.totalErrors || 0;
+                totalMissing = data.totalMissing || 0;
 
-        if (totalMissing > 0) {
-          toast.success(`${totalMissing} fordítás kezelve! ${totalSuccess} sikeres, ${totalErrors} hiba.`);
+                setStats({
+                  total: totalMissing,
+                  success: totalSuccess,
+                  errors: totalErrors
+                });
+
+                if (totalMissing > 0) {
+                  toast.success(`${totalMissing} fordítás kezelve! ${totalSuccess} sikeres, ${totalErrors} hiba.`);
+                } else {
+                  toast.success('Minden fordítás teljes!');
+                }
+
+                if (totalErrors > 0) {
+                  toast.warning(`${totalErrors} hiba történt a fordítás során.`);
+                }
+              } else if (data.type === 'error') {
+                toast.error(data.message);
+                setStatus(`Hiba: ${data.message}`);
+              }
+            } catch (e) {
+              console.error('Parse error:', e);
+            }
+          }
         }
 
-        if (totalErrors > 0) {
-          toast.warning(`${totalErrors} hiba történt a fordítás során.`);
-        }
-      } else {
-        setProgress(100);
-        setStatus('Ismeretlen eredmény');
-        toast.warning('A fordítás eredménye nem ismert');
+        textBuffer = lines[lines.length - 1];
       }
 
     } catch (error) {
