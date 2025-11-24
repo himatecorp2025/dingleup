@@ -220,13 +220,17 @@ ${batchTexts}`;
                 console.error(`[generate-question-translations] AI error for ${lang}:`, aiResponse.status, errorText);
 
                 if (aiResponse.status === 402) {
-                  sendProgress({ type: 'error', message: 'AI kredit elfogyott - töltsd fel!' });
+                  const errorMsg = 'AI kredit elfogyott - töltsd fel a Lovable workspace-t!';
+                  console.error(`[generate-question-translations] ${errorMsg}`);
+                  sendProgress({ type: 'error', message: errorMsg });
                   controller.close();
                   return;
                 }
                 if (aiResponse.status === 429) {
-                  sendProgress({ type: 'error', message: 'Rate limit - várj egy kicsit!' });
-                  await new Promise(resolve => setTimeout(resolve, 5000));
+                  const errorMsg = `Rate limit elérve ${lang} nyelven - 10 másodperc várakozás...`;
+                  console.warn(`[generate-question-translations] ${errorMsg}`);
+                  sendProgress({ type: 'error', message: errorMsg });
+                  await new Promise(resolve => setTimeout(resolve, 10000)); // Increased to 10s for rate limit
                   continue;
                 }
 
