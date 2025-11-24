@@ -135,3 +135,6 @@ verify_jwt = true
 [functions.translate-landing-page]
 verify_jwt = false
 
+[functions.shorten-long-answers]
+verify_jwt = true
+
