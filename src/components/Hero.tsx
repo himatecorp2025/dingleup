@@ -114,12 +114,12 @@ const Hero = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 animate-fade-in px-4" style={{ animationDelay: '0.6s' }}>
             <Button
-              onClick={() => navigate('/intro-video')}
+              onClick={() => navigate('/game-rules')}
               size="lg"
               className="w-full sm:w-auto bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800 text-white font-black text-base xs:text-lg sm:text-xl md:text-2xl px-6 xs:px-8 sm:px-12 py-5 xs:py-6 sm:py-7 rounded-full shadow-[0_0_30px_rgba(34,197,94,0.5)] hover:shadow-[0_0_50px_rgba(34,197,94,0.8)] border-2 border-green-400 transform hover:scale-105 transition-all duration-300 truncate"
             >
               <Play className="mr-2 h-5 w-5 xs:h-6 xs:w-6 sm:h-7 sm:w-7 flex-shrink-0" />
-              <span className="truncate">{t('landing.hero.cta_start_game')}</span>
+              <span className="truncate">{t('landing.hero.cta_learn_rules')}</span>
             </Button>
             
             <Button
