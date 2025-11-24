@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -43,20 +43,20 @@ serve(async (req) => {
 
         sendProgress({ type: 'start', message: 'Magyar forrásnyelv betöltése...' });
 
-    // ========================================================================
-    // STEP 1: GET ALL HUNGARIAN SOURCE TRANSLATIONS
-    // ========================================================================
-    console.log('[generate-question-translations] Fetching Hungarian source translations...');
-    
-    const { data: hungarianSources, error: hunError } = await supabase
-      .from('question_translations')
-      .select('question_id, question_text, answer_a, answer_b, answer_c')
-      .eq('lang', 'hu');
+        // ========================================================================
+        // STEP 1: GET ALL HUNGARIAN SOURCE TRANSLATIONS
+        // ========================================================================
+        const { data: hungarianSources, error: hunError } = await supabase
+          .from('question_translations')
+          .select('question_id, question_text, answer_a, answer_b, answer_c')
+          .eq('lang', 'hu');
 
-    if (hunError || !hungarianSources) {
-      console.error('[generate-question-translations] Error fetching Hungarian sources:', hunError);
-      throw new Error('Failed to fetch Hungarian sources');
-    }
+        if (hunError || !hungarianSources) {
+          console.error('[generate-question-translations] Error fetching Hungarian sources:', hunError);
+          sendProgress({ type: 'error', message: 'Hiba a magyar kérdések betöltésénél' });
+          controller.close();
+          return;
+        }
 
         console.log(`[generate-question-translations] Found ${hungarianSources.length} Hungarian sources`);
         sendProgress({ 
@@ -68,43 +68,42 @@ serve(async (req) => {
         // ========================================================================
         // STEP 2: CHECK EXISTING TARGET LANGUAGE TRANSLATIONS
         // ========================================================================
-        console.log('[generate-question-translations] Checking existing translations...');
         sendProgress({ type: 'progress', message: 'Meglévő fordítások ellenőrzése...' });
-    
-    const { data: existingTranslations } = await supabase
-      .from('question_translations')
-      .select('question_id, lang')
-      .in('lang', TARGET_LANGUAGES);
+        
+        const { data: existingTranslations } = await supabase
+          .from('question_translations')
+          .select('question_id, lang')
+          .in('lang', TARGET_LANGUAGES);
 
-    const existingMap = new Set<string>();
-    if (existingTranslations) {
-      for (const t of existingTranslations) {
-        existingMap.add(`${t.question_id}|${t.lang}`);
-      }
-    }
-
-    // ========================================================================
-    // STEP 3: IDENTIFY MISSING TRANSLATIONS
-    // ========================================================================
-    const missingByLanguage: Record<string, Array<{question_id: string, hu_text: string, hu_a: string, hu_b: string, hu_c: string}>> = {};
-    for (const lang of TARGET_LANGUAGES) {
-      missingByLanguage[lang] = [];
-    }
-
-    for (const huSource of hungarianSources) {
-      for (const lang of TARGET_LANGUAGES) {
-        const key = `${huSource.question_id}|${lang}`;
-        if (!existingMap.has(key)) {
-          missingByLanguage[lang].push({
-            question_id: huSource.question_id,
-            hu_text: huSource.question_text,
-            hu_a: huSource.answer_a,
-            hu_b: huSource.answer_b,
-            hu_c: huSource.answer_c
-          });
+        const existingMap = new Set<string>();
+        if (existingTranslations) {
+          for (const t of existingTranslations) {
+            existingMap.add(`${t.question_id}|${t.lang}`);
+          }
         }
-      }
-    }
+
+        // ========================================================================
+        // STEP 3: IDENTIFY MISSING TRANSLATIONS
+        // ========================================================================
+        const missingByLanguage: Record<string, Array<{question_id: string, hu_text: string, hu_a: string, hu_b: string, hu_c: string}>> = {};
+        for (const lang of TARGET_LANGUAGES) {
+          missingByLanguage[lang] = [];
+        }
+
+        for (const huSource of hungarianSources) {
+          for (const lang of TARGET_LANGUAGES) {
+            const key = `${huSource.question_id}|${lang}`;
+            if (!existingMap.has(key)) {
+              missingByLanguage[lang].push({
+                question_id: huSource.question_id,
+                hu_text: huSource.question_text,
+                hu_a: huSource.answer_a,
+                hu_b: huSource.answer_b,
+                hu_c: huSource.answer_c
+              });
+            }
+          }
+        }
 
         const totalMissing = Object.values(missingByLanguage).reduce((sum, arr) => sum + arr.length, 0);
         console.log(`[generate-question-translations] Total missing translations: ${totalMissing}`);
@@ -114,10 +113,6 @@ serve(async (req) => {
           message: `${totalMissing} hiányzó fordítás azonosítva`,
           totalMissing 
         });
-
-        for (const lang of TARGET_LANGUAGES) {
-          console.log(`  - ${LANGUAGE_NAMES[lang]}: ${missingByLanguage[lang].length} missing`);
-        }
 
         if (totalMissing === 0) {
           sendProgress({ 
@@ -175,7 +170,7 @@ serve(async (req) => {
             });
 
             const batchTexts = batch.map((item, idx) => {
-          return `${idx + 1}. Question: "${item.hu_text}"
+              return `${idx + 1}. Question: "${item.hu_text}"
    Answer A: "${item.hu_a}"
    Answer B: "${item.hu_b}"
    Answer C: "${item.hu_c}"`;
@@ -188,6 +183,7 @@ CRITICAL RULES:
 2. Maintain quiz question formatting and clarity
 3. Keep answer order exactly as provided (A/B/C positions unchanged)
 4. Use native-speaker fluency
+5. Keep translations concise - questions max 75 chars, answers max 50 chars when possible
 
 RESPONSE FORMAT (return ONLY this format):
 1. Question: "translated question"
@@ -203,20 +199,20 @@ ${batchTexts}`;
 
             try {
               const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              model: 'google/gemini-2.5-flash',
-              messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: userPrompt }
-              ],
-              temperature: 0.3,
-              max_tokens: 4000
-            })
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  model: 'google/gemini-2.5-flash',
+                  messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt }
+                  ],
+                  temperature: 0.3,
+                  max_tokens: 4000
+                })
               });
 
               if (!aiResponse.ok) {
@@ -224,12 +220,14 @@ ${batchTexts}`;
                 console.error(`[generate-question-translations] AI error for ${lang}:`, aiResponse.status, errorText);
 
                 if (aiResponse.status === 402) {
-                  sendProgress({ type: 'error', message: 'AI kreditekfogytak - töltsd fel!' });
-                  throw new Error('PAYMENT_REQUIRED: Lovable AI credits exhausted');
+                  sendProgress({ type: 'error', message: 'AI kredit elfogyott - töltsd fel!' });
+                  controller.close();
+                  return;
                 }
                 if (aiResponse.status === 429) {
                   sendProgress({ type: 'error', message: 'Rate limit - várj egy kicsit!' });
-                  throw new Error('RATE_LIMIT: AI API rate limit hit');
+                  await new Promise(resolve => setTimeout(resolve, 5000));
+                  continue;
                 }
 
                 errorCount += batch.length;
@@ -244,6 +242,7 @@ ${batchTexts}`;
               
               if (!translatedText) {
                 errorCount += batch.length;
+                console.error(`[generate-question-translations] Empty AI response for ${lang}`);
                 continue;
               }
 
@@ -277,15 +276,19 @@ ${batchTexts}`;
                 const translatedB = answerBMatch[1].trim();
                 const translatedC = answerCMatch[1].trim();
 
+                // CRITICAL: Use upsert to handle duplicates gracefully
                 const { error: insertError } = await supabase
                   .from('question_translations')
-                  .insert({
+                  .upsert({
                     question_id: item.question_id,
                     lang,
                     question_text: translatedQuestion,
                     answer_a: translatedA,
                     answer_b: translatedB,
                     answer_c: translatedC,
+                  }, {
+                    onConflict: 'question_id,lang',
+                    ignoreDuplicates: false
                   });
 
                 if (insertError) {
@@ -296,6 +299,7 @@ ${batchTexts}`;
                   }
                 } else {
                   successCount++;
+                  console.log(`[generate-question-translations] ✓ Question ${item.question_id} translated to ${lang}`);
                 }
               }
 
@@ -310,7 +314,7 @@ ${batchTexts}`;
                 total: missingItems.length
               });
 
-              console.log(`[generate-question-translations] Batch ${batchNum}/${totalBatches} for ${lang} complete`);
+              console.log(`[generate-question-translations] Completed batch ${batchNum}/${totalBatches} for ${lang}`);
 
             } catch (translateError) {
               console.error(`[generate-question-translations] Translation error for ${lang}:`, translateError);
@@ -324,8 +328,14 @@ ${batchTexts}`;
               });
             }
 
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 300));
           }
+
+          sendProgress({ 
+            type: 'language_complete', 
+            message: `${LANGUAGE_NAMES[lang]} kész`,
+            lang
+          });
 
           console.log(`[generate-question-translations] Completed ${LANGUAGE_NAMES[lang]}`);
         }
@@ -346,7 +356,7 @@ ${batchTexts}`;
         console.error('[generate-question-translations] Fatal error:', error);
         sendProgress({ 
           type: 'error', 
-          message: error instanceof Error ? error.message : 'Ismeretlen hiba'
+          message: error instanceof Error ? error.message : 'Ismeretlen hiba történt'
         });
         controller.close();
       }
