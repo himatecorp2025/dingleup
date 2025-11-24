@@ -138,3 +138,12 @@ verify_jwt = false
 [functions.shorten-long-answers]
 verify_jwt = true
 
+[functions.generate-missing-questions]
+verify_jwt = true
+
+[functions.regenerate-question-pools]
+verify_jwt = true
+
+[functions.get-game-questions]
+verify_jwt = true
+
