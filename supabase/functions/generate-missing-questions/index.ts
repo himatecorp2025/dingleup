@@ -233,12 +233,15 @@ FONTOS: NE használj hosszú kérdéseket vagy válaszokat!`;
             if (insertError) {
               console.error(`Insert error:`, insertError);
               results.errors.push(`Insert failed for ${topicInfo.name}: ${insertError.message}`);
-            } else {
-              results.questions_generated++;
-              
-              // CRITICAL: Immediately translate the question to all languages
-              console.log(`[generate-missing] Translating question ${questionId} to all languages...`);
-              
+              continue; // Skip translation if question insert failed
+            }
+            
+            results.questions_generated++;
+            
+            // CRITICAL: Immediately translate the question to all languages
+            console.log(`[generate-missing] Translating question ${questionId} to all languages...`);
+            
+            try {
               // Prepare translation batch prompt
               const translationPrompt = `Translate this Hungarian quiz question and answers to these languages: English, German, French, Spanish, Italian, Portuguese, Dutch.
 
@@ -305,7 +308,11 @@ RULES: Max ${MAX_QUESTION_LENGTH} chars for question, max ${MAX_ANSWER_LENGTH} c
                   answer_b: q.answers[1],
                   answer_c: q.answers[2]
                 });
+              } else {
+                console.error(`Translation failed for ${questionId}`);
               }
+            } catch (transError) {
+              console.error(`Translation error for ${questionId}:`, transError);
             }
           }
 
