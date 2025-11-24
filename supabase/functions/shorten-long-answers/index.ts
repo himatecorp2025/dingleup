@@ -28,17 +28,23 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch all answers longer than 61 characters
-    const { data: longAnswers, error: fetchError } = await supabase
+    // Fetch ALL question_translations and filter in code
+    const { data: allTranslations, error: fetchError } = await supabase
       .from('question_translations')
-      .select('id, question_id, lang, question_text, answer_a, answer_b, answer_c')
-      .or('length(answer_a).gt.61,length(answer_b).gt.61,length(answer_c).gt.61');
+      .select('id, question_id, lang, question_text, answer_a, answer_b, answer_c');
 
     if (fetchError) {
       throw new Error(`Fetch error: ${fetchError.message}`);
     }
 
-    console.log(`Found ${longAnswers?.length || 0} entries with long answers`);
+    // Filter for answers longer than 61 characters in TypeScript
+    const longAnswers = allTranslations?.filter((item: LongAnswer) => 
+      item.answer_a.length > 61 || 
+      item.answer_b.length > 61 || 
+      item.answer_c.length > 61
+    ) || [];
+
+    console.log(`Found ${longAnswers.length} entries with long answers out of ${allTranslations?.length || 0} total`);
 
     if (!longAnswers || longAnswers.length === 0) {
       return new Response(
