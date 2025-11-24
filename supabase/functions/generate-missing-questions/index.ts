@@ -235,11 +235,82 @@ FONTOS: NE használj hosszú kérdéseket vagy válaszokat!`;
               results.errors.push(`Insert failed for ${topicInfo.name}: ${insertError.message}`);
             } else {
               results.questions_generated++;
+              
+              // CRITICAL: Immediately translate the question to all languages
+              console.log(`[generate-missing] Translating question ${questionId} to all languages...`);
+              
+              // Prepare translation batch prompt
+              const translationPrompt = `Translate this Hungarian quiz question and answers to these languages: English, German, French, Spanish, Italian, Portuguese, Dutch.
+
+Question: "${q.question}"
+Answer A: "${q.answers[0]}"
+Answer B: "${q.answers[1]}"
+Answer C: "${q.answers[2]}"
+
+Return JSON format ONLY:
+{
+  "en": { "question": "...", "answers": ["...", "...", "..."] },
+  "de": { "question": "...", "answers": ["...", "...", "..."] },
+  "fr": { "question": "...", "answers": ["...", "...", "..."] },
+  "es": { "question": "...", "answers": ["...", "...", "..."] },
+  "it": { "question": "...", "answers": ["...", "...", "..."] },
+  "pt": { "question": "...", "answers": ["...", "...", "..."] },
+  "nl": { "question": "...", "answers": ["...", "...", "..."] }
+}
+
+RULES: Max ${MAX_QUESTION_LENGTH} chars for question, max ${MAX_ANSWER_LENGTH} chars per answer.`;
+
+              const transResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${lovableApiKey}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  model: 'google/gemini-2.5-flash',
+                  messages: [
+                    { role: 'system', content: 'You are a professional translator. Return only valid JSON.' },
+                    { role: 'user', content: translationPrompt }
+                  ],
+                  temperature: 0.3,
+                  response_format: { type: 'json_object' }
+                })
+              });
+
+              if (transResponse.ok) {
+                const transData = await transResponse.json();
+                const translations = JSON.parse(transData.choices[0].message.content);
+                
+                // Insert translations for all languages
+                const langs = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
+                for (const lang of langs) {
+                  if (translations[lang]) {
+                    await supabaseAdmin.from('question_translations').insert({
+                      question_id: questionId,
+                      lang: lang,
+                      question_text: translations[lang].question,
+                      answer_a: translations[lang].answers[0],
+                      answer_b: translations[lang].answers[1],
+                      answer_c: translations[lang].answers[2]
+                    });
+                  }
+                }
+                
+                // Also insert Hungarian source
+                await supabaseAdmin.from('question_translations').insert({
+                  question_id: questionId,
+                  lang: 'hu',
+                  question_text: q.question,
+                  answer_a: q.answers[0],
+                  answer_b: q.answers[1],
+                  answer_c: q.answers[2]
+                });
+              }
             }
           }
 
           // Rate limiting
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 1500));
         }
 
         results.topics_processed++;
@@ -249,9 +320,8 @@ FONTOS: NE használj hosszú kérdéseket vagy válaszokat!`;
       }
     }
 
-    // Add translation instruction message
     results.message = results.questions_generated > 0 
-      ? `${results.questions_generated} kérdés generálva. Most futtasd az auto-translate-all funkciót a fordításokhoz.`
+      ? `${results.questions_generated} kérdés generálva és lefordítva minden nyelvre!`
       : 'Nincs hiányzó kérdés.';
 
     return new Response(

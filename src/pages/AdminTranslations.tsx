@@ -31,29 +31,17 @@ const AdminTranslations = () => {
   const handleGenerateMissingQuestions = async () => {
     setIsGeneratingQuestions(true);
     try {
-      // Step 1: Generate questions
-      toast.info('1/2 - Kérdések generálása...', {
-        description: 'Ez több percig is eltarthat.'
+      toast.info('Kérdések generálása és fordítása...', {
+        description: 'Ez több percig is eltarthat. Minden kérdés azonnal lefordításra kerül 7 nyelvre.'
       });
 
       const { data: genData, error: genError } = await supabase.functions.invoke('generate-missing-questions');
 
       if (genError) throw genError;
 
-      toast.success(`1/2 - ${genData.questions_generated} kérdés generálva`);
-
       if (genData.questions_generated > 0) {
-        // Step 2: Translate all questions
-        toast.info('2/2 - Fordítások készítése...', {
-          description: 'Minden új kérdés lefordítása 7 nyelvre.'
-        });
-        
-        const { data: transData, error: transError } = await supabase.functions.invoke('auto-translate-all');
-
-        if (transError) throw transError;
-
         toast.success('Kész! Kérdések generálva és lefordítva', {
-          description: `${genData.questions_generated} új kérdés + ${transData.translated || 0} fordítás`
+          description: `${genData.questions_generated} új kérdés létrehozva és lefordítva minden nyelvre`
         });
       } else {
         toast.info('Nincs hiányzó kérdés', {
