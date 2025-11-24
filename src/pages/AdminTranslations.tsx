@@ -31,24 +31,45 @@ const AdminTranslations = () => {
   const handleGenerateMissingQuestions = async () => {
     setIsGeneratingQuestions(true);
     try {
-      toast.info('Kérdések generálása elkezdődött...', {
-        description: 'Ez több percig is eltarthat. Kérlek várj türelemmel.'
+      // Step 1: Generate questions
+      toast.info('1/2 - Kérdések generálása...', {
+        description: 'Ez több percig is eltarthat.'
       });
 
-      const { data, error } = await supabase.functions.invoke('generate-missing-questions');
+      const { data: genData, error: genError } = await supabase.functions.invoke('generate-missing-questions');
 
-      if (error) throw error;
+      if (genError) throw genError;
 
-      toast.success('Kérdések sikeresen generálva!', {
-        description: `${data.questions_generated} kérdés létrehozva, ${data.questions_translated} fordítás készült`
-      });
+      toast.success(`1/2 - ${genData.questions_generated} kérdés generálva`);
 
-      if (data.errors?.length > 0) {
-        console.warn('Errors during generation:', data.errors);
+      if (genData.questions_generated > 0) {
+        // Step 2: Translate all questions
+        toast.info('2/2 - Fordítások készítése...', {
+          description: 'Minden új kérdés lefordítása 7 nyelvre.'
+        });
+        
+        const { data: transData, error: transError } = await supabase.functions.invoke('auto-translate-all');
+
+        if (transError) throw transError;
+
+        toast.success('Kész! Kérdések generálva és lefordítva', {
+          description: `${genData.questions_generated} új kérdés + ${transData.translated || 0} fordítás`
+        });
+      } else {
+        toast.info('Nincs hiányzó kérdés', {
+          description: 'Minden témakörben elérte a célszámot (150 kérdés/téma)'
+        });
+      }
+
+      if (genData.errors?.length > 0) {
+        console.warn('Errors during generation:', genData.errors);
+        toast.warning(`${genData.errors.length} figyelmeztetés`, {
+          description: 'Nézd meg a konzolt a részletekért'
+        });
       }
     } catch (error) {
       console.error('Question generation error:', error);
-      toast.error('Hiba történt a kérdések generálása során', {
+      toast.error('Hiba történt', {
         description: error instanceof Error ? error.message : 'Ismeretlen hiba'
       });
     } finally {
