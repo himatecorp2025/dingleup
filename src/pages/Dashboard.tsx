@@ -423,10 +423,10 @@ if (!profile) {
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             {/* Left: Greeting */}
-            <div className="flex items-center gap-3 h-12 sm:h-16 md:h-20">
-              <h1 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400">
+            <div className="flex items-center gap-2 xs:gap-3 h-10 xs:h-12 sm:h-16 md:h-20 flex-1 min-w-0">
+              <h1 className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 truncate">
                 {t('dashboard.welcome')}, {profile.username}!
               </h1>
             </div>

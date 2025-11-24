@@ -203,10 +203,10 @@ const RegisterNew = () => {
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)]">
+          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] break-words hyphens-auto px-2">
             {t('auth.register.title')}
           </h1>
-          <p className="text-center text-white/70 mb-6 text-sm font-medium">
+          <p className="text-center text-white/70 mb-6 text-xs xs:text-sm sm:text-base font-medium break-words px-4">
             {t('auth.register.subtitle')}
           </p>
 
@@ -291,7 +291,7 @@ const RegisterNew = () => {
             </Button>
           </form>
 
-          <p className="text-center text-white/60 mt-6 text-sm">
+          <p className="text-center text-white/60 mt-6 text-xs xs:text-sm break-words px-2">
             {t('auth.register.alreadyHaveAccount')}{' '}
             <button
               onClick={() => navigate('/auth/login')}
