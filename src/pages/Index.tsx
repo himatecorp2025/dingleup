@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
@@ -9,12 +9,12 @@ import Footer from "@/components/Footer";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Index = () => {
-  const navigate = useNavigate();
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(() => {
     // Immediate check on first render
     return window.innerWidth <= 1024;
   });
   const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Check device type
@@ -33,13 +33,26 @@ const Index = () => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUserId(session?.user?.id ?? null);
+      setLoading(false);
     });
   }, []);
 
-  // Desktop: show landing page normally
-  // Mobile/tablet: AppRouteGuard handles redirect, but we still need to render something briefly
-  // to avoid flash of empty content before redirect completes
+  // Mobile/tablet: redirect immediately, don't show landing page
+  if (isMobileOrTablet && !loading) {
+    const introShown = sessionStorage.getItem('introShown');
+    
+    if (!introShown) {
+      return <Navigate to="/intro" replace />;
+    }
+    
+    if (userId) {
+      return <Navigate to="/dashboard" replace />;
+    }
+    
+    return <Navigate to="/auth/choice" replace />;
+  }
 
+  // Desktop/laptop: show landing page
   return (
     <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] overflow-x-hidden overflow-y-auto">
       {/* Full-screen deep purple/blue background extending behind status bar */}
