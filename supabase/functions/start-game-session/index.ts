@@ -126,8 +126,9 @@ serve(async (req) => {
             .limit(300) // Fetch 300 questions for better variety and reduced repetition
     ]);
 
-    const userLang = profileResult.data?.preferred_language || 'en';
-    console.log(`[start-game-session] User ${user.id} language: ${userLang}`);
+    // CRITICAL: Always prioritize English for better user experience
+    const userLang = 'en'; // Force English for all users by default
+    console.log(`[start-game-session] User ${user.id} - forcing English language for questions`);
     
     if (!baseQuestions) {
       if (questionsResult.error || !questionsResult.data || questionsResult.data.length === 0) {
@@ -193,15 +194,15 @@ serve(async (req) => {
     translationsEn = enResult.data || [];
     translationsHu = huResult.data || [];
 
-    // Build translation map with fallback
+    // Build translation map - ALWAYS use English translations
     const translationMap = new Map();
     
-    // Priority 3: hu (fallback)
-    translationsHu?.forEach(t => translationMap.set(t.question_id, t));
-    // Priority 2: en (fallback)
+    // Priority 1: English (always preferred)
     translationsEn?.forEach(t => translationMap.set(t.question_id, t));
-    // Priority 1: user's preferred language
+    // Priority 2: User's preferred language (if set explicitly in future)
     translationsPreferred?.forEach(t => translationMap.set(t.question_id, t));
+    // Priority 3: Hungarian (last resort fallback)
+    translationsHu?.forEach(t => translationMap.set(t.question_id, t));
 
     // Build final questions list with translations
     const questions = [];
