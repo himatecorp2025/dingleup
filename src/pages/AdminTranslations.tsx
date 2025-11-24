@@ -26,41 +26,6 @@ const AdminTranslations = () => {
   const [isShortening, setIsShortening] = useState(false);
   const [progress, setProgress] = useState<ProgressState | null>(null);
   const [langProgress, setLangProgress] = useState<Record<string, { processed: number; total: number }>>({});
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const handleGenerateQuestions = async () => {
-    setIsGenerating(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-
-      toast.loading('Hiányzó kérdések generálása folyamatban...');
-
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-missing-questions`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      const result = await response.json();
-
-      if (result.error) {
-        throw new Error(result.error);
-      }
-
-      toast.success(`Sikeresen generálva ${result.generated} kérdés ${result.topics} témakörben!`);
-    } catch (error) {
-      console.error('Error generating questions:', error);
-      toast.error('Hiba történt a kérdések generálása során');
-    } finally {
-      setIsGenerating(false);
-    }
-  };
 
   const handleShortenAnswers = async () => {
     setIsShortening(true);
@@ -161,27 +126,6 @@ const AdminTranslations = () => {
           </TabsContent>
 
           <TabsContent value="questions" className="mt-6 space-y-6">
-            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-white mb-4">Hiányzó kérdések generálása</h3>
-              <p className="text-white/80 mb-4">
-                Magyar nyelvű kérdések generálása AI-val minden témakörben 100-ra kiegészítve (max 75 kar kérdés, max 50 kar válaszok)
-              </p>
-              <Button
-                onClick={handleGenerateQuestions}
-                disabled={isGenerating}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generálás folyamatban...
-                  </>
-                ) : (
-                  'Hiányzó kérdések generálása'
-                )}
-              </Button>
-            </div>
-
             <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
               <QuestionTranslationManager />
             </div>
