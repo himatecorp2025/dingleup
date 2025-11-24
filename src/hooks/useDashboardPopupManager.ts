@@ -22,6 +22,7 @@ interface PopupManagerParams {
   canMountModals: boolean;
   needsAgeVerification: boolean;
   userId: string | undefined;
+  profileLoading: boolean;
 }
 
 export const useDashboardPopupManager = (params: PopupManagerParams) => {
@@ -29,6 +30,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     canMountModals,
     needsAgeVerification,
     userId,
+    profileLoading,
   } = params;
 
   // Integrate popup hooks internally (eliminates external duplication)
@@ -45,15 +47,18 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   });
 
   // Priority 1: Age Gate (ABSOLUTE BLOCKING GATE)
+  // CRITICAL FIX: Only show if profile loaded AND verification needed
   useEffect(() => {
-    if (userId && !popupState.ageGateCompleted) {
+    if (profileLoading || !userId) return;
+    
+    if (!popupState.ageGateCompleted) {
       setPopupState(prev => ({
         ...prev,
         showAgeGate: needsAgeVerification,
         ageGateCompleted: !needsAgeVerification,
       }));
     }
-  }, [userId, needsAgeVerification, popupState.ageGateCompleted]);
+  }, [userId, needsAgeVerification, popupState.ageGateCompleted, profileLoading]);
 
   // Priority 2: Welcome Bonus (after age gate completed)
   useEffect(() => {
