@@ -48,29 +48,29 @@ const AuthChoice = () => {
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)]">
+          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] break-words hyphens-auto px-2">
             {t('auth.choice.title')}
           </h1>
-          <p className="text-center text-white/70 mb-8 text-sm font-medium">
+          <p className="text-center text-white/70 mb-8 text-xs xs:text-sm sm:text-base font-medium break-words px-4">
             {t('auth.choice.subtitle')}
           </p>
 
           <div className="space-y-4">
             <Button
               onClick={() => navigate('/auth/register')}
-              className="w-full h-14 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300 text-lg"
+              className="w-full h-12 xs:h-14 sm:h-16 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300 text-sm xs:text-base sm:text-lg truncate"
             >
-              <UserPlus className="w-6 h-6 mr-2" />
-              {t('auth.choice.no_account')}
+              <UserPlus className="w-5 h-5 xs:w-6 xs:h-6 mr-2 flex-shrink-0" />
+              <span className="truncate">{t('auth.choice.no_account')}</span>
             </Button>
 
             <Button
               onClick={() => navigate('/auth/login')}
               variant="outline"
-              className="w-full h-14 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300 text-lg"
+              className="w-full h-12 xs:h-14 sm:h-16 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-300 text-sm xs:text-base sm:text-lg truncate"
             >
-              <LogIn className="w-6 h-6 mr-2" />
-              {t('auth.choice.have_account')}
+              <LogIn className="w-5 h-5 xs:w-6 xs:h-6 mr-2 flex-shrink-0" />
+              <span className="truncate">{t('auth.choice.have_account')}</span>
             </Button>
           </div>
 
