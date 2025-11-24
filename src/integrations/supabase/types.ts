@@ -1154,6 +1154,30 @@ export type Database = {
           },
         ]
       }
+      game_session_pools: {
+        Row: {
+          id: string
+          last_pool_order: number
+          topic_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          last_pool_order: number
+          topic_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          last_pool_order?: number
+          topic_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       game_sessions: {
         Row: {
           category: string
@@ -2062,6 +2086,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      question_pools: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          pool_order: number
+          question_count: number | null
+          questions: Json
+          topic_id: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          pool_order: number
+          question_count?: number | null
+          questions?: Json
+          topic_id: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          pool_order?: number
+          question_count?: number | null
+          questions?: Json
+          topic_id?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: []
       }
       question_seen_history: {
         Row: {
