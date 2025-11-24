@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { Loader2, Database } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 interface ProgressState {
   type: string;
@@ -104,7 +104,7 @@ const AdminTranslations = () => {
         </div>
 
         <Tabs defaultValue="ui" className="w-full">
-          <TabsList className="grid w-full max-w-3xl grid-cols-3 bg-white/5 border border-white/10">
+          <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/5 border border-white/10">
             <TabsTrigger 
               value="ui"
               className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600/30 data-[state=active]:to-blue-600/30 data-[state=active]:text-white"
@@ -116,12 +116,6 @@ const AdminTranslations = () => {
               className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600/30 data-[state=active]:to-blue-600/30 data-[state=active]:text-white"
             >
               Kérdés Fordítások
-            </TabsTrigger>
-            <TabsTrigger 
-              value="question-pools"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600/30 data-[state=active]:to-blue-600/30 data-[state=active]:text-white"
-            >
-              Kérdés Poolok
             </TabsTrigger>
           </TabsList>
 
@@ -139,7 +133,7 @@ const AdminTranslations = () => {
             <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
               <h3 className="text-xl font-bold text-white mb-4">Válaszok rövidítése</h3>
               <p className="text-white/80 mb-4">
-                Automatikusan lerövidíti az összes 50 karakternél hosszabb választ AI segítségével
+                Automatikusan lerövidíti az összes 61 karakternél hosszabb választ AI segítségével (554 válasz)
               </p>
               
               {progress && (
@@ -171,86 +165,6 @@ const AdminTranslations = () => {
                 ) : (
                   'Hosszú válaszok rövidítése'
                 )}
-              </Button>
-            </div>
-
-            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-white mb-4">Kérdés Poolok Regenerálása</h3>
-              <p className="text-white/80 mb-4">
-                Újragenerálja a "mixed" témakör kérdés pool-jait. Minden pool eltérő kérdéseket tartalmaz, így biztosítva a változatosságot.
-              </p>
-              
-              <Button
-                onClick={async () => {
-                  try {
-                    toast.loading('Pool regenerálás folyamatban...');
-                    const { data: { session } } = await supabase.auth.getSession();
-                    
-                    const { data, error } = await supabase.functions.invoke('regenerate-question-pools', {
-                      headers: { Authorization: `Bearer ${session?.access_token}` },
-                      body: { topicId: 'mixed' }
-                    });
-
-                    if (error) throw error;
-                    
-                    toast.dismiss();
-                    toast.success(`Pool regenerálás sikeres! ${data.poolsCreated} pool létrehozva ${data.totalQuestions} kérdésből`);
-                  } catch (error) {
-                    toast.dismiss();
-                    console.error('Error regenerating pools:', error);
-                    toast.error('Hiba történt a pool regenerálás során');
-                  }
-                }}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Mixed Poolok Regenerálása
-              </Button>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="question-pools" className="mt-6 space-y-6">
-            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-white mb-4">Kérdés Poolok Regenerálása</h3>
-              <p className="text-white/80 mb-4">
-                Újragenerálja az összes kérdés pool-jait. Minden pool eltérő kérdéseket tartalmaz, így biztosítva a változatosságot.
-                A rendszer automatikusan optimalizált a nagy terhelésre - akár 25.000 játékos/perc kiszolgálására is képes.
-              </p>
-              
-              <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 mb-6">
-                <h4 className="text-white font-semibold mb-2">📊 Pool rendszer működése:</h4>
-                <ul className="text-white/70 text-sm space-y-1">
-                  <li>• Minden pool különböző kérdéseket tartalmaz</li>
-                  <li>• Játékosok rotációban kapják a poolokat</li>
-                  <li>• Soha nem kapnak kétszer ugyanazt egymás után</li>
-                  <li>• Automatikus cache 5 perc TTL-lel</li>
-                </ul>
-              </div>
-              
-              <Button
-                onClick={async () => {
-                  try {
-                    toast.loading('Pool regenerálás folyamatban...');
-                    const { data: { session } } = await supabase.auth.getSession();
-                    
-                    const { data, error } = await supabase.functions.invoke('regenerate-question-pools', {
-                      headers: { Authorization: `Bearer ${session?.access_token}` },
-                      body: { topicId: 'all' }
-                    });
-
-                    if (error) throw error;
-                    
-                    toast.dismiss();
-                    toast.success(`Pool regenerálás sikeres! ${data.poolsCreated} pool létrehozva ${data.totalQuestions} kérdésből`);
-                  } catch (error) {
-                    toast.dismiss();
-                    console.error('Error regenerating pools:', error);
-                    toast.error('Hiba történt a pool regenerálás során');
-                  }
-                }}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <Database className="mr-2 h-4 w-4" />
-                Összes Pool Regenerálása
               </Button>
             </div>
           </TabsContent>

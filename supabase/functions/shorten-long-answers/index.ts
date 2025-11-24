@@ -42,18 +42,17 @@ serve(async (req) => {
         // Fetch ALL question_translations and filter in code
         const { data: allTranslations, error: fetchError } = await supabase
           .from('question_translations')
-          .select('id, question_id, lang, question_text, answer_a, answer_b, answer_c')
-          .limit(10000); // Ensure we get all translations (2748 total)
+          .select('id, question_id, lang, question_text, answer_a, answer_b, answer_c');
 
         if (fetchError) {
           throw new Error(`Fetch error: ${fetchError.message}`);
         }
 
-        // Filter for answers longer than 50 characters in TypeScript
+        // Filter for answers longer than 61 characters in TypeScript
         const longAnswers = allTranslations?.filter((item: LongAnswer) => 
-          item.answer_a.length > 50 || 
-          item.answer_b.length > 50 || 
-          item.answer_c.length > 50
+          item.answer_a.length > 61 || 
+          item.answer_b.length > 61 || 
+          item.answer_c.length > 61
         ) || [];
 
         sendProgress({ 
