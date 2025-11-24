@@ -18,7 +18,8 @@ import {
   Gamepad2,
   Calendar,
   Languages,
-  BarChart3
+  BarChart3,
+  Database
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
@@ -30,12 +31,19 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { isHandheld } = usePlatformDetection();
+  const [sidebarOpen, setSidebarOpen] = useState(!isHandheld);
 
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // Mobilon minden navigáláskor zárjuk be a sidebárt
+  useEffect(() => {
+    if (isHandheld) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname, location.search, isHandheld]);
 
   const checkAuth = async () => {
     try {
@@ -70,6 +78,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/dashboard?tab=invitations', label: 'Meghívások', icon: Users, badge: 'invitations' },
     { path: '/admin/dashboard?tab=reports', label: 'Jelentések', icon: AlertTriangle, badge: 'reports' },
     { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: TrendingUp },
+    { path: '/admin/question-pools', label: 'Question Pools (Kérdésbázis)', icon: Database },
     { path: '/admin/booster-types', label: 'Booster Csomagok', icon: Zap },
     { path: '/admin/booster-purchases', label: 'Booster Vásárlások', icon: ShoppingBag },
     { path: '/admin/translations', label: 'Fordítások (UI & Kérdések)', icon: Languages },
