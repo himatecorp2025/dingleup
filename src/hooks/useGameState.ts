@@ -7,6 +7,7 @@ export const useGameState = () => {
   const [gameState, setGameState] = useState<GameState>('playing');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [coinsEarned, setCoinsEarned] = useState(0);
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
@@ -60,6 +61,7 @@ export const useGameState = () => {
     setCorrectAnswers(0);
     setCoinsEarned(0);
     setResponseTimes([]);
+    setSelectedAnswer(null); // Clear selected answer on reset
   }, []);
 
   return {
@@ -69,8 +71,8 @@ export const useGameState = () => {
     setQuestions,
     currentQuestionIndex,
     setCurrentQuestionIndex,
-    selectedAnswer: null,
-    setSelectedAnswer: () => {},
+    selectedAnswer,
+    setSelectedAnswer,
     correctAnswers,
     coinsEarned,
     responseTimes,

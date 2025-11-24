@@ -61,6 +61,8 @@ const GamePreview = memo(() => {
     setQuestions,
     currentQuestionIndex,
     setCurrentQuestionIndex,
+    selectedAnswer,
+    setSelectedAnswer,
     correctAnswers,
     incrementCorrectAnswers,
     responseTimes,
@@ -68,8 +70,6 @@ const GamePreview = memo(() => {
     nextQuestion,
     resetGameState: resetGameStateHook
   } = useGameState();
-  
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
   const [gameInstanceId] = useState(() => crypto.randomUUID());

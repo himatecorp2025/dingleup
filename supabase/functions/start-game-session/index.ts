@@ -18,8 +18,8 @@ interface CacheEntry<T> {
   cachedAt: number;
 }
 
-// Cache TTL: 15 minutes (questions don't change frequently)
-const CACHE_TTL_MS = 15 * 60 * 1000;
+// Cache TTL: 5 minutes (shorter to reduce repetition in gameplay)
+const CACHE_TTL_MS = 5 * 60 * 1000;
 
 // Global cache maps (persist across warm function invocations)
 const questionsCache = new Map<string, CacheEntry<any[]>>();
@@ -123,7 +123,7 @@ serve(async (req) => {
         : supabaseClient
             .from('questions')
             .select('id, correct_answer, audience, third, source_category')
-            .limit(50) // Fetch 50 to have buffer for translations
+            .limit(300) // Fetch 300 questions for better variety and reduced repetition
     ]);
 
     const userLang = profileResult.data?.preferred_language || 'en';
