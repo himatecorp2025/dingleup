@@ -26,6 +26,35 @@ const AdminTranslations = () => {
   const [isShortening, setIsShortening] = useState(false);
   const [progress, setProgress] = useState<ProgressState | null>(null);
   const [langProgress, setLangProgress] = useState<Record<string, { processed: number; total: number }>>({});
+  const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
+
+  const handleGenerateMissingQuestions = async () => {
+    setIsGeneratingQuestions(true);
+    try {
+      toast.info('Kérdések generálása elkezdődött...', {
+        description: 'Ez több percig is eltarthat. Kérlek várj türelemmel.'
+      });
+
+      const { data, error } = await supabase.functions.invoke('generate-missing-questions');
+
+      if (error) throw error;
+
+      toast.success('Kérdések sikeresen generálva!', {
+        description: `${data.questions_generated} kérdés létrehozva, ${data.questions_translated} fordítás készült`
+      });
+
+      if (data.errors?.length > 0) {
+        console.warn('Errors during generation:', data.errors);
+      }
+    } catch (error) {
+      console.error('Question generation error:', error);
+      toast.error('Hiba történt a kérdések generálása során', {
+        description: error instanceof Error ? error.message : 'Ismeretlen hiba'
+      });
+    } finally {
+      setIsGeneratingQuestions(false);
+    }
+  };
 
   const handleShortenAnswers = async () => {
     setIsShortening(true);
@@ -210,7 +239,42 @@ const AdminTranslations = () => {
 
           <TabsContent value="question-pools" className="mt-6 space-y-6">
             <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-white mb-4">Kérdés Poolok Regenerálása</h3>
+              <h3 className="text-xl font-bold text-white mb-4">1. Kérdésbank Feltöltése</h3>
+              <p className="text-white/80 mb-4">
+                Generál új kérdéseket minden témakörbe (150 db/téma célszám), automatikusan lefordítja őket minden nyelvre.
+              </p>
+              
+              <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4 mb-6">
+                <h4 className="text-white font-semibold mb-2">⚠️ Fontos információk:</h4>
+                <ul className="text-white/70 text-sm space-y-1">
+                  <li>• AI-val generál hiányzó kérdéseket témakörönként</li>
+                  <li>• Automatikusan lefordítja minden nyelvre (8 nyelv)</li>
+                  <li>• Betartja a karakterszám korlátokat (max 120 char kérdés, max 50 char válasz)</li>
+                  <li>• Ez TÖBB PERCIG is eltarthat, legyél türelmes!</li>
+                </ul>
+              </div>
+              
+              <Button
+                onClick={handleGenerateMissingQuestions}
+                disabled={isGeneratingQuestions}
+                className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 mb-8"
+              >
+                {isGeneratingQuestions ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Kérdések generálása és fordítása...
+                  </>
+                ) : (
+                  <>
+                    <Database className="mr-2 h-4 w-4" />
+                    Hiányzó Kérdések Generálása + Fordítás
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
+              <h3 className="text-xl font-bold text-white mb-4">2. Kérdés Poolok Regenerálása</h3>
               <p className="text-white/80 mb-4">
                 Újragenerálja az összes kérdés pool-jait. Minden pool eltérő kérdéseket tartalmaz, így biztosítva a változatosságot.
                 A rendszer automatikusan optimalizált a nagy terhelésre - akár 25.000 játékos/perc kiszolgálására is képes.
@@ -247,7 +311,7 @@ const AdminTranslations = () => {
                     toast.error('Hiba történt a pool regenerálás során');
                   }
                 }}
-                className="bg-green-600 hover:bg-green-700"
+                className="w-full bg-green-600 hover:bg-green-700"
               >
                 <Database className="mr-2 h-4 w-4" />
                 Összes Pool Regenerálása
