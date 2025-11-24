@@ -42,7 +42,8 @@ serve(async (req) => {
         // Fetch ALL question_translations and filter in code
         const { data: allTranslations, error: fetchError } = await supabase
           .from('question_translations')
-          .select('id, question_id, lang, question_text, answer_a, answer_b, answer_c');
+          .select('id, question_id, lang, question_text, answer_a, answer_b, answer_c')
+          .limit(10000); // Ensure we get all translations (2748 total)
 
         if (fetchError) {
           throw new Error(`Fetch error: ${fetchError.message}`);
