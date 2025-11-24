@@ -8,6 +8,7 @@ const corsHeaders = {
 
 const TOTAL_POOLS = 40;
 const MIN_QUESTIONS_PER_POOL = 15;
+const TARGET_QUESTIONS_PER_POOL = 500;
 
 interface Question {
   id: string;
@@ -65,7 +66,7 @@ serve(async (req) => {
       );
     }
 
-    // Get ALL questions from ALL topics (mixed)
+    // Get ALL questions grouped by topic
     const { data: questions, error: questionsError } = await supabase
       .from('questions')
       .select('*');
@@ -81,21 +82,32 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Regenerating GLOBAL pools: ${questions.length} total questions (mixed topics)`);
+    console.log(`Total questions available: ${questions.length}`);
 
-    // Shuffle ALL questions using Fisher-Yates algorithm (MIXED TOPICS)
-    const shuffled = [...questions];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
+    // Group questions by topic_id
+    const questionsByTopic = new Map<number, Question[]>();
+    questions.forEach((q: Question) => {
+      if (!questionsByTopic.has(q.topic_id)) {
+        questionsByTopic.set(q.topic_id, []);
+      }
+      questionsByTopic.get(q.topic_id)!.push(q);
+    });
 
-    // Calculate pool distribution (~500 questions/pool)
-    const totalQuestions = shuffled.length;
-    const questionsPerPool = Math.floor(totalQuestions / TOTAL_POOLS);
-    const remainder = totalQuestions % TOTAL_POOLS;
+    const topicIds = Array.from(questionsByTopic.keys());
+    console.log(`Found ${topicIds.length} unique topics`);
 
-    console.log(`Distributing ${totalQuestions} questions into ${TOTAL_POOLS} pools (~${questionsPerPool} per pool)`);
+    // Shuffle questions within each topic
+    topicIds.forEach(topicId => {
+      const topicQuestions = questionsByTopic.get(topicId)!;
+      for (let i = topicQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [topicQuestions[i], topicQuestions[j]] = [topicQuestions[j], topicQuestions[i]];
+      }
+    });
+
+    // Calculate how many questions per topic per pool (equal distribution)
+    const questionsPerTopicPerPool = Math.floor(TARGET_QUESTIONS_PER_POOL / topicIds.length);
+    console.log(`Target: ${questionsPerTopicPerPool} questions per topic per pool`);
 
     // Delete ALL existing pools
     const { error: deleteError } = await supabase
@@ -107,19 +119,37 @@ serve(async (req) => {
       console.error('Error deleting old pools:', deleteError);
     }
 
-    // Create 40 new GLOBAL pools with mixed topics
+    // Create 40 pools with equal topic distribution
     const pools = [];
-    let currentIndex = 0;
+    const topicPointers = new Map<number, number>(); // Track position in each topic
+    topicIds.forEach(id => topicPointers.set(id, 0));
 
     for (let poolOrder = 1; poolOrder <= TOTAL_POOLS; poolOrder++) {
-      // Calculate questions for this pool
-      let poolSize = questionsPerPool;
-      if (poolOrder <= remainder) {
-        poolSize += 1; // Distribute remainder evenly
+      const poolQuestions: Question[] = [];
+
+      // Get equal amount from each topic
+      for (const topicId of topicIds) {
+        const topicQuestions = questionsByTopic.get(topicId)!;
+        const startIdx = topicPointers.get(topicId)!;
+        
+        // Take questionsPerTopicPerPool from this topic
+        const endIdx = Math.min(startIdx + questionsPerTopicPerPool, topicQuestions.length);
+        const questionsToAdd = topicQuestions.slice(startIdx, endIdx);
+        
+        poolQuestions.push(...questionsToAdd);
+        topicPointers.set(topicId, endIdx);
+
+        // If we've used all questions from this topic, wrap around
+        if (endIdx >= topicQuestions.length) {
+          topicPointers.set(topicId, 0);
+        }
       }
 
-      const poolQuestions = shuffled.slice(currentIndex, currentIndex + poolSize);
-      currentIndex += poolSize;
+      // Shuffle the pool so topics are mixed (not grouped)
+      for (let i = poolQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [poolQuestions[i], poolQuestions[j]] = [poolQuestions[j], poolQuestions[i]];
+      }
 
       if (poolQuestions.length >= MIN_QUESTIONS_PER_POOL) {
         pools.push({
@@ -127,12 +157,13 @@ serve(async (req) => {
           questions: poolQuestions,
           version: 1,
         });
+        console.log(`Pool ${poolOrder}: ${poolQuestions.length} questions (${topicIds.length} topics mixed)`);
       } else {
         console.log(`Pool ${poolOrder} skipped (only ${poolQuestions.length} questions, minimum is ${MIN_QUESTIONS_PER_POOL})`);
       }
     }
 
-    console.log(`Created ${pools.length} usable pools (MIXED TOPICS)`);
+    console.log(`Created ${pools.length} pools with EQUAL TOPIC DISTRIBUTION`);
 
     // Insert all pools
     const { data: insertedPools, error: insertError } = await supabase
@@ -147,10 +178,12 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        total_questions: totalQuestions,
+        total_questions: questions.length,
         pools_created: pools.length,
+        topics_count: topicIds.length,
+        questions_per_topic_per_pool: questionsPerTopicPerPool,
         pools: insertedPools,
-        note: 'GLOBAL pools with MIXED topics created (not topic-specific)',
+        note: 'Global pools with EQUAL TOPIC DISTRIBUTION created',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
