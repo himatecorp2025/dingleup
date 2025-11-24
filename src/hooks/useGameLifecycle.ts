@@ -194,7 +194,50 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
               throw new Error('No questions received from backend');
             }
 
-            const shuffledWithVariety = shuffleAnswers(data.questions);
+            let questionsToUse = data.questions;
+            
+            // CRITICAL: Apply translations based on user's preferred language
+            const userLang = profile.preferred_language || 'en';
+            console.log('[useGameLifecycle] User language:', userLang);
+            
+            if (userLang !== 'hu' && questionsToUse.length > 0) {
+              const questionIds = questionsToUse.map((q: any) => q.id);
+              
+              const { data: translations, error: translationsError } = await supabase
+                .from('question_translations')
+                .select('question_id, question_text, answer_a, answer_b, answer_c')
+                .eq('lang', userLang)
+                .in('question_id', questionIds);
+
+              if (!translationsError && translations && translations.length > 0) {
+                console.log(`[useGameLifecycle] Translations fetched: ${translations.length} for language: ${userLang}`);
+                
+                // Apply translations to questions
+                questionsToUse = questionsToUse.map((question: any) => {
+                  const translation = translations.find((t: any) => t.question_id === question.id);
+                  
+                  if (translation) {
+                    return {
+                      ...question,
+                      question: translation.question_text || question.question,
+                      answers: question.answers.map((answer: any, index: number) => ({
+                        ...answer,
+                        text: index === 0 ? (translation.answer_a || answer.text) :
+                              index === 1 ? (translation.answer_b || answer.text) :
+                              (translation.answer_c || answer.text)
+                      }))
+                    };
+                  }
+                  
+                  // No translation - keep original Hungarian
+                  return question;
+                });
+              } else {
+                console.log('[useGameLifecycle] No translations found or error:', translationsError);
+              }
+            }
+
+            const shuffledWithVariety = shuffleAnswers(questionsToUse);
             setQuestions(shuffledWithVariety);
           } catch (error) {
             console.error('[useGameLifecycle] Failed to load questions:', error);
