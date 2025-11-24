@@ -17,25 +17,33 @@ interface PoolStats {
   max_questions: number;
 }
 
+interface Topic {
+  id: number;
+  name: string;
+}
+
 export default function AdminQuestionPools() {
   const [poolStats, setPoolStats] = useState<PoolStats[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState<number | null>(null);
 
-  const topicNames: Record<number, string> = {
-    1: 'Kultúra',
-    2: 'Történelem', 
-    3: 'Egészség',
-    4: 'Pénzügy',
-  };
-
   useEffect(() => {
-    loadPoolStats();
+    loadTopicsAndStats();
   }, []);
 
-  const loadPoolStats = async () => {
+  const loadTopicsAndStats = async () => {
     setLoading(true);
     try {
+      // Load all topics from database
+      const { data: topicsData, error: topicsError } = await supabase
+        .from('topics')
+        .select('id, name')
+        .order('id');
+
+      if (topicsError) throw topicsError;
+      setTopics(topicsData || []);
+
       // Get pool statistics per topic
       const { data: pools, error } = await supabase
         .from('question_pools')
@@ -52,17 +60,16 @@ export default function AdminQuestionPools() {
 
       if (qError) throw qError;
 
-      // Calculate stats
-      const topicIds = [1, 2, 3, 4];
-      const stats: PoolStats[] = topicIds.map(topicId => {
-        const topicPools = pools?.filter(p => p.topic_id === topicId) || [];
-        const topicQuestions = questions?.filter(q => q.topic_id === topicId) || [];
+      // Calculate stats for ALL topics (27 total)
+      const stats: PoolStats[] = (topicsData || []).map(topic => {
+        const topicPools = pools?.filter(p => p.topic_id === topic.id) || [];
+        const topicQuestions = questions?.filter(q => q.topic_id === topic.id) || [];
         
         const questionCounts = topicPools.map(p => p.question_count || 0);
         
         return {
-          topic_id: topicId,
-          topic_name: topicNames[topicId] || `Topic ${topicId}`,
+          topic_id: topic.id,
+          topic_name: topic.name,
           total_pools: topicPools.length,
           total_questions: topicQuestions.length,
           avg_questions_per_pool: questionCounts.length > 0 
@@ -91,8 +98,8 @@ export default function AdminQuestionPools() {
 
       if (error) throw error;
 
-      toast.success(`Poolok újragenerálva: ${data.pools_created} pool létrehozva`);
-      await loadPoolStats();
+      toast.success(`${data.pools_created} pool létrehozva (Topic ID: ${topicId})`);
+      await loadTopicsAndStats();
     } catch (error) {
       console.error('Error regenerating pools:', error);
       toast.error(`Hiba a poolok generálásakor: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -103,14 +110,25 @@ export default function AdminQuestionPools() {
 
   const regenerateAllPools = async () => {
     setRegenerating(-1);
+    const allTopicIds = topics.map(t => t.id);
+    
     try {
-      for (const topicId of [1, 2, 3, 4]) {
-        await regeneratePools(topicId);
+      let successCount = 0;
+      for (const topicId of allTopicIds) {
+        try {
+          const { data, error } = await supabase.functions.invoke('regenerate-question-pools', {
+            body: { topic_id: topicId },
+          });
+          if (!error) successCount++;
+        } catch (err) {
+          console.error(`Failed to regenerate pools for topic ${topicId}:`, err);
+        }
       }
-      toast.success('Minden pool újragenerálva');
+      toast.success(`${successCount}/${allTopicIds.length} témakör pooljai újragenerálva`);
+      await loadTopicsAndStats();
     } catch (error) {
       console.error('Error regenerating all pools:', error);
-      toast.error('Hiba történt');
+      toast.error('Hiba történt az újragenerálás során');
     } finally {
       setRegenerating(null);
     }
@@ -121,9 +139,9 @@ export default function AdminQuestionPools() {
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Question Pools</h1>
+            <h1 className="text-3xl font-bold">Question Pools (Kérdésbázis)</h1>
             <p className="text-muted-foreground mt-1">
-              Kérdés-poolok kezelése és statisztikák (40 pool / témakör, rotációs rendszer)
+              27 témakör × 40 pool × ~500 kérdés/pool = rotációs kérdésbetöltés
             </p>
           </div>
           <Button 
@@ -143,7 +161,7 @@ export default function AdminQuestionPools() {
               Pool Rendszer Áttekintés
             </CardTitle>
             <CardDescription>
-              Minden témakör 40 pool-ra van osztva. A játékosok pool-rotációval kapják a kérdéseket.
+              Mind a 27 témakör 40 pool-ra van osztva (~500 kérdés/pool). Pool-rotáció: 1→2→3→...→40→1
             </CardDescription>
           </CardHeader>
           <CardContent>
