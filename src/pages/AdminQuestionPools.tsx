@@ -7,80 +7,43 @@ import { toast } from 'sonner';
 import { RefreshCw, Database, PlayCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-interface PoolStats {
-  topic_id: number;
-  topic_name: string;
-  total_pools: number;
-  total_questions: number;
-  avg_questions_per_pool: number;
-  min_questions: number;
-  max_questions: number;
-}
-
-interface Topic {
-  id: number;
-  name: string;
+interface PoolInfo {
+  id: string;
+  pool_order: number;
+  question_count: number;
 }
 
 export default function AdminQuestionPools() {
-  const [poolStats, setPoolStats] = useState<PoolStats[]>([]);
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const [pools, setPools] = useState<PoolInfo[]>([]);
+  const [totalQuestions, setTotalQuestions] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [regenerating, setRegenerating] = useState<number | null>(null);
+  const [regenerating, setRegenerating] = useState(false);
 
   useEffect(() => {
-    loadTopicsAndStats();
+    loadPoolStats();
   }, []);
 
-  const loadTopicsAndStats = async () => {
+  const loadPoolStats = async () => {
     setLoading(true);
     try {
-      // Load all topics from database
-      const { data: topicsData, error: topicsError } = await supabase
-        .from('topics')
-        .select('id, name')
-        .order('id');
-
-      if (topicsError) throw topicsError;
-      setTopics(topicsData || []);
-
-      // Get pool statistics per topic
-      const { data: pools, error } = await supabase
+      // Get all pools
+      const { data: poolsData, error: poolsError } = await supabase
         .from('question_pools')
-        .select('topic_id, question_count')
-        .returns<{ topic_id: number; question_count: number }[]>();
+        .select('id, pool_order, question_count')
+        .order('pool_order');
 
-      if (error) throw error;
+      if (poolsError) throw poolsError;
 
-      // Get question counts per topic
-      const { data: questions, error: qError } = await supabase
+      setPools(poolsData || []);
+
+      // Get total question count
+      const { count, error: countError } = await supabase
         .from('questions')
-        .select('topic_id')
-        .returns<{ topic_id: number }[]>();
+        .select('*', { count: 'exact', head: true });
 
-      if (qError) throw qError;
+      if (countError) throw countError;
 
-      // Calculate stats for ALL topics (27 total)
-      const stats: PoolStats[] = (topicsData || []).map(topic => {
-        const topicPools = pools?.filter(p => p.topic_id === topic.id) || [];
-        const topicQuestions = questions?.filter(q => q.topic_id === topic.id) || [];
-        
-        const questionCounts = topicPools.map(p => p.question_count || 0);
-        
-        return {
-          topic_id: topic.id,
-          topic_name: topic.name,
-          total_pools: topicPools.length,
-          total_questions: topicQuestions.length,
-          avg_questions_per_pool: questionCounts.length > 0 
-            ? Math.round(questionCounts.reduce((a, b) => a + b, 0) / questionCounts.length)
-            : 0,
-          min_questions: questionCounts.length > 0 ? Math.min(...questionCounts) : 0,
-          max_questions: questionCounts.length > 0 ? Math.max(...questionCounts) : 0,
-        };
-      });
-
-      setPoolStats(stats);
+      setTotalQuestions(count || 0);
     } catch (error) {
       console.error('Error loading pool stats:', error);
       toast.error('Hiba a pool statisztikák betöltésekor');
@@ -89,68 +52,49 @@ export default function AdminQuestionPools() {
     }
   };
 
-  const regeneratePools = async (topicId: number) => {
-    setRegenerating(topicId);
+  const regenerateAllPools = async () => {
+    setRegenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('regenerate-question-pools', {
-        body: { topic_id: topicId },
+        body: {},
       });
 
       if (error) throw error;
 
-      toast.success(`${data.pools_created} pool létrehozva (Topic ID: ${topicId})`);
-      await loadTopicsAndStats();
+      toast.success(`${data.pools_created} pool sikeresen létrehozva (vegyes témák)`);
+      await loadPoolStats();
     } catch (error) {
       console.error('Error regenerating pools:', error);
-      toast.error(`Hiba a poolok generálásakor: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(`Hiba: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
-      setRegenerating(null);
+      setRegenerating(false);
     }
   };
 
-  const regenerateAllPools = async () => {
-    setRegenerating(-1);
-    const allTopicIds = topics.map(t => t.id);
-    
-    try {
-      let successCount = 0;
-      for (const topicId of allTopicIds) {
-        try {
-          const { data, error } = await supabase.functions.invoke('regenerate-question-pools', {
-            body: { topic_id: topicId },
-          });
-          if (!error) successCount++;
-        } catch (err) {
-          console.error(`Failed to regenerate pools for topic ${topicId}:`, err);
-        }
-      }
-      toast.success(`${successCount}/${allTopicIds.length} témakör pooljai újragenerálva`);
-      await loadTopicsAndStats();
-    } catch (error) {
-      console.error('Error regenerating all pools:', error);
-      toast.error('Hiba történt az újragenerálás során');
-    } finally {
-      setRegenerating(null);
-    }
-  };
+  const avgQuestionsPerPool = pools.length > 0
+    ? Math.round(pools.reduce((sum, p) => sum + p.question_count, 0) / pools.length)
+    : 0;
+
+  const minQuestions = pools.length > 0 ? Math.min(...pools.map(p => p.question_count)) : 0;
+  const maxQuestions = pools.length > 0 ? Math.max(...pools.map(p => p.question_count)) : 0;
 
   return (
     <AdminLayout>
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Question Pools (Kérdésbázis)</h1>
+            <h1 className="text-3xl font-bold">Question Pools (Vegyes Témák)</h1>
             <p className="text-muted-foreground mt-1">
-              27 témakör × 40 pool × ~500 kérdés/pool = rotációs kérdésbetöltés
+              40 pool összesen × ~500 vegyes kérdés/pool = rotációs rendszer
             </p>
           </div>
           <Button 
             onClick={regenerateAllPools}
-            disabled={regenerating !== null}
+            disabled={regenerating}
             size="lg"
           >
-            <RefreshCw className={`mr-2 h-4 w-4 ${regenerating === -1 ? 'animate-spin' : ''}`} />
-            Összes Pool Újragenerálása
+            <RefreshCw className={`mr-2 h-4 w-4 ${regenerating ? 'animate-spin' : ''}`} />
+            Poolok Újragenerálása
           </Button>
         </div>
 
@@ -158,84 +102,74 @@ export default function AdminQuestionPools() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Database className="h-5 w-5" />
-              Pool Rendszer Áttekintés
+              Globális Pool Rendszer
             </CardTitle>
             <CardDescription>
-              Mind a 27 témakör 40 pool-ra van osztva (~500 kérdés/pool). Pool-rotáció: 1→2→3→...→40→1
+              40 pool vegyes témákkal. Rotáció: 1→2→3→...→40→1 (minden játékos más poolból kap)
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4">
-              {loading ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Betöltés...
-                </div>
-              ) : poolStats.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Még nincs egyetlen pool sem generálva. Kattints a gombra a poolok létrehozásához.
-                </div>
-              ) : (
-                poolStats.map(stat => (
-                  <Card key={stat.topic_id} className="bg-muted/30">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle className="text-xl">{stat.topic_name}</CardTitle>
-                          <CardDescription className="mt-1">
-                            Topic ID: {stat.topic_id}
-                          </CardDescription>
-                        </div>
-                        <Button
-                          onClick={() => regeneratePools(stat.topic_id)}
-                          disabled={regenerating !== null}
-                          variant="outline"
-                        >
-                          <RefreshCw 
-                            className={`mr-2 h-4 w-4 ${regenerating === stat.topic_id ? 'animate-spin' : ''}`} 
-                          />
-                          Újragenerálás
-                        </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                        <div>
-                          <div className="text-2xl font-bold">{stat.total_pools}</div>
-                          <div className="text-sm text-muted-foreground">Poolok száma</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold">{stat.total_questions}</div>
-                          <div className="text-sm text-muted-foreground">Összes kérdés</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold">{stat.avg_questions_per_pool}</div>
-                          <div className="text-sm text-muted-foreground">Átlag kérdés/pool</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold">{stat.min_questions}</div>
-                          <div className="text-sm text-muted-foreground">Min kérdés/pool</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold">{stat.max_questions}</div>
-                          <div className="text-sm text-muted-foreground">Max kérdés/pool</div>
-                        </div>
-                      </div>
-                      
-                      {stat.total_pools === 0 && (
-                        <Badge variant="destructive" className="mt-4">
-                          Nincs pool generálva - kattints az újragenerálás gombra
-                        </Badge>
-                      )}
-                      {stat.total_pools > 0 && stat.min_questions < 15 && (
-                        <Badge variant="outline" className="mt-4 border-yellow-500 text-yellow-600">
-                          Figyelem: Néhány pool kevés kérdést tartalmaz (&lt;15)
-                        </Badge>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))
-              )}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold">{pools.length}</div>
+                <div className="text-sm text-muted-foreground">Aktív Poolok</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold">{totalQuestions}</div>
+                <div className="text-sm text-muted-foreground">Összes Kérdés</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold">{avgQuestionsPerPool}</div>
+                <div className="text-sm text-muted-foreground">Átlag/Pool</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold">{minQuestions}</div>
+                <div className="text-sm text-muted-foreground">Min/Pool</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold">{maxQuestions}</div>
+                <div className="text-sm text-muted-foreground">Max/Pool</div>
+              </div>
             </div>
+
+            {loading ? (
+              <div className="text-center py-8 text-muted-foreground">
+                Betöltés...
+              </div>
+            ) : pools.length === 0 ? (
+              <div className="text-center py-8">
+                <Badge variant="destructive" className="mb-4">
+                  Még nincs egyetlen pool sem generálva
+                </Badge>
+                <p className="text-muted-foreground">
+                  Kattints a "Poolok Újragenerálása" gombra a létrehozáshoz
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-8 md:grid-cols-10 gap-2">
+                {pools.map(pool => (
+                  <div
+                    key={pool.id}
+                    className={`
+                      text-center p-3 rounded-lg border-2 transition-colors
+                      ${pool.question_count >= 15 
+                        ? 'border-primary bg-primary/10 hover:bg-primary/20' 
+                        : 'border-destructive bg-destructive/10'
+                      }
+                    `}
+                  >
+                    <div className="text-lg font-bold">{pool.pool_order}</div>
+                    <div className="text-xs text-muted-foreground">{pool.question_count}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {pools.length > 0 && minQuestions < 15 && (
+              <Badge variant="outline" className="mt-4 border-yellow-500 text-yellow-600">
+                ⚠️ Néhány pool kevés kérdést tartalmaz (&lt;15) - ezek átugrásra kerülnek
+              </Badge>
+            )}
           </CardContent>
         </Card>
 
@@ -243,15 +177,17 @@ export default function AdminQuestionPools() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <PlayCircle className="h-5 w-5" />
-              Pool Rotációs Rendszer
+              Vegyes Pool Rendszer (25.000 játékosra optimalizálva)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <p>✅ Minden játékos pool-rotációval kapja a kérdéseket (1→2→3→...→40→1)</p>
+            <p>✅ 40 pool ÖSSZESEN (nem témakörönként!)</p>
+            <p>✅ Minden pool vegyes témájú kérdéseket tartalmaz (~500 db)</p>
             <p>✅ Egy kérdés csak egy poolban szerepel → garantált változatosság</p>
-            <p>✅ A poolok memóriában cache-eltek → 25.000 egyidejű játékos támogatás</p>
-            <p>✅ Kisebb poolok (&lt;15 kérdés) automatikusan átugrásra kerülnek</p>
-            <p>✅ Új kérdések hozzáadása után újragenerálással frissíthetők a poolok</p>
+            <p>✅ Pool-rotáció: 1→2→3→...→40→1 (soha nem ugyanaz kétszer egymás után)</p>
+            <p>✅ Poolok memóriában cache-eltek → 25.000 egyidejű játékos támogatás</p>
+            <p>✅ Kis poolok (&lt;15 kérdés) automatikusan átugrásra kerülnek</p>
+            <p>✅ Új kérdések hozzáadása után újragenerálással frissíthetők</p>
           </CardContent>
         </Card>
       </div>
