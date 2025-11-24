@@ -127,31 +127,26 @@ serve(async (req) => {
     for (let poolOrder = 1; poolOrder <= TOTAL_POOLS; poolOrder++) {
       const poolQuestions: Question[] = [];
 
-      // CRITICAL: Get EXACTLY 10 questions from EACH topic (skip if < 10 available)
+      // Get EXACTLY 10 questions from EACH topic (NO wraparound - skip if exhausted)
       for (const topicId of topicIds) {
         const topicQuestions = questionsByTopic.get(topicId)!;
         const startIdx = topicPointers.get(topicId)!;
         
-        // Skip this topic if it doesn't have at least 10 questions
-        if (topicQuestions.length < QUESTIONS_PER_TOPIC_PER_POOL) {
-          console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: SKIPPED (only ${topicQuestions.length} questions, need ${QUESTIONS_PER_TOPIC_PER_POOL})`);
-          continue;
+        // Check if we have 10 more questions available (NO wraparound)
+        if (startIdx + QUESTIONS_PER_TOPIC_PER_POOL > topicQuestions.length) {
+          console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: EXHAUSTED (pointer at ${startIdx}/${topicQuestions.length})`);
+          continue; // Skip this topic - no more questions available
         }
         
-        // Take EXACTLY 10 questions using modulo (wraparound)
-        const questionsToAdd: Question[] = [];
-        for (let i = 0; i < QUESTIONS_PER_TOPIC_PER_POOL; i++) {
-          const idx = (startIdx + i) % topicQuestions.length;
-          questionsToAdd.push(topicQuestions[idx]);
-        }
-        
+        // Take EXACTLY 10 questions (sequential, no wraparound)
+        const questionsToAdd = topicQuestions.slice(startIdx, startIdx + QUESTIONS_PER_TOPIC_PER_POOL);
         poolQuestions.push(...questionsToAdd);
         
-        // Update pointer with wraparound
-        const newPointer = (startIdx + QUESTIONS_PER_TOPIC_PER_POOL) % topicQuestions.length;
+        // Update pointer (NO wraparound)
+        const newPointer = startIdx + QUESTIONS_PER_TOPIC_PER_POOL;
         topicPointers.set(topicId, newPointer);
         
-        console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: added EXACTLY ${questionsToAdd.length} questions (pointer now at ${newPointer})`);
+        console.log(`[regenerate-pools] Pool ${poolOrder}, Topic ${topicId}: added ${questionsToAdd.length} questions (pointer now at ${newPointer}/${topicQuestions.length})`);
       }
 
       // Shuffle the pool so topics are mixed (not grouped)
