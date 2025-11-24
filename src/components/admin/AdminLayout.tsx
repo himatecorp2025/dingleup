@@ -18,7 +18,8 @@ import {
   Gamepad2,
   Calendar,
   Languages,
-  BarChart3
+  BarChart3,
+  Database
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
@@ -30,12 +31,19 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { isHandheld } = usePlatformDetection();
+  const [sidebarOpen, setSidebarOpen] = useState(!isHandheld); // Mobilon alapból zárva
 
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // Mobilon/tableten automatikusan záródjon a menü oldalváltáskor
+  useEffect(() => {
+    if (isHandheld) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname, location.search, isHandheld]);
 
   const checkAuth = async () => {
     try {
@@ -73,6 +81,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/booster-types', label: 'Booster Csomagok', icon: Zap },
     { path: '/admin/booster-purchases', label: 'Booster Vásárlások', icon: ShoppingBag },
     { path: '/admin/translations', label: 'Fordítások (UI & Kérdések)', icon: Languages },
+    { path: '/admin/translations?tab=question-pools', label: 'Kérdés Poolok', icon: Database },
     { path: '/admin/load-test', label: 'Terheléses Teszt (Load Test)', icon: BarChart3 },
     { path: '/admin/advanced-analytics', label: 'Fejlett Analitika', icon: Activity },
     { path: '/admin/age-statistics', label: 'Korcsoport Statisztika', icon: Calendar },
