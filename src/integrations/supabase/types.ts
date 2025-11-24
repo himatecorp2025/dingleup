@@ -2089,30 +2089,30 @@ export type Database = {
       }
       question_pools: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           pool_order: number
           question_count: number | null
-          questions: Json
-          updated_at: string
+          questions: Json[]
+          updated_at: string | null
           version: number
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           pool_order: number
           question_count?: number | null
-          questions?: Json
-          updated_at?: string
+          questions?: Json[]
+          updated_at?: string | null
           version?: number
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           pool_order?: number
           question_count?: number | null
-          questions?: Json
-          updated_at?: string
+          questions?: Json[]
+          updated_at?: string | null
           version?: number
         }
         Relationships: []
