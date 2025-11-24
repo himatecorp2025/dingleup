@@ -83,16 +83,26 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     }
   };
 
-  const handleLater = () => {
+  const handleLater = async () => {
     if (!userId) return;
     
-    // Save "later" choice in sessionStorage (only for this browser session)
-    const laterKey = `welcome_bonus_later_${userId}`;
-    sessionStorage.setItem(laterKey, 'true');
-    setCanClaim(false);
-    
-    // Track later action
-    trackEvent('popup_cta_click', 'welcome', 'later');
+    try {
+      // CRITICAL FIX: Mark as claimed even if dismissed
+      // This ensures the welcome bonus popup never appears again
+      await supabase
+        .from('profiles')
+        .update({ welcome_bonus_claimed: true })
+        .eq('id', userId);
+      
+      setCanClaim(false);
+      
+      // Track later action (user dismissed without claiming)
+      trackEvent('popup_cta_click', 'welcome', 'dismissed');
+    } catch (error) {
+      console.error('Error marking welcome bonus as dismissed:', error);
+      // Even if error, close the popup locally
+      setCanClaim(false);
+    }
   };
 
   return {
