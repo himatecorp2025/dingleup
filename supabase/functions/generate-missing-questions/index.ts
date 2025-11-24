@@ -63,36 +63,15 @@ Deno.serve(async (req) => {
       topicCounts.set(q.topic_id, (topicCounts.get(q.topic_id) || 0) + 1);
     });
 
-    // Define topics (matching your database)
-    const topics: { id: number; name: string; category: string }[] = [
-      { id: 1, name: 'Egészség és wellness', category: 'health' },
-      { id: 2, name: 'Mentális egészség', category: 'health' },
-      { id: 3, name: 'Táplálkozás', category: 'health' },
-      { id: 4, name: 'Fitness és sport', category: 'health' },
-      { id: 5, name: 'Megelőzés', category: 'health' },
-      { id: 6, name: 'Történelem', category: 'history' },
-      { id: 7, name: 'Magyar történelem', category: 'history' },
-      { id: 8, name: 'Világtörténelem', category: 'history' },
-      { id: 9, name: 'Tudománytörténet', category: 'history' },
-      { id: 10, name: 'Kultúrtörténet', category: 'history' },
-      { id: 11, name: 'Földrajz', category: 'culture' },
-      { id: 12, name: 'Irodalom', category: 'culture' },
-      { id: 13, name: 'Magyar irodalom', category: 'culture' },
-      { id: 14, name: 'Zene', category: 'culture' },
-      { id: 15, name: 'Klasszikus zene', category: 'culture' },
-      { id: 16, name: 'Művészet', category: 'culture' },
-      { id: 17, name: 'Építészet', category: 'culture' },
-      { id: 18, name: 'Film és színház', category: 'culture' },
-      { id: 19, name: 'Popkultúra', category: 'culture' },
-      { id: 20, name: 'Pénzügy', category: 'finance' },
-      { id: 21, name: 'Befektetés', category: 'finance' },
-      { id: 22, name: 'Vállalkozás', category: 'finance' },
-      { id: 23, name: 'Gazdaság', category: 'finance' },
-      { id: 24, name: 'Önismeret', category: 'health' },
-      { id: 25, name: 'Pszichológia', category: 'health' },
-      { id: 26, name: 'Vegyes', category: 'mixed' },
-      { id: 27, name: 'Általános műveltség', category: 'mixed' }
-    ];
+    // Fetch topics from database to ensure correct IDs and names
+    const { data: topicsData, error: topicsError } = await supabaseAdmin
+      .from('topics')
+      .select('id, name, category')
+      .order('id');
+    
+    if (topicsError) throw new Error(`Topics fetch error: ${topicsError.message}`);
+    
+    const topics = topicsData || [];
 
     const topicsNeedingQuestions: TopicInfo[] = [];
     for (const topic of topics) {
