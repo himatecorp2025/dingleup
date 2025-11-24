@@ -2,6 +2,7 @@ project_id = "wdpxmwsxhckazwxufttk"
 
 [functions.generate-question-translations]
 verify_jwt = true
+timeout = 500  # Maximum timeout for batch translation of 4500 questions × 7 languages
 
 [functions.stripe-webhook]
 verify_jwt = false
