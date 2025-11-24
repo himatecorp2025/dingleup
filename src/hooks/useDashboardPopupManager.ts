@@ -145,7 +145,10 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     }));
   };
 
-  const closeDailyWinners = () => {
+  const closeDailyWinners = async () => {
+    // CRITICAL FIX: Call the actual closePopup function to update database
+    // This ensures the popup won't reappear on same day after closing
+    await dailyWinners.closePopup();
     setPopupState(prev => ({
       ...prev,
       showDailyWinners: false,
