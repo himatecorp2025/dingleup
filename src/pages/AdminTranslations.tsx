@@ -212,7 +212,7 @@ const AdminTranslations = () => {
             <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-6">
               <h3 className="text-xl font-bold text-white mb-4">Kérdés Poolok Regenerálása</h3>
               <p className="text-white/80 mb-4">
-                Újragenerálja a "mixed" témakör kérdés pool-jait. Minden pool eltérő kérdéseket tartalmaz, így biztosítva a változatosságot.
+                Újragenerálja az összes kérdés pool-jait. Minden pool eltérő kérdéseket tartalmaz, így biztosítva a változatosságot.
                 A rendszer automatikusan optimalizált a nagy terhelésre - akár 25.000 játékos/perc kiszolgálására is képes.
               </p>
               
@@ -234,7 +234,7 @@ const AdminTranslations = () => {
                     
                     const { data, error } = await supabase.functions.invoke('regenerate-question-pools', {
                       headers: { Authorization: `Bearer ${session?.access_token}` },
-                      body: { topicId: 'mixed' }
+                      body: { topicId: 'all' }
                     });
 
                     if (error) throw error;
@@ -250,7 +250,7 @@ const AdminTranslations = () => {
                 className="bg-green-600 hover:bg-green-700"
               >
                 <Database className="mr-2 h-4 w-4" />
-                Mixed Poolok Regenerálása
+                Összes Pool Regenerálása
               </Button>
             </div>
           </TabsContent>

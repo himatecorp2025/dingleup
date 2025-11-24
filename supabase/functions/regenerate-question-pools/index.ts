@@ -2,23 +2,27 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 import { getCorsHeaders } from '../_shared/cors.ts';
 
 const corsHeaders = getCorsHeaders();
-
 const QUESTIONS_PER_POOL = 500;
 const MIN_QUESTIONS_PER_POOL = 15;
 
+interface Answer {
+  key: string;
+  text: string;
+  correct: boolean;
+}
+
 interface Question {
   id: string;
-  topic: string;
   question: string;
-  answer_a: string;
-  answer_b: string;
-  answer_c: string;
+  answers: Answer[];
   correct_answer: string;
+  topic_id: number;
+  source_category: string;
 }
 
 interface QuestionTranslation {
   question_id: string;
-  language_code: string;
+  lang: string;
   question_text: string;
   answer_a: string;
   answer_b: string;
@@ -59,11 +63,11 @@ Deno.serve(async (req) => {
     }
 
     const { topicId } = await req.json();
-    if (!topicId) {
-      throw new Error('topicId is required');
-    }
+    
+    // topicId can be "all" to regenerate all questions, or a specific category
+    const filterCategory = topicId && topicId !== 'all' ? topicId : null;
 
-    console.log(`[regenerate-pools] Starting regeneration for topic: ${topicId}`);
+    console.log(`[regenerate-pools] Starting regeneration for: ${filterCategory || 'ALL questions'}`);
 
     // Use service role client for pool management
     const supabaseAdmin = createClient(
@@ -71,21 +75,24 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Fetch all questions for the topic
-    const { data: questions, error: questionsError } = await supabaseAdmin
-      .from('questions')
-      .select('*')
-      .eq('topic', topicId);
+    // Fetch all questions (or filtered by source_category)
+    let query = supabaseAdmin.from('questions').select('*');
+    
+    if (filterCategory) {
+      query = query.eq('source_category', filterCategory);
+    }
+
+    const { data: questions, error: questionsError } = await query;
 
     if (questionsError) {
       throw new Error(`Failed to fetch questions: ${questionsError.message}`);
     }
 
     if (!questions || questions.length === 0) {
-      throw new Error(`No questions found for topic: ${topicId}`);
+      throw new Error(`No questions found${filterCategory ? ` for category: ${filterCategory}` : ''}`);
     }
 
-    console.log(`[regenerate-pools] Found ${questions.length} questions for topic ${topicId}`);
+    console.log(`[regenerate-pools] Found ${questions.length} questions`);
 
     // Fetch all translations for these questions
     const questionIds = questions.map(q => q.id);
@@ -108,16 +115,24 @@ Deno.serve(async (req) => {
     });
 
     // Build complete question objects with translations
-    const completeQuestions = questions.map((q: Question) => ({
-      id: q.id,
-      topic: q.topic,
-      question: q.question,
-      answer_a: q.answer_a,
-      answer_b: q.answer_b,
-      answer_c: q.answer_c,
-      correct_answer: q.correct_answer,
-      translations: translationsByQuestion.get(q.id) || []
-    }));
+    const completeQuestions = questions.map((q: Question) => {
+      // Extract answer texts from JSONB answers array
+      const answerA = q.answers.find(a => a.key === 'A')?.text || '';
+      const answerB = q.answers.find(a => a.key === 'B')?.text || '';
+      const answerC = q.answers.find(a => a.key === 'C')?.text || '';
+
+      return {
+        id: q.id,
+        question: q.question,
+        answer_a: answerA,
+        answer_b: answerB,
+        answer_c: answerC,
+        correct_answer: q.correct_answer,
+        topic_id: q.topic_id,
+        source_category: q.source_category,
+        translations: translationsByQuestion.get(q.id) || []
+      };
+    });
 
     // Shuffle questions using Fisher-Yates
     for (let i = completeQuestions.length - 1; i > 0; i--) {
@@ -125,11 +140,12 @@ Deno.serve(async (req) => {
       [completeQuestions[i], completeQuestions[j]] = [completeQuestions[j], completeQuestions[i]];
     }
 
-    // Delete existing pools for this topic
+    // Delete existing pools for this topic/category
+    const poolTopicId = filterCategory || 'all';
     const { error: deleteError } = await supabaseAdmin
       .from('question_pools')
       .delete()
-      .eq('topic_id', topicId);
+      .eq('topic_id', poolTopicId);
 
     if (deleteError) {
       console.error(`[regenerate-pools] Warning: Failed to delete old pools: ${deleteError.message}`);
@@ -146,7 +162,7 @@ Deno.serve(async (req) => {
       // Only create pool if it has at least MIN_QUESTIONS_PER_POOL
       if (poolQuestions.length >= MIN_QUESTIONS_PER_POOL) {
         pools.push({
-          topic_id: topicId,
+          topic_id: poolTopicId,
           pool_order: poolOrder,
           questions: poolQuestions,
           is_active: true,
@@ -160,7 +176,7 @@ Deno.serve(async (req) => {
       questionIndex += QUESTIONS_PER_POOL;
     }
 
-    console.log(`[regenerate-pools] Created ${pools.length} pools for topic ${topicId}`);
+    console.log(`[regenerate-pools] Created ${pools.length} pools for topic ${poolTopicId}`);
 
     // Insert new pools
     if (pools.length > 0) {
@@ -176,7 +192,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        topicId,
+        topicId: poolTopicId,
         totalQuestions: questions.length,
         poolsCreated: pools.length,
         questionsPerPool: pools.map(p => p.questions.length)
