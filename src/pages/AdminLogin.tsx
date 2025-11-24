@@ -17,22 +17,33 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
+      // Clear any existing session first
+      await supabase.auth.signOut();
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Login error:', error);
+        throw error;
+      }
+
+      if (!data.user) {
+        throw new Error('Sikertelen bejelentkezés');
+      }
 
       // Check if user has admin role
-      const { data: roleData } = await supabase
+      const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', data.user.id)
         .eq('role', 'admin')
         .single();
 
-      if (!roleData) {
+      if (roleError || !roleData) {
+        console.error('Role check error:', roleError);
         await supabase.auth.signOut();
         toast.error('Nincs admin jogosultságod');
         return;
@@ -41,7 +52,11 @@ const AdminLogin = () => {
       toast.success('Sikeres bejelentkezés');
       navigate('/admin/dashboard');
     } catch (error: any) {
-      toast.error(error.message || 'Hiba történt a bejelentkezés során');
+      console.error('Admin login error:', error);
+      const errorMessage = error.message === 'Failed to fetch' 
+        ? 'Hálózati hiba. Ellenőrizd az internetkapcsolatot vagy próbáld újra később.'
+        : error.message || 'Hiba történt a bejelentkezés során';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
