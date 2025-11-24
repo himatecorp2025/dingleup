@@ -32,6 +32,7 @@ import LoginNew from "./pages/LoginNew";
 
 // Lazy load secondary pages
 const Game = lazy(() => import("./pages/Game"));
+const GameRules = lazy(() => import("./pages/GameRules"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const RegistrationSuccess = lazy(() => import("./pages/RegistrationSuccess"));
@@ -155,6 +156,7 @@ const AppCore = () => {
               <Route path="/profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
               <Route path="/leaderboard" element={<ErrorBoundary><Leaderboard /></ErrorBoundary>} />
               <Route path="/game" element={<GameErrorBoundary><Game /></GameErrorBoundary>} />
+              <Route path="/game-rules" element={<ErrorBoundary><GameRules /></ErrorBoundary>} />
               <Route path="/registration-success" element={<ErrorBoundary><RegistrationSuccess /></ErrorBoundary>} />
               <Route path="/payment-success" element={<ErrorBoundary><PaymentSuccess /></ErrorBoundary>} />
               <Route path="/install" element={<ErrorBoundary><InstallApp /></ErrorBoundary>} />
