@@ -106,7 +106,7 @@ export const QuestionTranslationManager = () => {
     try {
       setIsTranslating(true);
       setProgress(0);
-      setStatus('Csonka fordítások keresése...');
+      setStatus('Hiányzó és csonka fordítások keresése...');
       setStats(null);
 
       // CRITICAL: Refresh session to ensure valid JWT token
@@ -120,8 +120,8 @@ export const QuestionTranslationManager = () => {
 
       console.log('[QuestionTranslationManager] Starting truncated translations scan and re-translation');
 
-      // Single invocation - scans ALL question_translations, finds truncated, deletes, and re-translates
-      setStatus('Csonka fordítások törlése és újrafordítása...');
+      // Single invocation - scans ALL questions, finds missing/truncated translations, and translates
+      setStatus('Hiányzó és csonka fordítások fordítása...');
       setProgress(10);
 
       const { data, error } = await supabase.functions.invoke('generate-question-translations', {
@@ -139,9 +139,9 @@ export const QuestionTranslationManager = () => {
 
       console.log('[QuestionTranslationManager] Translation response:', data);
 
-      if (data?.phase === 'scan' && data?.stats?.totalTruncated === 0) {
+      if (data?.phase === 'scan' && data?.stats?.totalMissing === 0 && data?.stats?.truncatedDeleted === 0) {
         setProgress(100);
-        setStatus('Nincs csonka fordítás!');
+        setStatus('Nincs hiányzó vagy csonka fordítás!');
         toast.success('Minden kérdés fordítása teljes és rendben van!');
         setStats({
           total: 0,
@@ -155,20 +155,21 @@ export const QuestionTranslationManager = () => {
       setProgress(50);
 
       if (data?.stats) {
-        const totalSuccess = data.stats.retranslated || 0;
+        const totalSuccess = data.stats.translated || 0;
         const totalErrors = data.stats.errors || 0;
-        const totalTruncated = data.stats.totalTruncated || 0;
+        const totalMissing = data.stats.totalMissing || 0;
+        const truncatedDeleted = data.stats.truncatedDeleted || 0;
 
         setProgress(100);
         setStatus('Fordítás befejezve!');
         setStats({
-          total: totalTruncated,
+          total: totalMissing + truncatedDeleted,
           success: totalSuccess,
           errors: totalErrors
         });
 
-        if (totalTruncated > 0) {
-          toast.success(`${totalTruncated} csonka fordítás törölve és újrafordítva! ${totalSuccess} sikeres.`);
+        if (totalMissing > 0 || truncatedDeleted > 0) {
+          toast.success(`${totalMissing} hiányzó + ${truncatedDeleted} csonka fordítás kezelve! ${totalSuccess} sikeres.`);
         }
 
         if (totalErrors > 0) {
@@ -309,7 +310,7 @@ export const QuestionTranslationManager = () => {
         ) : (
           <>
             <Languages className="w-4 h-4 mr-2" />
-            Csonka fordítások ellenőrzése és javítása
+            Hiányzó fordítások generálása mind a 7 nyelvre
           </>
         )}
       </Button>
