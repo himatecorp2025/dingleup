@@ -3,48 +3,6 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 import { checkRateLimit, rateLimitExceeded, RATE_LIMITS } from '../_shared/rateLimit.ts';
 
-interface Question {
-  question: string;
-  answers: string[];
-  correctAnswer: number;
-  difficulty: string;
-}
-
-// ============================================
-// CRITICAL OPTIMIZATION #3: In-Memory Question Cache
-// ============================================
-interface CacheEntry<T> {
-  data: T;
-  cachedAt: number;
-}
-
-// Cache TTL: 5 minutes (shorter to reduce repetition in gameplay)
-const CACHE_TTL_MS = 5 * 60 * 1000;
-
-// Global cache maps (persist across warm function invocations)
-const questionsCache = new Map<string, CacheEntry<any[]>>();
-const translationsCache = new Map<string, CacheEntry<any[]>>();
-
-function getCached<T>(cache: Map<string, CacheEntry<T>>, key: string): T | null {
-  const entry = cache.get(key);
-  if (!entry) return null;
-  
-  const now = Date.now();
-  if (now - entry.cachedAt > CACHE_TTL_MS) {
-    cache.delete(key); // Expired
-    return null;
-  }
-  
-  return entry.data;
-}
-
-function setCached<T>(cache: Map<string, CacheEntry<T>>, key: string, data: T): void {
-  cache.set(key, {
-    data,
-    cachedAt: Date.now(),
-  });
-}
-
 serve(async (req) => {
   const origin = req.headers.get('origin');
   
@@ -99,146 +57,41 @@ serve(async (req) => {
       return rateLimitExceeded(corsHeaders);
     }
 
-    // ============================================
-    // CRITICAL OPTIMIZATION #3: Parallel Operations
-    // ============================================
-    // Fetch profile and base questions in parallel instead of sequentially
-    // Reduces total latency by ~800ms (from 2,100ms to 1,300ms)
-    
-    const cacheKey = 'questions:base';
-    let baseQuestions = getCached(questionsCache, cacheKey);
-    
-    // Parallel fetch: profile language + base questions (if not cached)
-    const [profileResult, questionsResult] = await Promise.all([
-      // Fetch user's preferred language
-      supabaseClient
-        .from('profiles')
-        .select('preferred_language')
-        .eq('id', user.id)
-        .single(),
-      
-      // Fetch base questions only if not in cache
-      baseQuestions 
-        ? Promise.resolve({ data: baseQuestions, error: null })
-        : supabaseClient
-            .from('questions')
-            .select('id, correct_answer, audience, third, source_category')
-            .limit(300) // Fetch 300 questions for better variety and reduced repetition
-    ]);
+    console.log(`[start-game-session] User ${user.id} starting game`);
 
-    const userLang = profileResult.data?.preferred_language || 'en';
-    console.log(`[start-game-session] User ${user.id} language: ${userLang}`);
-    
-    if (!baseQuestions) {
-      if (questionsResult.error || !questionsResult.data || questionsResult.data.length === 0) {
-        console.error('[start-game-session] Questions fetch error:', questionsResult.error);
-        return new Response(
-          JSON.stringify({ error: 'Failed to load questions from database' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+    // =====================================================
+    // CRITICAL: USE POOL SYSTEM FOR QUESTION LOADING
+    // =====================================================
+    // Call the get-game-questions function to use pool rotation
+    const { data: questionsData, error: questionsError } = await supabaseClient.functions.invoke(
+      'get-game-questions',
+      {
+        body: {},
       }
-      
-      baseQuestions = questionsResult.data;
-      setCached(questionsCache, cacheKey, baseQuestions);
-      console.log('[start-game-session] CACHE MISS - Fetched and cached', baseQuestions.length, 'base questions');
-    } else {
-      console.log('[start-game-session] CACHE HIT - Using cached questions');
-    }
+    );
 
-    // Shuffle and get question IDs
-    const shuffled = baseQuestions.sort(() => Math.random() - 0.5);
-    const questionIds = shuffled.slice(0, 30).map(q => q.id);
-
-    // ============================================
-    // CRITICAL OPTIMIZATION #3: Parallel Translation Fetches
-    // ============================================
-    // Fetch all 3 language translations in parallel instead of sequentially
-    // Reduces translation fetch time by ~600ms (from 900ms to 300ms)
-    
-    let translationsPreferred = getCached(translationsCache, `${userLang}:preferred`);
-    let translationsEn = getCached(translationsCache, 'en:fallback');
-    let translationsHu = getCached(translationsCache, 'hu:fallback');
-
-    // Parallel fetch all translations at once
-    const [prefResult, enResult, huResult] = await Promise.all([
-      // User's preferred language
-      translationsPreferred
-        ? Promise.resolve({ data: translationsPreferred })
-        : supabaseClient
-            .from('question_translations')
-            .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
-            .in('question_id', questionIds)
-            .eq('lang', userLang),
-      
-      // English fallback
-      translationsEn
-        ? Promise.resolve({ data: translationsEn })
-        : supabaseClient
-            .from('question_translations')
-            .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
-            .in('question_id', questionIds)
-            .eq('lang', 'en'),
-      
-      // Hungarian fallback
-      translationsHu
-        ? Promise.resolve({ data: translationsHu })
-        : supabaseClient
-            .from('question_translations')
-            .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
-            .in('question_id', questionIds)
-            .eq('lang', 'hu')
-    ]);
-
-    translationsPreferred = prefResult.data || [];
-    translationsEn = enResult.data || [];
-    translationsHu = huResult.data || [];
-
-    // Build translation map with fallback
-    const translationMap = new Map();
-    
-    // Priority 3: hu (fallback)
-    translationsHu?.forEach(t => translationMap.set(t.question_id, t));
-    // Priority 2: en (fallback)
-    translationsEn?.forEach(t => translationMap.set(t.question_id, t));
-    // Priority 1: user's preferred language
-    translationsPreferred?.forEach(t => translationMap.set(t.question_id, t));
-
-    // Build final questions list with translations
-    const questions = [];
-    for (const baseQ of shuffled) {
-      const translation = translationMap.get(baseQ.id);
-      if (!translation) {
-        console.warn(`[start-game-session] No translation for question ${baseQ.id}, skipping`);
-        continue;
-      }
-
-      questions.push({
-        id: baseQ.id,
-        question: translation.question_text,
-        answers: [
-          { key: 'A', text: translation.answer_a, correct: baseQ.correct_answer === 'A' },
-          { key: 'B', text: translation.answer_b, correct: baseQ.correct_answer === 'B' },
-          { key: 'C', text: translation.answer_c, correct: baseQ.correct_answer === 'C' },
-        ],
-        audience: baseQ.audience || { A: 33, B: 33, C: 34 },
-        third: baseQ.third || 'A',
-        topic: baseQ.source_category || 'mixed'
-      });
-
-      // Stop when we have 15 questions
-      if (questions.length >= 15) break;
-    }
-
-    if (questions.length < 15) {
-      console.error('[start-game-session] Insufficient translated questions:', questions.length);
+    if (questionsError || !questionsData) {
+      console.error('[start-game-session] Failed to get questions from pool:', questionsError);
       return new Response(
-        JSON.stringify({ error: `Not enough translated questions: only ${questions.length} found, need 15` }),
+        JSON.stringify({ error: 'Failed to load questions from pool system' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Questions are already properly formatted
-    const clientQuestions = questions.slice(0, 15);
+    const { questions: poolQuestions, used_pool_order, fallback } = questionsData;
+
+    if (!poolQuestions || poolQuestions.length < 15) {
+      console.error('[start-game-session] Insufficient questions from pool:', poolQuestions?.length);
+      return new Response(
+        JSON.stringify({ error: `Not enough questions: only ${poolQuestions?.length || 0} found, need 15` }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`[start-game-session] Got ${poolQuestions.length} questions from pool ${used_pool_order || 'fallback'}`);
+
+    // Questions are already properly formatted from pool
+    const clientQuestions = poolQuestions.slice(0, 15);
 
     // Create session data for database storage
     const sessionId = crypto.randomUUID();
@@ -271,17 +124,20 @@ serve(async (req) => {
       );
     }
 
-    console.log(`[start-game-session] Session ${sessionId} created with ${clientQuestions.length} questions for user ${user.id}`);
+    console.log(`[start-game-session] Session ${sessionId} created with pool ${used_pool_order || 'fallback'} for user ${user.id}`);
 
     return new Response(
       JSON.stringify({ 
         sessionId,
         questions: clientQuestions,
+        poolUsed: used_pool_order,
+        fallback: fallback || false,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
+    console.error('[start-game-session] Error:', error);
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
