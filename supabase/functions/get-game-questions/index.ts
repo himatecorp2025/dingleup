@@ -2,7 +2,6 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 import { getCorsHeaders } from '../_shared/cors.ts';
 
 const corsHeaders = getCorsHeaders();
-
 const MIN_QUESTIONS_PER_POOL = 15;
 const QUESTIONS_PER_GAME = 15;
 const MAX_POOL_ATTEMPTS = 100; // Prevent infinite loops
@@ -49,17 +48,17 @@ Deno.serve(async (req) => {
     }
 
     const { topicId, lastPoolOrder, languageCode } = await req.json();
-    if (!topicId) {
-      throw new Error('topicId is required');
-    }
+    
+    // Default to "all" if no topicId provided
+    const poolTopicId = topicId || 'all';
 
-    console.log(`[get-game-questions] User: ${user.id}, Topic: ${topicId}, LastPool: ${lastPoolOrder}, Lang: ${languageCode || 'en'}`);
+    console.log(`[get-game-questions] User: ${user.id}, Topic: ${poolTopicId}, LastPool: ${lastPoolOrder}, Lang: ${languageCode || 'hu'}`);
 
     // Get total number of active pools for this topic
     const { count, error: countError } = await supabaseClient
       .from('question_pools')
       .select('*', { count: 'exact', head: true })
-      .eq('topic_id', topicId)
+      .eq('topic_id', poolTopicId)
       .eq('is_active', true);
 
     if (countError) {
@@ -67,10 +66,10 @@ Deno.serve(async (req) => {
     }
 
     if (!count || count === 0) {
-      throw new Error(`No active pools found for topic: ${topicId}`);
+      throw new Error(`No active pools found for topic: ${poolTopicId}`);
     }
 
-    console.log(`[get-game-questions] Found ${count} active pools for topic ${topicId}`);
+    console.log(`[get-game-questions] Found ${count} active pools for topic ${poolTopicId}`);
 
     // Calculate next pool order
     let nextPoolOrder = lastPoolOrder ? ((lastPoolOrder % count) + 1) : 1;
@@ -82,14 +81,14 @@ Deno.serve(async (req) => {
       attempts++;
 
       // Check cache first
-      let pool = getCachedPool(topicId, nextPoolOrder);
+      let pool = getCachedPool(poolTopicId, nextPoolOrder);
 
       if (!pool) {
         // Fetch from database
         const { data: poolData, error: poolError } = await supabaseClient
           .from('question_pools')
           .select('*')
-          .eq('topic_id', topicId)
+          .eq('topic_id', poolTopicId)
           .eq('pool_order', nextPoolOrder)
           .eq('is_active', true)
           .single();
@@ -101,7 +100,7 @@ Deno.serve(async (req) => {
         }
 
         pool = poolData;
-        setCachedPool(topicId, nextPoolOrder, pool);
+        setCachedPool(poolTopicId, nextPoolOrder, pool);
       }
 
       // Check if pool has enough questions
@@ -133,13 +132,13 @@ Deno.serve(async (req) => {
     console.log(`[get-game-questions] Selected ${selectedQuestions.length} random questions from pool ${selectedPool.pool_order}`);
 
     // Format questions for the game (with translations)
+    const targetLang = languageCode || 'hu';
     const formattedQuestions = selectedQuestions.map(q => {
-      const targetLang = languageCode || 'en';
-      const translation = q.translations?.find((t: any) => t.language_code === targetLang);
+      const translation = q.translations?.find((t: any) => t.lang === targetLang);
       
       return {
         id: q.id,
-        topic: q.topic,
+        topic: q.source_category || 'mixed',
         question: translation?.question_text || q.question,
         answer_a: translation?.answer_a || q.answer_a,
         answer_b: translation?.answer_b || q.answer_b,
@@ -153,7 +152,7 @@ Deno.serve(async (req) => {
       .from('game_session_pools')
       .upsert({
         user_id: user.id,
-        topic_id: topicId,
+        topic_id: poolTopicId,
         last_pool_order: selectedPool.pool_order,
         updated_at: new Date().toISOString()
       }, {
