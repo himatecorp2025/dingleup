@@ -174,7 +174,16 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
               <span className="relative z-10 text-primary-foreground font-bold text-[10px] sm:text-xs leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{questionNumber}/15</span>
             )}
           </div>
-          <p className="text-sm sm:text-base md:text-lg font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>
+          <p 
+            className={`font-bold text-center flex-1 drop-shadow-lg font-poppins text-foreground ${
+              typeof children === 'string' && children.length > 80 
+                ? 'text-xs sm:text-sm md:text-base leading-tight' 
+                : typeof children === 'string' && children.length > 50
+                ? 'text-sm sm:text-base md:text-lg leading-snug'
+                : 'text-sm sm:text-base md:text-lg leading-snug'
+            }`}
+            style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}
+          >
             {children}
           </p>
           <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />

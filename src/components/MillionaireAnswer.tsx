@@ -41,7 +41,17 @@ export const MillionaireAnswer = ({
             >
               {letter}:
             </div>
-            <span className="text-xl sm:text-2xl md:text-3xl line-through font-bold font-poppins flex-1 text-center px-2 sm:px-3 md:px-4">{children}</span>
+            <span 
+              className={`line-through font-bold font-poppins flex-1 text-center px-2 sm:px-3 md:px-4 ${
+                typeof children === 'string' && children.length > 35 
+                  ? 'text-base sm:text-lg md:text-xl' 
+                  : typeof children === 'string' && children.length > 25
+                  ? 'text-lg sm:text-xl md:text-2xl'
+                  : 'text-xl sm:text-2xl md:text-3xl'
+              }`}
+            >
+              {children}
+            </span>
             <div className="w-8 sm:w-9 md:w-10 flex-shrink-0" aria-hidden />
           </div>
         </div>
@@ -269,7 +279,16 @@ export const MillionaireAnswer = ({
 
               <span className="relative z-10 text-primary-foreground font-bold text-[15px] sm:text-lg leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{letter}:</span>
             </div>
-            <p className="text-xl sm:text-2xl md:text-3xl font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground translate-y-[35%]" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>
+            <p 
+              className={`font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground translate-y-[35%] ${
+                typeof children === 'string' && children.length > 35 
+                  ? 'text-base sm:text-lg md:text-xl' 
+                  : typeof children === 'string' && children.length > 25
+                  ? 'text-lg sm:text-xl md:text-2xl'
+                  : 'text-xl sm:text-2xl md:text-3xl'
+              }`}
+              style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}
+            >
               {children}
             </p>
             <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />

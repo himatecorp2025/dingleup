@@ -294,22 +294,10 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
   const restartGameImmediately = useCallback(async () => {
     if (!profile || isStarting) return;
 
+    console.log('[useGameLifecycle] Restart initiated - clearing all state');
     toast.dismiss();
     
-    if (!gameCompleted) {
-      toast.error('Újraindítva! Elvesztetted az összegyűjtött aranyérméidet.', {
-        duration: 2000,
-        style: {
-          background: 'hsl(var(--destructive))',
-          color: 'hsl(var(--destructive-foreground))',
-          border: '1px solid hsl(var(--destructive))',
-        }
-      });
-      
-      await new Promise(resolve => setTimeout(resolve, 800));
-      toast.dismiss();
-    }
-    
+    // Complete state reset BEFORE starting new game
     resetGameStateHook();
     setCoinsEarned(0);
     setHelp5050UsageCount(0);
@@ -320,19 +308,35 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     setSecondAttempt(null);
     setErrorBannerVisible(false);
     resetRewardAnimation();
-    
-    await startGame(true);
-    
+    setCurrentQuestionIndex(0);
+    setQuestionVisible(false);
     setIsAnimating(true);
     setCanSwipe(false);
-    setQuestionVisible(false);
     
+    // Short delay to ensure UI state is cleared
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    if (!gameCompleted) {
+      toast.error('Újraindítva! Elvesztetted az összegyűjtött aranyérméidet.', {
+        duration: 2000,
+        style: {
+          background: 'hsl(var(--destructive))',
+          color: 'hsl(var(--destructive-foreground))',
+          border: '1px solid hsl(var(--destructive))',
+        }
+      });
+    }
+    
+    // Start new game with clean slate
+    await startGame(true);
+    
+    // Smooth transition to new game
     setTimeout(() => {
-      setCurrentQuestionIndex(0);
       resetTimer(10);
       setQuestionVisible(true);
       setIsAnimating(false);
       setCanSwipe(true);
+      console.log('[useGameLifecycle] Restart complete - game ready');
     }, 300);
   }, [
     profile, isStarting, gameCompleted, resetGameStateHook, setCoinsEarned,
