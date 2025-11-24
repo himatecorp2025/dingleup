@@ -3,7 +3,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 
 const corsHeaders = getCorsHeaders();
 const TARGET_QUESTIONS_PER_TOPIC = 150;
-const MAX_QUESTION_LENGTH = 120;
+const MAX_QUESTION_LENGTH = 75;
 const MAX_ANSWER_LENGTH = 50;
 
 interface TopicInfo {
