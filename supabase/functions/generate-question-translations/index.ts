@@ -312,22 +312,58 @@ serve(async (req) => {
     }
 
     // ========================================================================
-    // STEP 6: TRANSLATE MISSING TRANSLATIONS
+    // STEP 6: TRANSLATE MISSING TRANSLATIONS WITH REAL-TIME PROGRESS
     // ========================================================================
+    
+    // Set up Realtime channel for progress broadcasting
+    const progressChannel = supabase.channel('question-translation-progress');
+    
     for (const lang of TARGET_LANGUAGES) {
       console.log(`[generate-question-translations] Starting translations to ${LANGUAGE_NAMES[lang]}`);
+      
+      // Broadcast language start
+      await progressChannel.send({
+        type: 'broadcast',
+        event: 'translation-progress',
+        payload: {
+          phase: 'language-start',
+          language: lang,
+          languageName: LANGUAGE_NAMES[lang],
+          totalQuestions: questions.length
+        }
+      });
 
       // BATCH SIZE: 10 questions at a time for quality
       const BATCH_SIZE = 10;
+      const totalBatches = Math.ceil(questions.length / BATCH_SIZE);
+      
       for (let i = 0; i < questions.length; i += BATCH_SIZE) {
         const batch = questions.slice(i, i + BATCH_SIZE);
+        const currentBatch = Math.floor(i / BATCH_SIZE) + 1;
         
         // Filter: only translate missing translations
         const itemsToTranslate = batch.filter(q => !existingSet.has(`${q.id}|${lang}`));
 
         if (itemsToTranslate.length === 0) {
           skippedExisting += batch.length;
-          console.log(`[generate-question-translations] Batch ${Math.floor(i / BATCH_SIZE) + 1}: all questions already translated for ${lang}`);
+          console.log(`[generate-question-translations] Batch ${currentBatch}: all questions already translated for ${lang}`);
+          
+          // Broadcast skipped batch progress
+          await progressChannel.send({
+            type: 'broadcast',
+            event: 'translation-progress',
+            payload: {
+              phase: 'batch-skipped',
+              language: lang,
+              languageName: LANGUAGE_NAMES[lang],
+              currentBatch,
+              totalBatches,
+              questionsProcessed: i + batch.length,
+              totalQuestions: questions.length,
+              skipped: batch.length
+            }
+          });
+          
           continue;
         }
 
@@ -535,7 +571,25 @@ CRITICAL REQUIREMENTS:
             }
           }
 
-          console.log(`[generate-question-translations] Completed batch ${Math.floor(i / BATCH_SIZE) + 1} for ${lang}`);
+          console.log(`[generate-question-translations] Completed batch ${currentBatch} for ${lang}`);
+          
+          // Broadcast batch completion progress
+          await progressChannel.send({
+            type: 'broadcast',
+            event: 'translation-progress',
+            payload: {
+              phase: 'batch-complete',
+              language: lang,
+              languageName: LANGUAGE_NAMES[lang],
+              currentBatch,
+              totalBatches,
+              questionsProcessed: i + batch.length,
+              totalQuestions: questions.length,
+              successCount,
+              errorCount,
+              skippedExisting
+            }
+          });
 
         } catch (translateError) {
           console.error(`[generate-question-translations] Translation error for ${lang}:`, translateError);
