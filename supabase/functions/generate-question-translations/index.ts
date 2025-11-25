@@ -204,20 +204,20 @@ RESPONSE FORMAT:
             }
 
             const translatedQuestion = questionMatch[1];
-            const translatedAnswers = {
-              A: answerAMatch[1],
-              B: answerBMatch[1],
-              C: answerCMatch[1]
-            };
+            const translatedA = answerAMatch[1];
+            const translatedB = answerBMatch[1];
+            const translatedC = answerCMatch[1];
 
-            // Insert translation
+            // Insert translation with correct column names
             const { error: insertError } = await supabase
               .from('question_translations')
               .insert({
                 question_id: question.id,
                 lang: targetLang,
-                question: translatedQuestion,
-                answers: translatedAnswers
+                question_text: translatedQuestion,
+                answer_a: translatedA,
+                answer_b: translatedB,
+                answer_c: translatedC
               });
 
             if (insertError) {
