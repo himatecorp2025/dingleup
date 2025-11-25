@@ -87,13 +87,98 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
 
     // ========================================================================
-    // STEP 1: FETCH ALL QUESTIONS FROM DATABASE
+    // STEP 1: FIND ALL INCOMPLETE TRANSLATIONS
     // ========================================================================
-    console.log('[generate-question-translations] Fetching all questions from database...');
+    console.log('[generate-question-translations] Scanning for incomplete translations...');
     
+    const { data: allIncomplete } = await supabase
+      .from('question_translations')
+      .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
+      .in('lang', TARGET_LANGUAGES);
+    
+    const incompleteItems: Array<{question_id: string, lang: string, reason: string}> = [];
+    if (allIncomplete) {
+      for (const t of allIncomplete) {
+        // Check for incomplete/truncated translations
+        if (!t.question_text || !t.question_text.includes('?')) {
+          incompleteItems.push({ 
+            question_id: t.question_id, 
+            lang: t.lang,
+            reason: 'Missing question mark'
+          });
+        } else if (t.question_text.length < 15) {
+          incompleteItems.push({ 
+            question_id: t.question_id, 
+            lang: t.lang,
+            reason: 'Too short (<15 chars)'
+          });
+        } else if (
+          t.answer_a?.toLowerCase().includes('unfilled') || 
+          t.answer_b?.toLowerCase().includes('unfilled') || 
+          t.answer_c?.toLowerCase().includes('unfilled')
+        ) {
+          incompleteItems.push({ 
+            question_id: t.question_id, 
+            lang: t.lang,
+            reason: 'Contains "unfilled"'
+          });
+        }
+      }
+    }
+
+    console.log(`[generate-question-translations] Found ${incompleteItems.length} incomplete translations`);
+    
+    // Group by language for detailed listing
+    const incompleteByLang: Record<string, number> = {};
+    for (const item of incompleteItems) {
+      incompleteByLang[item.lang] = (incompleteByLang[item.lang] || 0) + 1;
+    }
+    
+    console.log('[generate-question-translations] Breakdown by language:', incompleteByLang);
+    
+    if (incompleteItems.length === 0) {
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          phase: 'scan',
+          message: 'Nincsen hiányos fordítás - minden kérdés rendben van!',
+          stats: {
+            totalIncomplete: 0,
+            byLanguage: {},
+            deleted: 0,
+            retranslated: 0
+          }
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      );
+    }
+
+    // ========================================================================
+    // STEP 2: DELETE ALL INCOMPLETE TRANSLATIONS
+    // ========================================================================
+    console.log(`[generate-question-translations] Deleting ${incompleteItems.length} incomplete translations...`);
+    
+    for (const item of incompleteItems) {
+      await supabase
+        .from('question_translations')
+        .delete()
+        .eq('question_id', item.question_id)
+        .eq('lang', item.lang);
+    }
+    
+    console.log(`[generate-question-translations] Successfully deleted ${incompleteItems.length} incomplete translations`);
+
+    // ========================================================================
+    // STEP 3: GET UNIQUE QUESTION IDs THAT NEED RE-TRANSLATION
+    // ========================================================================
+    const uniqueQuestionIds = [...new Set(incompleteItems.map(t => t.question_id))];
+    console.log(`[generate-question-translations] ${uniqueQuestionIds.length} unique questions need re-translation`);
+
+    // Fetch full question data for these questions
     const { data: questions, error: fetchError } = await supabase
       .from('questions')
-      .select('id, question, answers, correct_answer');
+      .select('id, question, answers, correct_answer')
+      .in('id', uniqueQuestionIds);
 
     if (fetchError) {
       console.error('[generate-question-translations] Fetch error:', fetchError);
@@ -362,7 +447,7 @@ CRITICAL REQUIREMENTS:
       console.log(`[generate-question-translations] Completed ${LANGUAGE_NAMES[lang]}`);
     }
 
-    console.log(`[generate-question-translations] Translation complete - ${successCount} success, ${errorCount} errors, ${skippedExisting} skipped existing`);
+    console.log(`[generate-question-translations] Re-translation complete - ${successCount} success, ${errorCount} errors, ${skippedExisting} skipped existing`);
 
     // ========================================================================
     // RETURN REPORT
@@ -371,11 +456,13 @@ CRITICAL REQUIREMENTS:
       JSON.stringify({ 
         success: true,
         phase: 'done',
-        message: `Fordítás befejezve: ${successCount} új fordítás, ${skippedExisting} már létező kihagyva`,
+        message: `${incompleteItems.length} hiányos fordítás törölve és újrafordítva`,
         stats: {
-          totalQuestions: questions?.length || 0,
+          totalIncomplete: incompleteItems.length,
+          byLanguage: incompleteByLang,
+          deleted: incompleteItems.length,
           attempted: attemptedCount,
-          translated: successCount,
+          retranslated: successCount,
           skippedExisting: skippedExisting,
           errors: errorCount,
           languages: TARGET_LANGUAGES
