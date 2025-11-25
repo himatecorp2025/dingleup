@@ -34,7 +34,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
   };
 
   return (
-    <div className={`relative ${className}`} style={{ minWidth: '320px', minHeight: '100px' }}>
+    <div className={`relative ${className}`} style={{ minWidth: '220px', minHeight: '100px' }}>
       {/* Rank Hexagon - Blue */}
       <div className="absolute z-10" style={{ left: '27%', top: '36%', transform: 'translate(-50%, -50%)' }}>
         <DiamondHexagon type="rank" value={rank !== null ? rank : '...'} />
