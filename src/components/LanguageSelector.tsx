@@ -11,13 +11,7 @@ import { Globe } from 'lucide-react';
 
 const LANGUAGE_FLAGS: Record<LangCode, string> = {
   hu: '🇭🇺',
-  en: '🇬🇧',
-  de: '🇩🇪',
-  fr: '🇫🇷',
-  es: '🇪🇸',
-  it: '🇮🇹',
-  pt: '🇵🇹',
-  nl: '🇳🇱'
+  en: '🇬🇧'
 };
 
 export const LanguageSelector: React.FC = () => {

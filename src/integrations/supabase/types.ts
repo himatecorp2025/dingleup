@@ -2633,44 +2633,26 @@ export type Database = {
       translations: {
         Row: {
           created_at: string
-          de: string | null
           en: string | null
-          es: string | null
-          fr: string | null
           hu: string
           id: string
-          it: string | null
           key: string
-          nl: string | null
-          pt: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
-          de?: string | null
           en?: string | null
-          es?: string | null
-          fr?: string | null
           hu: string
           id?: string
-          it?: string | null
           key: string
-          nl?: string | null
-          pt?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
-          de?: string | null
           en?: string | null
-          es?: string | null
-          fr?: string | null
           hu?: string
           id?: string
-          it?: string | null
           key?: string
-          nl?: string | null
-          pt?: string | null
           updated_at?: string
         }
         Relationships: []
