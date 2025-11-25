@@ -427,20 +427,32 @@ if (!profile) {
           <div className="flex items-center justify-between gap-1">
             {/* Left: Greeting */}
             <div className="flex items-center gap-2 xs:gap-3 flex-1 min-w-0 pr-1">
-              <h1 
-                className="font-black leading-tight"
-                style={{ 
-                  fontSize: 'clamp(0.8125rem, 3.75vw, 1.5625rem)',
-                  wordBreak: 'break-word',
-                  overflowWrap: 'break-word',
-                  background: 'linear-gradient(to right, #fbbf24, #ffffff, #fbbf24)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  WebkitTextStroke: '1px rgba(0, 0, 0, 0.8)'
-                }}
-              >
-                {t('dashboard.welcome')}, {profile.username}!
-              </h1>
+              <div className="font-black leading-tight" style={{ width: '100%' }}>
+                <div
+                  style={{ 
+                    fontSize: 'clamp(0.8125rem, 3.75vw, 1.5625rem)',
+                    background: 'linear-gradient(to right, #fbbf24, #ffffff, #fbbf24)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    WebkitTextStroke: '1px rgba(0, 0, 0, 0.8)'
+                  }}
+                >
+                  {t('dashboard.welcome')}
+                </div>
+                <div
+                  style={{ 
+                    fontSize: 'clamp(0.8125rem, 3.75vw, 1.5625rem)',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'break-word',
+                    background: 'linear-gradient(to right, #fbbf24, #ffffff, #fbbf24)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    WebkitTextStroke: '1px rgba(0, 0, 0, 0.8)'
+                  }}
+                >
+                  {profile.username}!
+                </div>
+              </div>
             </div>
 
             {/* Right: Purple Users Hexagon Bar with 4 hexagons */}
