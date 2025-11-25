@@ -31,6 +31,9 @@ export const QuestionTranslationManager = () => {
   const [isTranslating, setIsTranslating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<string>('');
+  const [currentLanguage, setCurrentLanguage] = useState<string>('');
+  const [currentBatch, setCurrentBatch] = useState<number>(0);
+  const [totalBatches, setTotalBatches] = useState<number>(0);
   const [stats, setStats] = useState<{
     total: number;
     success: number;
@@ -107,6 +110,9 @@ export const QuestionTranslationManager = () => {
       setIsTranslating(true);
       setProgress(0);
       setStatus('Csonka fordítások keresése...');
+      setCurrentLanguage('');
+      setCurrentBatch(0);
+      setTotalBatches(0);
       setStats(null);
 
       // CRITICAL: Refresh session to ensure valid JWT token
@@ -120,9 +126,33 @@ export const QuestionTranslationManager = () => {
 
       console.log('[QuestionTranslationManager] Starting truncated translations scan and re-translation');
 
+      // Subscribe to real-time progress updates
+      const progressChannel = supabase.channel('question-translation-progress');
+      
+      progressChannel.on('broadcast', { event: 'translation-progress' }, (payload: any) => {
+        const data = payload.payload;
+        console.log('[QuestionTranslationManager] Progress update:', data);
+        
+        if (data.phase === 'language-start') {
+          setCurrentLanguage(data.languageName);
+          setStatus(`Fordítás ${data.languageName} nyelvre...`);
+          setCurrentBatch(0);
+          setTotalBatches(Math.ceil(data.totalQuestions / 10));
+        } else if (data.phase === 'batch-complete' || data.phase === 'batch-skipped') {
+          setCurrentBatch(data.currentBatch);
+          setTotalBatches(data.totalBatches);
+          const percentComplete = Math.round((data.questionsProcessed / data.totalQuestions) * 100);
+          setProgress(percentComplete);
+          setStatus(`${data.languageName}: ${data.currentBatch}/${data.totalBatches} batch (${data.successCount} sikeres, ${data.errorCount} hiba)`);
+        }
+      });
+
+      await progressChannel.subscribe();
+      channelRef.current = progressChannel;
+
       // Single invocation - scans ALL question_translations, finds truncated, deletes, and re-translates
       setStatus('Csonka fordítások törlése és újrafordítása...');
-      setProgress(10);
+      setProgress(5);
 
       const { data, error } = await supabase.functions.invoke('generate-question-translations', {
         body: {}, // No parameters needed - scans entire table
@@ -185,6 +215,11 @@ export const QuestionTranslationManager = () => {
       toast.error('Váratlan hiba történt');
       setStatus('Váratlan hiba');
     } finally {
+      // Unsubscribe from real-time channel
+      if (channelRef.current) {
+        await channelRef.current.unsubscribe();
+        channelRef.current = null;
+      }
       setIsTranslating(false);
     }
   };
@@ -252,6 +287,19 @@ export const QuestionTranslationManager = () => {
       {status && (
         <div className="mb-4 p-3 bg-white/5 rounded-lg">
           <p className="text-sm text-white/80">{status}</p>
+          {currentLanguage && (
+            <div className="mt-2 flex items-center gap-2">
+              <Languages className="w-4 h-4 text-purple-400" />
+              <p className="text-xs text-white/60">
+                Aktuális nyelv: <span className="font-semibold text-purple-400">{currentLanguage}</span>
+              </p>
+            </div>
+          )}
+          {totalBatches > 0 && (
+            <p className="mt-1 text-xs text-white/60">
+              Batch: <span className="font-semibold text-purple-400">{currentBatch}/{totalBatches}</span>
+            </p>
+          )}
         </div>
       )}
 
