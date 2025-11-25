@@ -450,7 +450,7 @@ if (!profile) {
                     WebkitTextStroke: '1px rgba(0, 0, 0, 0.8)'
                   }}
                 >
-                  {profile.username}!
+                  <span style={{ whiteSpace: 'nowrap' }}>{profile.username}!</span>
                 </div>
               </div>
             </div>
