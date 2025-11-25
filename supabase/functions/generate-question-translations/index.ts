@@ -200,15 +200,28 @@ serve(async (req) => {
     // ========================================================================
     console.log(`[generate-question-translations] Deleting ${incompleteItems.length} incomplete translations...`);
     
+    // Delete in batches grouped by language to avoid thousands of single-row deletes
+    const deletionsByLang: Record<string, string[]> = {};
     for (const item of incompleteItems) {
-      await supabase
+      if (!deletionsByLang[item.lang]) {
+        deletionsByLang[item.lang] = [];
+      }
+      deletionsByLang[item.lang].push(item.question_id);
+    }
+
+    for (const [lang, ids] of Object.entries(deletionsByLang)) {
+      const { error: deleteError } = await supabase
         .from('question_translations')
         .delete()
-        .eq('question_id', item.question_id)
-        .eq('lang', item.lang);
+        .in('question_id', ids)
+        .eq('lang', lang);
+
+      if (deleteError) {
+        console.error(`[generate-question-translations] Delete error for lang ${lang}:`, deleteError);
+      }
     }
     
-    console.log(`[generate-question-translations] Successfully deleted ${incompleteItems.length} incomplete translations`);
+    console.log(`[generate-question-translations] Successfully deleted ${incompleteItems.length} incomplete translations in ${Object.keys(deletionsByLang).length} batches`);
 
     // ========================================================================
     // STEP 3: GET UNIQUE QUESTION IDs THAT NEED RE-TRANSLATION
