@@ -87,41 +87,83 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
 
     // ========================================================================
-    // STEP 1: FIND ALL INCOMPLETE TRANSLATIONS
+    // STEP 1: FIND ALL INCOMPLETE/MISSING TRANSLATIONS
     // ========================================================================
-    console.log('[generate-question-translations] Scanning for incomplete translations...');
+    console.log('[generate-question-translations] Scanning for missing and incomplete translations...');
     
-    const { data: allIncomplete } = await supabase
+    // Get all question IDs
+    const { data: allQuestions } = await supabase
+      .from('questions')
+      .select('id');
+    
+    if (!allQuestions) {
+      return new Response(JSON.stringify({
+        success: false,
+        phase: 'scan',
+        error: 'Failed to fetch questions'
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const allQuestionIds = new Set(allQuestions.map(q => q.id));
+    console.log(`[generate-question-translations] Total questions in database: ${allQuestionIds.size}`);
+    
+    // Get all existing translations
+    const { data: existingTranslationsData } = await supabase
       .from('question_translations')
       .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
       .in('lang', TARGET_LANGUAGES);
     
+    // Build map of existing translations
+    const existingMap = new Map<string, any>();
+    if (existingTranslationsData) {
+      for (const t of existingTranslationsData) {
+        existingMap.set(`${t.question_id}|${t.lang}`, t);
+      }
+    }
+    
     const incompleteItems: Array<{question_id: string, lang: string, reason: string}> = [];
-    if (allIncomplete) {
-      for (const t of allIncomplete) {
-        // Check for incomplete/truncated translations
-        if (!t.question_text || !t.question_text.includes('?')) {
+    
+    // Check each question for each target language
+    for (const questionId of allQuestionIds) {
+      for (const lang of TARGET_LANGUAGES) {
+        const key = `${questionId}|${lang}`;
+        const translation = existingMap.get(key);
+        
+        if (!translation) {
+          // Translation doesn't exist at all
           incompleteItems.push({ 
-            question_id: t.question_id, 
-            lang: t.lang,
-            reason: 'Missing question mark'
+            question_id: questionId, 
+            lang: lang,
+            reason: 'Missing translation'
           });
-        } else if (t.question_text.length < 15) {
-          incompleteItems.push({ 
-            question_id: t.question_id, 
-            lang: t.lang,
-            reason: 'Too short (<15 chars)'
-          });
-        } else if (
-          t.answer_a?.toLowerCase().includes('unfilled') || 
-          t.answer_b?.toLowerCase().includes('unfilled') || 
-          t.answer_c?.toLowerCase().includes('unfilled')
-        ) {
-          incompleteItems.push({ 
-            question_id: t.question_id, 
-            lang: t.lang,
-            reason: 'Contains "unfilled"'
-          });
+        } else {
+          // Translation exists but check if it's incomplete/broken
+          if (!translation.question_text || !translation.question_text.includes('?')) {
+            incompleteItems.push({ 
+              question_id: questionId, 
+              lang: lang,
+              reason: 'Missing question mark'
+            });
+          } else if (translation.question_text.length < 15) {
+            incompleteItems.push({ 
+              question_id: questionId, 
+              lang: lang,
+              reason: 'Too short (<15 chars)'
+            });
+          } else if (
+            translation.answer_a?.toLowerCase().includes('unfilled') || 
+            translation.answer_b?.toLowerCase().includes('unfilled') || 
+            translation.answer_c?.toLowerCase().includes('unfilled')
+          ) {
+            incompleteItems.push({ 
+              question_id: questionId, 
+              lang: lang,
+              reason: 'Contains "unfilled"'
+            });
+          }
         }
       }
     }
