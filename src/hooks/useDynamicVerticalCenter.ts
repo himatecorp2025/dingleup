@@ -45,7 +45,9 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
       if (Math.abs(contentHeight - lastContentHeightRef.current) > 2) {
         // Calculate exact vertical center position
         // Formula: (overlayHeight / 2) - (contentHeight / 2)
-        const centerPosition = (overlayHeight - contentHeight) / 2;
+        const isMultiLine = contentHeight / overlayHeight > 0.5;
+        const opticalAdjust = isMultiLine ? 4 : 0;
+        const centerPosition = (overlayHeight - contentHeight) / 2 + opticalAdjust;
         
         // Set translateY in pixels
         setTranslateY(centerPosition);
