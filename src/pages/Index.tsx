@@ -38,7 +38,11 @@ const Index = () => {
   }, []);
 
   // Mobile/tablet: redirect immediately, don't show landing page
-  if (isMobileOrTablet && !loading) {
+  if (isMobileOrTablet) {
+    if (loading) {
+      return null; // Wait for session check on mobile
+    }
+    
     const introShown = sessionStorage.getItem('introShown');
     
     if (!introShown) {
@@ -52,7 +56,7 @@ const Index = () => {
     return <Navigate to="/auth/choice" replace />;
   }
 
-  // Desktop/laptop: show landing page
+  // Desktop/laptop: show landing page immediately (no need to wait for loading)
   return (
     <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] overflow-x-hidden overflow-y-auto">
       {/* Full-screen deep purple/blue background extending behind status bar */}
