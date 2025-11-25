@@ -434,7 +434,7 @@ if (!profile) {
                     background: 'linear-gradient(to right, #fbbf24, #ffffff, #fbbf24)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
-                    WebkitTextStroke: '1px rgba(0, 0, 0, 0.8)'
+                    filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.9)) drop-shadow(-1px -1px 1px rgba(0, 0, 0, 0.9))'
                   }}
                 >
                   {t('dashboard.welcome')}
@@ -447,7 +447,7 @@ if (!profile) {
                     background: 'linear-gradient(to right, #fbbf24, #ffffff, #fbbf24)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
-                    WebkitTextStroke: '1px rgba(0, 0, 0, 0.8)'
+                    filter: 'drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.9)) drop-shadow(-1px -1px 1px rgba(0, 0, 0, 0.9))'
                   }}
                 >
                   <span style={{ whiteSpace: 'nowrap' }}>{profile.username}!</span>
