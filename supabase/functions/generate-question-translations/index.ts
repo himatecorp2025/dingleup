@@ -34,7 +34,11 @@ serve(async (req) => {
       };
 
       try {
-        console.log('[generate-question-translations] Starting Hungarian to target languages translation');
+        // Get target language from request (optional - if not provided, process all)
+        const body = await req.json().catch(() => ({}));
+        const targetLang = body.targetLang as LangCode | undefined;
+        
+        console.log('[generate-question-translations] Starting Hungarian to target languages translation', targetLang ? `for ${targetLang}` : 'for all languages');
         
         const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
         const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -133,7 +137,10 @@ serve(async (req) => {
         let errorCount = 0;
         const errorSamples: string[] = [];
 
-        for (const lang of TARGET_LANGUAGES) {
+        // Process only the target language if specified, otherwise all languages
+        const languagesToProcess = targetLang ? [targetLang as LangCode] : TARGET_LANGUAGES;
+        
+        for (const lang of languagesToProcess) {
           const missingItems = missingByLanguage[lang];
           
           if (missingItems.length === 0) {
@@ -347,12 +354,38 @@ ${batchTexts}`;
 
         console.log(`[generate-question-translations] Translation complete - ${successCount} success, ${errorCount} errors`);
 
+        // Check if there are still missing translations in other languages
+        const { data: remainingCheck } = await supabase
+          .from('question_translations')
+          .select('question_id, lang')
+          .in('lang', TARGET_LANGUAGES);
+
+        const remainingMap = new Set<string>();
+        if (remainingCheck) {
+          for (const t of remainingCheck) {
+            remainingMap.add(`${t.question_id}|${t.lang}`);
+          }
+        }
+
+        let totalRemaining = 0;
+        for (const huSource of hungarianSources) {
+          for (const checkLang of TARGET_LANGUAGES) {
+            const key = `${huSource.question_id}|${checkLang}`;
+            if (!remainingMap.has(key)) {
+              totalRemaining++;
+            }
+          }
+        }
+
         sendProgress({ 
           type: 'complete', 
-          message: `Fordítás kész! ${successCount} sikeres, ${errorCount} hiba`,
+          message: targetLang 
+            ? `${LANGUAGE_NAMES[targetLang]} kész! ${successCount} sikeres, ${errorCount} hiba${totalRemaining > 0 ? ` - ${totalRemaining} fordítás maradt más nyelveken` : ''}`
+            : `Fordítás kész! ${successCount} sikeres, ${errorCount} hiba`,
           totalMissing,
           totalSuccess: successCount,
-          totalErrors: errorCount
+          totalErrors: errorCount,
+          totalRemaining
         });
 
         controller.close();
