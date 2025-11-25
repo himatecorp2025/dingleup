@@ -24,7 +24,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
       borderColor: 'border-primary',
       shadowColor: 'shadow-[0_0_20px_hsl(var(--primary)/0.6),0_8px_25px_rgba(0,0,0,0.5)]',
       glowColor: 'hsl(var(--primary) / 0.4)',
-      iconColor: 'hsl(var(--accent))',
+      iconColor: 'hsl(var(--foreground))',
     },
     coins: {
       gradientOuter: 'from-yellow-900 via-yellow-600 to-yellow-800',
@@ -74,14 +74,13 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
           >
             <path
               d="M2 10L5 6L8.5 9L12 3L15.5 9L19 6L22 10V18H2V10Z"
-              stroke="currentColor"
               strokeWidth="1.5"
               strokeLinejoin="round"
             />
             <rect x="2" y="18" width="20" height="3" rx="0.5" />
-            <circle cx="12" cy="8" r="1" fill="currentColor" />
-            <circle cx="7" cy="10" r="1" fill="currentColor" />
-            <circle cx="17" cy="10" r="1" fill="currentColor" />
+            <circle cx="12" cy="8" r="1" />
+            <circle cx="7" cy="10" r="1" />
+            <circle cx="17" cy="10" r="1" />
           </svg>
         );
       case 'coins':
