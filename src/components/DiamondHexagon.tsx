@@ -64,16 +64,16 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
     switch (type) {
       case 'rank':
-        // Crown SVG - positioned exactly like the heart
+        // Crown SVG - same sizing & alignment as coin/heart
         return (
           <svg
             className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
             viewBox="0 0 24 24"
-            fill={color}
+            fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d="M2 18H22V21H2V18Z" />
-            <path d="M3 8L6 4L9.5 8L12 2L14.5 8L18 4L21 8V18H3V8Z" />
+            <path d="M5 16H19V18H5V16Z" fill={color} />
+            <path d="M6 10L9 7L11.5 10L12 8.5L12.5 10L15 7L18 10V16H6V10Z" fill={color} />
           </svg>
         );
       case 'coins':
