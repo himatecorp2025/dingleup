@@ -280,8 +280,15 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
   const handleVideoEnd = useCallback(async () => {
     if (gameInitPromiseRef.current) {
       try {
-        await gameInitPromiseRef.current;
+        // Add 5-second timeout to prevent infinite wait
+        await Promise.race([
+          gameInitPromiseRef.current,
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Game initialization timeout')), 5000)
+          )
+        ]);
       } catch (error) {
+        console.error('[useGameLifecycle] Init timeout or error:', error);
         return;
       }
     }

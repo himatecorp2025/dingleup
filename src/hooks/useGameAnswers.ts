@@ -48,7 +48,14 @@ export const useGameAnswers = (options: UseGameAnswersOptions) => {
     setSelectedAnswer(answerKey);
     incrementCorrectAnswers();
     triggerHaptic('success');
-    await creditCorrectAnswer();
+    
+    // Add error handling for credit operation
+    try {
+      await creditCorrectAnswer();
+    } catch (error) {
+      console.error('[useGameAnswers] Error crediting correct answer:', error);
+      // Don't block game flow - rewards will sync on next wallet refresh
+    }
   }, [addResponseTime, incrementCorrectAnswers, triggerHaptic, creditCorrectAnswer, setSelectedAnswer]);
 
   const handleWrongAnswer = useCallback((responseTime: number, answerKey: string) => {
@@ -57,10 +64,13 @@ export const useGameAnswers = (options: UseGameAnswersOptions) => {
     setContinueType('wrong');
     triggerHaptic('error');
     
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setErrorBannerVisible(true);
       setErrorBannerMessage(`Rossz válasz! Folytatáshoz ${CONTINUE_AFTER_WRONG_COST} aranyérme szükséges.`);
     }, 500);
+    
+    // Return cleanup function
+    return () => clearTimeout(timeoutId);
   }, [addResponseTime, triggerHaptic, setSelectedAnswer, setContinueType, setErrorBannerVisible, setErrorBannerMessage]);
 
   const handleAnswer = useCallback((answerKey: string) => {
@@ -71,15 +81,19 @@ export const useGameAnswers = (options: UseGameAnswersOptions) => {
     const selectedAnswerObj = currentQuestion.answers.find(a => a.key === answerKey);
     const isCorrect = selectedAnswerObj?.correct || false;
 
+    // Track cleanup for timeouts
+    const timeouts: NodeJS.Timeout[] = [];
+
     // 2x answer logic - only if active for this question
     if (isDoubleAnswerActiveThisQuestion && !firstAttempt) {
       setFirstAttempt(answerKey);
       
       if (isCorrect) {
         // After 200ms, show correct answer in green
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           handleCorrectAnswer(responseTime, answerKey);
         }, 200);
+        timeouts.push(timeoutId);
       }
       return;
     }
@@ -90,14 +104,16 @@ export const useGameAnswers = (options: UseGameAnswersOptions) => {
       
       if (isCorrect || firstAnswerObj?.correct) {
         // After 200ms, show correct answer in green
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           handleCorrectAnswer(responseTime, isCorrect ? answerKey : firstAttempt!);
         }, 200);
+        timeouts.push(timeoutId);
       } else {
         // After 200ms, show wrong answer
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           handleWrongAnswer(responseTime, answerKey);
         }, 200);
+        timeouts.push(timeoutId);
       }
       return;
     }

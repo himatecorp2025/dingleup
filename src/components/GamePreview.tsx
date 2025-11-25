@@ -326,19 +326,27 @@ const GamePreview = memo(() => {
     const trackMilestone = async () => {
       if (!userId || !isGameReady || currentQuestionIndex < 0) return;
 
-      // Track milestones: 5th question (index 4), 10th question (index 9), 15th question/completion (index 14)
+      // Debounce: track only specific milestones to prevent duplicate tracking
       if (currentQuestionIndex === 4) {
-        await trackGameMilestone(userId, 'question_5_reached', {
-          category: 'mixed',
-          question_index: 5,
-          correct_answers: correctAnswers,
-        });
+        try {
+          await trackGameMilestone(userId, 'question_5_reached', {
+            category: 'mixed',
+            question_index: 5,
+            correct_answers: correctAnswers,
+          });
+        } catch (error) {
+          console.error('[GamePreview] Error tracking milestone 5:', error);
+        }
       } else if (currentQuestionIndex === 9) {
-        await trackGameMilestone(userId, 'question_10_reached', {
-          category: 'mixed',
-          question_index: 10,
-          correct_answers: correctAnswers,
-        });
+        try {
+          await trackGameMilestone(userId, 'question_10_reached', {
+            category: 'mixed',
+            question_index: 10,
+            correct_answers: correctAnswers,
+          });
+        } catch (error) {
+          console.error('[GamePreview] Error tracking milestone 10:', error);
+        }
       }
     };
 
@@ -376,6 +384,7 @@ const GamePreview = memo(() => {
     const params = new URLSearchParams(window.location.search);
     const paymentStatus = params.get('payment');
     const sessionId = params.get('session_id');
+    let timeoutId: NodeJS.Timeout | null = null;
 
     const verifyInGamePayment = async () => {
       if (paymentStatus === 'success' && sessionId && userId) {
@@ -396,13 +405,13 @@ const GamePreview = memo(() => {
             
             // Continue game automatically
             if (gameState === 'playing') {
-              setTimeout(() => {
+              timeoutId = setTimeout(() => {
                 handleNextQuestion();
               }, 1500);
             }
           }
         } catch (error: any) {
-          console.error('Error verifying in-game payment:', error);
+          console.error('[GamePreview] Error verifying in-game payment:', error);
           // Nincs toast - a felhasználó látja az eredményt
         }
         
@@ -417,7 +426,12 @@ const GamePreview = memo(() => {
     if (userId) {
       verifyInGamePayment();
     }
-  }, [userId, gameState, refreshProfile]);
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [userId, gameState, refreshProfile, handleNextQuestion]);
 
   const handleRejectContinue = () => {
     finishGame();
