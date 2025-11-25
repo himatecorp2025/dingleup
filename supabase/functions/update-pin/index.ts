@@ -1,11 +1,20 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
-import { compare, hash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Simple SHA-256 hash using Web Crypto API (matches login function)
+async function hashPin(pin: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(pin);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -78,7 +87,8 @@ serve(async (req) => {
     }
 
     // Verify current PIN
-    const isValidPin = await compare(currentPin, profile.pin_hash);
+    const currentPinHash = await hashPin(currentPin);
+    const isValidPin = currentPinHash === profile.pin_hash;
     
     if (!isValidPin) {
       return new Response(
@@ -88,7 +98,7 @@ serve(async (req) => {
     }
 
     // Hash new PIN
-    const newPinHash = await hash(newPin);
+    const newPinHash = await hashPin(newPin);
 
     // Update pin_hash in profiles table
     const { error: updateError } = await supabaseAdmin
