@@ -64,32 +64,15 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
     switch (type) {
       case 'rank':
-        // Crown SVG - simple 3-prong line crown, same class as coin/heart
+        // Crown SVG - simple solid filled, matching heart style
         return (
           <svg
             className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
             viewBox="0 0 24 24"
-            fill="none"
+            fill={color}
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* bottom oval */}
-            <ellipse cx="12" cy="17" rx="5" ry="1.5" stroke={color} strokeWidth="1.5" />
-            {/* crown arc */}
-            <path
-              d="M5 15C6.5 11 9 9 12 9C15 9 17.5 11 19 15"
-              stroke={color}
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* three prongs */}
-            <path d="M8 11L7 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M12 10L12 6" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M16 11L17 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-            {/* circles on top */}
-            <circle cx="7" cy="6" r="1" fill={color} />
-            <circle cx="12" cy="5" r="1" fill={color} />
-            <circle cx="17" cy="6" r="1" fill={color} />
+            <path d="M5 19H19V17H5V19ZM6 16H18V10L15 7L13 9.5L12 8L11 9.5L9 7L6 10V16Z" />
           </svg>
         );
       case 'coins':
