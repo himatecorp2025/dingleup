@@ -19,7 +19,8 @@ import {
   Calendar,
   Languages,
   BarChart3,
-  Database
+  Database,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
@@ -85,6 +86,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/load-test', label: 'Terheléses Teszt (Load Test)', icon: BarChart3 },
     { path: '/admin/advanced-analytics', label: 'Fejlett Analitika', icon: Activity },
     { path: '/admin/age-statistics', label: 'Korcsoport Statisztika', icon: Calendar },
+    { path: '/admin/profile', label: 'Profil Szerkesztése', icon: Settings },
   ];
 
   const handleLogout = async () => {
