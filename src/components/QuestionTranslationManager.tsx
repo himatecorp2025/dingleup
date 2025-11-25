@@ -117,104 +117,64 @@ export const QuestionTranslationManager = () => {
       setProgress(0);
       setStatus('Fordítás indítása...');
       setTranslationStats(null);
-      
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Admin session expired');
+        setIsTranslating(false);
+        return;
+      }
+
+      console.log('[QuestionTranslationManager] Starting chunked translation process');
+
       // Process languages one by one
       const languages = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
       let totalSuccess = 0;
       let totalErrors = 0;
-      
-      for (let i = 0; i < languages.length; i++) {
-        const lang = languages[i];
+
+      for (let langIndex = 0; langIndex < languages.length; langIndex++) {
+        const lang = languages[langIndex];
         const langName = LANGUAGE_NAMES[lang];
-        
-        setStatus(`${langName} fordítása (${i + 1}/${languages.length})...`);
-        
-        // Refresh session first
-        const { error: sessionError } = await supabase.auth.refreshSession();
-        if (sessionError) {
-          console.error('Session refresh error:', sessionError);
-          toast.error('Session frissítési hiba');
-          setIsTranslating(false);
-          return;
-        }
 
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          toast.error('Nincs aktív session');
-          setIsTranslating(false);
-          return;
-        }
+        setStatus(`${langName} fordítása (${langIndex + 1}/${languages.length})...`);
 
-        const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-question-translations`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ targetLang: lang }),
+        let offset = 0;
+        let hasMore = true;
+
+        while (hasMore) {
+          setStatus(`${langName} fordítása... feldolgozott: ${offset}`);
+
+          const { data, error } = await supabase.functions.invoke('generate-question-translations', {
+            body: { targetLang: lang, offset, limit: 50 },
+            headers: { Authorization: `Bearer ${session.access_token}` }
+          });
+
+          if (error) {
+            console.error('[QuestionTranslationManager] Translation error:', error);
+            toast.error(`Hiba történt a ${langName} fordítása közben`);
+            setStatus('Hiba történt');
+            setIsTranslating(false);
+            return;
           }
-        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+          if (data?.stats) {
+            totalSuccess += data.stats.translated || 0;
+            totalErrors += data.stats.errors || 0;
 
-        const reader = response.body?.getReader();
-        if (!reader) {
-          throw new Error('No response body');
-        }
-
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.slice(6));
-                
-                if (data.type === 'progress') {
-                  if (data.processed !== undefined && data.total !== undefined) {
-                    const langProgress = (data.processed / data.total) * 100;
-                    const overallProgress = ((i + (langProgress / 100)) / languages.length) * 100;
-                    setProgress(overallProgress);
-                  }
-                  setStatus(data.message || 'Folyamatban...');
-                } else if (data.type === 'complete') {
-                  totalSuccess += data.totalSuccess || 0;
-                  totalErrors += data.totalErrors || 0;
-                  
-                  const overallProgress = ((i + 1) / languages.length) * 100;
-                  setProgress(overallProgress);
-                  
-                  setStatus(data.message || 'Kész!');
-                  
-                  if (data.totalRemaining && data.totalRemaining > 0) {
-                    setStatus(`${langName} kész, folytatás...`);
-                  }
-                } else if (data.type === 'error') {
-                  setStatus(data.message || 'Hiba történt');
-                  toast.error(data.message || 'Fordítási hiba');
-                  throw new Error(data.message);
-                }
-              } catch (e) {
-                console.error('Failed to parse SSE data:', e);
-              }
-            }
+            const chunkProgress = data.progress || 0;
+            const overallProgress = ((langIndex + (chunkProgress / 100)) / languages.length) * 100;
+            setProgress(overallProgress);
           }
+
+          hasMore = data?.hasMore || false;
+          offset = data?.nextOffset || (offset + 50);
+
+          console.log(`[QuestionTranslationManager] ${langName} chunk complete - hasMore: ${hasMore}, nextOffset: ${offset}`);
         }
+
+        console.log(`[QuestionTranslationManager] ${langName} completed`);
       }
-      
+
       // All languages completed
       setTranslationStats({
         totalMissing: 0,
@@ -224,7 +184,7 @@ export const QuestionTranslationManager = () => {
       setProgress(100);
       setStatus('Minden fordítás kész!');
       toast.success(`Fordítás befejezve! ${totalSuccess} sikeres, ${totalErrors} hiba`);
-      
+
     } catch (error) {
       console.error('Translation error:', error);
       toast.error(error instanceof Error ? error.message : 'Fordítási hiba történt');
