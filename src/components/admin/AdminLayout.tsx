@@ -165,26 +165,23 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               </nav>
             </div>
 
-            {/* Admin fiók szerkesztése - közvetlenül a menü után */}
-            <div>
-              <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">Admin fiók szerkesztése</h3>
-              <div className="space-y-2">
-                {/* Vissza a játékba gomb - csak mobilon/tableten */}
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  className="md:hidden w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
-                >
-                  <Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-                  <span className="font-medium">Vissza a játékba</span>
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
-                >
-                  <LogOut className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-                  <span className="font-medium">Kijelentkezés</span>
-                </button>
-              </div>
+            {/* Admin fiók szerkesztése gombok */}
+            <div className="space-y-2">
+              {/* Vissza a játékba gomb - csak mobilon/tableten */}
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="md:hidden w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
+              >
+                <Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
+                <span className="font-medium">Vissza a játékba</span>
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
+              >
+                <LogOut className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
+                <span className="font-medium">Kijelentkezés</span>
+              </button>
             </div>
           </div>
         </aside>
