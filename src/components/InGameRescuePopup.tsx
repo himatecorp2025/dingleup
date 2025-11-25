@@ -242,7 +242,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </div>
 
               <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider">
-                Gold<br />Saver
+                {t('rescue.gold_saver_title_line1')}<br />{t('rescue.gold_saver_title_line2')}
               </h3>
 
               <p className="text-blue-50 text-[9px] sm:text-[10px] text-center mb-3 sm:mb-4 font-semibold leading-snug px-1" style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)' }}>
@@ -274,7 +274,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                     <span className="text-[10px] sm:text-xs">{t('rescue.processing')}</span>
                   </div>
                 ) : hasEnoughGold ? (
-                  <span className="text-sm sm:text-base tracking-wider">500 ARANY</span>
+                  <span className="text-sm sm:text-base tracking-wider">500 {t('rescue.currency_gold')}</span>
                 ) : (
                   <span className="text-xs sm:text-sm">{t('rescue.not_enough_short')}</span>
                 )}
@@ -307,7 +307,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </div>
 
               <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-center bg-gradient-to-r from-cyan-100 via-blue-50 to-cyan-100 bg-clip-text text-transparent mb-0.5 sm:mb-1 leading-tight tracking-wider">
-                Instant<br />Rescue
+                {t('rescue.instant_rescue_title_line1')}<br />{t('rescue.instant_rescue_title_line2')}
               </h3>
 
               <p className="text-cyan-50 text-[9px] sm:text-[10px] text-center mb-3 sm:mb-4 font-semibold leading-snug px-1" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)' }}>
@@ -344,7 +344,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
               </Button>
 
               <p className="text-cyan-100/70 text-[8px] sm:text-[9px] text-center mt-1 sm:mt-1.5 leading-snug font-bold" style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.6)' }}>
-                Azonnali jóváírás
+                {t('rescue.instant_credit')}
               </p>
             </div>
           </div>
