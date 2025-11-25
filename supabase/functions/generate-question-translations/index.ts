@@ -274,26 +274,37 @@ CRITICAL RULES:
 3. Keep answer order exactly as provided (A/B/C positions unchanged)
 4. The correct answer indicator remains the same letter
 5. Use native-speaker fluency and appropriate educational terminology
+6. MANDATORY: Every question MUST end with a question mark (?)
+7. MANDATORY: Questions MUST be complete sentences, NEVER truncated or cut off
+8. MANDATORY: Answers must be complete phrases, NEVER truncated or cut off
+9. CRITICAL: Do NOT truncate text at character limits - write full natural translations
+10. Questions can be up to 200 characters if needed to be grammatically complete
+11. Answers can be up to 100 characters if needed to be complete and natural
 
 RESPONSE FORMAT:
 Return ONLY numbered translations in this format for EACH question:
-1. Question: "translated question"
-   A: "translated answer A"
-   B: "translated answer B"
-   C: "translated answer C"
+1. Question: "translated question ending with ?"
+   A: "complete translated answer A"
+   B: "complete translated answer B"
+   C: "complete translated answer C"
 
-2. Question: "translated question"
-   A: "translated answer A"
-   B: "translated answer B"
-   C: "translated answer C"
+2. Question: "translated question ending with ?"
+   A: "complete translated answer A"
+   B: "complete translated answer B"
+   C: "complete translated answer C"
 
-NO markdown, NO explanations, ONLY the numbered format above.`;
+NO markdown, NO explanations, NO truncation, ONLY complete translations in the numbered format above.`;
 
         const userPrompt = `Translate these ${itemsToTranslate.length} Hungarian quiz questions to ${LANGUAGE_NAMES[lang]}:
 
 ${batchTexts}
 
-Remember: Keep answer positions (A/B/C) exactly as shown. Translate naturally for ${LANGUAGE_NAMES[lang]} speakers.`;
+CRITICAL REQUIREMENTS:
+- Every question MUST end with a question mark (?)
+- Questions and answers MUST be complete, NEVER truncated
+- Write full natural translations even if they exceed typical length limits
+- Keep answer positions (A/B/C) exactly as shown
+- Translate naturally for ${LANGUAGE_NAMES[lang]} speakers with proper grammar`;
 
         attemptedCount += itemsToTranslate.length;
 
