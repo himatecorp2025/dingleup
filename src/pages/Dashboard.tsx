@@ -430,7 +430,7 @@ if (!profile) {
               <h1 
                 className="font-black leading-tight"
                 style={{ 
-                  fontSize: 'clamp(0.65rem, 3vw, 1.25rem)',
+                  fontSize: 'clamp(0.8125rem, 3.75vw, 1.5625rem)',
                   wordBreak: 'break-word',
                   overflowWrap: 'break-word',
                   background: 'linear-gradient(to right, #fbbf24, #ffffff, #fbbf24)',
