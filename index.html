@@ -88,17 +88,46 @@
     }
     </script>
 
-    <!-- Fonts with optimized loading -->
+    <!-- Fonts with optimized loading - font-display=swap ensures text shows immediately -->
+    <link 
+      rel="preload"
+      href="https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <style>
+      /* Critical inline styles for LCP text element to render immediately */
+      .hero-text-critical {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+        color: rgba(255, 255, 255, 0.9);
+        filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+        display: block;
+      }
+      @media (min-width: 768px) {
+        .hero-text-critical {
+          font-size: 3rem;
+          line-height: 1;
+        }
+      }
+      @media (min-width: 1024px) {
+        .hero-text-critical {
+          font-size: 3.75rem;
+          line-height: 1;
+        }
+      }
+    </style>
     <link 
       rel="stylesheet" 
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" 
+      media="print"
+      onload="this.media='all'"
     />
-    <style>
-      @font-face {
-        font-family: 'Poppins';
-        font-display: swap;
-      }
-    </style>
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" />
+    </noscript>
     
     <!-- PERFORMANCE OPTIMIZATION: Prefetch intro/loading video for instant game start -->
     <link rel="prefetch" href="/src/assets/loading-video.mp4" as="video" type="video/mp4">
