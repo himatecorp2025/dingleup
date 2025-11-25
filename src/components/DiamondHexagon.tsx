@@ -64,7 +64,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
     switch (type) {
       case 'rank':
-        // Crown SVG - simple filled style matching coins/lives
+        // Crown SVG - centered like coins/lives
         return (
           <svg
             className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
@@ -72,8 +72,8 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
             fill={color}
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d="M3 18H21V20H3V18Z" />
-            <path d="M4 9L7 5L10 8L12 3L14 8L17 5L20 9V18H4V9Z" />
+            <path d="M3 16H21V19H3V16Z" />
+            <path d="M4 7L7 4L10 7L12 2L14 7L17 4L20 7V16H4V7Z" />
           </svg>
         );
       case 'coins':
