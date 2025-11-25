@@ -138,13 +138,13 @@ const Profile = () => {
       // Validate file size (max 2MB)
       const maxSizeBytes = 2 * 1024 * 1024;
       if (file.size > maxSizeBytes) {
-        toast.error("A fájl mérete maximum 2 MB lehet");
+        toast.error(t('profile.error.file_too_large'));
         return;
       }
       
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        toast.error("Csak kép fájl engedélyezett");
+        toast.error(t('profile.error.image_only'));
         return;
       }
 
@@ -162,9 +162,9 @@ const Profile = () => {
         .getPublicUrl(filePath);
 
       await updateProfile({ avatar_url: data.publicUrl });
-      toast.success("Profilkép feltöltve");
+      toast.success(t('profile.avatar_uploaded'));
     } catch (error: any) {
-      toast.error("Feltöltési hiba: " + error.message);
+      toast.error(`${t('profile.error.upload_failed')}: ${error.message}`);
     } finally {
       setUploading(false);
     }
@@ -213,7 +213,7 @@ const Profile = () => {
     
     if (error) throw error;
     await refreshProfile();
-    toast.success("Ország frissítve");
+    toast.success(t('profile.country_updated'));
   };
 
   const updateCountryAndLanguage = async (newCountryCode: string, newLang: LangCode) => {
@@ -231,7 +231,7 @@ const Profile = () => {
     // Update language in i18n context
     await setLang(newLang, true);
     await refreshProfile();
-    toast.success("Ország és nyelv frissítve");
+    toast.success(t('profile.country_language_updated'));
   };
 
   const handleLanguageChangeConfirm = async (changeLanguage: boolean) => {
@@ -245,7 +245,7 @@ const Profile = () => {
       }
     } catch (error) {
       console.error('Failed to update:', error);
-      toast.error("Frissítési hiba");
+      toast.error(t('profile.error.update_failed'));
     } finally {
       setShowLanguageDialog(false);
       setPendingCountryChange(null);
@@ -259,7 +259,7 @@ const Profile = () => {
 
   const handleUsernameSave = async () => {
     if (!newUsername.trim()) {
-      toast.error("A felhasználónév nem lehet üres");
+      toast.error(t('profile.error.username_empty'));
       return;
     }
 
@@ -271,7 +271,7 @@ const Profile = () => {
       
       if (daysSinceLastChange < 7) {
         const daysRemaining = Math.ceil(7 - daysSinceLastChange);
-        toast.error(`7 naponta módosítható. Még ${daysRemaining} nap van hátra.`);
+        toast.error(`${t('profile.error.username_cooldown')} ${daysRemaining} ${t('profile.error.days_remaining')}`);
         setIsEditingUsername(false);
         return;
       }
@@ -280,7 +280,7 @@ const Profile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error("Nincs bejelentkezve");
+        toast.error(t('errors.not_logged_in'));
         return;
       }
 
@@ -292,12 +292,12 @@ const Profile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || "Felhasználónév frissítés sikertelen");
+        throw new Error(response.error.message || t('profile.error.username_update_failed'));
       }
 
       await updateProfile({ username: newUsername });
       setIsEditingUsername(false);
-      toast.success("Felhasználónév frissítve");
+      toast.success(t('profile.username_updated'));
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -305,19 +305,19 @@ const Profile = () => {
 
   const validatePin = (pin: string): string | null => {
     if (!/^\d{6}$/.test(pin)) {
-      return "A PIN-nek pontosan 6 számjegyből kell állnia";
+      return t('profile.error.pin_6_digits');
     }
     return null;
   };
 
   const handlePinSave = async () => {
     if (!currentPin || !newPin || !confirmPin) {
-      toast.error("Minden mező kitöltése kötelező");
+      toast.error(t('profile.error.all_fields_required'));
       return;
     }
 
     if (newPin !== confirmPin) {
-      toast.error("Az új PIN-ek nem egyeznek");
+      toast.error(t('profile.error.pins_not_match'));
       return;
     }
 
@@ -331,7 +331,7 @@ const Profile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error("Nincs bejelentkezve");
+        toast.error(t('errors.not_logged_in'));
         return;
       }
 
@@ -343,7 +343,7 @@ const Profile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || "Hibás jelenlegi PIN");
+        throw new Error(response.error.message || t('profile.error.invalid_current_pin'));
       }
 
       const responseData = response.data;
@@ -354,9 +354,9 @@ const Profile = () => {
       setCurrentPin('');
       setNewPin('');
       setConfirmPin('');
-      toast.success("PIN sikeresen módosítva");
+      toast.success(t('profile.pin_updated'));
     } catch (error: any) {
-      toast.error(error.message || "Általános hiba");
+      toast.error(error.message || t('errors.general'));
     } finally {
       setIsSaving(false);
     }
