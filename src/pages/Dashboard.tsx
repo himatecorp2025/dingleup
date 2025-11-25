@@ -175,8 +175,20 @@ const Dashboard = () => {
 
     const fetchUserDailyRank = async () => {
       try {
-        // Call edge function to get country-specific leaderboard and user rank
-        const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country');
+        // Check for valid session first
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !sessionData?.session) {
+          console.log('[Dashboard] No valid session, skipping rank fetch');
+          setCurrentRank(1);
+          return;
+        }
+
+        // Call edge function to get country-specific leaderboard and user rank with explicit auth header
+        const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country', {
+          headers: {
+            Authorization: `Bearer ${sessionData.session.access_token}`
+          }
+        });
         
         if (error) {
           console.error('[Dashboard] Error fetching user rank:', error);

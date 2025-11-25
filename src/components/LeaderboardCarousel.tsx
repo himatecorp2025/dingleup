@@ -22,8 +22,19 @@ const LeaderboardCarouselComponent = () => {
   // Memoized fetch function to prevent recreation on every render
   const fetchFromDailyRankings = useCallback(async (): Promise<LeaderboardEntry[]> => {
     try {
-      // Call Edge Function for country-specific daily leaderboard
-      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country');
+      // Check for valid session first
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData?.session) {
+        console.log('[LeaderboardCarousel] No valid session, skipping fetch');
+        return [];
+      }
+
+      // Call Edge Function for country-specific daily leaderboard with explicit auth header
+      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country', {
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`
+        }
+      });
 
       if (error) {
         console.error('[LeaderboardCarousel] Edge function error:', error);
