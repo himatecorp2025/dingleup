@@ -48,132 +48,13 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          // Vendor libraries splitting
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'vendor-react';
-            }
-            if (id.includes('@radix-ui')) {
-              return 'vendor-ui';
-            }
-            if (id.includes('@supabase')) {
-              return 'vendor-supabase';
-            }
-            if (id.includes('@tanstack/react-query')) {
-              return 'vendor-query';
-            }
-            if (id.includes('recharts')) {
-              return 'vendor-charts';
-            }
-            return 'vendor-other';
-          }
-          
-          // Admin pages and dashboards
-          if (id.includes('src/pages/Admin') || 
-              id.includes('Dashboard.tsx') && !id.includes('src/pages/Dashboard.tsx') ||
-              id.includes('PerformanceDashboard') ||
-              id.includes('RetentionDashboard') ||
-              id.includes('EngagementDashboard') ||
-              id.includes('MonetizationDashboard') ||
-              id.includes('UserJourneyDashboard') ||
-              id.includes('AdvancedAnalytics')) {
-            return 'admin';
-          }
-          
-          // Game-related components
-          if (id.includes('src/pages/Game.tsx') ||
-              id.includes('GamePreview') ||
-              id.includes('MillionaireQuestion') ||
-              id.includes('MillionaireAnswer') ||
-              id.includes('GameLifelines') ||
-              id.includes('GameTimer') ||
-              id.includes('TimerCircle') ||
-              id.includes('ExitGameDialog') ||
-              id.includes('InGameRescuePopup') ||
-              id.includes('game/Game')) {
-            return 'game';
-          }
-          
-          // Dashboard-related (user dashboard, not admin)
-          if (id.includes('src/pages/Dashboard.tsx') ||
-              id.includes('DailyGiftDialog') ||
-              id.includes('DailyWinnersDialog') ||
-              id.includes('WelcomeBonusDialog') ||
-              id.includes('CategorySelector') ||
-              id.includes('DailyRewards')) {
-            return 'dashboard';
-          }
-          
-          // Profile pages
-          if (id.includes('src/pages/Profile') ||
-              id.includes('ProfileGame')) {
-            return 'profile';
-          }
-          
-          // Leaderboard
-          if (id.includes('src/pages/Leaderboard.tsx') ||
-              id.includes('LeaderboardCarousel')) {
-            return 'leaderboard';
-          }
-          
-          // Analytics hooks (heavy and only used in admin)
-          if (id.includes('usePerformanceAnalytics') ||
-              id.includes('useEngagementAnalytics') ||
-              id.includes('useRetentionAnalytics') ||
-              id.includes('useMonetizationAnalytics') ||
-              id.includes('useUserJourneyAnalytics')) {
-            return 'analytics';
-          }
-        },
-        // Add cache-busting hashes to all assets
-        assetFileNames: (assetInfo) => {
-          if (!assetInfo.name) return `assets/[name]-[hash][extname]`;
-          const info = assetInfo.name.split('.');
-          const ext = info[info.length - 1];
-          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
-            return `assets/images/[name]-[hash][extname]`;
-          } else if (/mp4|webm|ogg|mp3|wav|flac|aac/i.test(ext)) {
-            return `assets/media/[name]-[hash][extname]`;
-          }
-          return `assets/[name]-[hash][extname]`;
-        },
-      },
-    },
-    cssCodeSplit: true,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production',
-      },
-    },
-  },
   plugins: [
     react(),
     mode === "development" && componentTagger(),
     securityHeadersPlugin(mode),
-    {
-      name: 'html-transform',
-      transformIndexHtml(html: string) {
-        // Inline critical CSS for LCP element
-        const criticalCSS = `
-          <style>
-            .text-3xl{font-size:1.875rem;line-height:2.25rem}
-            .text-white\\/90{color:rgb(255 255 255 / 0.9)}
-            .drop-shadow-lg{filter:drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))}
-            .block{display:block}
-          </style>
-        `;
-        return html.replace('</head>', `${criticalCSS}</head>`);
-      }
-    },
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt', 'dingleup-logo-optimized.png'],
+      includeAssets: ['favicon.ico', 'robots.txt', 'dingleup-logo.png'],
       manifest: {
         name: 'DingleUP!',
         short_name: 'DingleUP!',
@@ -183,19 +64,19 @@ export default defineConfig(({ mode }) => ({
         display: 'standalone',
         icons: [
           {
-            src: '/dingleup-logo-optimized.png',
+            src: '/dingleup-logo.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: '/dingleup-logo-optimized.png',
+            src: '/dingleup-logo.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: '/dingleup-logo-optimized.png',
+            src: '/dingleup-logo.png',
             sizes: '1024x1024',
             type: 'image/png',
             purpose: 'any maskable'
@@ -207,26 +88,26 @@ export default defineConfig(({ mode }) => ({
             short_name: 'Játék',
             description: 'Új játék indítása',
             url: '/game',
-            icons: [{ src: '/dingleup-logo-optimized.png', sizes: '192x192' }]
+            icons: [{ src: '/dingleup-logo.png', sizes: '192x192' }]
           },
           {
             name: 'Ranglista',
             short_name: 'Ranglista',
             description: 'Napi ranglista megtekintése',
             url: '/leaderboard',
-            icons: [{ src: '/dingleup-logo-optimized.png', sizes: '192x192' }]
+            icons: [{ src: '/dingleup-logo.png', sizes: '192x192' }]
           },
           {
             name: 'Profil',
             short_name: 'Profil',
             description: 'Profil beállítások',
             url: '/profile',
-            icons: [{ src: '/dingleup-logo-optimized.png', sizes: '192x192' }]
+            icons: [{ src: '/dingleup-logo.png', sizes: '192x192' }]
           }
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,mp4,mp3,woff,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,mp4,mp3,woff,woff2}'],
         // Offline fallback strategy - serve app shell on navigation failures
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api/, /^\/admin/],
@@ -236,7 +117,7 @@ export default defineConfig(({ mode }) => ({
         clientsClaim: true,
         // PERFORMANCE OPTIMIZATION: Pre-cache critical assets for instant load
         additionalManifestEntries: [
-          { url: '/dingleup-logo-optimized.png', revision: null },
+          { url: '/dingleup-logo.png', revision: null },
           { url: '/src/assets/introvideo.mp4', revision: null }, // Intro video pre-cached
           { url: '/src/assets/loading-video.mp4', revision: null }, // Loading video pre-cached
           { url: '/src/assets/DingleUP.mp3', revision: null },
@@ -299,27 +180,19 @@ export default defineConfig(({ mode }) => ({
               }
             }
           },
-          // Images - CacheFirst with very long cache for instant load
+          // Images - CacheFirst for instant load
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'images',
               expiration: {
-                maxEntries: 300,
-                maxAgeSeconds: 60 * 60 * 24 * 365 * 2 // 2 years for static images
+                maxEntries: 250, // More images cached
+                maxAgeSeconds: 60 * 60 * 24 * 90 // 90 days cache
               },
               cacheableResponse: {
                 statuses: [0, 200]
-              },
-              // Force immediate cache
-              plugins: [
-                {
-                  cacheWillUpdate: async ({ request, response }) => {
-                    return response;
-                  }
-                }
-              ]
+              }
             }
           },
           // Fonts - CacheFirst for instant load
@@ -337,27 +210,19 @@ export default defineConfig(({ mode }) => ({
               }
             }
           },
-          // Static JS/CSS - CacheFirst for instant load, with background update
+          // Static JS/CSS - StaleWhileRevalidate for fast load + fresh updates
           {
             urlPattern: /\.(?:js|css)$/,
-            handler: 'CacheFirst',
+            handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'static-resources',
               expiration: {
-                maxEntries: 150,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                maxEntries: 120,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
               },
               cacheableResponse: {
                 statuses: [0, 200]
-              },
-              // Enable background sync for updates
-              plugins: [
-                {
-                  cacheWillUpdate: async ({ request, response }) => {
-                    return response;
-                  }
-                }
-              ]
+              }
             }
           },
           // Supabase API - NetworkFirst with shorter timeout for mobile

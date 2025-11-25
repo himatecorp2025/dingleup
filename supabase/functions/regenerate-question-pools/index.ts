@@ -67,46 +67,7 @@ serve(async (req) => {
       );
     }
 
-    // ===== STEP 1: VALIDATE QUESTION BANK =====
-    console.log('[regenerate-pools] STEP 1: Validating question bank...');
-    
-    const { data: bankValidation, error: validationError } = await supabase
-      .rpc('get_topics_needing_questions');
-
-    if (validationError) {
-      console.error('[regenerate-pools] Validation error:', validationError);
-    } else {
-      console.log('[regenerate-pools] Question Bank Validation Report:');
-      console.log('==============================================');
-      
-      const topicsAbove150 = bankValidation.filter((t: any) => t.current_count >= 150);
-      const topicsBelow150 = bankValidation.filter((t: any) => t.current_count < 150);
-      const topicsBelow10 = bankValidation.filter((t: any) => t.current_count < 10);
-      
-      console.log(`✓ Topics at 150+ questions: ${topicsAbove150.length}/${bankValidation.length}`);
-      console.log(`⚠ Topics below 150 questions: ${topicsBelow150.length}/${bankValidation.length}`);
-      console.log(`❌ Topics below 10 questions: ${topicsBelow10.length}/${bankValidation.length}`);
-      
-      if (topicsBelow150.length > 0) {
-        console.log('\nTopics needing more questions:');
-        topicsBelow150.forEach((t: any) => {
-          console.log(`  - ${t.topic_name}: ${t.current_count}/150 (need ${t.needed} more)`);
-        });
-      }
-      
-      if (topicsBelow10.length > 0) {
-        console.log('\n⚠️ WARNING: Topics with less than 10 questions will be skipped in pool generation:');
-        topicsBelow10.forEach((t: any) => {
-          console.log(`  - ${t.topic_name}: only ${t.current_count} questions`);
-        });
-      }
-      
-      console.log('==============================================\n');
-    }
-
-    // ===== STEP 2: FETCH ALL QUESTIONS =====
-    console.log('[regenerate-pools] STEP 2: Fetching all questions...');
-    
+    // Get ALL questions grouped by topic (NO LIMIT)
     const { data: questions, error: questionsError } = await supabase
       .from('questions')
       .select('*')
@@ -118,10 +79,7 @@ serve(async (req) => {
 
     if (!questions || questions.length === 0) {
       return new Response(
-        JSON.stringify({ 
-          error: 'No questions found in database',
-          validation: bankValidation 
-        }),
+        JSON.stringify({ error: 'No questions found in database' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
@@ -232,7 +190,6 @@ serve(async (req) => {
         questions_per_topic_per_pool: QUESTIONS_PER_TOPIC_PER_POOL,
         expected_questions_per_pool: topicIds.length * QUESTIONS_PER_TOPIC_PER_POOL,
         pools: insertedPools,
-        validation: bankValidation,
         note: `50 GLOBAL pools created with ${QUESTIONS_PER_TOPIC_PER_POOL} questions per topic per pool (currently ${topicIds.length} topics = ~${topicIds.length * QUESTIONS_PER_TOPIC_PER_POOL} questions/pool)`,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

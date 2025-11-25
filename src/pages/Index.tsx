@@ -38,26 +38,7 @@ const Index = () => {
   }, []);
 
   // Mobile/tablet: redirect immediately, don't show landing page
-  if (isMobileOrTablet) {
-    if (loading) {
-      return (
-        <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033]">
-          <div className="animate-pulse flex flex-col items-center justify-center gap-4">
-            <img 
-              src="/dingleup-logo-optimized.png" 
-              alt="DingleUP!" 
-              className="w-32 h-32 object-contain"
-              loading="eager"
-              fetchPriority="high"
-              width="128"
-              height="128"
-            />
-            <div className="text-white/70">Loading...</div>
-          </div>
-        </div>
-      );
-    }
-    
+  if (isMobileOrTablet && !loading) {
     const introShown = sessionStorage.getItem('introShown');
     
     if (!introShown) {
@@ -71,7 +52,7 @@ const Index = () => {
     return <Navigate to="/auth/choice" replace />;
   }
 
-  // Desktop/laptop: show landing page immediately (no need to wait for loading)
+  // Desktop/laptop: show landing page
   return (
     <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] overflow-x-hidden overflow-y-auto">
       {/* Full-screen deep purple/blue background extending behind status bar */}

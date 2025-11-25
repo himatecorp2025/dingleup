@@ -31,23 +31,14 @@ export const QuestionTranslationManager = () => {
   const [isTranslating, setIsTranslating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<string>('');
-  const [translationStats, setTranslationStats] = useState<{
-    totalMissing: number;
-    totalSuccess: number;
-    totalErrors: number;
+  const [stats, setStats] = useState<{
+    total: number;
+    success: number;
+    errors: number;
   } | null>(null);
   const [initialStats, setInitialStats] = useState<InitialStats | null>(null);
   const [isCheckingContent, setIsCheckingContent] = useState(true);
-
-  const LANGUAGE_NAMES: Record<string, string> = {
-    en: 'Angol',
-    de: 'Német',
-    fr: 'Francia',
-    es: 'Spanyol',
-    it: 'Olasz',
-    pt: 'Portugál',
-    nl: 'Holland'
-  };
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
   // Load initial statistics with per-language breakdown
   useEffect(() => {
@@ -115,83 +106,97 @@ export const QuestionTranslationManager = () => {
     try {
       setIsTranslating(true);
       setProgress(0);
-      setStatus('Fordítás indítása...');
-      setTranslationStats(null);
+      setStatus('Csonka fordítások keresése...');
+      setStats(null);
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.error('Admin session expired');
+      // CRITICAL: Refresh session to ensure valid JWT token
+      let { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
+      if (sessionError || !session) {
+        console.error('[QuestionTranslationManager] Session refresh failed:', sessionError);
+        toast.error('Admin munkamenet lejárt, kérlek jelentkezz be újra');
         setIsTranslating(false);
         return;
       }
 
-      console.log('[QuestionTranslationManager] Starting chunked translation process');
+      console.log('[QuestionTranslationManager] Starting truncated translations scan and re-translation');
 
-      // Process languages one by one
-      const languages = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
-      let totalSuccess = 0;
-      let totalErrors = 0;
+      // Single invocation - scans ALL question_translations, finds truncated, deletes, and re-translates
+      setStatus('Csonka fordítások törlése és újrafordítása...');
+      setProgress(10);
 
-      for (let langIndex = 0; langIndex < languages.length; langIndex++) {
-        const lang = languages[langIndex];
-        const langName = LANGUAGE_NAMES[lang];
+      const { data, error } = await supabase.functions.invoke('generate-question-translations', {
+        body: {}, // No parameters needed - scans entire table
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      });
 
-        setStatus(`${langName} fordítása (${langIndex + 1}/${languages.length})...`);
-
-        let offset = 0;
-        let hasMore = true;
-
-        while (hasMore) {
-          setStatus(`${langName} fordítása... feldolgozott: ${offset}`);
-
-          const { data, error } = await supabase.functions.invoke('generate-question-translations', {
-            body: { targetLang: lang, offset, limit: 50 },
-            headers: { Authorization: `Bearer ${session.access_token}` }
-          });
-
-          if (error) {
-            console.error('[QuestionTranslationManager] Translation error:', error);
-            toast.error(`Hiba történt a ${langName} fordítása közben`);
-            setStatus('Hiba történt');
-            setIsTranslating(false);
-            return;
-          }
-
-          if (data?.stats) {
-            totalSuccess += data.stats.translated || 0;
-            totalErrors += data.stats.errors || 0;
-
-            const chunkProgress = data.progress || 0;
-            const overallProgress = ((langIndex + (chunkProgress / 100)) / languages.length) * 100;
-            setProgress(overallProgress);
-          }
-
-          hasMore = data?.hasMore || false;
-          offset = data?.nextOffset || (offset + 50);
-
-          console.log(`[QuestionTranslationManager] ${langName} chunk complete - hasMore: ${hasMore}, nextOffset: ${offset}`);
-        }
-
-        console.log(`[QuestionTranslationManager] ${langName} completed`);
+      if (error) {
+        console.error('[QuestionTranslationManager] Translation error:', error);
+        toast.error('Hiba történt a fordítás közben');
+        setStatus('Hiba történt');
+        setIsTranslating(false);
+        return;
       }
 
-      // All languages completed
-      setTranslationStats({
-        totalMissing: 0,
-        totalSuccess: totalSuccess,
-        totalErrors: totalErrors,
-      });
-      setProgress(100);
-      setStatus('Minden fordítás kész!');
-      toast.success(`Fordítás befejezve! ${totalSuccess} sikeres, ${totalErrors} hiba`);
+      console.log('[QuestionTranslationManager] Translation response:', data);
+
+      if (data?.phase === 'scan' && data?.stats?.totalTruncated === 0) {
+        setProgress(100);
+        setStatus('Nincs csonka fordítás!');
+        toast.success('Minden kérdés fordítása teljes és rendben van!');
+        setStats({
+          total: 0,
+          success: 0,
+          errors: 0
+        });
+        setIsTranslating(false);
+        return;
+      }
+
+      setProgress(50);
+
+      if (data?.stats) {
+        const totalSuccess = data.stats.retranslated || 0;
+        const totalErrors = data.stats.errors || 0;
+        const totalTruncated = data.stats.totalTruncated || 0;
+
+        setProgress(100);
+        setStatus('Fordítás befejezve!');
+        setStats({
+          total: totalTruncated,
+          success: totalSuccess,
+          errors: totalErrors
+        });
+
+        if (totalTruncated > 0) {
+          toast.success(`${totalTruncated} csonka fordítás törölve és újrafordítva! ${totalSuccess} sikeres.`);
+        }
+
+        if (totalErrors > 0) {
+          toast.warning(`${totalErrors} hiba történt a fordítás során.`);
+        }
+      } else {
+        setProgress(100);
+        setStatus('Ismeretlen eredmény');
+        toast.warning('A fordítás eredménye nem ismert');
+      }
 
     } catch (error) {
-      console.error('Translation error:', error);
-      toast.error(error instanceof Error ? error.message : 'Fordítási hiba történt');
-      setStatus('Hiba történt');
+      console.error('[QuestionTranslationManager] Exception:', error);
+      toast.error('Váratlan hiba történt');
+      setStatus('Váratlan hiba');
     } finally {
       setIsTranslating(false);
     }
+  };
+
+  const LANGUAGE_NAMES: Record<string, string> = {
+    en: 'Angol',
+    de: 'Német',
+    fr: 'Francia',
+    es: 'Spanyol',
+    it: 'Olasz',
+    pt: 'Portugál',
+    nl: 'Holland'
   };
 
   return (
@@ -204,8 +209,8 @@ export const QuestionTranslationManager = () => {
       </div>
 
       <p className="text-sm text-white/60 mb-4">
-        Magyar nyelvről történő AI-alapú automatikus fordítás mind a 7 célnyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
-        A folyamat a teljes kérdésbázist nyelvenként dolgozza fel. Várható időtartam: 20-40 perc.
+        AI-alapú automatikus fordítás generálása mind a 7 támogatott nyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
+        A folyamat eltarthat néhány percig.
       </p>
 
       {/* Initial Statistics Display */}
@@ -255,26 +260,33 @@ export const QuestionTranslationManager = () => {
           <Progress value={progress} className="h-2" />
           <div className="flex items-center justify-between mt-2">
             <p className="text-xs text-white/50">Folyamat:</p>
-            <p className="text-sm font-semibold text-purple-400">{Math.round(progress)}%</p>
+            <p className="text-sm font-semibold text-purple-400">{progress}%</p>
           </div>
         </div>
       )}
 
-      {translationStats && (
-        <div className="mb-4 grid grid-cols-2 gap-3">
+      {stats && (
+        <div className="mb-4 grid grid-cols-3 gap-3">
+          <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+            <div className="flex items-center gap-2 mb-1">
+              <Languages className="w-4 h-4 text-purple-400" />
+              <span className="text-xs text-white/60">Összesen</span>
+            </div>
+            <p className="text-xl font-bold text-purple-400">{stats.total}</p>
+          </div>
           <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <CheckCircle className="w-4 h-4 text-green-400" />
               <span className="text-xs text-white/60">Sikeres</span>
             </div>
-            <p className="text-xl font-bold text-green-400">{translationStats.totalSuccess}</p>
+            <p className="text-xl font-bold text-green-400">{stats.success}</p>
           </div>
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <XCircle className="w-4 h-4 text-red-400" />
               <span className="text-xs text-white/60">Hibák</span>
             </div>
-            <p className="text-xl font-bold text-red-400">{translationStats.totalErrors}</p>
+            <p className="text-xl font-bold text-red-400">{stats.errors}</p>
           </div>
         </div>
       )}
@@ -297,7 +309,7 @@ export const QuestionTranslationManager = () => {
         ) : (
           <>
             <Languages className="w-4 h-4 mr-2" />
-            Fordítás magyarról 7 célnyelvre
+            Csonka fordítások ellenőrzése és javítása
           </>
         )}
       </Button>

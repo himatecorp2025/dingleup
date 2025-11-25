@@ -19,22 +19,19 @@
     <meta name="360-fullscreen" content="true" />
     
     <!-- SEO & Icons -->
-    <link rel="apple-touch-icon" href="/dingleup-logo-optimized.png" />
-    <link rel="icon" type="image/png" href="/dingleup-logo-optimized.png" />
+    <link rel="apple-touch-icon" href="/dingleup-logo.png" />
+    <link rel="icon" type="image/png" href="/dingleup-logo.png" />
     <!-- Preconnect to critical domains for faster loading -->
     <link rel="preconnect" href="https://wdpxmwsxhckazwxufttk.supabase.co" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- PERFORMANCE OPTIMIZATION: Preload critical above-the-fold assets -->
-    <link rel="preload" href="/dingleup-logo-optimized.png" as="image" fetchpriority="high">
+    <!-- PERFORMANCE OPTIMIZATION: Preload critical assets for instant game start -->
+    <link rel="preload" href="/dingleup-logo.png" as="image">
+    <link rel="preload" href="/src/assets/introvideo.mp4" as="video" type="video/mp4">
+    <link rel="preload" href="/src/assets/game-background.png" as="image">
     
-    <!-- PERFORMANCE OPTIMIZATION: Prefetch non-critical assets for instant second-load -->
-    <link rel="prefetch" href="/src/assets/introvideo.mp4" as="video" type="video/mp4">
-    <link rel="prefetch" href="/src/assets/game-background.png" as="image">
-    
-    <!-- Preload critical font for LCP text -->
-    <link rel="preload" href="https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- PERFORMANCE OPTIMIZATION: Prefetch game route for instant navigation from Dashboard -->
+    <link rel="modulepreload" href="/src/pages/Game.tsx">
+    <link rel="modulepreload" href="/src/components/GamePreview.tsx">
     
     <link rel="canonical" href="https://dingleup.com/" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
@@ -54,7 +51,7 @@
     <meta property="og:description" content="A DingleUP! kvízjáték! Teszteld tudásod 15 izgalmas kérdéssel." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://dingleup.com/" />
-    <meta property="og:image" content="https://dingleup.com/dingleup-logo-optimized.png" />
+    <meta property="og:image" content="https://dingleup.com/dingleup-logo.png" />
     <meta property="og:locale" content="hu_HU" />
     <meta property="og:site_name" content="DingleUP!" />
 
@@ -62,7 +59,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="DingleUP! - Kvízjáték" />
     <meta name="twitter:description" content="A DingleUP! kvízjáték! Teszteld tudásod 15 izgalmas kérdéssel." />
-    <meta name="twitter:image" content="https://dingleup.com/dingleup-logo-optimized.png" />
+    <meta name="twitter:image" content="https://dingleup.com/dingleup-logo.png" />
     
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
@@ -87,46 +84,16 @@
     }
     </script>
 
-    <!-- Fonts with optimized loading - font-display=swap ensures text shows immediately -->
-    <link 
-      rel="preload"
-      href="https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
+    <!-- Fonts with optimized loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-      /* Critical inline styles for LCP text element to render immediately */
-      .hero-text-critical {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-        font-size: 1.875rem;
-        line-height: 2.25rem;
-        color: rgba(255, 255, 255, 0.9);
-        filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
-        display: block;
-      }
-      @media (min-width: 768px) {
-        .hero-text-critical {
-          font-size: 3rem;
-          line-height: 1;
-        }
-      }
-      @media (min-width: 1024px) {
-        .hero-text-critical {
-          font-size: 3.75rem;
-          line-height: 1;
-        }
+      @font-face {
+        font-family: 'Poppins';
+        font-display: swap;
       }
     </style>
-    <link 
-      rel="stylesheet" 
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" 
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" />
-    </noscript>
     
     <!-- PERFORMANCE OPTIMIZATION: Prefetch intro/loading video for instant game start -->
     <link rel="prefetch" href="/src/assets/loading-video.mp4" as="video" type="video/mp4">

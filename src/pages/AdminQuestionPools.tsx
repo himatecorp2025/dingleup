@@ -13,17 +13,9 @@ interface PoolInfo {
   question_count: number;
 }
 
-interface TopicValidation {
-  topic_id: number;
-  topic_name: string;
-  current_count: number;
-  needed: number;
-}
-
 export default function AdminQuestionPools() {
   const [pools, setPools] = useState<PoolInfo[]>([]);
   const [totalQuestions, setTotalQuestions] = useState(0);
-  const [topicValidation, setTopicValidation] = useState<TopicValidation[]>([]);
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
 
@@ -52,16 +44,6 @@ export default function AdminQuestionPools() {
       if (countError) throw countError;
 
       setTotalQuestions(count || 0);
-
-      // Get topic validation data
-      const { data: validation, error: validationError } = await supabase
-        .rpc('get_topics_needing_questions');
-
-      if (validationError) {
-        console.error('Error loading topic validation:', validationError);
-      } else {
-        setTopicValidation(validation || []);
-      }
     } catch (error) {
       console.error('Error loading pool stats:', error);
       toast.error('Hiba a pool statisztikák betöltésekor');
@@ -97,10 +79,6 @@ export default function AdminQuestionPools() {
 
   const minQuestions = pools.length > 0 ? Math.min(...pools.map(p => p.question_count)) : 0;
   const maxQuestions = pools.length > 0 ? Math.max(...pools.map(p => p.question_count)) : 0;
-
-  const topicsAt150Plus = topicValidation.filter(t => t.current_count >= 150).length;
-  const topicsBelow150 = topicValidation.filter(t => t.current_count < 150);
-  const topicsBelow10 = topicValidation.filter(t => t.current_count < 10);
 
   return (
     <AdminLayout>
@@ -197,79 +175,6 @@ export default function AdminQuestionPools() {
           </CardContent>
         </Card>
 
-        <Card className="border-yellow-500/20 bg-yellow-500/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Database className="h-5 w-5" />
-              Kérdésbank Állapot - Témakörönkénti Ellenőrzés
-            </CardTitle>
-            <CardDescription>
-              Minimum követelmény: 150 kérdés/témakör | Jelenleg: 27 témakör | Jövőbeli cél: 50 témakör
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-8 text-muted-foreground">
-                Betöltés...
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-3 gap-6 mb-6">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600">{topicsAt150Plus}</div>
-                    <div className="text-sm text-muted-foreground">Témakör ≥150 kérdés</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-yellow-600">{topicsBelow150.length}</div>
-                    <div className="text-sm text-muted-foreground">Témakör &lt;150 kérdés</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-red-600">{topicsBelow10.length}</div>
-                    <div className="text-sm text-muted-foreground">Témakör &lt;10 kérdés</div>
-                  </div>
-                </div>
-
-                {topicsBelow150.length > 0 && (
-                  <div className="space-y-2">
-                    <h3 className="font-semibold text-sm">Témakörök, amelyek további kérdéseket igényelnek:</h3>
-                    <div className="grid gap-2 max-h-64 overflow-y-auto">
-                      {topicsBelow150.map(topic => (
-                        <div 
-                          key={topic.topic_id}
-                          className={`
-                            flex items-center justify-between p-3 rounded-lg border-2
-                            ${topic.current_count < 10 
-                              ? 'border-red-500 bg-red-500/10' 
-                              : 'border-yellow-500 bg-yellow-500/10'
-                            }
-                          `}
-                        >
-                          <div className="flex-1">
-                            <div className="font-medium">{topic.topic_name}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {topic.current_count} / 150 kérdés
-                              {topic.current_count < 10 && ' (⚠️ medencékből kihagyva)'}
-                            </div>
-                          </div>
-                          <Badge variant={topic.current_count < 10 ? 'destructive' : 'outline'}>
-                            Hiányzik: {topic.needed}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {topicsBelow10.length > 0 && (
-                  <Badge variant="destructive" className="mt-4">
-                    ⚠️ {topicsBelow10.length} témakör nem használható medencékben (kevesebb, mint 10 kérdés)
-                  </Badge>
-                )}
-              </>
-            )}
-          </CardContent>
-        </Card>
-
         <Card className="border-primary/20 bg-primary/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -286,7 +191,6 @@ export default function AdminQuestionPools() {
             <p>✅ Poolok memóriában cache-eltek → 25.000 egyidejű játékos támogatás</p>
             <p>✅ Kis poolok (&lt;15 kérdés) automatikusan átugrásra kerülnek</p>
             <p>✅ Új kérdések hozzáadása után újragenerálással frissíthetők</p>
-            <p>⚠️ Témakörök &lt;10 kérdéssel automatikusan átugrásra kerülnek</p>
           </CardContent>
         </Card>
       </div>

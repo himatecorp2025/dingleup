@@ -8,8 +8,8 @@ import { toast } from 'sonner';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [pin, setPin] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -17,28 +17,9 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      // Only allow DingleUP username
-      if (username !== 'DingleUP') {
-        toast.error('Csak a DingleUP felhasználó férhet hozzá az admin felülethez');
-        setLoading(false);
-        return;
-      }
-
-      // Call login-with-username-pin edge function
-      const { data: loginData, error: loginError } = await supabase.functions.invoke(
-        'login-with-username-pin',
-        {
-          body: { username, pin }
-        }
-      );
-
-      if (loginError) throw loginError;
-      if (!loginData?.user) throw new Error('Sikertelen bejelentkezés');
-
-      // Sign in with the credentials returned from edge function
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginData.user.email,
-        password: loginData.passwordVariants[0], // Use first password variant
+        email,
+        password,
       });
 
       if (error) throw error;
@@ -111,14 +92,14 @@ const AdminLogin = () => {
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Felhasználónév</label>
+              <label className="text-sm font-medium text-white/80">Email</label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-purple-400 transition-colors" />
                 <Input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="DingleUP"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@dingleup.hu"
                   className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-purple-400/50 focus:ring-purple-400/20 transition-all"
                   required
                 />
@@ -126,17 +107,14 @@ const AdminLogin = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">PIN kód</label>
+              <label className="text-sm font-medium text-white/80">Jelszó</label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-purple-400 transition-colors" />
                 <Input
                   type="password"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={6}
-                  value={pin}
-                  onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-                  placeholder="••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
                   className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-purple-400/50 focus:ring-purple-400/20 transition-all"
                   required
                 />
