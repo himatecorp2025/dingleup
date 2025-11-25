@@ -424,9 +424,9 @@ if (!profile) {
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-1">
             {/* Left: Greeting */}
-            <div className="flex items-center gap-2 xs:gap-3 flex-1 min-w-0">
+            <div className="flex items-center gap-2 xs:gap-3 flex-1 min-w-0 pr-1">
               <h1 
                 className="font-black leading-tight"
                 style={{ 
