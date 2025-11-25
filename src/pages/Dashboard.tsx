@@ -424,7 +424,7 @@ if (!profile) {
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             {/* Left: Greeting */}
             <div className="flex items-center gap-2 xs:gap-3 flex-1 min-w-0 pr-2 overflow-hidden">
               <div className="font-black leading-tight w-full">
@@ -467,7 +467,7 @@ if (!profile) {
               />
             </div>
           </div>
-          
+
           {/* Life Regeneration Timer (below hexagons) */}
           <div className="flex justify-end">
             {walletData?.activeSpeedToken ? (
