@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Lock, User } from 'lucide-react';
+import { Lock, User, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [pin, setPin] = useState('');
+  const [showPin, setShowPin] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -17,18 +18,42 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // Call login edge function
+      const { data: loginData, error: loginError } = await supabase.functions.invoke(
+        'login-with-username-pin',
+        { body: { username, pin } }
+      );
 
-      if (error) throw error;
+      if (loginError) throw loginError;
+      if (!loginData.success) {
+        toast.error(loginData.error || 'Hibás felhasználónév vagy PIN');
+        return;
+      }
+
+      // Try to sign in with Supabase Auth using password variants
+      let signInSuccess = false;
+      for (const passwordVariant of loginData.passwordVariants) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: loginData.user.email,
+          password: passwordVariant,
+        });
+
+        if (!error) {
+          signInSuccess = true;
+          break;
+        }
+      }
+
+      if (!signInSuccess) {
+        toast.error('Bejelentkezés sikertelen');
+        return;
+      }
 
       // Check if user has admin role
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', data.user.id)
+        .eq('user_id', loginData.user.id)
         .eq('role', 'admin')
         .single();
 
@@ -38,7 +63,7 @@ const AdminLogin = () => {
         return;
       }
 
-      toast.success('Sikeres bejelentkezés');
+      toast.success('Sikeres admin bejelentkezés');
       navigate('/admin/dashboard');
     } catch (error: any) {
       toast.error(error.message || 'Hiba történt a bejelentkezés során');
@@ -92,14 +117,14 @@ const AdminLogin = () => {
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Email</label>
+              <label className="text-sm font-medium text-white/80">Felhasználónév</label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-purple-400 transition-colors" />
                 <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@dingleup.hu"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="DingleUP"
                   className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-purple-400/50 focus:ring-purple-400/20 transition-all"
                   required
                 />
@@ -107,17 +132,29 @@ const AdminLogin = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Jelszó</label>
+              <label className="text-sm font-medium text-white/80">PIN kód</label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-purple-400 transition-colors" />
                 <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-purple-400/50 focus:ring-purple-400/20 transition-all"
+                  type={showPin ? "text" : "password"}
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
+                  placeholder="••••••"
+                  maxLength={6}
+                  className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-purple-400/50 focus:ring-purple-400/20 transition-all"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPin(!showPin)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-purple-400 transition-colors"
+                >
+                  {showPin ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
               </div>
             </div>
 
