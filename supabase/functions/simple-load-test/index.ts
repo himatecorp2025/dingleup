@@ -343,10 +343,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Security limits
-    const vus = Math.max(10, Math.min(body.vus, 2000));
-    const requestsPerUser = Math.max(1, Math.min(body.requestsPerUser, 50));
-    const delayMs = Math.max(0, Math.min(body.delayMs, 2000));
+    // Security limits - increased for load testing
+    const vus = Math.max(10, Math.min(body.vus, 30000));
+    const requestsPerUser = Math.max(1, Math.min(body.requestsPerUser, 100));
+    const delayMs = Math.max(0, Math.min(body.delayMs, 5000));
 
     if (!['A', 'B', 'C'].includes(body.scenario)) {
       return new Response(
