@@ -48,6 +48,25 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  build: {
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'admin': [
+            './src/pages/AdminDashboard.tsx',
+            './src/pages/AdminGameProfiles.tsx',
+            './src/pages/AdminPopularContent.tsx',
+            './src/pages/PerformanceDashboard.tsx',
+            './src/pages/RetentionDashboard.tsx',
+            './src/pages/EngagementDashboard.tsx',
+            './src/pages/MonetizationDashboard.tsx',
+            './src/pages/UserJourneyDashboard.tsx',
+          ],
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     mode === "development" && componentTagger(),
