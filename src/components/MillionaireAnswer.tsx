@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { useDynamicVerticalCenter } from '@/hooks/useDynamicVerticalCenter';
 
 interface MillionaireAnswerProps {
   children: ReactNode;
@@ -26,8 +25,6 @@ export const MillionaireAnswer = ({
   isDoubleChoiceActive,
   showCorrectPulse
 }: MillionaireAnswerProps) => {
-  const { overlayRef, contentRef, transformStyle } = useDynamicVerticalCenter();
-  
   if (isRemoved) {
     return (
       <div className="w-full flex justify-center mb-2 opacity-30">
@@ -197,13 +194,10 @@ export const MillionaireAnswer = ({
         </svg>
         
         <div 
-          ref={overlayRef}
-          className={`absolute top-[20%] bottom-[20%] left-0 right-0 flex justify-center px-3 sm:px-4 md:px-5`}
+          className="absolute top-[20%] bottom-[20%] left-0 right-0 flex items-center justify-center px-3 sm:px-4 md:px-5"
         >
           <div 
-            ref={contentRef}
             className="flex items-center justify-center w-full gap-2 sm:gap-3"
-            style={transformStyle}
           >
             <div 
               className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
