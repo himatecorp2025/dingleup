@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useDynamicVerticalCenter } from '@/hooks/useDynamicVerticalCenter';
 
 interface MillionaireQuestionProps {
   children: ReactNode;
@@ -6,6 +7,8 @@ interface MillionaireQuestionProps {
 }
 
 export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
+  const { overlayRef, contentRef, transformStyle } = useDynamicVerticalCenter();
+  
   return (
     <div className="relative w-full mb-0.5" style={{ minHeight: '100px' }}>
       {/* SVG Background */}
@@ -82,9 +85,14 @@ export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQue
       </svg>
       
       <div 
-        className="absolute top-[20%] bottom-[20%] left-0 right-0 flex items-center justify-center px-3 sm:px-4 md:px-5 translate-y-[20%]"
+        ref={overlayRef}
+        className="absolute top-[20%] bottom-[20%] left-0 right-0 flex items-center justify-center px-3 sm:px-4 md:px-5"
       >
-        <div className="flex items-center justify-center w-full gap-2 sm:gap-3">
+        <div 
+          ref={contentRef}
+          className="flex items-center justify-center w-full gap-2 sm:gap-3"
+          style={transformStyle}
+        >
           <div 
             className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
             style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
