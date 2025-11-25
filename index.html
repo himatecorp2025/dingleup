@@ -86,14 +86,9 @@
     }
     </script>
 
-    <!-- Fonts with optimized loading -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <style>
-      @font-face {
-        font-family: 'Poppins';
-        font-display: swap;
-      }
-    </style>
+    <!-- Fonts with optimized non-blocking loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" /></noscript>
     
     <!-- PERFORMANCE OPTIMIZATION: Prefetch intro/loading video for instant game start -->
     <link rel="prefetch" href="/src/assets/loading-video.mp4" as="video" type="video/mp4">
