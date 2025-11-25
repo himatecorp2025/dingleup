@@ -67,7 +67,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         // Crown SVG - simple 3-prong shape, aligned like coin/heart
         return (
           <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
+            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
             viewBox="0 0 24 24"
             fill={color}
             xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +82,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         // Coin SVG
         return (
           <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
+            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -96,7 +96,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         // Heart SVG
         return (
           <svg
-            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
+            className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
             viewBox="0 0 24 24"
             fill={color}
             xmlns="http://www.w3.org/2000/svg"
@@ -232,7 +232,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         />
 
         {/* Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 z-10">
           {type === 'avatar' ? (
             avatarUrl ? (
               <img
