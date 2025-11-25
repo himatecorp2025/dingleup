@@ -52,6 +52,7 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
+          // Vendor libraries splitting
           if (id.includes('node_modules')) {
             if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
               return 'vendor-react';
@@ -62,10 +63,70 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('@supabase')) {
               return 'vendor-supabase';
             }
+            if (id.includes('@tanstack/react-query')) {
+              return 'vendor-query';
+            }
+            if (id.includes('recharts')) {
+              return 'vendor-charts';
+            }
             return 'vendor-other';
           }
-          if (id.includes('src/pages/Admin')) {
+          
+          // Admin pages and dashboards
+          if (id.includes('src/pages/Admin') || 
+              id.includes('Dashboard.tsx') && !id.includes('src/pages/Dashboard.tsx') ||
+              id.includes('PerformanceDashboard') ||
+              id.includes('RetentionDashboard') ||
+              id.includes('EngagementDashboard') ||
+              id.includes('MonetizationDashboard') ||
+              id.includes('UserJourneyDashboard') ||
+              id.includes('AdvancedAnalytics')) {
             return 'admin';
+          }
+          
+          // Game-related components
+          if (id.includes('src/pages/Game.tsx') ||
+              id.includes('GamePreview') ||
+              id.includes('MillionaireQuestion') ||
+              id.includes('MillionaireAnswer') ||
+              id.includes('GameLifelines') ||
+              id.includes('GameTimer') ||
+              id.includes('TimerCircle') ||
+              id.includes('ExitGameDialog') ||
+              id.includes('InGameRescuePopup') ||
+              id.includes('game/Game')) {
+            return 'game';
+          }
+          
+          // Dashboard-related (user dashboard, not admin)
+          if (id.includes('src/pages/Dashboard.tsx') ||
+              id.includes('DailyGiftDialog') ||
+              id.includes('DailyWinnersDialog') ||
+              id.includes('WelcomeBonusDialog') ||
+              id.includes('CategorySelector') ||
+              id.includes('DailyRewards')) {
+            return 'dashboard';
+          }
+          
+          // Profile pages
+          if (id.includes('src/pages/Profile') ||
+              id.includes('ProfileGame')) {
+            return 'profile';
+          }
+          
+          // Leaderboard
+          if (id.includes('src/pages/Leaderboard.tsx') ||
+              id.includes('LeaderboardCarousel')) {
+            return 'leaderboard';
+          }
+          
+          // Analytics hooks (heavy and only used in admin)
+          if (id.includes('usePerformanceAnalytics') ||
+              id.includes('useEngagementAnalytics') ||
+              id.includes('useRetentionAnalytics') ||
+              id.includes('useMonetizationAnalytics') ||
+              id.includes('useUserJourneyAnalytics')) {
+            return 'analytics';
           }
         },
         // Add cache-busting hashes to all assets
