@@ -40,7 +40,22 @@ const Index = () => {
   // Mobile/tablet: redirect immediately, don't show landing page
   if (isMobileOrTablet) {
     if (loading) {
-      return null; // Wait for session check on mobile
+      return (
+        <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033]">
+          <div className="animate-pulse flex flex-col items-center justify-center gap-4">
+            <img 
+              src="/dingleup-logo.png" 
+              alt="DingleUP!" 
+              className="w-32 h-32 object-contain"
+              loading="eager"
+              fetchPriority="high"
+              width="128"
+              height="128"
+            />
+            <div className="text-white/70">Loading...</div>
+          </div>
+        </div>
+      );
     }
     
     const introShown = sessionStorage.getItem('introShown');

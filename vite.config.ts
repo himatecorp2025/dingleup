@@ -48,6 +48,24 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
+        },
+      },
+    },
+    cssCodeSplit: true,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+      },
+    },
+  },
   plugins: [
     react(),
     mode === "development" && componentTagger(),
@@ -107,7 +125,7 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,mp4,mp3,woff,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,mp4,mp3,woff,woff2}'],
         // Offline fallback strategy - serve app shell on navigation failures
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api/, /^\/admin/],
@@ -180,15 +198,15 @@ export default defineConfig(({ mode }) => ({
               }
             }
           },
-          // Images - CacheFirst for instant load
+          // Images - CacheFirst for instant load with longer cache
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'images',
               expiration: {
-                maxEntries: 250, // More images cached
-                maxAgeSeconds: 60 * 60 * 24 * 90 // 90 days cache
+                maxEntries: 250,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year for static images
               },
               cacheableResponse: {
                 statuses: [0, 200]
