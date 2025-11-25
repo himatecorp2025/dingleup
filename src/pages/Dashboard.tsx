@@ -432,7 +432,8 @@ if (!profile) {
                 style={{ 
                   fontSize: 'clamp(0.65rem, 3vw, 1.25rem)',
                   wordBreak: 'break-word',
-                  overflowWrap: 'break-word'
+                  overflowWrap: 'break-word',
+                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, -2px 0 0 #000, 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000'
                 }}
               >
                 {t('dashboard.welcome')}, {profile.username}!
