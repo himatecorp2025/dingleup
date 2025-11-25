@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { useI18n } from '@/i18n';
 
 export const useSessionMonitor = () => {
   const [isValidating, setIsValidating] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useI18n();
 
   useEffect(() => {
     // Public pages that don't require session monitoring
@@ -29,8 +31,8 @@ export const useSessionMonitor = () => {
         if (error || !session) {
           console.log('[SessionMonitor] Session invalid, redirecting to login');
           toast({
-            title: "Munkamenet lejárt",
-            description: "Kérjük, jelentkezz be újra.",
+            title: t('session.expired_title'),
+            description: t('session.expired_description'),
             variant: "destructive",
             duration: 4000,
           });

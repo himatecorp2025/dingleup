@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { UserProfile } from '@/types/game';
 import { toast } from '@/hooks/use-toast';
+import { useI18n } from '@/i18n';
 
 export const useGameProfile = (userId: string | undefined) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useI18n();
 
   const fetchProfile = async () => {
     if (!userId) {
@@ -36,8 +38,8 @@ export const useGameProfile = (userId: string | undefined) => {
       // Only show toast for real errors, not missing profiles
       if (error.code !== 'PGRST116') {
         toast({
-          title: 'Hiba',
-          description: 'Nem sikerült betölteni a profilt',
+          title: t('profile.error.load_title'),
+          description: t('profile.error.load_description'),
           variant: 'destructive'
         });
       }
@@ -76,8 +78,8 @@ export const useGameProfile = (userId: string | undefined) => {
         console.error('Error updating profile:', error);
       }
       toast({
-        title: 'Hiba',
-        description: 'Nem sikerült frissíteni a profilt',
+        title: t('profile.error.update_title'),
+        description: t('profile.error.update_description'),
         variant: 'destructive'
       });
       throw error;
