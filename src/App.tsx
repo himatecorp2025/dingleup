@@ -216,7 +216,7 @@ const SplashScreen = () => (
   <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
     <div className="animate-pulse">
       <img 
-        src="/dingleup-logo.png" 
+        src="/dingleup-logo-optimized.png" 
         alt="DingleUP!" 
         className="w-32 h-32 object-contain"
       />

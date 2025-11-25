@@ -44,7 +44,7 @@ const Index = () => {
         <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033]">
           <div className="animate-pulse flex flex-col items-center justify-center gap-4">
             <img 
-              src="/dingleup-logo.png" 
+              src="/dingleup-logo-optimized.png" 
               alt="DingleUP!" 
               className="w-32 h-32 object-contain"
               loading="eager"

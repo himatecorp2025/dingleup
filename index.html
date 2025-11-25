@@ -19,8 +19,8 @@
     <meta name="360-fullscreen" content="true" />
     
     <!-- SEO & Icons -->
-    <link rel="apple-touch-icon" href="/dingleup-logo.png" />
-    <link rel="icon" type="image/png" href="/dingleup-logo.png" />
+    <link rel="apple-touch-icon" href="/dingleup-logo-optimized.png" />
+    <link rel="icon" type="image/png" href="/dingleup-logo-optimized.png" />
     <!-- Preconnect to critical domains for faster loading -->
     <link rel="preconnect" href="https://wdpxmwsxhckazwxufttk.supabase.co" crossorigin>
     <link rel="dns-prefetch" href="https://wdpxmwsxhckazwxufttk.supabase.co">
@@ -28,11 +28,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- PERFORMANCE OPTIMIZATION: Preload critical above-the-fold assets -->
-    <link rel="preload" href="/dingleup-logo.png" as="image" fetchpriority="high">
+    <link rel="preload" href="/dingleup-logo-optimized.png" as="image" fetchpriority="high">
     
     <!-- PERFORMANCE OPTIMIZATION: Prefetch non-critical assets for instant second-load -->
     <link rel="prefetch" href="/src/assets/introvideo.mp4" as="video" type="video/mp4">
     <link rel="prefetch" href="/src/assets/game-background.png" as="image">
+    
+    <!-- Preload critical font for LCP text -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" as="font" type="font/woff2" crossorigin>
     
     <link rel="canonical" href="https://dingleup.com/" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
@@ -52,7 +55,7 @@
     <meta property="og:description" content="A DingleUP! kvízjáték! Teszteld tudásod 15 izgalmas kérdéssel." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://dingleup.com/" />
-    <meta property="og:image" content="https://dingleup.com/dingleup-logo.png" />
+    <meta property="og:image" content="https://dingleup.com/dingleup-logo-optimized.png" />
     <meta property="og:locale" content="hu_HU" />
     <meta property="og:site_name" content="DingleUP!" />
 
@@ -60,7 +63,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="DingleUP! - Kvízjáték" />
     <meta name="twitter:description" content="A DingleUP! kvízjáték! Teszteld tudásod 15 izgalmas kérdéssel." />
-    <meta name="twitter:image" content="https://dingleup.com/dingleup-logo.png" />
+    <meta name="twitter:image" content="https://dingleup.com/dingleup-logo-optimized.png" />
     
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
@@ -85,18 +88,11 @@
     }
     </script>
 
-    <!-- Fonts with optimized async loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts with optimized loading -->
     <link 
       rel="stylesheet" 
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" 
-      media="print" 
-      onload="this.media='all'"
     />
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    </noscript>
     <style>
       @font-face {
         font-family: 'Poppins';
