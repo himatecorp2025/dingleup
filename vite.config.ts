@@ -55,6 +55,18 @@ export default defineConfig(({ mode }) => ({
           vendor: ['react', 'react-dom', 'react-router-dom'],
           ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
         },
+        // Add cache-busting hashes to all assets
+        assetFileNames: (assetInfo) => {
+          if (!assetInfo.name) return `assets/[name]-[hash][extname]`;
+          const info = assetInfo.name.split('.');
+          const ext = info[info.length - 1];
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
+            return `assets/images/[name]-[hash][extname]`;
+          } else if (/mp4|webm|ogg|mp3|wav|flac|aac/i.test(ext)) {
+            return `assets/media/[name]-[hash][extname]`;
+          }
+          return `assets/[name]-[hash][extname]`;
+        },
       },
     },
     cssCodeSplit: true,
@@ -198,19 +210,27 @@ export default defineConfig(({ mode }) => ({
               }
             }
           },
-          // Images - CacheFirst for instant load with longer cache
+          // Images - CacheFirst with very long cache for instant load
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'images',
               expiration: {
-                maxEntries: 250,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year for static images
+                maxEntries: 300,
+                maxAgeSeconds: 60 * 60 * 24 * 365 * 2 // 2 years for static images
               },
               cacheableResponse: {
                 statuses: [0, 200]
-              }
+              },
+              // Force immediate cache
+              plugins: [
+                {
+                  cacheWillUpdate: async ({ request, response }) => {
+                    return response;
+                  }
+                }
+              ]
             }
           },
           // Fonts - CacheFirst for instant load
@@ -228,19 +248,27 @@ export default defineConfig(({ mode }) => ({
               }
             }
           },
-          // Static JS/CSS - StaleWhileRevalidate for fast load + fresh updates
+          // Static JS/CSS - CacheFirst for instant load, with background update
           {
             urlPattern: /\.(?:js|css)$/,
-            handler: 'StaleWhileRevalidate',
+            handler: 'CacheFirst',
             options: {
               cacheName: 'static-resources',
               expiration: {
-                maxEntries: 120,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+                maxEntries: 150,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
               },
               cacheableResponse: {
                 statuses: [0, 200]
-              }
+              },
+              // Enable background sync for updates
+              plugins: [
+                {
+                  cacheWillUpdate: async ({ request, response }) => {
+                    return response;
+                  }
+                }
+              ]
             }
           },
           // Supabase API - NetworkFirst with shorter timeout for mobile
