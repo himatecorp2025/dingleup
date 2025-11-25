@@ -31,14 +31,23 @@ export const QuestionTranslationManager = () => {
   const [isTranslating, setIsTranslating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<string>('');
-  const [stats, setStats] = useState<{
-    total: number;
-    success: number;
-    errors: number;
+  const [translationStats, setTranslationStats] = useState<{
+    totalMissing: number;
+    totalSuccess: number;
+    totalErrors: number;
   } | null>(null);
   const [initialStats, setInitialStats] = useState<InitialStats | null>(null);
   const [isCheckingContent, setIsCheckingContent] = useState(true);
-  const channelRef = useRef<RealtimeChannel | null>(null);
+
+  const LANGUAGE_NAMES: Record<string, string> = {
+    en: 'Angol',
+    de: 'Német',
+    fr: 'Francia',
+    es: 'Spanyol',
+    it: 'Olasz',
+    pt: 'Portugál',
+    nl: 'Holland'
+  };
 
   // Load initial statistics with per-language breakdown
   useEffect(() => {
@@ -106,127 +115,123 @@ export const QuestionTranslationManager = () => {
     try {
       setIsTranslating(true);
       setProgress(0);
-      setStatus('Magyar forrásnyelv ellenőrzése...');
-      setStats(null);
-
-      // CRITICAL: Refresh session to ensure valid JWT token
-      let { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
-      if (sessionError || !session) {
-        console.error('[QuestionTranslationManager] Session refresh failed:', sessionError);
-        toast.error('Admin munkamenet lejárt, kérlek jelentkezz be újra');
-        setIsTranslating(false);
-        return;
-      }
-
-      console.log('[QuestionTranslationManager] Starting Hungarian to target languages translation');
-
-      // Streaming translation with progress updates (no timeout for long batches)
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-question-translations`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-          // No timeout - allow function to run as long as needed for 4500 questions
-        }
-      );
-
-      if (!response.ok || !response.body) {
-        throw new Error('Streaming hiba');
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let textBuffer = '';
-
-      let totalMissing = 0;
+      setStatus('Fordítás indítása...');
+      setTranslationStats(null);
+      
+      // Process languages one by one
+      const languages = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
       let totalSuccess = 0;
       let totalErrors = 0;
+      
+      for (let i = 0; i < languages.length; i++) {
+        const lang = languages[i];
+        const langName = LANGUAGE_NAMES[lang];
+        
+        setStatus(`${langName} fordítása (${i + 1}/${languages.length})...`);
+        
+        // Refresh session first
+        const { error: sessionError } = await supabase.auth.refreshSession();
+        if (sessionError) {
+          console.error('Session refresh error:', sessionError);
+          toast.error('Session frissítési hiba');
+          setIsTranslating(false);
+          return;
+        }
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast.error('Nincs aktív session');
+          setIsTranslating(false);
+          return;
+        }
 
-        textBuffer += decoder.decode(value, { stream: true });
-        const lines = textBuffer.split('\n');
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-question-translations`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ targetLang: lang }),
+          }
+        );
 
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6));
-              
-              if (data.type === 'start') {
-                setStatus(data.message);
-                setProgress(5);
-              } else if (data.type === 'progress') {
-                setStatus(data.message);
-                if (data.totalMissing) {
-                  totalMissing = data.totalMissing;
-                  setProgress(10);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('No response body');
+        }
+
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                
+                if (data.type === 'progress') {
+                  if (data.processed !== undefined && data.total !== undefined) {
+                    const langProgress = (data.processed / data.total) * 100;
+                    const overallProgress = ((i + (langProgress / 100)) / languages.length) * 100;
+                    setProgress(overallProgress);
+                  }
+                  setStatus(data.message || 'Folyamatban...');
+                } else if (data.type === 'complete') {
+                  totalSuccess += data.totalSuccess || 0;
+                  totalErrors += data.totalErrors || 0;
+                  
+                  const overallProgress = ((i + 1) / languages.length) * 100;
+                  setProgress(overallProgress);
+                  
+                  setStatus(data.message || 'Kész!');
+                  
+                  if (data.totalRemaining && data.totalRemaining > 0) {
+                    setStatus(`${langName} kész, folytatás...`);
+                  }
+                } else if (data.type === 'error') {
+                  setStatus(data.message || 'Hiba történt');
+                  toast.error(data.message || 'Fordítási hiba');
+                  throw new Error(data.message);
                 }
-              } else if (data.type === 'language_start') {
-                setStatus(data.message);
-                setProgress(15);
-              } else if (data.type === 'batch_complete') {
-                setStatus(data.message);
-                // Calculate progress across all languages: 15% start + 70% translation + 15% completion
-                const languageProgress = data.processed / data.total;
-                const progressPercent = 15 + (languageProgress * 70);
-                setProgress(Math.round(progressPercent));
-              } else if (data.type === 'complete') {
-                setProgress(100);
-                setStatus(data.message);
-                totalSuccess = data.totalSuccess || 0;
-                totalErrors = data.totalErrors || 0;
-                totalMissing = data.totalMissing || 0;
-
-                setStats({
-                  total: totalMissing,
-                  success: totalSuccess,
-                  errors: totalErrors
-                });
-
-                if (totalMissing > 0) {
-                  toast.success(`${totalMissing} fordítás kezelve! ${totalSuccess} sikeres, ${totalErrors} hiba.`);
-                } else {
-                  toast.success('Minden fordítás teljes!');
-                }
-
-                if (totalErrors > 0) {
-                  toast.warning(`${totalErrors} hiba történt a fordítás során.`);
-                }
-              } else if (data.type === 'error') {
-                toast.error(data.message);
-                setStatus(`Hiba: ${data.message}`);
+              } catch (e) {
+                console.error('Failed to parse SSE data:', e);
               }
-            } catch (e) {
-              console.error('Parse error:', e);
             }
           }
         }
-
-        textBuffer = lines[lines.length - 1];
       }
-
+      
+      // All languages completed
+      setTranslationStats({
+        totalMissing: 0,
+        totalSuccess: totalSuccess,
+        totalErrors: totalErrors,
+      });
+      setProgress(100);
+      setStatus('Minden fordítás kész!');
+      toast.success(`Fordítás befejezve! ${totalSuccess} sikeres, ${totalErrors} hiba`);
+      
     } catch (error) {
-      console.error('[QuestionTranslationManager] Exception:', error);
-      toast.error('Váratlan hiba történt');
-      setStatus('Váratlan hiba');
+      console.error('Translation error:', error);
+      toast.error(error instanceof Error ? error.message : 'Fordítási hiba történt');
+      setStatus('Hiba történt');
     } finally {
       setIsTranslating(false);
     }
-  };
-
-  const LANGUAGE_NAMES: Record<string, string> = {
-    en: 'Angol',
-    de: 'Német',
-    fr: 'Francia',
-    es: 'Spanyol',
-    it: 'Olasz',
-    pt: 'Portugál',
-    nl: 'Holland'
   };
 
   return (
@@ -240,7 +245,7 @@ export const QuestionTranslationManager = () => {
 
       <p className="text-sm text-white/60 mb-4">
         Magyar nyelvről történő AI-alapú automatikus fordítás mind a 7 célnyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
-        A folyamat a teljes kérdésbázist (~4500 kérdés × 7 nyelv) dolgozza fel batch-ekben. Várható időtartam: 15-30 perc.
+        A folyamat a teljes kérdésbázist nyelvenként dolgozza fel. Várható időtartam: 20-40 perc.
       </p>
 
       {/* Initial Statistics Display */}
@@ -290,33 +295,26 @@ export const QuestionTranslationManager = () => {
           <Progress value={progress} className="h-2" />
           <div className="flex items-center justify-between mt-2">
             <p className="text-xs text-white/50">Folyamat:</p>
-            <p className="text-sm font-semibold text-purple-400">{progress}%</p>
+            <p className="text-sm font-semibold text-purple-400">{Math.round(progress)}%</p>
           </div>
         </div>
       )}
 
-      {stats && (
-        <div className="mb-4 grid grid-cols-3 gap-3">
-          <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-            <div className="flex items-center gap-2 mb-1">
-              <Languages className="w-4 h-4 text-purple-400" />
-              <span className="text-xs text-white/60">Összesen</span>
-            </div>
-            <p className="text-xl font-bold text-purple-400">{stats.total}</p>
-          </div>
+      {translationStats && (
+        <div className="mb-4 grid grid-cols-2 gap-3">
           <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <CheckCircle className="w-4 h-4 text-green-400" />
               <span className="text-xs text-white/60">Sikeres</span>
             </div>
-            <p className="text-xl font-bold text-green-400">{stats.success}</p>
+            <p className="text-xl font-bold text-green-400">{translationStats.totalSuccess}</p>
           </div>
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <XCircle className="w-4 h-4 text-red-400" />
               <span className="text-xs text-white/60">Hibák</span>
             </div>
-            <p className="text-xl font-bold text-red-400">{stats.errors}</p>
+            <p className="text-xl font-bold text-red-400">{translationStats.totalErrors}</p>
           </div>
         </div>
       )}
