@@ -89,8 +89,20 @@ const Leaderboard = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      // Call Edge Function for country-specific daily leaderboard
-      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country');
+      // Check for valid session first
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData?.session) {
+        console.log('[Leaderboard] No valid session, skipping fetch');
+        setLoading(false);
+        return;
+      }
+
+      // Call Edge Function for country-specific daily leaderboard with explicit auth header
+      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country', {
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`
+        }
+      });
 
       if (error) {
         console.error('[Leaderboard] Edge function error:', error);
