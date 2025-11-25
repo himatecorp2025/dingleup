@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n';
 import {
   Dialog,
   DialogContent,
@@ -114,6 +115,7 @@ export const AdminReportActionDialog = ({
   actionType,
   onSuccess 
 }: AdminReportActionDialogProps) => {
+  const { t } = useI18n();
   const [message, setMessage] = useState(actionConfig[actionType].defaultMessage);
   const [submitting, setSubmitting] = useState(false);
   const [reasonType, setReasonType] = useState<string>('');
@@ -138,37 +140,37 @@ export const AdminReportActionDialog = ({
       setAvailableReasonTypes([...availableReasonTypes, newType]);
       setReasonType(newType);
       setCustomReasonType('');
-      toast.success(actionType === 'resolved' ? 'Új problématípus hozzáadva!' : 'Új elutasítási ok hozzáadva!');
+      toast.success(actionType === 'resolved' ? t('admin.new_problem_added') : t('admin.new_dismissal_added'));
     }
   };
 
   const handleSubmit = async () => {
     if (!message.trim()) {
-      toast.error('Az üzenet mező kötelező!');
+      toast.error(t('admin.field_required'));
       return;
     }
 
     if (message.length < 10) {
-      toast.error('Az üzenet túl rövid (minimum 10 karakter)!');
+      toast.error(t('admin.message_too_short'));
       return;
     }
 
     if (message.length > 2000) {
-      toast.error('Az üzenet túl hosszú (maximum 2000 karakter)!');
+      toast.error(t('admin.message_too_long'));
       return;
     }
 
     if ((actionType === 'resolved' || actionType === 'dismissed') && !reasonType) {
       toast.error(actionType === 'resolved' 
-        ? 'Kérlek válaszd ki a megoldott problématípust!' 
-        : 'Kérlek válaszd ki az elutasítás okát!');
+        ? t('admin.select_problem_type') 
+        : t('admin.select_dismissal_reason'));
       return;
     }
 
     // Ensure valid admin session
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
-      toast.error('Lejárt admin munkamenet. Jelentkezz be újra az admin felületen.');
+      toast.error(t('admin.session_expired'));
       return;
     }
 
@@ -177,7 +179,7 @@ export const AdminReportActionDialog = ({
     try {
       const { data: { session: adminSession } } = await supabase.auth.getSession();
       if (!adminSession) {
-        toast.error('No admin session');
+        toast.error(t('admin.no_session'));
         setSubmitting(false);
         return;
       }
@@ -210,12 +212,12 @@ export const AdminReportActionDialog = ({
 
 
       const actionLabel = {
-        reviewing: 'folyamatba helyezve',
-        resolved: 'megoldva',
-        dismissed: 'elutasítva'
+        reviewing: t('admin.status_reviewing'),
+        resolved: t('admin.status_resolved'),
+        dismissed: t('admin.status_dismissed')
       }[actionType];
 
-      toast.success(`Jelentés ${actionLabel}, és a felhasználó értesítést kapott!`);
+      toast.success(t('admin.report_action_success').replace('{status}', actionLabel));
       onOpenChange(false);
       onSuccess();
       setMessage(actionConfig[actionType].defaultMessage);
@@ -226,11 +228,11 @@ export const AdminReportActionDialog = ({
       const status = error?.status || error?.context?.status;
       const msg: string = error?.message || '';
       if (status === 401 || status === 403 || /authorization|token/i.test(msg)) {
-        toast.error('Lejárt admin munkamenet. Jelentkezz be újra.');
+        toast.error(t('admin.session_expired'));
       } else if (/function returned non-?2xx/i.test(msg)) {
-        toast.error('Hiba történt a küldés közben. Próbáld újra.');
+        toast.error(t('admin.send_error'));
       } else {
-        toast.error(`Hiba: ${msg || 'Ismeretlen hiba történt'}`);
+        toast.error(t('admin.error_with_message').replace('{message}', msg || t('admin.unknown_error')));
       }
     } finally {
       setSubmitting(false);

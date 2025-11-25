@@ -360,13 +360,13 @@ const GamePreview = memo(() => {
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        toast.error('A játék megszakadt!');
+        toast.error(t('game.interrupted'));
         navigate('/dashboard');
       }
     };
 
     const handleBlur = () => {
-      toast.error('A játék megszakadt!');
+      toast.error(t('game.interrupted'));
       navigate('/dashboard');
     };
 

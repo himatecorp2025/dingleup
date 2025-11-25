@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Languages, Loader2, CheckCircle, XCircle, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { RealtimeChannel } from '@supabase/supabase-js';
+import { useI18n } from '@/i18n';
 
 interface LanguageStats {
   total: number;
@@ -28,6 +29,7 @@ interface InitialStats {
 }
 
 export const QuestionTranslationManager = () => {
+  const { t } = useI18n();
   const [isTranslating, setIsTranslating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<string>('');
@@ -119,7 +121,7 @@ export const QuestionTranslationManager = () => {
       let { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
       if (sessionError || !session) {
         console.error('[QuestionTranslationManager] Session refresh failed:', sessionError);
-        toast.error('Admin munkamenet lejárt, kérlek jelentkezz be újra');
+        toast.error(t('admin.session_expired'));
         setIsTranslating(false);
         return;
       }
@@ -161,8 +163,8 @@ export const QuestionTranslationManager = () => {
 
       if (error) {
         console.error('[QuestionTranslationManager] Translation error:', error);
-        toast.error('Hiba történt a fordítás közben');
-        setStatus('Hiba történt');
+        toast.error(t('admin.translation_error'));
+        setStatus(t('admin.error_occurred'));
         setIsTranslating(false);
         return;
       }
@@ -171,8 +173,8 @@ export const QuestionTranslationManager = () => {
 
       if (data?.phase === 'scan' && data?.stats?.totalTruncated === 0) {
         setProgress(100);
-        setStatus('Nincs csonka fordítás!');
-        toast.success('Minden kérdés fordítása teljes és rendben van!');
+        setStatus(t('admin.no_truncated_translations'));
+        toast.success(t('admin.all_translations_complete'));
         setStats({
           total: 0,
           success: 0,
@@ -198,22 +200,22 @@ export const QuestionTranslationManager = () => {
         });
 
         if (totalTruncated > 0) {
-          toast.success(`${totalTruncated} csonka fordítás törölve és újrafordítva! ${totalSuccess} sikeres.`);
+          toast.success(t('admin.translations_retranslated').replace('{count}', totalTruncated.toString()).replace('{success}', totalSuccess.toString()));
         }
 
         if (totalErrors > 0) {
-          toast.warning(`${totalErrors} hiba történt a fordítás során.`);
+          toast.warning(t('admin.translation_errors_count').replace('{count}', totalErrors.toString()));
         }
       } else {
         setProgress(100);
-        setStatus('Ismeretlen eredmény');
-        toast.warning('A fordítás eredménye nem ismert');
+        setStatus(t('admin.unknown_result'));
+        toast.warning(t('admin.translation_result_unknown'));
       }
 
     } catch (error) {
       console.error('[QuestionTranslationManager] Exception:', error);
-      toast.error('Váratlan hiba történt');
-      setStatus('Váratlan hiba');
+      toast.error(t('admin.unexpected_error'));
+      setStatus(t('admin.unexpected_error'));
     } finally {
       // Unsubscribe from real-time channel
       if (channelRef.current) {
