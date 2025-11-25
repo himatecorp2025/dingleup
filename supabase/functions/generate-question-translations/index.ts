@@ -291,6 +291,43 @@ CRITICAL RULES:
 10. Questions can be up to 200 characters if needed to be grammatically complete
 11. Answers can be up to 100 characters if needed to be complete and natural
 
+GRAMMAR AND LANGUAGE-SPECIFIC RULES (CRITICAL):
+${lang === 'en' ? `
+- English: Use correct SVO word order (Subject-Verb-Object)
+- Use proper article usage (a/an/the)
+- Maintain proper tense consistency
+- Use natural English phrasing and idioms` : ''}${lang === 'de' ? `
+- German: ALWAYS capitalize ALL nouns (e.g., "der Mann", "die Frau", "das Haus")
+- Use correct gender agreement (der/die/das)
+- Use proper case endings (Nominativ, Akkusativ, Dativ, Genitiv)
+- Maintain correct word order (verb-second position in main clauses)
+- Use formal "Sie" for quiz questions unless context requires informal "du"` : ''}${lang === 'fr' ? `
+- French: Use correct gender agreement between nouns and adjectives (le/la, un/une)
+- Apply proper accent marks (é, è, ê, à, ù, etc.)
+- Use correct verb conjugations and tense forms
+- Maintain proper use of "tu/vous" (use "vous" for quiz questions)
+- Apply liaison and elision rules where appropriate` : ''}${lang === 'es' ? `
+- Spanish: Use correct gender agreement (el/la, un/una)
+- Apply proper accent marks (á, é, í, ó, ú, ñ)
+- Use correct verb conjugations (including subjunctive when needed)
+- Use formal "usted" for quiz questions
+- Place adjectives correctly (usually after nouns, except for some common adjectives)` : ''}${lang === 'it' ? `
+- Italian: Use correct gender agreement (il/la, un/una)
+- Apply proper accent marks and apostrophes (à, è, é, ì, ò, ù)
+- Use correct verb conjugations (including subjunctive when needed)
+- Use formal "Lei" for quiz questions
+- Maintain proper use of prepositions and articles` : ''}${lang === 'pt' ? `
+- Portuguese: Use correct gender agreement (o/a, um/uma)
+- Apply proper accent marks and tildes (á, é, í, ó, ú, â, ê, ô, ã, õ, ç)
+- Use correct verb conjugations (including subjunctive when needed)
+- Use formal "você" for quiz questions
+- Maintain proper use of contractions (do, da, no, na, etc.)` : ''}${lang === 'nl' ? `
+- Dutch: Use correct article usage (de/het)
+- Maintain proper word order (V2 word order in main clauses)
+- Use correct verb conjugations
+- Use formal "u" for quiz questions
+- Apply proper compound word formation` : ''}
+
 RESPONSE FORMAT:
 Return ONLY numbered translations in this format for EACH question:
 1. Question: "translated question ending with ?"
@@ -314,7 +351,10 @@ CRITICAL REQUIREMENTS:
 - Questions and answers MUST be complete, NEVER truncated
 - Write full natural translations even if they exceed typical length limits
 - Keep answer positions (A/B/C) exactly as shown
-- Translate naturally for ${LANGUAGE_NAMES[lang]} speakers with proper grammar`;
+- Translate naturally for ${LANGUAGE_NAMES[lang]} speakers with proper grammar
+- MANDATORY: Follow ALL grammar rules specific to ${LANGUAGE_NAMES[lang]} (capitalization, gender agreement, accent marks, verb conjugations, word order, etc.)
+- MANDATORY: Ensure translations sound fluent and natural to native ${LANGUAGE_NAMES[lang]} speakers
+- MANDATORY: Respect language-specific grammatical structures and cultural localization`;
 
         attemptedCount += itemsToTranslate.length;
 
