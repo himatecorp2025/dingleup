@@ -174,21 +174,31 @@ const Profile = () => {
     if (!userId) return;
     
     try {
-      // Check what language the new country would suggest
-      const newLang = resolveLangFromCountry(newCountryCode);
+      const currentCountryCode = profile.country_code || 'HU';
       
-      // If language would change, ask user for confirmation
-      if (newLang !== lang) {
-        setPendingCountryChange({ countryCode: newCountryCode, newLang });
+      // Determine if we're switching between HU and non-HU
+      const isFromHungary = currentCountryCode === 'HU';
+      const isToHungary = newCountryCode === 'HU';
+      
+      // Case 1: Hungary → Other country (offer English)
+      if (isFromHungary && !isToHungary) {
+        setPendingCountryChange({ countryCode: newCountryCode, newLang: 'en' });
         setShowLanguageDialog(true);
         return;
       }
       
-      // If language stays the same, update country only
+      // Case 2: Other country → Hungary (offer Hungarian)
+      if (!isFromHungary && isToHungary) {
+        setPendingCountryChange({ countryCode: newCountryCode, newLang: 'hu' });
+        setShowLanguageDialog(true);
+        return;
+      }
+      
+      // Case 3: Other → Other (no language change, just update country)
       await updateCountryOnly(newCountryCode);
     } catch (error) {
       console.error('Failed to update country:', error);
-      toast.error("Ország frissítési hiba");
+      toast.error(t('profile.error.updateFailed'));
     }
   };
 
@@ -962,25 +972,20 @@ const Profile = () => {
       <BottomNav />
       <TutorialManager route="profile" />
 
-      {/* Language Change Confirmation Dialog */}
+      {/* Language Change Confirmation Dialog - Always in English */}
       <AlertDialog open={showLanguageDialog} onOpenChange={setShowLanguageDialog}>
         <AlertDialogContent className="max-w-[90vw] sm:max-w-md bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-accent/30">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
               <Globe className="w-6 h-6 text-accent" />
-              Nyelv változtatása
+              {pendingCountryChange?.newLang === 'hu' 
+                ? t('profile.languageDialog.toHungarianTitle')
+                : t('profile.languageDialog.toEnglishTitle')}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground text-base leading-relaxed">
-              Az új ország alapján a rendszer {pendingCountryChange?.newLang === 'hu' ? 'magyar' : 
-                pendingCountryChange?.newLang === 'en' ? 'angol' : 
-                pendingCountryChange?.newLang === 'de' ? 'német' : 
-                pendingCountryChange?.newLang === 'fr' ? 'francia' : 
-                pendingCountryChange?.newLang === 'es' ? 'spanyol' : 
-                pendingCountryChange?.newLang === 'it' ? 'olasz' : 
-                pendingCountryChange?.newLang === 'pt' ? 'portugál' : 
-                pendingCountryChange?.newLang === 'nl' ? 'holland' : ''} nyelvre váltaná a játékot.
-              <br /><br />
-              <strong>Szeretnéd a nyelvet is megváltoztatni?</strong>
+              {pendingCountryChange?.newLang === 'hu' 
+                ? t('profile.languageDialog.toHungarianQuestion')
+                : t('profile.languageDialog.toEnglishQuestion')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-2">
@@ -988,13 +993,13 @@ const Profile = () => {
               onClick={() => handleLanguageChangeConfirm(false)}
               className="bg-muted hover:bg-muted/80 text-foreground border-border"
             >
-              Nem, a nyelv maradjon
+              {t('profile.languageDialog.noButton')}
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => handleLanguageChangeConfirm(true)}
               className="bg-accent hover:bg-accent/90 text-accent-foreground"
             >
-              Igen, váltsunk át
+              {t('profile.languageDialog.yesButton')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

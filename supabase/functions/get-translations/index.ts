@@ -6,9 +6,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-type LangCode = 'hu' | 'en' | 'de' | 'fr' | 'es' | 'it' | 'pt' | 'nl';
+type LangCode = 'hu' | 'en';
 
-const VALID_LANGUAGES: LangCode[] = ['hu', 'en', 'de', 'fr', 'es', 'it', 'pt', 'nl'];
+const VALID_LANGUAGES: LangCode[] = ['hu', 'en'];
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -21,7 +21,7 @@ serve(async (req) => {
 
     if (!lang || !VALID_LANGUAGES.includes(lang)) {
       return new Response(
-        JSON.stringify({ error: 'Invalid or missing lang parameter. Must be one of: hu, en, de, fr, es, it, pt, nl' }),
+        JSON.stringify({ error: 'Invalid or missing lang parameter. Must be one of: hu, en' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }

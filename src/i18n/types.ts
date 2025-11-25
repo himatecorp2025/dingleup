@@ -1,4 +1,4 @@
-export type LangCode = 'hu' | 'en' | 'de' | 'fr' | 'es' | 'it' | 'pt' | 'nl';
+export type LangCode = 'hu' | 'en';
 
 export interface TranslationMap {
   [key: string]: string;
