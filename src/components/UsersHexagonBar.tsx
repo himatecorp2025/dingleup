@@ -36,22 +36,22 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
   return (
     <div className={`relative ${className}`} style={{ minWidth: '320px', minHeight: '100px' }}>
       {/* Rank Hexagon - Blue */}
-      <div className="absolute z-10" style={{ left: '22%', top: '36%', transform: 'translate(-50%, -50%)' }}>
+      <div className="absolute z-10" style={{ left: '27%', top: '36%', transform: 'translate(-50%, -50%)' }}>
         <DiamondHexagon type="rank" value={rank !== null ? rank : '...'} />
       </div>
 
       {/* Coins Hexagon - Gold */}
-      <div className="absolute z-10" style={{ left: '42%', top: '36%', transform: 'translate(-50%, -50%)' }}>
+      <div className="absolute z-10" style={{ left: '47%', top: '36%', transform: 'translate(-50%, -50%)' }}>
         <DiamondHexagon type="coins" value={coins} />
       </div>
 
       {/* Lives Hexagon - Red */}
-      <div className="absolute z-10" style={{ left: '62%', top: '36%', transform: 'translate(-50%, -50%)' }}>
+      <div className="absolute z-10" style={{ left: '67%', top: '36%', transform: 'translate(-50%, -50%)' }}>
         <DiamondHexagon type="lives" value={lives} />
       </div>
 
       {/* Avatar Hexagon - Purple */}
-      <div className="absolute z-10" style={{ left: '82%', top: '36%', transform: 'translate(-50%, -50%)' }}>
+      <div className="absolute z-10" style={{ left: '87%', top: '36%', transform: 'translate(-50%, -50%)' }}>
         <DiamondHexagon 
           type="avatar" 
           value={username} 
