@@ -56,6 +56,11 @@ Deno.serve(async (req) => {
     const body: GetPersonalizedQuestionsRequest = await req.json();
     const numberOfQuestions = body.numberOfQuestions || 15;
     const lang = (body as any).lang || 'en'; // Language for question translations
+    
+    // CRITICAL: Only hu/en languages supported
+    if (lang !== 'hu' && lang !== 'en') {
+      throw new Error('Invalid language. Only "hu" and "en" are supported.');
+    }
 
     // Get total answered count
     const { data: statsData, error: statsError } = await supabaseClient
@@ -100,19 +105,17 @@ Deno.serve(async (req) => {
         .from('question_translations')
         .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
         .in('question_id', selectedIds)
-        .in('lang', [lang, 'en', 'hu']);
+        .eq('lang', lang);
 
       questions = selectedIds.map(id => {
         const q = shuffled.find(sq => sq.id === id)!;
-        const tr = translations?.find(t => t.question_id === id && t.lang === lang) ||
-                   translations?.find(t => t.question_id === id && t.lang === 'en') ||
-                   translations?.find(t => t.question_id === id && t.lang === 'hu');
+        const tr = translations?.find(t => t.question_id === id && t.lang === lang);
         
         return {
           questionId: id,
           topicId: String(q.topic_id),
           topicName: (q.topics as any)?.name || `Topic ${q.topic_id}`,
-          lang: tr?.lang || 'hu',
+          lang: tr?.lang || lang,
           questionText: tr?.question_text || '',
           answerA: tr?.answer_a || '',
           answerB: tr?.answer_b || '',
@@ -194,18 +197,16 @@ Deno.serve(async (req) => {
         .from('question_translations')
         .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
         .in('question_id', selectedIds)
-        .in('lang', [lang, 'en', 'hu']);
+        .eq('lang', lang);
 
       questions = combined.map(q => {
-        const tr = translations?.find(t => t.question_id === q.id && t.lang === lang) ||
-                   translations?.find(t => t.question_id === q.id && t.lang === 'en') ||
-                   translations?.find(t => t.question_id === q.id && t.lang === 'hu');
+        const tr = translations?.find(t => t.question_id === q.id && t.lang === lang);
         
         return {
           questionId: q.id,
           topicId: String(q.topic_id),
           topicName: (q.topics as any)?.name || `Topic ${q.topic_id}`,
-          lang: tr?.lang || 'hu',
+          lang: tr?.lang || lang,
           questionText: tr?.question_text || '',
           answerA: tr?.answer_a || '',
           answerB: tr?.answer_b || '',

@@ -161,6 +161,11 @@ serve(async (req) => {
     await initializePoolsCache(supabase);
 
     const { last_pool_order, lang = 'en' } = await req.json();
+    
+    // CRITICAL: Only hu/en languages supported
+    if (lang !== 'hu' && lang !== 'en') {
+      throw new Error('Invalid language. Only "hu" and "en" are supported.');
+    }
 
     // Calculate next pool (global rotation 1-15)
     let nextPoolOrder = 1;
