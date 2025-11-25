@@ -51,9 +51,22 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'vendor-react';
+            }
+            if (id.includes('@radix-ui')) {
+              return 'vendor-ui';
+            }
+            if (id.includes('@supabase')) {
+              return 'vendor-supabase';
+            }
+            return 'vendor-other';
+          }
+          if (id.includes('src/pages/Admin')) {
+            return 'admin';
+          }
         },
         // Add cache-busting hashes to all assets
         assetFileNames: (assetInfo) => {
@@ -82,9 +95,24 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     securityHeadersPlugin(mode),
+    {
+      name: 'html-transform',
+      transformIndexHtml(html: string) {
+        // Inline critical CSS for LCP element
+        const criticalCSS = `
+          <style>
+            .text-3xl{font-size:1.875rem;line-height:2.25rem}
+            .text-white\\/90{color:rgb(255 255 255 / 0.9)}
+            .drop-shadow-lg{filter:drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))}
+            .block{display:block}
+          </style>
+        `;
+        return html.replace('</head>', `${criticalCSS}</head>`);
+      }
+    },
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt', 'dingleup-logo.png'],
+      includeAssets: ['favicon.ico', 'robots.txt', 'dingleup-logo-optimized.png'],
       manifest: {
         name: 'DingleUP!',
         short_name: 'DingleUP!',
@@ -94,19 +122,19 @@ export default defineConfig(({ mode }) => ({
         display: 'standalone',
         icons: [
           {
-            src: '/dingleup-logo.png',
+            src: '/dingleup-logo-optimized.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: '/dingleup-logo.png',
+            src: '/dingleup-logo-optimized.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: '/dingleup-logo.png',
+            src: '/dingleup-logo-optimized.png',
             sizes: '1024x1024',
             type: 'image/png',
             purpose: 'any maskable'
@@ -118,21 +146,21 @@ export default defineConfig(({ mode }) => ({
             short_name: 'Játék',
             description: 'Új játék indítása',
             url: '/game',
-            icons: [{ src: '/dingleup-logo.png', sizes: '192x192' }]
+            icons: [{ src: '/dingleup-logo-optimized.png', sizes: '192x192' }]
           },
           {
             name: 'Ranglista',
             short_name: 'Ranglista',
             description: 'Napi ranglista megtekintése',
             url: '/leaderboard',
-            icons: [{ src: '/dingleup-logo.png', sizes: '192x192' }]
+            icons: [{ src: '/dingleup-logo-optimized.png', sizes: '192x192' }]
           },
           {
             name: 'Profil',
             short_name: 'Profil',
             description: 'Profil beállítások',
             url: '/profile',
-            icons: [{ src: '/dingleup-logo.png', sizes: '192x192' }]
+            icons: [{ src: '/dingleup-logo-optimized.png', sizes: '192x192' }]
           }
         ]
       },
@@ -147,7 +175,7 @@ export default defineConfig(({ mode }) => ({
         clientsClaim: true,
         // PERFORMANCE OPTIMIZATION: Pre-cache critical assets for instant load
         additionalManifestEntries: [
-          { url: '/dingleup-logo.png', revision: null },
+          { url: '/dingleup-logo-optimized.png', revision: null },
           { url: '/src/assets/introvideo.mp4', revision: null }, // Intro video pre-cached
           { url: '/src/assets/loading-video.mp4', revision: null }, // Loading video pre-cached
           { url: '/src/assets/DingleUP.mp3', revision: null },
