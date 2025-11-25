@@ -89,9 +89,35 @@ async function initializePoolsCache(supabase: any): Promise<void> {
 
       // Load all pools into memory
       for (const poolData of pools || []) {
-        const questions = Array.isArray(poolData.questions) ? poolData.questions : [];
+        // ✅ CRITICAL FIX: Explicit JSONB[] -> Question[] parsing
+        const questionsRaw = poolData.questions;
+        let questions: Question[] = [];
+
+        if (questionsRaw && Array.isArray(questionsRaw)) {
+          // Parse each question object explicitly (JSONB[] conversion)
+          questions = questionsRaw.map((q: any) => {
+            // If string, parse JSON
+            if (typeof q === 'string') {
+              try {
+                return JSON.parse(q);
+              } catch (err) {
+                console.error(`[POOL CACHE] Failed to parse question:`, err);
+                return null;
+              }
+            }
+            // If already object, return as-is
+            return q;
+          }).filter((q: any) => q !== null); // Remove null entries
+        }
+
+        // ✅ VALIDATION: Ensure pool has sufficient questions
+        if (questions.length < MIN_QUESTIONS_PER_POOL) {
+          console.error(`[POOL CACHE] ❌ Pool ${poolData.pool_order} has only ${questions.length} questions (expected ${MIN_QUESTIONS_PER_POOL})`);
+        } else {
+          console.log(`[POOL CACHE] ✅ Pool ${poolData.pool_order} loaded: ${questions.length} questions`);
+        }
+
         POOLS_MEMORY_CACHE.set(poolData.pool_order, questions);
-        console.log(`[POOL CACHE] Pool ${poolData.pool_order} loaded: ${questions.length} questions`);
       }
 
       CACHE_INITIALIZED = true;
