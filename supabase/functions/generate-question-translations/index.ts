@@ -229,15 +229,25 @@ serve(async (req) => {
     const uniqueQuestionIds = [...new Set(incompleteItems.map(t => t.question_id))];
     console.log(`[generate-question-translations] ${uniqueQuestionIds.length} unique questions need re-translation`);
 
-    // Fetch full question data for these questions
-    const { data: questions, error: fetchError } = await supabase
-      .from('questions')
-      .select('id, question, answers, correct_answer')
-      .in('id', uniqueQuestionIds);
+    // Fetch full question data for these questions in safe-sized batches to avoid URL length limits
+    let questions: any[] = [];
+    const ID_BATCH_SIZE = 200;
 
-    if (fetchError) {
-      console.error('[generate-question-translations] Fetch error:', fetchError);
-      throw fetchError;
+    for (let i = 0; i < uniqueQuestionIds.length; i += ID_BATCH_SIZE) {
+      const batchIds = uniqueQuestionIds.slice(i, i + ID_BATCH_SIZE);
+      const { data, error: fetchError } = await supabase
+        .from('questions')
+        .select('id, question, answers, correct_answer')
+        .in('id', batchIds);
+
+      if (fetchError) {
+        console.error('[generate-question-translations] Fetch error for batch:', fetchError);
+        throw new Error(fetchError.message || 'Failed to fetch questions batch for re-translation');
+      }
+
+      if (data && data.length > 0) {
+        questions = questions.concat(data);
+      }
     }
 
     if (!questions || questions.length === 0) {
