@@ -21,16 +21,15 @@ import { AppRouteGuard } from "@/components/AppRouteGuard";
 import { AudioPolicyManager } from "@/components/AudioPolicyManager";
 import { useI18n } from "@/i18n";
 
-// Eager load critical pages
+// Eager load only landing page for instant initial render
 import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
 
-// New simplified auth pages
-import AuthChoice from "./pages/AuthChoice";
-import RegisterNew from "./pages/RegisterNew";
-import LoginNew from "./pages/LoginNew";
-
-// Lazy load secondary pages
+// Lazy load all other pages for optimal bundle splitting
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const AuthChoice = lazy(() => import("./pages/AuthChoice"));
+const RegisterNew = lazy(() => import("./pages/RegisterNew"));
+const LoginNew = lazy(() => import("./pages/LoginNew"));
+const IntroVideo = lazy(() => import("./pages/IntroVideo"));
 const Game = lazy(() => import("./pages/Game"));
 const GameRules = lazy(() => import("./pages/GameRules"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -39,7 +38,6 @@ const RegistrationSuccess = lazy(() => import("./pages/RegistrationSuccess"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const InstallApp = lazy(() => import("./pages/InstallApp"));
 const Invitation = lazy(() => import("./pages/Invitation"));
-import IntroVideo from "./pages/IntroVideo";
 const About = lazy(() => import("./pages/About"));
 
 // Lazy load admin pages
