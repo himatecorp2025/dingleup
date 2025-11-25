@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Languages, Loader2, CheckCircle, XCircle, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { RealtimeChannel } from '@supabase/supabase-js';
+import { useI18n } from '@/i18n';
 
 interface LanguageStats {
   total: number;
@@ -27,6 +28,7 @@ interface InitialStats {
 }
 
 export const TranslationSeeder = () => {
+  const { t } = useI18n();
   const [isTranslating, setIsTranslating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<string>('');
@@ -143,7 +145,7 @@ export const TranslationSeeder = () => {
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Admin session expired');
+        toast.error(t('admin.session_expired'));
         setIsTranslating(false);
         return;
       }
@@ -166,7 +168,7 @@ export const TranslationSeeder = () => {
 
         if (error) {
           console.error('[TranslationSeeder] Translation error:', error);
-          toast.error('Hiba történt a fordítás közben');
+          toast.error(t('admin.translation_error_generic'));
           setStatus('Hiba történt');
           setIsTranslating(false);
           return;
@@ -196,7 +198,7 @@ export const TranslationSeeder = () => {
         errors: totalErrors
       });
 
-      toast.success(`UI fordítás sikeres! ${totalSuccess} szöveg lefordítva.`);
+      toast.success(t('admin.translation_success').replace('{count}', totalSuccess.toString()));
 
       if (totalErrors > 0) {
         toast.warning(`${totalErrors} hiba történt a fordítás során.`);
@@ -204,7 +206,7 @@ export const TranslationSeeder = () => {
 
     } catch (error) {
       console.error('[TranslationSeeder] Exception:', error);
-      toast.error('Váratlan hiba történt');
+      toast.error(t('admin.unexpected_error'));
       setStatus('Váratlan hiba');
     } finally {
       setIsTranslating(false);

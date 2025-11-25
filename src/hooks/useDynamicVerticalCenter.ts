@@ -15,6 +15,7 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [translateY, setTranslateY] = useState<number>(0);
   const retryTimeoutRef = useRef<number | null>(null);
+  const lastContentHeightRef = useRef<number>(0);
 
   const calculateCenter = useCallback(() => {
     if (!overlayRef.current || !contentRef.current) {
@@ -40,20 +41,24 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
         return;
       }
 
-      // Calculate exact vertical center position
-      // Formula: (overlayHeight / 2) - (contentHeight / 2)
-      const centerPosition = (overlayHeight - contentHeight) / 2;
-      
-      // Set translateY in pixels
-      setTranslateY(centerPosition);
-      
-      if (import.meta.env.DEV) {
-        console.log('[useDynamicVerticalCenter] Calculated:', {
-          overlayHeight,
-          contentHeight,
-          centerPosition,
-          pixelDiff: Math.abs(centerPosition - overlayHeight / 2 + contentHeight / 2)
-        });
+      // Only recalculate if content height changed significantly (>2px difference)
+      if (Math.abs(contentHeight - lastContentHeightRef.current) > 2) {
+        // Calculate exact vertical center position
+        // Formula: (overlayHeight / 2) - (contentHeight / 2)
+        const centerPosition = (overlayHeight - contentHeight) / 2;
+        
+        // Set translateY in pixels
+        setTranslateY(centerPosition);
+        lastContentHeightRef.current = contentHeight;
+        
+        if (import.meta.env.DEV) {
+          console.log('[useDynamicVerticalCenter] Recalculated:', {
+            overlayHeight,
+            contentHeight,
+            centerPosition,
+            heightChange: Math.abs(contentHeight - lastContentHeightRef.current)
+          });
+        }
       }
     } catch (error) {
       console.error('[useDynamicVerticalCenter] Error:', error);
