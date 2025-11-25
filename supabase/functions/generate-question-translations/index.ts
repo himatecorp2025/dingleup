@@ -87,88 +87,13 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
 
     // ========================================================================
-    // STEP 1: FIND ALL TRUNCATED TRANSLATIONS GLOBALLY (< 15 characters)
+    // STEP 1: FETCH ALL QUESTIONS FROM DATABASE
     // ========================================================================
-    console.log('[generate-question-translations] Scanning for truncated translations...');
+    console.log('[generate-question-translations] Fetching all questions from database...');
     
-    const { data: allTruncated } = await supabase
-      .from('question_translations')
-      .select('question_id, lang, question_text')
-      .in('lang', TARGET_LANGUAGES);
-    
-    const truncatedItems: Array<{question_id: string, lang: string, text: string}> = [];
-    if (allTruncated) {
-      for (const t of allTruncated) {
-        if (t.question_text && t.question_text.length < 15) {
-          truncatedItems.push({ 
-            question_id: t.question_id, 
-            lang: t.lang,
-            text: t.question_text 
-          });
-        }
-      }
-    }
-
-    console.log(`[generate-question-translations] Found ${truncatedItems.length} truncated translations`);
-    
-    // Group by language for detailed listing
-    const truncatedByLang: Record<string, number> = {};
-    for (const item of truncatedItems) {
-      truncatedByLang[item.lang] = (truncatedByLang[item.lang] || 0) + 1;
-    }
-    
-    console.log('[generate-question-translations] Breakdown by language:', truncatedByLang);
-    
-    // Log first 10 samples
-    console.log('[generate-question-translations] Sample truncated translations:');
-    for (let i = 0; i < Math.min(10, truncatedItems.length); i++) {
-      const item = truncatedItems[i];
-      console.log(`  - ${item.question_id} (${item.lang}): "${item.text}" (${item.text.length} chars)`);
-    }
-
-    if (truncatedItems.length === 0) {
-      return new Response(
-        JSON.stringify({ 
-          success: true,
-          phase: 'scan',
-          message: 'Nincsen csonka fordítás - minden kérdés rendben van!',
-          stats: {
-            totalTruncated: 0,
-            byLanguage: {},
-            deleted: 0,
-            retranslated: 0
-          }
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-      );
-    }
-
-    // ========================================================================
-    // STEP 2: DELETE ALL TRUNCATED TRANSLATIONS
-    // ========================================================================
-    console.log(`[generate-question-translations] Deleting ${truncatedItems.length} truncated translations...`);
-    
-    for (const item of truncatedItems) {
-      await supabase
-        .from('question_translations')
-        .delete()
-        .eq('question_id', item.question_id)
-        .eq('lang', item.lang);
-    }
-    
-    console.log(`[generate-question-translations] Successfully deleted ${truncatedItems.length} truncated translations`);
-
-    // ========================================================================
-    // STEP 3: GET UNIQUE QUESTION IDs THAT NEED RE-TRANSLATION
-    // ========================================================================
-    const uniqueQuestionIds = [...new Set(truncatedItems.map(t => t.question_id))];
-    console.log(`[generate-question-translations] ${uniqueQuestionIds.length} unique questions need re-translation`);
-
-    // Fetch full question data for these questions
     const { data: questions, error: fetchError } = await supabase
       .from('questions')
-      .select('id, question, answers, correct_answer')
-      .in('id', uniqueQuestionIds);
+      .select('id, question, answers, correct_answer');
 
     if (fetchError) {
       console.error('[generate-question-translations] Fetch error:', fetchError);
@@ -437,7 +362,7 @@ CRITICAL REQUIREMENTS:
       console.log(`[generate-question-translations] Completed ${LANGUAGE_NAMES[lang]}`);
     }
 
-    console.log(`[generate-question-translations] Re-translation complete - ${successCount} success, ${errorCount} errors, ${skippedExisting} skipped existing`);
+    console.log(`[generate-question-translations] Translation complete - ${successCount} success, ${errorCount} errors, ${skippedExisting} skipped existing`);
 
     // ========================================================================
     // RETURN REPORT
@@ -446,22 +371,15 @@ CRITICAL REQUIREMENTS:
       JSON.stringify({ 
         success: true,
         phase: 'done',
-        message: `${truncatedItems.length} csonka fordítás törölve és újrafordítva`,
+        message: `Fordítás befejezve: ${successCount} új fordítás, ${skippedExisting} már létező kihagyva`,
         stats: {
-          totalTruncated: truncatedItems.length,
-          byLanguage: truncatedByLang,
-          deleted: truncatedItems.length,
+          totalQuestions: questions?.length || 0,
           attempted: attemptedCount,
-          retranslated: successCount,
+          translated: successCount,
           skippedExisting: skippedExisting,
           errors: errorCount,
           languages: TARGET_LANGUAGES
         },
-        truncatedSamples: truncatedItems.slice(0, 10).map(t => ({ 
-          question_id: t.question_id, 
-          lang: t.lang, 
-          text: t.text 
-        })),
         errorSamples: errorSamples.length > 0 ? errorSamples : undefined
       }),
       { 
