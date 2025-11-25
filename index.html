@@ -23,11 +23,14 @@
     <link rel="icon" type="image/png" href="/dingleup-logo.png" />
     <!-- Preconnect to critical domains for faster loading -->
     <link rel="preconnect" href="https://wdpxmwsxhckazwxufttk.supabase.co" crossorigin>
+    <link rel="dns-prefetch" href="https://wdpxmwsxhckazwxufttk.supabase.co">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- PERFORMANCE OPTIMIZATION: Preload only critical above-the-fold image -->
+    <!-- PERFORMANCE OPTIMIZATION: Preload critical above-the-fold assets -->
     <link rel="preload" href="/dingleup-logo.png" as="image" fetchpriority="high">
     
-    <!-- PERFORMANCE OPTIMIZATION: Prefetch non-critical assets -->
+    <!-- PERFORMANCE OPTIMIZATION: Prefetch non-critical assets for instant second-load -->
     <link rel="prefetch" href="/src/assets/introvideo.mp4" as="video" type="video/mp4">
     <link rel="prefetch" href="/src/assets/game-background.png" as="image">
     
