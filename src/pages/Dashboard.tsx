@@ -426,14 +426,13 @@ if (!profile) {
           {/* First Row: Username and Stats */}
           <div className="flex items-center justify-between gap-2">
             {/* Left: Greeting */}
-            <div className="flex items-center gap-2 xs:gap-3 h-10 xs:h-12 sm:h-16 md:h-20 flex-1 min-w-0">
+            <div className="flex items-center gap-2 xs:gap-3 flex-1 min-w-0">
               <h1 
-                className="font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400"
+                className="font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 leading-tight"
                 style={{ 
-                  fontSize: 'clamp(0.75rem, 3.5vw, 1.5rem)',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
+                  fontSize: 'clamp(0.65rem, 3vw, 1.25rem)',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word'
                 }}
               >
                 {t('dashboard.welcome')}, {profile.username}!
