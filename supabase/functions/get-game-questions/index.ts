@@ -80,15 +80,28 @@ serve(async (req) => {
           break;
         }
       } else {
-        const { data: pools } = await supabase
+        const { data: pools, error: poolError } = await supabase
           .from('question_pools')
           .select('*')
           .eq('pool_order', currentPoolOrder)
           .gte('question_count', MIN_QUESTIONS_PER_POOL)
           .limit(1);
 
+        if (poolError) {
+          console.error(`[get-game-questions] Pool query error:`, poolError);
+        }
+
         if (pools && pools.length > 0) {
-          selectedPool = pools[0] as Pool;
+          const poolData = pools[0];
+          // CRITICAL: questions field is jsonb[] array in database
+          // Convert it to Question[] array for TypeScript
+          selectedPool = {
+            ...poolData,
+            questions: Array.isArray(poolData.questions) ? poolData.questions : []
+          } as Pool;
+          
+          console.log(`[get-game-questions] Pool ${currentPoolOrder} loaded with ${selectedPool.questions.length} questions`);
+          
           poolCache.set(currentPoolOrder, { pool: selectedPool, timestamp: Date.now() });
           break;
         }
@@ -99,6 +112,7 @@ serve(async (req) => {
     }
 
     if (!selectedPool) {
+      console.error('[get-game-questions] No valid pool found after trying all pools');
       const { data: fallbackQuestions } = await supabase
         .from('questions')
         .select('*')
@@ -108,12 +122,19 @@ serve(async (req) => {
         throw new Error('No questions available');
       }
 
+      console.log(`[get-game-questions] Using fallback: ${fallbackQuestions.length} questions`);
       const randomQuestions = selectRandomQuestions(fallbackQuestions as Question[], QUESTIONS_PER_GAME);
       const translatedFallback = await translateQuestions(supabase, randomQuestions, lang);
       return new Response(
         JSON.stringify({ questions: translatedFallback, used_pool_order: null, fallback: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    console.log(`[get-game-questions] Selected pool ${selectedPool.pool_order} with ${selectedPool.questions.length} questions, lang: ${lang}`);
+    
+    if (!selectedPool.questions || selectedPool.questions.length < QUESTIONS_PER_GAME) {
+      throw new Error(`Pool ${selectedPool.pool_order} has insufficient questions: ${selectedPool.questions?.length || 0}`);
     }
 
     const selectedQuestions = selectRandomQuestions(selectedPool.questions, QUESTIONS_PER_GAME);
