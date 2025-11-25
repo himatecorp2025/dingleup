@@ -4,12 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGameProfile } from '@/hooks/useGameProfile';
 import { useWallet } from '@/hooks/useWallet';
 import { useBoosterState } from '@/hooks/useBoosterState';
-import { useI18n } from '@/i18n';
+import { useI18n, LangCode } from '@/i18n';
 import { resolveLangFromCountry } from '@/lib/i18n/langMapping';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings, Globe, Edit2, Eye, EyeOff, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
@@ -41,6 +42,10 @@ const Profile = () => {
   const [newPin, setNewPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Language change confirmation dialog
+  const [showLanguageDialog, setShowLanguageDialog] = useState(false);
+  const [pendingCountryChange, setPendingCountryChange] = useState<{ countryCode: string; newLang: LangCode } | null>(null);
   
   // Platform detection for conditional padding
   const [isStandalone, setIsStandalone] = useState(false);
@@ -169,28 +174,71 @@ const Profile = () => {
     if (!userId) return;
     
     try {
-      // Automatically set language based on country using new util
+      // Check what language the new country would suggest
       const newLang = resolveLangFromCountry(newCountryCode);
       
-      // Update database: both preferred_country and country_code
-      const { error } = await supabase
-        .from('profiles')
-        .update({ 
-          country_code: newCountryCode,
-          preferred_country: newCountryCode,
-          preferred_language: newLang 
-        })
-        .eq('id', userId);
+      // If language would change, ask user for confirmation
+      if (newLang !== lang) {
+        setPendingCountryChange({ countryCode: newCountryCode, newLang });
+        setShowLanguageDialog(true);
+        return;
+      }
       
-      if (error) throw error;
-      
-      // Skip DB update in setLang since we already updated it
-      await setLang(newLang, true);
-      
-      toast.success("Ország frissítve");
+      // If language stays the same, update country only
+      await updateCountryOnly(newCountryCode);
     } catch (error) {
       console.error('Failed to update country:', error);
       toast.error("Ország frissítési hiba");
+    }
+  };
+
+  const updateCountryOnly = async (newCountryCode: string) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ 
+        country_code: newCountryCode,
+        preferred_country: newCountryCode
+      })
+      .eq('id', userId);
+    
+    if (error) throw error;
+    await refreshProfile();
+    toast.success("Ország frissítve");
+  };
+
+  const updateCountryAndLanguage = async (newCountryCode: string, newLang: LangCode) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ 
+        country_code: newCountryCode,
+        preferred_country: newCountryCode,
+        preferred_language: newLang 
+      })
+      .eq('id', userId);
+    
+    if (error) throw error;
+    
+    // Update language in i18n context
+    await setLang(newLang, true);
+    await refreshProfile();
+    toast.success("Ország és nyelv frissítve");
+  };
+
+  const handleLanguageChangeConfirm = async (changeLanguage: boolean) => {
+    if (!pendingCountryChange) return;
+    
+    try {
+      if (changeLanguage) {
+        await updateCountryAndLanguage(pendingCountryChange.countryCode, pendingCountryChange.newLang);
+      } else {
+        await updateCountryOnly(pendingCountryChange.countryCode);
+      }
+    } catch (error) {
+      console.error('Failed to update:', error);
+      toast.error("Frissítési hiba");
+    } finally {
+      setShowLanguageDialog(false);
+      setPendingCountryChange(null);
     }
   };
 
@@ -913,6 +961,44 @@ const Profile = () => {
 
       <BottomNav />
       <TutorialManager route="profile" />
+
+      {/* Language Change Confirmation Dialog */}
+      <AlertDialog open={showLanguageDialog} onOpenChange={setShowLanguageDialog}>
+        <AlertDialogContent className="max-w-[90vw] sm:max-w-md bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-accent/30">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Globe className="w-6 h-6 text-accent" />
+              Nyelv változtatása
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground text-base leading-relaxed">
+              Az új ország alapján a rendszer {pendingCountryChange?.newLang === 'hu' ? 'magyar' : 
+                pendingCountryChange?.newLang === 'en' ? 'angol' : 
+                pendingCountryChange?.newLang === 'de' ? 'német' : 
+                pendingCountryChange?.newLang === 'fr' ? 'francia' : 
+                pendingCountryChange?.newLang === 'es' ? 'spanyol' : 
+                pendingCountryChange?.newLang === 'it' ? 'olasz' : 
+                pendingCountryChange?.newLang === 'pt' ? 'portugál' : 
+                pendingCountryChange?.newLang === 'nl' ? 'holland' : ''} nyelvre váltaná a játékot.
+              <br /><br />
+              <strong>Szeretnéd a nyelvet is megváltoztatni?</strong>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel 
+              onClick={() => handleLanguageChangeConfirm(false)}
+              className="bg-muted hover:bg-muted/80 text-foreground border-border"
+            >
+              Nem, a nyelv maradjon
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => handleLanguageChangeConfirm(true)}
+              className="bg-accent hover:bg-accent/90 text-accent-foreground"
+            >
+              Igen, váltsunk át
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
