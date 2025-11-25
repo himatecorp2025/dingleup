@@ -64,18 +64,32 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
     switch (type) {
       case 'rank':
-        // Crown SVG - simple 3-prong shape, aligned like coin/heart
+        // Crown SVG - simple 3-prong line crown, same class as coin/heart
         return (
           <svg
             className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
             viewBox="0 0 24 24"
-            fill={color}
+            fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <rect x="5" y="14" width="14" height="3" rx="1" />
-            <rect x="5" y="7" width="3" height="6" rx="1" />
-            <rect x="10.5" y="5" width="3" height="8" rx="1" />
-            <rect x="16" y="7" width="3" height="6" rx="1" />
+            {/* bottom oval */}
+            <ellipse cx="12" cy="17" rx="5" ry="1.5" stroke={color} strokeWidth="1.5" />
+            {/* crown arc */}
+            <path
+              d="M5 15C6.5 11 9 9 12 9C15 9 17.5 11 19 15"
+              stroke={color}
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            {/* three prongs */}
+            <path d="M8 11L7 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M12 10L12 6" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M16 11L17 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+            {/* circles on top */}
+            <circle cx="7" cy="6" r="1" fill={color} />
+            <circle cx="12" cy="5" r="1" fill={color} />
+            <circle cx="17" cy="6" r="1" fill={color} />
           </svg>
         );
       case 'coins':
