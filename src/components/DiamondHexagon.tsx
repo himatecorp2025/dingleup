@@ -64,34 +64,24 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
 
     switch (type) {
       case 'rank':
-        // Crown SVG - gold color for rank, unified style
+        // Crown SVG - matching coins/lives style
         return (
           <svg
             className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
             viewBox="0 0 24 24"
-            fill="none"
+            fill={color}
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path 
-              d="M2 16L4 4L8 8L12 2L16 8L20 4L22 16H2Z" 
-              fill="hsl(var(--accent))" 
-              stroke="hsl(var(--accent-dark))" 
-              strokeWidth="2" 
+            <path
+              d="M2 10L5 6L8.5 9L12 3L15.5 9L19 6L22 10V18H2V10Z"
+              stroke="currentColor"
+              strokeWidth="1.5"
               strokeLinejoin="round"
             />
-            <rect 
-              x="2" 
-              y="16" 
-              width="20" 
-              height="4" 
-              fill="hsl(var(--accent))" 
-              stroke="hsl(var(--accent-dark))" 
-              strokeWidth="2"
-              rx="1"
-            />
-            <circle cx="12" cy="8" r="1.5" fill="hsl(var(--accent-dark))" />
-            <circle cx="7" cy="10" r="1.5" fill="hsl(var(--accent-dark))" />
-            <circle cx="17" cy="10" r="1.5" fill="hsl(var(--accent-dark))" />
+            <rect x="2" y="18" width="20" height="3" rx="0.5" />
+            <circle cx="12" cy="8" r="1" fill="currentColor" />
+            <circle cx="7" cy="10" r="1" fill="currentColor" />
+            <circle cx="17" cy="10" r="1" fill="currentColor" />
           </svg>
         );
       case 'coins':
