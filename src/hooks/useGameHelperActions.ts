@@ -73,37 +73,42 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
     
     const cost = help5050UsageCount === 0 ? 0 : 15;
     
-    if (help5050UsageCount === 0 && profile?.help_third_active) {
-      const currentQuestion = questions[currentQuestionIndex];
-      const thirdAnswerKey = currentQuestion.third;
-      
-      setRemovedAnswer(thirdAnswerKey);
-      setIsHelp5050ActiveThisQuestion(true);
-      setHelp5050UsageCount(1);
-      
-      await supabase.rpc('use_help', { p_help_type: 'third' });
-      await refreshProfile();
-      await logHelpUsage('third');
-      return;
-    }
-    
-    if (help5050UsageCount === 1) {
-      if (!profile || profile.coins < cost) {
-        toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
-        return;
-      }
-      
-      const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
-      if (success) {
-        await refreshProfile();
+    try {
+      if (help5050UsageCount === 0 && profile?.help_third_active) {
         const currentQuestion = questions[currentQuestionIndex];
         const thirdAnswerKey = currentQuestion.third;
         
         setRemovedAnswer(thirdAnswerKey);
         setIsHelp5050ActiveThisQuestion(true);
-        setHelp5050UsageCount(2);
+        setHelp5050UsageCount(1);
+        
+        await supabase.rpc('use_help', { p_help_type: 'third' });
+        await refreshProfile();
         await logHelpUsage('third');
+        return;
       }
+      
+      if (help5050UsageCount === 1) {
+        if (!profile || profile.coins < cost) {
+          toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
+          return;
+        }
+        
+        const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
+        if (success) {
+          await refreshProfile();
+          const currentQuestion = questions[currentQuestionIndex];
+          const thirdAnswerKey = currentQuestion.third;
+          
+          setRemovedAnswer(thirdAnswerKey);
+          setIsHelp5050ActiveThisQuestion(true);
+          setHelp5050UsageCount(2);
+          await logHelpUsage('third');
+        }
+      }
+    } catch (error) {
+      console.error('[useGameHelperActions] Error in useHelp5050:', error);
+      toast.error('Hiba történt a segítség aktiválásakor!');
     }
   }, [
     selectedAnswer, isHelp5050ActiveThisQuestion, help5050UsageCount, profile,
@@ -118,33 +123,38 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
     
     const cost = help2xAnswerUsageCount === 0 ? 0 : 20;
     
-    if (help2xAnswerUsageCount === 0 && profile?.help_2x_answer_active) {
-      setIsDoubleAnswerActiveThisQuestion(true);
-      setHelp2xAnswerUsageCount(1);
-      setFirstAttempt(null);
-      setSecondAttempt(null);
-      
-      await supabase.rpc('use_help', { p_help_type: '2x_answer' });
-      await refreshProfile();
-      await logHelpUsage('2x_answer');
-      return;
-    }
-    
-    if (help2xAnswerUsageCount === 1) {
-      if (!profile || profile.coins < cost) {
-        toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
+    try {
+      if (help2xAnswerUsageCount === 0 && profile?.help_2x_answer_active) {
+        setIsDoubleAnswerActiveThisQuestion(true);
+        setHelp2xAnswerUsageCount(1);
+        setFirstAttempt(null);
+        setSecondAttempt(null);
+        
+        await supabase.rpc('use_help', { p_help_type: '2x_answer' });
+        await refreshProfile();
+        await logHelpUsage('2x_answer');
         return;
       }
       
-      const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
-      if (success) {
-        await refreshProfile();
-        setIsDoubleAnswerActiveThisQuestion(true);
-        setHelp2xAnswerUsageCount(2);
-        setFirstAttempt(null);
-        setSecondAttempt(null);
-        await logHelpUsage('2x_answer');
+      if (help2xAnswerUsageCount === 1) {
+        if (!profile || profile.coins < cost) {
+          toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
+          return;
+        }
+        
+        const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
+        if (success) {
+          await refreshProfile();
+          setIsDoubleAnswerActiveThisQuestion(true);
+          setHelp2xAnswerUsageCount(2);
+          setFirstAttempt(null);
+          setSecondAttempt(null);
+          await logHelpUsage('2x_answer');
+        }
       }
+    } catch (error) {
+      console.error('[useGameHelperActions] Error in useHelp2xAnswer:', error);
+      toast.error('Hiba történt a segítség aktiválásakor!');
     }
   }, [
     selectedAnswer, isDoubleAnswerActiveThisQuestion, help2xAnswerUsageCount,
@@ -159,48 +169,53 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
     
     const cost = helpAudienceUsageCount === 0 ? 0 : 25;
     
-    const currentQuestion = questions[currentQuestionIndex];
-    const correctKey = currentQuestion.answers.find(a => a.correct)?.key || 'A';
-    
-    const correctVote = 65 + Math.floor(Math.random() * 20);
-    const remaining = 100 - correctVote;
-    
-    const wrongKeys = currentQuestion.answers.filter(a => !a.correct).map(a => a.key);
-    const votes: Record<string, number> = {};
-    
-    if (wrongKeys.length === 2) {
-      const first = Math.floor(Math.random() * (remaining - 1)) + 1;
-      const second = remaining - first;
-      votes[wrongKeys[0]] = Math.min(first, second);
-      votes[wrongKeys[1]] = Math.max(first, second);
-    }
-    votes[correctKey] = correctVote;
-    
-    if (helpAudienceUsageCount === 0 && profile?.help_audience_active) {
-      setAudienceVotes(votes);
-      setIsAudienceActiveThisQuestion(true);
-      setHelpAudienceUsageCount(1);
+    try {
+      const currentQuestion = questions[currentQuestionIndex];
+      const correctKey = currentQuestion.answers.find(a => a.correct)?.key || 'A';
       
-      await supabase.rpc('use_help', { p_help_type: 'audience' });
-      await refreshProfile();
-      await logHelpUsage('audience');
-      return;
-    }
-    
-    if (helpAudienceUsageCount === 1) {
-      if (!profile || profile.coins < cost) {
-        toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
+      const correctVote = 65 + Math.floor(Math.random() * 20);
+      const remaining = 100 - correctVote;
+      
+      const wrongKeys = currentQuestion.answers.filter(a => !a.correct).map(a => a.key);
+      const votes: Record<string, number> = {};
+      
+      if (wrongKeys.length === 2) {
+        const first = Math.floor(Math.random() * (remaining - 1)) + 1;
+        const second = remaining - first;
+        votes[wrongKeys[0]] = Math.min(first, second);
+        votes[wrongKeys[1]] = Math.max(first, second);
+      }
+      votes[correctKey] = correctVote;
+      
+      if (helpAudienceUsageCount === 0 && profile?.help_audience_active) {
+        setAudienceVotes(votes);
+        setIsAudienceActiveThisQuestion(true);
+        setHelpAudienceUsageCount(1);
+        
+        await supabase.rpc('use_help', { p_help_type: 'audience' });
+        await refreshProfile();
+        await logHelpUsage('audience');
         return;
       }
       
-      const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
-      if (success) {
-        await refreshProfile();
-        setAudienceVotes(votes);
-        setIsAudienceActiveThisQuestion(true);
-        setHelpAudienceUsageCount(2);
-        await logHelpUsage('audience');
+      if (helpAudienceUsageCount === 1) {
+        if (!profile || profile.coins < cost) {
+          toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
+          return;
+        }
+        
+        const { data: success } = await supabase.rpc('spend_coins', { amount: cost });
+        if (success) {
+          await refreshProfile();
+          setAudienceVotes(votes);
+          setIsAudienceActiveThisQuestion(true);
+          setHelpAudienceUsageCount(2);
+          await logHelpUsage('audience');
+        }
       }
+    } catch (error) {
+      console.error('[useGameHelperActions] Error in useHelpAudience:', error);
+      toast.error('Hiba történt a segítség aktiválásakor!');
     }
   }, [
     selectedAnswer, isAudienceActiveThisQuestion, helpAudienceUsageCount,
