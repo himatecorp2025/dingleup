@@ -45,9 +45,78 @@ interface Pool {
   version: number;
 }
 
-// In-memory cache for pools (5 minute TTL)
-const poolCache = new Map<number, { pool: Pool; timestamp: number }>();
-const CACHE_TTL_MS = 5 * 60 * 1000;
+// ============================================================================
+// IN-MEMORY POOL CACHE - ALL 15 POOLS LOADED AT STARTUP
+// ============================================================================
+const POOLS_MEMORY_CACHE = new Map<number, Question[]>();
+let CACHE_INITIALIZED = false;
+let CACHE_INIT_PROMISE: Promise<void> | null = null;
+
+// Fisher-Yates shuffle for random question selection from memory
+function fisherYatesShuffle<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Initialize all 15 pools into memory at startup
+async function initializePoolsCache(supabase: any): Promise<void> {
+  if (CACHE_INITIALIZED) return;
+  if (CACHE_INIT_PROMISE) return CACHE_INIT_PROMISE;
+
+  CACHE_INIT_PROMISE = (async () => {
+    console.log('[POOL CACHE] Initializing all 15 pools into memory...');
+    const startTime = Date.now();
+
+    try {
+      const { data: pools, error } = await supabase
+        .from('question_pools')
+        .select('*')
+        .gte('question_count', MIN_QUESTIONS_PER_POOL)
+        .order('pool_order');
+
+      if (error) {
+        console.error('[POOL CACHE] Failed to load pools:', error);
+        throw error;
+      }
+
+      if (!pools || pools.length < TOTAL_POOLS) {
+        console.warn(`[POOL CACHE] Only ${pools?.length || 0} pools found, expected ${TOTAL_POOLS}`);
+      }
+
+      // Load all pools into memory
+      for (const poolData of pools || []) {
+        const questions = Array.isArray(poolData.questions) ? poolData.questions : [];
+        POOLS_MEMORY_CACHE.set(poolData.pool_order, questions);
+        console.log(`[POOL CACHE] Pool ${poolData.pool_order} loaded: ${questions.length} questions`);
+      }
+
+      CACHE_INITIALIZED = true;
+      const elapsed = Date.now() - startTime;
+      console.log(`[POOL CACHE] ✅ All pools loaded in ${elapsed}ms. Total pools: ${POOLS_MEMORY_CACHE.size}`);
+    } catch (err) {
+      console.error('[POOL CACHE] Initialization failed:', err);
+      CACHE_INIT_PROMISE = null;
+      throw err;
+    }
+  })();
+
+  return CACHE_INIT_PROMISE;
+}
+
+// Select 15 random questions from pool (in-memory, 0-5ms)
+function selectRandomQuestionsFromMemory(poolQuestions: Question[], count: number): Question[] {
+  if (poolQuestions.length <= count) {
+    return fisherYatesShuffle(poolQuestions);
+  }
+  
+  // Fisher-Yates shuffle and take first 'count' items
+  const shuffled = fisherYatesShuffle(poolQuestions);
+  return shuffled.slice(0, count);
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -59,60 +128,26 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Initialize pool cache if not already done
+    await initializePoolsCache(supabase);
+
     const { last_pool_order, lang = 'en' } = await req.json();
 
-    // Calculate next pool (global rotation 1-50)
+    // Calculate next pool (global rotation 1-15)
     let nextPoolOrder = 1;
     if (last_pool_order && typeof last_pool_order === 'number') {
       nextPoolOrder = (last_pool_order % TOTAL_POOLS) + 1;
     }
 
-    // Try to find a valid pool
-    let selectedPool: Pool | null = null;
-    let attempts = 0;
-    let currentPoolOrder = nextPoolOrder;
+    console.log(`[get-game-questions] Requesting pool ${nextPoolOrder}, lang: ${lang}`);
 
-    while (attempts < TOTAL_POOLS && !selectedPool) {
-      const cached = poolCache.get(currentPoolOrder);
-      if (cached && (Date.now() - cached.timestamp < CACHE_TTL_MS)) {
-        if (cached.pool.question_count >= MIN_QUESTIONS_PER_POOL) {
-          selectedPool = cached.pool;
-          break;
-        }
-      } else {
-        const { data: pools, error: poolError } = await supabase
-          .from('question_pools')
-          .select('*')
-          .eq('pool_order', currentPoolOrder)
-          .gte('question_count', MIN_QUESTIONS_PER_POOL)
-          .limit(1);
-
-        if (poolError) {
-          console.error(`[get-game-questions] Pool query error:`, poolError);
-        }
-
-        if (pools && pools.length > 0) {
-          const poolData = pools[0];
-          // CRITICAL: questions field is jsonb[] array in database
-          // Convert it to Question[] array for TypeScript
-          selectedPool = {
-            ...poolData,
-            questions: Array.isArray(poolData.questions) ? poolData.questions : []
-          } as Pool;
-          
-          console.log(`[get-game-questions] Pool ${currentPoolOrder} loaded with ${selectedPool.questions.length} questions`);
-          
-          poolCache.set(currentPoolOrder, { pool: selectedPool, timestamp: Date.now() });
-          break;
-        }
-      }
-
-      currentPoolOrder = (currentPoolOrder % TOTAL_POOLS) + 1;
-      attempts++;
-    }
-
-    if (!selectedPool) {
-      console.error('[get-game-questions] No valid pool found after trying all pools');
+    // Get pool questions from in-memory cache (instant, <1ms)
+    const poolQuestions = POOLS_MEMORY_CACHE.get(nextPoolOrder);
+    
+    if (!poolQuestions || poolQuestions.length < MIN_QUESTIONS_PER_POOL) {
+      console.error(`[get-game-questions] Pool ${nextPoolOrder} not in cache or insufficient questions`);
+      
+      // Fallback: load from database
       const { data: fallbackQuestions } = await supabase
         .from('questions')
         .select('*')
@@ -123,7 +158,7 @@ serve(async (req) => {
       }
 
       console.log(`[get-game-questions] Using fallback: ${fallbackQuestions.length} questions`);
-      const randomQuestions = selectRandomQuestions(fallbackQuestions as Question[], QUESTIONS_PER_GAME);
+      const randomQuestions = selectRandomQuestionsFromMemory(fallbackQuestions as Question[], QUESTIONS_PER_GAME);
       const translatedFallback = await translateQuestions(supabase, randomQuestions, lang);
       return new Response(
         JSON.stringify({ questions: translatedFallback, used_pool_order: null, fallback: true }),
@@ -131,20 +166,25 @@ serve(async (req) => {
       );
     }
 
-    console.log(`[get-game-questions] Selected pool ${selectedPool.pool_order} with ${selectedPool.questions.length} questions, lang: ${lang}`);
+    // Select 15 random questions from pool (in-memory, <5ms)
+    const startSelect = Date.now();
+    const selectedQuestions = selectRandomQuestionsFromMemory(poolQuestions, QUESTIONS_PER_GAME);
+    const selectTime = Date.now() - startSelect;
     
-    if (!selectedPool.questions || selectedPool.questions.length < QUESTIONS_PER_GAME) {
-      throw new Error(`Pool ${selectedPool.pool_order} has insufficient questions: ${selectedPool.questions?.length || 0}`);
-    }
+    console.log(`[get-game-questions] Selected ${selectedQuestions.length} questions from pool ${nextPoolOrder} in ${selectTime}ms`);
 
-    const selectedQuestions = selectRandomQuestions(selectedPool.questions, QUESTIONS_PER_GAME);
+    // Translate questions to target language
     const translatedQuestions = await translateQuestions(supabase, selectedQuestions, lang);
 
     return new Response(
       JSON.stringify({
         questions: translatedQuestions,
-        used_pool_order: selectedPool.pool_order,
+        used_pool_order: nextPoolOrder,
         fallback: false,
+        performance: {
+          selection_time_ms: selectTime,
+          cache_hit: true
+        }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -157,21 +197,6 @@ serve(async (req) => {
   }
 });
 
-function selectRandomQuestions(questions: Question[], count: number): Question[] {
-  if (questions.length <= count) {
-    return [...questions].sort(() => Math.random() - 0.5);
-  }
-  const selected = new Set<number>();
-  const result: Question[] = [];
-  while (result.length < count) {
-    const idx = Math.floor(Math.random() * questions.length);
-    if (!selected.has(idx)) {
-      selected.add(idx);
-      result.push(questions[idx]);
-    }
-  }
-  return result;
-}
 
 async function translateQuestions(
   supabase: any,

@@ -16,6 +16,10 @@ interface GameQuestionsResponse {
   questions: Question[];
   used_pool_order: number | null;
   fallback: boolean;
+  performance?: {
+    selection_time_ms: number;
+    cache_hit: boolean;
+  };
 }
 
 // Local storage key for global last pool order
@@ -56,7 +60,7 @@ export function useGameQuestions() {
   }, []);
 
   // Prefetch next game questions (background operation)
-  const prefetchNextGameQuestions = useCallback(async (currentPoolOrder: number | null) => {
+  const prefetchNextGameQuestions = useCallback(async (currentPoolOrder: number | null, lang: string = 'en') => {
     if (isPrefetchingRef.current) {
       console.log('[useGameQuestions] Prefetch already in progress, skipping');
       return;
@@ -65,11 +69,12 @@ export function useGameQuestions() {
     isPrefetchingRef.current = true;
 
     try {
-      console.log('[useGameQuestions] Prefetching next game questions (background)...');
+      console.log(`[useGameQuestions] Prefetching next game questions (background, lang: ${lang})...`);
 
       const { data, error: funcError } = await supabase.functions.invoke('get-game-questions', {
         body: {
           last_pool_order: currentPoolOrder,
+          lang,
         },
       });
 
@@ -83,7 +88,8 @@ export function useGameQuestions() {
       if (response && response.questions && response.questions.length > 0) {
         setPrefetchedQuestions(response.questions);
         setPrefetchedPoolOrder(response.used_pool_order);
-        console.log(`[useGameQuestions] ✓ Prefetched ${response.questions.length} questions from pool ${response.used_pool_order || 'fallback'}`);
+        const perfInfo = response.performance ? ` (${response.performance.selection_time_ms}ms)` : '';
+        console.log(`[useGameQuestions] ✓ Prefetched ${response.questions.length} questions from pool ${response.used_pool_order || 'fallback'}${perfInfo}`);
       }
     } catch (err) {
       console.error('[useGameQuestions] Prefetch exception:', err);
@@ -93,14 +99,14 @@ export function useGameQuestions() {
   }, []);
 
   // Get next game questions using global pool rotation
-  const getNextGameQuestions = useCallback(async (): Promise<Question[]> => {
+  const getNextGameQuestions = useCallback(async (lang: string = 'en'): Promise<Question[]> => {
     setLoading(true);
     setError(null);
 
     try {
       // Check if we have prefetched questions
       if (prefetchedQuestions && prefetchedQuestions.length > 0) {
-        console.log('[useGameQuestions] ✓ Using prefetched questions');
+        console.log('[useGameQuestions] ✓ Using prefetched questions (instant, <1ms)');
         const questions = prefetchedQuestions;
         const poolOrder = prefetchedPoolOrder;
 
@@ -115,7 +121,7 @@ export function useGameQuestions() {
         }
 
         // Start prefetching next questions in background
-        prefetchNextGameQuestions(poolOrder);
+        prefetchNextGameQuestions(poolOrder, lang);
 
         setLoading(false);
         return questions;
@@ -124,11 +130,12 @@ export function useGameQuestions() {
       // No prefetched questions - fetch synchronously
       const lastPoolOrder = getLastPoolOrder();
 
-      console.log(`[useGameQuestions] Fetching questions (last pool: ${lastPoolOrder})`);
+      console.log(`[useGameQuestions] Fetching questions (last pool: ${lastPoolOrder}, lang: ${lang})`);
 
       const { data, error: funcError } = await supabase.functions.invoke('get-game-questions', {
         body: {
           last_pool_order: lastPoolOrder,
+          lang,
         },
       });
 
@@ -152,8 +159,11 @@ export function useGameQuestions() {
         console.warn('[useGameQuestions] Using fallback random selection (no pools available)');
       }
 
+      const perfInfo = response.performance ? ` (${response.performance.selection_time_ms}ms, cache: ${response.performance.cache_hit})` : '';
+      console.log(`[useGameQuestions] ✓ Questions loaded${perfInfo}`);
+
       // Start prefetching next questions in background
-      prefetchNextGameQuestions(response.used_pool_order);
+      prefetchNextGameQuestions(response.used_pool_order, lang);
 
       setLoading(false);
       return response.questions;
