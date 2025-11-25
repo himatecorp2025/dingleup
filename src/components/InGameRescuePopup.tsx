@@ -63,7 +63,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
 
   const handleGoldSaverPurchase = async () => {
     if (currentGold < 500) {
-      toast.error('Nincs elég aranyérméd a mentőcsomag megvásárlásához!');
+      toast.error(t('rescue.insufficient_gold'));
       return;
     }
 
@@ -71,7 +71,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nincs bejelentkezve! Kérlek, jelentkezz be!');
+        toast.error(t('rescue.not_logged_in'));
         setLoadingGoldSaver(false);
         return;
       }
@@ -93,15 +93,15 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
       if (error) throw error;
 
       if (data?.success) {
-        toast.success('Sikeres vásárlás! +30 aranyérme és +3 élet hozzáadva!');
+        toast.success(t('rescue.free_success'));
         await onStateRefresh();
         onClose();
       } else {
-        toast.error(data?.error || 'Sikertelen vásárlás!');
+        toast.error(data?.error || t('rescue.free_error'));
       }
     } catch (error) {
       console.error('Gold Saver purchase error:', error);
-      toast.error('Hiba történt a vásárlás során!');
+      toast.error(t('rescue.purchase_error'));
     } finally {
       setLoadingGoldSaver(false);
     }
@@ -112,7 +112,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nincs bejelentkezve! Kérlek, jelentkezz be!');
+        toast.error(t('rescue.not_logged_in'));
         setLoadingInstantRescue(false);
         return;
       }
@@ -134,19 +134,19 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
       if (error) throw error;
 
       if (data?.success) {
-        toast.success('Sikeres vásárlás! +1500 aranyérme és +50 élet hozzáadva!');
+        toast.success(t('rescue.premium_success'));
         await onStateRefresh();
         onClose();
       } else {
         if (data?.error === 'PAYMENT_FAILED') {
-          toast.error('A fizetés sikertelen volt!');
+          toast.error(t('rescue.premium_payment_failed'));
         } else {
-          toast.error(data?.error || 'Sikertelen vásárlás!');
+          toast.error(data?.error || t('rescue.free_error'));
         }
       }
     } catch (error) {
       console.error('Instant Rescue purchase error:', error);
-      toast.error('Hiba történt a vásárlás során!');
+      toast.error(t('rescue.purchase_error'));
     } finally {
       setLoadingInstantRescue(false);
     }

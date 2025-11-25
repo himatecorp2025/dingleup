@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Question } from '@/types/game';
 import { trackFeatureUsage, trackGameMilestone } from '@/lib/analytics';
+import { useI18n } from '@/i18n';
 
 interface UseGameLifecycleOptions {
   userId: string | undefined;
@@ -39,6 +40,7 @@ interface UseGameLifecycleOptions {
 }
 
 export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
+  const { t } = useI18n();
   const {
     userId,
     profile,
@@ -156,7 +158,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       
       const canPlay = await spendLife();
       if (!canPlay) {
-        toast.error('Nincs elég életed a játék indításához!');
+        toast.error(t('game.insufficient_lives'));
         setIsStarting(false);
         navigate('/dashboard');
         throw new Error('Insufficient lives');
@@ -168,14 +170,14 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
         console.error('[useGameLifecycle] Session error:', sessionError);
-        toast.error('A munkameneted lejárt. Kérlek, jelentkezz be újra!');
+        toast.error(t('game.session_expired'));
         navigate('/auth/login');
         throw new Error('Session error');
       }
       
       const { data: { session: authSession } } = await supabase.auth.getSession();
       if (!authSession) {
-        toast.error('Nincs bejelentkezve! Kérlek, jelentkezz be!');
+        toast.error(t('game.not_logged_in'));
         navigate('/auth/login');
         throw new Error('Not authenticated');
       }
@@ -241,7 +243,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
             setQuestions(shuffledWithVariety);
           } catch (error) {
             console.error('[useGameLifecycle] Failed to load questions:', error);
-            toast.error('Hiba történt a kérdések betöltésekor!');
+            toast.error(t('game.error_loading_questions'));
             setIsStarting(false);
             navigate('/dashboard');
             throw error;
@@ -324,7 +326,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     await new Promise(resolve => setTimeout(resolve, 100));
     
     if (!gameCompleted) {
-      toast.error('Újraindítva! Elvesztetted az összegyűjtött aranyérméidet.', {
+      toast.error(t('game.restart_lost_gold'), {
         duration: 2000,
         style: {
           background: 'hsl(var(--destructive))',
@@ -420,7 +422,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
 
   const resetGameState = useCallback(() => {
     if (!gameCompleted) {
-      toast.error('Kilépés... Elvesztetted az összegyűjtött aranyérméidet!', {
+      toast.error(t('game.exit_lost_gold'), {
         duration: 3000,
         style: {
           background: 'hsl(var(--destructive))',
@@ -430,7 +432,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     }
     
     navigate('/dashboard');
-  }, [gameCompleted, navigate]);
+  }, [gameCompleted, navigate, t]);
 
   return {
     showLoadingVideo,

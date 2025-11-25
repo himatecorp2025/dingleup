@@ -112,7 +112,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
       // 1. Get user profile with preferred_language
       const { data: { user } } = await supabase.auth.getUser();
-      let targetLang: LangCode = DEFAULT_LANG;
+      let targetLang: LangCode = DEFAULT_LANG; // DEFAULT_LANG is already 'en'
 
       if (user) {
         const { data: profile } = await supabase
@@ -140,8 +140,9 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
           localStorage.setItem(STORAGE_KEY, targetLang);
         }
       } else {
-        // No user logged in - use resolveInitialLang with localStorage fallback
-        targetLang = resolveInitialLang({ loggedInUserPreferredLanguage: null });
+        // No user logged in - always default to English for landing page
+        targetLang = 'en';
+        localStorage.setItem(STORAGE_KEY, 'en');
       }
 
       setLangState(targetLang);
