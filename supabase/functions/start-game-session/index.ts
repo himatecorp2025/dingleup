@@ -60,10 +60,18 @@ serve(async (req) => {
     console.log(`[start-game-session] User ${user.id} starting game`);
 
     // =====================================================
-    // CRITICAL: USE GLOBAL POOL SYSTEM FOR QUESTION LOADING
+    // CRITICAL: USE GLOBAL POOL SYSTEM + MULTILINGUAL QUESTIONS
     // =====================================================
     
-    // Get user's last pool order
+    // Get user's last pool order AND language preference
+    const { data: userProfile } = await supabaseClient
+      .from('profiles')
+      .select('preferred_language')
+      .eq('id', user.id)
+      .single();
+
+    const userLang = userProfile?.preferred_language || 'en';
+    
     const { data: poolSession } = await supabaseClient
       .from('game_session_pools')
       .select('last_pool_order')
@@ -72,14 +80,15 @@ serve(async (req) => {
 
     const lastPoolOrder = poolSession?.last_pool_order || null;
     
-    console.log(`[start-game-session] User ${user.id} last pool: ${lastPoolOrder}`);
+    console.log(`[start-game-session] User ${user.id} last pool: ${lastPoolOrder}, lang: ${userLang}`);
 
-    // Call the get-game-questions function to use global pool rotation
+    // Call the get-game-questions function with user's language
     const { data: questionsData, error: questionsError } = await supabaseClient.functions.invoke(
       'get-game-questions',
       {
         body: {
           last_pool_order: lastPoolOrder,
+          lang: userLang,
         },
       }
     );

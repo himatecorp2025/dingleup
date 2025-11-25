@@ -6,9 +6,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// CRITICAL: 50 GLOBAL POOLS (pool_1 ... pool_50)
-const TOTAL_POOLS = 50;
-const MIN_QUESTIONS_PER_POOL = 15;
+// CRITICAL: 15 GLOBAL POOLS (pool_1 ... pool_15)
+const TOTAL_POOLS = 15;
+const MIN_QUESTIONS_PER_POOL = 300;
 const QUESTIONS_PER_GAME = 15;
 
 interface Question {
@@ -20,6 +20,21 @@ interface Question {
   topic_id: number;
   source_category: string;
   correct_answer: string;
+}
+
+interface TranslatedQuestion extends Question {
+  question_text_translated: string;
+  answer_a_translated: string;
+  answer_b_translated: string;
+  answer_c_translated: string;
+}
+
+interface QuestionTranslation {
+  question_id: string;
+  question_text: string;
+  answer_a: string;
+  answer_b: string;
+  answer_c: string;
 }
 
 interface Pool {
@@ -44,7 +59,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { last_pool_order } = await req.json();
+    const { last_pool_order, lang = 'en' } = await req.json();
 
     // Calculate next pool (global rotation 1-50)
     let nextPoolOrder = 1;
@@ -94,17 +109,19 @@ serve(async (req) => {
       }
 
       const randomQuestions = selectRandomQuestions(fallbackQuestions as Question[], QUESTIONS_PER_GAME);
+      const translatedFallback = await translateQuestions(supabase, randomQuestions, lang);
       return new Response(
-        JSON.stringify({ questions: randomQuestions, used_pool_order: null, fallback: true }),
+        JSON.stringify({ questions: translatedFallback, used_pool_order: null, fallback: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const selectedQuestions = selectRandomQuestions(selectedPool.questions, QUESTIONS_PER_GAME);
+    const translatedQuestions = await translateQuestions(supabase, selectedQuestions, lang);
 
     return new Response(
       JSON.stringify({
-        questions: selectedQuestions,
+        questions: translatedQuestions,
         used_pool_order: selectedPool.pool_order,
         fallback: false,
       }),
@@ -133,4 +150,59 @@ function selectRandomQuestions(questions: Question[], count: number): Question[]
     }
   }
   return result;
+}
+
+async function translateQuestions(
+  supabase: any,
+  questions: Question[],
+  lang: string
+): Promise<TranslatedQuestion[]> {
+  // If Hungarian, no translation needed - return original
+  if (lang === 'hu') {
+    return questions.map(q => ({
+      ...q,
+      question_text_translated: q.question,
+      answer_a_translated: q.answers[0]?.text || '',
+      answer_b_translated: q.answers[1]?.text || '',
+      answer_c_translated: q.answers[2]?.text || '',
+    }));
+  }
+
+  const questionIds = questions.map(q => q.id);
+  
+  // Fetch translations for all questions in one query
+  const { data: translations } = await supabase
+    .from('question_translations')
+    .select('question_id, question_text, answer_a, answer_b, answer_c')
+    .in('question_id', questionIds)
+    .eq('lang', lang);
+
+  if (!translations) {
+    // Fallback to Hungarian if translations not found
+    console.warn(`Translations not found for lang: ${lang}, using Hungarian`);
+    return questions.map(q => ({
+      ...q,
+      question_text_translated: q.question,
+      answer_a_translated: q.answers[0]?.text || '',
+      answer_b_translated: q.answers[1]?.text || '',
+      answer_c_translated: q.answers[2]?.text || '',
+    }));
+  }
+
+  // Create a map of translations by question_id
+  const translationMap = new Map<string, QuestionTranslation>(
+    (translations as QuestionTranslation[]).map((t: QuestionTranslation) => [t.question_id, t])
+  );
+
+  // Merge original questions with translations
+  return questions.map(q => {
+    const translation = translationMap.get(q.id);
+    return {
+      ...q,
+      question_text_translated: translation?.question_text || q.question,
+      answer_a_translated: translation?.answer_a || q.answers[0]?.text || '',
+      answer_b_translated: translation?.answer_b || q.answers[1]?.text || '',
+      answer_c_translated: translation?.answer_c || q.answers[2]?.text || '',
+    } as TranslatedQuestion;
+  });
 }
