@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Question, getSkipCost } from '@/types/game';
+import { useI18n } from '@/i18n';
 
 interface UseGameHelperActionsOptions {
   profile: any;
@@ -35,6 +36,7 @@ interface UseGameHelperActionsOptions {
 }
 
 export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
+  const { t } = useI18n();
   const {
     profile,
     refreshProfile,
@@ -90,7 +92,7 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
       
       if (help5050UsageCount === 1) {
         if (!profile || profile.coins < cost) {
-          toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
+          toast.error(`${t('game.not_enough_gold')} ${cost} ${t('game.gold_needed')}`);
           return;
         }
         
@@ -108,7 +110,7 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
       }
     } catch (error) {
       console.error('[useGameHelperActions] Error in useHelp5050:', error);
-      toast.error('Hiba történt a segítség aktiválásakor!');
+      toast.error(t('game.help_activation_error'));
     }
   }, [
     selectedAnswer, isHelp5050ActiveThisQuestion, help5050UsageCount, profile,
@@ -138,7 +140,7 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
       
       if (help2xAnswerUsageCount === 1) {
         if (!profile || profile.coins < cost) {
-          toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
+          toast.error(`${t('game.not_enough_gold')} ${cost} ${t('game.gold_needed')}`);
           return;
         }
         
@@ -154,7 +156,7 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
       }
     } catch (error) {
       console.error('[useGameHelperActions] Error in useHelp2xAnswer:', error);
-      toast.error('Hiba történt a segítség aktiválásakor!');
+      toast.error(t('game.help_activation_error'));
     }
   }, [
     selectedAnswer, isDoubleAnswerActiveThisQuestion, help2xAnswerUsageCount,
@@ -200,7 +202,7 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
       
       if (helpAudienceUsageCount === 1) {
         if (!profile || profile.coins < cost) {
-          toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
+          toast.error(`${t('game.not_enough_gold')} ${cost} ${t('game.gold_needed')}`);
           return;
         }
         
@@ -215,7 +217,7 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
       }
     } catch (error) {
       console.error('[useGameHelperActions] Error in useHelpAudience:', error);
-      toast.error('Hiba történt a segítség aktiválásakor!');
+      toast.error(t('game.help_activation_error'));
     }
   }, [
     selectedAnswer, isAudienceActiveThisQuestion, helpAudienceUsageCount,
@@ -230,7 +232,7 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
     const skipCost = getSkipCost(currentQuestionIndex);
     
     if (!profile || profile.coins < skipCost) {
-      toast.error(`Nincs elég aranyérméd a kérdés átugrásához! ${skipCost} aranyérme szükséges.`);
+      toast.error(`${t('game.not_enough_gold_skip')} ${skipCost} ${t('game.gold_needed')}`);
       return;
     }
     

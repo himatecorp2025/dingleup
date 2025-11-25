@@ -147,7 +147,7 @@ const Dashboard = () => {
   // Check for canceled payment - separate useEffect for searchParams
   useEffect(() => {
     if (searchParams.get('canceled') === 'true') {
-      toast.error("Visszaléptél, a jutalmad elveszett!", {
+      toast.error(t('payment.canceled_reward_lost'), {
         duration: 5000,
         style: {
           background: 'linear-gradient(135deg, #ff0000 0%, #cc0000 100%)',
@@ -161,7 +161,7 @@ const Dashboard = () => {
       // Remove the query parameter
       setSearchParams({});
     }
-  }, [searchParams, setSearchParams]);
+  }, [searchParams, setSearchParams, t]);
 
   // Popup sequencing handled by useDashboardPopupManager hook
   // No individual useEffect blocks needed here
@@ -253,7 +253,7 @@ const Dashboard = () => {
 
   const handleSpeedBoost = async () => {
     if (!userId) {
-      toast.error("Bejelentkezés szükséges");
+      toast.error(t('errors.login_required'));
       return;
     }
 
@@ -276,11 +276,11 @@ const Dashboard = () => {
 
   const handleActivatePremiumSpeed = async () => {
     try {
-      toast.loading("Prémium sebességfokozó aktiválása...", { id: 'activate-premium-speed' });
+      toast.loading(t('booster.activating_premium'), { id: 'activate-premium-speed' });
       
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error("Nincs bejelentkezve", { id: 'activate-premium-speed' });
+        toast.error(t('errors.not_logged_in'), { id: 'activate-premium-speed' });
         return;
       }
       
@@ -292,13 +292,14 @@ const Dashboard = () => {
       if (error) throw error;
 
       if (data?.success) {
-        toast.success(`Aktiválva: ${data.activatedSpeed?.speedCount}x sebességfokozó (${data.activatedSpeed?.speedDurationMinutes} perc)`, { id: 'activate-premium-speed' });
+        const speedInfo = `${data.activatedSpeed?.speedCount}x ${t('booster.speed')} (${data.activatedSpeed?.speedDurationMinutes} ${t('booster.minutes')})`;
+        toast.success(`${t('booster.activated')}: ${speedInfo}`, { id: 'activate-premium-speed' });
         await refetchWallet();
         await refreshProfile();
       } else if (data?.error === 'NO_PENDING_PREMIUM') {
-        toast.info("Prémium már aktiválva", { id: 'activate-premium-speed' });
+        toast.info(t('booster.already_activated'), { id: 'activate-premium-speed' });
       } else {
-        throw new Error(data?.error || "Ismeretlen hiba");
+        throw new Error(data?.error || t('errors.unknown'));
       }
     } catch (error) {
       console.error('Premium speed activation error:', error);
@@ -309,11 +310,11 @@ const Dashboard = () => {
 
   const purchasePremiumBooster = async (confirmInstant: boolean = false) => {
     try {
-      toast.loading("Fizetés betöltése...", { id: 'purchase-premium-booster' });
+      toast.loading(t('payment.loading'), { id: 'purchase-premium-booster' });
       
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error("Nincs bejelentkezve", { id: 'purchase-premium-booster' });
+        toast.error(t('errors.not_logged_in'), { id: 'purchase-premium-booster' });
         return;
       }
       
@@ -328,9 +329,9 @@ const Dashboard = () => {
       if (data?.url) {
         // Redirect to Stripe Checkout in new tab
         window.open(data.url, '_blank');
-        toast.success("Fizetési oldal megnyitva", { id: 'purchase-premium-booster' });
+        toast.success(t('payment.page_opened'), { id: 'purchase-premium-booster' });
       } else {
-        throw new Error("Fizetési URL hiányzik");
+        throw new Error(t('payment.url_missing'));
       }
     } catch (error) {
       console.error('Premium booster payment error:', error);
