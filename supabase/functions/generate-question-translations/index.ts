@@ -120,15 +120,13 @@ serve(async (req) => {
           return `${idx + 1}. Question: "${q.question}"\n   A) "${answers.A}"\n   B) "${answers.B}"\n   C) "${answers.C}"`;
         }).join('\n\n');
 
-        const systemPrompt = `You are a professional translator specializing in quiz/trivia content localization from Hungarian to ${LANGUAGE_NAMES[targetLang]}.
+const systemPrompt = `You are a professional translator specializing in quiz/trivia content localization from Hungarian to ${LANGUAGE_NAMES[targetLang]}.
 
 CRITICAL RULES:
 1. Translate question and all 3 answers naturally and idiomatically for ${LANGUAGE_NAMES[targetLang]}-speaking users
 2. Maintain the EXACT SAME meaning and difficulty level
-3. Keep questions under 75 characters
-4. Keep answers under 50 characters each
-5. Preserve factual accuracy - do NOT change correct answers or facts
-6. Return ONLY numbered format with question and answers
+3. Preserve factual accuracy - do NOT change correct answers or facts
+4. Return ONLY numbered format with question and answers
 
 RESPONSE FORMAT:
 1. Question: "translated question"
