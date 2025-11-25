@@ -18,15 +18,29 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      // Call login edge function
       const { data: loginData, error: loginError } = await supabase.functions.invoke(
         'login-with-username-pin',
         { body: { username, pin } }
       );
 
-      if (loginError) throw loginError;
-      if (!loginData.success) {
-        toast.error(loginData.error || 'Hibás felhasználónév vagy PIN');
+      if (loginError) {
+        const rawMessage = (loginError as any)?.message || 'Hibás felhasználónév vagy PIN';
+        try {
+          const match = rawMessage.match(/\{.*\}/);
+          if (match) {
+            const parsed = JSON.parse(match[0]);
+            toast.error(parsed.error || 'Hibás felhasználónév vagy PIN');
+          } else {
+            toast.error(rawMessage);
+          }
+        } catch {
+          toast.error(rawMessage);
+        }
+        return;
+      }
+
+      if (!loginData?.success) {
+        toast.error(loginData?.error || 'Hibás felhasználónév vagy PIN');
         return;
       }
 
