@@ -103,6 +103,16 @@ serve(async (req) => {
       );
     }
 
+    // Sync Supabase Auth password to current PIN + username so username+PIN login always works
+    try {
+      await supabaseAdmin.auth.admin.updateUserById(profile.id, {
+        password: pin + profile.username,
+      });
+    } catch (syncError) {
+      console.error('Failed to sync auth password from PIN:', syncError);
+      // Do not block login if password sync fails; frontend will still try variants
+    }
+
     // Get actual auth email from auth.users (legacy users have gmail, new users have @dingleup.auto)
     const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(profile.id);
     const authEmail = authUser?.user?.email || `${profile.username.toLowerCase()}@dingleup.auto`;
