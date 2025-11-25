@@ -428,12 +428,15 @@ if (!profile) {
             {/* Left: Greeting */}
             <div className="flex items-center gap-2 xs:gap-3 flex-1 min-w-0">
               <h1 
-                className="font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-white to-yellow-400 leading-tight"
+                className="font-black leading-tight"
                 style={{ 
                   fontSize: 'clamp(0.65rem, 3vw, 1.25rem)',
                   wordBreak: 'break-word',
                   overflowWrap: 'break-word',
-                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, -2px 0 0 #000, 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000'
+                  background: 'linear-gradient(to right, #fbbf24, #ffffff, #fbbf24)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  WebkitTextStroke: '1px rgba(0, 0, 0, 0.8)'
                 }}
               >
                 {t('dashboard.welcome')}, {profile.username}!
