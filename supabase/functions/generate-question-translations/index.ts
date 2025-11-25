@@ -62,7 +62,20 @@ serve(async (req) => {
   }
 
   try {
-    console.log('[generate-question-translations] Function invoked');
+    const body = await req.json();
+    const targetLang = body.targetLang as LangCode;
+    
+    if (!targetLang || !TARGET_LANGUAGES.includes(targetLang)) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Invalid target language. Must be one of: ${TARGET_LANGUAGES.join(', ')}`
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
+    console.log(`[generate-question-translations] Function invoked for language: ${targetLang}`);
     
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -87,9 +100,9 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
 
     // ========================================================================
-    // STEP 1: FIND ALL INCOMPLETE/MISSING TRANSLATIONS
+    // STEP 1: FIND INCOMPLETE/MISSING TRANSLATIONS FOR TARGET LANGUAGE
     // ========================================================================
-    console.log('[generate-question-translations] Scanning for missing and incomplete translations...');
+    console.log(`[generate-question-translations] Scanning for missing and incomplete translations for ${LANGUAGE_NAMES[targetLang]}...`);
     
     // Get all question IDs
     const { data: allQuestions } = await supabase
@@ -110,85 +123,70 @@ serve(async (req) => {
     const allQuestionIds = new Set(allQuestions.map(q => q.id));
     console.log(`[generate-question-translations] Total questions in database: ${allQuestionIds.size}`);
     
-    // Get all existing translations
+    // Get existing translations for THIS language only
     const { data: existingTranslationsData } = await supabase
       .from('question_translations')
       .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
-      .in('lang', TARGET_LANGUAGES);
+      .eq('lang', targetLang);
     
-    // Build map of existing translations
+    // Build map of existing translations for this language
     const existingMap = new Map<string, any>();
     if (existingTranslationsData) {
       for (const t of existingTranslationsData) {
-        existingMap.set(`${t.question_id}|${t.lang}`, t);
+        existingMap.set(t.question_id, t);
       }
     }
     
-    const incompleteItems: Array<{question_id: string, lang: string, reason: string}> = [];
+    const incompleteItems: Array<{question_id: string, reason: string}> = [];
     
-    // Check each question for each target language
+    // Check each question for THIS target language
     for (const questionId of allQuestionIds) {
-      for (const lang of TARGET_LANGUAGES) {
-        const key = `${questionId}|${lang}`;
-        const translation = existingMap.get(key);
-        
-        if (!translation) {
-          // Translation doesn't exist at all
+      const translation = existingMap.get(questionId);
+      
+      if (!translation) {
+        // Translation doesn't exist at all
+        incompleteItems.push({ 
+          question_id: questionId,
+          reason: 'Missing translation'
+        });
+      } else {
+        // Translation exists but check if it's incomplete/broken
+        if (!translation.question_text || !translation.question_text.includes('?')) {
           incompleteItems.push({ 
-            question_id: questionId, 
-            lang: lang,
-            reason: 'Missing translation'
+            question_id: questionId,
+            reason: 'Missing question mark'
           });
-        } else {
-          // Translation exists but check if it's incomplete/broken
-          if (!translation.question_text || !translation.question_text.includes('?')) {
-            incompleteItems.push({ 
-              question_id: questionId, 
-              lang: lang,
-              reason: 'Missing question mark'
-            });
-          } else if (translation.question_text.length < 15) {
-            incompleteItems.push({ 
-              question_id: questionId, 
-              lang: lang,
-              reason: 'Too short (<15 chars)'
-            });
-          } else if (
-            translation.answer_a?.toLowerCase().includes('unfilled') || 
-            translation.answer_b?.toLowerCase().includes('unfilled') || 
-            translation.answer_c?.toLowerCase().includes('unfilled')
-          ) {
-            incompleteItems.push({ 
-              question_id: questionId, 
-              lang: lang,
-              reason: 'Contains "unfilled"'
-            });
-          }
+        } else if (translation.question_text.length < 15) {
+          incompleteItems.push({ 
+            question_id: questionId,
+            reason: 'Too short (<15 chars)'
+          });
+        } else if (
+          translation.answer_a?.toLowerCase().includes('unfilled') || 
+          translation.answer_b?.toLowerCase().includes('unfilled') || 
+          translation.answer_c?.toLowerCase().includes('unfilled')
+        ) {
+          incompleteItems.push({ 
+            question_id: questionId,
+            reason: 'Contains "unfilled"'
+          });
         }
       }
     }
 
-    console.log(`[generate-question-translations] Found ${incompleteItems.length} incomplete translations`);
-    
-    // Group by language for detailed listing
-    const incompleteByLang: Record<string, number> = {};
-    for (const item of incompleteItems) {
-      incompleteByLang[item.lang] = (incompleteByLang[item.lang] || 0) + 1;
-    }
-    
-    console.log('[generate-question-translations] Breakdown by language:', incompleteByLang);
+    console.log(`[generate-question-translations] Found ${incompleteItems.length} incomplete translations for ${LANGUAGE_NAMES[targetLang]}`);
     
     if (incompleteItems.length === 0) {
       return new Response(
         JSON.stringify({ 
           success: true,
-          phase: 'scan',
-          message: 'Nincsen hiányos fordítás - minden kérdés rendben van!',
+          language: targetLang,
+          message: `Nincs hiányos fordítás ${LANGUAGE_NAMES[targetLang]} nyelven - minden rendben!`,
           stats: {
             totalIncomplete: 0,
-            byLanguage: {},
             deleted: 0,
-            retranslated: 0
+            retranslated: 0,
+            errors: 0
           }
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
@@ -196,32 +194,31 @@ serve(async (req) => {
     }
 
     // ========================================================================
-    // STEP 2: DELETE ALL INCOMPLETE TRANSLATIONS
+    // STEP 2: DELETE INCOMPLETE TRANSLATIONS FOR THIS LANGUAGE
     // ========================================================================
-    console.log(`[generate-question-translations] Deleting ${incompleteItems.length} incomplete translations...`);
+    console.log(`[generate-question-translations] Deleting ${incompleteItems.length} incomplete translations for ${LANGUAGE_NAMES[targetLang]}...`);
     
-    // Delete in batches grouped by language to avoid thousands of single-row deletes
-    const deletionsByLang: Record<string, string[]> = {};
-    for (const item of incompleteItems) {
-      if (!deletionsByLang[item.lang]) {
-        deletionsByLang[item.lang] = [];
-      }
-      deletionsByLang[item.lang].push(item.question_id);
-    }
+    const questionIdsToDelete = incompleteItems.map(item => item.question_id);
+    
+    const { error: deleteError } = await supabase
+      .from('question_translations')
+      .delete()
+      .in('question_id', questionIdsToDelete)
+      .eq('lang', targetLang);
 
-    for (const [lang, ids] of Object.entries(deletionsByLang)) {
-      const { error: deleteError } = await supabase
-        .from('question_translations')
-        .delete()
-        .in('question_id', ids)
-        .eq('lang', lang);
-
-      if (deleteError) {
-        console.error(`[generate-question-translations] Delete error for lang ${lang}:`, deleteError);
-      }
+    if (deleteError) {
+      console.error(`[generate-question-translations] Delete error for ${targetLang}:`, deleteError);
+      return new Response(JSON.stringify({
+        success: false,
+        phase: 'delete',
+        error: deleteError.message
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
     
-    console.log(`[generate-question-translations] Successfully deleted ${incompleteItems.length} incomplete translations in ${Object.keys(deletionsByLang).length} batches`);
+    console.log(`[generate-question-translations] Successfully deleted ${incompleteItems.length} incomplete translations for ${LANGUAGE_NAMES[targetLang]}`);
 
     // ========================================================================
     // STEP 3: GET UNIQUE QUESTION IDs THAT NEED RE-TRANSLATION
@@ -257,20 +254,20 @@ serve(async (req) => {
     console.log(`[generate-question-translations] Fetched ${questions.length} questions for re-translation`);
 
     // ========================================================================
-    // STEP 4: RE-CHECK WHICH LANGUAGES NEED TRANSLATION FOR EACH QUESTION
+    // STEP 4: CHECK EXISTING TRANSLATIONS FOR THIS LANGUAGE
     // ========================================================================
     const questionIds = questions.map(q => q.id);
     
     const { data: existingTranslations } = await supabase
       .from('question_translations')
-      .select('question_id, lang')
+      .select('question_id')
       .in('question_id', questionIds)
-      .in('lang', TARGET_LANGUAGES);
+      .eq('lang', targetLang);
 
     const existingSet = new Set<string>();
     if (existingTranslations) {
       for (const t of existingTranslations) {
-        existingSet.add(`${t.question_id}|${t.lang}`);
+        existingSet.add(t.question_id);
       }
     }
 
@@ -312,60 +309,26 @@ serve(async (req) => {
     }
 
     // ========================================================================
-    // STEP 6: TRANSLATE MISSING TRANSLATIONS WITH REAL-TIME PROGRESS
+    // STEP 6: TRANSLATE MISSING TRANSLATIONS FOR THIS LANGUAGE
     // ========================================================================
-    
-    // Set up Realtime channel for progress broadcasting
-    const progressChannel = supabase.channel('question-translation-progress');
-    
-    for (const lang of TARGET_LANGUAGES) {
-      console.log(`[generate-question-translations] Starting translations to ${LANGUAGE_NAMES[lang]}`);
-      
-      // Broadcast language start
-      await progressChannel.send({
-        type: 'broadcast',
-        event: 'translation-progress',
-        payload: {
-          phase: 'language-start',
-          language: lang,
-          languageName: LANGUAGE_NAMES[lang],
-          totalQuestions: questions.length
-        }
-      });
+    console.log(`[generate-question-translations] Starting translations to ${LANGUAGE_NAMES[targetLang]}`);
 
-      // BATCH SIZE: 10 questions at a time for quality
-      const BATCH_SIZE = 10;
-      const totalBatches = Math.ceil(questions.length / BATCH_SIZE);
+    // BATCH SIZE: 10 questions at a time for quality
+    const BATCH_SIZE = 10;
+    const totalBatches = Math.ceil(questions.length / BATCH_SIZE);
+    
+    for (let i = 0; i < questions.length; i += BATCH_SIZE) {
+      const batch = questions.slice(i, i + BATCH_SIZE);
+      const currentBatch = Math.floor(i / BATCH_SIZE) + 1;
       
-      for (let i = 0; i < questions.length; i += BATCH_SIZE) {
-        const batch = questions.slice(i, i + BATCH_SIZE);
-        const currentBatch = Math.floor(i / BATCH_SIZE) + 1;
-        
-        // Filter: only translate missing translations
-        const itemsToTranslate = batch.filter(q => !existingSet.has(`${q.id}|${lang}`));
+      // Filter: only translate missing translations
+      const itemsToTranslate = batch.filter(q => !existingSet.has(q.id));
 
-        if (itemsToTranslate.length === 0) {
-          skippedExisting += batch.length;
-          console.log(`[generate-question-translations] Batch ${currentBatch}: all questions already translated for ${lang}`);
-          
-          // Broadcast skipped batch progress
-          await progressChannel.send({
-            type: 'broadcast',
-            event: 'translation-progress',
-            payload: {
-              phase: 'batch-skipped',
-              language: lang,
-              languageName: LANGUAGE_NAMES[lang],
-              currentBatch,
-              totalBatches,
-              questionsProcessed: i + batch.length,
-              totalQuestions: questions.length,
-              skipped: batch.length
-            }
-          });
-          
-          continue;
-        }
+      if (itemsToTranslate.length === 0) {
+        skippedExisting += batch.length;
+        console.log(`[generate-question-translations] Batch ${currentBatch}: all questions already translated for ${targetLang}`);
+        continue;
+      }
 
         // Create batch prompt
         const batchTexts = itemsToTranslate.map((item, idx) => {
@@ -377,10 +340,10 @@ serve(async (req) => {
    Correct: ${item.correct_answer || 'A'}`;
         }).join('\n\n');
 
-        const systemPrompt = `You are a professional translator specializing in quiz questions and educational content from Hungarian to ${LANGUAGE_NAMES[lang]}.
+        const systemPrompt = `You are a professional translator specializing in quiz questions and educational content from Hungarian to ${LANGUAGE_NAMES[targetLang]}.
 
 CRITICAL RULES:
-1. Translate naturally and idiomatically for ${LANGUAGE_NAMES[lang]}-speaking users
+1. Translate naturally and idiomatically for ${LANGUAGE_NAMES[targetLang]}-speaking users
 2. Maintain quiz question formatting and clarity
 3. Keep answer order exactly as provided (A/B/C positions unchanged)
 4. The correct answer indicator remains the same letter
@@ -393,36 +356,36 @@ CRITICAL RULES:
 11. Answers can be up to 100 characters if needed to be complete and natural
 
 GRAMMAR AND LANGUAGE-SPECIFIC RULES (CRITICAL):
-${lang === 'en' ? `
+${targetLang === 'en' ? `
 - English: Use correct SVO word order (Subject-Verb-Object)
 - Use proper article usage (a/an/the)
 - Maintain proper tense consistency
-- Use natural English phrasing and idioms` : ''}${lang === 'de' ? `
+- Use natural English phrasing and idioms` : ''}${targetLang === 'de' ? `
 - German: ALWAYS capitalize ALL nouns (e.g., "der Mann", "die Frau", "das Haus")
 - Use correct gender agreement (der/die/das)
 - Use proper case endings (Nominativ, Akkusativ, Dativ, Genitiv)
 - Maintain correct word order (verb-second position in main clauses)
-- Use formal "Sie" for quiz questions unless context requires informal "du"` : ''}${lang === 'fr' ? `
+- Use formal "Sie" for quiz questions unless context requires informal "du"` : ''}${targetLang === 'fr' ? `
 - French: Use correct gender agreement between nouns and adjectives (le/la, un/une)
 - Apply proper accent marks (é, è, ê, à, ù, etc.)
 - Use correct verb conjugations and tense forms
 - Maintain proper use of "tu/vous" (use "vous" for quiz questions)
-- Apply liaison and elision rules where appropriate` : ''}${lang === 'es' ? `
+- Apply liaison and elision rules where appropriate` : ''}${targetLang === 'es' ? `
 - Spanish: Use correct gender agreement (el/la, un/una)
 - Apply proper accent marks (á, é, í, ó, ú, ñ)
 - Use correct verb conjugations (including subjunctive when needed)
 - Use formal "usted" for quiz questions
-- Place adjectives correctly (usually after nouns, except for some common adjectives)` : ''}${lang === 'it' ? `
+- Place adjectives correctly (usually after nouns, except for some common adjectives)` : ''}${targetLang === 'it' ? `
 - Italian: Use correct gender agreement (il/la, un/una)
 - Apply proper accent marks and apostrophes (à, è, é, ì, ò, ù)
 - Use correct verb conjugations (including subjunctive when needed)
 - Use formal "Lei" for quiz questions
-- Maintain proper use of prepositions and articles` : ''}${lang === 'pt' ? `
+- Maintain proper use of prepositions and articles` : ''}${targetLang === 'pt' ? `
 - Portuguese: Use correct gender agreement (o/a, um/uma)
 - Apply proper accent marks and tildes (á, é, í, ó, ú, â, ê, ô, ã, õ, ç)
 - Use correct verb conjugations (including subjunctive when needed)
 - Use formal "você" for quiz questions
-- Maintain proper use of contractions (do, da, no, na, etc.)` : ''}${lang === 'nl' ? `
+- Maintain proper use of contractions (do, da, no, na, etc.)` : ''}${targetLang === 'nl' ? `
 - Dutch: Use correct article usage (de/het)
 - Maintain proper word order (V2 word order in main clauses)
 - Use correct verb conjugations
@@ -443,7 +406,7 @@ Return ONLY numbered translations in this format for EACH question:
 
 NO markdown, NO explanations, NO truncation, ONLY complete translations in the numbered format above.`;
 
-        const userPrompt = `Translate these ${itemsToTranslate.length} Hungarian quiz questions to ${LANGUAGE_NAMES[lang]}:
+        const userPrompt = `Translate these ${itemsToTranslate.length} Hungarian quiz questions to ${LANGUAGE_NAMES[targetLang]}:
 
 ${batchTexts}
 
@@ -452,15 +415,15 @@ CRITICAL REQUIREMENTS:
 - Questions and answers MUST be complete, NEVER truncated
 - Write full natural translations even if they exceed typical length limits
 - Keep answer positions (A/B/C) exactly as shown
-- Translate naturally for ${LANGUAGE_NAMES[lang]} speakers with proper grammar
-- MANDATORY: Follow ALL grammar rules specific to ${LANGUAGE_NAMES[lang]} (capitalization, gender agreement, accent marks, verb conjugations, word order, etc.)
-- MANDATORY: Ensure translations sound fluent and natural to native ${LANGUAGE_NAMES[lang]} speakers
+- Translate naturally for ${LANGUAGE_NAMES[targetLang]} speakers with proper grammar
+- MANDATORY: Follow ALL grammar rules specific to ${LANGUAGE_NAMES[targetLang]} (capitalization, gender agreement, accent marks, verb conjugations, word order, etc.)
+- MANDATORY: Ensure translations sound fluent and natural to native ${LANGUAGE_NAMES[targetLang]} speakers
 - MANDATORY: Respect language-specific grammatical structures and cultural localization`;
 
-        attemptedCount += itemsToTranslate.length;
+      attemptedCount += itemsToTranslate.length;
 
-        try {
-          const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      try {
+        const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${LOVABLE_API_KEY}`,
@@ -477,10 +440,10 @@ CRITICAL REQUIREMENTS:
             })
           });
 
-          // AI ERROR HANDLING: STOP ALL ON CRITICAL ERRORS
-          if (!aiResponse.ok) {
-            const errorText = await aiResponse.text();
-            console.error(`[generate-question-translations] AI error for ${lang}:`, aiResponse.status, errorText);
+        // AI ERROR HANDLING: STOP ALL ON CRITICAL ERRORS
+        if (!aiResponse.ok) {
+          const errorText = await aiResponse.text();
+          console.error(`[generate-question-translations] AI error for ${targetLang}:`, aiResponse.status, errorText);
 
             if (aiResponse.status === 402) {
               throw new Error('PAYMENT_REQUIRED: Lovable AI credits exhausted – STOP ALL TRANSLATIONS');
@@ -494,26 +457,36 @@ CRITICAL REQUIREMENTS:
               throw new Error(`AI_SERVER_ERROR: ${aiResponse.status} – STOP ALL TRANSLATIONS`);
             }
 
-            errorCount += itemsToTranslate.length;
-            if (errorSamples.length < 3) {
-              errorSamples.push(`AI error ${aiResponse.status} for ${lang}: ${errorText.substring(0, 100)}`);
-            }
-            continue;
+          errorCount += itemsToTranslate.length;
+          if (errorSamples.length < 3) {
+            errorSamples.push(`AI error ${aiResponse.status} for ${targetLang}: ${errorText.substring(0, 100)}`);
           }
-
-          const aiData = await aiResponse.json();
-          const translatedText = aiData.choices?.[0]?.message?.content?.trim() || '';
           
-          if (!translatedText) {
-            errorCount += itemsToTranslate.length;
-            continue;
-          }
+          return new Response(JSON.stringify({
+            success: false,
+            phase: 'translate',
+            language: targetLang,
+            error: `AI API error: ${aiResponse.status}`,
+            stats: { attempted: attemptedCount, success: successCount, errors: errorCount }
+          }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
 
-          // Parse numbered format: extract question blocks
-          const questionBlocks = translatedText.split(/\n\n+/);
-          
-          for (let j = 0; j < itemsToTranslate.length; j++) {
-            const question = itemsToTranslate[j];
+        const aiData = await aiResponse.json();
+        const translatedText = aiData.choices?.[0]?.message?.content?.trim() || '';
+        
+        if (!translatedText) {
+          errorCount += itemsToTranslate.length;
+          continue;
+        }
+
+        // Parse numbered format: extract question blocks
+        const questionBlocks = translatedText.split(/\n\n+/);
+        
+        for (let j = 0; j < itemsToTranslate.length; j++) {
+          const question = itemsToTranslate[j];
             
             // Find matching block (numbered with j+1)
             const blockPattern = new RegExp(`^${j + 1}\\.\\s*Question:`, 'i');
@@ -542,71 +515,52 @@ CRITICAL REQUIREMENTS:
             const translatedB = answerBMatch[1].trim();
             const translatedC = answerCMatch[1].trim();
 
-            // Insert translation
-            const { error: insertError } = await supabase
-              .from('question_translations')
-              .insert({
-                question_id: question.id,
-                lang,
-                question_text: translatedQuestion,
-                answer_a: translatedA,
-                answer_b: translatedB,
-                answer_c: translatedC,
-              });
+          // Insert translation
+          const { error: insertError } = await supabase
+            .from('question_translations')
+            .insert({
+              question_id: question.id,
+              lang: targetLang,
+              question_text: translatedQuestion,
+              answer_a: translatedA,
+              answer_b: translatedB,
+              answer_c: translatedC,
+            });
 
-            if (insertError) {
-              // Check if duplicate (23505 = unique violation)
-              if (insertError.code === '23505') {
-                skippedExisting++;
-              } else {
-                console.error(`[generate-question-translations] Insert error for ${question.id} (${lang}):`, insertError);
-                errorCount++;
-                if (errorSamples.length < 3) {
-                  errorSamples.push(`Insert error for ${question.id} (${lang}): ${insertError.message}`);
-                }
-              }
+          if (insertError) {
+            // Check if duplicate (23505 = unique violation)
+            if (insertError.code === '23505') {
+              skippedExisting++;
             } else {
-              successCount++;
-              console.log(`[generate-question-translations] ✓ Question ${question.id} translated to ${lang}`);
+              console.error(`[generate-question-translations] Insert error for ${question.id} (${targetLang}):`, insertError);
+              errorCount++;
+              if (errorSamples.length < 3) {
+                errorSamples.push(`Insert error for ${question.id} (${targetLang}): ${insertError.message}`);
+              }
             }
-          }
-
-          console.log(`[generate-question-translations] Completed batch ${currentBatch} for ${lang}`);
-          
-          // Broadcast batch completion progress
-          await progressChannel.send({
-            type: 'broadcast',
-            event: 'translation-progress',
-            payload: {
-              phase: 'batch-complete',
-              language: lang,
-              languageName: LANGUAGE_NAMES[lang],
-              currentBatch,
-              totalBatches,
-              questionsProcessed: i + batch.length,
-              totalQuestions: questions.length,
-              successCount,
-              errorCount,
-              skippedExisting
-            }
-          });
-
-        } catch (translateError) {
-          console.error(`[generate-question-translations] Translation error for ${lang}:`, translateError);
-          errorCount += itemsToTranslate.length;
-          if (errorSamples.length < 3) {
-            errorSamples.push(`Translation error for ${lang}: ${translateError instanceof Error ? translateError.message : 'Unknown'}`);
+          } else {
+            successCount++;
+            console.log(`[generate-question-translations] ✓ Question ${question.id} translated to ${targetLang}`);
           }
         }
 
-        // Small delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 200));
+      } catch (translateError) {
+        console.error(`[generate-question-translations] Translation error for ${targetLang}:`, translateError);
+        errorCount += itemsToTranslate.length;
+        if (errorSamples.length < 3) {
+          errorSamples.push(`Translation error for ${targetLang}: ${translateError instanceof Error ? translateError.message : 'Unknown'}`);
+        }
       }
 
-      console.log(`[generate-question-translations] Completed ${LANGUAGE_NAMES[lang]}`);
+      console.log(`[generate-question-translations] Completed batch ${currentBatch}/${totalBatches} for ${targetLang}`);
+
+      // Small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 200));
     }
 
-    console.log(`[generate-question-translations] Re-translation complete - ${successCount} success, ${errorCount} errors, ${skippedExisting} skipped existing`);
+    console.log(`[generate-question-translations] Completed all batches for ${LANGUAGE_NAMES[targetLang]}`);
+
+    console.log(`[generate-question-translations] Translation complete for ${LANGUAGE_NAMES[targetLang]} - ${successCount} success, ${errorCount} errors, ${skippedExisting} skipped existing`);
 
     // ========================================================================
     // RETURN REPORT
@@ -614,24 +568,20 @@ CRITICAL REQUIREMENTS:
     return new Response(
       JSON.stringify({ 
         success: true,
-        phase: 'done',
-        message: `${incompleteItems.length} hiányos fordítás törölve és újrafordítva`,
+        language: targetLang,
+        languageName: LANGUAGE_NAMES[targetLang],
+        message: `Translation completed for ${LANGUAGE_NAMES[targetLang]}`,
         stats: {
           totalIncomplete: incompleteItems.length,
-          byLanguage: incompleteByLang,
           deleted: incompleteItems.length,
           attempted: attemptedCount,
-          retranslated: successCount,
-          skippedExisting: skippedExisting,
+          translated: successCount,
           errors: errorCount,
-          languages: TARGET_LANGUAGES
-        },
-        errorSamples: errorSamples.length > 0 ? errorSamples : undefined
+          skippedExisting,
+          errorSamples: errorSamples.slice(0, 3)
+        }
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
 
   } catch (error) {
