@@ -138,3 +138,6 @@ verify_jwt = false
 [functions.shorten-long-answers]
 verify_jwt = true
 
+[functions.simple-load-test]
+verify_jwt = false
+
