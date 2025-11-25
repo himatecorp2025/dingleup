@@ -309,7 +309,7 @@ export const QuestionTranslationManager = () => {
         ) : (
           <>
             <Languages className="w-4 h-4 mr-2" />
-            Csonka fordítások ellenőrzése és javítása
+            Hiányzó fordítások generálása
           </>
         )}
       </Button>
