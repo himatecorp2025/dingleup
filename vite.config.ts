@@ -73,6 +73,7 @@ export default defineConfig(({ mode }) => ({
     securityHeadersPlugin(mode),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
       includeAssets: ['favicon.ico', 'robots.txt', 'dingleup-logo.png'],
       manifest: {
         name: 'DingleUP!',
