@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Question, CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from '@/types/game';
+import { useI18n } from '@/i18n';
 
 interface UseGameNavigationOptions {
   profile: any;
@@ -39,6 +40,7 @@ interface UseGameNavigationOptions {
 }
 
 export const useGameNavigation = (options: UseGameNavigationOptions) => {
+  const { t } = useI18n();
   const {
     profile,
     userId,
@@ -105,27 +107,27 @@ export const useGameNavigation = (options: UseGameNavigationOptions) => {
       toast.success(
         <div className="flex flex-col gap-2 p-1.5">
           <div className="text-center text-base font-black mb-1 bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 bg-clip-text text-transparent">
-            Játék vége!
+            {t('game_results.title')}
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
               <div className="text-lg mb-0.5">✅</div>
               <div className="font-bold text-green-400">{correctAnswers}/15</div>
-              <div className="text-[10px] opacity-70">Helyes</div>
+              <div className="text-[10px] opacity-70">{t('game_results.correct')}</div>
             </div>
             <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
               <div className="text-lg mb-0.5">💰</div>
               <div className="font-bold text-yellow-400">{coinsEarned}</div>
-              <div className="text-[10px] opacity-70">Arany</div>
+              <div className="text-[10px] opacity-70">{t('game_results.gold')}</div>
             </div>
             <div className="flex flex-col items-center bg-black/30 rounded-lg p-2 border border-yellow-500/20">
               <div className="text-lg mb-0.5">⚡</div>
               <div className="font-bold text-blue-400">{avgResponseTime}s</div>
-              <div className="text-[10px] opacity-70">Idő</div>
+              <div className="text-[10px] opacity-70">{t('game_results.time')}</div>
             </div>
           </div>
           <div className="text-center mt-1 text-xs font-bold animate-pulse text-white/90">
-            Görgess felfelé új játékhoz
+            {t('game_results.swipe_for_new')}
           </div>
         </div>,
         {
@@ -195,7 +197,7 @@ export const useGameNavigation = (options: UseGameNavigationOptions) => {
     if (currentQuestionIndex >= 10) cost = 30;
     
     if (profile.coins < cost) {
-      toast.error(`Nincs elég aranyérméd! ${cost} aranyérme szükséges.`);
+      toast.error(`${t('game.insufficient_coins')} ${cost} ${t('game.coins_required')}`);
       return;
     }
     
