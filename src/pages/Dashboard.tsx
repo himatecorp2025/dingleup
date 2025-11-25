@@ -424,10 +424,10 @@ if (!profile) {
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}
-          <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center justify-between gap-2">
             {/* Left: Greeting */}
-            <div className="flex items-center gap-2 xs:gap-3 flex-1 min-w-0 pr-1">
-              <div className="font-black leading-tight" style={{ width: '100%' }}>
+            <div className="flex items-center gap-2 xs:gap-3 flex-1 min-w-0 pr-2 overflow-hidden">
+              <div className="font-black leading-tight w-full">
                 <div
                   style={{ 
                     fontSize: 'clamp(0.8125rem, 3.75vw, 1.5625rem)',
@@ -456,14 +456,16 @@ if (!profile) {
             </div>
 
             {/* Right: Purple Users Hexagon Bar with 4 hexagons */}
-            <UsersHexagonBar
-              username={profile.username}
-              rank={currentRank}
-              coins={walletData?.coinsCurrent ?? profile.coins}
-              lives={walletData?.livesCurrent ?? profile.lives}
-              avatarUrl={profile.avatar_url}
-              className="data-tutorial-profile-header"
-            />
+            <div className="flex-shrink-0">
+              <UsersHexagonBar
+                username={profile.username}
+                rank={currentRank}
+                coins={walletData?.coinsCurrent ?? profile.coins}
+                lives={walletData?.livesCurrent ?? profile.lives}
+                avatarUrl={profile.avatar_url}
+                className="data-tutorial-profile-header"
+              />
+            </div>
           </div>
           
           {/* Life Regeneration Timer (below hexagons) */}
