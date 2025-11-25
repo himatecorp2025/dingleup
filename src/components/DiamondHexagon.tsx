@@ -67,7 +67,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         // Crown SVG - gold color for rank
         return (
             <svg
-              className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mb-0.5 drop-shadow-lg"
+              className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 drop-shadow-lg"
               viewBox="0 0 24 24"
               fill="hsl(var(--accent))"
               xmlns="http://www.w3.org/2000/svg"
@@ -233,7 +233,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         />
 
         {/* Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 z-10">
           {type === 'avatar' ? (
             avatarUrl ? (
               <img
