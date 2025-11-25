@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { getCoinsForQuestion, START_GAME_REWARD } from '@/types/game';
+import { useI18n } from '@/i18n';
 
 interface UseGameRewardsOptions {
   userId: string | undefined;
@@ -18,6 +19,7 @@ export const useGameRewards = ({
   coinsEarned,
   broadcast
 }: UseGameRewardsOptions) => {
+  const { t } = useI18n();
   const [localCoinsEarned, setLocalCoinsEarned] = useState(coinsEarned);
   const [coinRewardAmount, setCoinRewardAmount] = useState(0);
   const [coinRewardTrigger, setCoinRewardTrigger] = useState(0);
@@ -48,7 +50,7 @@ export const useGameRewards = ({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('A munkameneted lejárt. Kérlek, jelentkezz be újra!');
+        toast.error(t('game.reward.session_expired'));
         return;
       }
       
@@ -65,7 +67,7 @@ export const useGameRewards = ({
       setCoinRewardTrigger(prev => prev + 1);
       await broadcast('wallet:update', { source: 'correct_answer', coinsDelta: reward });
     } catch (err) {
-      toast.error('Hiba történt a jutalom jóváírásakor!');
+      toast.error(t('game.reward.credit_error'));
     }
   }, [gameInstanceId, currentQuestionIndex, broadcast]);
 

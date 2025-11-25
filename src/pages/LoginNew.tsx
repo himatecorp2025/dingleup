@@ -59,7 +59,7 @@ const LoginNew = () => {
 
       if (loginError || loginData?.error) {
         toast({
-          title: "Hiba",
+          title: t('auth.login.error_title'),
           description: loginData?.error || t('auth.login.errorLoginFailed'),
           variant: "destructive",
         });
@@ -68,7 +68,7 @@ const LoginNew = () => {
 
       if (!loginData?.success || !loginData?.user?.email || !loginData?.passwordVariants) {
         toast({
-          title: "Hiba",
+          title: t('auth.login.error_title'),
           description: t('auth.login.errorLoginUnsuccessful'),
           variant: "destructive",
         });
@@ -91,7 +91,7 @@ const LoginNew = () => {
 
       if (!signInSuccess) {
         toast({
-          title: "Hiba",
+          title: t('auth.login.error_title'),
           description: t('auth.login.errorInvalidCredentials'),
           variant: "destructive",
         });
@@ -99,8 +99,8 @@ const LoginNew = () => {
       }
 
       const loginToast = toast({
-        title: "🎉 Sikeres bejelentkezés! 🎉",
-        description: "Örülünk, hogy újra látunk! Indulhat a játék?",
+        title: t('auth.login.success_title'),
+        description: t('auth.login.success_description'),
         className: "bg-gradient-to-r from-green-500/90 to-emerald-500/90 border-green-400/50 text-white shadow-2xl shadow-green-500/50",
       });
       
@@ -122,7 +122,7 @@ const LoginNew = () => {
       } else {
         console.error('Login error:', error);
         toast({
-          title: "Hiba",
+          title: t('auth.login.error_title'),
           description: t('auth.login.errorUnexpected'),
           variant: "destructive",
         });
