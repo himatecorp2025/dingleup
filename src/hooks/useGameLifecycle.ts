@@ -374,7 +374,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        toast.error('A munkameneted lejárt. Kérlek, jelentkezz be újra!');
+        toast.error(t('errors.session_expired'));
         return;
       }
 
