@@ -7,8 +7,10 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { User, Lock, Shield, Eye, EyeOff } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useI18n } from '@/i18n';
 
 const AdminProfile = () => {
+  const { t } = useI18n();
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState('');
   const [lastUsernameChange, setLastUsernameChange] = useState<string | null>(null);
@@ -39,7 +41,7 @@ const AdminProfile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nincs bejelentkezve');
+        toast.error(t('admin.error_not_logged_in'));
         return;
       }
 
@@ -90,7 +92,7 @@ const AdminProfile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nincs bejelentkezve');
+        toast.error(t('admin.error_not_logged_in'));
         return;
       }
 
@@ -143,7 +145,7 @@ const AdminProfile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nincs bejelentkezve');
+        toast.error(t('admin.error_not_logged_in'));
         return;
       }
 

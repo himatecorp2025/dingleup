@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from 'sonner';
 import { RefreshCw, Database, PlayCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useI18n } from '@/i18n';
 
 interface PoolInfo {
   id: string;
@@ -14,6 +15,7 @@ interface PoolInfo {
 }
 
 export default function AdminQuestionPools() {
+  const { t } = useI18n();
   const [pools, setPools] = useState<PoolInfo[]>([]);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -46,7 +48,7 @@ export default function AdminQuestionPools() {
       setTotalQuestions(count || 0);
     } catch (error) {
       console.error('Error loading pool stats:', error);
-      toast.error('Hiba a pool statisztikák betöltésekor');
+      toast.error(t('admin.error_loading_pool_stats'));
     } finally {
       setLoading(false);
     }

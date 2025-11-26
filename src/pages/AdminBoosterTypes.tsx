@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Coins, Heart, Zap, DollarSign } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useI18n } from '@/i18n';
 
 interface BoosterType {
   id: string;
@@ -23,6 +24,7 @@ interface BoosterType {
 }
 
 export default function AdminBoosterTypes() {
+  const { t } = useI18n();
   const [boosterTypes, setBoosterTypes] = useState<BoosterType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +45,7 @@ export default function AdminBoosterTypes() {
       setBoosterTypes(data || []);
     } catch (error) {
       console.error('Error fetching booster types:', error);
-      toast.error('Hiba történt a booster típusok betöltésekor');
+      toast.error(t('admin.error_loading_booster_types'));
     } finally {
       setLoading(false);
     }

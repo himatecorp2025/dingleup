@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Lock, User, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n';
 
 const AdminLogin = () => {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [pin, setPin] = useState('');
@@ -73,14 +75,14 @@ const AdminLogin = () => {
 
       if (!roleData) {
         await supabase.auth.signOut();
-        toast.error('Nincs admin jogosultságod');
+        toast.error(t('admin.error_no_admin_permission'));
         return;
       }
 
-      toast.success('Sikeres admin bejelentkezés');
+      toast.success(t('admin.success_admin_login'));
       navigate('/admin/dashboard');
     } catch (error: any) {
-      toast.error(error.message || 'Hiba történt a bejelentkezés során');
+      toast.error(error.message || t('admin.error_login_failed'));
     } finally {
       setLoading(false);
     }
