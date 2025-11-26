@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n';
+import { X } from 'lucide-react';
 import { LifeIcon3D } from '@/components/icons/LifeIcon3D';
 import { CoinIcon3D } from '@/components/icons/CoinIcon3D';
 import { DiamondIcon3D } from '@/components/icons/DiamondIcon3D';
@@ -157,6 +158,15 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-[75vw] w-full h-[80vh] sm:h-[75vh] md:h-[70vh] overflow-y-auto bg-gradient-to-br from-red-900/50 via-purple-900/70 to-red-900/50 border-[4px] sm:border-[5px] md:border-[6px] border-yellow-400 p-3 sm:p-4 md:p-5 shadow-2xl rounded-[20px] !fixed !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2 !m-0" style={{ boxShadow: '0 0 50px rgba(250, 204, 21, 0.7), 0 25px 80px rgba(0, 0, 0, 0.8), inset 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 -4px 20px rgba(250, 204, 21, 0.2)' }}>
+        {/* Close button - top right */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/30 hover:bg-black/50 transition-all duration-200 hover:scale-110"
+          aria-label="Close"
+        >
+          <X className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
+        </button>
+
         {/* Animated background stars */}
         <div className="absolute inset-0 overflow-hidden rounded-[20px] pointer-events-none">
           {Array.from({ length: 80 }).map((_, i) => (
@@ -350,22 +360,6 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
           </div>
         </div>
 
-        {/* Footer with enhanced 3D styling */}
-        <div className="relative text-center pt-2 sm:pt-3 border-t-[2px] sm:border-t-[3px] border-yellow-400/40" style={{ boxShadow: '0 -4px 15px rgba(234, 179, 8, 0.3), inset 0 2px 10px rgba(234, 179, 8, 0.2)' }}>
-          {/* Footer background layer */}
-          <div className="absolute inset-0 bg-gradient-to-t from-yellow-600/10 via-transparent to-transparent"></div>
-          
-          <p className="relative text-yellow-50 text-[9px] sm:text-[10px] mb-1.5 sm:mb-2 leading-snug font-semibold" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(251, 191, 36, 0.3)' }}>
-            {t('rescue.continue_message')}
-          </p>
-          <Button
-            onClick={onClose}
-            variant="ghost"
-            className="relative rounded-[30px] text-yellow-100 hover:text-yellow-50 hover:bg-white/15 text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 font-bold transition-all" style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.9)' }}
-          >
-            {t('rescue.cancel_button')}
-          </Button>
-        </div>
       </DialogContent>
     </Dialog>
   );
