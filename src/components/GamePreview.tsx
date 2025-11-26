@@ -31,20 +31,7 @@ import { useLikePrompt } from "@/hooks/useLikePrompt";
 import { QuestionLikePromptPopup } from "./QuestionLikePromptPopup";
 import { useQuestionLike } from "@/hooks/useQuestionLike";
 
-import healthQuestions from "@/data/questions-health.json";
-import historyQuestions from "@/data/questions-history.json";
-import cultureQuestions from "@/data/questions-culture.json";
-import financeQuestions from "@/data/questions-finance.json";
-
 type GameState = 'playing' | 'finished' | 'out-of-lives';
-
-// All questions from all categories combined
-const ALL_QUESTIONS: Question[] = [
-  ...(healthQuestions as Question[]),
-  ...(historyQuestions as Question[]),
-  ...(cultureQuestions as Question[]),
-  ...(financeQuestions as Question[])
-];
 
 const GamePreview = memo(() => {
   const { t } = useI18n();
@@ -56,6 +43,10 @@ const GamePreview = memo(() => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { broadcast } = useBroadcastChannel({ channelName: 'wallet', onMessage: () => {}, enabled: true });
+  
+  // Prefetch state for instant game restarts
+  const [prefetchedQuestions, setPrefetchedQuestions] = useState<Question[] | null>(null);
+  const prefetchTriggeredRef = useRef(false);
   
   const {
     gameState,
@@ -213,6 +204,8 @@ const GamePreview = memo(() => {
     questions,
     questionStartTime,
     gameCompleted,
+    prefetchedQuestions,
+    onPrefetchComplete: setPrefetchedQuestions,
   });
 
   const { timeLeft, resetTimer } = useGameTimer({
@@ -319,7 +312,7 @@ const GamePreview = memo(() => {
     resetTimer: (time: number) => resetTimer(time),
     setQuestionStartTime,
     setUsedQuestionSwap,
-    ALL_QUESTIONS,
+    ALL_QUESTIONS: [],
   });
   
   // Auth check
@@ -341,7 +334,7 @@ const GamePreview = memo(() => {
     }
   }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState, startGame]);
 
-  // Track game funnel milestones (5th, 10th, 15th question reached)
+  // Track game funnel milestones + PREFETCH next game at question 10
   useEffect(() => {
     const trackMilestone = async () => {
       if (!userId || !isGameReady || currentQuestionIndex < 0) return;
@@ -364,6 +357,68 @@ const GamePreview = memo(() => {
             question_index: 10,
             correct_answers: correctAnswers,
           });
+          
+          // PREFETCH: Start loading next game questions in background at question 10
+          if (!prefetchTriggeredRef.current) {
+            prefetchTriggeredRef.current = true;
+            console.log('[GamePreview] 🚀 Triggering prefetch for next game (background)');
+            
+            // Trigger prefetch via edge function
+            (async () => {
+              try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) return;
+                
+                const userLang = profile?.preferred_language || 'en';
+                
+                const { data, error } = await supabase.functions.invoke('start-game-session', {
+                  headers: { Authorization: `Bearer ${session.access_token}` }
+                });
+                
+                if (error || !data?.questions) {
+                  console.warn('[GamePreview] Prefetch failed:', error);
+                  return;
+                }
+                
+                let questionsToUse = data.questions;
+                
+                // Apply translations if needed
+                if (userLang !== 'hu' && questionsToUse.length > 0) {
+                  const questionIds = questionsToUse.map((q: any) => q.id);
+                  
+                  const { data: translations } = await supabase
+                    .from('question_translations')
+                    .select('question_id, question_text, answer_a, answer_b, answer_c')
+                    .eq('lang', userLang)
+                    .in('question_id', questionIds);
+                  
+                  if (translations && translations.length > 0) {
+                    questionsToUse = questionsToUse.map((question: any) => {
+                      const translation = translations.find((t: any) => t.question_id === question.id);
+                      if (translation) {
+                        return {
+                          ...question,
+                          question: translation.question_text || question.question,
+                          answers: question.answers.map((answer: any, index: number) => ({
+                            ...answer,
+                            text: index === 0 ? (translation.answer_a || answer.text) :
+                                  index === 1 ? (translation.answer_b || answer.text) :
+                                  (translation.answer_c || answer.text)
+                          }))
+                        };
+                      }
+                      return question;
+                    });
+                  }
+                }
+                
+                setPrefetchedQuestions(questionsToUse);
+                console.log('[GamePreview] ✓ Prefetch complete - next game ready (<5ms on restart)');
+              } catch (error) {
+                console.error('[GamePreview] Prefetch exception:', error);
+              }
+            })();
+          }
         } catch (error) {
           console.error('[GamePreview] Error tracking milestone 10:', error);
         }
@@ -371,7 +426,7 @@ const GamePreview = memo(() => {
     };
 
     trackMilestone();
-  }, [currentQuestionIndex, userId, isGameReady, correctAnswers]);
+  }, [currentQuestionIndex, userId, isGameReady, correctAnswers, profile?.preferred_language]);
 
   // Background detection - exit game if app goes to background (only after video ended)
   useEffect(() => {
