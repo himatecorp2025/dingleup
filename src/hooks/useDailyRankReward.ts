@@ -1,0 +1,139 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
+
+export interface DailyRankReward {
+  rank: number;
+  gold: number;
+  lives: number;
+  isSundayJackpot: boolean;
+  dayDate: string;
+  username: string;
+  rewardPayload?: any;
+}
+
+/**
+ * Hook to manage daily rank reward popup
+ * Shows popup when user has pending rank reward from yesterday
+ */
+export const useDailyRankReward = (userId: string | undefined) => {
+  const [showRewardPopup, setShowRewardPopup] = useState(false);
+  const [pendingReward, setPendingReward] = useState<DailyRankReward | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isClaiming, setIsClaiming] = useState(false);
+
+  // Fetch pending reward on mount and when userId changes
+  useEffect(() => {
+    if (!userId) {
+      setPendingReward(null);
+      setShowRewardPopup(false);
+      return;
+    }
+
+    const fetchPendingReward = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('get-pending-rank-reward', {
+          body: {}
+        });
+
+        if (error) {
+          console.error('[RANK-REWARD] Error fetching pending reward:', error);
+          setPendingReward(null);
+          setShowRewardPopup(false);
+          return;
+        }
+
+        if (data.hasPendingReward && data.reward) {
+          console.log('[RANK-REWARD] Found pending reward:', data.reward);
+          setPendingReward(data.reward);
+          setShowRewardPopup(true);
+        } else {
+          setPendingReward(null);
+          setShowRewardPopup(false);
+        }
+      } catch (error) {
+        console.error('[RANK-REWARD] Exception fetching pending reward:', error);
+        setPendingReward(null);
+        setShowRewardPopup(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPendingReward();
+  }, [userId]);
+
+  const claimReward = async () => {
+    if (!pendingReward || isClaiming) return;
+
+    setIsClaiming(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('claim-daily-rank-reward', {
+        body: { day_date: pendingReward.dayDate }
+      });
+
+      if (error || !data?.success) {
+        console.error('[RANK-REWARD] Error claiming reward:', error);
+        toast({
+          title: 'Hiba',
+          description: 'Nem sikerült felvenni a jutalmat. Próbáld újra később.',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      console.log('[RANK-REWARD] Reward claimed successfully:', data);
+      
+      // Close popup and clear state
+      setShowRewardPopup(false);
+      setPendingReward(null);
+
+      // Show success toast
+      toast({
+        title: '🎉 Jutalom felvéve!',
+        description: `+${data.goldCredited} arany, +${data.livesCredited} élet`,
+      });
+    } catch (error) {
+      console.error('[RANK-REWARD] Exception claiming reward:', error);
+      toast({
+        title: 'Hiba',
+        description: 'Hiba történt a jutalom felvétele során.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
+  const dismissReward = async () => {
+    if (!pendingReward) return;
+
+    try {
+      const { error } = await supabase.functions.invoke('dismiss-daily-rank-reward', {
+        body: { day_date: pendingReward.dayDate }
+      });
+
+      if (error) {
+        console.error('[RANK-REWARD] Error dismissing reward:', error);
+      }
+
+      console.log('[RANK-REWARD] Reward dismissed (lost)');
+      
+      // Close popup and clear state
+      setShowRewardPopup(false);
+      setPendingReward(null);
+    } catch (error) {
+      console.error('[RANK-REWARD] Exception dismissing reward:', error);
+    }
+  };
+
+  return {
+    showRewardPopup,
+    pendingReward,
+    isLoading,
+    isClaiming,
+    claimReward,
+    dismissReward
+  };
+};

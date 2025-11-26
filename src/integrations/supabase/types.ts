@@ -477,29 +477,44 @@ export type Database = {
       daily_winner_awarded: {
         Row: {
           awarded_at: string | null
+          claimed_at: string | null
           day_date: string
+          dismissed_at: string | null
           gold_awarded: number
           id: string
+          is_sunday_jackpot: boolean
           lives_awarded: number
           rank: number
+          reward_payload: Json | null
+          status: string
           user_id: string
         }
         Insert: {
           awarded_at?: string | null
+          claimed_at?: string | null
           day_date: string
+          dismissed_at?: string | null
           gold_awarded?: number
           id?: string
+          is_sunday_jackpot?: boolean
           lives_awarded?: number
           rank: number
+          reward_payload?: Json | null
+          status?: string
           user_id: string
         }
         Update: {
           awarded_at?: string | null
+          claimed_at?: string | null
           day_date?: string
+          dismissed_at?: string | null
           gold_awarded?: number
           id?: string
+          is_sunday_jackpot?: boolean
           lives_awarded?: number
           rank?: number
+          reward_payload?: Json | null
+          status?: string
           user_id?: string
         }
         Relationships: []
