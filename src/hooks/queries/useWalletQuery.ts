@@ -10,6 +10,7 @@ export interface WalletData {
   maxLives: number;
   livesMax: number; // Alias for backward compatibility
   nextLifeAt: string | null;
+  serverDriftMs: number;
   activeSpeedToken?: {
     speedCount: number;
     speedDurationMinutes: number;
@@ -20,9 +21,16 @@ export interface WalletData {
 const WALLET_QUERY_KEY = (userId: string) => ['wallet', userId];
 
 async function fetchWallet(userId: string): Promise<WalletData> {
+  const requestTime = Date.now();
+  
   const response = await supabase.functions.invoke('get-wallet', {
     body: { userId }
   });
+
+  const responseTime = Date.now();
+  const roundTripTime = responseTime - requestTime;
+  const estimatedServerTime = responseTime - (roundTripTime / 2);
+  const clientServerDrift = estimatedServerTime - Date.now();
 
   if (response.error) throw response.error;
   if (!response.data?.success) throw new Error(response.data?.error || 'Failed to fetch wallet');
@@ -36,6 +44,7 @@ async function fetchWallet(userId: string): Promise<WalletData> {
     maxLives: data.maxLives,
     livesMax: data.maxLives, // Backward compatibility
     nextLifeAt: data.nextLifeAt,
+    serverDriftMs: clientServerDrift,
     activeSpeedToken: data.activeSpeedToken || null,
   };
 }
@@ -115,7 +124,7 @@ export function useWalletQuery(userId: string | undefined) {
     walletData: query.data,
     loading: query.isLoading,
     refetchWallet,
-    serverDriftMs: 0, // Deprecated - kept for backward compatibility
+    serverDriftMs: query.data?.serverDriftMs ?? 0,
   };
 }
 

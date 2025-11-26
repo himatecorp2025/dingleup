@@ -64,7 +64,7 @@ const Dashboard = () => {
   const { canMountModals } = useScrollBehavior();
   const { markActive } = useActivityTracker('route_view');
   const { profile, loading, refreshProfile } = useProfileQuery(userId);
-  const { walletData, refetchWallet } = useWalletQuery(userId);
+  const { walletData, refetchWallet, serverDriftMs } = useWalletQuery(userId);
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
@@ -477,7 +477,7 @@ if (!profile) {
                 lives={walletData?.livesCurrent ?? profile.lives}
                 livesMax={walletData?.livesMax || profile.max_lives}
                 nextLifeAt={walletData?.nextLifeAt || null}
-                serverDriftMs={0}
+                serverDriftMs={serverDriftMs}
                 onLifeExpired={() => {
                   refetchWallet();
                   refreshProfile();
