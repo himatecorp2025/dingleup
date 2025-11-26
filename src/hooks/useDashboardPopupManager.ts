@@ -52,41 +52,51 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     if (profileLoading || !userId) return;
     
     if (!popupState.ageGateCompleted) {
-      setPopupState(prev => ({
-        ...prev,
-        showAgeGate: needsAgeVerification,
-        ageGateCompleted: !needsAgeVerification,
-      }));
+      const shouldShowAgeGate = needsAgeVerification;
+      const shouldMarkCompleted = !needsAgeVerification;
+      
+      // Only update state if values would actually change
+      if (popupState.showAgeGate !== shouldShowAgeGate || popupState.ageGateCompleted !== shouldMarkCompleted) {
+        setPopupState(prev => ({
+          ...prev,
+          showAgeGate: shouldShowAgeGate,
+          ageGateCompleted: shouldMarkCompleted,
+        }));
+      }
     }
-  }, [userId, needsAgeVerification, popupState.ageGateCompleted, profileLoading]);
+  }, [userId, needsAgeVerification, profileLoading]); // Removed popupState dependencies to prevent loop
 
   // Priority 2: Welcome Bonus (after age gate completed)
   useEffect(() => {
-    if (
+    const shouldShow = 
       canMountModals &&
       popupState.ageGateCompleted &&
       !popupState.showAgeGate &&
       welcomeBonus.canClaim &&
-      userId
-    ) {
+      !!userId;
+    
+    // Only update if value would change
+    if (shouldShow && !popupState.showWelcomeBonus) {
       setPopupState(prev => ({
         ...prev,
         showWelcomeBonus: true,
         showDailyGift: false,
       }));
     }
-  }, [canMountModals, popupState.ageGateCompleted, popupState.showAgeGate, welcomeBonus.canClaim, userId]);
+  }, [canMountModals, popupState.ageGateCompleted, popupState.showAgeGate, welcomeBonus.canClaim, userId, popupState.showWelcomeBonus]);
 
   // Priority 3: Daily Gift (after age gate + welcome bonus)
   useEffect(() => {
-    if (
+    const shouldShow =
       canMountModals &&
       popupState.ageGateCompleted &&
       !popupState.showAgeGate &&
       !popupState.showWelcomeBonus &&
       dailyGift.canClaim &&
-      userId
-    ) {
+      !!userId;
+    
+    // Only update if value would change
+    if (shouldShow && !popupState.showDailyGift) {
       setPopupState(prev => ({
         ...prev,
         showDailyGift: true,
@@ -99,19 +109,22 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     popupState.showWelcomeBonus,
     dailyGift.canClaim,
     userId,
+    popupState.showDailyGift,
   ]);
 
   // Priority 4: Daily Winners (after all other popups)
   useEffect(() => {
-    if (
+    const shouldShow =
       canMountModals &&
       popupState.ageGateCompleted &&
       !popupState.showAgeGate &&
       !popupState.showWelcomeBonus &&
       !popupState.showDailyGift &&
       dailyWinners.showPopup &&
-      userId
-    ) {
+      !!userId;
+    
+    // Only update if value would change
+    if (shouldShow && !popupState.showDailyWinners) {
       setPopupState(prev => ({
         ...prev,
         showDailyWinners: true,
@@ -125,6 +138,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     popupState.showDailyGift,
     dailyWinners.showPopup,
     userId,
+    popupState.showDailyWinners,
   ]);
 
   // Handlers for closing popups
