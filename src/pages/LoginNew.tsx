@@ -8,6 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useI18n } from "@/i18n";
+import { getCountryFromTimezone } from "@/lib/utils";
+import type { LangCode } from "@/i18n/types";
 import loadingLogo from '@/assets/dingleup-loading-logo.png';
 
 const createLoginSchema = (t: (key: string) => string) => z.object({
@@ -18,7 +20,7 @@ const createLoginSchema = (t: (key: string) => string) => z.object({
 const LoginNew = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t } = useI18n();
+  const { t, setLang } = useI18n();
   
   const loginSchema = createLoginSchema(t);
   type LoginForm = z.infer<typeof loginSchema>;
@@ -40,6 +42,26 @@ const LoginNew = () => {
     };
     checkStandalone();
   }, []);
+
+  // Auto-detect language based on device timezone
+  useEffect(() => {
+    const detectAndSetLanguage = async () => {
+      try {
+        const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const countryCode = getCountryFromTimezone(detectedTimezone);
+        
+        // Hungary → Hungarian, all others → English
+        const detectedLang: LangCode = countryCode === 'HU' ? 'hu' : 'en';
+        
+        // Set language without updating database (user not logged in yet)
+        await setLang(detectedLang, true);
+      } catch (error) {
+        console.error('[AUTH LANG] Error detecting language:', error);
+      }
+    };
+    
+    detectAndSetLanguage();
+  }, [setLang]);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
