@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { UserPlus, LogIn } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/i18n";
+import loadingLogo from '@/assets/dingleup-loading-logo.png';
 
 const AuthChoice = () => {
   const navigate = useNavigate();
@@ -38,14 +39,11 @@ const AuthChoice = () => {
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
           {/* Logo */}
           <div className="flex justify-center mb-6">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
-              <img 
-                src="/logo.png" 
-                alt="DingleUP! Logo" 
-                className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 transform group-hover:scale-110 transition-transform duration-300" 
-              />
-            </div>
+            <img 
+              src={loadingLogo} 
+              alt="DingleUP! Logo" 
+              className="w-20 h-20 sm:w-24 sm:h-24 object-contain" 
+            />
           </div>
 
           <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] break-words hyphens-auto px-2">

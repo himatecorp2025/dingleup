@@ -20,6 +20,7 @@ import { useSessionMonitor } from "@/hooks/useSessionMonitor";
 import { AppRouteGuard } from "@/components/AppRouteGuard";
 import { AudioPolicyManager } from "@/components/AudioPolicyManager";
 import { useI18n } from "@/i18n";
+import loadingLogo from '@/assets/dingleup-loading-logo.png';
 
 // Eager load only landing page for instant initial render
 import Index from "./pages/Index";
@@ -217,13 +218,11 @@ const SessionMonitorWrapper = () => {
 // Splash screen while translations load
 const SplashScreen = () => (
   <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
-    <div className="animate-pulse">
-      <img 
-        src="/dingleup-logo.png" 
-        alt="DingleUP!" 
-        className="w-32 h-32 object-contain"
-      />
-    </div>
+    <img 
+      src={loadingLogo} 
+      alt="DingleUP!" 
+      className="w-32 h-32 object-contain animate-pulse"
+    />
   </div>
 );
 

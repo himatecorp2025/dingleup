@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useI18n } from "@/i18n";
+import loadingLogo from '@/assets/dingleup-loading-logo.png';
 
 const createRegisterSchema = (t: (key: string) => string) => z.object({
   username: z.string()
@@ -193,14 +194,11 @@ const RegisterNew = () => {
 
           {/* Logo */}
           <div className="flex justify-center mb-4 mt-2">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
-              <img 
-                src="/logo.png" 
-                alt="DingleUP! Logo" 
-                className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 transform group-hover:scale-110 transition-transform duration-300" 
-              />
-            </div>
+            <img 
+              src={loadingLogo} 
+              alt="DingleUP! Logo" 
+              className="w-16 h-16 sm:w-20 sm:h-20 object-contain" 
+            />
           </div>
 
           <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-center mb-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] break-words hyphens-auto px-2">
