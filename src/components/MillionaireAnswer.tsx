@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { useDynamicVerticalCenter } from '@/hooks/useDynamicVerticalCenter';
 
 interface MillionaireAnswerProps {
   children: ReactNode;
@@ -26,7 +25,6 @@ export const MillionaireAnswer = ({
   isDoubleChoiceActive,
   showCorrectPulse
 }: MillionaireAnswerProps) => {
-  const { svgRef, overlayRef, contentRef, transformStyle } = useDynamicVerticalCenter();
   if (isRemoved) {
     return (
       <div className="w-full flex justify-center mb-2 opacity-30">
@@ -84,7 +82,6 @@ export const MillionaireAnswer = ({
       >
         {/* SVG Background with fast pulse animation on correct answer */}
         <svg 
-          ref={svgRef}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="22.53058 -47.5814116 672.82399 250"
           fill="none"
@@ -196,15 +193,9 @@ export const MillionaireAnswer = ({
           </g>
         </svg>
         
-        <div 
-          ref={overlayRef}
-          className="absolute top-[26%] bottom-[26%] left-0 right-0 flex items-start justify-center px-3 sm:px-4 md:px-5"
-        >
-          <div 
-            ref={contentRef}
-            className="flex items-center justify-center w-full gap-2 sm:gap-3"
-            style={transformStyle}
-          >
+        {/* Content wrapper - flexbox centered like PlayNowButton */}
+        <div className="absolute inset-0 flex items-center justify-center px-3 sm:px-4 md:px-5">
+          <div className="flex items-center justify-center w-full gap-2 sm:gap-3 translate-y-[4px]">
             <div 
               className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
               style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
