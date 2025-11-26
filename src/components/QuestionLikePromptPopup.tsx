@@ -1,6 +1,7 @@
 import { X, Heart } from "lucide-react";
 import { useI18n } from "@/i18n/useI18n";
 import { CoinIcon3D } from "@/components/icons/CoinIcon3D";
+import { LifeIcon3D } from "@/components/icons/LifeIcon3D";
 
 interface QuestionLikePromptPopupProps {
   isOpen: boolean;
@@ -53,16 +54,25 @@ export const QuestionLikePromptPopup = ({
               <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
             </div>
 
-            {/* Title Text with Coin Reward */}
+            {/* Title Text with Coin and Life Reward */}
             <div className="space-y-2">
               <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-[0_4px_15px_rgba(0,0,0,0.7)]">
                 {t('game.like_prompt_title')}
               </h2>
-              <div className="flex items-center justify-center gap-2 text-yellow-400 font-bold text-xl animate-pulse">
-                <CoinIcon3D size={32} />
-                <span className="drop-shadow-[0_2px_10px_rgba(234,179,8,0.9)]">
-                  +10 {t('game.like_prompt_coin_reward')}
-                </span>
+              <div className="flex items-center justify-center gap-4 text-xl font-bold">
+                <div className="flex items-center gap-2 text-yellow-400 animate-pulse">
+                  <CoinIcon3D size={32} />
+                  <span className="drop-shadow-[0_2px_10px_rgba(234,179,8,0.9)]">
+                    +10
+                  </span>
+                </div>
+                <span className="text-white text-2xl">+</span>
+                <div className="flex items-center gap-2 text-red-400 animate-pulse" style={{ animationDelay: '0.2s' }}>
+                  <LifeIcon3D size={32} />
+                  <span className="drop-shadow-[0_2px_10px_rgba(239,68,68,0.9)]">
+                    +1
+                  </span>
+                </div>
               </div>
             </div>
 

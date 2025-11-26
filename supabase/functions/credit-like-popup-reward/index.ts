@@ -52,13 +52,13 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Credit +10 coins via wallet_ledger (automatic profile update via trigger)
+    // Credit +10 coins and +1 life via wallet_ledger (automatic profile update via trigger)
     const { error: creditError } = await supabase
       .from('wallet_ledger')
       .insert({
         user_id: user.id,
         delta_coins: 10,
-        delta_lives: 0,
+        delta_lives: 1,
         source: 'like_popup_reward',
         idempotency_key: idempotencyKey,
         metadata: {
@@ -75,10 +75,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('[credit-like-popup-reward] Successfully credited 10 coins to user:', user.id);
+    console.log('[credit-like-popup-reward] Successfully credited 10 coins and 1 life to user:', user.id);
 
     return new Response(
-      JSON.stringify({ success: true, coinsAdded: 10 }),
+      JSON.stringify({ success: true, coinsAdded: 10, livesAdded: 1 }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
