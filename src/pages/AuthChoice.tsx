@@ -4,10 +4,11 @@ import { UserPlus, LogIn } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/i18n";
 import loadingLogo from '@/assets/dingleup-loading-logo.png';
+import { getCountryFromTimezone } from "@/lib/i18n/getCountryFromTimezone";
 
 const AuthChoice = () => {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, setLang } = useI18n();
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
@@ -19,6 +20,26 @@ const AuthChoice = () => {
     };
     checkStandalone();
   }, []);
+
+  // Auto-detect language based on device timezone
+  useEffect(() => {
+    const detectAndSetLanguage = async () => {
+      try {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const countryCode = getCountryFromTimezone(timezone);
+        
+        // If Hungary, set Hungarian, otherwise English
+        const detectedLang = countryCode === 'HU' ? 'hu' : 'en';
+        await setLang(detectedLang, true); // Skip DB update since user not logged in
+      } catch (error) {
+        console.error('Language detection error:', error);
+        // Default to English if detection fails
+        await setLang('en', true);
+      }
+    };
+
+    detectAndSetLanguage();
+  }, [setLang]);
 
   return (
     <div 
