@@ -60,12 +60,13 @@ export const NextLifeTimer = ({
 
   return (
     <div 
-      className="absolute -bottom-[10.8px] -right-0.75 rounded-md z-50 text-[12px]"
+      className="absolute bottom-0 -right-0.75 rounded-md z-50 text-[12px]"
       title={t('timer.next_life')}
       style={{ 
         perspective: '1000px',
         width: '52px',
-        height: '24px'
+        height: '24px',
+        transform: 'translateY(100%)'
       }}
     >
       {/* DEEP BOTTOM SHADOW - Multiple layers for depth */}
