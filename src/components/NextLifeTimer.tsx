@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useI18n } from '@/i18n';
 
 interface NextLifeTimerProps {
@@ -20,6 +20,12 @@ export const NextLifeTimer = ({
 }: NextLifeTimerProps) => {
   const { t } = useI18n();
   const [remainingMs, setRemainingMs] = useState(0);
+  const hasExpiredRef = useRef(false);
+
+  // Reset expiry flag when a new timer starts (nextLifeAt or isSpeedBoost changes)
+  useEffect(() => {
+    hasExpiredRef.current = false;
+  }, [nextLifeAt, isSpeedBoost]);
 
   useEffect(() => {
     // For speed boost timer, always show countdown even if lives are at max
@@ -35,8 +41,9 @@ export const NextLifeTimer = ({
       const diff = Math.max(0, targetTime - now);
       setRemainingMs(diff);
       
-      // When timer reaches 00:00, trigger refresh
-      if (diff <= 0 && onExpired) {
+      // When timer reaches 00:00, trigger refresh ONCE
+      if (diff <= 0 && onExpired && !hasExpiredRef.current) {
+        hasExpiredRef.current = true;
         onExpired();
       }
     };
