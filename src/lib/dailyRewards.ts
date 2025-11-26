@@ -23,19 +23,19 @@ export interface RankReward {
 
 // Elméleti heti bázis (csak referencia, NEM kerül kiosztásra)
 export const WEEKLY_BASE: DailyBaseReward = {
-  gold: 150000,
-  life: 3000,
+  gold: 30000,
+  life: 600,
 };
 
 // Napi bázis jutalmak (TOP10 számításhoz)
 export const DAILY_BASE_REWARDS: Record<Weekday, DailyBaseReward> = {
-  MONDAY:    { gold: 12000,  life: 240 },   // 8%
-  TUESDAY:   { gold: 18000,  life: 360 },   // 12%
-  WEDNESDAY: { gold: 27000,  life: 540 },   // 18%
-  THURSDAY:  { gold: 37500,  life: 750 },   // 25%
-  FRIDAY:    { gold: 52500,  life: 1050 },  // 35%
-  SATURDAY:  { gold: 75000,  life: 1500 },  // 50%
-  SUNDAY:    { gold: 150000, life: 3000 },  // 100% (csak referencia, vasárnap a Jackpot táblázat az irányadó)
+  MONDAY:    { gold: 2400,   life: 48 },    // 8%
+  TUESDAY:   { gold: 3600,   life: 72 },    // 12%
+  WEDNESDAY: { gold: 5400,   life: 108 },   // 18%
+  THURSDAY:  { gold: 7500,   life: 150 },   // 25%
+  FRIDAY:    { gold: 10500,  life: 210 },   // 35%
+  SATURDAY:  { gold: 15000,  life: 300 },   // 50%
+  SUNDAY:    { gold: 30000,  life: 600 },   // 100% (csak referencia, vasárnap a Jackpot táblázat az irányadó)
 };
 
 // TOP10 helyezési szorzók (normál napokon H-Szo)
@@ -54,31 +54,31 @@ export const TOP10_MULTIPLIERS = [
 
 // Vasárnapi Jackpot TOP25 (fix értékek)
 export const SUNDAY_JACKPOT_TOP25: RankReward[] = [
-  { rank: 1,  gold: 150000, life: 3000 },
-  { rank: 2,  gold: 105000, life: 2100 },
-  { rank: 3,  gold: 75000,  life: 1500 },
-  { rank: 4,  gold: 45000,  life: 900 },
-  { rank: 5,  gold: 37500,  life: 750 },
-  { rank: 6,  gold: 30000,  life: 600 },
-  { rank: 7,  gold: 22500,  life: 450 },
-  { rank: 8,  gold: 18000,  life: 360 },
-  { rank: 9,  gold: 15000,  life: 300 },
-  { rank: 10, gold: 12000,  life: 240 },
-  { rank: 11, gold: 10000,  life: 200 },
-  { rank: 12, gold: 9000,   life: 180 },
-  { rank: 13, gold: 8000,   life: 160 },
-  { rank: 14, gold: 7000,   life: 140 },
-  { rank: 15, gold: 6000,   life: 120 },
-  { rank: 16, gold: 5000,   life: 100 },
-  { rank: 17, gold: 4000,   life: 80 },
-  { rank: 18, gold: 3500,   life: 70 },
-  { rank: 19, gold: 3000,   life: 60 },
-  { rank: 20, gold: 2500,   life: 50 },
-  { rank: 21, gold: 2000,   life: 40 },
-  { rank: 22, gold: 1800,   life: 36 },
-  { rank: 23, gold: 1500,   life: 30 },
-  { rank: 24, gold: 1300,   life: 26 },
-  { rank: 25, gold: 1200,   life: 24 },
+  { rank: 1,  gold: 30000, life: 600 },
+  { rank: 2,  gold: 21000, life: 420 },
+  { rank: 3,  gold: 15000, life: 300 },
+  { rank: 4,  gold: 9000,  life: 180 },
+  { rank: 5,  gold: 7500,  life: 150 },
+  { rank: 6,  gold: 6000,  life: 120 },
+  { rank: 7,  gold: 4500,  life: 90 },
+  { rank: 8,  gold: 3600,  life: 72 },
+  { rank: 9,  gold: 3000,  life: 60 },
+  { rank: 10, gold: 2400,  life: 48 },
+  { rank: 11, gold: 2000,  life: 40 },
+  { rank: 12, gold: 1800,  life: 36 },
+  { rank: 13, gold: 1600,  life: 32 },
+  { rank: 14, gold: 1400,  life: 28 },
+  { rank: 15, gold: 1200,  life: 24 },
+  { rank: 16, gold: 1000,  life: 20 },
+  { rank: 17, gold: 800,   life: 16 },
+  { rank: 18, gold: 700,   life: 14 },
+  { rank: 19, gold: 600,   life: 12 },
+  { rank: 20, gold: 500,   life: 10 },
+  { rank: 21, gold: 400,   life: 8 },
+  { rank: 22, gold: 360,   life: 7 },
+  { rank: 23, gold: 320,   life: 6 },
+  { rank: 24, gold: 280,   life: 6 },
+  { rank: 25, gold: 240,   life: 5 },
 ];
 
 /**
