@@ -33,9 +33,8 @@ Deno.serve(async (req) => {
 
     const { questionIndex } = await req.json();
 
-    // Check if question index is eligible (5-10 = questions after 5th, 6th, 7th, 8th, 9th, 10th)
-    const eligibleQuestions = [5, 6, 7, 8, 9, 10];
-    if (!eligibleQuestions.includes(questionIndex)) {
+    // Check if question index is eligible (1-15 = any question in the game)
+    if (questionIndex < 1 || questionIndex > 15) {
       return new Response(
         JSON.stringify({ eligible: false, reason: 'question_index_not_eligible' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
