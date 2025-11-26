@@ -158,7 +158,7 @@ const Leaderboard = () => {
 
         {/* Countdown Timer - below title */}
         <div className="flex justify-center mb-2 px-2">
-          <DailyRankingsCountdown compact={false} />
+          <DailyRankingsCountdown compact={false} userTimezone={profile?.user_timezone || 'Europe/Budapest'} />
         </div>
 
         {/* Daily Rewards Section with Top 10 */}

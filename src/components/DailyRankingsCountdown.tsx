@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { Trophy } from 'lucide-react';
 import { useI18n } from '@/i18n/useI18n';
+import { getMillisecondsUntilMidnight } from '@/lib/utils';
 
 interface DailyRankingsCountdownProps {
   compact?: boolean;
   className?: string;
+  userTimezone?: string;
 }
 
-export const DailyRankingsCountdown = ({ compact = false, className = '' }: DailyRankingsCountdownProps) => {
+export const DailyRankingsCountdown = ({ compact = false, className = '', userTimezone = 'Europe/Budapest' }: DailyRankingsCountdownProps) => {
   const { t } = useI18n();
   const [timeRemaining, setTimeRemaining] = useState('');
   const [containerWidth, setContainerWidth] = useState(260); // default width
@@ -15,14 +17,8 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
 
   useEffect(() => {
     const updateCountdown = () => {
-      const now = new Date();
-      
-      // Calculate next day 00:00:00 (midnight)
-      const tomorrow = new Date(now);
-      tomorrow.setDate(now.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-      
-      const diff = tomorrow.getTime() - now.getTime();
+      // Calculate milliseconds until midnight in user's timezone
+      const diff = getMillisecondsUntilMidnight(userTimezone);
       
       if (diff <= 0) {
         setTimeRemaining(t('countdown.processing'));
@@ -42,7 +38,7 @@ export const DailyRankingsCountdown = ({ compact = false, className = '' }: Dail
     const interval = setInterval(updateCountdown, 1000);
     
     return () => clearInterval(interval);
-  }, [t]);
+  }, [t, userTimezone]);
 
   // Measure only the second row (timer row) width and update container width (+5%)
   useEffect(() => {
