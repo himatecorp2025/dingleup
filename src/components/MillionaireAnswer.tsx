@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
 interface MillionaireAnswerProps {
   children: ReactNode;
@@ -25,6 +25,20 @@ export const MillionaireAnswer = ({
   isDoubleChoiceActive,
   showCorrectPulse
 }: MillionaireAnswerProps) => {
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const [isMultiLine, setIsMultiLine] = useState(false);
+
+  useEffect(() => {
+    if (!textRef.current) return;
+    
+    const styles = window.getComputedStyle(textRef.current);
+    const lineHeight = parseFloat(styles.lineHeight);
+    const height = textRef.current.offsetHeight;
+    const lines = Math.round(height / lineHeight);
+    
+    setIsMultiLine(lines >= 2);
+  }, [children]);
+
   if (isRemoved) {
     return (
       <div className="w-full flex justify-center mb-2 opacity-30">
@@ -279,6 +293,7 @@ export const MillionaireAnswer = ({
               <span className="relative z-10 text-primary-foreground font-bold text-[15px] sm:text-lg leading-none drop-shadow-lg font-poppins" style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}>{letter}:</span>
             </div>
             <p 
+              ref={textRef}
               className={`font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-foreground ${
                 typeof children === 'string' && children.length > 35 
                   ? 'text-base sm:text-lg md:text-xl' 
@@ -286,7 +301,11 @@ export const MillionaireAnswer = ({
                   ? 'text-lg sm:text-xl md:text-2xl'
                   : 'text-xl sm:text-2xl md:text-3xl'
               }`}
-              style={{ textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)' }}
+              style={{ 
+                textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)',
+                transform: isMultiLine ? 'scale(0.95)' : 'scale(1)',
+                transformOrigin: 'center'
+              }}
             >
               {children}
             </p>
