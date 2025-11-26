@@ -28,13 +28,11 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
     }
 
     try {
-      // Measure actual heights in pixels based on real DOM layout
+      // Measure actual bounding boxes of the BLACK overlay area and content
       const overlayRect = overlayRef.current.getBoundingClientRect();
       const contentRect = contentRef.current.getBoundingClientRect();
-      const overlayHeight = overlayRect.height;
-      const contentHeight = contentRect.height;
 
-      if (overlayHeight === 0 || contentHeight === 0) {
+      if (overlayRect.height === 0 || contentRect.height === 0) {
         // Elements not yet rendered - retry
         if (retryTimeoutRef.current) {
           clearTimeout(retryTimeoutRef.current);
@@ -43,38 +41,23 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
         return;
       }
 
-      // Measure line height to determine line count
-      const styles = window.getComputedStyle(contentRef.current);
-      const lineHeightPx = parseFloat(styles.lineHeight);
-      const approxLines = Math.round(contentHeight / lineHeightPx);
-      
-      // Determine if 1-line or 2-line
-      const is1Line = approxLines <= 1;
-      const is2Line = approxLines === 2;
-      
-      // Calculate mathematical center for both cases
-      let offsetY = (overlayHeight / 2) - (contentHeight / 2);
-      
-      // Optional fine-tuning (can be adjusted if needed)
-      if (is1Line) {
-        // 1-line: use pure mathematical center
-        // offsetY remains as calculated
-      } else if (is2Line) {
-        // 2-line: use pure mathematical center, optionally add +1-2px if needed
-        // offsetY remains as calculated (or add small adjustment if testing shows it's needed)
-      }
+      // Calculate center Y positions in viewport coordinates
+      const overlayCenterY = overlayRect.top + overlayRect.height / 2;
+      const contentCenterY = contentRect.top + contentRect.height / 2;
+
+      // Calculate offset needed to align content center to overlay center
+      const offsetY = overlayCenterY - contentCenterY;
       
       // Set translateY in pixels
       setTranslateY(offsetY);
-      lastContentHeightRef.current = contentHeight;
+      lastContentHeightRef.current = contentRect.height;
       
       if (import.meta.env.DEV) {
         console.log('[useDynamicVerticalCenter] Recalculated:', {
-          overlayHeight,
-          contentHeight,
-          lineHeightPx,
-          approxLines,
-          lineCount: is1Line ? 1 : is2Line ? 2 : 3,
+          overlayHeight: overlayRect.height,
+          contentHeight: contentRect.height,
+          overlayCenterY,
+          contentCenterY,
           offsetY,
         });
       }
