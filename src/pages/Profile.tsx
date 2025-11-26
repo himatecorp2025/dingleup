@@ -362,18 +362,10 @@ const Profile = () => {
     }
   };
 
-  if (loading) {
+  if (loading || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
         <p className="text-lg text-white">{t('profile.loading')}</p>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-        <p className="text-lg text-white">{t('profile.load_error')}</p>
       </div>
     );
   }
