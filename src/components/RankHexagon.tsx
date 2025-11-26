@@ -119,14 +119,13 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Egyszerű háromágú korona – csak vonal, 3 csúcs, mint a referenciaképen */}
+            {/* Háromágú korona - user által megadott geometria fehérben */}
             <path
-              d="M4 18 L8 8 L12 14 L16 8 L20 18 L4 18"
+              d="M2.4 18 L2.4 12 L7.2 4 L12 12 L16.8 4 L21.6 12 L21.6 18 Z"
               fill="none"
               stroke="white"
-              strokeWidth="2.2"
-              strokeLinecap="square"
-              strokeLinejoin="miter"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
             />
           </svg>
           <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ marginTop: '8px' }}>
