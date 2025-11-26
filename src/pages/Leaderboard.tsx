@@ -4,19 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { LogOut } from 'lucide-react';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useI18n } from '@/i18n';
+import { useLeaderboardQuery } from '@/hooks/queries/useLeaderboardQuery';
+import { useProfileQuery } from '@/hooks/useProfileQuery';
 
 import DailyRewards from '@/components/DailyRewards';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import { LeaderboardSkeleton } from '@/components/LeaderboardSkeleton';
 import BottomNav from '@/components/BottomNav';
-
-interface LeaderboardEntry {
-  user_id?: string;
-  username: string;
-  total_correct_answers: number;
-  avatar_url: string | null;
-  rank: number;
-}
 
 interface RankReward {
   rank: number;
@@ -33,17 +27,15 @@ interface DailyRewardsData {
 const Leaderboard = () => {
   const navigate = useNavigate();
   const { t } = useI18n();
-  const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [userRank, setUserRank] = useState<number | null>(null);
-  const [userUsername, setUserUsername] = useState<string | null>(null);
-  const [userCorrectAnswers, setUserCorrectAnswers] = useState<number>(0);
+  const [userId, setUserId] = useState<string | undefined>();
+  const { profile } = useProfileQuery(userId);
+  const { leaderboard, loading, refetch } = useLeaderboardQuery(profile?.country_code);
   const [dailyRewards, setDailyRewards] = useState<DailyRewardsData | null>(null);
   
   // Pull-to-refresh functionality
   const { isPulling, pullProgress } = usePullToRefresh({
     onRefresh: async () => {
-      await fetchLeaderboard();
+      await refetch();
     },
     threshold: 80,
     disabled: false
@@ -62,89 +54,24 @@ const Leaderboard = () => {
     checkStandalone();
   }, []);
 
+  // Get user session
   useEffect(() => {
-    fetchLeaderboard();
-    
-    // Real-time subscription for daily_rankings updates
-    const channel = supabase
-      .channel('leaderboard-rankings-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'daily_rankings'
-        },
-        () => {
-          fetchLeaderboard();
-        }
-      )
-      .subscribe();
-    
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-
-  const fetchLeaderboard = async () => {
-    try {
-      // Check for valid session first
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionData?.session) {
-        console.log('[Leaderboard] No valid session, skipping fetch');
-        setLoading(false);
-        return;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUserId(session.user.id);
+      } else {
+        navigate('/auth/choice');
       }
+    });
+  }, [navigate]);
 
-      // Call Edge Function for country-specific daily leaderboard with explicit auth header
-      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country', {
-        headers: {
-          Authorization: `Bearer ${sessionData.session.access_token}`
-        }
-      });
+  // Calculate user's rank and stats from leaderboard data
+  const userRank = userId && leaderboard.length > 0
+    ? leaderboard.findIndex(entry => entry.user_id === userId) + 1 || null
+    : null;
 
-      if (error) {
-        console.error('[Leaderboard] Edge function error:', error);
-        setLoading(false);
-        return;
-      }
-
-      if (!data || !data.leaderboard) {
-        console.error('[Leaderboard] No leaderboard data returned');
-        setLoading(false);
-        return;
-      }
-
-      console.log('[Leaderboard] Loaded', data.leaderboard.length, 'players from country:', data.countryCode);
-      setTopPlayers(data.leaderboard);
-      setDailyRewards(data.dailyRewards || null);
-      
-      // Set user's own rank and info
-      if (data.userRank) {
-        setUserRank(data.userRank);
-        
-        // Get current user's data
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('username, total_correct_answers')
-            .eq('id', user.id)
-            .single();
-          
-          if (profileData) {
-            setUserUsername(profileData.username);
-            setUserCorrectAnswers(profileData.total_correct_answers);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('[Leaderboard] Error fetching daily leaderboard:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const userCorrectAnswers = profile?.total_correct_answers || 0;
+  const userUsername = profile?.username || null;
 
   return (
     <div className="min-h-screen w-full flex flex-col relative">
@@ -239,7 +166,7 @@ const Leaderboard = () => {
           <LeaderboardSkeleton />
         ) : (
           <DailyRewards 
-            topPlayers={topPlayers.slice(0, 10).map(p => ({
+            topPlayers={leaderboard.slice(0, 10).map(p => ({
               username: p.username,
               total_correct_answers: p.total_correct_answers
             }))}

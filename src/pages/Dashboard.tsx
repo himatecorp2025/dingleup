@@ -5,11 +5,11 @@ import { PlayNowButton } from '@/components/PlayNowButton';
 import { BoosterButton } from '@/components/BoosterButton';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useGameProfile } from '@/hooks/useGameProfile';
+import { useProfileQuery } from '@/hooks/useProfileQuery';
 import { useScrollBehavior } from '@/hooks/useScrollBehavior';
 import { useI18n } from '@/i18n';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
-import { useWallet } from '@/hooks/useWallet';
+import { useWalletQuery } from '@/hooks/queries/useWalletQuery';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useBoosterState } from '@/hooks/useBoosterState';
@@ -63,8 +63,8 @@ const Dashboard = () => {
   const { isHandheld, isStandalone } = usePlatformDetection();
   const { canMountModals } = useScrollBehavior();
   const { markActive } = useActivityTracker('route_view');
-  const { profile, loading, regenerateLives, refreshProfile } = useGameProfile(userId);
-  const { walletData, serverDriftMs, refetchWallet } = useWallet(userId);
+  const { profile, loading, refreshProfile } = useProfileQuery(userId);
+  const { walletData, refetchWallet } = useWalletQuery(userId);
   
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
@@ -477,14 +477,14 @@ if (!profile) {
                 lives={walletData?.livesCurrent ?? profile.lives}
                 livesMax={walletData?.livesMax || profile.max_lives}
                 nextLifeAt={walletData?.nextLifeAt || null}
-                serverDriftMs={serverDriftMs}
+                serverDriftMs={0}
                 onLifeExpired={() => {
                   refetchWallet();
                   refreshProfile();
                 }}
                 activeSpeedToken={walletData?.activeSpeedToken ? {
                   expiresAt: walletData.activeSpeedToken.expiresAt,
-                  durationMinutes: walletData.activeSpeedToken.durationMinutes
+                  durationMinutes: walletData.activeSpeedToken.speedDurationMinutes
                 } : null}
                 avatarUrl={profile.avatar_url}
                 className="data-tutorial-profile-header"

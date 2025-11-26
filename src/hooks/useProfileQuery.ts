@@ -21,6 +21,7 @@ export interface UserProfile {
   birth_date?: string | null;
   lives_regeneration_rate?: number;
   created_at?: string;
+  age_verified?: boolean;
 }
 
 const PROFILE_QUERY_KEY = (userId: string) => ['profile', userId];
