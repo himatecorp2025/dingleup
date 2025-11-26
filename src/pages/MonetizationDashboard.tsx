@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { useMonetizationAnalytics } from '@/hooks/useMonetizationAnalytics';
+import { useMonetizationAnalyticsQuery } from '@/hooks/queries/useMonetizationAnalyticsQuery';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 const MonetizationDashboard = () => {
   const navigate = useNavigate();
-  const { analytics, loading, error, refetch } = useMonetizationAnalytics();
+  const { analytics, loading, error, refetch } = useMonetizationAnalyticsQuery();
 
   if (loading) {
     return (
