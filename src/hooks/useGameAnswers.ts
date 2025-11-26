@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Question, CONTINUE_AFTER_WRONG_COST } from '@/types/game';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+import { useI18n } from '@/i18n';
 
 interface UseGameAnswersOptions {
   selectedAnswer: string | null;
@@ -22,6 +23,7 @@ interface UseGameAnswersOptions {
 }
 
 export const useGameAnswers = (options: UseGameAnswersOptions) => {
+  const { t } = useI18n();
   const {
     selectedAnswer,
     isAnimating,
@@ -66,12 +68,12 @@ export const useGameAnswers = (options: UseGameAnswersOptions) => {
     
     const timeoutId = setTimeout(() => {
       setErrorBannerVisible(true);
-      setErrorBannerMessage(`Rossz válasz! Folytatáshoz ${CONTINUE_AFTER_WRONG_COST} aranyérme szükséges.`);
+      setErrorBannerMessage(t('game.wrong_answer_banner_message').replace('{cost}', String(CONTINUE_AFTER_WRONG_COST)));
     }, 500);
     
     // Return cleanup function
     return () => clearTimeout(timeoutId);
-  }, [addResponseTime, triggerHaptic, setSelectedAnswer, setContinueType, setErrorBannerVisible, setErrorBannerMessage]);
+  }, [addResponseTime, triggerHaptic, setSelectedAnswer, setContinueType, setErrorBannerVisible, setErrorBannerMessage, t]);
 
   const handleAnswer = useCallback((answerKey: string) => {
     if (selectedAnswer || isAnimating) return;
