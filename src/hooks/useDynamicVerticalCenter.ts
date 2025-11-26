@@ -41,26 +41,19 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
         return;
       }
 
-      // Only recalculate if content height changed significantly (>2px difference)
-      if (Math.abs(contentHeight - lastContentHeightRef.current) > 2) {
-        // Calculate exact vertical center position
-        // Formula: (overlayHeight / 2) - (contentHeight / 2)
-        const isMultiLine = contentHeight / overlayHeight > 0.5;
-        const opticalAdjust = isMultiLine ? 4 : 0;
-        const centerPosition = (overlayHeight - contentHeight) / 2 + opticalAdjust;
-        
-        // Set translateY in pixels
-        setTranslateY(centerPosition);
-        lastContentHeightRef.current = contentHeight;
-        
-        if (import.meta.env.DEV) {
-          console.log('[useDynamicVerticalCenter] Recalculated:', {
-            overlayHeight,
-            contentHeight,
-            centerPosition,
-            heightChange: Math.abs(contentHeight - lastContentHeightRef.current)
-          });
-        }
+      // Always recalculate for pixel-perfect centering
+      const centerPosition = (overlayHeight - contentHeight) / 2;
+      
+      // Set translateY in pixels
+      setTranslateY(centerPosition);
+      lastContentHeightRef.current = contentHeight;
+      
+      if (import.meta.env.DEV) {
+        console.log('[useDynamicVerticalCenter] Recalculated:', {
+          overlayHeight,
+          contentHeight,
+          centerPosition,
+        });
       }
     } catch (error) {
       console.error('[useDynamicVerticalCenter] Error:', error);
