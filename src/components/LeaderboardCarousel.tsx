@@ -252,26 +252,35 @@ const LeaderboardCarouselComponent = () => {
                     aria-hidden 
                   />
                   
-                  {/* SHIMMER EFFECT - csak 1. helyezett */}
+                  {/* ANIMATED SPARKLES - csak 1. helyezett */}
                   {rankIndex === 0 && (
-                    <div 
-                      className="absolute clip-hexagon pointer-events-none overflow-hidden"
-                      style={{ 
-                        top: '5px', 
-                        left: '5px', 
-                        right: '5px', 
-                        bottom: '5px'
-                      }}
-                      aria-hidden
+                    <svg 
+                      className="absolute inset-0 w-full h-full pointer-events-none clip-hexagon"
+                      style={{ top: '5px', left: '5px', right: '5px', bottom: '5px' }}
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="xMidYMid slice"
                     >
-                      <div 
-                        className="absolute w-[200%] h-full animate-[shimmer_2s_ease-in-out_infinite]"
-                        style={{
-                          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
-                          transform: 'translateX(-100%)'
-                        }}
-                      />
-                    </div>
+                      {/* Sparkle 1 - top left */}
+                      <circle cx="25" cy="20" r="2.5" fill="#ffffff" opacity="0.95">
+                        <animate attributeName="opacity" values="0.95;0.4;0.95" dur="2s" repeatCount="indefinite"/>
+                      </circle>
+                      {/* Sparkle 2 - top right */}
+                      <circle cx="75" cy="25" r="2" fill="#fef3c7" opacity="0.85">
+                        <animate attributeName="opacity" values="0.85;0.3;0.85" dur="2.5s" repeatCount="indefinite"/>
+                      </circle>
+                      {/* Sparkle 3 - middle left */}
+                      <circle cx="20" cy="50" r="1.8" fill="#fde047" opacity="0.75">
+                        <animate attributeName="opacity" values="0.75;0.25;0.75" dur="3s" repeatCount="indefinite"/>
+                      </circle>
+                      {/* Sparkle 4 - middle right */}
+                      <circle cx="80" cy="55" r="1.5" fill="#ffffff" opacity="0.8">
+                        <animate attributeName="opacity" values="0.8;0.35;0.8" dur="2.2s" repeatCount="indefinite"/>
+                      </circle>
+                      {/* Sparkle 5 - bottom center */}
+                      <circle cx="50" cy="80" r="1.2" fill="#fef3c7" opacity="0.7">
+                        <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.8s" repeatCount="indefinite"/>
+                      </circle>
+                    </svg>
                   )}
                   
                   {/* Content */}
