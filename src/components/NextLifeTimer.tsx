@@ -62,7 +62,11 @@ export const NextLifeTimer = ({
     <div 
       className="absolute -bottom-[10.8px] -right-0.75 rounded-md z-50 text-[12px]"
       title={t('timer.next_life')}
-      style={{ perspective: '1000px' }}
+      style={{ 
+        perspective: '1000px',
+        width: '52px',
+        height: '24px'
+      }}
     >
       {/* DEEP BOTTOM SHADOW - Multiple layers for depth */}
       <div 
@@ -145,11 +149,14 @@ export const NextLifeTimer = ({
       
       {/* TEXT - Clean black, no effects */}
       <span 
-        className="relative z-10 font-extrabold leading-none block px-2 py-0.75" 
+        className="relative z-10 font-extrabold leading-none flex items-center justify-center" 
         style={{ 
           transform: 'translateZ(10px)',
           textShadow: 'none',
-          color: '#000000'
+          color: '#000000',
+          padding: '1px',
+          width: '100%',
+          height: '100%'
         }}
       >
         {formattedTime}
