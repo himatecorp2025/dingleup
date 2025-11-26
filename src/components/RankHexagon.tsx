@@ -125,7 +125,7 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
               strokeWidth="1.5"
             />
           </svg>
-          <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <span className="mt-2 text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             {value}
           </span>
         </div>
