@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback, memo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Crown } from 'lucide-react';
+import { Crown, Sparkles } from 'lucide-react';
 import { DailyRankingsCountdown } from './DailyRankingsCountdown';
 import { LeaderboardSkeleton } from './LeaderboardSkeleton';
 import { useI18n } from '@/i18n';
@@ -251,6 +251,13 @@ const LeaderboardCarouselComponent = () => {
                     }}
                     aria-hidden 
                   />
+                  
+                  {/* SPARKLE EFFECT - csak 1. helyezett */}
+                  {rankIndex === 0 && (
+                    <div className="absolute top-1 right-1 animate-pulse">
+                      <Sparkles className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 text-yellow-200 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]" />
+                    </div>
+                  )}
                   
                   {/* Content */}
                   <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
