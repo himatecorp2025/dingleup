@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useGameProfile } from '@/hooks/useGameProfile';
+import { useProfileQuery } from '@/hooks/useProfileQuery';
 import { useWallet } from '@/hooks/useWallet';
 import { useBoosterState } from '@/hooks/useBoosterState';
 import { useI18n, LangCode } from '@/i18n';
 import { resolveLangFromCountry } from '@/lib/i18n/langMapping';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -23,7 +24,7 @@ const Profile = () => {
   const { lang, setLang, t } = useI18n();
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
-  const { profile, loading, updateProfile, refreshProfile } = useGameProfile(userId);
+  const { profile, loading, updateProfile, refreshProfile } = useProfileQuery(userId);
   const { walletData, refetchWallet } = useWallet(userId);
   const boosterState = useBoosterState(userId);
   const [uploading, setUploading] = useState(false);
@@ -362,11 +363,35 @@ const Profile = () => {
     }
   };
 
-  // No loading screen - profile loads instantly via optimistic updates
-
   const getInitials = (name: string) => {
     return name.charAt(0).toUpperCase();
   };
+
+  // Skeleton loading state
+  if (loading || !profile) {
+    return (
+      <div className="profile-container min-h-dvh min-h-svh w-screen fixed inset-0 overflow-y-auto" style={{
+        background: 'linear-gradient(135deg, #0a0a2e 0%, #16213e 50%, #0f0f3d 100%)',
+        paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
+      }}>
+        <div className="max-w-2xl mx-auto p-6 space-y-6" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)' }}>
+          <div className="flex items-center justify-between mb-8">
+            <Skeleton className="h-8 w-32" />
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </div>
+          
+          <Skeleton className="h-32 w-full rounded-lg" />
+          
+          <div className="space-y-4">
+            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-24 w-full rounded-lg" />
+          </div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   // SVG Icons
   const HeartIcon = () => (
