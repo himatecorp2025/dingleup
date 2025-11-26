@@ -91,9 +91,9 @@ function = "regenerate-lives-background"
 schedule = "0 2 * * *"
 function = "aggregate-daily-activity"
 
-# Cron job for daily winners processing every day at 00:00 Budapest time (23:00 UTC)
+# Cron job for daily winners processing every day at 23:59:59 Budapest time (22:59 UTC)
 [[edge_runtime.cron]]
-schedule = "0 23 * * *"
+schedule = "59 22 * * *"
 function = "process-daily-winners"
 
 # CRITICAL OPTIMIZATION: Leaderboard cache refresh every 1 minute
