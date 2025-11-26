@@ -28,9 +28,11 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
     }
 
     try {
-      // Measure actual heights in pixels
-      const overlayHeight = overlayRef.current.offsetHeight;
-      const contentHeight = contentRef.current.offsetHeight;
+      // Measure actual heights in pixels based on real DOM layout
+      const overlayRect = overlayRef.current.getBoundingClientRect();
+      const contentRect = contentRef.current.getBoundingClientRect();
+      const overlayHeight = overlayRect.height;
+      const contentHeight = contentRect.height;
 
       if (overlayHeight === 0 || contentHeight === 0) {
         // Elements not yet rendered - retry
