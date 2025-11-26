@@ -252,10 +252,25 @@ const LeaderboardCarouselComponent = () => {
                     aria-hidden 
                   />
                   
-                  {/* SPARKLE EFFECT - csak 1. helyezett */}
+                  {/* SHIMMER EFFECT - csak 1. helyezett */}
                   {rankIndex === 0 && (
-                    <div className="absolute top-1 right-1 animate-pulse">
-                      <Sparkles className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 text-yellow-200 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]" />
+                    <div 
+                      className="absolute clip-hexagon pointer-events-none overflow-hidden"
+                      style={{ 
+                        top: '5px', 
+                        left: '5px', 
+                        right: '5px', 
+                        bottom: '5px'
+                      }}
+                      aria-hidden
+                    >
+                      <div 
+                        className="absolute w-[200%] h-full animate-[shimmer_2s_ease-in-out_infinite]"
+                        style={{
+                          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
+                          transform: 'translateX(-100%)'
+                        }}
+                      />
                     </div>
                   )}
                   
