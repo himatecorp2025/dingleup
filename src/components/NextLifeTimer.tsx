@@ -60,7 +60,7 @@ export const NextLifeTimer = ({
 
   return (
     <div 
-      className="absolute -bottom-[7.2px] -right-0.5 rounded-md z-50 text-[8px]"
+      className="absolute -bottom-[14.4px] -right-1 rounded-md z-50 text-[16px]"
       title={t('timer.next_life')}
       style={{ perspective: '1000px' }}
     >
@@ -145,10 +145,11 @@ export const NextLifeTimer = ({
       
       {/* TEXT - Clean black, no effects */}
       <span 
-        className="relative z-10 font-extrabold text-accent-foreground leading-none block px-1.5 py-0.5" 
+        className="relative z-10 font-extrabold leading-none block px-3 py-1" 
         style={{ 
           transform: 'translateZ(10px)',
-          textShadow: 'none'
+          textShadow: 'none',
+          color: '#000000'
         }}
       >
         {formattedTime}
