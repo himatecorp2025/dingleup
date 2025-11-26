@@ -41,6 +41,7 @@ const prefetchGameAssets = () => {
 import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { DailyWinnersDialog } from '@/components/DailyWinnersDialog';
+import { DailyRankRewardDialog } from '@/components/DailyRankRewardDialog';
 import { PremiumBoosterConfirmDialog } from '@/components/PremiumBoosterConfirmDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
@@ -625,7 +626,22 @@ if (!profile) {
           {/* Ranglista Button (moved above) removed here */}
       </div>
 
-      {/* Welcome bonus dialog - FIRST (only after age gate completed) */}
+      {/* Rank Reward Dialog - FIRST after age gate (BLOCKS Daily Winners) */}
+      <DailyRankRewardDialog
+        open={popupManager.popupState.showRankReward}
+        reward={popupManager.rankReward.pendingReward}
+        isClaiming={popupManager.rankReward.isClaiming}
+        onClaim={async () => {
+          await popupManager.rankReward.claimReward();
+          popupManager.closeRankReward();
+        }}
+        onDismiss={async () => {
+          await popupManager.rankReward.dismissReward();
+          popupManager.closeRankReward();
+        }}
+      />
+
+      {/* Welcome bonus dialog - SECOND (only after age gate completed) */}
         <WelcomeBonusDialog
           open={popupManager.popupState.showWelcomeBonus}
           onClaim={handleClaimWelcomeBonus}
@@ -633,7 +649,7 @@ if (!profile) {
           claiming={popupManager.welcomeBonus.claiming}
         />
  
-       {/* Daily gift dialog - SECOND - manual trigger (only after age gate completed) */}
+       {/* Daily gift dialog - THIRD - manual trigger (only after age gate completed) */}
        <DailyGiftDialog
         open={popupManager.popupState.showDailyGift}
         onClaim={handleClaimDailyGift}
@@ -642,6 +658,12 @@ if (!profile) {
         nextReward={popupManager.dailyGift.nextReward}
         canClaim={popupManager.dailyGift.canClaim}
         claiming={popupManager.dailyGift.claiming}
+      />
+
+      {/* Daily Winners Dialog - LAST (ONLY if no rank reward) */}
+      <DailyWinnersDialog
+        open={popupManager.popupState.showDailyWinners}
+        onClose={popupManager.closeDailyWinners}
       />
 
       <div data-tutorial="bottom-nav">

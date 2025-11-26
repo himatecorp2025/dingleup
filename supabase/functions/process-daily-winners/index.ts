@@ -193,50 +193,12 @@ serve(async (req) => {
 
         const { gold, lives } = prize;
 
-        // Credit wallet (coins)
-        const correlationId = `daily-top10:${user_id}:${dayDate}:${actualRank}:${countryCode}`;
-        const { error: coinError } = await supabaseClient
-          .rpc('credit_wallet', {
-            p_user_id: user_id,
-            p_delta_coins: gold,
-            p_delta_lives: 0,
-            p_source: 'daily_reward',
-            p_idempotency_key: correlationId,
-            p_metadata: {
-              day_date: dayDate,
-              rank: actualRank,
-              country_code: countryCode,
-              gold
-            }
-          });
+        // Check if it's Sunday (jackpot day)
+        const dateObj = new Date(dayDate + 'T00:00:00Z');
+        const dayOfWeek = dateObj.getUTCDay(); // 0 = Sunday
+        const isSundayJackpot = dayOfWeek === 0;
 
-        if (coinError) {
-          console.error(`[DAILY-WINNERS] Coin credit error for ${user_id}:`, coinError);
-          continue;
-        }
-
-        // Credit lives
-        const livesCorrelationId = `daily-top10-lives:${user_id}:${dayDate}:${actualRank}:${countryCode}`;
-        const { error: livesError } = await supabaseClient
-          .rpc('credit_lives', {
-            p_user_id: user_id,
-            p_delta_lives: lives,
-            p_source: 'daily_reward',
-            p_idempotency_key: livesCorrelationId,
-            p_metadata: {
-              day_date: dayDate,
-              rank: actualRank,
-              country_code: countryCode,
-              lives
-            }
-          });
-
-        if (livesError) {
-          console.error(`[DAILY-WINNERS] Lives credit error for ${user_id}:`, livesError);
-          continue;
-        }
-
-        // Mark as awarded
+        // Create pending reward record (NO automatic credit)
         const { error: awardError } = await supabaseClient
           .from('daily_winner_awarded')
           .insert({
@@ -244,7 +206,16 @@ serve(async (req) => {
             day_date: dayDate,
             rank: actualRank,
             gold_awarded: gold,
-            lives_awarded: lives
+            lives_awarded: lives,
+            status: 'pending',
+            is_sunday_jackpot: isSundayJackpot,
+            reward_payload: {
+              gold,
+              lives,
+              rank: actualRank,
+              country_code: countryCode,
+              day_type: isSundayJackpot ? 'sunday_jackpot' : 'normal'
+            }
           });
 
         if (awardError) {
@@ -252,7 +223,7 @@ serve(async (req) => {
           continue;
         }
 
-        console.log(`[DAILY-WINNERS] Awarded rank ${actualRank} to user ${user_id}: ${gold} gold, ${lives} lives`);
+        console.log(`[DAILY-WINNERS] Created pending reward rank ${actualRank} for user ${user_id}: ${gold} gold, ${lives} lives (status: pending)`);
         totalProcessedWinners++;
       }
     }
