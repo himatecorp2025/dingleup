@@ -237,8 +237,61 @@ Deno.serve(async (req) => {
         rank: index + 1
       }));
     } else {
-      // Use cached data (FAST PATH)
+      // Use cached data (FAST PATH) - but always include current user if missing
       leaderboard = cachedLeaderboard as LeaderboardEntry[];
+      
+      // CRITICAL FIX: Check if current user is in cached leaderboard
+      const userInCache = leaderboard.some(entry => entry.user_id === user.id);
+      
+      if (!userInCache) {
+        console.log('[get-daily-leaderboard-by-country] Current user not in cache, fetching profile...');
+        
+        // Fetch current user's profile
+        const { data: userProfile } = await supabase
+          .from('profiles')
+          .select('id, username, avatar_url, country_code')
+          .eq('id', user.id)
+          .single();
+        
+        // Fetch current user's daily ranking
+        const { data: userRanking } = await supabase
+          .from('daily_rankings')
+          .select('total_correct_answers')
+          .eq('user_id', user.id)
+          .eq('day_date', currentDay)
+          .eq('category', 'mixed')
+          .maybeSingle();
+        
+        if (userProfile) {
+          const userAnswers = userRanking?.total_correct_answers || 0;
+          
+          // Insert user into leaderboard at correct position
+          const userEntry: LeaderboardEntry = {
+            user_id: userProfile.id,
+            username: userProfile.username,
+            avatar_url: userProfile.avatar_url,
+            total_correct_answers: userAnswers,
+            rank: 0, // Will be recalculated
+          };
+          
+          leaderboard.push(userEntry);
+          
+          // Re-sort and recalculate ranks
+          leaderboard.sort((a, b) => {
+            if (b.total_correct_answers !== a.total_correct_answers) {
+              return b.total_correct_answers - a.total_correct_answers;
+            }
+            return a.username.localeCompare(b.username);
+          });
+          
+          leaderboard = leaderboard.map((entry, index) => ({
+            ...entry,
+            rank: index + 1
+          }));
+          
+          console.log('[get-daily-leaderboard-by-country] User added to leaderboard at rank:', userEntry.rank);
+        }
+      }
     }
 
     // Find user's rank

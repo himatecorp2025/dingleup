@@ -66,7 +66,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     }
   }, [userId, needsAgeVerification, profileLoading]); // Removed popupState dependencies to prevent loop
 
-  // Priority 2: Welcome Bonus (after age gate completed)
+  // Priority 2: Welcome Bonus (after age gate completed with 500ms delay)
   useEffect(() => {
     const shouldShow = 
       canMountModals &&
@@ -75,17 +75,21 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       welcomeBonus.canClaim &&
       !!userId;
     
-    // Only update if value would change
+    // Only update if value would change - with 500ms delay to allow age gate to fully close
     if (shouldShow && !popupState.showWelcomeBonus) {
-      setPopupState(prev => ({
-        ...prev,
-        showWelcomeBonus: true,
-        showDailyGift: false,
-      }));
+      const timer = setTimeout(() => {
+        setPopupState(prev => ({
+          ...prev,
+          showWelcomeBonus: true,
+          showDailyGift: false,
+        }));
+      }, 500); // 500ms delay for age gate close animation
+      
+      return () => clearTimeout(timer);
     }
   }, [canMountModals, popupState.ageGateCompleted, popupState.showAgeGate, welcomeBonus.canClaim, userId, popupState.showWelcomeBonus]);
 
-  // Priority 3: Daily Gift (after age gate + welcome bonus)
+  // Priority 3: Daily Gift (after age gate + welcome bonus with 500ms delay)
   useEffect(() => {
     const shouldShow =
       canMountModals &&
@@ -95,12 +99,16 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       dailyGift.canClaim &&
       !!userId;
     
-    // Only update if value would change
+    // Only update if value would change - with 500ms delay to allow welcome bonus to fully close
     if (shouldShow && !popupState.showDailyGift) {
-      setPopupState(prev => ({
-        ...prev,
-        showDailyGift: true,
-      }));
+      const timer = setTimeout(() => {
+        setPopupState(prev => ({
+          ...prev,
+          showDailyGift: true,
+        }));
+      }, 500); // 500ms delay for welcome bonus close animation
+      
+      return () => clearTimeout(timer);
     }
   }, [
     canMountModals,
