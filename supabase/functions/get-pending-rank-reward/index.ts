@@ -25,16 +25,24 @@ serve(async (req) => {
       );
     }
 
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+
+    // Extract bearer token and use it explicitly for auth.getUser
+    const token = authHeader.replace('Bearer ', '').trim();
+
     const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { 
-        global: { headers: { Authorization: authHeader } },
-        auth: { persistSession: false }
-      }
+      supabaseUrl,
+      supabaseAnonKey,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      },
     );
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
     if (authError || !user) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
