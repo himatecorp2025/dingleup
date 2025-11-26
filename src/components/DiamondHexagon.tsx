@@ -233,7 +233,7 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
         />
 
         {/* Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 z-10">
           {type === 'avatar' ? (
             avatarUrl ? (
               <img
