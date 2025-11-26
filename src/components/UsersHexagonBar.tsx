@@ -66,7 +66,7 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
       {/* Lives Hexagon - Red with Timer */}
       <div className="absolute z-10" style={{ left: '65%', top: '36%', transform: 'translate(-50%, -50%)' }}>
         <div className="relative">
-          <DiamondHexagon type="lives" value={lives} />
+          <DiamondHexagon type="lives" value={`${lives}/${livesMax}`} />
           {activeSpeedToken ? (
             <NextLifeTimer
               nextLifeAt={activeSpeedToken.expiresAt}
