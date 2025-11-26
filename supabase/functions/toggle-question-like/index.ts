@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { checkRateLimit, RATE_LIMITS } from '../_shared/rateLimit.ts';
-import { validateUUID } from '../_shared/validation.ts';
+import { validateString } from '../_shared/validation.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -60,9 +60,13 @@ serve(async (req) => {
 
     const { questionId } = await req.json();
 
-    // SECURITY: Enhanced validation
+    // SECURITY: Enhanced validation - question IDs are string identifiers, not UUIDs
     try {
-      validateUUID(questionId, 'questionId');
+      validateString(questionId, 'questionId', { 
+        required: true, 
+        minLength: 1, 
+        maxLength: 100 
+      });
     } catch (error) {
       return new Response(
         JSON.stringify({ error: error instanceof Error ? error.message : 'Invalid question ID' }),
