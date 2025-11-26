@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getCountryFromTimezone } from '@/lib/utils';
 
 /**
  * Automatically detects and saves user's device timezone to profile
@@ -23,10 +24,14 @@ export function useTimezoneDetection() {
 
         console.log('[TIMEZONE] Detected timezone:', detectedTimezone);
 
-        // Get current profile timezone
+        // Derive country from timezone
+        const derivedCountry = getCountryFromTimezone(detectedTimezone);
+        console.log('[TIMEZONE] Derived country from timezone:', derivedCountry);
+
+        // Get current profile timezone and country
         const { data: profile, error: fetchError } = await supabase
           .from('profiles')
-          .select('user_timezone')
+          .select('user_timezone, country_code')
           .eq('id', user.id)
           .single();
 
@@ -35,20 +40,33 @@ export function useTimezoneDetection() {
           return;
         }
 
-        // Only update if timezone has changed or not set
-        if (!profile?.user_timezone || profile.user_timezone !== detectedTimezone) {
+        // Update both timezone and country if either has changed
+        const needsUpdate = 
+          !profile?.user_timezone || 
+          profile.user_timezone !== detectedTimezone ||
+          !profile?.country_code ||
+          profile.country_code !== derivedCountry;
+
+        if (needsUpdate) {
           const { error: updateError } = await supabase
             .from('profiles')
-            .update({ user_timezone: detectedTimezone })
+            .update({ 
+              user_timezone: detectedTimezone,
+              country_code: derivedCountry,
+              preferred_country: derivedCountry
+            })
             .eq('id', user.id);
 
           if (updateError) {
-            console.error('[TIMEZONE] Error updating timezone:', updateError);
+            console.error('[TIMEZONE] Error updating timezone/country:', updateError);
           } else {
-            console.log('[TIMEZONE] Timezone saved successfully:', detectedTimezone);
+            console.log('[TIMEZONE] Timezone and country saved successfully:', {
+              timezone: detectedTimezone,
+              country: derivedCountry
+            });
           }
         } else {
-          console.log('[TIMEZONE] Timezone already up to date');
+          console.log('[TIMEZONE] Timezone and country already up to date');
         }
       } catch (error) {
         console.error('[TIMEZONE] Error in timezone detection:', error);

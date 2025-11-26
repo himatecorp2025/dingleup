@@ -89,3 +89,87 @@ export function getMillisecondsUntilMidnight(userTimezone: string): number {
     return tomorrow.getTime() - now.getTime();
   }
 }
+
+/**
+ * Maps IANA timezone to ISO country code
+ * @param timezone IANA timezone (e.g., 'Europe/Budapest', 'America/New_York')
+ * @returns ISO 3166-1 alpha-2 country code (e.g., 'HU', 'US')
+ */
+export function getCountryFromTimezone(timezone: string): string {
+  // Timezone to country mapping
+  const timezoneToCountry: Record<string, string> = {
+    // Europe
+    'Europe/Budapest': 'HU',
+    'Europe/London': 'GB',
+    'Europe/Paris': 'FR',
+    'Europe/Berlin': 'DE',
+    'Europe/Rome': 'IT',
+    'Europe/Madrid': 'ES',
+    'Europe/Amsterdam': 'NL',
+    'Europe/Brussels': 'BE',
+    'Europe/Vienna': 'AT',
+    'Europe/Warsaw': 'PL',
+    'Europe/Prague': 'CZ',
+    'Europe/Athens': 'GR',
+    'Europe/Bucharest': 'RO',
+    'Europe/Sofia': 'BG',
+    'Europe/Copenhagen': 'DK',
+    'Europe/Stockholm': 'SE',
+    'Europe/Oslo': 'NO',
+    'Europe/Helsinki': 'FI',
+    'Europe/Dublin': 'IE',
+    'Europe/Lisbon': 'PT',
+    'Europe/Zurich': 'CH',
+    'Europe/Moscow': 'RU',
+    'Europe/Kiev': 'UA',
+    'Europe/Istanbul': 'TR',
+    
+    // Americas
+    'America/New_York': 'US',
+    'America/Chicago': 'US',
+    'America/Denver': 'US',
+    'America/Los_Angeles': 'US',
+    'America/Phoenix': 'US',
+    'America/Anchorage': 'US',
+    'America/Honolulu': 'US',
+    'America/Toronto': 'CA',
+    'America/Vancouver': 'CA',
+    'America/Mexico_City': 'MX',
+    'America/Sao_Paulo': 'BR',
+    'America/Buenos_Aires': 'AR',
+    'America/Santiago': 'CL',
+    'America/Bogota': 'CO',
+    'America/Lima': 'PE',
+    'America/Caracas': 'VE',
+    
+    // Asia
+    'Asia/Tokyo': 'JP',
+    'Asia/Shanghai': 'CN',
+    'Asia/Hong_Kong': 'HK',
+    'Asia/Seoul': 'KR',
+    'Asia/Singapore': 'SG',
+    'Asia/Bangkok': 'TH',
+    'Asia/Jakarta': 'ID',
+    'Asia/Manila': 'PH',
+    'Asia/Kolkata': 'IN',
+    'Asia/Dubai': 'AE',
+    'Asia/Riyadh': 'SA',
+    'Asia/Tel_Aviv': 'IL',
+    
+    // Oceania
+    'Pacific/Auckland': 'NZ',
+    'Australia/Sydney': 'AU',
+    'Australia/Melbourne': 'AU',
+    'Australia/Brisbane': 'AU',
+    'Australia/Perth': 'AU',
+    
+    // Africa
+    'Africa/Cairo': 'EG',
+    'Africa/Johannesburg': 'ZA',
+    'Africa/Lagos': 'NG',
+    'Africa/Nairobi': 'KE',
+  };
+
+  // Return mapped country or default to 'HU' (Hungary) if not found
+  return timezoneToCountry[timezone] || 'HU';
+}
