@@ -362,13 +362,7 @@ const Profile = () => {
     }
   };
 
-  if (loading || !profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-        <p className="text-lg text-white">{t('profile.loading')}</p>
-      </div>
-    );
-  }
+  // No loading screen - profile loads instantly via optimistic updates
 
   const getInitials = (name: string) => {
     return name.charAt(0).toUpperCase();
@@ -427,6 +421,8 @@ const Profile = () => {
       <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="hsl(var(--accent)/0.8)" strokeWidth="2" strokeLinejoin="round"/>
     </svg>
   );
+
+  if (!profile) return null; // Don't render anything until profile loads
 
   return (
     <div className="profile-container min-h-dvh min-h-svh w-screen fixed inset-0 overflow-y-auto" style={{
