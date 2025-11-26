@@ -35,10 +35,10 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
     containerElement,
     { ...containerProps, role: 'status', 'aria-label': `Rank: ${value}` },
     <>
-      {/* Külső fényglow */}
+      {/* Külső fényglow - pókerzöld */}
       <div
         className="absolute inset-0 rounded-full blur-xl opacity-60 animate-pulse"
-        style={{ background: 'rgba(65, 105, 225, 0.4)' }}
+        style={{ background: 'rgba(34, 197, 94, 0.4)' }}
       />
 
       {/* 3D Hexagon konténer */}
@@ -57,22 +57,22 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
           aria-hidden
         />
 
-        {/* Külső keret */}
+        {/* Külső keret - pókerzöld */}
         <div
-          className="absolute inset-0 clip-hexagon bg-gradient-to-br from-blue-900 via-blue-600 to-blue-800 border-2 border-blue-400 shadow-[0_0_20px_rgba(65,105,225,0.6),0_8px_25px_rgba(0,0,0,0.5)]"
+          className="absolute inset-0 clip-hexagon bg-gradient-to-br from-green-900 via-green-600 to-green-800 border-2 border-green-400 shadow-[0_0_20px_rgba(34,197,94,0.6),0_8px_25px_rgba(0,0,0,0.5)]"
           aria-hidden
         />
 
-        {/* Középső keret */}
+        {/* Középső keret - pókerzöld */}
         <div
-          className="absolute inset-[3px] clip-hexagon bg-gradient-to-b from-blue-600 via-blue-400 to-blue-700"
+          className="absolute inset-[3px] clip-hexagon bg-gradient-to-b from-green-600 via-green-400 to-green-700"
           style={{ boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.15)' }}
           aria-hidden
         />
 
-        {/* Belső réteg */}
+        {/* Belső réteg - pókerzöld */}
         <div
-          className="absolute clip-hexagon bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700"
+          className="absolute clip-hexagon bg-gradient-to-b from-green-400 via-green-500 to-green-700"
           style={{
             top: '5px',
             left: '5px',
@@ -119,12 +119,12 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Serleg/kupa ikon - neon zöld színben */}
-            <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" fill="rgb(57, 255, 20)" stroke="rgb(57, 255, 20)" strokeWidth="2"/>
-            <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6" stroke="rgb(57, 255, 20)" strokeWidth="2" strokeLinecap="round"/>
-            <path d="M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="rgb(57, 255, 20)" strokeWidth="2" strokeLinecap="round"/>
-            <rect x="9" y="16" width="6" height="4.5" rx="1" fill="rgb(57, 255, 20)" stroke="rgb(57, 255, 20)" strokeWidth="2"/>
-            <line x1="7" y1="21" x2="17" y2="21" stroke="rgb(57, 255, 20)" strokeWidth="2.5" strokeLinecap="round"/>
+            {/* Serleg/kupa ikon - fehér */}
+            <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" fill="white" stroke="white" strokeWidth="2"/>
+            <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            <rect x="9" y="16" width="6" height="4.5" rx="1" fill="white" stroke="white" strokeWidth="2"/>
+            <line x1="7" y1="21" x2="17" y2="21" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
           <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ marginTop: '8px' }}>
             {value}
