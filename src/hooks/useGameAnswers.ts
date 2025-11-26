@@ -20,6 +20,7 @@ interface UseGameAnswersOptions {
   setContinueType: (type: 'timeout' | 'wrong' | 'out-of-lives') => void;
   setErrorBannerVisible: (visible: boolean) => void;
   setErrorBannerMessage: (message: string) => void;
+  onAnswerProcessed?: () => void; // Optional callback after answer is processed
 }
 
 export const useGameAnswers = (options: UseGameAnswersOptions) => {
@@ -41,6 +42,7 @@ export const useGameAnswers = (options: UseGameAnswersOptions) => {
     setContinueType,
     setErrorBannerVisible,
     setErrorBannerMessage,
+    onAnswerProcessed,
   } = options;
 
   const { triggerHaptic } = useHapticFeedback();
@@ -58,7 +60,10 @@ export const useGameAnswers = (options: UseGameAnswersOptions) => {
       console.error('[useGameAnswers] Error crediting correct answer:', error);
       // Don't block game flow - rewards will sync on next wallet refresh
     }
-  }, [addResponseTime, incrementCorrectAnswers, triggerHaptic, creditCorrectAnswer, setSelectedAnswer]);
+
+    // Trigger callback after answer is processed
+    onAnswerProcessed?.();
+  }, [addResponseTime, incrementCorrectAnswers, triggerHaptic, creditCorrectAnswer, setSelectedAnswer, onAnswerProcessed]);
 
   const handleWrongAnswer = useCallback((responseTime: number, answerKey: string) => {
     addResponseTime(responseTime);
@@ -70,10 +75,13 @@ export const useGameAnswers = (options: UseGameAnswersOptions) => {
       setErrorBannerVisible(true);
       setErrorBannerMessage(t('game.wrong_answer_banner_message').replace('{cost}', String(CONTINUE_AFTER_WRONG_COST)));
     }, 500);
+
+    // Trigger callback after answer is processed
+    onAnswerProcessed?.();
     
     // Return cleanup function
     return () => clearTimeout(timeoutId);
-  }, [addResponseTime, triggerHaptic, setSelectedAnswer, setContinueType, setErrorBannerVisible, setErrorBannerMessage, t]);
+  }, [addResponseTime, triggerHaptic, setSelectedAnswer, setContinueType, setErrorBannerVisible, setErrorBannerMessage, t, onAnswerProcessed]);
 
   const handleAnswer = useCallback((answerKey: string) => {
     if (selectedAnswer || isAnimating) return;
