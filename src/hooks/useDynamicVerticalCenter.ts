@@ -16,7 +16,7 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
   const [translateY, setTranslateY] = useState<number>(0);
   const retryTimeoutRef = useRef<number | null>(null);
   const lastContentHeightRef = useRef<number>(0);
-
+  const VISUAL_ADJUST_PX = 2; // small downward visual compensation to counter font metrics
   const calculateCenter = useCallback(() => {
     if (!overlayRef.current || !contentRef.current) {
       // DOM not ready - retry after 100ms
@@ -46,10 +46,11 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
       const contentCenterY = contentRect.top + contentRect.height / 2;
 
       // Calculate offset needed to align content center to overlay center
-      const offsetY = overlayCenterY - contentCenterY;
+      const rawOffsetY = overlayCenterY - contentCenterY;
+      const adjustedOffsetY = rawOffsetY + VISUAL_ADJUST_PX; // push slightly downward for visual centering
       
       // Set translateY in pixels
-      setTranslateY(offsetY);
+      setTranslateY(adjustedOffsetY);
       lastContentHeightRef.current = contentRect.height;
       
       if (import.meta.env.DEV) {
@@ -58,7 +59,8 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
           contentHeight: contentRect.height,
           overlayCenterY,
           contentCenterY,
-          offsetY,
+          rawOffsetY,
+          adjustedOffsetY,
         });
       }
     } catch (error) {
