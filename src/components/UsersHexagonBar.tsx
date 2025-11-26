@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DiamondHexagon } from './DiamondHexagon';
+import { RankHexagon } from './RankHexagon';
 import { NextLifeTimer } from './NextLifeTimer';
 
 interface UsersHexagonBarProps {
@@ -49,11 +50,10 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
 
   return (
     <div className={`relative ${className}`} style={{ minWidth: '260px', minHeight: '100px' }}>
-      {/* Rank Hexagon - Blue */}
+      {/* Rank Hexagon - Piros, külön komponenssel */}
       <div className="absolute z-10" style={{ left: '15%', top: '36%', transform: 'translate(-50%, -50%)' }}>
-        <DiamondHexagon 
-          type="rank" 
-          value={rank !== null ? rank : '...'} 
+        <RankHexagon
+          value={rank !== null ? rank : '...'}
           onClick={() => navigate('/leaderboard')}
         />
       </div>
