@@ -4,6 +4,8 @@ import { Crown } from 'lucide-react';
 import { DailyRankingsCountdown } from './DailyRankingsCountdown';
 import { LeaderboardSkeleton } from './LeaderboardSkeleton';
 import { useI18n } from '@/i18n';
+import { useLeaderboardQuery } from '@/hooks/queries/useLeaderboardQuery';
+import { useProfileQuery } from '@/hooks/useProfileQuery';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -14,76 +16,23 @@ interface LeaderboardEntry {
 
 const LeaderboardCarouselComponent = () => {
   const { t } = useI18n();
-  const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
+  const [userId, setUserId] = useState<string | undefined>();
+  const { profile } = useProfileQuery(userId);
+  const { leaderboard, loading } = useLeaderboardQuery(profile?.country_code);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollPausedRef = useRef(false);
   const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Memoized fetch function to prevent recreation on every render
-  const fetchFromDailyRankings = useCallback(async (): Promise<LeaderboardEntry[]> => {
-    try {
-      // Check for valid session first
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionData?.session) {
-        console.log('[LeaderboardCarousel] No valid session, skipping fetch');
-        return [];
+  // Get user session
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUserId(session.user.id);
       }
-
-      // Call Edge Function for country-specific daily leaderboard with explicit auth header
-      const { data, error } = await supabase.functions.invoke('get-daily-leaderboard-by-country', {
-        headers: {
-          Authorization: `Bearer ${sessionData.session.access_token}`
-        }
-      });
-
-      if (error) {
-        console.error('[LeaderboardCarousel] Edge function error:', error);
-        return [];
-      }
-
-      if (!data || !data.leaderboard) {
-        console.error('[LeaderboardCarousel] No leaderboard data returned');
-        return [];
-      }
-
-      console.log('[LeaderboardCarousel] Loaded', data.leaderboard.length, 'players from country:', data.countryCode);
-      return data.leaderboard;
-    } catch (e) {
-      console.error('[LeaderboardCarousel] Error:', e);
-      return [];
-    }
+    });
   }, []);
 
-  // Memoized refresh function
-  const refresh = useCallback(async () => {
-    const dailyData = await fetchFromDailyRankings();
-    setTopPlayers(dailyData.slice(0, 100));
-  }, [fetchFromDailyRankings]);
-
-  useEffect(() => {
-    // Azonnal indítjuk a betöltést
-    refresh();
-    
-    // Real-time subscription for daily_rankings updates
-    const channel = supabase
-      .channel('daily-rankings-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'daily_rankings'
-        },
-        () => {
-          refresh();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [refresh]);
+  const topPlayers = leaderboard.slice(0, 100);
 
   // Auto-scroll logika - infinite loop with seamless transition
   useEffect(() => {
@@ -209,7 +158,7 @@ const LeaderboardCarouselComponent = () => {
       </div>
       
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        {topPlayers.length === 0 ? (
+        {loading || topPlayers.length === 0 ? (
           <LeaderboardSkeleton />
         ) : (
           <div className="inline-flex gap-2 sm:gap-3 px-2">
