@@ -33,6 +33,17 @@ export const useDailyRankReward = (userId: string | undefined) => {
     const fetchPendingReward = async () => {
       setIsLoading(true);
       try {
+        // CRITICAL FIX: Wait for Supabase session to fully initialize before calling edge function
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          console.log('[RANK-REWARD] No active session, skipping');
+          setPendingReward(null);
+          setShowRewardPopup(false);
+          setIsLoading(false);
+          return;
+        }
+
         const { data, error } = await supabase.functions.invoke('get-pending-rank-reward', {
           body: {}
         });
