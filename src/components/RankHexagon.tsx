@@ -116,14 +116,20 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
           <svg
             className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
             viewBox="0 0 24 24"
-            fill="hsl(var(--foreground))"
+            fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
+            <rect x="3" y="17" width="18" height="3" rx="1" fill="rgb(255, 215, 0)" stroke="rgb(65, 105, 225)" strokeWidth="1.5"/>
             <path
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              d="M5 17 L7 9 L9 17 M10 17 L12 5 L14 17 M15 17 L17 9 L19 17"
+              fill="rgb(255, 215, 0)"
               stroke="rgb(65, 105, 225)"
               strokeWidth="1.5"
+              strokeLinejoin="round"
             />
+            <circle cx="7" cy="9" r="1.5" fill="rgb(255, 215, 0)" stroke="rgb(65, 105, 225)" strokeWidth="1"/>
+            <circle cx="12" cy="5" r="1.5" fill="rgb(255, 215, 0)" stroke="rgb(65, 105, 225)" strokeWidth="1"/>
+            <circle cx="17" cy="9" r="1.5" fill="rgb(255, 215, 0)" stroke="rgb(65, 105, 225)" strokeWidth="1"/>
           </svg>
           <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ marginTop: '8px' }}>
             {value}
