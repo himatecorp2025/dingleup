@@ -57,6 +57,7 @@ export interface UserProfile {
   question_swaps_available: number;
   total_correct_answers: number;
   country_code: string | null;
+  preferred_language: string | null;
   created_at: string;
   updated_at: string;
   age_verified: boolean | null;

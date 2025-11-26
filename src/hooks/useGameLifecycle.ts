@@ -37,6 +37,8 @@ interface UseGameLifecycleOptions {
   questions: Question[];
   questionStartTime: number;
   gameCompleted: boolean;
+  prefetchedQuestions: Question[] | null;
+  onPrefetchComplete: (questions: Question[]) => void;
 }
 
 export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
@@ -72,6 +74,8 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     questions,
     questionStartTime,
     gameCompleted,
+    prefetchedQuestions,
+    onPrefetchComplete,
   } = options;
 
   const navigate = useNavigate();
@@ -119,9 +123,71 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     });
   };
 
-  const startGame = useCallback(async (skipLoadingVideo: boolean = false) => {
+  const startGame = useCallback(async (skipLoadingVideo: boolean = false, usePrefetched: boolean = false) => {
     if (!profile || isStarting) return;
     
+    // INSTANT MODE: Use prefetched questions if available
+    if (usePrefetched && prefetchedQuestions && prefetchedQuestions.length > 0) {
+      console.log('[useGameLifecycle] ⚡ INSTANT RESTART - Using prefetched questions (<5ms)');
+      
+      setIsStarting(true);
+      setShowLoadingVideo(false);
+      setVideoEnded(true);
+      setIsGameReady(true);
+      
+      try {
+        // Backend operations in parallel (non-blocking)
+        const backendOps = (async () => {
+          try {
+            await supabase.rpc('reset_game_helps');
+          } catch (error) {
+            console.error('Error resetting helps:', error);
+          }
+          
+          const canPlay = await spendLife();
+          if (!canPlay) {
+            toast.error(t('game.insufficient_lives'));
+            navigate('/dashboard');
+            throw new Error('Insufficient lives');
+          }
+          
+          await refetchWallet();
+          await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
+          await creditStartReward();
+          await refreshProfile();
+        })();
+
+        // Immediately set questions and reset state (ATOMIC)
+        const shuffledWithVariety = shuffleAnswers(prefetchedQuestions);
+        setQuestions(shuffledWithVariety);
+        
+        resetGameStateHook();
+        resetTimer(10);
+        setHelp5050UsageCount(0);
+        setHelp2xAnswerUsageCount(0);
+        setHelpAudienceUsageCount(0);
+        resetQuestionHelpers();
+        setFirstAttempt(null);
+        setSecondAttempt(null);
+        setQuestionStartTime(Date.now());
+        setCanSwipe(true);
+        setIsAnimating(false);
+        
+        setIsStarting(false);
+        
+        // Wait for backend ops to complete
+        await backendOps;
+        
+        console.log('[useGameLifecycle] ✓ Instant restart complete');
+        return;
+      } catch (error) {
+        console.error('[useGameLifecycle] Instant restart error:', error);
+        setIsStarting(false);
+        return;
+      }
+    }
+    
+    // NORMAL MODE: Full backend loading
     if (userId) {
       await trackFeatureUsage(userId, 'game_action', 'game', 'start', {
         skipLoadingVideo,
@@ -241,6 +307,9 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
 
             const shuffledWithVariety = shuffleAnswers(questionsToUse);
             setQuestions(shuffledWithVariety);
+            
+            // Trigger prefetch for NEXT game (store in parent)
+            onPrefetchComplete(shuffledWithVariety);
           } catch (error) {
             console.error('[useGameLifecycle] Failed to load questions:', error);
             toast.error(t('game.error_loading_questions'));
@@ -276,7 +345,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     creditStartReward, setQuestions, resetGameStateHook, resetTimer,
     setHelp5050UsageCount, setHelp2xAnswerUsageCount, setHelpAudienceUsageCount,
     resetQuestionHelpers, setFirstAttempt, setSecondAttempt, setQuestionStartTime,
-    setCanSwipe, setIsAnimating, refreshProfile
+    setCanSwipe, setIsAnimating, refreshProfile, prefetchedQuestions, onPrefetchComplete
   ]);
 
   const handleVideoEnd = useCallback(async () => {
@@ -303,10 +372,11 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
   const restartGameImmediately = useCallback(async () => {
     if (!profile || isStarting) return;
 
-    console.log('[useGameLifecycle] Restart initiated - clearing all state');
+    console.log('[useGameLifecycle] ⚡ INSTANT RESTART initiated');
     toast.dismiss();
     
-    // Complete state reset BEFORE starting new game
+    // ATOMIC STATE RESET + PREFETCH MODE
+    // All state changes in batch to prevent flickering
     resetGameStateHook();
     setCoinsEarned(0);
     setHelp5050UsageCount(0);
@@ -319,11 +389,10 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     resetRewardAnimation();
     setCurrentQuestionIndex(0);
     setQuestionVisible(false);
-    setIsAnimating(true);
-    setCanSwipe(false);
     
-    // Short delay to ensure UI state is cleared
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // NO animation during restart for instant feel
+    setIsAnimating(false);
+    setCanSwipe(false);
     
     if (!gameCompleted) {
       toast.error(t('game.restart_lost_gold'), {
@@ -336,17 +405,16 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       });
     }
     
-    // Start new game with clean slate
-    await startGame(true);
+    // Start new game with PREFETCH MODE (uses prefetched questions if available)
+    await startGame(true, true);
     
-    // Smooth transition to new game
+    // Instant transition to new game (no 300ms delay!)
     setTimeout(() => {
       resetTimer(10);
       setQuestionVisible(true);
-      setIsAnimating(false);
       setCanSwipe(true);
-      console.log('[useGameLifecycle] Restart complete - game ready');
-    }, 300);
+      console.log('[useGameLifecycle] ✓ Instant restart complete');
+    }, 50);
   }, [
     profile, isStarting, gameCompleted, resetGameStateHook, setCoinsEarned,
     setHelp5050UsageCount, setHelp2xAnswerUsageCount, setHelpAudienceUsageCount,
