@@ -60,7 +60,7 @@ export const NextLifeTimer = ({
 
   return (
     <div 
-      className="absolute -bottom-[14.4px] -right-1 rounded-md z-50 text-[16px]"
+      className="absolute -bottom-[10.8px] -right-0.75 rounded-md z-50 text-[12px]"
       title={t('timer.next_life')}
       style={{ perspective: '1000px' }}
     >
@@ -145,7 +145,7 @@ export const NextLifeTimer = ({
       
       {/* TEXT - Clean black, no effects */}
       <span 
-        className="relative z-10 font-extrabold leading-none block px-3 py-1" 
+        className="relative z-10 font-extrabold leading-none block px-2 py-0.75" 
         style={{ 
           transform: 'translateZ(10px)',
           textShadow: 'none',
