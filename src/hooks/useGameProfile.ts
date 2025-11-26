@@ -35,14 +35,7 @@ export const useGameProfile = (userId: string | undefined) => {
       if (import.meta.env.DEV) {
         console.error('Error fetching profile:', error);
       }
-      // Only show toast for real errors, not missing profiles
-      if (error.code !== 'PGRST116') {
-        toast({
-          title: t('profile.error.load_title'),
-          description: t('profile.error.load_description'),
-          variant: 'destructive'
-        });
-      }
+      // No toast - silent failure, loading state handles UI
     } finally {
       setLoading(false);
     }
@@ -77,11 +70,7 @@ export const useGameProfile = (userId: string | undefined) => {
       if (import.meta.env.DEV) {
         console.error('Error updating profile:', error);
       }
-      toast({
-        title: t('profile.error.update_title'),
-        description: t('profile.error.update_description'),
-        variant: 'destructive'
-      });
+      // No toast - silent failure
       throw error;
     }
   };
