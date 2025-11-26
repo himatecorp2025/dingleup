@@ -7,12 +7,13 @@ interface MillionaireQuestionProps {
 }
 
 export const MillionaireQuestion = ({ children, questionNumber }: MillionaireQuestionProps) => {
-  const { overlayRef, contentRef, transformStyle } = useDynamicVerticalCenter();
+  const { svgRef, overlayRef, contentRef, transformStyle } = useDynamicVerticalCenter();
   
   return (
     <div className="relative w-full mb-0.5" style={{ minHeight: '100px' }}>
       {/* SVG Background */}
       <svg 
+        ref={svgRef}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="22.53058 -47.5814116 672.82399 250"
         fill="none"
