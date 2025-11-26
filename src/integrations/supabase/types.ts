@@ -478,6 +478,7 @@ export type Database = {
         Row: {
           awarded_at: string | null
           claimed_at: string | null
+          country_code: string | null
           day_date: string
           dismissed_at: string | null
           gold_awarded: number
@@ -492,6 +493,7 @@ export type Database = {
         Insert: {
           awarded_at?: string | null
           claimed_at?: string | null
+          country_code?: string | null
           day_date: string
           dismissed_at?: string | null
           gold_awarded?: number
@@ -506,6 +508,7 @@ export type Database = {
         Update: {
           awarded_at?: string | null
           claimed_at?: string | null
+          country_code?: string | null
           day_date?: string
           dismissed_at?: string | null
           gold_awarded?: number
@@ -534,6 +537,27 @@ export type Database = {
           day_date?: string
           shown_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      daily_winner_processing_log: {
+        Row: {
+          country_code: string
+          created_at: string | null
+          last_processed_at: string
+          last_processed_date: string
+        }
+        Insert: {
+          country_code: string
+          created_at?: string | null
+          last_processed_at?: string
+          last_processed_date: string
+        }
+        Update: {
+          country_code?: string
+          created_at?: string | null
+          last_processed_at?: string
+          last_processed_date?: string
         }
         Relationships: []
       }

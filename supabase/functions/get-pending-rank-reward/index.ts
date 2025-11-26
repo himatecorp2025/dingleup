@@ -42,17 +42,35 @@ serve(async (req) => {
       );
     }
 
-    // Get yesterday's date
+    // Get user's country to determine their local "yesterday"
+    const { data: profile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('country_code')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile?.country_code) {
+      console.error('[GET-PENDING-REWARD] Profile error:', profileError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch user profile' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Calculate yesterday's date (use UTC for now, rewards are country-specific)
     const yesterday = new Date();
     yesterday.setUTCDate(yesterday.getUTCDate() - 1);
     yesterday.setUTCHours(0, 0, 0, 0);
     const yesterdayDate = yesterday.toISOString().split('T')[0];
 
-    // Check for pending reward from yesterday
+    console.log(`[GET-PENDING-REWARD] Checking for user ${user.id} in country ${profile.country_code} on date ${yesterdayDate}`);
+
+    // Check for pending reward from yesterday FOR THIS USER'S COUNTRY
     const { data: pendingReward, error: rewardError } = await supabaseClient
       .from('daily_winner_awarded')
       .select('*')
       .eq('user_id', user.id)
+      .eq('country_code', profile.country_code)
       .eq('day_date', yesterdayDate)
       .eq('status', 'pending')
       .single();
@@ -65,13 +83,6 @@ serve(async (req) => {
       );
     }
 
-    // Get user profile for username
-    const { data: profile } = await supabaseClient
-      .from('profiles')
-      .select('username')
-      .eq('id', user.id)
-      .single();
-
     if (!pendingReward) {
       return new Response(
         JSON.stringify({ 
@@ -82,6 +93,13 @@ serve(async (req) => {
       );
     }
 
+    // Get user profile for username (use different variable name)
+    const { data: userProfile } = await supabaseClient
+      .from('profiles')
+      .select('username')
+      .eq('id', user.id)
+      .single();
+
     return new Response(
       JSON.stringify({ 
         hasPendingReward: true,
@@ -91,7 +109,7 @@ serve(async (req) => {
           lives: pendingReward.lives_awarded,
           isSundayJackpot: pendingReward.is_sunday_jackpot || false,
           dayDate: pendingReward.day_date,
-          username: profile?.username || 'Player',
+          username: userProfile?.username || 'Player',
           rewardPayload: pendingReward.reward_payload
         }
       }),
