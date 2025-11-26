@@ -18,12 +18,12 @@ export const DiamondHexagon: React.FC<DiamondHexagonProps> = ({ type, value, cla
   // Color schemes per type
   const colorSchemes = {
     rank: {
-      gradientOuter: 'from-primary-dark via-primary to-primary-darker',
-      gradientMiddle: 'from-primary via-primary-glow to-primary-dark',
-      gradientInner: 'from-primary-glow via-primary to-primary-dark',
-      borderColor: 'border-primary',
-      shadowColor: 'shadow-[0_0_20px_hsl(var(--primary)/0.6),0_8px_25px_rgba(0,0,0,0.5)]',
-      glowColor: 'hsl(var(--primary) / 0.4)',
+      gradientOuter: 'from-red-900 via-red-600 to-red-800',
+      gradientMiddle: 'from-red-600 via-red-400 to-red-700',
+      gradientInner: 'from-red-400 via-red-500 to-red-700',
+      borderColor: 'border-red-400',
+      shadowColor: 'shadow-[0_0_20px_rgba(239,68,68,0.6),0_8px_25px_rgba(0,0,0,0.5)]',
+      glowColor: 'rgba(239, 68, 68, 0.4)',
       iconColor: 'hsl(var(--foreground))',
     },
     coins: {
