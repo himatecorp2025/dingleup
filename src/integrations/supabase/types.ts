@@ -489,6 +489,7 @@ export type Database = {
           reward_payload: Json | null
           status: string
           user_id: string
+          user_timezone: string | null
         }
         Insert: {
           awarded_at?: string | null
@@ -504,6 +505,7 @@ export type Database = {
           reward_payload?: Json | null
           status?: string
           user_id: string
+          user_timezone?: string | null
         }
         Update: {
           awarded_at?: string | null
@@ -519,6 +521,7 @@ export type Database = {
           reward_payload?: Json | null
           status?: string
           user_id?: string
+          user_timezone?: string | null
         }
         Relationships: []
       }
@@ -542,22 +545,22 @@ export type Database = {
       }
       daily_winner_processing_log: {
         Row: {
-          country_code: string
           created_at: string | null
           last_processed_at: string
           last_processed_date: string
+          timezone: string
         }
         Insert: {
-          country_code: string
           created_at?: string | null
           last_processed_at?: string
           last_processed_date: string
+          timezone: string
         }
         Update: {
-          country_code?: string
           created_at?: string | null
           last_processed_at?: string
           last_processed_date?: string
+          timezone?: string
         }
         Relationships: []
       }
@@ -1890,6 +1893,7 @@ export type Database = {
           terms_accepted_at: string | null
           total_correct_answers: number
           updated_at: string | null
+          user_timezone: string | null
           username: string
           webauthn_challenge: string | null
           webauthn_credential_id: string | null
@@ -1934,6 +1938,7 @@ export type Database = {
           terms_accepted_at?: string | null
           total_correct_answers?: number
           updated_at?: string | null
+          user_timezone?: string | null
           username: string
           webauthn_challenge?: string | null
           webauthn_credential_id?: string | null
@@ -1978,6 +1983,7 @@ export type Database = {
           terms_accepted_at?: string | null
           total_correct_answers?: number
           updated_at?: string | null
+          user_timezone?: string | null
           username?: string
           webauthn_challenge?: string | null
           webauthn_credential_id?: string | null

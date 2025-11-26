@@ -20,6 +20,7 @@ import { useSessionMonitor } from "@/hooks/useSessionMonitor";
 import { AppRouteGuard } from "@/components/AppRouteGuard";
 import { AudioPolicyManager } from "@/components/AudioPolicyManager";
 import { useI18n } from "@/i18n";
+import { useTimezoneDetection } from "@/hooks/useTimezoneDetection";
 import loadingLogo from '@/assets/dingleup-loading-logo.png';
 
 // Eager load only landing page for instant initial render
@@ -100,6 +101,9 @@ const AppWithAnalytics = () => {
 
 // Main App component with lifecycle management
 const AppCore = () => {
+  // Automatic timezone detection for authenticated users
+  useTimezoneDetection();
+
   // App lifecycle management
   useAppLifecycle({
     onForeground: () => {

@@ -42,14 +42,14 @@ serve(async (req) => {
       );
     }
 
-    // Get user's country to determine their local "yesterday"
-    const { data: profile, error: profileError } = await supabaseClient
+    // Get user's country and timezone from profile
+    const { data: userProfile, error: profileError } = await supabaseClient
       .from('profiles')
-      .select('country_code')
+      .select('country_code, user_timezone, username')
       .eq('id', user.id)
       .single();
 
-    if (profileError || !profile?.country_code) {
+    if (profileError || !userProfile) {
       console.error('[GET-PENDING-REWARD] Profile error:', profileError);
       return new Response(
         JSON.stringify({ error: 'Failed to fetch user profile' }),
@@ -57,20 +57,20 @@ serve(async (req) => {
       );
     }
 
-    // Calculate yesterday's date (use UTC for now, rewards are country-specific)
+    // Calculate yesterday's date (use UTC for now, but rewards are timezone-specific)
     const yesterday = new Date();
     yesterday.setUTCDate(yesterday.getUTCDate() - 1);
     yesterday.setUTCHours(0, 0, 0, 0);
     const yesterdayDate = yesterday.toISOString().split('T')[0];
 
-    console.log(`[GET-PENDING-REWARD] Checking for user ${user.id} in country ${profile.country_code} on date ${yesterdayDate}`);
+    console.log(`[GET-PENDING-REWARD] Checking user ${user.id} in country ${userProfile.country_code} (timezone: ${userProfile.user_timezone})`);
 
-    // Check for pending reward from yesterday FOR THIS USER'S COUNTRY
+    // Check for pending reward from yesterday FOR THIS USER (country + timezone specific)
     const { data: pendingReward, error: rewardError } = await supabaseClient
       .from('daily_winner_awarded')
       .select('*')
       .eq('user_id', user.id)
-      .eq('country_code', profile.country_code)
+      .eq('country_code', userProfile.country_code)
       .eq('day_date', yesterdayDate)
       .eq('status', 'pending')
       .single();
@@ -93,13 +93,6 @@ serve(async (req) => {
       );
     }
 
-    // Get user profile for username (use different variable name)
-    const { data: userProfile } = await supabaseClient
-      .from('profiles')
-      .select('username')
-      .eq('id', user.id)
-      .single();
-
     return new Response(
       JSON.stringify({ 
         hasPendingReward: true,
@@ -109,7 +102,7 @@ serve(async (req) => {
           lives: pendingReward.lives_awarded,
           isSundayJackpot: pendingReward.is_sunday_jackpot || false,
           dayDate: pendingReward.day_date,
-          username: userProfile?.username || 'Player',
+          username: userProfile.username || 'Player',
           rewardPayload: pendingReward.reward_payload
         }
       }),
