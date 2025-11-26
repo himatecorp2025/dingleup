@@ -77,8 +77,8 @@ export const DailyRankRewardDialog = ({
   const styling = getRankStyling(reward.rank);
 
   const messageText = lang === 'hu' 
-    ? `${reward.username}, gratulálunk! Bekerültél a ${reward.isSundayJackpot ? 'Vasárnapi Jackpot' : 'napi'} TOP${reward.isSundayJackpot ? '25' : '10'}-be!`
-    : `${reward.username}, congratulations! You made it to the ${reward.isSundayJackpot ? 'Sunday Jackpot' : 'daily'} TOP${reward.isSundayJackpot ? '25' : '10'}!`;
+    ? `${reward.username}, gratulálunk! Bekerültél a ${reward.isSundayJackpot ? 'Vasárnapi Jackpot napi ranglistás' : 'tegnapi'} TOP${reward.isSundayJackpot ? '25' : '10'}-be!`
+    : `${reward.username}, congratulations! You made it to the ${reward.isSundayJackpot ? 'Sunday Jackpot daily' : 'yesterday\'s'} TOP${reward.isSundayJackpot ? '25' : '10'}!`;
 
   const claimButtonText = lang === 'hu' ? '💰 JUTALOM FELVÉTELE!' : '💰 CLAIM REWARD!';
   const dismissText = lang === 'hu' ? 'Most nem' : 'Not now';

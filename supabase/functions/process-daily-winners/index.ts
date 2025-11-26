@@ -118,7 +118,13 @@ serve(async (req) => {
 
       const countryUserIds = countryProfiles.map(p => p.id);
 
-      // Get top 10 rankings for this country for yesterday
+      // Determine if today is Sunday (day 0) for TOP25 jackpot
+      const dateObj = new Date(dayDate + 'T00:00:00Z');
+      const dayOfWeek = dateObj.getUTCDay(); // 0 = Sunday
+      const isSundayJackpot = dayOfWeek === 0;
+      const topLimit = isSundayJackpot ? 25 : 10;
+
+      // Get top N rankings for this country for yesterday (N = 10 or 25 depending on day)
       const { data: countryRankings, error: rankError } = await supabaseClient
         .from('daily_rankings')
         .select('user_id, total_correct_answers, average_response_time, rank')
@@ -127,7 +133,7 @@ serve(async (req) => {
         .in('user_id', countryUserIds)
         .order('total_correct_answers', { ascending: false })
         .order('average_response_time', { ascending: true })
-        .limit(10);
+        .limit(topLimit);
 
       if (rankError) {
         console.error(`[DAILY-WINNERS] Rank error for ${countryCode}:`, rankError);
@@ -139,7 +145,7 @@ serve(async (req) => {
         continue;
       }
 
-      console.log(`[DAILY-WINNERS] Found ${countryRankings.length} winners in ${countryCode}`);
+      console.log(`[DAILY-WINNERS] Found ${countryRankings.length} winners in ${countryCode} (${isSundayJackpot ? 'Sunday TOP25' : 'TOP10'})`);
 
       // Create snapshot for this country's winners
       for (let idx = 0; idx < countryRankings.length; idx++) {
@@ -192,11 +198,6 @@ serve(async (req) => {
         }
 
         const { gold, lives } = prize;
-
-        // Check if it's Sunday (jackpot day)
-        const dateObj = new Date(dayDate + 'T00:00:00Z');
-        const dayOfWeek = dateObj.getUTCDay(); // 0 = Sunday
-        const isSundayJackpot = dayOfWeek === 0;
 
         // Create pending reward record (NO automatic credit)
         const { error: awardError } = await supabaseClient
