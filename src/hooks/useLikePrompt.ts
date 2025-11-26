@@ -10,9 +10,8 @@ export const useLikePrompt = ({ currentQuestionIndex, questionId }: UseLikePromp
   const [isLikePromptOpen, setIsLikePromptOpen] = useState(false);
 
   const checkAndShowLikePrompt = useCallback(async () => {
-    // Only check after questions 5, 6, 7, 8, 9, 10 (0-indexed: 5-10)
-    const eligibleQuestions = [5, 6, 7, 8, 9, 10];
-    if (!eligibleQuestions.includes(currentQuestionIndex)) {
+    // Check after any question (1-15)
+    if (currentQuestionIndex < 1 || currentQuestionIndex > 15) {
       return;
     }
 
@@ -54,14 +53,32 @@ export const useLikePrompt = ({ currentQuestionIndex, questionId }: UseLikePromp
     recordPromptView();
   }, [recordPromptView]);
 
-  const handleLikeFromPrompt = useCallback((onLikeCallback: () => void) => {
-    // Execute the like action
-    onLikeCallback();
+  const handleLikeFromPrompt = useCallback(async (onLikeCallback: () => Promise<boolean>) => {
+    // Execute the like action and get result
+    const wasSuccessful = await onLikeCallback();
+    
+    // Only credit coins if the like was successful (not already liked)
+    if (wasSuccessful && questionId) {
+      try {
+        const { data, error } = await supabase.functions.invoke('credit-like-popup-reward', {
+          body: { questionId }
+        });
+
+        if (error) {
+          console.error('[useLikePrompt] Error crediting coin reward:', error);
+        } else if (data?.success) {
+          console.log('[useLikePrompt] Successfully credited +10 coins');
+        }
+      } catch (error) {
+        console.error('[useLikePrompt] Error in coin reward:', error);
+      }
+    }
+    
     // Record view
     recordPromptView();
     // Close popup
     setIsLikePromptOpen(false);
-  }, [recordPromptView]);
+  }, [recordPromptView, questionId]);
 
   return {
     isLikePromptOpen,
