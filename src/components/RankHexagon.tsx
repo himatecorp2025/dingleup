@@ -119,12 +119,12 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Serleg/kupa ikon - profil oldalról */}
-            <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" fill="white" stroke="white" strokeWidth="2"/>
-            <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            <path d="M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            <rect x="9" y="16" width="6" height="4.5" rx="1" fill="white" stroke="white" strokeWidth="2"/>
-            <line x1="7" y1="21" x2="17" y2="21" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+            {/* Serleg/kupa ikon - neon zöld színben */}
+            <path d="M6 9c0 3.866 2.686 7 6 7s6-3.134 6-7V4H6v5z" fill="rgb(57, 255, 20)" stroke="rgb(57, 255, 20)" strokeWidth="2"/>
+            <path d="M6 9H4.5C3.67157 9 3 8.32843 3 7.5V6C3 5.17157 3.67157 4.5 4.5 4.5H6" stroke="rgb(57, 255, 20)" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M18 9h1.5c.8284 0 1.5-.67157 1.5-1.5V6c0-.82843-.6716-1.5-1.5-1.5H18" stroke="rgb(57, 255, 20)" strokeWidth="2" strokeLinecap="round"/>
+            <rect x="9" y="16" width="6" height="4.5" rx="1" fill="rgb(57, 255, 20)" stroke="rgb(57, 255, 20)" strokeWidth="2"/>
+            <line x1="7" y1="21" x2="17" y2="21" stroke="rgb(57, 255, 20)" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
           <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ marginTop: '8px' }}>
             {value}
