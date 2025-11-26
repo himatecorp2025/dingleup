@@ -166,21 +166,97 @@ const LeaderboardCarouselComponent = () => {
             {[...topPlayers, ...topPlayers].map((player, index) => {
               const rank = (index % topPlayers.length) + 1;
               const showCrown = (index % topPlayers.length) < 3;
+              const rankIndex = index % topPlayers.length;
+              
+              // Get border and shadow colors based on rank
+              const getBorderColor = () => {
+                if (rankIndex === 0) return 'hsl(var(--gold))'; // Arany
+                if (rankIndex === 1) return 'hsl(var(--muted))'; // Ezüst
+                if (rankIndex === 2) return 'hsl(var(--gold-dark))'; // Bronz
+                return 'hsl(var(--primary))'; // Lila
+              };
+              
+              const getShadowColor = () => {
+                if (rankIndex === 0) return 'shadow-[0_0_20px_rgba(234,179,8,0.6),0_8px_25px_rgba(0,0,0,0.5)]'; // Gold glow
+                if (rankIndex === 1) return 'shadow-[0_0_20px_rgba(156,163,175,0.6),0_8px_25px_rgba(0,0,0,0.5)]'; // Silver glow
+                if (rankIndex === 2) return 'shadow-[0_0_20px_rgba(180,83,9,0.6),0_8px_25px_rgba(0,0,0,0.5)]'; // Bronze glow
+                return 'shadow-[0_0_20px_rgba(168,85,247,0.6),0_8px_25px_rgba(0,0,0,0.5)]'; // Purple glow
+              };
+              
               return (
                 <div key={`${player.user_id}-${index}`} className="relative clip-hexagon w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0">
-                  {/* BASE SHADOW */}
-                  <div className="absolute clip-hexagon" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px', background: 'rgba(0,0,0,0.5)', filter: 'blur(4px)' }} aria-hidden />
-                  {/* OUTER FRAME */}
-                  <div className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(index % topPlayers.length)} border-2 shadow-xl`} style={{ borderColor: (index % topPlayers.length) === 0 ? 'hsl(var(--gold))' : (index % topPlayers.length) === 1 ? 'hsl(var(--muted))' : (index % topPlayers.length) === 2 ? 'hsl(var(--gold-dark))' : 'hsl(var(--primary))' }} aria-hidden />
-                  {/* MIDDLE FRAME */}
-                  <div className="absolute inset-[2px] clip-hexagon" style={{ background: 'linear-gradient(180deg, hsl(var(--primary-foreground) / 0.3), hsl(var(--primary-foreground) / 0.1))', boxShadow: 'inset 0 2px 0 hsl(var(--primary-foreground) / 0.4)' }} aria-hidden />
-                  {/* INNER LAYER */}
-                  <div className="absolute clip-hexagon" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px', boxShadow: 'inset 0 4px 8px hsl(var(--primary-foreground) / 0.3), inset 0 -4px 8px hsl(var(--background) / 0.3)' }} aria-hidden />
+                  {/* BASE SHADOW (3D depth) */}
+                  <div 
+                    className="absolute clip-hexagon" 
+                    style={{ 
+                      top: '3px', 
+                      left: '3px', 
+                      right: '-3px', 
+                      bottom: '-3px', 
+                      background: 'rgba(0,0,0,0.35)', 
+                      filter: 'blur(3px)' 
+                    }} 
+                    aria-hidden 
+                  />
+                  
+                  {/* OUTER FRAME - gradient with border */}
+                  <div 
+                    className={`absolute inset-0 clip-hexagon bg-gradient-to-br ${getHexagonColor(rankIndex)} border-2 ${getShadowColor()}`}
+                    style={{ borderColor: getBorderColor() }}
+                    aria-hidden 
+                  />
+                  
+                  {/* MIDDLE FRAME (bright inner highlight) */}
+                  <div 
+                    className={`absolute inset-[3px] clip-hexagon bg-gradient-to-b ${getHexagonColor(rankIndex)}`}
+                    style={{ boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.15)' }}
+                    aria-hidden 
+                  />
+                  
+                  {/* INNER CRYSTAL/COLOR LAYER */}
+                  <div 
+                    className={`absolute clip-hexagon bg-gradient-to-b ${getHexagonColor(rankIndex)}`}
+                    style={{ 
+                      top: '5px', 
+                      left: '5px', 
+                      right: '5px', 
+                      bottom: '5px', 
+                      boxShadow: 'inset 0 4px 8px rgba(255,255,255,0.1), inset 0 -4px 8px rgba(0,0,0,0.15)' 
+                    }}
+                    aria-hidden 
+                  />
+                  
+                  {/* SPECULAR HIGHLIGHT (top-left) */}
+                  <div 
+                    className="absolute clip-hexagon pointer-events-none"
+                    style={{ 
+                      top: '5px', 
+                      left: '5px', 
+                      right: '5px', 
+                      bottom: '5px', 
+                      background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)' 
+                    }}
+                    aria-hidden 
+                  />
+                  
+                  {/* INNER GLOW (bottom shadow for 3D depth) */}
+                  <div 
+                    className="absolute clip-hexagon pointer-events-none"
+                    style={{ 
+                      top: '5px', 
+                      left: '5px', 
+                      right: '5px', 
+                      bottom: '5px', 
+                      boxShadow: 'inset 0 0 5px rgba(0,0,0,0.125)' 
+                    }}
+                    aria-hidden 
+                  />
+                  
                   {/* Content */}
                   <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
                     {/* Felső rész: korona + rang */}
                     <div className="flex flex-col items-center gap-0">
-                      {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ${getCrownColor(index % topPlayers.length)}`} />}
+                      {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ${getCrownColor(rankIndex)}`} />}
                       <p className="text-[9px] sm:text-[10px] md:text-xs font-black text-primary-foreground drop-shadow-lg leading-none">{rank}.</p>
                     </div>
                     
