@@ -303,7 +303,7 @@ export const MillionaireAnswer = ({
               }`}
               style={{ 
                 textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)',
-                transform: isMultiLine ? 'scale(0.95)' : 'scale(1)',
+                transform: isMultiLine ? 'scale(0.85)' : 'scale(1)',
                 transformOrigin: 'center'
               }}
             >
