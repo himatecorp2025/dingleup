@@ -60,12 +60,12 @@ export const NextLifeTimer = ({
 
   return (
     <div 
-      className="absolute bottom-0 -right-0.75 rounded-md z-50 text-[12px]"
+      className="absolute bottom-0 -right-0.75 rounded-md z-50 text-[10px]"
       title={t('timer.next_life')}
       style={{ 
         perspective: '1000px',
-        width: '52px',
-        height: '24px',
+        width: '44px',
+        height: '20px',
         transform: 'translateY(100%)'
       }}
     >
