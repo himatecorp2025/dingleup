@@ -137,9 +137,9 @@ const LeaderboardCarouselComponent = () => {
 
   // Memoized color functions to prevent recalculation
   const getHexagonColor = useCallback((index: number) => {
-    if (index === 0) return 'from-gold via-gold to-gold-dark'; // Arany
+    if (index === 0) return 'from-yellow-400 via-yellow-300 to-yellow-500'; // Intenzív arany
     if (index === 1) return 'from-muted via-muted-foreground to-muted'; // Ezüst
-    if (index === 2) return 'from-gold-dark via-gold-dark to-gold'; // Bronz
+    if (index === 2) return 'from-amber-700 via-amber-600 to-amber-800'; // Bronz (ezüst stílusában)
     return 'from-primary via-primary to-primary'; // Lila
   }, []);
 
@@ -170,16 +170,16 @@ const LeaderboardCarouselComponent = () => {
               
               // Get border and shadow colors based on rank
               const getBorderColor = () => {
-                if (rankIndex === 0) return 'hsl(var(--gold))'; // Arany
+                if (rankIndex === 0) return '#fbbf24'; // Intenzív arany
                 if (rankIndex === 1) return 'hsl(var(--muted))'; // Ezüst
-                if (rankIndex === 2) return 'hsl(var(--gold-dark))'; // Bronz
+                if (rankIndex === 2) return '#92400e'; // Bronz
                 return 'hsl(var(--primary))'; // Lila
               };
               
               const getShadowColor = () => {
-                if (rankIndex === 0) return 'shadow-[0_0_20px_rgba(234,179,8,0.6),0_8px_25px_rgba(0,0,0,0.5)]'; // Gold glow
+                if (rankIndex === 0) return 'shadow-[0_0_30px_rgba(251,191,36,0.9),0_10px_35px_rgba(234,179,8,0.7),0_0_50px_rgba(250,204,21,0.5)]'; // Intenzív arany glow
                 if (rankIndex === 1) return 'shadow-[0_0_20px_rgba(156,163,175,0.6),0_8px_25px_rgba(0,0,0,0.5)]'; // Silver glow
-                if (rankIndex === 2) return 'shadow-[0_0_20px_rgba(180,83,9,0.6),0_8px_25px_rgba(0,0,0,0.5)]'; // Bronze glow
+                if (rankIndex === 2) return 'shadow-[0_0_20px_rgba(146,64,14,0.6),0_8px_25px_rgba(0,0,0,0.5)]'; // Bronze glow
                 return 'shadow-[0_0_20px_rgba(168,85,247,0.6),0_8px_25px_rgba(0,0,0,0.5)]'; // Purple glow
               };
               
@@ -256,7 +256,7 @@ const LeaderboardCarouselComponent = () => {
                   <div className="absolute inset-0 flex flex-col items-center justify-between z-10 px-1 py-1.5">
                     {/* Felső rész: korona + rang */}
                     <div className="flex flex-col items-center gap-0">
-                      {showCrown && <Crown className={`w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ${getCrownColor(rankIndex)}`} />}
+                      {showCrown && <Crown className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${getCrownColor(rankIndex)} drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]`} />}
                       <p className="text-[9px] sm:text-[10px] md:text-xs font-black text-primary-foreground drop-shadow-lg leading-none">{rank}.</p>
                     </div>
                     
