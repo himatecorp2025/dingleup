@@ -120,12 +120,11 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M3 18 L3 21 L21 21 L21 18 L18 18 L15 8 L12 12 L9 8 L6 18 L3 18 Z"
+              d="M2 19 L2 21 L22 21 L22 19 L19 19 L16.5 9 L12 5 L7.5 9 L5 19 L2 19 Z"
               fill="white"
               stroke="rgb(65, 105, 225)"
-              strokeWidth="1.5"
+              strokeWidth="1.8"
               strokeLinejoin="miter"
-              strokeLinecap="square"
             />
           </svg>
           <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ marginTop: '8px' }}>
