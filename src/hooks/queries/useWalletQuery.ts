@@ -22,30 +22,43 @@ const WALLET_QUERY_KEY = (userId: string) => ['wallet', userId];
 
 async function fetchWallet(userId: string): Promise<WalletData> {
   const requestTime = Date.now();
-  
-  const response = await supabase.functions.invoke('get-wallet', {
-    body: { userId }
+
+  // Get current session for authenticated function call
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !sessionData?.session) {
+    throw new Error('No session');
+  }
+
+  // Request only the fields we actually need (smaller payload)
+  const fields = 'livesCurrent,livesMax,coinsCurrent,nextLifeAt,regenIntervalSec,regenMinutes,activeSpeedToken';
+
+  const { data, error } = await supabase.functions.invoke('get-wallet', {
+    headers: {
+      Authorization: `Bearer ${sessionData.session.access_token}`,
+    },
+    body: { fields },
   });
 
   const responseTime = Date.now();
   const roundTripTime = responseTime - requestTime;
-  const estimatedServerTime = responseTime - (roundTripTime / 2);
+  const estimatedServerTime = responseTime - roundTripTime / 2;
   const clientServerDrift = estimatedServerTime - Date.now();
 
-  if (response.error) throw response.error;
-  if (!response.data?.success) throw new Error(response.data?.error || 'Failed to fetch wallet');
+  if (error) throw error;
+  if (!data) throw new Error('Failed to fetch wallet');
 
-  const data = response.data;
+  const wallet = data as any;
+
   return {
-    coins: data.coins,
-    coinsCurrent: data.coins, // Backward compatibility
-    lives: data.lives,
-    livesCurrent: data.lives, // Backward compatibility
-    maxLives: data.maxLives,
-    livesMax: data.maxLives, // Backward compatibility
-    nextLifeAt: data.nextLifeAt,
+    coins: wallet.coinsCurrent ?? 0,
+    coinsCurrent: wallet.coinsCurrent ?? 0,
+    lives: wallet.livesCurrent ?? 0,
+    livesCurrent: wallet.livesCurrent ?? 0,
+    maxLives: wallet.livesMax ?? 0,
+    livesMax: wallet.livesMax ?? 0,
+    nextLifeAt: wallet.nextLifeAt ?? null,
     serverDriftMs: clientServerDrift,
-    activeSpeedToken: data.activeSpeedToken || null,
+    activeSpeedToken: wallet.activeSpeedToken || null,
   };
 }
 
