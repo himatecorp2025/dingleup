@@ -21,7 +21,7 @@ export const TutorialOverlay = ({
   onPrev,
   onClose
 }: TutorialOverlayProps) => {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [highlightRect, setHighlightRect] = useState<DOMRect | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -94,6 +94,7 @@ export const TutorialOverlay = ({
   if (!isVisible || currentStep >= steps.length) return null;
 
   const step = steps[currentStep];
+  const currentLang = lang === 'hu' ? 'hu' : 'en';
 
   return (
     <div className="fixed inset-0 z-[9999] pointer-events-none">
@@ -153,10 +154,10 @@ export const TutorialOverlay = ({
           {/* Content */}
           <div className="space-y-3">
             <h3 className="text-lg font-bold text-white pr-8">
-              {step.title}
+              {step.title[currentLang]}
             </h3>
             <p className="text-sm text-white/90 leading-relaxed">
-              {step.description}
+              {step.description[currentLang]}
             </p>
 
             {/* Progress indicator */}
