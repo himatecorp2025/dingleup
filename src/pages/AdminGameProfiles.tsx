@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { useAdminGameProfiles } from '@/hooks/useAdminGameProfiles';
+import { useAdminGameProfilesQuery } from '@/hooks/queries/useAdminGameProfilesQuery';
 import { Brain, Search, Info } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ import AdminLayout from '@/components/admin/AdminLayout';
 
 export default function AdminGameProfiles() {
   const navigate = useNavigate();
-  const { loading, error, profiles } = useAdminGameProfiles();
+  const { profiles, loading, error } = useAdminGameProfilesQuery();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'answered' | 'correctness' | 'active'>('answered');
 

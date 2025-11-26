@@ -5,15 +5,24 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useUserGameProfile } from '@/hooks/useUserGameProfile';
+import { useUserGameProfileQuery } from '@/hooks/queries/useUserGameProfileQuery';
 import { Brain, TrendingUp, Heart, ThumbsDown, Target, Info, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function ProfileGame() {
   const navigate = useNavigate();
-  const { loading, error, profile, updateSettings } = useUserGameProfile();
+  const [userId, setUserId] = useState<string | undefined>();
+  const { loading, error, profile, updateSettings } = useUserGameProfileQuery(userId);
   const [settingsLoading, setSettingsLoading] = useState(false);
+
+  // Get user ID on mount
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) setUserId(user.id);
+    });
+  }, []);
 
   const handleToggleAI = async (enabled: boolean) => {
     setSettingsLoading(true);
