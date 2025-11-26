@@ -119,9 +119,9 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Háromágú korona - user által megadott geometria fehérben */}
+            {/* Háromágú korona - 3 különálló csúcs: bal, középső (legmagasabb), jobb */}
             <path
-              d="M2.4 18 L2.4 12 L7.2 4 L12 12 L16.8 4 L21.6 12 L21.6 18 Z"
+              d="M3 18 L7 6 L12 13 L12 4 L17 13 L17 6 L21 18 Z"
               fill="none"
               stroke="white"
               strokeWidth="1.8"
