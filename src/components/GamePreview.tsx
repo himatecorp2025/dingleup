@@ -27,6 +27,9 @@ import { useGameAnswers } from "@/hooks/useGameAnswers";
 import { useGameNavigation } from "@/hooks/useGameNavigation";
 import { useGameErrorHandling } from "@/hooks/useGameErrorHandling";
 import { useGameAnimation } from "@/hooks/useGameAnimation";
+import { useLikePrompt } from "@/hooks/useLikePrompt";
+import { QuestionLikePromptPopup } from "./QuestionLikePromptPopup";
+import { useQuestionLike } from "@/hooks/useQuestionLike";
 
 import healthQuestions from "@/data/questions-health.json";
 import historyQuestions from "@/data/questions-history.json";
@@ -100,6 +103,21 @@ const GamePreview = memo(() => {
   const [firstAttempt, setFirstAttempt] = useState<string | null>(null);
   const [secondAttempt, setSecondAttempt] = useState<string | null>(null);
 
+  // Like prompt system
+  const currentQuestionId = questions[currentQuestionIndex]?.id || null;
+  const {
+    isLikePromptOpen,
+    checkAndShowLikePrompt,
+    handleCloseLikePrompt,
+    handleLikeFromPrompt,
+  } = useLikePrompt({ 
+    currentQuestionIndex, 
+    questionId: currentQuestionId 
+  });
+
+  // Question like functionality
+  const { liked: isLiked, toggleLike: handleToggleLike } = useQuestionLike(currentQuestionId);
+
   const {
     isAnimating,
     setIsAnimating,
@@ -133,6 +151,7 @@ const GamePreview = memo(() => {
     addResponseTime,
     setSelectedAnswer,
     triggerHaptic,
+    onAnswerProcessed: checkAndShowLikePrompt,
   });
   
   const {
@@ -223,6 +242,7 @@ const GamePreview = memo(() => {
     setContinueType,
     setErrorBannerVisible,
     setErrorBannerMessage,
+    onAnswerProcessed: checkAndShowLikePrompt,
   });
 
   const {
@@ -592,6 +612,13 @@ const GamePreview = memo(() => {
         </div>
 
         {/* Dialogs */}
+        <QuestionLikePromptPopup
+          isOpen={isLikePromptOpen}
+          onClose={handleCloseLikePrompt}
+          onLike={() => handleLikeFromPrompt(handleToggleLike)}
+          isLiked={isLiked}
+        />
+        
         <ExitGameDialog
           open={showExitDialog}
           onOpenChange={setShowExitDialog}

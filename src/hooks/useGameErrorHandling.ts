@@ -7,6 +7,7 @@ interface UseGameErrorHandlingOptions {
   addResponseTime: (time: number) => void;
   setSelectedAnswer: (answer: string | null) => void;
   triggerHaptic: (type: 'success' | 'warning' | 'error') => void;
+  onAnswerProcessed?: () => void;
 }
 
 export const useGameErrorHandling = (options: UseGameErrorHandlingOptions) => {
@@ -16,6 +17,7 @@ export const useGameErrorHandling = (options: UseGameErrorHandlingOptions) => {
     addResponseTime,
     setSelectedAnswer,
     triggerHaptic,
+    onAnswerProcessed,
   } = options;
 
   const [continueType, setContinueType] = useState<'timeout' | 'wrong' | 'out-of-lives'>('wrong');
@@ -32,7 +34,10 @@ export const useGameErrorHandling = (options: UseGameErrorHandlingOptions) => {
     triggerHaptic('warning');
     setErrorBannerVisible(true);
     setErrorBannerMessage(t('game.timeout_banner_message').replace('{cost}', String(TIMEOUT_CONTINUE_COST)));
-  }, [questionStartTime, addResponseTime, setSelectedAnswer, triggerHaptic, t]);
+    
+    // Trigger callback after timeout is processed
+    onAnswerProcessed?.();
+  }, [questionStartTime, addResponseTime, setSelectedAnswer, triggerHaptic, t, onAnswerProcessed]);
 
   return {
     continueType,

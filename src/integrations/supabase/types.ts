@@ -2976,6 +2976,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_like_prompt_tracking: {
+        Row: {
+          created_at: string
+          day_date: string
+          prompt_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_date?: string
+          prompt_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day_date?: string
+          prompt_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_premium_booster_state: {
         Row: {
           created_at: string
