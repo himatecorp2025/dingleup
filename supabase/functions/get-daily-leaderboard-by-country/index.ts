@@ -302,6 +302,7 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({
+        success: true,
         leaderboard: leaderboard.slice(0, maxPlayers), // TOP10 or TOP25 based on day
         userRank,
         totalPlayers: leaderboard.length,
