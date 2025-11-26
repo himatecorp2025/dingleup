@@ -437,23 +437,10 @@ const GamePreview = memo(() => {
     finishGame();
   };
 
-  if (profileLoading || !userId) {
+  if (profileLoading || !userId || !profile) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
         <div className="relative z-10 text-white">{t('game.loading')}</div>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
-        <div className="relative z-10 text-white flex flex-col items-center gap-4">
-          <p>{t('game.profile_load_error')}</p>
-          <Button onClick={() => navigate('/dashboard')} variant="outline">
-            {t('game.back')}
-          </Button>
-        </div>
       </div>
     );
   }
