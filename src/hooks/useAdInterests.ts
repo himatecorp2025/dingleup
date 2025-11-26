@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n';
 
 export interface AdInterestTopicSummary {
   topicId: string;
@@ -25,6 +26,7 @@ export interface AdUserInterestRow {
 }
 
 export const useAdInterests = () => {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(false);
   const [recalculating, setRecalculating] = useState(false);
   const [realtimeEnabled, setRealtimeEnabled] = useState(false);
@@ -45,11 +47,11 @@ export const useAdInterests = () => {
 
       if (error) throw error;
 
-      toast.success(`Frissítve: ${data.processedUserTopicPairs} rekord feldolgozva`);
+      toast.success(t('admin.success_recalculated').replace('{count}', String(data.processedUserTopicPairs)));
       return data;
     } catch (error) {
       console.error('Error recalculating ad interests:', error);
-      toast.error('Hiba a reklámprofil újraszámításakor');
+      toast.error(t('admin.error_recalculating_ad_interests'));
       throw error;
     } finally {
       setRecalculating(false);
@@ -75,7 +77,7 @@ export const useAdInterests = () => {
       return data.topics || [];
     } catch (error) {
       console.error('Error fetching all topics:', error);
-      toast.error('Hiba az összes témakör betöltésekor');
+      toast.error(t('admin.error_loading_all_topics'));
       return [];
     } finally {
       setLoading(false);
@@ -101,7 +103,7 @@ export const useAdInterests = () => {
       return data.topics || [];
     } catch (error) {
       console.error('Error fetching topic summary:', error);
-      toast.error('Hiba a témakör összefoglaló betöltésekor');
+      toast.error(t('admin.error_loading_topic_summary'));
       return [];
     } finally {
       setLoading(false);
@@ -139,7 +141,7 @@ export const useAdInterests = () => {
       return data;
     } catch (error) {
       console.error('Error fetching user interests:', error);
-      toast.error('Hiba a felhasználói érdeklődési lista betöltésekor');
+      toast.error(t('admin.error_loading_user_interests'));
       return { items: [], page, pageSize, totalItems: 0, totalPages: 0 };
     } finally {
       setLoading(false);

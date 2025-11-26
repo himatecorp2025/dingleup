@@ -10,11 +10,13 @@ import { AdminReportActionDialog } from '@/components/AdminReportActionDialog';
 import { QuestionTranslationManager } from '@/components/QuestionTranslationManager';
 import { TranslationSeeder } from '@/components/TranslationSeeder';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useI18n } from '@/i18n';
 
 type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'invitations' | 'reports' | 'popular-content';
 type ReportsSubTab = 'development' | 'support';
 
 const AdminDashboard = () => {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -80,7 +82,7 @@ const AdminDashboard = () => {
       
       if (adminError) {
         console.error('[Admin] Admin data fetch error:', adminError);
-        toast.error('Hiba az adatok betöltésekor');
+        toast.error(t('admin.error_loading_data'));
         setIsRefreshing(false);
         return;
       }
@@ -216,7 +218,7 @@ const AdminDashboard = () => {
         .single();
 
       if (!roleData) {
-        toast.error('Nincs admin jogosultságod');
+        toast.error(t('admin.error_no_admin_permission'));
         navigate('/');
         return;
       }
@@ -501,10 +503,10 @@ const AdminDashboard = () => {
                         headers: { Authorization: `Bearer ${session.access_token}` }
                       });
                       if (error) throw error;
-                      toast.success(`Kész! ${data.successful} barátság létrehozva`);
+                      toast.success(t('admin.success_friendships_created').replace('{count}', String(data.successful)));
                       await fetchData();
                     } catch (err: any) {
-                      toast.error('Hiba: ' + (err.message || 'Ismeretlen hiba'));
+                      toast.error(t('admin.error_unknown').replace('{message}', err.message || t('admin.unknown_error')));
                     }
                   }}
                   className="bg-blue-600 hover:bg-blue-700 text-white text-xs lg:text-sm whitespace-nowrap"

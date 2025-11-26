@@ -540,10 +540,10 @@ const GamePreview = memo(() => {
               <div className="relative text-white px-6 py-3 font-bold text-xs text-center animate-fade-in" style={{ transform: 'translateZ(60px)', textShadow: '0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6), 1px 1px 0 rgba(0,0,0,1), -1px -1px 0 rgba(0,0,0,1), 1px -1px 0 rgba(0,0,0,1), -1px 1px 0 rgba(0,0,0,1)' }}>
                 <div className="mb-1">{errorBannerMessage}</div>
                 <div className="text-[10px] opacity-90">
-                  Görgess felfelé a folytatáshoz ({continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST} aranyérme)
+                  {t('game.swipe_up_continue_cost').replace('{cost}', String(continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST))}
                 </div>
                 <div className="text-[10px] opacity-90">
-                  Görgess lefelé a kilépéshez
+                  {t('game.swipe_down_exit')}
                 </div>
               </div>
             </div>

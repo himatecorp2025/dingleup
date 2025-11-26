@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { CONTINUE_AFTER_WRONG_COST, TIMEOUT_CONTINUE_COST } from '@/types/game';
+import { useI18n } from '@/i18n';
 
 interface UseGameErrorHandlingOptions {
   questionStartTime: number;
@@ -9,6 +10,7 @@ interface UseGameErrorHandlingOptions {
 }
 
 export const useGameErrorHandling = (options: UseGameErrorHandlingOptions) => {
+  const { t } = useI18n();
   const {
     questionStartTime,
     addResponseTime,
@@ -29,8 +31,8 @@ export const useGameErrorHandling = (options: UseGameErrorHandlingOptions) => {
     setContinueType('timeout');
     triggerHaptic('warning');
     setErrorBannerVisible(true);
-    setErrorBannerMessage(`Lejárt az idő! Folytatáshoz ${TIMEOUT_CONTINUE_COST} aranyérme szükséges.`);
-  }, [questionStartTime, addResponseTime, setSelectedAnswer, triggerHaptic]);
+    setErrorBannerMessage(t('game.timeout_banner_message').replace('{cost}', String(TIMEOUT_CONTINUE_COST)));
+  }, [questionStartTime, addResponseTime, setSelectedAnswer, triggerHaptic, t]);
 
   return {
     continueType,

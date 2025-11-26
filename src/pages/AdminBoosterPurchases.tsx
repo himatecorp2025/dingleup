@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useI18n } from '@/i18n';
 
 interface BoosterPurchase {
   id: string;
@@ -31,6 +32,7 @@ interface PurchaseSummary {
 }
 
 export default function AdminBoosterPurchases() {
+  const { t } = useI18n();
   const [purchases, setPurchases] = useState<BoosterPurchase[]>([]);
   const [summary, setSummary] = useState<PurchaseSummary>({
     total_free: 0,
@@ -108,7 +110,7 @@ export default function AdminBoosterPurchases() {
       });
     } catch (error) {
       console.error('Error fetching purchases:', error);
-      toast.error('Hiba történt a vásárlások betöltésekor');
+      toast.error(t('admin.error_loading_purchases'));
     } finally {
       setLoading(false);
     }
