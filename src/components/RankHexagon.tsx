@@ -38,7 +38,7 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
       {/* Külső fényglow */}
       <div
         className="absolute inset-0 rounded-full blur-xl opacity-60 animate-pulse"
-        style={{ background: 'rgba(239, 68, 68, 0.4)' }}
+        style={{ background: 'rgba(65, 105, 225, 0.4)' }}
       />
 
       {/* 3D Hexagon konténer */}
@@ -59,20 +59,20 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
 
         {/* Külső keret */}
         <div
-          className="absolute inset-0 clip-hexagon bg-gradient-to-br from-red-900 via-red-600 to-red-800 border-2 border-red-400 shadow-[0_0_20px_rgba(239,68,68,0.6),0_8px_25px_rgba(0,0,0,0.5)]"
+          className="absolute inset-0 clip-hexagon bg-gradient-to-br from-blue-900 via-blue-600 to-blue-800 border-2 border-blue-400 shadow-[0_0_20px_rgba(65,105,225,0.6),0_8px_25px_rgba(0,0,0,0.5)]"
           aria-hidden
         />
 
         {/* Középső keret */}
         <div
-          className="absolute inset-[3px] clip-hexagon bg-gradient-to-b from-red-600 via-red-400 to-red-700"
+          className="absolute inset-[3px] clip-hexagon bg-gradient-to-b from-blue-600 via-blue-400 to-blue-700"
           style={{ boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.15)' }}
           aria-hidden
         />
 
         {/* Belső réteg */}
         <div
-          className="absolute clip-hexagon bg-gradient-to-b from-red-400 via-red-500 to-red-700"
+          className="absolute clip-hexagon bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700"
           style={{
             top: '5px',
             left: '5px',
@@ -121,7 +121,7 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
           >
             <path
               d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-              stroke="hsl(var(--destructive))"
+              stroke="rgb(65, 105, 225)"
               strokeWidth="1.5"
             />
           </svg>
