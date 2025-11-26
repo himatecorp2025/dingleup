@@ -43,39 +43,39 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
         return;
       }
 
-      // Detect if text is 1-line or 2-line based on content height ratio
-      const heightRatio = contentHeight / overlayHeight;
-      const is1Line = heightRatio < 0.35; // Single line takes less than 35% of overlay
-      const is2Line = heightRatio >= 0.35; // 2 lines take 35% or more
+      // Measure line height to determine line count
+      const styles = window.getComputedStyle(contentRef.current);
+      const lineHeightPx = parseFloat(styles.lineHeight);
+      const approxLines = Math.round(contentHeight / lineHeightPx);
       
-      // Calculate base mathematical center
-      const mathCenter = (overlayHeight - contentHeight) / 2;
+      // Determine if 1-line or 2-line
+      const is1Line = approxLines <= 1;
+      const is2Line = approxLines === 2;
       
-      // Apply optical correction based on line count
-      let opticalAdjust = 0;
+      // Calculate mathematical center for both cases
+      let offsetY = (overlayHeight / 2) - (contentHeight / 2);
+      
+      // Optional fine-tuning (can be adjusted if needed)
       if (is1Line) {
-        // 1-line: slight upward shift for better visual centering
-        opticalAdjust = -4;
+        // 1-line: use pure mathematical center
+        // offsetY remains as calculated
       } else if (is2Line) {
-        // 2-line: minimal or no adjustment
-        opticalAdjust = 0;
+        // 2-line: use pure mathematical center, optionally add +1-2px if needed
+        // offsetY remains as calculated (or add small adjustment if testing shows it's needed)
       }
       
-      const centerPosition = mathCenter + opticalAdjust;
-      
       // Set translateY in pixels
-      setTranslateY(centerPosition);
+      setTranslateY(offsetY);
       lastContentHeightRef.current = contentHeight;
       
       if (import.meta.env.DEV) {
         console.log('[useDynamicVerticalCenter] Recalculated:', {
           overlayHeight,
           contentHeight,
-          heightRatio,
-          lineCount: is1Line ? 1 : 2,
-          mathCenter,
-          opticalAdjust,
-          centerPosition,
+          lineHeightPx,
+          approxLines,
+          lineCount: is1Line ? 1 : is2Line ? 2 : 3,
+          offsetY,
         });
       }
     } catch (error) {

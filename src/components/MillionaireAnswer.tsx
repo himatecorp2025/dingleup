@@ -197,7 +197,7 @@ export const MillionaireAnswer = ({
         
         <div 
           ref={overlayRef}
-          className="absolute top-[20%] bottom-[20%] left-0 right-0 flex items-start justify-center px-3 sm:px-4 md:px-5"
+          className="absolute inset-0 flex items-start justify-center px-3 sm:px-4 md:px-5"
         >
           <div 
             ref={contentRef}
