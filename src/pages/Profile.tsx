@@ -5,20 +5,17 @@ import { useProfileQuery } from '@/hooks/useProfileQuery';
 import { useWallet } from '@/hooks/useWallet';
 import { useBoosterState } from '@/hooks/useBoosterState';
 import { useI18n, LangCode } from '@/i18n';
-import { resolveLangFromCountry } from '@/lib/i18n/langMapping';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ArrowLeft, LogOut, Camera, Heart, Coins, Trophy, Calendar, Zap, Crown, Settings, Globe, Edit2, Eye, EyeOff, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import BottomNav from '@/components/BottomNav';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { BackgroundMusicControl } from '@/components/BackgroundMusicControl';
-import { COUNTRIES } from '@/data/countries';
 
 const Profile = () => {
   const { lang, setLang, t } = useI18n();
@@ -43,10 +40,6 @@ const Profile = () => {
   const [newPin, setNewPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  
-  // Language change confirmation dialog
-  const [showLanguageDialog, setShowLanguageDialog] = useState(false);
-  const [pendingCountryChange, setPendingCountryChange] = useState<{ countryCode: string; newLang: LangCode } | null>(null);
   
   // Platform detection for conditional padding
   const [isStandalone, setIsStandalone] = useState(false);
@@ -168,88 +161,6 @@ const Profile = () => {
       toast.error(`${t('profile.error.upload_failed')}: ${error.message}`);
     } finally {
       setUploading(false);
-    }
-  };
-
-  const handleCountryChange = async (newCountryCode: string) => {
-    if (!userId) return;
-    
-    try {
-      const currentCountryCode = profile.country_code || 'HU';
-      
-      // Determine if we're switching between HU and non-HU
-      const isFromHungary = currentCountryCode === 'HU';
-      const isToHungary = newCountryCode === 'HU';
-      
-      // Case 1: Hungary → Other country (offer English)
-      if (isFromHungary && !isToHungary) {
-        setPendingCountryChange({ countryCode: newCountryCode, newLang: 'en' });
-        setShowLanguageDialog(true);
-        return;
-      }
-      
-      // Case 2: Other country → Hungary (offer Hungarian)
-      if (!isFromHungary && isToHungary) {
-        setPendingCountryChange({ countryCode: newCountryCode, newLang: 'hu' });
-        setShowLanguageDialog(true);
-        return;
-      }
-      
-      // Case 3: Other → Other (no language change, just update country)
-      await updateCountryOnly(newCountryCode);
-    } catch (error) {
-      console.error('Failed to update country:', error);
-      toast.error(t('profile.error.updateFailed'));
-    }
-  };
-
-  const updateCountryOnly = async (newCountryCode: string) => {
-    const { error } = await supabase
-      .from('profiles')
-      .update({ 
-        country_code: newCountryCode,
-        preferred_country: newCountryCode
-      })
-      .eq('id', userId);
-    
-    if (error) throw error;
-    await refreshProfile();
-    toast.success(t('profile.country_updated'));
-  };
-
-  const updateCountryAndLanguage = async (newCountryCode: string, newLang: LangCode) => {
-    const { error } = await supabase
-      .from('profiles')
-      .update({ 
-        country_code: newCountryCode,
-        preferred_country: newCountryCode,
-        preferred_language: newLang 
-      })
-      .eq('id', userId);
-    
-    if (error) throw error;
-    
-    // Update language in i18n context
-    await setLang(newLang, true);
-    await refreshProfile();
-    toast.success(t('profile.country_language_updated'));
-  };
-
-  const handleLanguageChangeConfirm = async (changeLanguage: boolean) => {
-    if (!pendingCountryChange) return;
-    
-    try {
-      if (changeLanguage) {
-        await updateCountryAndLanguage(pendingCountryChange.countryCode, pendingCountryChange.newLang);
-      } else {
-        await updateCountryOnly(pendingCountryChange.countryCode);
-      }
-    } catch (error) {
-      console.error('Failed to update:', error);
-      toast.error(t('profile.error.update_failed'));
-    } finally {
-      setShowLanguageDialog(false);
-      setPendingCountryChange(null);
     }
   };
 
@@ -907,30 +818,27 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* Country */}
+              {/* Language Selector */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-2 flex items-center gap-2">
                   <Globe className="w-4 h-4" />
-                  {t('profile.country_label')}
+                  {t('profile.language_label')}
                 </p>
-                <Select value={profile.country_code || 'HU'} onValueChange={handleCountryChange}>
+                <Select value={lang} onValueChange={(newLang: LangCode) => setLang(newLang, true)}>
                   <SelectTrigger className="bg-black/30 border-purple-500/30 text-white hover:border-purple-400/50 focus:border-purple-400">
-                    <SelectValue placeholder={t('profile.country_placeholder')} />
+                    <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-background border-purple-500/30 max-h-[300px] z-50">
-                    {COUNTRIES.map((country) => (
-                      <SelectItem 
-                        key={country.code} 
-                        value={country.code}
-                        className="text-foreground hover:bg-accent focus:bg-accent"
-                      >
-                        {t(country.nameKey)}
-                      </SelectItem>
-                    ))}
+                  <SelectContent className="bg-background border-purple-500/30 z-50">
+                    <SelectItem value="hu" className="text-foreground hover:bg-accent focus:bg-accent">
+                      🇭🇺 Magyar
+                    </SelectItem>
+                    <SelectItem value="en" className="text-foreground hover:bg-accent focus:bg-accent">
+                      🇬🇧 English
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-white/40 mt-1">
-                  {t('profile.country_notice')}
+                  {t('profile.language_notice')}
                 </p>
               </div>
               
@@ -984,39 +892,6 @@ const Profile = () => {
 
       <BottomNav />
       <TutorialManager route="profile" />
-
-      {/* Language Change Confirmation Dialog - Always in English */}
-      <AlertDialog open={showLanguageDialog} onOpenChange={setShowLanguageDialog}>
-        <AlertDialogContent className="max-w-[90vw] sm:max-w-md bg-gradient-to-br from-[#1a1a3e] to-[#0f0f2e] border-2 border-accent/30">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
-              <Globe className="w-6 h-6 text-accent" />
-              {pendingCountryChange?.newLang === 'hu' 
-                ? t('profile.languageDialog.toHungarianTitle')
-                : t('profile.languageDialog.toEnglishTitle')}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-muted-foreground text-base leading-relaxed">
-              {pendingCountryChange?.newLang === 'hu' 
-                ? t('profile.languageDialog.toHungarianQuestion')
-                : t('profile.languageDialog.toEnglishQuestion')}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-            <AlertDialogCancel 
-              onClick={() => handleLanguageChangeConfirm(false)}
-              className="bg-muted hover:bg-muted/80 text-foreground border-border"
-            >
-              {t('profile.languageDialog.noButton')}
-            </AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={() => handleLanguageChangeConfirm(true)}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground"
-            >
-              {t('profile.languageDialog.yesButton')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
