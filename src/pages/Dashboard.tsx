@@ -66,6 +66,19 @@ const Dashboard = () => {
   const { profile, loading, refreshProfile } = useProfileQuery(userId);
   const { walletData, refetchWallet, serverDriftMs } = useWalletQuery(userId);
   
+  // DEBUG: Log wallet data
+  useEffect(() => {
+    if (walletData) {
+      console.log('[Dashboard] Wallet Data:', {
+        lives: walletData.livesCurrent,
+        maxLives: walletData.livesMax,
+        nextLifeAt: walletData.nextLifeAt,
+        serverDriftMs,
+        activeSpeedToken: walletData.activeSpeedToken
+      });
+    }
+  }, [walletData, serverDriftMs]);
+  
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
   const boosterState = useBoosterState(userId);
