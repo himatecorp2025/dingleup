@@ -40,6 +40,7 @@ const DailyGiftDialog = ({
   const [origin, setOrigin] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
   const [burstActive, setBurstActive] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
+  const [claimed, setClaimed] = useState(false);
 
   // Sync badge width to button (account for inner hexagon vs. outer frame ratio)
   useEffect(() => {
@@ -73,10 +74,12 @@ const DailyGiftDialog = ({
         clearTimeout(t);
         setContentVisible(false);
         setBurstActive(false);
+        setClaimed(false); // Reset claimed state when dialog closes
       };
     } else {
       setContentVisible(false);
       setBurstActive(false);
+      setClaimed(false);
     }
   }, [open]);
 
@@ -152,6 +155,14 @@ const DailyGiftDialog = ({
           value: nextReward
         });
       }
+      
+      // CRITICAL: Show success state on button
+      setClaimed(true);
+      
+      // CRITICAL: Auto-close after 1.5 seconds
+      setTimeout(() => {
+        onLater();
+      }, 1500);
     }
   };
 
@@ -501,10 +512,14 @@ const DailyGiftDialog = ({
                 >
                   <HexAcceptButton
                     onClick={handleClaim}
-                    disabled={!canClaim || claiming}
+                    disabled={!canClaim || claiming || claimed}
                     style={{ width: 'var(--sync-width)' }}
                   >
-                    {claiming ? t('daily.claim_button_processing') : t('daily.claim_button_active')}
+                    {claimed 
+                      ? t('daily.claim_button_success') 
+                      : claiming 
+                        ? t('daily.claim_button_processing') 
+                        : t('daily.claim_button_active')}
                   </HexAcceptButton>
                 </div>
               </div>

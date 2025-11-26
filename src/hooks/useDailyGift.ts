@@ -153,7 +153,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     
     // Mark as dismissed for today (CONSISTENT KEY)
     const today = new Date().toISOString().split('T')[0];
-    sessionStorage.setItem(`daily_gift_dismissed_${today}`, 'dismissed');
+    sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'dismissed');
     
     // Close popup
     setShowPopup(false);
