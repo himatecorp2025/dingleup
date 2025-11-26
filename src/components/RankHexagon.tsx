@@ -111,8 +111,8 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
           aria-hidden
         />
 
-        {/* Tartalom: szív ikon + rang szám, JÓL LÁTHATÓ TÁVOLSÁGGAL */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+        {/* Tartalom: szív ikon + rang szám, ugyanazzal az elrendezéssel mint a többi hexagon */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 z-10">
           <svg
             className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 drop-shadow-lg"
             viewBox="0 0 24 24"
@@ -125,7 +125,7 @@ export const RankHexagon: React.FC<RankHexagonProps> = ({ value, className = '',
               strokeWidth="1.5"
             />
           </svg>
-          <span className="mt-1 text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             {value}
           </span>
         </div>
