@@ -153,7 +153,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     popupState.showDailyGift,
   ]);
 
-  // Priority 5: Daily Winners (ONLY if NO rank reward - mutually exclusive)
+  // Priority 5: Daily Winners (ONLY if NO rank reward - mutually exclusive, with 500ms delay)
   useEffect(() => {
     const shouldShow =
       canMountModals &&
@@ -163,15 +163,19 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       !popupState.showWelcomeBonus &&
       !popupState.showDailyGift &&
       !rankReward.showRewardPopup && // DOUBLE-CHECK: don't show if rank reward pending
-      dailyWinners.showPopup &&
+      dailyWinners.canShowToday && // Use canShowToday instead of showPopup
       !!userId;
     
-    // Only update if value would change
+    // Only update if value would change - with 500ms delay
     if (shouldShow && !popupState.showDailyWinners) {
-      setPopupState(prev => ({
-        ...prev,
-        showDailyWinners: true,
-      }));
+      const timer = setTimeout(() => {
+        setPopupState(prev => ({
+          ...prev,
+          showDailyWinners: true,
+        }));
+      }, 500); // 500ms delay for Daily Gift close animation
+      
+      return () => clearTimeout(timer);
     }
   }, [
     canMountModals,
@@ -181,7 +185,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     popupState.showWelcomeBonus,
     popupState.showDailyGift,
     rankReward.showRewardPopup,
-    dailyWinners.showPopup,
+    dailyWinners.canShowToday,
     userId,
     popupState.showDailyWinners,
   ]);
@@ -250,6 +254,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     },
     dailyWinners: {
       closePopup: dailyWinners.closePopup,
+      canShowToday: dailyWinners.canShowToday,
     },
     rankReward: {
       pendingReward: rankReward.pendingReward,
