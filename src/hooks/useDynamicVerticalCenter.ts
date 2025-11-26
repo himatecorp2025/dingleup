@@ -43,8 +43,25 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
         return;
       }
 
-      // Always recalculate for pixel-perfect centering
-      const centerPosition = (overlayHeight - contentHeight) / 2;
+      // Detect if text is 1-line or 2-line based on content height ratio
+      const heightRatio = contentHeight / overlayHeight;
+      const is1Line = heightRatio < 0.35; // Single line takes less than 35% of overlay
+      const is2Line = heightRatio >= 0.35; // 2 lines take 35% or more
+      
+      // Calculate base mathematical center
+      const mathCenter = (overlayHeight - contentHeight) / 2;
+      
+      // Apply optical correction based on line count
+      let opticalAdjust = 0;
+      if (is1Line) {
+        // 1-line: slight upward shift for better visual centering
+        opticalAdjust = -4;
+      } else if (is2Line) {
+        // 2-line: minimal or no adjustment
+        opticalAdjust = 0;
+      }
+      
+      const centerPosition = mathCenter + opticalAdjust;
       
       // Set translateY in pixels
       setTranslateY(centerPosition);
@@ -54,6 +71,10 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
         console.log('[useDynamicVerticalCenter] Recalculated:', {
           overlayHeight,
           contentHeight,
+          heightRatio,
+          lineCount: is1Line ? 1 : 2,
+          mathCenter,
+          opticalAdjust,
           centerPosition,
         });
       }
