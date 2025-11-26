@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 
 interface UseDynamicVerticalCenterReturn {
+  svgRef: React.RefObject<SVGSVGElement>;
   overlayRef: React.RefObject<HTMLDivElement>;
   contentRef: React.RefObject<HTMLDivElement>;
   transformStyle: React.CSSProperties;
@@ -11,14 +12,14 @@ interface UseDynamicVerticalCenterReturn {
  * using pixel-perfect measurements with ResizeObserver
  */
 export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
+  const svgRef = useRef<SVGSVGElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [translateY, setTranslateY] = useState<number>(0);
   const retryTimeoutRef = useRef<number | null>(null);
   const lastContentHeightRef = useRef<number>(0);
-  const VISUAL_ADJUST_PX = 2; // small downward visual compensation to counter font metrics
   const calculateCenter = useCallback(() => {
-    if (!overlayRef.current || !contentRef.current) {
+    if (!svgRef.current || !contentRef.current) {
       // DOM not ready - retry after 100ms
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
@@ -28,12 +29,35 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
     }
 
     try {
-      // Measure actual bounding boxes of the BLACK overlay area and content
-      const overlayRect = overlayRef.current.getBoundingClientRect();
-      const contentRect = contentRef.current.getBoundingClientRect();
+      // Find the BLACK overlay element: <use href="#HEX_Q" fill="black" fillOpacity="0.5" />
+      const blackOverlay = svgRef.current.querySelector('use[href="#HEX_Q"][fill="black"]') as SVGUseElement;
+      
+      if (!blackOverlay) {
+        console.error('[useDynamicVerticalCenter] Black overlay not found');
+        return;
+      }
 
-      if (overlayRect.height === 0 || contentRect.height === 0) {
-        // Elements not yet rendered - retry
+      // Get the REAL bounding box of the BLACK overlay path (after scale transform)
+      const bbox = blackOverlay.getBBox();
+      const ctm = blackOverlay.getCTM();
+      
+      if (!ctm) {
+        console.error('[useDynamicVerticalCenter] CTM not available');
+        return;
+      }
+
+      // Convert SVG coordinates to pixel coordinates using the transformation matrix
+      const blackTop = ctm.f + bbox.y * ctm.d;
+      const blackBottom = ctm.f + (bbox.y + bbox.height) * ctm.d;
+      const blackHeight = blackBottom - blackTop;
+      const blackCenter = blackTop + blackHeight / 2;
+
+      // Measure text content center
+      const contentRect = contentRef.current.getBoundingClientRect();
+      const textCenter = contentRect.top + contentRect.height / 2;
+
+      if (contentRect.height === 0) {
+        // Content not yet rendered - retry
         if (retryTimeoutRef.current) {
           clearTimeout(retryTimeoutRef.current);
         }
@@ -41,26 +65,22 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
         return;
       }
 
-      // Calculate center Y positions in viewport coordinates
-      const overlayCenterY = overlayRect.top + overlayRect.height / 2;
-      const contentCenterY = contentRect.top + contentRect.height / 2;
-
-      // Calculate offset needed to align content center to overlay center
-      const rawOffsetY = overlayCenterY - contentCenterY;
-      const adjustedOffsetY = rawOffsetY + VISUAL_ADJUST_PX; // push slightly downward for visual centering
+      // Calculate offset: align text center to BLACK overlay center
+      const offsetY = blackCenter - textCenter;
       
       // Set translateY in pixels
-      setTranslateY(adjustedOffsetY);
+      setTranslateY(offsetY);
       lastContentHeightRef.current = contentRect.height;
       
       if (import.meta.env.DEV) {
-        console.log('[useDynamicVerticalCenter] Recalculated:', {
-          overlayHeight: overlayRect.height,
+        console.log('[useDynamicVerticalCenter] BLACK overlay centering:', {
+          blackTop,
+          blackBottom,
+          blackHeight,
+          blackCenter,
+          textCenter,
           contentHeight: contentRect.height,
-          overlayCenterY,
-          contentCenterY,
-          rawOffsetY,
-          adjustedOffsetY,
+          offsetY,
         });
       }
     } catch (error) {
@@ -127,6 +147,7 @@ export const useDynamicVerticalCenter = (): UseDynamicVerticalCenterReturn => {
   }, [calculateCenter]);
 
   return {
+    svgRef,
     overlayRef,
     contentRef,
     transformStyle: {
