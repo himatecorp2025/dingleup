@@ -116,9 +116,21 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         
         return true;
       } else {
+        // Translate error codes from backend to i18n keys
+        let errorKey = 'daily.claim_error';
+        if (result.error === 'NOT_LOGGED_IN') {
+          errorKey = 'daily.error.not_logged_in';
+        } else if (result.error === 'PROFILE_NOT_FOUND') {
+          errorKey = 'daily.error.profile_not_found';
+        } else if (result.error === 'ALREADY_CLAIMED_TODAY') {
+          errorKey = 'daily.error.already_claimed_today';
+        } else if (result.error === 'SERVER_ERROR') {
+          errorKey = 'daily.error.server_error';
+        }
+        
         toast({
           title: t('errors.error_title'),
-          description: result.error || t('daily.claim_error'),
+          description: t(errorKey),
           variant: 'destructive'
         });
         return false;
