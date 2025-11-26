@@ -475,38 +475,21 @@ if (!profile) {
                 rank={currentRank}
                 coins={walletData?.coinsCurrent ?? profile.coins}
                 lives={walletData?.livesCurrent ?? profile.lives}
+                livesMax={walletData?.livesMax || profile.max_lives}
+                nextLifeAt={walletData?.nextLifeAt || null}
+                serverDriftMs={serverDriftMs}
+                onLifeExpired={() => {
+                  refetchWallet();
+                  refreshProfile();
+                }}
+                activeSpeedToken={walletData?.activeSpeedToken ? {
+                  expiresAt: walletData.activeSpeedToken.expiresAt,
+                  durationMinutes: walletData.activeSpeedToken.durationMinutes
+                } : null}
                 avatarUrl={profile.avatar_url}
                 className="data-tutorial-profile-header"
               />
             </div>
-          </div>
-
-          {/* Life Regeneration Timer (below hexagons) */}
-          <div className="flex justify-end">
-            {walletData?.activeSpeedToken ? (
-              <NextLifeTimer
-                nextLifeAt={walletData.activeSpeedToken.expiresAt}
-                livesCurrent={walletData?.livesCurrent ?? profile.lives}
-                livesMax={walletData?.livesMax || profile.max_lives}
-                serverDriftMs={serverDriftMs}
-                onExpired={() => {
-                  refetchWallet();
-                  refreshProfile();
-                }}
-                isSpeedBoost={true}
-              />
-            ) : (
-              <NextLifeTimer
-                nextLifeAt={walletData?.nextLifeAt || null}
-                livesCurrent={walletData?.livesCurrent ?? profile.lives}
-                livesMax={walletData?.livesMax || profile.max_lives}
-                serverDriftMs={serverDriftMs}
-                onExpired={() => {
-                  refetchWallet();
-                  refreshProfile();
-                }}
-              />
-            )}
           </div>
 
           {/* Second Row: Action Buttons */}

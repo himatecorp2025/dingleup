@@ -1,12 +1,21 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DiamondHexagon } from './DiamondHexagon';
+import { NextLifeTimer } from './NextLifeTimer';
 
 interface UsersHexagonBarProps {
   username: string;
   rank: number | null;
   coins: number;
   lives: number;
+  livesMax: number;
+  nextLifeAt: string | null;
+  serverDriftMs?: number;
+  onLifeExpired?: () => void;
+  activeSpeedToken?: {
+    expiresAt: string;
+    durationMinutes: number;
+  } | null;
   avatarUrl?: string | null;
   className?: string;
 }
@@ -24,6 +33,11 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
   rank,
   coins,
   lives,
+  livesMax,
+  nextLifeAt,
+  serverDriftMs = 0,
+  onLifeExpired,
+  activeSpeedToken,
   avatarUrl,
   className = ''
 }) => {
@@ -49,9 +63,29 @@ export const UsersHexagonBar: React.FC<UsersHexagonBarProps> = ({
         <DiamondHexagon type="coins" value={coins} />
       </div>
 
-      {/* Lives Hexagon - Red */}
+      {/* Lives Hexagon - Red with Timer */}
       <div className="absolute z-10" style={{ left: '65%', top: '36%', transform: 'translate(-50%, -50%)' }}>
-        <DiamondHexagon type="lives" value={lives} />
+        <div className="relative">
+          <DiamondHexagon type="lives" value={lives} />
+          {activeSpeedToken ? (
+            <NextLifeTimer
+              nextLifeAt={activeSpeedToken.expiresAt}
+              livesCurrent={lives}
+              livesMax={livesMax}
+              serverDriftMs={serverDriftMs}
+              onExpired={onLifeExpired}
+              isSpeedBoost={true}
+            />
+          ) : (
+            <NextLifeTimer
+              nextLifeAt={nextLifeAt}
+              livesCurrent={lives}
+              livesMax={livesMax}
+              serverDriftMs={serverDriftMs}
+              onExpired={onLifeExpired}
+            />
+          )}
+        </div>
       </div>
 
       {/* Avatar Hexagon - Purple */}
