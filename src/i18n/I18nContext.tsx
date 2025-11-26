@@ -182,6 +182,23 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
   useEffect(() => {
     initializeLanguage();
+
+    // Listen for auth state changes - when user logs in/out or switches accounts,
+    // reinitialize language based on the new user's preferred_language
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+        // Re-initialize language for the newly logged-in user
+        initializeLanguage();
+      } else if (event === 'SIGNED_OUT') {
+        // On logout, reset to English default
+        setLangState('en');
+        localStorage.setItem(STORAGE_KEY, 'en');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const setLang = async (newLang: LangCode, skipDbUpdate = false) => {
