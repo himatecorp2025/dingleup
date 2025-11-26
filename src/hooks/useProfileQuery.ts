@@ -22,6 +22,7 @@ export interface UserProfile {
   lives_regeneration_rate?: number;
   created_at?: string;
   age_verified?: boolean;
+  user_timezone?: string;
 }
 
 const PROFILE_QUERY_KEY = (userId: string) => ['profile', userId];

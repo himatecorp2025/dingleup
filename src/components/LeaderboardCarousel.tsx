@@ -154,7 +154,7 @@ const LeaderboardCarouselComponent = () => {
     <div className="w-full py-1">
       {/* Daily Rankings Countdown with TOP 100 title inside */}
       <div className="flex justify-center mb-2">
-        <DailyRankingsCountdown compact={false} />
+        <DailyRankingsCountdown compact={false} userTimezone={profile?.user_timezone || 'Europe/Budapest'} />
       </div>
       
       <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
