@@ -19,6 +19,7 @@ export interface PopupState {
   showDailyGift: boolean;
   showDailyWinners: boolean;
   ageGateCompleted: boolean;
+  welcomeBonusCompleted: boolean; // Track if user interacted with Welcome Bonus (accepted or closed)
   dailyGiftCompleted: boolean; // Track if user interacted with Daily Gift (accepted or closed)
 }
 
@@ -50,6 +51,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     showDailyGift: false,
     showDailyWinners: false,
     ageGateCompleted: false,
+    welcomeBonusCompleted: false,
     dailyGiftCompleted: false,
   });
 
@@ -117,6 +119,10 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     if (!canMountModals || !userId || profileLoading) return;
     if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus) return;
     
+    // CRITICAL: Daily Gift only appears AFTER Welcome Bonus is completed (accepted or closed)
+    // If Welcome Bonus can be claimed but not completed yet, wait
+    if (welcomeBonus.canClaim && !popupState.welcomeBonusCompleted) return;
+    
     // Only show if can claim and not already showing
     if (dailyGift.canClaim && !popupState.showDailyGift) {
       const timer = setTimeout(() => {
@@ -128,7 +134,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       
       return () => clearTimeout(timer);
     }
-  }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, dailyGift.canClaim, popupState.showDailyGift]);
+  }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, welcomeBonus.canClaim, popupState.welcomeBonusCompleted, dailyGift.canClaim, popupState.showDailyGift]);
 
   // Priority 5: Daily Winners (ONLY AFTER Daily Gift interaction, with 1200ms delay)
   useEffect(() => {
@@ -175,6 +181,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     setPopupState(prev => ({
       ...prev,
       showWelcomeBonus: false,
+      welcomeBonusCompleted: true, // Mark as completed when user closes/accepts
     }));
   };
 
