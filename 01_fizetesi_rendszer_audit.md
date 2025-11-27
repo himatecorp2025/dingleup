@@ -365,8 +365,8 @@ useEffect(() => {
 4. ✅ **Tranzakciós védelem** (minden verify function használja `credit_wallet()` function-t) – IMPLEMENTÁLVA (speed-boost, premium-booster, instant-rescue)
 
 ### P1 (Sürgős):
-5. ✅ **Mobile WebView fallback** (deep link + polling-based verification)
-6. **Speed token collision check** (aktív token ellenőrzés vásárlás előtt)
+5. ✅ **Mobile WebView fallback** (deep link + polling-based verification) – IMPLEMENTÁLVA
+6. ✅ **Speed token collision check** (aktív token ellenőrzés activation előtt) – IMPLEMENTÁLVA (activate-speed-token + verify functionök)
 7. **Rescue popup state management** (game_sessions.pending_rescue flag)
 8. **Lives overflow policy** (dokumentálás vagy cap enforcement)
 

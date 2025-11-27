@@ -233,38 +233,64 @@ serve(async (req) => {
       });
     }
 
-    // Create speed tokens
-    const speedTokenInserts: Array<{
-      user_id: string;
-      duration_minutes: number;
-      source: string;
-      metadata: Record<string, string>;
-    }> = [];
-    for (let i = 0; i < speedTokenCount; i++) {
-      speedTokenInserts.push({
-        user_id: user.id,
-        duration_minutes: speedDurationMin,
-        source: 'purchase',
-        metadata: {
-          session_id: sessionId,
-          purchased_at: new Date().toISOString()
+    // **SPEED TOKEN COLLISION CHECK** - prevent duplicate token creation
+    const { data: existingTokens } = await supabaseAdmin
+      .from('speed_tokens')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('source', 'purchase')
+      .filter('metadata->session_id', 'eq', sessionId)
+      .limit(1);
+
+    let tokensGranted = 0;
+
+    if (!existingTokens || existingTokens.length === 0) {
+      // Create speed tokens only if none exist for this session
+      const speedTokenInserts: Array<{
+        user_id: string;
+        duration_minutes: number;
+        source: string;
+        metadata: Record<string, string>;
+      }> = [];
+      for (let i = 0; i < speedTokenCount; i++) {
+        speedTokenInserts.push({
+          user_id: user.id,
+          duration_minutes: speedDurationMin,
+          source: 'purchase',
+          metadata: {
+            session_id: sessionId,
+            purchased_at: new Date().toISOString()
+          }
+        });
+      }
+
+      await withRetry(async () => {
+        const { error: tokenError } = await supabaseAdmin
+          .from('speed_tokens')
+          .insert(speedTokenInserts);
+
+        if (tokenError) {
+          throw tokenError;
         }
       });
-    }
 
-    await withRetry(async () => {
-      const { error: tokenError } = await supabaseAdmin
+      tokensGranted = speedTokenCount;
+      console.log('[verify-speed-boost-payment] Created', tokensGranted, 'speed tokens');
+    } else {
+      console.log('[verify-speed-boost-payment] Speed tokens already exist for session:', sessionId);
+      // Count existing tokens for this session
+      const { count } = await supabaseAdmin
         .from('speed_tokens')
-        .insert(speedTokenInserts);
-
-      if (tokenError) {
-        throw tokenError;
-      }
-    });
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('source', 'purchase')
+        .filter('metadata->session_id', 'eq', sessionId);
+      tokensGranted = count || 0;
+    }
 
     return new Response(JSON.stringify({ 
       success: true,
-      tokens_granted: speedTokenCount,
+      tokens_granted: tokensGranted,
       gold_granted: goldReward,
       lives_granted: livesReward
     }), {
