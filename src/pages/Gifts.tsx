@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useWalletQuery } from '@/hooks/queries/useWalletQuery';
+import { LootboxRewardDisplay } from '@/components/LootboxRewardDisplay';
 
 interface StoredLootbox {
   id: string;
@@ -23,6 +24,7 @@ const Gifts = () => {
   const [storedLootboxes, setStoredLootboxes] = useState<StoredLootbox[]>([]);
   const [loading, setLoading] = useState(true);
   const [openingId, setOpeningId] = useState<string | null>(null);
+  const [rewardDisplay, setRewardDisplay] = useState<{ gold: number; life: number } | null>(null);
   const { walletData, refetchWallet } = useWalletQuery(userId);
 
   // Get user session
@@ -102,21 +104,11 @@ const Gifts = () => {
       }
 
       if (data.rewards) {
-        // Show reward animation
-        toast.success(
-          `${t('lootbox.won')}: +${data.rewards.gold} ${t('common.gold')}, +${data.rewards.life} ${t('common.life')}`,
-          {
-            duration: 4000,
-            style: {
-              background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)',
-              color: '#000',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              border: '2px solid #d4af37',
-              boxShadow: '0 0 30px rgba(255, 215, 0, 0.6)',
-            },
-          }
-        );
+        // Show animated reward display
+        setRewardDisplay({
+          gold: data.rewards.gold,
+          life: data.rewards.life,
+        });
 
         // Remove opened lootbox from UI
         setStoredLootboxes(prev => prev.filter(box => box.id !== lootboxId));
@@ -140,7 +132,17 @@ const Gifts = () => {
   ];
 
   return (
-    <div className="h-[100dvh] bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 text-white relative overflow-hidden flex flex-col">
+    <>
+      {/* Reward display overlay */}
+      {rewardDisplay && (
+        <LootboxRewardDisplay
+          gold={rewardDisplay.gold}
+          life={rewardDisplay.life}
+          onClose={() => setRewardDisplay(null)}
+        />
+      )}
+
+      <div className="h-[100dvh] bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 text-white relative overflow-hidden flex flex-col">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.1),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[url('/game-background.png')] bg-cover bg-center opacity-10 pointer-events-none" />
@@ -410,7 +412,8 @@ const Gifts = () => {
       </div>
 
       <BottomNav />
-    </div>
+      </div>
+    </>
   );
 };
 
