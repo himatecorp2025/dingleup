@@ -103,12 +103,13 @@ export const LootboxDecisionDialog = ({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent 
-        className="max-w-[90vw] sm:max-w-[400px] bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 border-2 border-yellow-500/40 backdrop-blur-md"
+        className="max-w-[90vw] sm:max-w-[400px] bg-gradient-to-br from-yellow-900/50 to-yellow-800/30 border-2 border-yellow-500/60 backdrop-blur-md"
         style={{
           maxHeight: '80vh',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
+          boxShadow: "0 0 40px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.1)",
         }}
       >
         <DialogHeader>
@@ -117,7 +118,7 @@ export const LootboxDecisionDialog = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col items-center gap-6 py-4">
+        <div className="flex flex-col items-center gap-4 py-2">
           {/* Lootbox icon with glow effect */}
           <div className="relative">
             <div className="absolute inset-0 bg-yellow-500/30 blur-2xl rounded-full" />
@@ -125,12 +126,12 @@ export const LootboxDecisionDialog = ({
           </div>
 
           {/* Description with matching style */}
-          <p className="text-white/90 text-center text-base px-4 leading-relaxed">
+          <p className="text-white/90 text-center text-sm px-3 leading-snug">
             {t('lootbox.decision_description')}
           </p>
 
           {/* Buttons with 3D frame effects matching Gifts page */}
-          <div className="flex flex-col gap-4 w-full px-4">
+          <div className="flex flex-col gap-3 w-full px-3">
             {/* Store for later */}
             <div className="relative">
               {/* 3D Frame Effects */}
@@ -142,17 +143,17 @@ export const LootboxDecisionDialog = ({
               <button
                 onClick={() => handleDecision('store')}
                 disabled={!canStore || loading}
-                className="relative z-10 w-full rounded-xl font-bold text-white py-4 px-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+                className="relative z-10 w-full rounded-xl font-bold text-white py-3 px-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
               >
                 {loading ? (
-                  <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                 ) : (
-                  <span className="text-lg">{t('lootbox.store_later')}</span>
+                  <span className="text-base">{t('lootbox.store_later')}</span>
                 )}
               </button>
             </div>
             {!canStore && (
-              <p className="text-xs text-red-400 text-center -mt-2">
+              <p className="text-xs text-red-400 text-center -mt-1">
                 {t('lootbox.storage_full_hint')}
               </p>
             )}
@@ -168,17 +169,17 @@ export const LootboxDecisionDialog = ({
               <button
                 onClick={() => handleDecision('open_now')}
                 disabled={!canOpenNow || loading}
-                className="relative z-10 w-full rounded-xl font-bold text-black py-4 px-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+                className="relative z-10 w-full rounded-xl font-bold text-black py-3 px-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
               >
                 {loading ? (
-                  <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                 ) : (
-                  <span className="text-lg">{t('lootbox.open_now')}</span>
+                  <span className="text-base">{t('lootbox.open_now')}</span>
                 )}
               </button>
             </div>
             {!canOpenNow && (
-              <p className="text-xs text-red-400 text-center -mt-2">
+              <p className="text-xs text-red-400 text-center -mt-1">
                 {t('lootbox.not_enough_gold_hint')}
               </p>
             )}
