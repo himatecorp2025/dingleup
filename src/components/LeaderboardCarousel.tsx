@@ -95,8 +95,9 @@ const LeaderboardCarouselComponent = () => {
       const deltaMs = timestamp - lastTimestampRef.current;
       const deltaPx = (SCROLL_SPEED_PX_PER_SEC * deltaMs) / 1000;
 
-      // Update translateX position (moving left, so negative)
-      translateXRef.current -= deltaPx;
+      // Update translateX position (moving left, so negative) and snap to whole pixels
+      const nextX = translateXRef.current - deltaPx;
+      translateXRef.current = -Math.round(Math.abs(nextX));
 
       // Seamless wrap using modulo - no visible jump
       const contentWidth = contentWidthRef.current;
