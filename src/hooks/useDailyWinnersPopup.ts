@@ -23,6 +23,19 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
 
     const checkIfCanShowToday = async () => {
       try {
+        // TESTING MODE: Always show for DingleUP admin user (design testing)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', userId)
+          .single();
+
+        if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
+          console.log('[DAILY-WINNERS-POPUP] Admin user detected - always showing popup');
+          setCanShowToday(true);
+          return;
+        }
+
         if (forceAlwaysShow) {
           setCanShowToday(true);
           return;
@@ -65,6 +78,20 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
     if (!userId) return;
 
     try {
+      // TESTING MODE: Check if this is DingleUP admin user
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', userId)
+        .single();
+
+      // TESTING MODE: Don't mark as dismissed for DingleUP admin (allow re-testing)
+      if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
+        console.log('[DAILY-WINNERS-POPUP] Admin user - popup closed without marking as shown');
+        setShowPopup(false);
+        return;
+      }
+
       const currentDay = getCurrentDay();
 
       // Upsert the popup view record
