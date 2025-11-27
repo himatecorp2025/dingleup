@@ -658,12 +658,9 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           )}
                         </div>
 
-                        {/* Positions 4-10 - 2x4 Grid Layout (same style as TOP 3, no wreaths) */}
+                        {/* Positions 4-10 - 2x4 Grid Layout (same style as TOP 3, royal blue, no wreaths) */}
                         <div className="grid grid-cols-4 gap-2" style={{ transform: 'translateY(-8%)' }}>
-                          {rankFourToTen.map((player, index) => {
-                            // Alternate between silver and bronze styles
-                            const isSilver = index % 2 === 0;
-                            
+                          {rankFourToTen.map((player) => {
                             return (
                               <div
                                 key={player.user_id}
@@ -671,17 +668,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 style={{ width: '100%' }}
                               >
                                 <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
-                                  {/* Profile Picture with 3D Border */}
+                                  {/* Profile Picture with 3D Royal Blue Border */}
                                   <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
                                     <div 
                                       className="absolute inset-0 rounded-full" 
                                       style={{
-                                        background: isSilver 
-                                          ? 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)'
-                                          : 'linear-gradient(135deg, #f4a460 0%, #daa06d 40%, #cd7f32 70%, #a0522d 100%)',
-                                        boxShadow: isSilver
-                                          ? '0 6px 12px rgba(192,192,192,0.5), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.3)'
-                                          : '0 6px 12px rgba(205,127,50,0.5), inset 0 2px 4px rgba(255,200,150,0.8), inset 0 -2px 4px rgba(0,0,0,0.3)'
+                                        background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
+                                        boxShadow: '0 6px 12px rgba(65, 105, 225, 0.5), inset 0 2px 4px rgba(135, 206, 250, 0.8), inset 0 -2px 4px rgba(0, 0, 139, 0.3)'
                                       }} 
                                     />
                                     <div className="absolute inset-[4px] rounded-full overflow-hidden">
@@ -695,7 +688,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                         <div 
                                           className="w-full h-full flex items-center justify-center font-bold bg-gray-800"
                                           style={{ 
-                                            color: isSilver ? '#d8d8d8' : '#cd7f32',
+                                            color: 'hsl(225, 73%, 70%)',
                                             fontSize: 'clamp(0.9rem, 4vw, 1.2rem)'
                                           }}
                                         >
@@ -705,54 +698,38 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                     </div>
                                   </div>
 
-                                  {/* Rank Badge - Bottom Center */}
+                                  {/* Rank Badge - Bottom Center - Royal Blue */}
                                   <div className="absolute" style={{ left: '35%', bottom: '5%', width: '30%' }}>
                                     <div className="aspect-square rounded-full relative">
                                       <div 
                                         className="absolute inset-0 rounded-full" 
                                         style={{
-                                          background: isSilver
-                                            ? 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e8e8e8 30%, #d0d0d0 60%, #a8a8a8 100%)'
-                                            : 'radial-gradient(circle at 30% 30%, #f4c896 0%, #daa06d 30%, #cd7f32 60%, #a0522d 100%)',
-                                          boxShadow: isSilver
-                                            ? '0 4px 8px rgba(192,192,192,0.5), 0 2px 4px rgba(0,0,0,0.2)'
-                                            : '0 4px 8px rgba(205,127,50,0.5), 0 2px 4px rgba(0,0,0,0.2)'
+                                          background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: '0 4px 8px rgba(65, 105, 225, 0.5), 0 2px 4px rgba(0, 0, 139, 0.2)'
                                         }} 
                                       />
                                       <div 
                                         className="absolute inset-[2px] rounded-full" 
                                         style={{
-                                          background: isSilver
-                                            ? 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)'
-                                            : 'linear-gradient(135deg, #f4a460 0%, #daa06d 40%, #cd7f32 70%, #a0522d 100%)',
-                                          boxShadow: isSilver
-                                            ? 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
-                                            : 'inset 0 2px 6px rgba(255,200,150,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
+                                          background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.7), inset 0 -2px 6px rgba(0, 0, 139, 0.4)'
                                         }} 
                                       />
                                       <div 
                                         className="absolute inset-[4px] rounded-full flex items-center justify-center" 
                                         style={{
-                                          background: isSilver
-                                            ? 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e8e8e8 40%, #c0c0c0 100%)'
-                                            : 'radial-gradient(circle at 35% 35%, #daa06d 0%, #cd7f32 40%, #a0522d 100%)',
-                                          boxShadow: isSilver
-                                            ? 'inset 0 1px 3px rgba(255,255,255,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
-                                            : 'inset 0 1px 3px rgba(255,200,150,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
+                                          background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 57%) 40%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.8), inset 0 -1px 3px rgba(0, 0, 139, 0.2)'
                                         }}
                                       >
                                         <span 
                                           className="font-black relative" 
                                           style={{ 
                                             fontSize: 'clamp(0.6rem, 3vw, 0.75rem)',
-                                            background: isSilver
-                                              ? 'linear-gradient(180deg, #333333 0%, #000000 100%)'
-                                              : 'linear-gradient(180deg, #4a2511 0%, #2d1506 100%)',
+                                            background: 'linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%)',
                                             WebkitBackgroundClip: 'text',
                                             WebkitTextFillColor: 'transparent',
-                                            filter: isSilver
-                                              ? 'drop-shadow(0 1px 1px rgba(255,255,255,0.3))'
-                                              : 'drop-shadow(0 1px 1px rgba(255,200,150,0.3))'
+                                            filter: 'drop-shadow(0 1px 1px rgba(0, 0, 139, 0.5))'
                                           }}
                                         >
                                           {player.rank}
