@@ -44,11 +44,30 @@ const LeaderboardCarouselComponent = () => {
   // Calculate and update contentWidth (half of duplicated list)
   const updateContentWidth = useCallback(() => {
     const track = trackRef.current;
-    if (!track) return;
+    if (!track || track.children.length === 0) return;
     
-    // Use scrollWidth / 2 for perfect accuracy with DOM layout
-    // scrollWidth is total width of duplicated list, contentWidth is exactly half
-    contentWidthRef.current = track.scrollWidth / 2;
+    const children = Array.from(track.children) as HTMLElement[];
+    const halfCount = children.length / 2;
+    
+    // Measure actual rendered width of first half (original list)
+    // by getting bounding box from first to middle element
+    const firstChild = children[0];
+    const lastOfFirstHalf = children[halfCount - 1];
+    
+    const firstRect = firstChild.getBoundingClientRect();
+    const lastRect = lastOfFirstHalf.getBoundingClientRect();
+    
+    // Calculate exact width including the last element
+    const exactWidth = (lastRect.right - firstRect.left);
+    
+    // Add the gap after the last element (distance to next element)
+    if (children[halfCount]) {
+      const nextRect = children[halfCount].getBoundingClientRect();
+      const gapAfter = nextRect.left - lastRect.right;
+      contentWidthRef.current = exactWidth + gapAfter;
+    } else {
+      contentWidthRef.current = exactWidth;
+    }
   }, []);
 
   // Frame rate-independent scroll animation using translate3d
@@ -58,20 +77,22 @@ const LeaderboardCarouselComponent = () => {
     
     if (!container || !track || topPlayers.length === 0) return;
 
-    // Initialize contentWidth (must wait for DOM to render)
-    const initContentWidth = () => {
-      if (track.scrollWidth === 0) {
-        // DOM not ready yet, retry next frame
-        requestAnimationFrame(initContentWidth);
-        return;
-      }
-      updateContentWidth();
-    };
-    initContentWidth();
-    
     // Reset transform position
     translateXRef.current = 0;
     lastTimestampRef.current = null;
+    
+    // Wait for layout to be fully ready before measuring
+    const initContentWidth = () => {
+      setTimeout(() => {
+        if (!track || track.children.length === 0) return;
+        updateContentWidth();
+        
+        // Only start animation after contentWidth is measured
+        if (contentWidthRef.current > 0) {
+          animationFrameRef.current = requestAnimationFrame(animate);
+        }
+      }, 50); // Small delay to ensure full layout
+    };
 
     const animate = (timestamp: number) => {
       const currentTrack = trackRef.current;
@@ -113,8 +134,8 @@ const LeaderboardCarouselComponent = () => {
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    // Start animation loop
-    animationFrameRef.current = requestAnimationFrame(animate);
+    // Initialize contentWidth and start animation
+    initContentWidth();
 
     return () => {
       if (animationFrameRef.current) {
