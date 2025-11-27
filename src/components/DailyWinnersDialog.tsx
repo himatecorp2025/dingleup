@@ -658,104 +658,207 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           )}
                         </div>
 
-                        {/* Positions 4-10 - 2x4 Grid Layout (same style as TOP 3, royal blue, no wreaths) */}
-                        <div className="grid grid-cols-4 gap-2" style={{ transform: 'translateY(-8%)' }}>
-                          {rankFourToTen.map((player) => {
-                            return (
-                              <div
-                                key={player.user_id}
-                                className="flex flex-col items-center relative"
-                                style={{ width: '100%' }}
-                              >
-                                <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
-                                  {/* Profile Picture with 3D Royal Blue Border */}
-                                  <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
-                                    <div 
-                                      className="absolute inset-0 rounded-full" 
-                                      style={{
-                                        background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
-                                        boxShadow: '0 6px 12px rgba(65, 105, 225, 0.5), inset 0 2px 4px rgba(135, 206, 250, 0.8), inset 0 -2px 4px rgba(0, 0, 139, 0.3)'
-                                      }} 
-                                    />
-                                    <div className="absolute inset-[4px] rounded-full overflow-hidden">
-                                      {player.avatar_url ? (
-                                        <img 
-                                          src={player.avatar_url} 
-                                          alt={player.username}
-                                          className="w-full h-full object-cover"
-                                        />
-                                      ) : (
-                                        <div 
-                                          className="w-full h-full flex items-center justify-center font-bold bg-gray-800"
-                                          style={{ 
-                                            color: 'hsl(225, 73%, 70%)',
-                                            fontSize: 'clamp(0.9rem, 4vw, 1.2rem)'
-                                          }}
-                                        >
-                                          {player.username.substring(0, 2).toUpperCase()}
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-
-                                  {/* Rank Badge - Bottom Center - Royal Blue */}
-                                  <div className="absolute" style={{ left: '35%', bottom: '5%', width: '30%' }}>
-                                    <div className="aspect-square rounded-full relative">
+                        {/* Positions 4-10 - 2 rows: first row 4 items, second row 3 items centered */}
+                        <div style={{ transform: 'translateY(-8%)' }}>
+                          {/* First row: positions 4-7 */}
+                          <div className="grid grid-cols-4 gap-2 mb-2">
+                            {rankFourToTen.slice(0, 4).map((player) => {
+                              return (
+                                <div
+                                  key={player.user_id}
+                                  className="flex flex-col items-center relative"
+                                  style={{ width: '100%' }}
+                                >
+                                  <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
+                                    {/* Profile Picture with 3D Royal Blue Border */}
+                                    <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
                                       <div 
                                         className="absolute inset-0 rounded-full" 
                                         style={{
-                                          background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
-                                          boxShadow: '0 4px 8px rgba(65, 105, 225, 0.5), 0 2px 4px rgba(0, 0, 139, 0.2)'
-                                        }} 
-                                      />
-                                      <div 
-                                        className="absolute inset-[2px] rounded-full" 
-                                        style={{
                                           background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
-                                          boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.7), inset 0 -2px 6px rgba(0, 0, 139, 0.4)'
+                                          boxShadow: '0 6px 12px rgba(65, 105, 225, 0.5), inset 0 2px 4px rgba(135, 206, 250, 0.8), inset 0 -2px 4px rgba(0, 0, 139, 0.3)'
                                         }} 
                                       />
-                                      <div 
-                                        className="absolute inset-[4px] rounded-full flex items-center justify-center" 
-                                        style={{
-                                          background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 57%) 40%, hsl(225, 73%, 47%) 100%)',
-                                          boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.8), inset 0 -1px 3px rgba(0, 0, 139, 0.2)'
-                                        }}
-                                      >
-                                        <span 
-                                          className="font-black relative" 
-                                          style={{ 
-                                            fontSize: 'clamp(0.6rem, 3vw, 0.75rem)',
-                                            background: 'linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%)',
-                                            WebkitBackgroundClip: 'text',
-                                            WebkitTextFillColor: 'transparent',
-                                            filter: 'drop-shadow(0 1px 1px rgba(0, 0, 139, 0.5))'
+                                      <div className="absolute inset-[4px] rounded-full overflow-hidden">
+                                        {player.avatar_url ? (
+                                          <img 
+                                            src={player.avatar_url} 
+                                            alt={player.username}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        ) : (
+                                          <div 
+                                            className="w-full h-full flex items-center justify-center font-bold bg-gray-800"
+                                            style={{ 
+                                              color: 'hsl(225, 73%, 70%)',
+                                              fontSize: 'clamp(0.9rem, 4vw, 1.2rem)'
+                                            }}
+                                          >
+                                            {player.username.substring(0, 2).toUpperCase()}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Rank Badge - Bottom Center - Royal Blue */}
+                                    <div className="absolute" style={{ left: '35%', bottom: '5%', width: '30%' }}>
+                                      <div className="aspect-square rounded-full relative">
+                                        <div 
+                                          className="absolute inset-0 rounded-full" 
+                                          style={{
+                                            background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
+                                            boxShadow: '0 4px 8px rgba(65, 105, 225, 0.5), 0 2px 4px rgba(0, 0, 139, 0.2)'
+                                          }} 
+                                        />
+                                        <div 
+                                          className="absolute inset-[2px] rounded-full" 
+                                          style={{
+                                            background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
+                                            boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.7), inset 0 -2px 6px rgba(0, 0, 139, 0.4)'
+                                          }} 
+                                        />
+                                        <div 
+                                          className="absolute inset-[4px] rounded-full flex items-center justify-center" 
+                                          style={{
+                                            background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 57%) 40%, hsl(225, 73%, 47%) 100%)',
+                                            boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.8), inset 0 -1px 3px rgba(0, 0, 139, 0.2)'
                                           }}
                                         >
-                                          {player.rank}
-                                        </span>
+                                          <span 
+                                            className="font-black relative" 
+                                            style={{ 
+                                              fontSize: 'clamp(0.6rem, 3vw, 0.75rem)',
+                                              background: 'linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%)',
+                                              WebkitBackgroundClip: 'text',
+                                              WebkitTextFillColor: 'transparent',
+                                              filter: 'drop-shadow(0 1px 1px rgba(0, 0, 139, 0.5))'
+                                            }}
+                                          >
+                                            {player.rank}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
 
-                                {/* Username */}
-                                <div className="text-center w-full mt-1">
-                                  <p 
-                                    className="text-white font-bold leading-none truncate px-1" 
-                                    style={{
-                                      WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                      textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
-                                      fontSize: 'clamp(0.55rem, 2.5vw, 0.7rem)',
-                                      maxWidth: '100%'
-                                    }}
-                                  >
-                                    {player.username}
-                                  </p>
+                                  {/* Username */}
+                                  <div className="text-center w-full mt-1">
+                                    <p 
+                                      className="text-white font-bold leading-none truncate px-1" 
+                                      style={{
+                                        WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
+                                        textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
+                                        fontSize: 'clamp(0.55rem, 2.5vw, 0.7rem)',
+                                        maxWidth: '100%'
+                                      }}
+                                    >
+                                      {player.username}
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
+                          </div>
+
+                          {/* Second row: positions 8-10 centered */}
+                          <div className="flex justify-center gap-2">
+                            {rankFourToTen.slice(4, 7).map((player) => {
+                              return (
+                                <div
+                                  key={player.user_id}
+                                  className="flex flex-col items-center relative"
+                                  style={{ width: 'calc(25% - 6px)' }}
+                                >
+                                  <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
+                                    {/* Profile Picture with 3D Royal Blue Border */}
+                                    <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
+                                      <div 
+                                        className="absolute inset-0 rounded-full" 
+                                        style={{
+                                          background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: '0 6px 12px rgba(65, 105, 225, 0.5), inset 0 2px 4px rgba(135, 206, 250, 0.8), inset 0 -2px 4px rgba(0, 0, 139, 0.3)'
+                                        }} 
+                                      />
+                                      <div className="absolute inset-[4px] rounded-full overflow-hidden">
+                                        {player.avatar_url ? (
+                                          <img 
+                                            src={player.avatar_url} 
+                                            alt={player.username}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        ) : (
+                                          <div 
+                                            className="w-full h-full flex items-center justify-center font-bold bg-gray-800"
+                                            style={{ 
+                                              color: 'hsl(225, 73%, 70%)',
+                                              fontSize: 'clamp(0.9rem, 4vw, 1.2rem)'
+                                            }}
+                                          >
+                                            {player.username.substring(0, 2).toUpperCase()}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Rank Badge - Bottom Center - Royal Blue */}
+                                    <div className="absolute" style={{ left: '35%', bottom: '5%', width: '30%' }}>
+                                      <div className="aspect-square rounded-full relative">
+                                        <div 
+                                          className="absolute inset-0 rounded-full" 
+                                          style={{
+                                            background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
+                                            boxShadow: '0 4px 8px rgba(65, 105, 225, 0.5), 0 2px 4px rgba(0, 0, 139, 0.2)'
+                                          }} 
+                                        />
+                                        <div 
+                                          className="absolute inset-[2px] rounded-full" 
+                                          style={{
+                                            background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
+                                            boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.7), inset 0 -2px 6px rgba(0, 0, 139, 0.4)'
+                                          }} 
+                                        />
+                                        <div 
+                                          className="absolute inset-[4px] rounded-full flex items-center justify-center" 
+                                          style={{
+                                            background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 57%) 40%, hsl(225, 73%, 47%) 100%)',
+                                            boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.8), inset 0 -1px 3px rgba(0, 0, 139, 0.2)'
+                                          }}
+                                        >
+                                          <span 
+                                            className="font-black relative" 
+                                            style={{ 
+                                              fontSize: 'clamp(0.6rem, 3vw, 0.75rem)',
+                                              background: 'linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%)',
+                                              WebkitBackgroundClip: 'text',
+                                              WebkitTextFillColor: 'transparent',
+                                              filter: 'drop-shadow(0 1px 1px rgba(0, 0, 139, 0.5))'
+                                            }}
+                                          >
+                                            {player.rank}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Username */}
+                                  <div className="text-center w-full mt-1">
+                                    <p 
+                                      className="text-white font-bold leading-none truncate px-1" 
+                                      style={{
+                                        WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
+                                        textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
+                                        fontSize: 'clamp(0.55rem, 2.5vw, 0.7rem)',
+                                        maxWidth: '100%'
+                                      }}
+                                    >
+                                      {player.username}
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
                        </>
                     )}
