@@ -2,48 +2,49 @@ import { useState, useEffect } from 'react';
 import { Dialog, DialogContent } from './ui/dialog';
 import { Button } from './ui/button';
 import { X, ChevronRight, ChevronLeft, Play, Trophy, Share2, Gift } from 'lucide-react';
+import { useI18n } from '@/i18n';
 
 interface OnboardingStep {
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: any;
   gradient: string;
 }
 
 const ONBOARDING_STEPS: OnboardingStep[] = [
   {
-    title: 'Üdvözlünk a DingleUp-ban! 🎉',
-    description: 'Ez egy kvízjáték, ahol aranyérméket szerezhetsz a helyes válaszokért! Haladj végig a lépéseken, hogy megismerd az alkalmazás funkcióit.',
+    titleKey: 'onboarding.step1_title',
+    descriptionKey: 'onboarding.step1_desc',
     icon: Gift,
     gradient: 'from-accent via-accent-dark to-accent'
   },
   {
-    title: 'Kezdd el a játékot! 🎮',
-    description: 'A PLAY NOW gombbal indíthatsz új játékot. Válassz kategóriát és válaszolj a kérdésekre! Minden helyes válaszért aranyérméket és pontokat kapsz.',
+    titleKey: 'onboarding.step2_title',
+    descriptionKey: 'onboarding.step2_desc',
     icon: Play,
     gradient: 'from-success via-success/80 to-success'
   },
   {
-    title: 'Életek és újratöltés ❤️',
-    description: 'Minden játékhoz szükséged van életre. Ha elfogy, ne aggódj - automatikusan újratöltődnek 12 percenként!',
+    titleKey: 'onboarding.step3_title',
+    descriptionKey: 'onboarding.step3_desc',
     icon: Trophy,
     gradient: 'from-destructive via-destructive/80 to-destructive'
   },
   {
-    title: 'Napi jutalmak 🎁',
-    description: 'Jelentkezz be minden nap, és szerezz ingyenes aranyérméket! A sorozat folytatásával egyre több érmét kapsz. 7 nap után újraindul a ciklus.',
+    titleKey: 'onboarding.step4_title',
+    descriptionKey: 'onboarding.step4_desc',
     icon: Gift,
     gradient: 'from-accent-dark via-destructive to-accent-dark'
   },
   {
-    title: 'Ranglista és versenyek 🏆',
-    description: 'Versenyezz másokkal a ranglistán! Napi rangsorban versenyezhetsz más játékosokkal. A legjobb játékosok különleges jutalmakat nyernek!',
+    titleKey: 'onboarding.step5_title',
+    descriptionKey: 'onboarding.step5_desc',
     icon: Trophy,
     gradient: 'from-primary via-primary-glow to-primary'
   },
   {
-    title: 'Barátok meghívása 🤝',
-    description: 'Hívd meg barátaidat és szerezz bónuszokat! Minden meghívott barát után extra aranyérméket és életeket kapsz. Oszd meg a meghívó kódodat!',
+    titleKey: 'onboarding.step6_title',
+    descriptionKey: 'onboarding.step6_desc',
     icon: Share2,
     gradient: 'from-primary-glow via-primary to-primary-glow'
   }
@@ -54,6 +55,7 @@ interface OnboardingTutorialProps {
 }
 
 export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -133,12 +135,12 @@ export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
 
           {/* Title */}
           <h2 className={`text-2xl font-black bg-gradient-to-r ${step.gradient} bg-clip-text text-transparent`}>
-            {step.title}
+            {t(step.titleKey)}
           </h2>
 
           {/* Description */}
           <p className="text-foreground/90 text-sm leading-relaxed px-4">
-            {step.description}
+            {t(step.descriptionKey)}
           </p>
 
           {/* Step counter */}
@@ -156,14 +158,14 @@ export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
               className="flex-1 bg-background/10 border-border/20 hover:bg-background/20"
             >
               <ChevronLeft className="w-4 h-4 mr-1" />
-              Vissza
+              {t('onboarding.button_back')}
             </Button>
           )}
           <Button
             onClick={handleNext}
             className={`flex-1 bg-gradient-to-r ${step.gradient} text-foreground font-bold hover:opacity-90`}
           >
-            {currentStep === ONBOARDING_STEPS.length - 1 ? 'Befejezés' : 'Következő'}
+            {currentStep === ONBOARDING_STEPS.length - 1 ? t('onboarding.button_finish') : t('onboarding.button_next')}
             {currentStep < ONBOARDING_STEPS.length - 1 && <ChevronRight className="w-4 h-4 ml-1" />}
           </Button>
         </div>
@@ -174,7 +176,7 @@ export const OnboardingTutorial = ({ userId }: OnboardingTutorialProps) => {
             onClick={handleSkip}
             className="text-xs text-white/50 hover:text-white/80 transition-colors mt-2"
           >
-            Kihagyás
+            {t('onboarding.button_skip')}
           </button>
         )}
       </DialogContent>

@@ -1,6 +1,7 @@
 import { Heart } from 'lucide-react';
 import { useQuestionLike } from '@/hooks/useQuestionLike';
 import { useState } from 'react';
+import { useI18n } from '@/i18n';
 
 interface QuestionLikeButtonProps {
   questionId: string;
@@ -8,6 +9,7 @@ interface QuestionLikeButtonProps {
 }
 
 export const QuestionLikeButton = ({ questionId }: QuestionLikeButtonProps) => {
+  const { t } = useI18n();
   const { liked, likeCount, toggleLike } = useQuestionLike(questionId);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -28,7 +30,7 @@ export const QuestionLikeButton = ({ questionId }: QuestionLikeButtonProps) => {
       <button
         onClick={handleLike}
         className="relative p-3 rounded-full transition-all duration-200 hover:scale-110 active:scale-95"
-        aria-label={liked ? 'Lájk visszavonása' : 'Kérdés lájkolása'}
+        aria-label={liked ? t('aria.unlike_question') : t('aria.like_question')}
       >
         {/* Shadow base */}
         <div 
