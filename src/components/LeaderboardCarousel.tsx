@@ -58,8 +58,8 @@ const LeaderboardCarouselComponent = () => {
           <LeaderboardSkeleton />
         ) : (
           <div className="inline-flex gap-2 sm:gap-3 px-2 animate-leaderboard-marquee will-change-transform">
-            {/* Dupla rendering: eredeti lista + másolat körköröz scrollhoz */}
-            {[...topPlayers, ...topPlayers].map((player, index) => {
+            {/* 4x duplikálás a zökkenőmentes végtelen scroll érdekében */}
+            {[...topPlayers, ...topPlayers, ...topPlayers, ...topPlayers].map((player, index) => {
               const rank = (index % topPlayers.length) + 1;
               const showCrown = (index % topPlayers.length) < 3;
               const rankIndex = index % topPlayers.length;
