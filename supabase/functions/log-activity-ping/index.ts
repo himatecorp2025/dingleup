@@ -15,19 +15,33 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
-    // Client with SERVICE_ROLE_KEY for both auth verification and DB operations
+    // Client with SERVICE_ROLE_KEY for DB operations
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
+    if (!authHeader || !authHeader.toLowerCase().startsWith("bearer ")) {
       throw new Error("Missing Authorization header");
     }
-    
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
-    
-    if (authError || !user) {
-      console.error('[log-activity-ping] Auth error:', authError);
+
+    const token = authHeader.slice(7).trim();
+
+    let userId: string | null = null;
+    try {
+      const parts = token.split(".");
+      if (parts.length !== 3) {
+        console.error('[log-activity-ping] Invalid JWT format');
+      } else {
+        const payloadJson = atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"));
+        const payload = JSON.parse(payloadJson);
+        if (typeof payload.sub === "string") {
+          userId = payload.sub;
+        }
+      }
+    } catch (err) {
+      console.error('[log-activity-ping] Failed to decode JWT', err);
+    }
+
+    if (!userId) {
       throw new Error("User not authenticated");
     }
 
@@ -76,7 +90,7 @@ serve(async (req) => {
     const { error: insertError } = await supabaseClient
       .from('user_activity_pings')
       .upsert({
-        user_id: user.id,
+        user_id: userId,
         bucket_start: bucketDate.toISOString(),
         device_class: deviceClass,
         source: source

@@ -15,15 +15,38 @@ import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
  * 4. Mark slot as delivered, increment delivered_count
  */
 
+const getUserIdFromAuthHeader = (req: Request): string | null => {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || !authHeader.toLowerCase().startsWith('bearer ')) {
+    return null;
+  }
+
+  const token = authHeader.slice(7).trim();
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    console.error('[lootbox-heartbeat] Invalid JWT format');
+    return null;
+  }
+
+  try {
+    const payloadJson = atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'));
+    const payload = JSON.parse(payloadJson);
+    return typeof payload.sub === 'string' ? payload.sub : null;
+  } catch (err) {
+    console.error('[lootbox-heartbeat] Failed to decode JWT payload', err);
+    return null;
+  }
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return handleCorsPreflight(req.headers.get('origin'));
   }
 
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing auth header' }), {
+    const userId = getUserIdFromAuthHeader(req);
+    if (!userId) {
+      return new Response(JSON.stringify({ error: 'Unauthorized', details: 'Invalid or missing token' }), {
         status: 401,
         headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       });
@@ -33,19 +56,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
-
-    // Verify JWT and get user
-    const jwt = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(jwt);
-    
-    if (userError || !user) {
-      console.error('[lootbox-heartbeat] Auth error:', userError);
-      return new Response(JSON.stringify({ error: 'Unauthorized', details: userError?.message }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
-      });
-    }
-
     const now = new Date();
     const today = now.toISOString().split('T')[0]; // YYYY-MM-DD
 
@@ -53,7 +63,7 @@ serve(async (req) => {
     let { data: plan, error: planError } = await supabaseAdmin
       .from('lootbox_daily_plan')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('plan_date', today)
       .single();
 
@@ -62,7 +72,7 @@ serve(async (req) => {
       const { data: newPlanId, error: genError } = await supabaseAdmin.rpc(
         'generate_lootbox_daily_plan',
         {
-          p_user_id: user.id,
+          p_user_id: userId,
           p_plan_date: today,
           p_first_login_time: now.toISOString()
         }
@@ -80,7 +90,7 @@ serve(async (req) => {
       const { data: fetchedPlan, error: fetchError } = await supabaseAdmin
         .from('lootbox_daily_plan')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .eq('plan_date', today)
         .single();
 
@@ -98,7 +108,7 @@ serve(async (req) => {
     const { data: activeDrop } = await supabaseAdmin
       .from('lootbox_instances')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('status', 'active_drop')
       .gt('expires_at', now.toISOString())
       .single();
@@ -128,7 +138,7 @@ serve(async (req) => {
     const { data: lastDrop } = await supabaseAdmin
       .from('lootbox_instances')
       .select('created_at')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(1)
       .single();
@@ -196,7 +206,7 @@ serve(async (req) => {
     const expiresAt = new Date(now.getTime() + 60 * 1000); // 60 seconds from now
     
     console.log('[Lootbox Heartbeat] Creating drop with data:', {
-      user_id: user.id,
+      user_id: userId,
       status: 'active_drop',
       source: 'daily_activity',
       open_cost_gold: 150,
@@ -211,7 +221,7 @@ serve(async (req) => {
     const { data: newDrop, error: dropError } = await supabaseAdmin
       .from('lootbox_instances')
       .insert({
-        user_id: user.id,
+        user_id: userId,
         status: 'active_drop',
         source: 'daily_activity',
         open_cost_gold: 150,
