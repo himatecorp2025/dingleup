@@ -39,7 +39,8 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(jwt);
     
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      console.error('[lootbox-heartbeat] Auth error:', userError);
+      return new Response(JSON.stringify({ error: 'Unauthorized', details: userError?.message }), {
         status: 401,
         headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       });

@@ -13,11 +13,10 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
-    // Client for auth verification (with user's token)
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
+    // Client with SERVICE_ROLE_KEY for both auth verification and DB operations
+    const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
@@ -25,13 +24,12 @@ serve(async (req) => {
     }
     
     const token = authHeader.replace("Bearer ", "");
-    const { data } = await supabaseAuth.auth.getUser(token);
-    const user = data.user;
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
     
-    if (!user) throw new Error("User not authenticated");
-
-    // Client for database operations (bypasses RLS)
-    const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
+    if (authError || !user) {
+      console.error('[log-activity-ping] Auth error:', authError);
+      throw new Error("User not authenticated");
+    }
 
     const { bucketStart, source, deviceClass } = await req.json();
 
