@@ -22,13 +22,6 @@ interface Question {
   correct_answer: string;
 }
 
-interface TranslatedQuestion extends Question {
-  question_text_translated: string;
-  answer_a_translated: string;
-  answer_b_translated: string;
-  answer_c_translated: string;
-}
-
 interface QuestionTranslation {
   question_id: string;
   question_text: string;
@@ -236,16 +229,11 @@ async function translateQuestions(
   supabase: any,
   questions: Question[],
   lang: string
-): Promise<TranslatedQuestion[]> {
+): Promise<Question[]> {
   // If Hungarian, no translation needed - return original
   if (lang === 'hu') {
-    return questions.map(q => ({
-      ...q,
-      question_text_translated: q.question,
-      answer_a_translated: q.answers[0]?.text || '',
-      answer_b_translated: q.answers[1]?.text || '',
-      answer_c_translated: q.answers[2]?.text || '',
-    }));
+    console.log(`[translateQuestions] Hungarian language - no translation needed`);
+    return questions;
   }
 
   const questionIds = questions.map(q => q.id);
@@ -257,32 +245,37 @@ async function translateQuestions(
     .in('question_id', questionIds)
     .eq('lang', lang);
 
-  if (!translations) {
+  if (!translations || translations.length === 0) {
     // Fallback to Hungarian if translations not found
-    console.warn(`Translations not found for lang: ${lang}, using Hungarian`);
-    return questions.map(q => ({
-      ...q,
-      question_text_translated: q.question,
-      answer_a_translated: q.answers[0]?.text || '',
-      answer_b_translated: q.answers[1]?.text || '',
-      answer_c_translated: q.answers[2]?.text || '',
-    }));
+    console.warn(`[translateQuestions] No translations found for lang: ${lang}, using Hungarian`);
+    return questions;
   }
+
+  console.log(`[translateQuestions] Applying ${translations.length} translations for lang: ${lang}`);
 
   // Create a map of translations by question_id
   const translationMap = new Map<string, QuestionTranslation>(
     (translations as QuestionTranslation[]).map((t: QuestionTranslation) => [t.question_id, t])
   );
 
-  // Merge original questions with translations
+  // CRITICAL: Apply translations to original question and answers fields
   return questions.map(q => {
     const translation = translationMap.get(q.id);
-    return {
-      ...q,
-      question_text_translated: translation?.question_text || q.question,
-      answer_a_translated: translation?.answer_a || q.answers[0]?.text || '',
-      answer_b_translated: translation?.answer_b || q.answers[1]?.text || '',
-      answer_c_translated: translation?.answer_c || q.answers[2]?.text || '',
-    } as TranslatedQuestion;
+    
+    if (translation) {
+      // Apply translations to the original fields
+      return {
+        ...q,
+        question: translation.question_text,
+        answers: [
+          { ...q.answers[0], text: translation.answer_a },
+          { ...q.answers[1], text: translation.answer_b },
+          { ...q.answers[2], text: translation.answer_c },
+        ]
+      };
+    }
+    
+    // No translation found - keep original Hungarian
+    return q;
   });
 }
