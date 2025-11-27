@@ -41,6 +41,7 @@ const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const InstallApp = lazy(() => import("./pages/InstallApp"));
 const Invitation = lazy(() => import("./pages/Invitation"));
 const About = lazy(() => import("./pages/About"));
+const Gifts = lazy(() => import("./pages/Gifts"));
 
 // Lazy load admin pages
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
@@ -166,6 +167,7 @@ const AppCore = () => {
               <Route path="/install" element={<ErrorBoundary><InstallApp /></ErrorBoundary>} />
               <Route path="/invitation" element={<ErrorBoundary><Invitation /></ErrorBoundary>} />
               <Route path="/about" element={<ErrorBoundary><About /></ErrorBoundary>} />
+              <Route path="/gifts" element={<ErrorBoundary><Gifts /></ErrorBoundary>} />
               <Route path="/popular-content" element={<ErrorBoundary><PopularContent /></ErrorBoundary>} />
               <Route path="/profile/game" element={<ErrorBoundary><ProfileGame /></ErrorBoundary>} />
               
