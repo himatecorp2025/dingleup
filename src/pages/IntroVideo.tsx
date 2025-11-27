@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import introVideo from "@/assets/introvideo.mp4";
+import { useFullscreen } from "@/hooks/useFullscreen";
 
 const IntroVideo = () => {
   const navigate = useNavigate();
@@ -10,6 +11,12 @@ const IntroVideo = () => {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [fallbackTriggered, setFallbackTriggered] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // FULLSCREEN MODE: Hide status bar on mobile devices
+  useFullscreen({
+    enabled: true,
+    autoReenter: true,
+  });
   
   // PWA/Standalone mode detection
   const isStandalone = (() => {

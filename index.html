@@ -2,21 +2,29 @@
 <html lang="hu">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0" />
-    <meta name="theme-color" content="#1a0033" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    
+    <!-- iOS Safari - Full immersive mode -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="DingleUP!" />
-    <meta name="fullscreen" content="yes" />
     <meta name="apple-touch-fullscreen" content="yes" />
     
-    <!-- Fullscreen mode meta tags -->
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-tap-highlight" content="no" />
+    <!-- Android & Generic Mobile - Fullscreen mode -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="fullscreen" content="yes" />
     <meta name="full-screen" content="yes" />
+    
+    <!-- Chinese browsers - Fullscreen mode -->
     <meta name="x5-fullscreen" content="true" />
     <meta name="360-fullscreen" content="true" />
+    <meta name="x5-page-mode" content="app" />
+    
+    <!-- Disable phone number detection and tap highlights -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
     
     <!-- SEO & Icons -->
     <link rel="apple-touch-icon" href="/dingleup-logo.png" />
@@ -99,12 +107,14 @@
     /* TELJES IMMERSIVE MÓD - Safe-area kiterjesztéssel */
     html, body, #root {
       min-height: 100dvh;
-      height: auto;
+      height: 100dvh;
       margin: 0;
       padding: 0;
       overflow-x: hidden;
       overscroll-behavior: none;
       -webkit-overflow-scrolling: touch;
+      position: fixed;
+      width: 100%;
     }
 
     /* Safe-area változók */

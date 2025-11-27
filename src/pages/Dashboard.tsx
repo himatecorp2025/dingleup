@@ -15,6 +15,7 @@ import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useBoosterState } from '@/hooks/useBoosterState';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useDashboardPopupManager } from '@/hooks/useDashboardPopupManager';
+import { useFullscreen } from '@/hooks/useFullscreen';
 
 // PERFORMANCE OPTIMIZATION: Prefetch critical game assets
 // This preloads /game route code + intro video in background while user is on Dashboard
@@ -66,6 +67,12 @@ const Dashboard = () => {
   const { markActive } = useActivityTracker('route_view');
   const { profile, loading, refreshProfile } = useProfileQuery(userId);
   const { walletData, refetchWallet, serverDriftMs } = useWalletQuery(userId);
+  
+  // FULLSCREEN MODE: Hide status bar on mobile devices
+  useFullscreen({
+    enabled: true,
+    autoReenter: true,
+  });
   
   // DEBUG: Log wallet data
   useEffect(() => {
@@ -445,7 +452,7 @@ if (!profile) {
       
       {/* Casino lights removed per user requirement */}
       
-        <div className="min-h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)' }}>
+        <div className="h-dvh w-full flex flex-col overflow-x-hidden px-3 max-w-screen-lg mx-auto relative z-10" style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)' }}>
         {/* Top Section */}
         <div className="flex flex-col gap-3 mb-3 flex-shrink-0">
           {/* First Row: Username and Stats */}

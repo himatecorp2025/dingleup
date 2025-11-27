@@ -6,6 +6,7 @@ import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useI18n } from '@/i18n';
 import { useLeaderboardQuery } from '@/hooks/queries/useLeaderboardQuery';
 import { useProfileQuery } from '@/hooks/useProfileQuery';
+import { useFullscreen } from '@/hooks/useFullscreen';
 
 import DailyRewards from '@/components/DailyRewards';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
@@ -31,6 +32,12 @@ const Leaderboard = () => {
   const { profile } = useProfileQuery(userId);
   const { leaderboard, loading, refetch } = useLeaderboardQuery(profile?.country_code);
   const [dailyRewards, setDailyRewards] = useState<DailyRewardsData | null>(null);
+  
+  // FULLSCREEN MODE: Hide status bar on mobile devices
+  useFullscreen({
+    enabled: true,
+    autoReenter: true,
+  });
   
   // Pull-to-refresh functionality
   const { isPulling, pullProgress } = usePullToRefresh({

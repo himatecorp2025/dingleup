@@ -81,7 +81,8 @@ export default defineConfig(({ mode }) => ({
         description: 'Kvízjáték magyar nyelven',
         theme_color: '#9333ea',
         background_color: '#000000',
-        display: 'standalone',
+        display: 'fullscreen',
+        orientation: 'portrait',
         icons: [
           {
             src: '/dingleup-logo.png',

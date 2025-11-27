@@ -6,6 +6,7 @@ import { ReportDialog } from '@/components/ReportDialog';
 import { useI18n } from '@/i18n';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useFullscreen } from '@/hooks/useFullscreen';
 
 const About = () => {
   const { isHandheld, isStandalone } = usePlatformDetection();
@@ -13,6 +14,12 @@ const About = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const { t } = useI18n();
   const navigate = useNavigate();
+
+  // FULLSCREEN MODE: Hide status bar on mobile devices
+  useFullscreen({
+    enabled: true,
+    autoReenter: true,
+  });
 
   // Check if current user has admin role
   useEffect(() => {
