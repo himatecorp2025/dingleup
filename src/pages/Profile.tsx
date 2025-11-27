@@ -771,22 +771,6 @@ const Profile = () => {
                   {t('profile.language_notice')}
                 </p>
               </div>
-              
-              {/* Life Regeneration */}
-              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.life_regeneration_label')}</p>
-                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {t('profile.life_regeneration_value').replace('{rate}', profile.lives_regeneration_rate.toString())}
-                </p>
-              </div>
-              
-              {/* Registration Date */}
-              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.registration_date_label')}</p>
-                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {new Date(profile.created_at).toLocaleDateString('hu-HU')}
-                </p>
-              </div>
 
               {/* Current PIN */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
@@ -867,6 +851,22 @@ const Profile = () => {
                     {showConfirmPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+              </div>
+              
+              {/* Life Regeneration */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.life_regeneration_label')}</p>
+                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  {t('profile.life_regeneration_value').replace('{rate}', profile.lives_regeneration_rate.toString())}
+                </p>
+              </div>
+              
+              {/* Registration Date */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.registration_date_label')}</p>
+                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  {new Date(profile.created_at).toLocaleDateString('hu-HU')}
+                </p>
               </div>
 
               {/* Save Button */}
