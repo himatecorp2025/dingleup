@@ -2,11 +2,135 @@ import { useI18n } from '@/i18n';
 import BottomNav from '@/components/BottomNav';
 import boxGold from '@/assets/box-gold.svg';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Play } from 'lucide-react';
+import { LogOut, Play, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { useWalletQuery } from '@/hooks/queries/useWalletQuery';
+
+interface StoredLootbox {
+  id: string;
+  status: string;
+  open_cost_gold: number;
+  source: string;
+  created_at: string;
+}
 
 const Gifts = () => {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const [userId, setUserId] = useState<string | undefined>();
+  const [storedLootboxes, setStoredLootboxes] = useState<StoredLootbox[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [openingId, setOpeningId] = useState<string | null>(null);
+  const { walletData, refetchWallet } = useWalletQuery(userId);
+
+  // Get user session
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUserId(session.user.id);
+      }
+    });
+  }, []);
+
+  // Fetch stored lootboxes
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchStoredLootboxes = async () => {
+      try {
+        setLoading(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        const { data, error } = await supabase.functions.invoke('lootbox-stored', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`
+          }
+        });
+
+        if (error) {
+          console.error('[Gifts] Error fetching stored lootboxes:', error);
+        } else {
+          setStoredLootboxes(data?.storedLootboxes || []);
+        }
+      } catch (err) {
+        console.error('[Gifts] Unexpected error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStoredLootboxes();
+  }, [userId]);
+
+  const handleOpenLootbox = async (lootboxId: string) => {
+    if (openingId || !walletData) return;
+
+    // Check if user has enough gold
+    if (walletData.coinsCurrent < 150) {
+      toast.error(t('lootbox.not_enough_gold'));
+      return;
+    }
+
+    try {
+      setOpeningId(lootboxId);
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error(t('errors.not_logged_in'));
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('lootbox-open-stored', {
+        body: { lootboxId },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+
+      if (error) {
+        console.error('[Gifts] Open error:', error);
+        toast.error(t('errors.unknown'));
+        return;
+      }
+
+      if (data.error === 'NOT_ENOUGH_GOLD') {
+        toast.error(t('lootbox.not_enough_gold'));
+        return;
+      }
+
+      if (data.rewards) {
+        // Show reward animation
+        toast.success(
+          `${t('lootbox.won')}: +${data.rewards.gold} ${t('common.gold')}, +${data.rewards.life} ${t('common.life')}`,
+          {
+            duration: 4000,
+            style: {
+              background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)',
+              color: '#000',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              border: '2px solid #d4af37',
+              boxShadow: '0 0 30px rgba(255, 215, 0, 0.6)',
+            },
+          }
+        );
+
+        // Remove opened lootbox from UI
+        setStoredLootboxes(prev => prev.filter(box => box.id !== lootboxId));
+        
+        // Refresh wallet
+        await refetchWallet();
+      }
+    } catch (err) {
+      console.error('[Gifts] Unexpected error:', err);
+      toast.error(t('errors.unknown'));
+    } finally {
+      setOpeningId(null);
+    }
+  };
 
   const packages = [
     { boxes: 1, price: '$1.99' },
@@ -62,12 +186,20 @@ const Gifts = () => {
             </button>
 
             {/* Title - Center */}
-            <h1 
-              className="flex-1 font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 drop-shadow-[0_2px_8px_rgba(234,179,8,0.6)]"
-              style={{ fontSize: 'clamp(1.125rem, 4.5vw, 1.875rem)' }}
-            >
-              {t('gifts.title')}
-            </h1>
+            <div className="flex-1 flex flex-col items-center">
+              <h1 
+                className="font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 drop-shadow-[0_2px_8px_rgba(234,179,8,0.6)]"
+                style={{ fontSize: 'clamp(1.125rem, 4.5vw, 1.875rem)' }}
+              >
+                {t('gifts.title')}
+              </h1>
+              <p 
+                className="text-yellow-300/80 text-center mt-1"
+                style={{ fontSize: 'clamp(0.65rem, 2.5vw, 0.85rem)' }}
+              >
+                {t('lootbox.open_cost')}
+              </p>
+            </div>
 
             {/* Play Button - Right */}
             <button
@@ -120,22 +252,66 @@ const Gifts = () => {
               className="grid grid-cols-5"
               style={{ gap: 'clamp(5px, 1.2vw, 10px)' }}
             >
-              {Array.from({ length: 10 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="relative aspect-square rounded-lg bg-black/40 border border-yellow-500/30 flex items-center justify-center backdrop-blur-sm opacity-40"
-                >
-                  <img src={boxGold} alt="Gift box" className="w-3/4 h-3/4 object-contain" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span 
-                      className="font-bold text-yellow-400/60"
-                      style={{ fontSize: 'clamp(8px, 2vw, 10px)' }}
-                    >
-                      {t('gifts.inactive')}
-                    </span>
+              {loading ? (
+                // Loading skeleton
+                Array.from({ length: 10 }).map((_, index) => (
+                  <div
+                    key={`skeleton-${index}`}
+                    className="relative aspect-square rounded-lg bg-black/40 border border-yellow-500/30 flex items-center justify-center backdrop-blur-sm opacity-40 animate-pulse"
+                  >
+                    <div className="w-3/4 h-3/4 bg-yellow-500/20 rounded" />
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                // Actual slots
+                Array.from({ length: 10 }).map((_, index) => {
+                  const lootbox = storedLootboxes[index];
+                  const isActive = !!lootbox;
+
+                  return (
+                    <div
+                      key={lootbox?.id || `empty-${index}`}
+                      className={`relative aspect-square rounded-lg border flex items-center justify-center backdrop-blur-sm ${
+                        isActive
+                          ? 'bg-black/60 border-yellow-500/60 opacity-100'
+                          : 'bg-black/40 border-yellow-500/30 opacity-40'
+                      }`}
+                    >
+                      <img src={boxGold} alt="Gift box" className="w-3/4 h-3/4 object-contain" />
+                      
+                      {!isActive && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span 
+                            className="font-bold text-yellow-400/60"
+                            style={{ fontSize: 'clamp(8px, 2vw, 10px)' }}
+                          >
+                            {t('gifts.inactive')}
+                          </span>
+                        </div>
+                      )}
+
+                      {isActive && (
+                        <button
+                          onClick={() => handleOpenLootbox(lootbox.id)}
+                          disabled={!!openingId}
+                          className="absolute inset-x-0 bottom-0 flex justify-center pb-1"
+                        >
+                          <span
+                            className="px-2 py-0.5 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:from-gray-600 disabled:to-gray-700 rounded text-black font-bold shadow-lg transition-all"
+                            style={{ fontSize: 'clamp(7px, 1.8vw, 9px)' }}
+                          >
+                            {openingId === lootbox.id ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              t('lootbox.open')
+                            )}
+                          </span>
+                        </button>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 
