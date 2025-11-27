@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef, useCallback, memo } from 'react';
+import { useEffect, useState, useCallback, memo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Crown, Sparkles } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import { DailyRankingsCountdown } from './DailyRankingsCountdown';
 import { LeaderboardSkeleton } from './LeaderboardSkeleton';
 import { useI18n } from '@/i18n';
@@ -19,9 +19,6 @@ const LeaderboardCarouselComponent = () => {
   const [userId, setUserId] = useState<string | undefined>();
   const { profile } = useProfileQuery(userId);
   const { leaderboard, loading } = useLeaderboardQuery(profile?.country_code);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const autoScrollPausedRef = useRef(false);
-  const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Get user session
   useEffect(() => {
@@ -33,111 +30,6 @@ const LeaderboardCarouselComponent = () => {
   }, []);
 
   const topPlayers = leaderboard.slice(0, 100);
-
-  // Auto-scroll logika - infinite loop with seamless transition
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container || topPlayers.length === 0) return;
-
-    let animationFrameId: number;
-    const scrollSpeed = 1.2;
-
-    const scroll = () => {
-      if (!container || topPlayers.length === 0) return;
-
-      container.scrollLeft += scrollSpeed;
-
-      const contentWidth = container.scrollWidth / 2;
-      if (contentWidth > 0 && container.scrollLeft >= contentWidth) {
-        // Ha elértük a duplikált lista felét, visszaugrunk pontosan egy lista-szélességet,
-        // így az utolsó helyezett után az 1. folytatódik zökkenőmentesen.
-        container.scrollLeft -= contentWidth;
-      }
-
-      animationFrameId = requestAnimationFrame(scroll);
-    };
-
-    // Indítás mindig a lista elejéről
-    container.scrollLeft = 0;
-    animationFrameId = requestAnimationFrame(scroll);
-
-    return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-    };
-  }, [topPlayers.length]);
-
-  // Érintéses/manuális csúsztatás
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    let isDragging = false;
-    let startX = 0;
-    let scrollLeft = 0;
-
-    const pauseAutoScroll = () => {
-      // Folyamatos scroll: nincs pause, a görgetés megállás nélkül megy körbe-körbe
-    };
-
-    const handleMouseDown = (e: MouseEvent) => {
-      isDragging = true;
-      startX = e.pageX - container.offsetLeft;
-      scrollLeft = container.scrollLeft;
-      container.style.cursor = 'grabbing';
-      pauseAutoScroll();
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      isDragging = true;
-      startX = e.touches[0].pageX - container.offsetLeft;
-      scrollLeft = container.scrollLeft;
-      pauseAutoScroll();
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      const x = e.pageX - container.offsetLeft;
-      const walk = (x - startX) * 2;
-      container.scrollLeft = scrollLeft - walk;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging) return;
-      const x = e.touches[0].pageX - container.offsetLeft;
-      const walk = (x - startX) * 2;
-      container.scrollLeft = scrollLeft - walk;
-    };
-
-    const handleEnd = () => {
-      isDragging = false;
-      container.style.cursor = 'grab';
-    };
-
-    container.style.cursor = 'grab';
-    container.addEventListener('mousedown', handleMouseDown);
-    container.addEventListener('touchstart', handleTouchStart);
-    container.addEventListener('mousemove', handleMouseMove);
-    container.addEventListener('touchmove', handleTouchMove);
-    container.addEventListener('mouseup', handleEnd);
-    container.addEventListener('mouseleave', handleEnd);
-    container.addEventListener('touchend', handleEnd);
-
-    return () => {
-      container.removeEventListener('mousedown', handleMouseDown);
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('mousemove', handleMouseMove);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('mouseup', handleEnd);
-      container.removeEventListener('mouseleave', handleEnd);
-      container.removeEventListener('touchend', handleEnd);
-      if (autoScrollTimeoutRef.current) {
-        clearTimeout(autoScrollTimeoutRef.current);
-      }
-    };
-  }, []);
 
   // Memoized color functions to prevent recalculation
   const getHexagonColor = useCallback((index: number) => {
@@ -161,11 +53,11 @@ const LeaderboardCarouselComponent = () => {
         <DailyRankingsCountdown compact={false} userTimezone={profile?.user_timezone || 'Europe/Budapest'} />
       </div>
       
-      <div ref={scrollContainerRef} className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div className="overflow-hidden whitespace-nowrap h-16 sm:h-20 md:h-24 relative">
         {loading || topPlayers.length === 0 ? (
           <LeaderboardSkeleton />
         ) : (
-          <div className="inline-flex gap-2 sm:gap-3 px-2">
+          <div className="inline-flex gap-2 sm:gap-3 px-2 animate-leaderboard-marquee will-change-transform">
             {/* Dupla rendering: eredeti lista + másolat körköröz scrollhoz */}
             {[...topPlayers, ...topPlayers].map((player, index) => {
               const rank = (index % topPlayers.length) + 1;

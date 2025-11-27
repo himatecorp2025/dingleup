@@ -170,6 +170,10 @@ export default {
             opacity: "0.8",
             transform: "scale(1.05)"
           }
+        },
+        "leaderboard-marquee": {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" }
         }
       },
       animation: {
@@ -183,7 +187,8 @@ export default {
         "spin-slow": "spin 3s linear infinite",
         "shine": "shine 3s ease-in-out infinite",
         "flash": "flash 4s ease-in-out infinite",
-        "pulse-fast": "pulse-fast 0.6s ease-in-out infinite"
+        "pulse-fast": "pulse-fast 0.6s ease-in-out infinite",
+        "leaderboard-marquee": "leaderboard-marquee 60s linear infinite"
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
