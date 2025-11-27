@@ -7,6 +7,7 @@ import { useI18n } from '@/i18n';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { useFullscreen } from '@/hooks/useFullscreen';
+import { useNativeFullscreen } from '@/hooks/useNativeFullscreen';
 
 const About = () => {
   const { isHandheld, isStandalone } = usePlatformDetection();
@@ -15,11 +16,14 @@ const About = () => {
   const { t } = useI18n();
   const navigate = useNavigate();
 
-  // FULLSCREEN MODE: Hide status bar on mobile devices
+  // FULLSCREEN MODE: Hide status bar on mobile devices (Web)
   useFullscreen({
     enabled: true,
     autoReenter: true,
   });
+
+  // NATIVE FULLSCREEN: Hide status bar on iOS/Android Capacitor apps
+  useNativeFullscreen();
 
   // Check if current user has admin role
   useEffect(() => {

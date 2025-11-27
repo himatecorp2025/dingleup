@@ -7,6 +7,7 @@ import { useI18n } from '@/i18n';
 import { useLeaderboardQuery } from '@/hooks/queries/useLeaderboardQuery';
 import { useProfileQuery } from '@/hooks/useProfileQuery';
 import { useFullscreen } from '@/hooks/useFullscreen';
+import { useNativeFullscreen } from '@/hooks/useNativeFullscreen';
 
 import DailyRewards from '@/components/DailyRewards';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
@@ -33,11 +34,14 @@ const Leaderboard = () => {
   const { leaderboard, loading, refetch } = useLeaderboardQuery(profile?.country_code);
   const [dailyRewards, setDailyRewards] = useState<DailyRewardsData | null>(null);
   
-  // FULLSCREEN MODE: Hide status bar on mobile devices
+  // FULLSCREEN MODE: Hide status bar on mobile devices (Web)
   useFullscreen({
     enabled: true,
     autoReenter: true,
   });
+
+  // NATIVE FULLSCREEN: Hide status bar on iOS/Android Capacitor apps
+  useNativeFullscreen();
   
   // Pull-to-refresh functionality
   const { isPulling, pullProgress } = usePullToRefresh({

@@ -7,6 +7,7 @@ import { useBoosterState } from '@/hooks/useBoosterState';
 import { useI18n, LangCode } from '@/i18n';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useFullscreen } from '@/hooks/useFullscreen';
+import { useNativeFullscreen } from '@/hooks/useNativeFullscreen';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -29,11 +30,14 @@ const Profile = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [weeklyCorrectAnswers, setWeeklyCorrectAnswers] = useState<number>(0);
   
-  // FULLSCREEN MODE: Hide status bar on mobile devices
+  // FULLSCREEN MODE: Hide status bar on mobile devices (Web)
   useFullscreen({
     enabled: true,
     autoReenter: true,
   });
+
+  // NATIVE FULLSCREEN: Hide status bar on iOS/Android Capacitor apps
+  useNativeFullscreen();
   
   // Username editing
   const [isEditingUsername, setIsEditingUsername] = useState(false);
