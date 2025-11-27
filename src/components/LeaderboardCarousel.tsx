@@ -46,21 +46,13 @@ const LeaderboardCarouselComponent = () => {
     const scroll = () => {
       if (container && topPlayers.length > 0) {
         container.scrollLeft += scrollSpeed;
-        
-        const halfWidth = container.scrollWidth / 2;
-        if (halfWidth > 0 && container.scrollLeft >= halfWidth) {
-          container.scrollLeft -= halfWidth;
-        }
 
-        // Debug: néha logoljuk, hogy biztosan fut a loop (fejlesztéshez)
-        if (frameCount % 600 === 0) {
-          console.log('[LeaderboardCarousel] auto-scroll', {
-            left: container.scrollLeft,
-            halfWidth,
-            clientWidth: container.clientWidth,
-          });
+        const singleWidth = container.scrollWidth / 2;
+        const loopPoint = singleWidth + container.clientWidth;
+
+        if (singleWidth > 0 && container.scrollLeft >= loopPoint) {
+          container.scrollLeft -= singleWidth;
         }
-        frameCount += 1;
       }
 
       animationFrameId = requestAnimationFrame(scroll);
