@@ -14,8 +14,8 @@ const HexShieldFrame: React.FC<PropsWithChildren<{ className?: string; showShine
   return (
     <div className={`relative overflow-hidden ${className}`}
          style={{ 
-           width: '100vw', 
-           height: '100dvh'
+           width: '100%', 
+           height: '100%'
          }}>
       
       {/* Inner container - 90% of canvas size, centered */}
