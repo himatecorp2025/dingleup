@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useI18n } from '@/i18n';
 
 export interface DailyRankReward {
   rank: number;
@@ -17,6 +18,7 @@ export interface DailyRankReward {
  * Shows popup when user has pending rank reward from yesterday
  */
 export const useDailyRankReward = (userId: string | undefined) => {
+  const { t } = useI18n();
   const [showRewardPopup, setShowRewardPopup] = useState(false);
   const [pendingReward, setPendingReward] = useState<DailyRankReward | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -102,8 +104,8 @@ export const useDailyRankReward = (userId: string | undefined) => {
       if (error || !data?.success) {
         console.error('[RANK-REWARD] Error claiming reward:', error);
         toast({
-          title: 'Hiba',
-          description: 'Nem sikerült felvenni a jutalmat. Próbáld újra később.',
+          title: t('rank_reward.claim_error_title'),
+          description: t('rank_reward.claim_error_desc'),
           variant: 'destructive'
         });
         return;
@@ -117,14 +119,16 @@ export const useDailyRankReward = (userId: string | undefined) => {
 
       // Show success toast
       toast({
-        title: '🎉 Jutalom felvéve!',
-        description: `+${data.goldCredited} arany, +${data.livesCredited} élet`,
+        title: t('rank_reward.claim_success_title'),
+        description: t('rank_reward.claim_success_desc')
+          .replace('{gold}', data.goldCredited.toString())
+          .replace('{lives}', data.livesCredited.toString()),
       });
     } catch (error) {
       console.error('[RANK-REWARD] Exception claiming reward:', error);
       toast({
-        title: 'Hiba',
-        description: 'Hiba történt a jutalom felvétele során.',
+        title: t('rank_reward.claim_error_title'),
+        description: t('rank_reward.claim_exception_desc'),
         variant: 'destructive'
       });
     } finally {

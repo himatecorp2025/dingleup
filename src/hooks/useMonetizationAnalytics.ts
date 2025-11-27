@@ -39,7 +39,8 @@ export const useMonetizationAnalytics = () => {
       if (data) setAnalytics(data);
     } catch (err) {
       console.error('Error fetching monetization analytics:', err);
-      setError(err instanceof Error ? err.message : 'Ismeretlen hiba történt');
+      // Error is only used internally for admin, keep English
+      setError(err instanceof Error ? err.message : 'Unknown error occurred');
     } finally {
       if (!background) setLoading(false);
     }
