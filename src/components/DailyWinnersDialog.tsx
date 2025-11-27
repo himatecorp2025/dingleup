@@ -342,7 +342,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                             fontSize: 'clamp(0.75rem, 3.2vw, 1.1rem)',
                             fontFamily: '"Poppins", system-ui, sans-serif',
                             fontWeight: 700,
-                            flexWrap: 'nowrap'
+                            flexWrap: 'wrap'
                           }}>
                        <span style={{
                          color: '#ffd700',
