@@ -82,6 +82,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/dashboard?tab=reports', labelKey: 'admin.menu.reports', icon: AlertTriangle, badge: 'reports' },
     { path: '/admin/popular-content', labelKey: 'admin.menu.popular_content', icon: TrendingUp },
     { path: '/admin/question-pools', labelKey: 'admin.menu.question_pools', icon: Database },
+    { path: '/admin/lootbox-analytics', labelKey: 'admin.menu.lootbox_analytics', icon: Heart },
     { path: '/admin/booster-types', labelKey: 'admin.menu.booster_packages', icon: Zap },
     { path: '/admin/booster-purchases', labelKey: 'admin.menu.booster_purchases', icon: ShoppingBag },
     { path: '/admin/translations', labelKey: 'admin.menu.translations', icon: Languages },

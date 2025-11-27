@@ -103,66 +103,82 @@ export const LootboxDecisionDialog = ({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent 
-        className="max-w-[320px] bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 border-2 border-yellow-500/30"
+        className="max-w-[90vw] sm:max-w-[400px] bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 border-2 border-yellow-500/40 backdrop-blur-md"
         style={{
-          height: '70vh',
-          maxHeight: '70vh',
+          maxHeight: '80vh',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          display: 'flex',
-          flexDirection: 'column'
         }}
       >
         <DialogHeader>
-          <DialogTitle className="text-center text-yellow-400 font-bold text-xl">
+          <DialogTitle className="text-center text-yellow-400 font-bold text-xl drop-shadow-[0_2px_8px_rgba(234,179,8,0.6)]">
             {t('lootbox.decision_title')}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col items-center gap-4 py-4">
-          {/* Lootbox icon */}
-          <GoldLootboxIcon size={80} />
+        <div className="flex flex-col items-center gap-6 py-4">
+          {/* Lootbox icon with glow effect */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-yellow-500/30 blur-2xl rounded-full" />
+            <GoldLootboxIcon size={100} />
+          </div>
 
-          {/* Description */}
-          <p className="text-white/90 text-center text-sm">
+          {/* Description with matching style */}
+          <p className="text-white/90 text-center text-base px-4 leading-relaxed">
             {t('lootbox.decision_description')}
           </p>
 
-          {/* Buttons */}
-          <div className="flex flex-col gap-2 w-full">
+          {/* Buttons with 3D frame effects matching Gifts page */}
+          <div className="flex flex-col gap-4 w-full px-4">
             {/* Store for later */}
-            <button
-              onClick={() => handleDecision('store')}
-              disabled={!canStore || loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed rounded-lg font-bold text-white py-3 px-4 shadow-lg transition-all"
-            >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-              ) : (
-                t('lootbox.store_later')
-              )}
-            </button>
+            <div className="relative">
+              {/* 3D Frame Effects */}
+              <div className="absolute rounded-xl bg-black/40 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700/60 via-purple-600/50 to-purple-900/60 border-2 border-purple-500/40 shadow-[0_0_20px_rgba(168,85,247,0.4),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
+              <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-purple-600/40 via-purple-500/30 to-purple-800/40" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
+              <div className="absolute rounded-xl bg-gradient-to-b from-black/50 via-black/60 to-black/70" style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.4)' }} aria-hidden />
+              
+              <button
+                onClick={() => handleDecision('store')}
+                disabled={!canStore || loading}
+                className="relative z-10 w-full rounded-xl font-bold text-white py-4 px-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+              >
+                {loading ? (
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+                ) : (
+                  <span className="text-lg">{t('lootbox.store_later')}</span>
+                )}
+              </button>
+            </div>
             {!canStore && (
-              <p className="text-xs text-red-400 text-center">
+              <p className="text-xs text-red-400 text-center -mt-2">
                 {t('lootbox.storage_full_hint')}
               </p>
             )}
 
             {/* Open now */}
-            <button
-              onClick={() => handleDecision('open_now')}
-              disabled={!canOpenNow || loading}
-              className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed rounded-lg font-bold text-black py-3 px-4 shadow-lg transition-all"
-            >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-              ) : (
-                t('lootbox.open_now')
-              )}
-            </button>
+            <div className="relative">
+              {/* 3D Frame Effects */}
+              <div className="absolute rounded-xl bg-black/40 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-700/60 via-yellow-600/50 to-yellow-900/60 border-2 border-yellow-500/40 shadow-[0_0_20px_rgba(234,179,8,0.5),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
+              <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-yellow-600/40 via-yellow-500/30 to-yellow-800/40" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
+              <div className="absolute rounded-xl bg-gradient-to-b from-black/50 via-black/60 to-black/70" style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.4)' }} aria-hidden />
+              
+              <button
+                onClick={() => handleDecision('open_now')}
+                disabled={!canOpenNow || loading}
+                className="relative z-10 w-full rounded-xl font-bold text-black py-4 px-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+              >
+                {loading ? (
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+                ) : (
+                  <span className="text-lg">{t('lootbox.open_now')}</span>
+                )}
+              </button>
+            </div>
             {!canOpenNow && (
-              <p className="text-xs text-red-400 text-center">
+              <p className="text-xs text-red-400 text-center -mt-2">
                 {t('lootbox.not_enough_gold_hint')}
               </p>
             )}
