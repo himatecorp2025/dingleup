@@ -368,11 +368,19 @@ useEffect(() => {
 5. ✅ **Mobile WebView fallback** (deep link + polling-based verification) – IMPLEMENTÁLVA
 6. ✅ **Speed token collision check** (aktív token ellenőrzés activation előtt) – IMPLEMENTÁLVA (activate-speed-token + verify functionök)
 7. ✅ **Rescue popup state management** (game_sessions.pending_rescue flag + session_id tracking) – IMPLEMENTÁLVA
-8. **Lives overflow policy** (dokumentálás vagy cap enforcement)
+8. ✅ **Lives overflow policy** (dokumentálás vagy cap enforcement) – DOKUMENTÁLVA
+
+**Lives Overflow Policy - Hivatalos Működés:**
+- Vásárolt életek (Premium Booster, Instant Rescue) MEGENGEDETTEK max_lives felett
+- Pl. ha user 10/15 élettel rendelkezik és vásárol +20 életet → 30/15 lesz
+- Ez SZÁNDÉKOS monetizációs feature, nem bug
+- Regeneráció max_lives-nál megáll (nem megy tovább 15 fölé automatikusan)
+- Overflow csak purchase esetén engedélyezett, regeneration esetén nem
+- Dokumentálva a profiles táblában és a credit_wallet() függvényben
 
 ### P2 (Fontos):
-9. ✅ **Admin manual credit UI + audit**
-10. ✅ **Frontend debounce** (payment button: 500ms delay)
+9. **Admin manual credit UI + audit** – KÖVETKEZŐ
+10. **Frontend debounce** (payment button: 500ms delay) – KÖVETKEZŐ
 
 ---
 
