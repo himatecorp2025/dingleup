@@ -45,7 +45,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ success: false, error: "Hiányzó autentikáció" }),
+        JSON.stringify({ success: false, error: "Missing authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -54,7 +54,7 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
     if (userError || !userData.user) {
       return new Response(
-        JSON.stringify({ success: false, error: "Érvénytelen autentikáció" }),
+        JSON.stringify({ success: false, error: "Invalid authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -75,7 +75,7 @@ serve(async (req) => {
 
     if (boosterError || !boosterType) {
       return new Response(
-        JSON.stringify({ success: false, error: "Érvénytelen booster típus" }),
+        JSON.stringify({ success: false, error: "Invalid booster type" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -95,13 +95,13 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: false, error: "Ismeretlen booster kód" }),
+      JSON.stringify({ success: false, error: "Unknown booster code" }),
       { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
   } catch (error) {
     console.error("[purchase-booster] Error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Szerver hiba";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     return new Response(
       JSON.stringify({ success: false, error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -127,7 +127,7 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
 
   if (profileError || !profile) {
     return new Response(
-      JSON.stringify({ success: false, error: "Profil nem található" }),
+      JSON.stringify({ success: false, error: "Profile not found" }),
       { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
@@ -164,7 +164,7 @@ async function handleFreeBoosterPurchase(supabaseAdmin: any, userId: string, boo
   if (updateError) {
     console.error("[FREE] Update error:", updateError);
     return new Response(
-      JSON.stringify({ success: false, error: "Profil frissítési hiba" }),
+      JSON.stringify({ success: false, error: "Profile update failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
@@ -386,7 +386,7 @@ async function handlePremiumBoosterPurchase(
     if (updateError) {
       console.error("[PREMIUM] Profile update error:", updateError);
       return new Response(
-        JSON.stringify({ success: false, error: "Profil frissítési hiba" }),
+        JSON.stringify({ success: false, error: "Profile update failed" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -476,7 +476,7 @@ async function handlePremiumBoosterPurchase(
   } catch (error) {
     console.error("[PREMIUM] Transaction error:", error);
     return new Response(
-      JSON.stringify({ success: false, error: "Tranzakciós hiba történt" }),
+      JSON.stringify({ success: false, error: "Transaction failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

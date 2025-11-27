@@ -39,7 +39,7 @@ serve(async (req) => {
     // Validate username format
     const trimmedUsername = newUsername.trim();
     if (trimmedUsername.length < 3 || trimmedUsername.length > 30) {
-      throw new Error('A felhasználónévnek 3 és 30 karakter között kell lennie');
+      throw new Error('Username must be between 3 and 30 characters');
     }
 
     // Check if username is already taken
@@ -51,7 +51,7 @@ serve(async (req) => {
       .single();
 
     if (existingUser) {
-      throw new Error('Ez a felhasználónév már foglalt');
+      throw new Error('This username is already taken');
     }
 
     // Check last username change (7-day limit)
@@ -62,7 +62,7 @@ serve(async (req) => {
       .single();
 
     if (profileError) {
-      throw new Error('Profil betöltési hiba');
+      throw new Error('Profile loading failed');
     }
 
     if (profile.last_username_change) {
@@ -72,7 +72,7 @@ serve(async (req) => {
 
       if (daysSinceLastChange < 7) {
         const daysRemaining = Math.ceil(7 - daysSinceLastChange);
-        throw new Error(`A felhasználónév még ${daysRemaining} nap múlva módosítható`);
+        throw new Error(`Username can be changed in ${daysRemaining} days`);
       }
     }
 
@@ -86,7 +86,7 @@ serve(async (req) => {
       .eq('id', user.id);
 
     if (updateError) {
-      throw new Error('Felhasználónév frissítése sikertelen');
+      throw new Error('Username update failed');
     }
 
     // Also update global_leaderboard if user has entry there
@@ -96,13 +96,13 @@ serve(async (req) => {
       .eq('user_id', user.id);
 
     return new Response(
-      JSON.stringify({ success: true, message: 'Felhasználónév sikeresen frissítve' }),
+      JSON.stringify({ success: true, message: 'Username successfully updated' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
     console.error('Username update error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Ismeretlen hiba történt';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return new Response(
       JSON.stringify({ error: errorMessage }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
