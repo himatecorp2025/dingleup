@@ -6,7 +6,6 @@ import Features from "@/components/Features";
 import DevelopmentStatus from "@/components/DevelopmentStatus";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
-import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Index = () => {
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(() => {
@@ -66,12 +65,7 @@ const Index = () => {
              height: 'calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
              zIndex: 0
            }} 
-      />
-      
-      {/* Language selector - top right corner */}
-      <div className="fixed top-4 right-4 z-50">
-        <LanguageSelector />
-      </div>
+       />
       
       <div className="relative z-10">
         <div data-tutorial="hero">
