@@ -55,13 +55,25 @@ serve(async (req) => {
       .from('profiles')
       .select('country_code, user_timezone, username')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (profileError || !userProfile) {
+    if (profileError) {
       console.error('[GET-PENDING-REWARD] Profile error:', profileError);
       return new Response(
         JSON.stringify({ error: 'Failed to fetch user profile' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // If no profile or missing critical fields, no pending reward
+    if (!userProfile || !userProfile.country_code) {
+      console.log('[GET-PENDING-REWARD] Profile incomplete, no reward check');
+      return new Response(
+        JSON.stringify({ 
+          hasPendingReward: false,
+          reward: null
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 

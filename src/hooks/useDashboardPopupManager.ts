@@ -118,16 +118,27 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       
       return () => clearTimeout(timer);
     }
+    
+    // CRITICAL: Mark Welcome Bonus as "done" if it can't be claimed (already claimed before)
+    if (!welcomeBonus.canClaim && popupState.ageGateCompleted && !popupState.showRankReward && !popupState.showWelcomeBonus) {
+      setPopupState(prev => ({
+        ...prev,
+        showWelcomeBonus: false, // Mark as not showing but completed
+      }));
+    }
   }, [canMountModals, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, welcomeBonus.canClaim, userId, popupState.showWelcomeBonus]);
 
   // Priority 4: Daily Gift (after age gate + rank reward + welcome bonus with 500ms delay)
   useEffect(() => {
+    // CRITICAL: Only show if Welcome Bonus is done (either shown and closed OR not claimable)
+    const welcomeBonusDone = !welcomeBonus.canClaim || (!popupState.showWelcomeBonus && popupState.ageGateCompleted);
+    
     const shouldShow =
       canMountModals &&
       popupState.ageGateCompleted &&
       !popupState.showAgeGate &&
       !popupState.showRankReward &&
-      !popupState.showWelcomeBonus &&
+      welcomeBonusDone && // Wait for Welcome Bonus to be done
       dailyGift.canClaim &&
       !!userId;
     
@@ -148,6 +159,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     popupState.showAgeGate,
     popupState.showRankReward,
     popupState.showWelcomeBonus,
+    welcomeBonus.canClaim,
     dailyGift.canClaim,
     userId,
     popupState.showDailyGift,
