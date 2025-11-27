@@ -86,35 +86,33 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks(id) {
           // Vendor chunks for better caching
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-query': ['@tanstack/react-query'],
-          'vendor-ui': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-select',
-            '@radix-ui/react-toast',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-alert-dialog'
-          ],
-          // Admin bundle
-          'admin': [
-            './src/pages/AdminDashboard.tsx',
-            './src/pages/AdminGameProfiles.tsx',
-            './src/pages/AdminPopularContent.tsx',
-            './src/pages/PerformanceDashboard.tsx',
-            './src/pages/RetentionDashboard.tsx',
-            './src/pages/EngagementDashboard.tsx',
-            './src/pages/MonetizationDashboard.tsx',
-            './src/pages/UserJourneyDashboard.tsx',
-          ],
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
+            return 'vendor-react';
+          }
+          if (id.includes('node_modules/@supabase/supabase-js')) {
+            return 'vendor-supabase';
+          }
+          if (id.includes('node_modules/@tanstack/react-query')) {
+            return 'vendor-query';
+          }
+          if (id.includes('node_modules/@radix-ui')) {
+            return 'vendor-ui';
+          }
+          // Admin pages - ONLY load when navigating to admin routes
+          if (id.includes('/src/pages/Admin') || 
+              id.includes('/src/pages/PerformanceDashboard') || 
+              id.includes('/src/pages/RetentionDashboard') ||
+              id.includes('/src/pages/EngagementDashboard') ||
+              id.includes('/src/pages/MonetizationDashboard') ||
+              id.includes('/src/pages/UserJourneyDashboard')) {
+            return 'admin';
+          }
         },
       },
     },
-    chunkSizeWarningLimit: 1000, // Increase warning limit for larger chunks
+    chunkSizeWarningLimit: 1000,
   },
   plugins: [
     react(),
