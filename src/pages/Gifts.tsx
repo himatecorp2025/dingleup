@@ -18,16 +18,16 @@ const Gifts = () => {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.1),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[url('/game-background.png')] bg-cover bg-center opacity-10 pointer-events-none" />
 
-      <div className="relative z-10 flex-1 flex flex-col overflow-hidden pb-20">
-        <div className="container mx-auto px-4 py-4 max-w-2xl flex-1 flex flex-col">
+      <div className="relative z-10 flex-1 flex flex-col overflow-hidden pb-28">
+        <div className="container mx-auto px-4 py-3 max-w-2xl flex-1 flex flex-col overflow-y-auto">
           {/* Header */}
-          <h1 className="text-2xl md:text-3xl font-black text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 drop-shadow-[0_2px_8px_rgba(234,179,8,0.6)]">
+          <h1 className="text-2xl md:text-3xl font-black text-center mb-3 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 drop-shadow-[0_2px_8px_rgba(234,179,8,0.6)]">
             {t('gifts.title')}
           </h1>
 
           {/* My Reward Boxes Section */}
-          <div className="mb-6">
-            <h2 className="text-lg md:text-xl font-bold mb-3 text-yellow-400 drop-shadow-[0_2px_4px_rgba(234,179,8,0.4)]">
+          <div className="mb-4">
+            <h2 className="text-lg md:text-xl font-bold mb-2 text-yellow-400 drop-shadow-[0_2px_4px_rgba(234,179,8,0.4)]">
               {t('gifts.my_boxes')}
             </h2>
             <div className="grid grid-cols-5 gap-2">
@@ -47,10 +47,10 @@ const Gifts = () => {
 
           {/* Get New Rewards Section */}
           <div className="flex-1 flex flex-col min-h-0">
-            <h2 className="text-lg md:text-xl font-bold mb-3 text-yellow-400 drop-shadow-[0_2px_4px_rgba(234,179,8,0.4)]">
+            <h2 className="text-lg md:text-xl font-bold mb-2 text-yellow-400 drop-shadow-[0_2px_4px_rgba(234,179,8,0.4)]">
               {t('gifts.get_new')}
             </h2>
-            <div className="grid grid-cols-2 gap-3 flex-1">
+            <div className="grid grid-cols-2 gap-2 pb-2">
               {packages.map((pkg, index) => (
                 <div
                   key={index}
