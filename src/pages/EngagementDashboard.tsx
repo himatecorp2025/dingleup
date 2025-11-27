@@ -7,10 +7,12 @@ import { useEngagementAnalytics } from "@/hooks/useEngagementAnalytics";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { MetricInfo } from '@/components/admin/MetricInfo';
+import { useI18n } from '@/i18n';
 
 const EngagementDashboard = () => {
   const navigate = useNavigate();
   const { analytics, loading, error, refetch } = useEngagementAnalytics();
+  const { t } = useI18n();
 
   if (loading) {
     return (
@@ -18,7 +20,7 @@ const EngagementDashboard = () => {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-            <p className="text-lg text-white/70">Betöltés...</p>
+            <p className="text-lg text-white/70">{t('admin.loading')}</p>
           </div>
         </div>
       </AdminLayout>
@@ -29,7 +31,7 @@ const EngagementDashboard = () => {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center py-20">
-          <p className="text-lg text-red-400">{error || 'Hiba történt az adatok betöltése során'}</p>
+          <p className="text-lg text-red-400">{error || t('admin.error_loading')}</p>
         </div>
       </AdminLayout>
     );
@@ -54,16 +56,14 @@ const EngagementDashboard = () => {
           </div>
           <Button onClick={() => refetch()} disabled={loading} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Frissítés
+            {t('admin.refresh')}
           </Button>
         </div>
 
         <Card className="bg-primary-dark/30 border border-primary/20">
           <CardContent className="pt-6">
             <p className="text-foreground/80 leading-relaxed">
-              Az Engagement Dashboard azt mutatja, hogy a felhasználók mennyire aktívak az alkalmazásban.
-              Láthatod a session hosszakat, funkció használatot, játék aktivitást és a legaktívabb felhasználókat.
-              Az adatok valós időben frissülnek minden felhasználói tevékenység után.
+              {t('admin.engagement.description')}
             </p>
           </CardContent>
         </Card>

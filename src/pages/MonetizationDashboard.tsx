@@ -6,10 +6,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useMonetizationAnalyticsQuery } from '@/hooks/queries/useMonetizationAnalyticsQuery';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { useI18n } from '@/i18n';
 
 const MonetizationDashboard = () => {
   const navigate = useNavigate();
   const { analytics, loading, error, refetch } = useMonetizationAnalyticsQuery();
+  const { t } = useI18n();
 
   if (loading) {
     return (
@@ -33,10 +35,10 @@ const MonetizationDashboard = () => {
         <div className="max-w-7xl mx-auto">
           <Card className="backdrop-blur-xl bg-red-500/10 border-red-500/20">
             <CardContent className="p-8 text-center">
-              <p className="text-red-400 mb-4">Hiba történt az adatok betöltése során</p>
+              <p className="text-red-400 mb-4">{t('admin.error_loading')}</p>
               <Button onClick={() => refetch()} variant="outline">
                 <RefreshCw className="w-4 h-4 mr-2" />
-                Újrapróbálás
+                {t('admin.retry')}
               </Button>
             </CardContent>
           </Card>
@@ -61,14 +63,14 @@ const MonetizationDashboard = () => {
             </Button>
             <div>
               <h1 className="text-4xl font-black bg-gradient-to-r from-green-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
-                Monetizációs Dashboard
+                {t('admin.monetization.title')}
               </h1>
-              <p className="text-white/60 mt-1">Bevétel, ARPU, konverzió, LTV analízis</p>
+              <p className="text-white/60 mt-1">{t('admin.monetization.subtitle')}</p>
             </div>
           </div>
           <Button onClick={() => refetch()} variant="outline" size="sm">
             <RefreshCw className="w-4 h-4 mr-2" />
-            Frissítés
+            {t('admin.refresh')}
           </Button>
         </div>
 
@@ -78,7 +80,7 @@ const MonetizationDashboard = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-white/60 flex items-center gap-2">
                 <DollarSign className="w-4 h-4" />
-                Teljes Bevétel
+                {t('admin.monetization.total_revenue')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -99,7 +101,7 @@ const MonetizationDashboard = () => {
               <div className="text-3xl font-bold text-white">
                 {analytics?.arpu?.toFixed(0) || 0} Ft
               </div>
-              <p className="text-xs text-white/40 mt-1">Átlagos bevétel / felhasználó</p>
+              <p className="text-xs text-white/40 mt-1">{t('admin.monetization.arpu_desc')}</p>
             </CardContent>
           </Card>
 
@@ -114,7 +116,7 @@ const MonetizationDashboard = () => {
               <div className="text-3xl font-bold text-white">
                 {analytics?.arppu?.toFixed(0) || 0} Ft
               </div>
-              <p className="text-xs text-white/40 mt-1">Átlagos bevétel / fizető user</p>
+              <p className="text-xs text-white/40 mt-1">{t('admin.monetization.arppu_desc')}</p>
             </CardContent>
           </Card>
 
@@ -122,7 +124,7 @@ const MonetizationDashboard = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-white/60 flex items-center gap-2">
                 <ShoppingCart className="w-4 h-4" />
-                Konverziós Arány
+                {t('admin.monetization.conversion_rate')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -138,7 +140,7 @@ const MonetizationDashboard = () => {
         {analytics?.revenueOverTime && analytics.revenueOverTime.length > 0 && (
           <Card className="backdrop-blur-xl bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle className="text-white">Bevétel Időben</CardTitle>
+              <CardTitle className="text-white">{t('admin.monetization.revenue_over_time')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -162,7 +164,7 @@ const MonetizationDashboard = () => {
         {analytics?.revenueByProduct && analytics.revenueByProduct.length > 0 && (
           <Card className="backdrop-blur-xl bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle className="text-white">Bevétel Termék Szerint</CardTitle>
+              <CardTitle className="text-white">{t('admin.monetization.revenue_by_product')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -187,7 +189,7 @@ const MonetizationDashboard = () => {
         {(!analytics?.revenueOverTime || analytics.revenueOverTime.length === 0) && (
           <Card className="backdrop-blur-xl bg-white/5 border-white/10">
             <CardContent className="p-8 text-center">
-              <p className="text-white/60">Még nincs monetizációs adat ebben az időszakban</p>
+              <p className="text-white/60">{t('admin.monetization.no_data')}</p>
             </CardContent>
           </Card>
         )}
