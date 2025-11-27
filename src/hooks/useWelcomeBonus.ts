@@ -71,7 +71,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
       if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
         trackEvent('popup_cta_click', 'welcome', 'claim');
         setCanClaim(false);
-        toast.success(`${t('welcome.claimed_success_emoji')} +1000 ${t('welcome.gold')}, +5 ${t('welcome.life')} (TESZT MÓD)`);
+        toast.success(`${t('welcome.claimed_success_emoji')} +2500 ${t('welcome.gold')}, +50 ${t('welcome.life')} (TESZT MÓD)`);
         return true;
       }
 
