@@ -658,51 +658,100 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           )}
                         </div>
 
-                        <div style={{ transform: 'translateY(-12%)' }}>
-                        {rankFourToTen.map((player) => (
-                          <div key={player.user_id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg backdrop-blur-md"
-                               style={{
-                                 background: 'linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)',
-                                 borderLeft: '3px solid rgba(255,215,0,0.6)',
-                                 marginBottom: '4px',
-                                 boxShadow: '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)'
-                               }}>
-                            <div className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs"
-                                 style={{
-                                   background: 'linear-gradient(135deg, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.15) 100%)',
-                                   color: 'hsl(var(--dup-gold-500))',
-                                   border: '1px solid rgba(255,215,0,0.5)',
-                                   WebkitTextStroke: '0.5px rgba(0,0,0,0.6)',
-                                   textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
-                                 }}>
-                              {player.rank}
-                            </div>
-                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700 flex-shrink-0 border-2 border-white/30">
-                              {player.avatar_url ? (
-                                <img 
-                                  src={player.avatar_url} 
-                                  alt={`${player.username} avatar`}
-                                  className="w-full h-full object-cover"
-                                  loading="lazy"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-sm">
-                                  {player.username.substring(0, 2).toUpperCase()}
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex-grow min-w-0 max-w-[65%]">
-                              <p className="text-white font-semibold truncate" style={{
-                                WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
-                                fontSize: 'clamp(0.65rem, 2.8vw, 0.8rem)',
-                                maxWidth: '100%'
-                              }}>
+                        {/* Positions 4-10 - 2x4 Grid Layout with IT Blue */}
+                        <div className="grid grid-cols-4 gap-2.5 px-2" style={{ transform: 'translateY(-8%)' }}>
+                          {rankFourToTen.map((player) => (
+                            <div
+                              key={player.user_id}
+                              className="flex flex-col items-center gap-1.5 p-2 rounded-lg backdrop-blur-sm"
+                              style={{
+                                background: 'linear-gradient(135deg, rgba(100, 200, 255, 0.15) 0%, rgba(100, 200, 255, 0.08) 100%)',
+                                border: '2px solid rgba(100, 200, 255, 0.5)',
+                                boxShadow: '0 2px 8px rgba(100, 200, 255, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+                              }}
+                            >
+                              {/* Rank Badge - IT Blue Theme */}
+                              <div 
+                                className="w-6 h-6 rounded-full flex items-center justify-center font-bold"
+                                style={{
+                                  background: 'linear-gradient(135deg, rgba(100, 200, 255, 0.4) 0%, rgba(100, 200, 255, 0.2) 100%)',
+                                  border: '1.5px solid rgba(100, 200, 255, 0.6)',
+                                  color: '#64C8FF',
+                                  fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)',
+                                  WebkitTextStroke: '0.5px rgba(0,0,0,0.6)',
+                                  textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
+                                }}
+                              >
+                                {player.rank}
+                              </div>
+
+                              {/* Avatar - IT Blue Border */}
+                              <div 
+                                className="w-12 h-12 rounded-full overflow-hidden bg-gray-700 flex-shrink-0"
+                                style={{
+                                  border: '2px solid rgba(100, 200, 255, 0.6)',
+                                  boxShadow: '0 0 8px rgba(100, 200, 255, 0.3)'
+                                }}
+                              >
+                                {player.avatar_url ? (
+                                  <img 
+                                    src={player.avatar_url} 
+                                    alt={`${player.username} avatar`}
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                  />
+                                ) : (
+                                  <div 
+                                    className="w-full h-full flex items-center justify-center font-bold text-sm"
+                                    style={{ color: '#64C8FF' }}
+                                  >
+                                    {player.username.substring(0, 2).toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Username - IT Blue Text */}
+                              <p 
+                                className="text-center font-semibold truncate w-full px-0.5" 
+                                style={{
+                                  color: '#64C8FF',
+                                  WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
+                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
+                                  fontSize: 'clamp(0.6rem, 2.5vw, 0.7rem)',
+                                  maxWidth: '100%'
+                                }}
+                              >
                                 {player.username}
                               </p>
+
+                              {/* Correct Answers Count - IT Blue Theme */}
+                              <div 
+                                className="flex items-center gap-0.5"
+                                style={{
+                                  fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)',
+                                  color: '#64C8FF',
+                                  fontWeight: 'bold'
+                                }}
+                              >
+                                <svg 
+                                  width="12" 
+                                  height="12" 
+                                  viewBox="0 0 24 24" 
+                                  fill="none" 
+                                  stroke="currentColor" 
+                                  strokeWidth="2"
+                                >
+                                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                                  <path d="M4 22h16" />
+                                  <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                                  <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                                  <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                                </svg>
+                                <span>{player.total_correct_answers}</span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
                         </div>
                       </>
                     )}
