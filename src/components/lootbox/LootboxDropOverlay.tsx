@@ -18,6 +18,7 @@ export const LootboxDropOverlay = () => {
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [storedCount, setStoredCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
+  const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -65,6 +66,11 @@ export const LootboxDropOverlay = () => {
   // Handle drop animation
   useEffect(() => {
     if (activeLootbox && !loading && !isAdminPage && !isAuthPage && user) {
+      // Check if this lootbox was already dismissed
+      if (dismissedLootboxes.has(activeLootbox.id)) {
+        return;
+      }
+
       setIsAnimating(true);
       setIsVisible(true);
       
@@ -78,7 +84,7 @@ export const LootboxDropOverlay = () => {
       setIsVisible(false);
       setIsAnimating(false);
     }
-  }, [activeLootbox, loading, isAdminPage, isAuthPage, user]);
+  }, [activeLootbox, loading, isAdminPage, isAuthPage, user, dismissedLootboxes]);
 
   // Handle countdown
   useEffect(() => {
@@ -113,6 +119,12 @@ export const LootboxDropOverlay = () => {
   const handleSuccess = (decision: 'open_now' | 'store') => {
     setShowDialog(false);
     setIsVisible(false);
+    
+    // Mark this lootbox as dismissed
+    if (activeLootbox) {
+      setDismissedLootboxes(prev => new Set(prev).add(activeLootbox.id));
+    }
+    
     refetch();
     
     if (decision === 'store') {

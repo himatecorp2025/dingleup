@@ -65,7 +65,36 @@ const Gifts = () => {
     };
 
     fetchStoredLootboxes();
-  }, [userId]);
+
+    // Check for payment success in URL params
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get('payment');
+    const boxes = params.get('boxes');
+
+    if (paymentStatus === 'success' && boxes) {
+      // Payment successful, trigger verification
+      const verifyPayment = async () => {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) return;
+
+          toast.success(t('gifts.payment_success'));
+          
+          // Clear URL params
+          window.history.replaceState({}, '', '/gifts');
+          
+          // Refetch stored lootboxes
+          fetchStoredLootboxes();
+        } catch (err) {
+          console.error('[Gifts] Payment verification error:', err);
+        }
+      };
+      verifyPayment();
+    } else if (paymentStatus === 'canceled') {
+      toast.error(t('gifts.payment_canceled'));
+      window.history.replaceState({}, '', '/gifts');
+    }
+  }, [userId, t]);
 
   const handleOpenLootbox = async (lootboxId: string) => {
     if (openingId || !walletData) return;
@@ -125,11 +154,46 @@ const Gifts = () => {
   };
 
   const packages = [
-    { boxes: 1, price: '$1.99' },
-    { boxes: 3, price: '$4.99' },
-    { boxes: 5, price: '$9.99' },
-    { boxes: 10, price: '$17.99' }
+    { boxes: 1, price: '$1.99', priceId: 'price_1box' },
+    { boxes: 3, price: '$4.99', priceId: 'price_3box' },
+    { boxes: 5, price: '$9.99', priceId: 'price_5box' },
+    { boxes: 10, price: '$17.99', priceId: 'price_10box' }
   ];
+
+  const handlePurchase = async (pkg: typeof packages[0]) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error(t('errors.not_logged_in'));
+        return;
+      }
+
+      // Call Stripe payment edge function
+      const { data, error } = await supabase.functions.invoke('create-lootbox-payment', {
+        body: { 
+          priceId: pkg.priceId,
+          boxes: pkg.boxes 
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+
+      if (error) {
+        console.error('[Gifts] Payment error:', error);
+        toast.error(t('errors.unknown'));
+        return;
+      }
+
+      if (data?.url) {
+        // Open Stripe Checkout in new tab
+        window.open(data.url, '_blank');
+      }
+    } catch (err) {
+      console.error('[Gifts] Unexpected payment error:', err);
+      toast.error(t('errors.unknown'));
+    }
+  };
 
   return (
     <>
@@ -395,13 +459,14 @@ const Gifts = () => {
                       {pkg.price}
                     </p>
                     <button 
+                      onClick={() => handlePurchase(pkg)}
                       className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 rounded-lg font-bold text-black shadow-lg transition-all"
                       style={{ 
                         padding: 'clamp(3px, 0.9vh, 7px) clamp(7px, 1.8vw, 14px)',
                         fontSize: 'clamp(0.72rem, 2.8vw, 0.95rem)'
                       }}
                     >
-                      {t('gifts.buy')}
+                      {t('gifts.acquire')}
                     </button>
                   </div>
                 </div>

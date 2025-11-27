@@ -136,8 +136,8 @@ export const LootboxDecisionDialog = ({
             <div className="relative">
               {/* 3D Frame Effects */}
               <div className="absolute rounded-xl bg-black/40 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-700/60 via-purple-600/50 to-purple-900/60 border-2 border-purple-500/40 shadow-[0_0_20px_rgba(168,85,247,0.4),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
-              <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-purple-600/40 via-purple-500/30 to-purple-800/40" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
+              <div className={`absolute inset-0 rounded-xl border-2 shadow-[0_0_20px_rgba(168,85,247,0.4),0_8px_25px_rgba(0,0,0,0.5)] ${canStore ? 'bg-gradient-to-br from-purple-700/60 via-purple-600/50 to-purple-900/60 border-purple-500/40' : 'bg-gradient-to-br from-gray-700/40 via-gray-600/30 to-gray-900/40 border-gray-500/30'}`} aria-hidden />
+              <div className={`absolute inset-[3px] rounded-xl bg-gradient-to-b ${canStore ? 'from-purple-600/40 via-purple-500/30 to-purple-800/40' : 'from-gray-600/30 via-gray-500/20 to-gray-800/30'}`} style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
               <div className="absolute rounded-xl bg-gradient-to-b from-black/50 via-black/60 to-black/70" style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.4)' }} aria-hidden />
               
               <button
@@ -162,14 +162,15 @@ export const LootboxDecisionDialog = ({
             <div className="relative">
               {/* 3D Frame Effects */}
               <div className="absolute rounded-xl bg-black/40 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-700/60 via-yellow-600/50 to-yellow-900/60 border-2 border-yellow-500/40 shadow-[0_0_20px_rgba(234,179,8,0.5),0_8px_25px_rgba(0,0,0,0.5)]" aria-hidden />
-              <div className="absolute inset-[3px] rounded-xl bg-gradient-to-b from-yellow-600/40 via-yellow-500/30 to-yellow-800/40" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
+              <div className={`absolute inset-0 rounded-xl border-2 shadow-[0_0_20px_rgba(234,179,8,0.5),0_8px_25px_rgba(0,0,0,0.5)] ${canOpenNow ? 'bg-gradient-to-br from-yellow-700/60 via-yellow-600/50 to-yellow-900/60 border-yellow-500/40' : 'bg-gradient-to-br from-gray-700/40 via-gray-600/30 to-gray-900/40 border-gray-500/30'}`} aria-hidden />
+              <div className={`absolute inset-[3px] rounded-xl bg-gradient-to-b ${canOpenNow ? 'from-yellow-600/40 via-yellow-500/30 to-yellow-800/40' : 'from-gray-600/30 via-gray-500/20 to-gray-800/30'}`} style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }} aria-hidden />
               <div className="absolute rounded-xl bg-gradient-to-b from-black/50 via-black/60 to-black/70" style={{ top: '5px', left: '5px', right: '5px', bottom: '5px', boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.1), inset 0 -8px 16px rgba(0,0,0,0.4)' }} aria-hidden />
               
               <button
                 onClick={() => handleDecision('open_now')}
                 disabled={!canOpenNow || loading}
-                className="relative z-10 w-full rounded-xl font-bold text-black py-3 px-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+                className="relative z-10 w-full rounded-xl font-bold py-3 px-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+                style={{ color: canOpenNow ? '#000' : '#6b7280' }}
               >
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin mx-auto" />
