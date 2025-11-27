@@ -28,6 +28,7 @@ const LeaderboardCarouselComponent = () => {
   const animationFrameRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number | null>(null);
   const contentWidthRef = useRef<number>(0);
+  const translateXRef = useRef<number>(0);
 
   // Get user session
   useEffect(() => {
@@ -45,11 +46,29 @@ const LeaderboardCarouselComponent = () => {
     const track = trackRef.current;
     if (!track) return;
     
-    // scrollWidth is the total width of duplicated list, contentWidth is half
-    contentWidthRef.current = track.scrollWidth / 2;
+    // Get actual width of track content
+    const firstChild = track.firstElementChild;
+    if (!firstChild) return;
+    
+    // Calculate width of single list (count children / 2)
+    const childCount = track.children.length;
+    const singleListCount = childCount / 2;
+    
+    // Estimate width: sum first half of children
+    let totalWidth = 0;
+    for (let i = 0; i < singleListCount; i++) {
+      const child = track.children[i] as HTMLElement;
+      totalWidth += child.offsetWidth;
+      // Add gap (0.5rem = 8px on sm:, 0.75rem = 12px on md:)
+      if (i < singleListCount - 1) {
+        totalWidth += 8; // approximate gap
+      }
+    }
+    
+    contentWidthRef.current = totalWidth;
   }, []);
 
-  // Frame rate-independent scroll animation
+  // Frame rate-independent scroll animation using transform
   useEffect(() => {
     const container = containerRef.current;
     const track = trackRef.current;
@@ -59,18 +78,15 @@ const LeaderboardCarouselComponent = () => {
     // Initialize contentWidth
     updateContentWidth();
     
-    // Only reset scroll position on initial mount, not on data updates
-    if (container.scrollLeft === 0 && lastTimestampRef.current === null) {
-      container.scrollLeft = 0;
-    }
+    // Reset transform position
+    translateXRef.current = 0;
     lastTimestampRef.current = null;
 
     const animate = (timestamp: number) => {
-      const currentContainer = containerRef.current;
       const currentTrack = trackRef.current;
       
-      // Always continue animation as long as refs exist
-      if (!currentContainer || !currentTrack) {
+      // Always continue animation as long as track exists
+      if (!currentTrack) {
         animationFrameRef.current = requestAnimationFrame(animate);
         return;
       }
@@ -86,14 +102,18 @@ const LeaderboardCarouselComponent = () => {
       const deltaMs = timestamp - lastTimestampRef.current;
       const deltaPx = (SCROLL_SPEED_PX_PER_SEC * deltaMs) / 1000;
 
-      // Update scroll position
-      currentContainer.scrollLeft += deltaPx;
+      // Update translateX position (moving left, so negative)
+      translateXRef.current -= deltaPx;
 
       // Loop back when reaching contentWidth (half of duplicated list)
       const contentWidth = contentWidthRef.current;
-      if (contentWidth > 0 && currentContainer.scrollLeft >= contentWidth) {
-        currentContainer.scrollLeft -= contentWidth;
+      if (contentWidth > 0 && Math.abs(translateXRef.current) >= contentWidth) {
+        // Reset to beginning by adding back contentWidth
+        translateXRef.current += contentWidth;
       }
+
+      // Apply transform to track
+      currentTrack.style.transform = `translateX(${translateXRef.current}px)`;
 
       // Update timestamp for next frame
       lastTimestampRef.current = timestamp;
@@ -154,8 +174,7 @@ const LeaderboardCarouselComponent = () => {
       
       <div 
         ref={containerRef}
-        className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24 relative"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="overflow-hidden whitespace-nowrap h-16 sm:h-20 md:h-24 relative"
       >
         {loading || topPlayers.length === 0 ? (
           <LeaderboardSkeleton />
