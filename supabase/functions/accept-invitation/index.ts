@@ -46,7 +46,7 @@ serve(async (req) => {
     // Validate invitation code
     if (!invitationCode || typeof invitationCode !== 'string' || invitationCode.length < 8) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Érvénytelen meghívókód' }),
+        JSON.stringify({ success: false, error: 'Invalid invitation code' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -63,7 +63,7 @@ serve(async (req) => {
 
     if (inviterError || !inviterProfile) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Érvénytelen meghívókód' }),
+        JSON.stringify({ success: false, error: 'Invalid invitation code' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -82,7 +82,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Ez a meghívó már fel lett használva' 
+          error: 'This invitation has already been used' 
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -103,7 +103,7 @@ serve(async (req) => {
       if (updateError) {
         console.error('[INTERNAL] Error updating invitation:', updateError);
         return new Response(
-          JSON.stringify({ success: false, error: 'Hiba történt' }),
+          JSON.stringify({ success: false, error: 'An error occurred' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -123,7 +123,7 @@ serve(async (req) => {
       if (insertError) {
         console.error('[INTERNAL] Error inserting invitation:', insertError);
         return new Response(
-          JSON.stringify({ success: false, error: 'Hiba történt' }),
+          JSON.stringify({ success: false, error: 'An error occurred' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -163,7 +163,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: 'Meghívó sikeresen elfogadva!',
+        message: 'Invitation successfully accepted!',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -173,7 +173,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: 'Hiba történt'
+        error: 'An error occurred'
       }),
       { 
         status: 500,

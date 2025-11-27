@@ -24,7 +24,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           valid: false, 
-          error: 'Érvénytelen meghívókód formátum' 
+          error: 'Invalid invitation code format' 
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -36,14 +36,14 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           valid: false, 
-          error: 'Érvénytelen email cím' 
+          error: 'Invalid email address' 
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // SECURITY: Check if invitation code exists using public_profiles view
-    // (csak username kell, NEM email vagy pénzügyi adatok!)
+    // (only username needed, NOT email or financial data!)
     const { data: inviterProfile, error: profileError } = await supabaseClient
       .from('public_profiles')
       .select('id, username')
@@ -54,7 +54,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           valid: false, 
-          error: 'Érvénytelen meghívókód' 
+          error: 'Invalid invitation code' 
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -73,7 +73,7 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({ 
             valid: false, 
-            error: 'Ezzel az email címmel már regisztráltál ezzel a meghívóval' 
+            error: 'You have already registered with this email using this invitation' 
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
@@ -94,7 +94,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           valid: false, 
-          error: 'Túl sok meghívó lett elfogadva rövid időn belül. Próbáld később.' 
+          error: 'Too many invitations accepted recently. Try again later.' 
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -115,7 +115,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         valid: false, 
-        error: 'Hiba történt' 
+        error: 'An error occurred' 
       }),
       { 
         status: 500,

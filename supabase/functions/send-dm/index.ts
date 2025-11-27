@@ -94,14 +94,14 @@ serve(async (req) => {
     if (body) {
       if (body.length > 2000) {
         return new Response(
-          JSON.stringify({ error: 'Üzenet túl hosszú (max 2000 karakter)' }),
+          JSON.stringify({ error: 'Message too long (max 2000 characters)' }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
       if (body.trim().length === 0) {
         return new Response(
-          JSON.stringify({ error: 'Üzenet nem lehet üres' }),
+          JSON.stringify({ error: 'Message cannot be empty' }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -131,7 +131,7 @@ serve(async (req) => {
 
     if (friendshipError || !friendship) {
       return new Response(
-        JSON.stringify({ error: 'Nem küldhetsz üzenetet ennek a felhasználónak' }),
+        JSON.stringify({ error: 'Cannot send message to this user' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -142,7 +142,7 @@ serve(async (req) => {
     
     if (!isAllowed) {
       return new Response(
-        JSON.stringify({ error: 'Még nem küldhetsz üzenetet - várd meg a visszaigazolást' }),
+        JSON.stringify({ error: 'Cannot send message yet - wait for confirmation' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -189,7 +189,7 @@ serve(async (req) => {
 
     if (permission && !permission.can_send) {
       return new Response(
-        JSON.stringify({ error: 'Még nem küldhetsz üzenetet ebben a beszélgetésben' }),
+        JSON.stringify({ error: 'Cannot send message in this conversation yet' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

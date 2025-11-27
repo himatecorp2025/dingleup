@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
     if (!authHeader) {
       console.error('[get-daily-leaderboard-by-country] No authorization header');
       return new Response(
-        JSON.stringify({ error: 'Nincs bejelentkezve' }),
+        JSON.stringify({ error: 'Not logged in' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -131,7 +131,7 @@ Deno.serve(async (req) => {
     if (authError || !user) {
       console.error('[get-daily-leaderboard-by-country] Auth error:', authError);
       return new Response(
-        JSON.stringify({ error: 'Nincs bejelentkezve' }),
+        JSON.stringify({ error: 'Not logged in' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -148,7 +148,7 @@ Deno.serve(async (req) => {
     if (profileError) {
       console.error('[get-daily-leaderboard-by-country] Profile error:', profileError);
       return new Response(
-        JSON.stringify({ error: 'Profil nem található' }),
+        JSON.stringify({ error: 'Profile not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -181,7 +181,7 @@ Deno.serve(async (req) => {
     if (cacheError) {
       console.error('[get-daily-leaderboard-by-country] Cache error:', cacheError);
       return new Response(
-        JSON.stringify({ error: 'Hiba a ranglista lekérésekor' }),
+        JSON.stringify({ error: 'Error fetching leaderboard' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -315,7 +315,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('[get-daily-leaderboard-by-country] Unexpected error:', error);
     return new Response(
-      JSON.stringify({ error: 'Váratlan hiba történt' }),
+      JSON.stringify({ error: 'Unexpected error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
