@@ -44,30 +44,11 @@ const LeaderboardCarouselComponent = () => {
   // Calculate and update contentWidth (half of duplicated list)
   const updateContentWidth = useCallback(() => {
     const track = trackRef.current;
-    if (!track || track.children.length === 0) return;
+    if (!track) return;
     
-    const children = Array.from(track.children) as HTMLElement[];
-    const halfCount = children.length / 2;
-    
-    // Measure actual rendered width of first half (original list)
-    // by getting bounding box from first to middle element
-    const firstChild = children[0];
-    const lastOfFirstHalf = children[halfCount - 1];
-    
-    const firstRect = firstChild.getBoundingClientRect();
-    const lastRect = lastOfFirstHalf.getBoundingClientRect();
-    
-    // Calculate exact width including the last element
-    const exactWidth = (lastRect.right - firstRect.left);
-    
-    // Add the gap after the last element (distance to next element)
-    if (children[halfCount]) {
-      const nextRect = children[halfCount].getBoundingClientRect();
-      const gapAfter = nextRect.left - lastRect.right;
-      contentWidthRef.current = exactWidth + gapAfter;
-    } else {
-      contentWidthRef.current = exactWidth;
-    }
+    // Use scrollWidth / 2 for exact DOM-calculated width
+    // This is the most accurate way to get the width of one full list cycle
+    contentWidthRef.current = track.scrollWidth / 2;
   }, []);
 
   // Frame rate-independent scroll animation using translate3d
@@ -117,11 +98,14 @@ const LeaderboardCarouselComponent = () => {
       // Update translateX position (moving left, so negative)
       translateXRef.current -= deltaPx;
 
-      // Simple wrap when reaching contentWidth (half of duplicated list)
+      // Seamless wrap using modulo - no visible jump
       const contentWidth = contentWidthRef.current;
-      if (contentWidth > 0 && translateXRef.current <= -contentWidth) {
-        // Add back exactly contentWidth for seamless loop
-        translateXRef.current += contentWidth;
+      if (contentWidth > 0) {
+        const absX = Math.abs(translateXRef.current);
+        if (absX >= contentWidth) {
+          // Use modulo to wrap seamlessly
+          translateXRef.current = -(absX % contentWidth);
+        }
       }
 
       // Apply transform using translate3d for GPU acceleration and subpixel precision
