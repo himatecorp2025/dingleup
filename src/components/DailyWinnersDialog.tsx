@@ -238,7 +238,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               paddingLeft: '0',
               paddingRight: '0',
               marginLeft: '0',
-              marginRight: '0'
+              marginRight: '0',
+              backgroundColor: 'rgba(0, 0, 0, 0.75)'
             }}
           >
           <DialogTitle className="sr-only">{t('dailyWinners.dialog_title')}</DialogTitle>
