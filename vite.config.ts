@@ -121,7 +121,7 @@ export default defineConfig(({ mode }) => ({
     cacheHeadersPlugin(mode),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      injectRegister: 'inline',
       includeAssets: ['favicon.ico', 'robots.txt', 'dingleup-logo.png'],
       manifest: {
         name: 'DingleUP!',
