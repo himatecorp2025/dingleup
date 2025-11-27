@@ -76,6 +76,28 @@ serve(async (req) => {
       });
     }
 
+    // **IDEMPOTENCY CHECK** - prevent duplicate lootbox crediting on page refresh
+    const { data: existingLootboxes } = await supabaseAdmin
+      .from('lootbox_instances')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('source', 'purchase')
+      .eq('metadata->>session_id', sessionId)
+      .limit(1);
+
+    if (existingLootboxes && existingLootboxes.length > 0) {
+      console.log('[verify-lootbox-payment] Already processed session:', sessionId);
+      return new Response(JSON.stringify({ 
+        success: true,
+        already_processed: true,
+        boxes_credited: boxes,
+        message: 'Lootboxes already credited for this session'
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     // Credit stored lootboxes to user
     const insertPromises = [];
     for (let i = 0; i < boxes; i++) {
