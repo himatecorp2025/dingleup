@@ -344,12 +344,12 @@ const DailyGiftDialog = ({
                           strokeWidth="1" 
                           filter="url(#fireShadow)" 
                           style={{ animation: 'fireFlicker 0.8s ease-in-out infinite' }} />
-                    {/* Belső sárga csepp - alul */}
-                    <ellipse cx="50" cy="78" rx="14" ry="18" 
-                             fill="url(#fireInnerDrop)" 
-                             filter="url(#fireGlow)"
-                             opacity="0.95"
-                             style={{ animation: 'fireFlicker 0.8s ease-in-out infinite 0.1s' }} />
+                    {/* Belső sárga láng - alul, kisebb méretben */}
+                    <path d="M50 55 C45 60, 42 68, 41 78 C40 85, 43 91, 46 95 C47 97, 48 98, 50 99 C52 98, 53 97, 54 95 C57 91, 60 85, 59 78 C58 68, 55 60, 50 55 Z" 
+                          fill="url(#fireInnerDrop)" 
+                          filter="url(#fireGlow)"
+                          opacity="0.95"
+                          style={{ animation: 'fireFlicker 0.8s ease-in-out infinite 0.1s' }} />
                     {/* Fény highlight a tetején */}
                     <ellipse cx="48" cy="25" rx="10" ry="12" fill="url(#fireHighlight)" opacity="0.5" />
                     <style>{`
