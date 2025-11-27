@@ -44,6 +44,11 @@ const GamePreview = memo(() => {
   const { triggerHaptic } = useHapticFeedback();
   const containerRef = useRef<HTMLDivElement>(null);
   
+  // OPTIMIZATION: Memoize profile values to prevent unnecessary re-renders
+  const lives = profile?.lives ?? 0;
+  const maxLives = 5;
+  const coins = walletData?.coinsCurrent ?? 0;
+  
   const { broadcast } = useBroadcastChannel({ channelName: 'wallet', onMessage: () => {}, enabled: true });
   
   // Prefetch state for instant game restarts
