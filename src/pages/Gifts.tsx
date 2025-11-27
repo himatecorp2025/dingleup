@@ -69,22 +69,32 @@ const Gifts = () => {
     // Check for payment success in URL params
     const params = new URLSearchParams(window.location.search);
     const paymentStatus = params.get('payment');
-    const boxes = params.get('boxes');
+    const sessionId = params.get('session_id');
 
-    if (paymentStatus === 'success' && boxes) {
+    if (paymentStatus === 'success' && sessionId) {
       // Payment successful, trigger verification
       const verifyPayment = async () => {
         try {
           const { data: { session } } = await supabase.auth.getSession();
           if (!session) return;
 
-          toast.success(t('gifts.payment_success'));
-          
-          // Clear URL params
-          window.history.replaceState({}, '', '/gifts');
-          
-          // Refetch stored lootboxes
-          fetchStoredLootboxes();
+          const { data, error } = await supabase.functions.invoke('verify-lootbox-payment', {
+            body: { sessionId },
+            headers: {
+              Authorization: `Bearer ${session.access_token}`
+            }
+          });
+
+          if (error) {
+            console.error('[Gifts] Payment verification error:', error);
+            toast.error(t('errors.unknown'));
+          } else if (data?.success) {
+            toast.success(t('gifts.payment_success'));
+            // Clear URL params
+            window.history.replaceState({}, '', '/gifts');
+            // Refetch stored lootboxes
+            fetchStoredLootboxes();
+          }
         } catch (err) {
           console.error('[Gifts] Payment verification error:', err);
         }
@@ -154,10 +164,10 @@ const Gifts = () => {
   };
 
   const packages = [
-    { boxes: 1, price: '$1.99', priceId: 'price_1box' },
-    { boxes: 3, price: '$4.99', priceId: 'price_3box' },
-    { boxes: 5, price: '$9.99', priceId: 'price_5box' },
-    { boxes: 10, price: '$17.99', priceId: 'price_10box' }
+    { boxes: 1, price: '$1.99', priceId: 'price_1SY9TpKKw7HPC0ZDjtahxbNo' },
+    { boxes: 3, price: '$4.99', priceId: 'price_1SY9U8KKw7HPC0ZDj6AXLJdN' },
+    { boxes: 5, price: '$9.99', priceId: 'price_1SY9UbKKw7HPC0ZDGHEJq6Tg' },
+    { boxes: 10, price: '$17.99', priceId: 'price_1SY9V1KKw7HPC0ZDCyRUtwoK' }
   ];
 
   const handlePurchase = async (pkg: typeof packages[0]) => {
