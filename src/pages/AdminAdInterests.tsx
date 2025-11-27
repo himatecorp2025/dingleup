@@ -9,8 +9,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RefreshCw, BarChart3, Users, Info } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useI18n } from '@/i18n';
 
 const AdminAdInterests = () => {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const { loading, recalculating, recalculateInterests, fetchAllTopics, fetchTopicSummary, fetchUserInterests, enableRealtime } = useAdInterests();
   
@@ -98,7 +100,7 @@ const AdminAdInterests = () => {
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
         <div className="relative z-10">
-          <p className="text-white/70 text-lg">Betöltés...</p>
+          <p className="text-white/70 text-lg">{t('admin.loading')}</p>
         </div>
       </div>
     );
@@ -110,8 +112,8 @@ const AdminAdInterests = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Reklámprofilok (Előkészítés)</h1>
-            <p className="text-white/60">Játékadatokból származó reklám-érdeklődési analitika</p>
+            <h1 className="text-3xl font-bold text-white mb-2">{t('admin.ad_interests.title')}</h1>
+            <p className="text-white/60">{t('admin.ad_interests.description')}</p>
           </div>
           <Button
             onClick={handleRecalculate}
@@ -119,7 +121,7 @@ const AdminAdInterests = () => {
             className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${recalculating ? 'animate-spin' : ''}`} />
-            {recalculating ? 'Frissítés...' : 'Újraszámítás'}
+            {recalculating ? t('admin.ad_interests.recalculating') : t('admin.ad_interests.recalculate_button')}
           </Button>
         </div>
 
@@ -127,11 +129,7 @@ const AdminAdInterests = () => {
         <Alert className="bg-blue-500/10 border-blue-500/30 text-white">
           <Info className="h-5 w-5 text-blue-400" />
           <AlertDescription className="text-sm ml-2">
-            Ez a nézet a játékosok tematikus érdeklődését mutatja reklám-szempontú előkészítésként. 
-            A jelenlegi rendszerben ezek az adatok <strong>kizárólag analitikai és termékfejlesztési célokat</strong> szolgálnak, 
-            nem használjuk őket aktív reklámcélú profilozásra, és nem jelenítünk meg személyre szabott hirdetéseket. 
-            A tényleges reklám-targetálás csak akkor indul el, ha a szolgáltatás elérhetővé válik és a felhasználó ehhez 
-            kifejezetten hozzájárul.
+            {t('admin.ad_interests.legal_info')}
           </AlertDescription>
         </Alert>
 
@@ -139,20 +137,20 @@ const AdminAdInterests = () => {
         <Card className="backdrop-blur-xl bg-white/5 border-white/10 p-6">
           <div className="flex items-center gap-3 mb-4">
             <BarChart3 className="w-6 h-6 text-purple-400" />
-            <h2 className="text-xl font-bold text-white">Témakörök reklámérdeklődése</h2>
+            <h2 className="text-xl font-bold text-white">{t('admin.ad_interests.topics_title')}</h2>
           </div>
 
           {loading ? (
-            <div className="text-white/60 text-center py-8">Betöltés...</div>
+            <div className="text-white/60 text-center py-8">{t('admin.loading')}</div>
           ) : topicSummary.length === 0 ? (
             <div className="text-white/60 text-center py-8">
-              Nincs adat. Futtasd az újraszámítást!
+              {t('admin.ad_interests.no_data')}
             </div>
           ) : (
             <>
               {/* Bar Chart for Top 10 Topics */}
               <div className="mb-6 p-4 bg-white/5 rounded-lg">
-                <h3 className="text-white/80 text-sm font-medium mb-4">Top 10 témakör interest score alapján</h3>
+                <h3 className="text-white/80 text-sm font-medium mb-4">{t('admin.ad_interests.top_10_topics')}</h3>
                 <div className="space-y-3">
                   {topicSummary.slice(0, 10).map((topic, idx) => (
                     <div key={topic.topicId} className="space-y-1">
@@ -178,10 +176,10 @@ const AdminAdInterests = () => {
                   <TableHeader>
                     <TableRow className="border-white/10 hover:bg-white/5">
                       <TableHead className="text-white/70">#</TableHead>
-                      <TableHead className="text-white/70">Témakör</TableHead>
-                      <TableHead className="text-white/70">Átlagos Interest Score</TableHead>
-                      <TableHead className="text-white/70">%-ban</TableHead>
-                      <TableHead className="text-white/70">User Count</TableHead>
+                      <TableHead className="text-white/70">{t('admin.ad_interests.table.topic')}</TableHead>
+                      <TableHead className="text-white/70">{t('admin.ad_interests.table.avg_score')}</TableHead>
+                      <TableHead className="text-white/70">{t('admin.ad_interests.table.percentage')}</TableHead>
+                      <TableHead className="text-white/70">{t('admin.ad_interests.table.user_count')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -208,17 +206,17 @@ const AdminAdInterests = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <Users className="w-6 h-6 text-purple-400" />
-              <h2 className="text-xl font-bold text-white">User-szintű érdeklődés (anonim)</h2>
+              <h2 className="text-xl font-bold text-white">{t('admin.ad_interests.user_level_title')}</h2>
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-white/60 text-sm">Szűrés témakör szerint:</span>
+              <span className="text-white/60 text-sm">{t('admin.ad_interests.filter_by_topic')}</span>
               <Select value={selectedTopicFilter} onValueChange={setSelectedTopicFilter}>
                 <SelectTrigger className="w-[200px] bg-white/5 border-white/10 text-white">
-                  <SelectValue placeholder="Összes témakör" />
+                  <SelectValue placeholder={t('admin.ad_interests.all_topics')} />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a0b2e] border-white/10">
-                  <SelectItem value="all" className="text-white">Összes témakör (27)</SelectItem>
+                  <SelectItem value="all" className="text-white">{t('admin.ad_interests.all_topics_count')}</SelectItem>
                   {allTopics.map(topic => (
                     <SelectItem key={topic.topicId} value={topic.topicId} className="text-white">
                       {topic.topicName}
@@ -230,10 +228,10 @@ const AdminAdInterests = () => {
           </div>
 
           {loading ? (
-            <div className="text-white/60 text-center py-8">Betöltés...</div>
+            <div className="text-white/60 text-center py-8">{t('admin.loading')}</div>
           ) : userInterests.length === 0 ? (
             <div className="text-white/60 text-center py-8">
-              Nincs adat a kiválasztott szűrővel.
+              {t('admin.ad_interests.no_data_for_filter')}
             </div>
           ) : (
             <>
@@ -241,9 +239,9 @@ const AdminAdInterests = () => {
                 <Table>
                   <TableHeader>
                     <TableRow className="border-white/10 hover:bg-white/5">
-                      <TableHead className="text-white/70">User ID (hash)</TableHead>
-                      <TableHead className="text-white/70">Top témakörök</TableHead>
-                      <TableHead className="text-white/70">Összes érdeklődés</TableHead>
+                      <TableHead className="text-white/70">{t('admin.ad_interests.table.user_id')}</TableHead>
+                      <TableHead className="text-white/70">{t('admin.ad_interests.table.top_topics')}</TableHead>
+                      <TableHead className="text-white/70">{t('admin.ad_interests.table.total_interests')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -254,7 +252,7 @@ const AdminAdInterests = () => {
                         </TableCell>
                         <TableCell className="text-white/80">
                           {user.topTopics.length === 0 ? (
-                            <span className="text-white/40">Nincs adat</span>
+                            <span className="text-white/40">{t('admin.ad_interests.no_data')}</span>
                           ) : (
                             <div className="space-y-1">
                               {user.topTopics.map(topic => (
@@ -284,7 +282,7 @@ const AdminAdInterests = () => {
                   variant="outline"
                   className="bg-white/5 border-white/10 text-white hover:bg-white/10"
                 >
-                  Előző
+                  {t('admin.pagination.previous')}
                 </Button>
                 <span className="text-white/60">
                   {currentPage} / {totalPages}
@@ -295,7 +293,7 @@ const AdminAdInterests = () => {
                   variant="outline"
                   className="bg-white/5 border-white/10 text-white hover:bg-white/10"
                 >
-                  Következő
+                  {t('admin.pagination.next')}
                 </Button>
               </div>
             </>

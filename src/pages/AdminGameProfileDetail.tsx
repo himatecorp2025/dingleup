@@ -8,8 +8,10 @@ import { useAdminGameProfileDetail } from '@/hooks/useAdminGameProfiles';
 import { Brain, TrendingUp, Heart, ThumbsDown, Clock } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useI18n } from '@/i18n';
 
 export default function AdminGameProfileDetail() {
+  const { t } = useI18n();
   const { userId } = useParams<{ userId: string }>();
   const { loading, error, profile } = useAdminGameProfileDetail(userId);
 
@@ -19,7 +21,7 @@ export default function AdminGameProfileDetail() {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-            <p className="text-lg text-white/70">Betöltés...</p>
+            <p className="text-lg text-white/70">{t('admin.loading')}</p>
           </div>
         </div>
       </AdminLayout>
@@ -31,7 +33,7 @@ export default function AdminGameProfileDetail() {
       <AdminLayout>
         <div className="container mx-auto max-w-7xl">
           <Alert variant="destructive">
-            <AlertDescription>{error || 'Hiba történt az adatok betöltésekor'}</AlertDescription>
+            <AlertDescription>{error || t('admin.error_loading_data')}</AlertDescription>
           </Alert>
         </div>
       </AdminLayout>
@@ -46,7 +48,7 @@ export default function AdminGameProfileDetail() {
             <Brain className="h-8 w-8 text-purple-400" />
             {profile.username}
           </h1>
-          <p className="text-white/60">Részletes játékprofil adatok</p>
+          <p className="text-white/60">{t('admin.game_profile.detailed_data')}</p>
         </div>
 
         {/* Status Alert */}
@@ -66,7 +68,7 @@ export default function AdminGameProfileDetail() {
         ) : (
           <Alert className="mb-6 bg-blue-500/10 border-blue-500/30">
             <AlertDescription>
-              <strong>Tanulási fázis:</strong> {profile.totalAnswered} / 1000 kérdés megválaszolva
+              <strong>{t('admin.game_profile.learning_phase')}</strong> {profile.totalAnswered} / 1000 {t('admin.game_profile.questions_answered')}
             </AlertDescription>
           </Alert>
         )}
@@ -75,7 +77,7 @@ export default function AdminGameProfileDetail() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 mb-6">
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Összes válasz</CardDescription>
+              <CardDescription>{t('admin.game_profile.total_answers')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold">{profile.totalAnswered}</p>
@@ -84,7 +86,7 @@ export default function AdminGameProfileDetail() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Helyes válaszok</CardDescription>
+              <CardDescription>{t('admin.game_profile.correct_answers')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-green-600">{profile.totalCorrect}</p>
@@ -93,7 +95,7 @@ export default function AdminGameProfileDetail() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Helyességi arány</CardDescription>
+              <CardDescription>{t('admin.game_profile.correct_ratio')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-blue-600">
@@ -105,7 +107,7 @@ export default function AdminGameProfileDetail() {
           <Card>
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-1">
-                <Heart className="h-3 w-3" /> Likes
+                <Heart className="h-3 w-3" /> {t('admin.game_profile.likes')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -116,7 +118,7 @@ export default function AdminGameProfileDetail() {
           <Card>
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-1">
-                <ThumbsDown className="h-3 w-3" /> Dislikes
+                <ThumbsDown className="h-3 w-3" /> {t('admin.game_profile.dislikes')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -128,24 +130,24 @@ export default function AdminGameProfileDetail() {
         {/* Metadata */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Profil Metadata</CardTitle>
+            <CardTitle>{t('admin.game_profile.metadata')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
               <div>
-                <p className="text-sm text-muted-foreground">User ID</p>
+                <p className="text-sm text-muted-foreground">{t('admin.game_profile.user_id')}</p>
                 <p className="font-mono text-sm">{profile.userId}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Regisztráció</p>
+                <p className="text-sm text-muted-foreground">{t('admin.game_profile.registration')}</p>
                 <p className="text-sm">{new Date(profile.createdAt).toLocaleString('hu-HU')}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Utolsó aktivitás</p>
+                <p className="text-sm text-muted-foreground">{t('admin.game_profile.last_activity')}</p>
                 <p className="text-sm">
                   {profile.lastSeenAt
                     ? new Date(profile.lastSeenAt).toLocaleString('hu-HU')
-                    : 'Nincs adat'}
+                    : t('admin.game_profile.no_data')}
                 </p>
               </div>
             </div>
@@ -157,9 +159,9 @@ export default function AdminGameProfileDetail() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-yellow-500" />
-              TOP 3 Témakörök
+              {t('admin.game_profile.top_3_topics')}
             </CardTitle>
-            <CardDescription>Legnagyobb pontszámú témák</CardDescription>
+            <CardDescription>{t('admin.game_profile.highest_score_topics')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -170,12 +172,12 @@ export default function AdminGameProfileDetail() {
                     <div>
                       <p className="font-semibold">{topic.topicName}</p>
                       <p className="text-sm text-muted-foreground">
-                        {topic.answeredCount} válasz • {(topic.correctRatio * 100).toFixed(1)}% helyes
+                        {topic.answeredCount} {t('admin.game_profile.answer')} • {(topic.correctRatio * 100).toFixed(1)}% {t('admin.game_profile.correct')}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold">Score: {topic.score.toFixed(2)}</p>
+                    <p className="font-semibold">{t('admin.game_profile.score')} {topic.score.toFixed(2)}</p>
                     <p className="text-sm text-muted-foreground">
                       <Heart className="inline h-3 w-3" /> {topic.likeCount} • <ThumbsDown className="inline h-3 w-3" /> {topic.dislikeCount}
                     </p>
@@ -190,32 +192,32 @@ export default function AdminGameProfileDetail() {
         {profile.personalizationReady && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle>Kérdéselosztás (70/20/10)</CardTitle>
+              <CardTitle>{t('admin.game_profile.question_distribution')}</CardTitle>
               <CardDescription>
                 {profile.aiPersonalizedQuestionsEnabled
-                  ? 'Aktív személyre szabott elosztás'
-                  : 'Elosztás ha be lenne kapcsolva'}
+                  ? t('admin.game_profile.active_personalized')
+                  : t('admin.game_profile.if_enabled')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span>Kedvenc témák (TOP3)</span>
+                    <span>{t('admin.game_profile.favorite_topics')}</span>
                     <span className="font-semibold">70%</span>
                   </div>
                   <Progress value={70} className="h-3" />
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span>Új kérdések</span>
+                    <span>{t('admin.game_profile.new_questions')}</span>
                     <span className="font-semibold">20%</span>
                   </div>
                   <Progress value={20} className="h-3" />
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span>Dislike témák</span>
+                    <span>{t('admin.game_profile.dislike_topics')}</span>
                     <span className="font-semibold">10%</span>
                   </div>
                   <Progress value={10} className="h-3" />
@@ -228,21 +230,21 @@ export default function AdminGameProfileDetail() {
         {/* Összes téma táblázat */}
         <Card>
           <CardHeader>
-            <CardTitle>Összes Témakör</CardTitle>
-            <CardDescription>Teljes statisztika témánként</CardDescription>
+            <CardTitle>{t('admin.game_profile.all_topics')}</CardTitle>
+            <CardDescription>{t('admin.game_profile.full_stats_by_topic')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-2 px-4">Témakör</th>
-                    <th className="text-right py-2 px-4">Válaszok</th>
-                    <th className="text-right py-2 px-4">Helyes %</th>
-                    <th className="text-right py-2 px-4">Like/Dislike</th>
-                    <th className="text-right py-2 px-4">Átl. idő (ms)</th>
-                    <th className="text-right py-2 px-4">Score</th>
-                    <th className="text-center py-2 px-4">TOP3</th>
+                    <th className="text-left py-2 px-4">{t('admin.game_profile.table.topic')}</th>
+                    <th className="text-right py-2 px-4">{t('admin.game_profile.table.answers')}</th>
+                    <th className="text-right py-2 px-4">{t('admin.game_profile.table.correct_percent')}</th>
+                    <th className="text-right py-2 px-4">{t('admin.game_profile.table.like_dislike')}</th>
+                    <th className="text-right py-2 px-4">{t('admin.game_profile.table.avg_time')}</th>
+                    <th className="text-right py-2 px-4">{t('admin.game_profile.table.score')}</th>
+                    <th className="text-center py-2 px-4">{t('admin.game_profile.table.top3')}</th>
                   </tr>
                 </thead>
                 <tbody>
