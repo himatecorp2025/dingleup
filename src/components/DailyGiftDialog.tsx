@@ -347,7 +347,7 @@ const DailyGiftDialog = ({
                       <div key={dayNumber} className="flex flex-col items-center gap-[1.5%]">
                         {/* 3D Star SVG */}
                         <svg viewBox="0 0 100 100" style={{ 
-                          width: 'clamp(14px, 6.5cqw, 24px)', 
+                          width: 'clamp(21px, 9.75cqw, 36px)', 
                           height: 'auto',
                           filter: isActive 
                             ? `drop-shadow(0 0 6px #FBBF24) drop-shadow(0 0 12px rgba(251,191,36,0.6))` 
