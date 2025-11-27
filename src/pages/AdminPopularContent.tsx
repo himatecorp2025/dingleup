@@ -98,7 +98,7 @@ const AdminPopularContent = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setError('No admin session');
+        setError(t('admin.popular.session_error'));
         setLoading(false);
         return;
       }

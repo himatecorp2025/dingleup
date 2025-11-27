@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { Target, DollarSign, Zap, Activity, Map as MapIcon } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useI18n } from '@/i18n';
 
 const AdvancedAnalytics = () => {
+  const { t } = useI18n();
   const navigate = useNavigate();
 
   return (
@@ -13,7 +15,7 @@ const AdvancedAnalytics = () => {
           <div className="flex items-center gap-3">
             <Activity className="w-8 h-8 text-purple-400" />
             <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Fejlett Analitika
+              {t('admin.advanced.title')}
             </h1>
           </div>
         </div>
@@ -25,8 +27,8 @@ const AdvancedAnalytics = () => {
             className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
           >
             <Target className="w-10 h-10 text-purple-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">Retenciós Dashboard</h4>
-            <p className="text-white/60 text-sm">DAU/WAU/MAU, kohorsz analízis, lemorzsolódás</p>
+            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.retention_title')}</h4>
+            <p className="text-white/60 text-sm">{t('admin.advanced.retention_desc')}</p>
           </button>
 
           <button
@@ -34,8 +36,8 @@ const AdvancedAnalytics = () => {
             className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-green-500/20"
           >
             <DollarSign className="w-10 h-10 text-green-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">Monetizációs Dashboard</h4>
-            <p className="text-white/60 text-sm">Bevétel, ARPU, konverzió, LTV analízis</p>
+            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.monetization_title')}</h4>
+            <p className="text-white/60 text-sm">{t('admin.advanced.monetization_desc')}</p>
           </button>
 
           <button
@@ -43,8 +45,8 @@ const AdvancedAnalytics = () => {
             className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
           >
             <Zap className="w-10 h-10 text-purple-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">Teljesítmény Dashboard</h4>
-            <p className="text-white/60 text-sm">Betöltési idők, TTFB, LCP, hibák</p>
+            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.performance_title')}</h4>
+            <p className="text-white/60 text-sm">{t('admin.advanced.performance_desc')}</p>
           </button>
 
           <button
@@ -52,8 +54,8 @@ const AdvancedAnalytics = () => {
             className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
           >
             <Activity className="w-10 h-10 text-purple-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">Engagement Dashboard</h4>
-            <p className="text-white/60 text-sm">Session-ök, felhasználói aktivitás, játék engagement</p>
+            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.engagement_title')}</h4>
+            <p className="text-white/60 text-sm">{t('admin.advanced.engagement_desc')}</p>
           </button>
 
           <button
@@ -61,8 +63,8 @@ const AdvancedAnalytics = () => {
             className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
           >
             <MapIcon className="w-10 h-10 text-purple-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">User Journey</h4>
-            <p className="text-white/60 text-sm">Onboarding, vásárlási és játék tölcsérek</p>
+            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.journey_title')}</h4>
+            <p className="text-white/60 text-sm">{t('admin.advanced.journey_desc')}</p>
           </button>
         </div>
       </div>

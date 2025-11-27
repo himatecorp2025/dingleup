@@ -89,9 +89,9 @@ export default function AdminQuestionPools() {
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Question Pools (Vegyes Témák)</h1>
+            <h1 className="text-3xl font-bold">{t('admin.pools.main_title')}</h1>
             <p className="text-muted-foreground mt-1">
-              50 pool összesen × 270 kérdés/pool (27 témakör × 10 kérdés) → cél: 500 kérdés (50 témakör)
+              {t('admin.pools.subtitle')}
             </p>
           </div>
           <Button 
@@ -108,33 +108,33 @@ export default function AdminQuestionPools() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Database className="h-5 w-5" />
-              Globális Pool Rendszer
+              {t('admin.pools.card_title')}
             </CardTitle>
             <CardDescription>
-              50 pool vegyes témákkal. Rotáció: 1→2→3→...→50→1 (minden játékos más poolból kap)
+              {t('admin.pools.card_description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-6">
               <div className="text-center">
                 <div className="text-3xl font-bold">{pools.length}</div>
-                <div className="text-sm text-muted-foreground">Aktív Poolok</div>
+                <div className="text-sm text-muted-foreground">{t('admin.pools.stat_active')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold">{totalQuestions}</div>
-                <div className="text-sm text-muted-foreground">Összes Kérdés</div>
+                <div className="text-sm text-muted-foreground">{t('admin.pools.stat_total_questions')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold">{avgQuestionsPerPool}</div>
-                <div className="text-sm text-muted-foreground">Átlag/Pool</div>
+                <div className="text-sm text-muted-foreground">{t('admin.pools.stat_avg_per_pool')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold">{minQuestions}</div>
-                <div className="text-sm text-muted-foreground">Min/Pool</div>
+                <div className="text-sm text-muted-foreground">{t('admin.pools.stat_min_per_pool')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold">{maxQuestions}</div>
-                <div className="text-sm text-muted-foreground">Max/Pool</div>
+                <div className="text-sm text-muted-foreground">{t('admin.pools.stat_max_per_pool')}</div>
               </div>
             </div>
 
@@ -173,7 +173,7 @@ export default function AdminQuestionPools() {
 
             {pools.length > 0 && minQuestions < 15 && (
               <Badge variant="outline" className="mt-4 border-yellow-500 text-yellow-600">
-                ⚠️ Néhány pool kevés kérdést tartalmaz (&lt;15) - ezek átugrásra kerülnek
+                {t('admin.pools.warning_low_questions')}
               </Badge>
             )}
           </CardContent>
@@ -183,18 +183,18 @@ export default function AdminQuestionPools() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <PlayCircle className="h-5 w-5" />
-              Vegyes Pool Rendszer (25.000 játékosra optimalizálva)
+              {t('admin.pools.optimized_title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <p>✅ 50 pool ÖSSZESEN (nem témakörönként!)</p>
-            <p>✅ Minden pool minden témakörből pontosan 10 kérdést tartalmaz</p>
-            <p>✅ Jelenleg: 27 témakör × 10 kérdés = 270 kérdés/pool</p>
-            <p>✅ Cél: 50 témakör × 10 kérdés = 500 kérdés/pool</p>
-            <p>✅ Pool-rotáció: 1→2→3→...→50→1 (soha nem ugyanaz kétszer egymás után)</p>
-            <p>✅ Poolok memóriában cache-eltek → 25.000 egyidejű játékos támogatás</p>
-            <p>✅ Kis poolok (&lt;15 kérdés) automatikusan átugrásra kerülnek</p>
-            <p>✅ Új kérdések hozzáadása után újragenerálással frissíthetők</p>
+            <p>{t('admin.pools.feature_1')}</p>
+            <p>{t('admin.pools.feature_2')}</p>
+            <p>{t('admin.pools.feature_3')}</p>
+            <p>{t('admin.pools.feature_4')}</p>
+            <p>{t('admin.pools.feature_5')}</p>
+            <p>{t('admin.pools.feature_6')}</p>
+            <p>{t('admin.pools.feature_7')}</p>
+            <p>{t('admin.pools.feature_8')}</p>
           </CardContent>
         </Card>
       </div>

@@ -94,10 +94,10 @@ export default function AdminAgeStatistics() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t('admin.age.all_countries')}</SelectItem>
-                  <SelectItem value="HU">Magyarország</SelectItem>
-                  <SelectItem value="US">USA</SelectItem>
-                  <SelectItem value="GB">Egyesült Királyság</SelectItem>
-                  <SelectItem value="DE">Németország</SelectItem>
+                  <SelectItem value="HU">{t('admin.age.countries.hu')}</SelectItem>
+                  <SelectItem value="US">{t('admin.age.countries.us')}</SelectItem>
+                  <SelectItem value="GB">{t('admin.age.countries.gb')}</SelectItem>
+                  <SelectItem value="DE">{t('admin.age.countries.de')}</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>
@@ -138,7 +138,7 @@ export default function AdminAgeStatistics() {
                     <XAxis dataKey="label" />
                     <YAxis />
                     <Tooltip 
-                      formatter={(value: number) => `${value} fő`}
+                      formatter={(value: number) => `${value} ${t('admin.age.users').toLowerCase()}`}
                       labelStyle={{ color: '#000' }}
                     />
                     <Legend />
