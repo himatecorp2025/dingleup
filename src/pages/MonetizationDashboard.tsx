@@ -131,7 +131,7 @@ const MonetizationDashboard = () => {
               <div className="text-3xl font-bold text-white">
                 {analytics?.conversionRate?.toFixed(1) || 0}%
               </div>
-              <p className="text-xs text-white/40 mt-1">{analytics?.payingUsers || 0} / {analytics?.totalUsers || 0} fizető</p>
+              <p className="text-xs text-white/40 mt-1">{analytics?.payingUsers || 0} / {analytics?.totalUsers || 0} {t('admin.monetization.paying_users')}</p>
             </CardContent>
           </Card>
         </div>
@@ -153,7 +153,7 @@ const MonetizationDashboard = () => {
                     labelStyle={{ color: '#fff' }}
                   />
                   <Legend />
-                  <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} name="Bevétel (Ft)" />
+                  <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} name={t('admin.monetization.revenue_chart')} />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -177,8 +177,8 @@ const MonetizationDashboard = () => {
                     labelStyle={{ color: '#fff' }}
                   />
                   <Legend />
-                  <Bar dataKey="revenue" fill="#10b981" name="Bevétel (Ft)" />
-                  <Bar dataKey="count" fill="#3b82f6" name="Vásárlások száma" />
+                  <Bar dataKey="revenue" fill="#10b981" name={t('admin.monetization.revenue_chart')} />
+                  <Bar dataKey="count" fill="#3b82f6" name={t('admin.monetization.purchase_count')} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>

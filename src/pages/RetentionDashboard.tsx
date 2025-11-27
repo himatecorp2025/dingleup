@@ -109,9 +109,9 @@ const RetentionDashboard = () => {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={[
-                    { name: '1. Nap', rate: analytics.retentionRates.day1 },
-                    { name: '7. Nap', rate: analytics.retentionRates.day7 },
-                    { name: '30. Nap', rate: analytics.retentionRates.day30 },
+                    { name: t('admin.retention.day_1'), rate: analytics.retentionRates.day1 },
+                    { name: t('admin.retention.day_7'), rate: analytics.retentionRates.day7 },
+                    { name: t('admin.retention.day_30'), rate: analytics.retentionRates.day30 },
                   ]}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="name" stroke="#fff" />

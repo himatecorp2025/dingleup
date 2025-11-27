@@ -20,7 +20,7 @@ const PerformanceDashboard = () => {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-            <p className="text-lg text-white/70">Betöltés...</p>
+            <p className="text-lg text-white/70">{t('admin.loading')}</p>
           </div>
         </div>
       </AdminLayout>
@@ -52,30 +52,30 @@ const PerformanceDashboard = () => {
             </Button>
             <div>
               <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Teljesítmény Dashboard
+                {t('admin.performance.dashboard_title')}
               </h1>
-              <p className="text-white/60 text-sm mt-1">Az alkalmazás betöltési sebességének és hibáinak valós idejű monitorozása</p>
+              <p className="text-white/60 text-sm mt-1">{t('admin.performance.dashboard_subtitle')}</p>
             </div>
           </div>
           <Button onClick={() => refetch()} disabled={loading} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Frissítés
+            {t('admin.performance.refresh_button')}
           </Button>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="backdrop-blur-xl bg-white/5 border border-white/10 p-1 flex-wrap h-auto gap-1">
             <TabsTrigger value="overview" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60">
-              Áttekintés
+              {t('admin.performance.tab_overview')}
             </TabsTrigger>
             <TabsTrigger value="pages" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60">
-              Oldalak
+              {t('admin.performance.tab_pages')}
             </TabsTrigger>
             <TabsTrigger value="devices" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60">
-              Eszközök
+              {t('admin.performance.tab_devices')}
             </TabsTrigger>
             <TabsTrigger value="errors" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60">
-              Hibák
+              {t('admin.performance.tab_errors')}
             </TabsTrigger>
           </TabsList>
 
