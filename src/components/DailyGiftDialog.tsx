@@ -344,8 +344,8 @@ const DailyGiftDialog = ({
                           strokeWidth="1" 
                           filter="url(#fireShadow)" 
                           style={{ animation: 'fireFlicker 0.8s ease-in-out infinite' }} />
-                    {/* Belső sárga láng - alul, kisebb méretben */}
-                    <path d="M50 55 C45 60, 42 68, 41 78 C40 85, 43 91, 46 95 C47 97, 48 98, 50 99 C52 98, 53 97, 54 95 C57 91, 60 85, 59 78 C58 68, 55 60, 50 55 Z" 
+                    {/* Belső sárga láng - alul, 50%-kal nagyobb */}
+                    <path d="M50 45 C43 53, 38 65, 36 80 C34 90, 38 97, 43 102 C45 105, 47 107, 50 108 C53 107, 55 105, 57 102 C62 97, 66 90, 64 80 C62 65, 57 53, 50 45 Z" 
                           fill="url(#fireInnerDrop)" 
                           filter="url(#fireGlow)"
                           opacity="0.95"
