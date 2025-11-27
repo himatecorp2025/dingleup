@@ -14,8 +14,6 @@ const Index = () => {
     // Immediate check on first render
     return window.innerWidth <= 1024;
   });
-  const [userId, setUserId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Check device type
@@ -31,32 +29,8 @@ const Index = () => {
     };
   }, []);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserId(session?.user?.id ?? null);
-      setLoading(false);
-    });
-  }, []);
-
-  // Mobile/tablet: redirect immediately, don't show landing page
+  // Mobile/tablet: redirect immediately to auth/choice
   if (isMobileOrTablet) {
-    if (loading) {
-      // Show splash screen while checking auth
-      return (
-        <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
-          <img 
-            src={loadingLogo} 
-            alt="DingleUP!" 
-            className="w-32 h-32 object-contain animate-pulse"
-          />
-        </div>
-      );
-    }
-    
-    if (userId) {
-      return <Navigate to="/dashboard" replace />;
-    }
-    
     return <Navigate to="/auth/choice" replace />;
   }
 
