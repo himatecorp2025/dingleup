@@ -248,7 +248,7 @@ const AdminDashboard = () => {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <p className="text-white/70 text-lg">Betöltés...</p>
+          <p className="text-white/70 text-lg">{t('admin.dashboard.loading')}</p>
         </div>
       </AdminLayout>
     );
@@ -264,7 +264,7 @@ const AdminDashboard = () => {
             className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-white/10 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-white/70 text-xs lg:text-sm">Összes felhasználó</h3>
+              <h3 className="text-white/70 text-xs lg:text-sm">{t('admin.dashboard.total_users')}</h3>
               <Users className="w-6 h-6 lg:w-8 lg:h-8 text-purple-400 bg-purple-500/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
             <p className="text-xl lg:text-3xl font-bold text-white">{totalUsers.toLocaleString()}</p>
@@ -275,11 +275,11 @@ const AdminDashboard = () => {
             className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-white/70 text-xs lg:text-sm">Teljes Bevétel (USD)</h3>
+              <h3 className="text-white/70 text-xs lg:text-sm">{t('admin.dashboard.total_revenue')}</h3>
               <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-blue-400 bg-blue-500/20 p-1.5 lg:p-2 rounded-lg" />
             </div>
             <p className="text-xl lg:text-3xl font-bold text-white">${totalRevenue}</p>
-            <p className="text-white/50 text-xs mt-1">Stripe + Booster vásárlásokból</p>
+            <p className="text-white/50 text-xs mt-1">{t('admin.dashboard.revenue_source')}</p>
           </button>
 
         </div>
@@ -288,13 +288,13 @@ const AdminDashboard = () => {
         {activeTab === 'dashboard' && (
           <div className="space-y-4 lg:space-y-6">
             <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
-              <h2 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-3 lg:mb-6">Üdvözöllek az Admin Felületen!</h2>
+              <h2 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-3 lg:mb-6">{t('admin.dashboard.welcome')}</h2>
               <p className="text-white/70 text-sm lg:text-base mb-3 lg:mb-4">
-                Itt kezelheted a platform működését, megtekintheted a statisztikákat és a felhasználókat.
+                {t('admin.dashboard.welcome_desc')}
               </p>
               <div className="backdrop-blur-xl bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 lg:p-4 mt-3 lg:mt-4">
                 <p className="text-blue-300 text-xs lg:text-sm">
-                  💡 <strong>Tipp:</strong> Használd a <span className="lg:hidden">felső</span><span className="hidden lg:inline">bal oldali</span> menüt a különböző funkciók eléréséhez.
+                  💡 <strong>{t('admin.dashboard.tip_label')}</strong> {t('admin.dashboard.tip_mobile')} <span className="lg:hidden">{t('admin.dashboard.tip_mobile')}</span><span className="hidden lg:inline">{t('admin.dashboard.tip_desktop')}</span>
                 </p>
               </div>
             </div>
@@ -302,23 +302,23 @@ const AdminDashboard = () => {
             <UserGrowthChart />
 
             <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-              <h3 className="text-lg lg:text-xl font-bold text-white mb-3 lg:mb-4">Gyors elérési útvonalak</h3>
+              <h3 className="text-lg lg:text-xl font-bold text-white mb-3 lg:mb-4">{t('admin.dashboard.quick_links')}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
                 <button
                   onClick={() => setActiveTab('users')}
                   className="backdrop-blur-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg p-3 lg:p-4 text-left transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
                 >
                   <Users className="w-5 h-5 lg:w-6 lg:h-6 text-blue-400 mb-2" />
-                  <h4 className="text-white font-semibold text-sm lg:text-base">Felhasználók</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Összes felhasználó megtekintése</p>
+                  <h4 className="text-white font-semibold text-sm lg:text-base">{t('admin.dashboard.view_users')}</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">{t('admin.dashboard.view_users_desc')}</p>
                 </button>
                 <button
                   onClick={() => setActiveTab('revenue')}
                   className="backdrop-blur-xl bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 rounded-lg p-3 lg:p-4 text-left transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20"
                 >
                   <DollarSign className="w-5 h-5 lg:w-6 lg:h-6 text-green-400 mb-2" />
-                  <h4 className="text-white font-semibold text-sm lg:text-base">Bevételek</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Vásárlások és bevételi adatok</p>
+                  <h4 className="text-white font-semibold text-sm lg:text-base">{t('admin.dashboard.revenue')}</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">{t('admin.dashboard.revenue_desc')}</p>
                 </button>
               </div>
             </div>
@@ -328,7 +328,7 @@ const AdminDashboard = () => {
               <div className="flex items-center gap-3 mb-4 lg:mb-6">
                 <Activity className="w-8 h-8 text-purple-400" />
                 <h3 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  Fejlett Analitika
+                  {t('admin.dashboard.advanced_analytics')}
                 </h3>
               </div>
               
@@ -338,8 +338,8 @@ const AdminDashboard = () => {
                   className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
                 >
                   <Target className="w-8 h-8 lg:w-10 lg:h-10 text-purple-400 mb-3 lg:mb-4" />
-                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">Retenciós Dashboard</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">DAU/WAU/MAU, kohorsz analízis, lemorzsolódás</p>
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">{t('admin.dashboard.retention_title')}</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">{t('admin.dashboard.retention_desc')}</p>
                 </button>
 
                 <button
@@ -347,8 +347,8 @@ const AdminDashboard = () => {
                   className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-green-500/20"
                 >
                   <DollarSign className="w-8 h-8 lg:w-10 lg:h-10 text-green-400 mb-3 lg:mb-4" />
-                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">Monetizációs Dashboard</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Bevétel, ARPU, konverzió, LTV analízis</p>
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">{t('admin.dashboard.monetization_title')}</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">{t('admin.dashboard.monetization_desc')}</p>
                 </button>
 
                 <button
@@ -356,8 +356,8 @@ const AdminDashboard = () => {
                   className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
                 >
                   <Zap className="w-8 h-8 lg:w-10 lg:h-10 text-purple-400 mb-3 lg:mb-4" />
-                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">Teljesítmény Dashboard</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Betöltési idők, TTFB, LCP, hibák</p>
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">{t('admin.dashboard.performance_title')}</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">{t('admin.dashboard.performance_desc')}</p>
                 </button>
 
                 <button
@@ -365,8 +365,8 @@ const AdminDashboard = () => {
                   className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
                 >
                   <Activity className="w-8 h-8 lg:w-10 lg:h-10 text-purple-400 mb-3 lg:mb-4" />
-                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">Engagement Dashboard</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Session-ök, felhasználói aktivitás, játék engagement</p>
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">{t('admin.dashboard.engagement_title')}</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">{t('admin.dashboard.engagement_desc')}</p>
                 </button>
 
                 <button
@@ -374,8 +374,8 @@ const AdminDashboard = () => {
                   className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
                 >
                   <MapIcon className="w-8 h-8 lg:w-10 lg:h-10 text-purple-400 mb-3 lg:mb-4" />
-                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">User Journey</h4>
-                  <p className="text-white/60 text-xs lg:text-sm">Onboarding, vásárlási és játék tölcsérek</p>
+                  <h4 className="text-white font-bold text-lg lg:text-xl mb-2">{t('admin.dashboard.user_journey_title')}</h4>
+                  <p className="text-white/60 text-xs lg:text-sm">{t('admin.dashboard.user_journey_desc')}</p>
                 </button>
               </div>
             </div>
@@ -386,12 +386,12 @@ const AdminDashboard = () => {
         {activeTab === 'users' && (
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 lg:mb-6">
-              <h2 className="text-xl lg:text-2xl font-bold text-white">Összes felhasználó ({filteredUsers.length})</h2>
+              <h2 className="text-xl lg:text-2xl font-bold text-white">{t('admin.dashboard.all_users_count').replace('{count}', String(filteredUsers.length))}</h2>
               <div className="relative max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
                 <Input
                   type="text"
-                  placeholder="Keresés (ID, név, email, szerepkör, életek, érmék...)"
+                  placeholder={t('admin.dashboard.search_placeholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/50"
@@ -402,14 +402,14 @@ const AdminDashboard = () => {
               <table className="w-full min-w-[800px]">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">ID</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Felhasználónév</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Email</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Szerepkör</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Életek</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Érmék</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Helyes válaszok</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Regisztráció</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.table_id')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.table_username')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.table_email')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.table_role')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.table_lives')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.table_coins')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.table_correct_answers')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.table_registration')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -482,11 +482,11 @@ const AdminDashboard = () => {
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
             <div className="flex items-start justify-between gap-3 mb-4 lg:mb-6">
               <h2 className="text-xl lg:text-2xl font-bold text-white">
-                Meghívások ({invitations.length})
+                {t('admin.dashboard.invitations_count').replace('{count}', String(invitations.length))}
               </h2>
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
                 <span className="text-white/50 text-xs whitespace-nowrap">
-                  {isRefreshing ? '🔄 Frissítés...' : '✓ Automatikus szinkronizálás aktív (5mp)'}
+                  {isRefreshing ? t('admin.dashboard.refreshing') : t('admin.dashboard.auto_sync_active')}
                 </span>
                 <Button
                   onClick={async () => {
@@ -511,7 +511,7 @@ const AdminDashboard = () => {
                   }}
                   className="bg-blue-600 hover:bg-blue-700 text-white text-xs lg:text-sm whitespace-nowrap"
                 >
-                  🔄 Barátságok manuális szinkronizálása
+                  {t('admin.dashboard.sync_friendships_manual')}
                 </Button>
               </div>
             </div>
@@ -520,12 +520,12 @@ const AdminDashboard = () => {
               <table className="w-full">
                 <thead className="border-b border-purple-500/30">
                   <tr>
-                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Meghívó</th>
-                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Meghívott</th>
-                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Kód</th>
-                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Státusz</th>
-                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Létrehozva</th>
-                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">Aktiválva</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">{t('admin.dashboard.inviter')}</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">{t('admin.dashboard.invited')}</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">{t('admin.dashboard.code')}</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">{t('admin.dashboard.status')}</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">{t('admin.dashboard.created')}</th>
+                    <th className="text-left py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm font-semibold">{t('admin.dashboard.activated')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -536,7 +536,7 @@ const AdminDashboard = () => {
                         <span className="text-white/50 ml-1">({invitation.inviter?.email || 'N/A'})</span>
                       </td>
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">
-                        {invitation.invited?.username || 'Még nem regisztrált'} 
+                        {invitation.invited?.username || t('admin.dashboard.not_registered_yet')} 
                         <span className="text-white/50 ml-1">
                           ({invitation.invited?.email || invitation.invited_email || 'N/A'})
                         </span>
@@ -552,7 +552,7 @@ const AdminDashboard = () => {
                             ? 'bg-green-600/30 text-green-300' 
                             : 'bg-yellow-600/30 text-yellow-300'
                         }`}>
-                          {invitation.accepted ? '✓ Elfogadva' : '⏳ Függőben'}
+                          {invitation.accepted ? t('admin.dashboard.accepted') : t('admin.dashboard.pending')}
                         </span>
                       </td>
                       <td className="py-3 lg:py-4 px-2 lg:px-4 text-white/70 text-xs lg:text-sm">
@@ -583,7 +583,7 @@ const AdminDashboard = () => {
               
               {invitations.length === 0 && (
                 <div className="text-center py-8 text-white/50">
-                  Nincs meghívás
+                  {t('admin.dashboard.no_invitations')}
                 </div>
               )}
             </div>
@@ -594,10 +594,10 @@ const AdminDashboard = () => {
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
             <div className="flex items-start justify-between gap-3 mb-4 lg:mb-6">
               <h2 className="text-xl lg:text-2xl font-bold text-white">
-                Jelentések ({reports.length})
+                {t('admin.dashboard.reports_count').replace('{count}', String(reports.length))}
               </h2>
               <span className="text-white/50 text-xs whitespace-nowrap flex-shrink-0">
-                {isRefreshing ? '🔄 Frissítés...' : '✓ Automatikus szinkronizálás aktív (5mp)'}
+                {isRefreshing ? t('admin.dashboard.refreshing') : t('admin.dashboard.auto_sync_active')}
               </span>
             </div>
             
@@ -611,7 +611,7 @@ const AdminDashboard = () => {
                     : 'text-white/70 hover:bg-white/5'
                 }`}
               >
-                🐛 Development ({reports.filter(r => r.report_type === 'bug' && (r.status === 'pending' || r.status === 'reviewing')).length})
+                {t('admin.dashboard.report_type_development').replace('{count}', String(reports.filter(r => r.report_type === 'bug' && (r.status === 'pending' || r.status === 'reviewing')).length))}
               </button>
               <button
                 onClick={() => setReportsSubTab('support')}
@@ -621,7 +621,7 @@ const AdminDashboard = () => {
                     : 'text-white/70 hover:bg-white/5'
                 }`}
               >
-                ⚠️ Support ({reports.filter(r => r.report_type === 'user_behavior' && (r.status === 'pending' || r.status === 'reviewing')).length})
+                {t('admin.dashboard.report_type_support').replace('{count}', String(reports.filter(r => r.report_type === 'user_behavior' && (r.status === 'pending' || r.status === 'reviewing')).length))}
               </button>
             </div>
             
@@ -640,7 +640,7 @@ const AdminDashboard = () => {
                           ? 'bg-orange-500/20 text-orange-400'
                           : 'bg-red-500/20 text-red-400'
                       }`}>
-                        {report.report_type === 'bug' ? '🐛 Fejlesztői' : '⚠️ Felhasználói'}
+                        {report.report_type === 'bug' ? t('admin.dashboard.report_type_bug') : t('admin.dashboard.report_type_user')}
                       </span>
                       <span className={`ml-2 inline-block px-3 py-1 rounded-full text-xs font-bold ${
                         report.status === 'pending'
@@ -652,12 +652,12 @@ const AdminDashboard = () => {
                           : 'bg-gray-500/20 text-gray-400'
                       }`}>
                         {report.status === 'pending' 
-                          ? '⏳ Függőben' 
+                          ? t('admin.dashboard.report_status_pending')
                           : report.status === 'reviewing'
-                          ? '📋 Folyamatban'
+                          ? t('admin.dashboard.report_status_reviewing')
                           : report.status === 'resolved' 
-                          ? '✅ Megoldva' 
-                          : '❌ Elutasítva'}
+                          ? t('admin.dashboard.report_status_resolved')
+                          : t('admin.dashboard.report_status_dismissed')}
                       </span>
                     </div>
                     <span className="text-xs text-white/50">
@@ -667,30 +667,30 @@ const AdminDashboard = () => {
 
                   <div className="space-y-2">
                     <p className="text-sm text-white/70">
-                      <strong className="text-white">Bejelentő:</strong>{' '}
-                      {report.reporter?.username || 'Ismeretlen'} ({report.reporter?.email})
+                      <strong className="text-white">{t('admin.dashboard.reporter')}</strong>{' '}
+                      {report.reporter?.username || t('admin.dashboard.unknown')} ({report.reporter?.email})
                     </p>
 
                     {report.report_type === 'bug' ? (
                       <>
                         <p className="text-sm text-white/70">
-                          <strong className="text-white">Kategória:</strong> {report.bug_category}
+                          <strong className="text-white">{t('admin.dashboard.category')}</strong> {report.bug_category}
                         </p>
                         <p className="text-sm text-white/70">
-                          <strong className="text-white">Leírás:</strong> {report.bug_description}
+                          <strong className="text-white">{t('admin.dashboard.description_label')}</strong> {report.bug_description}
                         </p>
                       </>
                     ) : (
                       <>
                         <p className="text-sm text-white/70">
-                          <strong className="text-white">Jelentett felhasználó:</strong>{' '}
-                          {report.reported_user?.username || 'Ismeretlen'}
+                          <strong className="text-white">{t('admin.dashboard.reported_user')}</strong>{' '}
+                          {report.reported_user?.username || t('admin.dashboard.unknown')}
                         </p>
                         <p className="text-sm text-white/70">
-                          <strong className="text-white">Visszaélés típusa:</strong> {report.violation_type}
+                          <strong className="text-white">{t('admin.dashboard.violation_type')}</strong> {report.violation_type}
                         </p>
                         <p className="text-sm text-white/70">
-                          <strong className="text-white">Részletek:</strong> {report.violation_description}
+                          <strong className="text-white">{t('admin.dashboard.details')}</strong> {report.violation_description}
                         </p>
                       </>
                     )}

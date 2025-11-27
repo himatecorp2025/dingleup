@@ -319,22 +319,22 @@ export const TranslationSeeder = () => {
                 {isCheckingContent ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Tartalom ellenőrzése...
+                    {t('translation_seeder.checking_content')}
                   </>
                 ) : isTranslating ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Fordítás folyamatban...
+                    {t('translation_seeder.translating')}
                   </>
                 ) : !hasUntranslated ? (
                   <>
                     <Info className="w-4 h-4 mr-2" />
-                    Nincs fordítandó szöveg
+                    {t('translation_seeder.no_untranslated')}
                   </>
                 ) : (
                   <>
                     <Languages className="w-4 h-4 mr-2" />
-                    UI Szövegek fordítása
+                    {t('translation_seeder.translate_ui')}
                   </>
                 )}
               </Button>
@@ -342,7 +342,7 @@ export const TranslationSeeder = () => {
           </TooltipTrigger>
           {!hasUntranslated && !isCheckingContent && (
             <TooltipContent>
-              <p>Minden UI szöveg már le van fordítva mind a 7 nyelvre</p>
+              <p>{t('translation_seeder.all_translated')}</p>
             </TooltipContent>
           )}
         </Tooltip>
