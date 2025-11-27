@@ -102,7 +102,18 @@ export const LootboxDecisionDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[320px] bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 border-2 border-yellow-500/30">
+      <DialogContent 
+        className="max-w-[320px] bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 border-2 border-yellow-500/30"
+        style={{
+          height: '70vh',
+          maxHeight: '70vh',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="text-center text-yellow-400 font-bold text-xl">
             {t('lootbox.decision_title')}
