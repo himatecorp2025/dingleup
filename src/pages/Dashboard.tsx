@@ -61,6 +61,7 @@ import gameBackground from '@/assets/game-background.png';
 import { toast } from 'sonner';
 import { useBroadcastChannel } from '@/hooks/useBroadcastChannel';
 import { useLoginLootboxTracker } from '@/hooks/useLoginLootboxTracker';
+import { useLootboxActivityTracker } from '@/hooks/useLootboxActivityTracker';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -101,7 +102,15 @@ const Dashboard = () => {
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
-  // Track login activity for lootbox drops
+  // LOOTBOX HEARTBEAT SYSTEM: Automatic periodic checks for pending slots
+  // Sends heartbeat every 30s while Dashboard is active
+  // Backend processes pending lootbox slots when user is actively playing
+  useLootboxActivityTracker({
+    enabled: !!userId, // Only when authenticated
+    heartbeatIntervalSeconds: 30
+  });
+  
+  // Track login activity for lootbox drops (first login of the day)
   useLoginLootboxTracker(!!userId);
   
   // Lootbox state
