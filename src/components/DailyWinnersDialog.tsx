@@ -221,7 +221,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent 
-        overlayClassName="bg-black/75"
+        overlayClassName="bg-black/25"
         className="overflow-visible p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden z-[99999]"
         style={{ 
           margin: 0,
