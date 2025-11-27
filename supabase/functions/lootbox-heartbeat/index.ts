@@ -120,6 +120,43 @@ serve(async (req) => {
       );
     }
 
+    // 2.5. Check cooldown: minimum 15 minutes between drops
+    const COOLDOWN_MINUTES = 15;
+    const cooldownMs = COOLDOWN_MINUTES * 60 * 1000;
+    
+    const { data: lastDrop } = await supabaseAdmin
+      .from('lootbox_instances')
+      .select('created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (lastDrop) {
+      const lastDropTime = new Date(lastDrop.created_at);
+      const timeSinceLastDrop = now.getTime() - lastDropTime.getTime();
+      
+      if (timeSinceLastDrop < cooldownMs) {
+        const remainingMinutes = Math.ceil((cooldownMs - timeSinceLastDrop) / (60 * 1000));
+        return new Response(
+          JSON.stringify({
+            success: true,
+            has_active_drop: false,
+            cooldown_active: true,
+            remaining_minutes: remainingMinutes,
+            plan: {
+              target_count: plan.target_count,
+              delivered_count: plan.delivered_count
+            }
+          }),
+          {
+            status: 200,
+            headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
+
     // 3. Find pending slots that are due
     const slots = plan.slots as Array<{
       slot_id: number;
