@@ -498,7 +498,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               <div className="text-center w-full" style={{ marginTop: '-4px' }}>
                                 <p className="text-white font-bold leading-none truncate px-1" style={{
                                   WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
                                   fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
                                   maxWidth: '100%'
                                 }}>
@@ -572,7 +571,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               <div className="text-center w-full" style={{ marginTop: '-4px' }}>
                                 <p className="text-white font-bold leading-none truncate px-1" style={{
                                   WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
                                   fontSize: 'clamp(0.65rem, 3vw, 0.8rem)',
                                   maxWidth: '100%'
                                 }}>
@@ -647,7 +645,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                               <div className="text-center w-full" style={{ marginTop: '-4px' }}>
                                 <p className="text-white font-bold leading-none truncate px-1" style={{
                                   WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
                                   fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
                                   maxWidth: '100%'
                                 }}>
@@ -728,11 +725,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                                   {/* Username */}
                                   <div className="text-center w-full mt-1">
-                                    <p 
+                                     <p 
                                       className="text-white font-bold leading-none truncate px-1" 
                                       style={{
                                         WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                        textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
                                         fontSize: 'clamp(0.55rem, 2.5vw, 0.7rem)',
                                         maxWidth: '100%'
                                       }}
@@ -813,11 +809,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                                   {/* Username */}
                                   <div className="text-center w-full mt-1">
-                                    <p 
+                                     <p 
                                       className="text-white font-bold leading-none truncate px-1" 
                                       style={{
                                         WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                        textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
                                         fontSize: 'clamp(0.55rem, 2.5vw, 0.7rem)',
                                         maxWidth: '100%'
                                       }}
