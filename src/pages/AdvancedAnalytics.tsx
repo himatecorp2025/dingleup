@@ -24,47 +24,47 @@ const AdvancedAnalytics = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <button
             onClick={() => navigate('/admin/retention')}
-            className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
+            className="cursor-pointer backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
           >
-            <Target className="w-10 h-10 text-purple-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.retention_title')}</h4>
-            <p className="text-white/60 text-sm">{t('admin.advanced.retention_desc')}</p>
+            <Target className="w-10 h-10 text-purple-400 mb-4 pointer-events-none" />
+            <h4 className="text-white font-bold text-xl mb-2 pointer-events-none">{t('admin.advanced.retention_title')}</h4>
+            <p className="text-white/60 text-sm pointer-events-none">{t('admin.advanced.retention_desc')}</p>
           </button>
 
           <button
             onClick={() => navigate('/admin/monetization')}
-            className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-green-500/20"
+            className="cursor-pointer backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-green-500/20"
           >
-            <DollarSign className="w-10 h-10 text-green-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.monetization_title')}</h4>
-            <p className="text-white/60 text-sm">{t('admin.advanced.monetization_desc')}</p>
+            <DollarSign className="w-10 h-10 text-green-400 mb-4 pointer-events-none" />
+            <h4 className="text-white font-bold text-xl mb-2 pointer-events-none">{t('admin.advanced.monetization_title')}</h4>
+            <p className="text-white/60 text-sm pointer-events-none">{t('admin.advanced.monetization_desc')}</p>
           </button>
 
           <button
             onClick={() => navigate('/admin/performance')}
-            className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
+            className="cursor-pointer backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
           >
-            <Zap className="w-10 h-10 text-purple-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.performance_title')}</h4>
-            <p className="text-white/60 text-sm">{t('admin.advanced.performance_desc')}</p>
+            <Zap className="w-10 h-10 text-purple-400 mb-4 pointer-events-none" />
+            <h4 className="text-white font-bold text-xl mb-2 pointer-events-none">{t('admin.advanced.performance_title')}</h4>
+            <p className="text-white/60 text-sm pointer-events-none">{t('admin.advanced.performance_desc')}</p>
           </button>
 
           <button
             onClick={() => navigate('/admin/engagement')}
-            className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
+            className="cursor-pointer backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
           >
-            <Activity className="w-10 h-10 text-purple-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.engagement_title')}</h4>
-            <p className="text-white/60 text-sm">{t('admin.advanced.engagement_desc')}</p>
+            <Activity className="w-10 h-10 text-purple-400 mb-4 pointer-events-none" />
+            <h4 className="text-white font-bold text-xl mb-2 pointer-events-none">{t('admin.advanced.engagement_title')}</h4>
+            <p className="text-white/60 text-sm pointer-events-none">{t('admin.advanced.engagement_desc')}</p>
           </button>
 
           <button
             onClick={() => navigate('/admin/user-journey')}
-            className="backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
+            className="cursor-pointer backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 rounded-3xl p-8 text-left transition-all hover:scale-105 shadow-2xl hover:shadow-purple-500/20"
           >
-            <MapIcon className="w-10 h-10 text-purple-400 mb-4" />
-            <h4 className="text-white font-bold text-xl mb-2">{t('admin.advanced.journey_title')}</h4>
-            <p className="text-white/60 text-sm">{t('admin.advanced.journey_desc')}</p>
+            <MapIcon className="w-10 h-10 text-purple-400 mb-4 pointer-events-none" />
+            <h4 className="text-white font-bold text-xl mb-2 pointer-events-none">{t('admin.advanced.journey_title')}</h4>
+            <p className="text-white/60 text-sm pointer-events-none">{t('admin.advanced.journey_desc')}</p>
           </button>
         </div>
       </div>
