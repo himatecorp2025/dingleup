@@ -95,7 +95,7 @@ serve(async (req) => {
       );
     }
 
-    // Step 2: Check cooldown (20 minutes since last drop)
+    // Step 2: Check cooldown (5 minutes since last drop)
     const { data: lastDrop } = await supabaseAdmin
       .from('lootbox_instances')
       .select('created_at')
@@ -108,12 +108,12 @@ serve(async (req) => {
       const lastDropTime = new Date(lastDrop.created_at);
       const minutesSinceLast = (now.getTime() - lastDropTime.getTime()) / (1000 * 60);
       
-      if (minutesSinceLast < 20) {
+      if (minutesSinceLast < 5) {
         return new Response(
           JSON.stringify({ 
             drop_granted: false, 
             reason: 'COOLDOWN_ACTIVE',
-            minutes_remaining: Math.ceil(20 - minutesSinceLast)
+            minutes_remaining: Math.ceil(5 - minutesSinceLast)
           }),
           { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
