@@ -124,16 +124,16 @@ const AdminLogin = () => {
 
           {/* Title */}
           <h1 className="text-3xl font-black text-center bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
-            Admin Belépés
+            {t('admin.login.title')}
           </h1>
           <p className="text-center text-white/60 mb-8 text-sm">
-            Csak adminisztrátorok számára
+            {t('admin.login.subtitle')}
           </p>
 
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Felhasználónév</label>
+              <label className="text-sm font-medium text-white/80">{t('admin.login.username_label')}</label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-purple-400 transition-colors" />
                 <Input
@@ -148,7 +148,7 @@ const AdminLogin = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">PIN kód</label>
+              <label className="text-sm font-medium text-white/80">{t('admin.login.pin_label')}</label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-purple-400 transition-colors" />
                 <Input
@@ -182,10 +182,10 @@ const AdminLogin = () => {
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Bejelentkezés...
+                  {t('admin.login.logging_in')}
                 </span>
               ) : (
-                'Bejelentkezés'
+                t('admin.login.login_button')
               )}
             </Button>
           </form>
@@ -196,7 +196,7 @@ const AdminLogin = () => {
             className="w-full mt-6 text-sm text-white/50 hover:text-white/80 transition-colors flex items-center justify-center gap-2 group"
           >
             <span className="group-hover:-translate-x-1 transition-transform">←</span>
-            <span>Vissza a főoldalra</span>
+            <span>{t('admin.login.back_to_home')}</span>
           </button>
         </div>
       </div>
