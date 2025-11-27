@@ -56,20 +56,15 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
   useEffect(() => {
     if (profileLoading || !userId) return;
     
+    // Set age gate state once when profile loads
     if (!popupState.ageGateCompleted) {
-      const shouldShowAgeGate = needsAgeVerification;
-      const shouldMarkCompleted = !needsAgeVerification;
-      
-      // Only update state if values would actually change
-      if (popupState.showAgeGate !== shouldShowAgeGate || popupState.ageGateCompleted !== shouldMarkCompleted) {
-        setPopupState(prev => ({
-          ...prev,
-          showAgeGate: shouldShowAgeGate,
-          ageGateCompleted: shouldMarkCompleted,
-        }));
-      }
+      setPopupState(prev => ({
+        ...prev,
+        showAgeGate: needsAgeVerification,
+        ageGateCompleted: !needsAgeVerification,
+      }));
     }
-  }, [userId, needsAgeVerification, profileLoading]); // Removed popupState dependencies to prevent loop
+  }, [userId, needsAgeVerification, profileLoading]); // FIXED: Removed popupState from deps
 
   // Priority 2: Rank Reward (after age gate with 500ms delay, BLOCKS Daily Winners)
   useEffect(() => {
@@ -98,16 +93,11 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
 
   // Priority 3: Welcome Bonus (after age gate + rank reward with 500ms delay)
   useEffect(() => {
-    const shouldShow = 
-      canMountModals &&
-      popupState.ageGateCompleted &&
-      !popupState.showAgeGate &&
-      !popupState.showRankReward &&
-      welcomeBonus.canClaim &&
-      !!userId;
+    if (!canMountModals || !userId || profileLoading) return;
+    if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward) return;
     
-    // Only update if value would change - with 500ms delay
-    if (shouldShow && !popupState.showWelcomeBonus) {
+    // Only show if can claim and not already showing
+    if (welcomeBonus.canClaim && !popupState.showWelcomeBonus) {
       const timer = setTimeout(() => {
         setPopupState(prev => ({
           ...prev,
@@ -118,32 +108,15 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       
       return () => clearTimeout(timer);
     }
-    
-    // CRITICAL: Mark Welcome Bonus as "done" if it can't be claimed (already claimed before)
-    if (!welcomeBonus.canClaim && popupState.ageGateCompleted && !popupState.showRankReward && !popupState.showWelcomeBonus) {
-      setPopupState(prev => ({
-        ...prev,
-        showWelcomeBonus: false, // Mark as not showing but completed
-      }));
-    }
-  }, [canMountModals, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, welcomeBonus.canClaim, userId, popupState.showWelcomeBonus]);
+  }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, welcomeBonus.canClaim, popupState.showWelcomeBonus]);
 
   // Priority 4: Daily Gift (after age gate + rank reward + welcome bonus with 500ms delay)
   useEffect(() => {
-    // CRITICAL: Only show if Welcome Bonus is done (either shown and closed OR not claimable)
-    const welcomeBonusDone = !welcomeBonus.canClaim || (!popupState.showWelcomeBonus && popupState.ageGateCompleted);
+    if (!canMountModals || !userId || profileLoading) return;
+    if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus) return;
     
-    const shouldShow =
-      canMountModals &&
-      popupState.ageGateCompleted &&
-      !popupState.showAgeGate &&
-      !popupState.showRankReward &&
-      welcomeBonusDone && // Wait for Welcome Bonus to be done
-      dailyGift.canClaim &&
-      !!userId;
-    
-    // Only update if value would change - with 500ms delay
-    if (shouldShow && !popupState.showDailyGift) {
+    // Only show if can claim and not already showing
+    if (dailyGift.canClaim && !popupState.showDailyGift) {
       const timer = setTimeout(() => {
         setPopupState(prev => ({
           ...prev,
@@ -153,54 +126,28 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
       
       return () => clearTimeout(timer);
     }
-  }, [
-    canMountModals,
-    popupState.ageGateCompleted,
-    popupState.showAgeGate,
-    popupState.showRankReward,
-    popupState.showWelcomeBonus,
-    welcomeBonus.canClaim,
-    dailyGift.canClaim,
-    userId,
-    popupState.showDailyGift,
-  ]);
+  }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, dailyGift.canClaim, popupState.showDailyGift]);
 
   // Priority 5: Daily Winners (ONLY if NO rank reward - mutually exclusive, with 500ms delay)
   useEffect(() => {
-    const shouldShow =
-      canMountModals &&
-      popupState.ageGateCompleted &&
-      !popupState.showAgeGate &&
-      !popupState.showRankReward && // CRITICAL: block if rank reward exists
-      !popupState.showWelcomeBonus &&
-      !popupState.showDailyGift &&
-      !rankReward.showRewardPopup && // DOUBLE-CHECK: don't show if rank reward pending
-      dailyWinners.canShowToday && // Use canShowToday instead of showPopup
-      !!userId;
+    if (!canMountModals || !userId || profileLoading) return;
+    if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus || popupState.showDailyGift) return;
     
-    // Only update if value would change - with 500ms delay
-    if (shouldShow && !popupState.showDailyWinners) {
+    // CRITICAL: block if rank reward exists (mutually exclusive)
+    if (rankReward.showRewardPopup) return;
+    
+    // Only show if can show today and not already showing
+    if (dailyWinners.canShowToday && !popupState.showDailyWinners) {
       const timer = setTimeout(() => {
         setPopupState(prev => ({
           ...prev,
           showDailyWinners: true,
         }));
-      }, 500); // 500ms delay for Daily Gift close animation
+      }, 500);
       
       return () => clearTimeout(timer);
     }
-  }, [
-    canMountModals,
-    popupState.ageGateCompleted,
-    popupState.showAgeGate,
-    popupState.showRankReward,
-    popupState.showWelcomeBonus,
-    popupState.showDailyGift,
-    rankReward.showRewardPopup,
-    dailyWinners.canShowToday,
-    userId,
-    popupState.showDailyWinners,
-  ]);
+  }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, popupState.showDailyGift, rankReward.showRewardPopup, dailyWinners.canShowToday, popupState.showDailyWinners]);
 
   // Handlers for closing popups
   const closeAgeGate = () => {

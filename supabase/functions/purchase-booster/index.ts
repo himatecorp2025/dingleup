@@ -498,7 +498,7 @@ async function handleGoldSaverPurchase(supabaseAdmin: any, userId: string, boost
 
   if (profileError || !profile) {
     return new Response(
-      JSON.stringify({ success: false, error: "Profil nem található" }),
+      JSON.stringify({ success: false, error: "Profile not found" }),
       { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
@@ -534,7 +534,7 @@ async function handleGoldSaverPurchase(supabaseAdmin: any, userId: string, boost
   if (updateError) {
     console.error("[GOLD_SAVER] Update error:", updateError);
     return new Response(
-      JSON.stringify({ success: false, error: "Profil frissítési hiba" }),
+      JSON.stringify({ success: false, error: "Profile update failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
@@ -672,7 +672,7 @@ async function handleInstantRescuePurchase(supabaseAdmin: any, userId: string, b
     if (updateError) {
       console.error("[INSTANT_RESCUE] Profile update error:", updateError);
       return new Response(
-        JSON.stringify({ success: false, error: "Profil frissítési hiba" }),
+        JSON.stringify({ success: false, error: "Profile update failed" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -752,7 +752,7 @@ async function handleInstantRescuePurchase(supabaseAdmin: any, userId: string, b
   } catch (error) {
     console.error("[INSTANT_RESCUE] Transaction error:", error);
     return new Response(
-      JSON.stringify({ success: false, error: "Tranzakciós hiba történt" }),
+      JSON.stringify({ success: false, error: "Transaction failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
