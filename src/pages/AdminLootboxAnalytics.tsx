@@ -33,6 +33,21 @@ interface LootboxAnalytics {
     openNowPercentage: number;
     storePercentage: number;
   };
+  hourlyDistribution: Array<{ hour: number; count: number }>;
+  activityWindow: {
+    avgStart: number;
+    avgEnd: number;
+  } | null;
+  planStatistics: {
+    totalPlans: number;
+    avgTargetCount: number;
+    avgDeliveredCount: number;
+    deliveryRate: number;
+  };
+  slotStatus: {
+    pending: number;
+    delivered: number;
+  };
 }
 
 const AdminLootboxAnalytics = () => {
@@ -245,6 +260,101 @@ const AdminLootboxAnalytics = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Hourly Distribution & Activity Window */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Hourly Distribution */}
+          <Card className="bg-white/5 backdrop-blur-xl border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-cyan-400" />
+                {t('admin.lootbox.hourly_distribution')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-1 max-h-64 overflow-y-auto">
+                {analytics.hourlyDistribution.map((item) => (
+                  <div key={item.hour} className="flex items-center gap-2">
+                    <span className="text-white/60 text-xs w-16">
+                      {item.hour.toString().padStart(2, '0')}:00
+                    </span>
+                    <div className="flex-1 bg-white/10 rounded-full h-4 relative overflow-hidden">
+                      <div
+                        className="bg-gradient-to-r from-cyan-600 to-blue-600 h-full rounded-full transition-all"
+                        style={{
+                          width: `${Math.min((item.count / Math.max(...analytics.hourlyDistribution.map(d => d.count), 1)) * 100, 100)}%`
+                        }}
+                      />
+                      {item.count > 0 && (
+                        <span className="absolute inset-0 flex items-center justify-center text-white text-[10px] font-bold">
+                          {item.count}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Activity Window & Plan Stats */}
+          <Card className="bg-white/5 backdrop-blur-xl border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-orange-400" />
+                {t('admin.lootbox.activity_stats')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {/* Average Activity Window */}
+                {analytics.activityWindow && (
+                  <div className="p-3 bg-white/5 rounded-lg">
+                    <div className="text-sm text-white/70 mb-2">{t('admin.lootbox.avg_activity_window')}</div>
+                    <div className="text-lg font-bold text-orange-400">
+                      {analytics.activityWindow.avgStart.toString().padStart(2, '0')}:00 - {analytics.activityWindow.avgEnd.toString().padStart(2, '0')}:00 UTC
+                    </div>
+                  </div>
+                )}
+
+                {/* Plan Statistics */}
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-white/70 text-sm">{t('admin.lootbox.total_plans')}</span>
+                    <span className="text-white font-bold">{analytics.planStatistics.totalPlans}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-white/70 text-sm">{t('admin.lootbox.avg_target')}</span>
+                    <span className="text-white font-bold">{analytics.planStatistics.avgTargetCount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-white/70 text-sm">{t('admin.lootbox.avg_delivered')}</span>
+                    <span className="text-white font-bold">{analytics.planStatistics.avgDeliveredCount}</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-white/10">
+                    <span className="text-white/70 text-sm">{t('admin.lootbox.delivery_rate')}</span>
+                    <span className="text-green-400 font-bold">{analytics.planStatistics.deliveryRate}%</span>
+                  </div>
+                </div>
+
+                {/* Slot Status */}
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="text-sm text-white/70 mb-2">{t('admin.lootbox.slot_status')}</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="text-center">
+                      <div className="text-yellow-400 text-xs">{t('admin.lootbox.pending')}</div>
+                      <div className="text-white font-bold text-lg">{analytics.slotStatus.pending}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-green-400 text-xs">{t('admin.lootbox.delivered')}</div>
+                      <div className="text-white font-bold text-lg">{analytics.slotStatus.delivered}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Top Users */}
         <Card className="bg-white/5 backdrop-blur-xl border-white/10">
