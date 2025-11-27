@@ -4,6 +4,7 @@ import { LangCode, TranslationMap, I18nContextValue } from './types';
 import { VALID_LANGUAGES, DEFAULT_LANG, SOURCE_LANG, STORAGE_KEY } from './constants';
 import { resolveLangFromCountry, ALLOWED_LANGS } from '@/lib/i18n/langMapping';
 import { resolveInitialLang } from '@/lib/i18n/resolveInitialLang';
+import { getCountryFromTimezone } from '@/lib/utils';
 
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
@@ -143,7 +144,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         // No user logged in - detect timezone for login/register pages
         try {
           const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          const countryCode = await import('@/lib/utils').then(m => m.getCountryFromTimezone(detectedTimezone));
+          const countryCode = getCountryFromTimezone(detectedTimezone);
           targetLang = countryCode === 'HU' ? 'hu' : 'en';
         } catch (error) {
           console.error('[I18n] Timezone detection failed:', error);
