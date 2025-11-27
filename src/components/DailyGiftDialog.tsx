@@ -302,31 +302,56 @@ const DailyGiftDialog = ({
                     {t('daily.day_label')} {weeklyEntryCount + 1}
                   </p>
                   
-                  {/* 3D Fire SVG */}
+                  {/* 3D Fire SVG - Élethű tűz sárga belső cseppel */}
                   <svg viewBox="0 0 100 120" className="flex-shrink-0" style={{ width: 'clamp(36px, 9vw, 60px)', height: 'auto' }}>
                     <defs>
+                      {/* Külső láng gradiens - piros/narancs */}
                       <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                         <stop offset="0%" stopColor="#FFD700" />
-                        <stop offset="30%" stopColor="#FF8C00" />
-                        <stop offset="60%" stopColor="#FF4500" />
-                        <stop offset="100%" stopColor="#B22222" />
+                        <stop offset="25%" stopColor="#FF8C00" />
+                        <stop offset="50%" stopColor="#FF6347" />
+                        <stop offset="75%" stopColor="#FF4500" />
+                        <stop offset="100%" stopColor="#DC143C" />
                       </linearGradient>
-                      <radialGradient id="fireHighlight" cx="35%" cy="30%">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
-                        <stop offset="50%" stopColor="rgba(255,255,255,0.3)" />
+                      {/* Belső sárga csepp gradiens */}
+                      <radialGradient id="fireInnerDrop" cx="50%" cy="50%">
+                        <stop offset="0%" stopColor="#FFFF00" />
+                        <stop offset="40%" stopColor="#FFD700" />
+                        <stop offset="70%" stopColor="#FFA500" />
+                        <stop offset="100%" stopColor="#FF8C00" />
+                      </radialGradient>
+                      {/* Fény highlight */}
+                      <radialGradient id="fireHighlight" cx="35%" cy="25%">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
+                        <stop offset="50%" stopColor="rgba(255,255,255,0.2)" />
                         <stop offset="100%" stopColor="rgba(255,255,255,0)" />
                       </radialGradient>
                       <filter id="fireShadow">
                         <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#FF4500" floodOpacity="0.8"/>
                       </filter>
+                      <filter id="fireGlow">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                          <feMergeNode in="coloredBlur"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
                     </defs>
-                    {/* Fire shape */}
-                    <path d="M50 10 C40 25, 30 40, 30 60 C30 80, 40 95, 50 100 C60 95, 70 80, 70 60 C70 40, 60 25, 50 10 Z
-                             M45 25 C40 35, 38 48, 42 60 C44 68, 48 75, 50 78 C52 75, 56 68, 58 60 C62 48, 60 35, 55 25 Z" 
-                          fill="url(#fireGrad)" stroke="#8B0000" strokeWidth="1.5" filter="url(#fireShadow)" 
+                    {/* Külső láng alakzat */}
+                    <path d="M50 10 C40 20, 32 35, 30 55 C28 70, 35 85, 42 92 C45 96, 47 98, 50 100 C53 98, 55 96, 58 92 C65 85, 72 70, 70 55 C68 35, 60 20, 50 10 Z" 
+                          fill="url(#fireGrad)" 
+                          stroke="#8B0000" 
+                          strokeWidth="1" 
+                          filter="url(#fireShadow)" 
                           style={{ animation: 'fireFlicker 0.8s ease-in-out infinite' }} />
-                    {/* Highlight */}
-                    <ellipse cx="45" cy="35" rx="12" ry="18" fill="url(#fireHighlight)" opacity="0.7" />
+                    {/* Belső sárga csepp - alul */}
+                    <ellipse cx="50" cy="78" rx="14" ry="18" 
+                             fill="url(#fireInnerDrop)" 
+                             filter="url(#fireGlow)"
+                             opacity="0.95"
+                             style={{ animation: 'fireFlicker 0.8s ease-in-out infinite 0.1s' }} />
+                    {/* Fény highlight a tetején */}
+                    <ellipse cx="48" cy="25" rx="10" ry="12" fill="url(#fireHighlight)" opacity="0.5" />
                     <style>{`
                       @keyframes fireFlicker {
                         0%, 100% { transform: scale(1) translateY(0); }
