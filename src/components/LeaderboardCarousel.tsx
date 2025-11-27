@@ -76,14 +76,7 @@ const LeaderboardCarouselComponent = () => {
     let scrollLeft = 0;
 
     const pauseAutoScroll = () => {
-      autoScrollPausedRef.current = true;
-      if (autoScrollTimeoutRef.current) {
-        clearTimeout(autoScrollTimeoutRef.current);
-      }
-      // Resume auto-scroll after 2000ms
-      autoScrollTimeoutRef.current = setTimeout(() => {
-        autoScrollPausedRef.current = false;
-      }, 2000);
+      // Folyamatos scroll: nincs pause, a görgetés megállás nélkül megy körbe-körbe
     };
 
     const handleMouseDown = (e: MouseEvent) => {
