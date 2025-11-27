@@ -16,6 +16,7 @@ import { useBoosterState } from '@/hooks/useBoosterState';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useDashboardPopupManager } from '@/hooks/useDashboardPopupManager';
 import { useFullscreen } from '@/hooks/useFullscreen';
+import { useNativeFullscreen } from '@/hooks/useNativeFullscreen';
 
 // PERFORMANCE OPTIMIZATION: Prefetch critical game assets
 // This preloads /game route code + intro video in background while user is on Dashboard
@@ -68,11 +69,14 @@ const Dashboard = () => {
   const { profile, loading, refreshProfile } = useProfileQuery(userId);
   const { walletData, refetchWallet, serverDriftMs } = useWalletQuery(userId);
   
-  // FULLSCREEN MODE: Hide status bar on mobile devices
+  // FULLSCREEN MODE: Hide status bar on mobile devices (Web)
   useFullscreen({
     enabled: true,
     autoReenter: true,
   });
+
+  // NATIVE FULLSCREEN: Hide status bar on iOS/Android Capacitor apps
+  useNativeFullscreen();
   
   // DEBUG: Log wallet data
   useEffect(() => {

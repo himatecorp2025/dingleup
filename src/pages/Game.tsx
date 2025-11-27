@@ -7,16 +7,20 @@ import { ScreenshotProtection } from "@/components/ScreenshotProtection";
 import { GameErrorBoundary } from "@/components/GameErrorBoundary";
 import AudioManager from "@/lib/audioManager";
 import { useFullscreen } from "@/hooks/useFullscreen";
+import { useNativeFullscreen } from "@/hooks/useNativeFullscreen";
 
 const Game = () => {
   const navigate = useNavigate();
   const { musicEnabled, volume, loaded } = useAudioStore();
 
-  // FULLSCREEN MODE: Hide status bar on mobile devices
+  // FULLSCREEN MODE: Hide status bar on mobile devices (Web)
   useFullscreen({
     enabled: true,
     autoReenter: true,
   });
+
+  // NATIVE FULLSCREEN: Hide status bar on iOS/Android Capacitor apps
+  useNativeFullscreen();
 
   // CRITICAL: Game is MOBILE-ONLY - redirect desktop users
   useEffect(() => {

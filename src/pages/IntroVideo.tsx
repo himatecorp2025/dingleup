@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import introVideo from "@/assets/introvideo.mp4";
 import { useFullscreen } from "@/hooks/useFullscreen";
+import { useNativeFullscreen } from "@/hooks/useNativeFullscreen";
 
 const IntroVideo = () => {
   const navigate = useNavigate();
@@ -12,11 +13,14 @@ const IntroVideo = () => {
   const [fallbackTriggered, setFallbackTriggered] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // FULLSCREEN MODE: Hide status bar on mobile devices
+  // FULLSCREEN MODE: Hide status bar on mobile devices (Web)
   useFullscreen({
     enabled: true,
     autoReenter: true,
   });
+
+  // NATIVE FULLSCREEN: Hide status bar on iOS/Android Capacitor apps
+  useNativeFullscreen();
   
   // PWA/Standalone mode detection
   const isStandalone = (() => {
