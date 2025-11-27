@@ -131,8 +131,8 @@ serve(async (req) => {
       );
     }
 
-    // 2.5. Check cooldown: minimum 15 minutes between drops
-    const COOLDOWN_MINUTES = 15;
+    // 2.5. Check cooldown: minimum 5 minutes between drops
+    const COOLDOWN_MINUTES = 5;
     const cooldownMs = COOLDOWN_MINUTES * 60 * 1000;
     
     const { data: lastDrop } = await supabaseAdmin
