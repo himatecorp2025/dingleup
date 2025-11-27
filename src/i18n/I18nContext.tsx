@@ -13,7 +13,7 @@ interface I18nProviderProps {
 
 const CACHE_KEY_PREFIX = 'dingleup_translations_';
 const CACHE_VERSION_KEY = 'dingleup_translations_version';
-const CACHE_VERSION = '1.7'; // Bumped to force cache refresh for landing page title fix
+const CACHE_VERSION = '1.8'; // Bumped to force cache refresh for new gifts navigation
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 interface CachedTranslations {
