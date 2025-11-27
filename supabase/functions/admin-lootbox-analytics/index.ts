@@ -2,6 +2,34 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 
+function getUserIdFromAuthHeader(req: Request): string | null {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+
+  const token = authHeader.replace('Bearer ', '');
+  try {
+    const payloadPart = token.split('.')[1];
+    if (!payloadPart) return null;
+
+    const normalized = payloadPart
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    const padded = normalized.padEnd(
+      normalized.length + (4 - (normalized.length % 4)) % 4,
+      '='
+    );
+
+    const json = atob(padded);
+    const payload = JSON.parse(json);
+    return typeof payload.sub === 'string' ? payload.sub : null;
+  } catch (error) {
+    console.error('[Admin Lootbox Analytics] Failed to decode JWT:', error);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return handleCorsPreflight(req.headers.get('origin'));
@@ -24,31 +52,21 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Verify JWT and get user
-    const jwt = authHeader.replace('Bearer ', '');
-    console.log('[Admin Lootbox Analytics] Verifying JWT...');
-    
-    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(jwt);
-    console.log('[Admin Lootbox Analytics] User verification result:', { 
-      hasUser: !!user, 
-      userId: user?.id,
-      error: userError?.message 
-    });
-    
-    if (userError || !user) {
-      console.error('[Admin Lootbox Analytics] Auth failed:', userError);
-      return new Response(JSON.stringify({ error: 'Unauthorized', details: userError?.message }), {
+    const userId = getUserIdFromAuthHeader(req);
+    console.log('[Admin Lootbox Analytics] Decoded user id:', userId);
+    if (!userId) {
+      return new Response(JSON.stringify({ error: 'Unauthorized', details: 'Invalid authentication token' }), {
         status: 401,
         headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       });
     }
 
     // Check admin role
-    console.log('[Admin Lootbox Analytics] Checking admin role for user:', user.id);
+    console.log('[Admin Lootbox Analytics] Checking admin role for user:', userId);
     const { data: roleCheck, error: roleError } = await supabaseAdmin
       .from('user_roles')
       .select('role')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('role', 'admin')
       .single();
 

@@ -19,6 +19,34 @@ interface AdminBoosterPurchaseRow {
   iapTransactionId: string | null;
 }
 
+function getUserIdFromAuthHeader(req: Request): string | null {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return null;
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  try {
+    const payloadPart = token.split(".")[1];
+    if (!payloadPart) return null;
+
+    const normalized = payloadPart
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const padded = normalized.padEnd(
+      normalized.length + (4 - (normalized.length % 4)) % 4,
+      "="
+    );
+
+    const json = atob(padded);
+    const payload = JSON.parse(json);
+    return typeof payload.sub === "string" ? payload.sub : null;
+  } catch (error) {
+    console.error("[admin-booster-purchases] Failed to decode JWT:", error);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,18 +59,8 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Auth check
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Missing authentication" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
-    if (userError || !userData.user) {
+    const userId = getUserIdFromAuthHeader(req);
+    if (!userId) {
       return new Response(
         JSON.stringify({ error: "Invalid authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -50,10 +68,18 @@ serve(async (req) => {
     }
 
     // Check admin role
-    const { data: roles } = await supabaseAdmin
+    const { data: roles, error: roleError } = await supabaseAdmin
       .from("user_roles")
       .select("role")
-      .eq("user_id", userData.user.id);
+      .eq("user_id", userId);
+
+    if (roleError) {
+      console.error("[admin-booster-purchases] Role check error:", roleError);
+      return new Response(
+        JSON.stringify({ error: "Failed to verify admin role" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     const isAdmin = roles?.some(r => r.role === "admin");
     if (!isAdmin) {
