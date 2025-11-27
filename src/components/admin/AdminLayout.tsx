@@ -153,14 +153,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     <button
                       key={item.path}
                       onClick={() => navigate(item.path)}
-                      className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm ${
+                      className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg transition-all text-sm text-left ${
                         isActive(item.path)
                           ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white shadow-lg shadow-purple-500/20'
                           : 'text-white/60 hover:bg-white/5'
                       }`}
                     >
-                      <Icon className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-                      <span className="font-medium">{t(item.labelKey)}</span>
+                      <Icon className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400 flex-shrink-0" />
+                      <span className="font-medium text-left">{t(item.labelKey)}</span>
                     </button>
                   );
                 })}
@@ -172,17 +172,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               {/* Vissza a játékba gomb - csak mobilon/tableten */}
               <button
                 onClick={() => navigate('/dashboard')}
-                className="md:hidden w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
+                className="md:hidden w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm text-left"
               >
-                <Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-                <span className="font-medium">{t('admin.layout.back_to_game')}</span>
+                <Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400 flex-shrink-0" />
+                <span className="font-medium text-left">{t('admin.layout.back_to_game')}</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
+                className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm text-left"
               >
-                <LogOut className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-                <span className="font-medium">{t('admin.layout.logout')}</span>
+                <LogOut className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400 flex-shrink-0" />
+                <span className="font-medium text-left">{t('admin.layout.logout')}</span>
               </button>
             </div>
           </div>
