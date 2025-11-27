@@ -20,29 +20,27 @@ serve(async (req) => {
       );
     }
 
-    // Create Supabase client with user's auth
+    // Extract token from "Bearer TOKEN"
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Create Supabase client for auth verification
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      },
-      global: {
-        headers: {
-          Authorization: authHeader
-        }
-      }
-    });
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
 
-    // Get user ID from auth token
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Verify user token
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
     if (authError || !user) {
+      console.error('[lootbox-active] Auth error:', authError);
       return new Response(
         JSON.stringify({ error: 'Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Create service role client for database operations
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Query active lootbox for this user
     const { data: activeLootbox, error: queryError } = await supabase

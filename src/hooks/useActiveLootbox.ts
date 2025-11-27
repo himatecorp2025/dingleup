@@ -28,8 +28,9 @@ export const useActiveLootbox = (userId?: string | undefined): UseActiveLootboxR
       setLoading(true);
       setError(null);
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      // Get fresh session with explicit refresh if needed
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session?.access_token) {
         setActiveLootbox(null);
         setLoading(false);
         return;

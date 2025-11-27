@@ -43,9 +43,10 @@ export const useLootboxActivityTracker = (
 
   const sendHeartbeat = useCallback(async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        console.log('[Lootbox Heartbeat] No session, skipping');
+      // Get fresh session with explicit token validation
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session?.access_token) {
+        console.log('[Lootbox Heartbeat] No valid session, skipping');
         return null;
       }
 
