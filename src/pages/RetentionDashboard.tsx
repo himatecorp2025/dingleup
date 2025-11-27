@@ -6,10 +6,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRetentionAnalytics } from "@/hooks/useRetentionAnalytics";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useI18n } from '@/i18n';
 
 const RetentionDashboard = () => {
   const navigate = useNavigate();
   const { analytics, loading, error, refetch } = useRetentionAnalytics();
+  const { t } = useI18n();
 
   if (loading) {
     return (
@@ -17,7 +19,7 @@ const RetentionDashboard = () => {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-            <p className="text-lg text-white/70">Betöltés...</p>
+            <p className="text-lg text-white/70">{t('admin.loading')}</p>
           </div>
         </div>
       </AdminLayout>
@@ -28,7 +30,7 @@ const RetentionDashboard = () => {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center py-20">
-          <p className="text-lg text-red-400">{error || 'Hiba történt az adatok betöltése során'}</p>
+          <p className="text-lg text-red-400">{error || t('admin.error_loading')}</p>
         </div>
       </AdminLayout>
     );
@@ -48,25 +50,25 @@ const RetentionDashboard = () => {
               <ArrowLeft className="w-6 h-6" />
             </Button>
             <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Retenciós Dashboard
+              {t('admin.retention.title')}
             </h1>
           </div>
           <Button onClick={() => refetch()} disabled={loading} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Frissítés
+            {t('admin.refresh')}
           </Button>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="bg-primary-dark/50 p-1 flex-wrap h-auto gap-1">
             <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
-              Áttekintés
+              {t('admin.retention.tab_overview')}
             </TabsTrigger>
             <TabsTrigger value="cohorts" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
-              Kohorszok
+              {t('admin.retention.tab_cohorts')}
             </TabsTrigger>
             <TabsTrigger value="churn" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
-              Lemorzsolódás
+              {t('admin.retention.tab_churn')}
             </TabsTrigger>
           </TabsList>
 
@@ -74,7 +76,7 @@ const RetentionDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               <Card className="bg-primary-dark/50 border border-primary/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-foreground text-base sm:text-lg">Napi Aktív Felhasználók</CardTitle>
+                  <CardTitle className="text-foreground text-base sm:text-lg">{t('admin.retention.daily_active')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl sm:text-4xl font-bold text-foreground">{analytics.dailyActiveUsers}</p>
@@ -83,7 +85,7 @@ const RetentionDashboard = () => {
 
               <Card className="bg-primary-dark/50 border border-primary/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-foreground text-base sm:text-lg">Heti Aktív Felhasználók</CardTitle>
+                  <CardTitle className="text-foreground text-base sm:text-lg">{t('admin.retention.weekly_active')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl sm:text-4xl font-bold text-foreground">{analytics.weeklyActiveUsers}</p>
@@ -92,7 +94,7 @@ const RetentionDashboard = () => {
 
               <Card className="bg-primary-dark/50 border border-primary/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-foreground text-base sm:text-lg">Havi Aktív Felhasználók</CardTitle>
+                  <CardTitle className="text-foreground text-base sm:text-lg">{t('admin.retention.monthly_active')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl sm:text-4xl font-bold text-white">{analytics.monthlyActiveUsers}</p>
@@ -102,7 +104,7 @@ const RetentionDashboard = () => {
 
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Retenciós Ráták</CardTitle>
+                <CardTitle className="text-white">{t('admin.retention.retention_rates')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -125,7 +127,7 @@ const RetentionDashboard = () => {
           <TabsContent value="cohorts" className="space-y-6">
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Kohorsz Analízis</CardTitle>
+                <CardTitle className="text-white">{t('admin.retention.cohort_analysis')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
@@ -147,7 +149,7 @@ const RetentionDashboard = () => {
           <TabsContent value="churn" className="space-y-6">
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
-                <CardTitle className="text-white">Inaktív Felhasználók (Lemorzsolódási Kockázat)</CardTitle>
+                <CardTitle className="text-white">{t('admin.retention.inactive_users')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -155,7 +157,7 @@ const RetentionDashboard = () => {
                     <div key={user.user_id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
                       <span className="font-medium text-white">{user.username}</span>
                       <span className="text-sm text-white/70">
-                        {user.days_inactive} napja inaktív
+                        {user.days_inactive} {t('admin.retention.days_inactive_label')}
                       </span>
                     </div>
                   ))}
