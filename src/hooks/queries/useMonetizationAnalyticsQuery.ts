@@ -27,11 +27,23 @@ export interface MonetizationAnalytics {
 const MONETIZATION_ANALYTICS_KEY = 'monetization-analytics';
 
 async function fetchMonetizationAnalytics(): Promise<MonetizationAnalytics> {
-  const response = await supabase.functions.invoke('admin-monetization-analytics');
+  // Ensure we always call the admin function with the current user JWT,
+  // same mint a többi admin analitika hooknál
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    throw new Error('No active session');
+  }
 
-  if (response.error) throw response.error;
-  return response.data;
+  const { data, error } = await supabase.functions.invoke('admin-monetization-analytics', {
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
+  });
+
+  if (error) throw error;
+  return data as MonetizationAnalytics;
 }
+
 
 export function useMonetizationAnalyticsQuery() {
   const queryClient = useQueryClient();
