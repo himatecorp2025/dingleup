@@ -147,7 +147,11 @@ const UserJourneyDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis type="number" stroke="hsl(var(--foreground))" />
                     <YAxis dataKey="stepLabel" type="category" width={150} stroke="hsl(var(--foreground))" />
-                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--primary-dark))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: 'hsl(var(--primary-dark))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Bar dataKey="users" name={t('admin.journey.users')}>
                       {analytics.onboardingFunnel.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -195,7 +199,11 @@ const UserJourneyDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis type="number" stroke="#fff" />
                     <YAxis dataKey="stepLabel" type="category" width={150} stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Bar dataKey="users" name={t('admin.journey.users')}>
                       {analytics.purchaseFunnel.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -243,7 +251,11 @@ const UserJourneyDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis type="number" stroke="#fff" />
                     <YAxis dataKey="stepLabel" type="category" width={150} stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Bar dataKey="users" name={t('admin.journey.users')}>
                       {analytics.gameFunnel.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -316,7 +328,11 @@ const UserJourneyDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="page" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Bar dataKey="exits" fill="hsl(var(--destructive))" name={t('admin.journey.exits')} />
                   </BarChart>
                 </ResponsiveContainer>

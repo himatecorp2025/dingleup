@@ -165,7 +165,11 @@ const PerformanceDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="page_route" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Bar dataKey="avg_load_time_ms" fill="hsl(var(--primary))" name={t('admin.performance.avg_load_time_ms')} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -192,7 +196,11 @@ const PerformanceDashboard = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="device_type" stroke="#fff" />
                       <YAxis stroke="#fff" />
-                      <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                        labelStyle={{ color: '#fff' }}
+                        itemStyle={{ color: '#fff' }}
+                      />
                       <Bar dataKey="avg_load_time" fill="hsl(var(--primary))" name={t('admin.performance.avg_load_time_ms')} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -216,7 +224,11 @@ const PerformanceDashboard = () => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="browser" stroke="#fff" />
                       <YAxis stroke="#fff" />
-                      <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                        labelStyle={{ color: '#fff' }}
+                        itemStyle={{ color: '#fff' }}
+                      />
                       <Bar dataKey="avg_load_time" fill="hsl(var(--secondary))" name={t('admin.performance.avg_load_time_ms')} />
                     </BarChart>
                   </ResponsiveContainer>

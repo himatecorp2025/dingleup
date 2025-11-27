@@ -152,7 +152,11 @@ const EngagementDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="hour" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Line type="monotone" dataKey="sessions" stroke="hsl(var(--primary))" name={t('admin.engagement.sessions')} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -178,7 +182,11 @@ const EngagementDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="feature_name" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Bar dataKey="usage_count" fill="hsl(var(--primary))" name={t('admin.engagement.usage_count')} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -268,7 +276,11 @@ const EngagementDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="category" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Bar dataKey="count" fill="hsl(var(--primary))" name={t('admin.engagement.top_topic_score')} />
                   </BarChart>
                 </ResponsiveContainer>

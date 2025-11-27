@@ -139,7 +139,9 @@ export default function AdminAgeStatistics() {
                     <YAxis />
                     <Tooltip 
                       formatter={(value: number) => `${value} ${t('admin.age.users').toLowerCase()}`}
-                      labelStyle={{ color: '#000' }}
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
                     />
                     <Legend />
                     <Bar dataKey="count" fill="#FFD700" name={t('admin.age.users_count')} />
@@ -169,7 +171,12 @@ export default function AdminAgeStatistics() {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
+                    <Tooltip 
+                      formatter={(value: number) => `${value.toFixed(1)}%`}
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
