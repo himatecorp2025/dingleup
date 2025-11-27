@@ -32,7 +32,6 @@ const LoginNew = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showPin, setShowPin] = useState(false);
-  const [langDetected, setLangDetected] = useState(false);
 
   useEffect(() => {
     const checkStandalone = () => {
@@ -43,28 +42,6 @@ const LoginNew = () => {
     };
     checkStandalone();
   }, []);
-
-  // Auto-detect language based on device timezone
-  useEffect(() => {
-    const detectAndSetLanguage = async () => {
-      try {
-        const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const countryCode = getCountryFromTimezone(detectedTimezone);
-        
-        // Hungary → Hungarian, all others → English
-        const detectedLang: LangCode = countryCode === 'HU' ? 'hu' : 'en';
-        
-        // Set language without updating database (user not logged in yet)
-        await setLang(detectedLang, true);
-        setLangDetected(true);
-      } catch (error) {
-        console.error('[AUTH LANG] Error detecting language:', error);
-        setLangDetected(true);
-      }
-    };
-    
-    detectAndSetLanguage();
-  }, [setLang]);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,13 +135,12 @@ const LoginNew = () => {
     }
   };
 
-  // Show loading until language is detected and translations loaded
-  if (!langDetected || i18nLoading) {
+  // Show loading until translations are loaded
+  if (i18nLoading) {
     return (
       <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <img src={loadingLogo} alt="DingleUP!" className="w-20 h-20 animate-pulse" />
-          <p className="text-white/70 text-sm">Loading...</p>
         </div>
       </div>
     );
