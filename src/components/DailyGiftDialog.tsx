@@ -202,10 +202,12 @@ const DailyGiftDialog = ({
             ×
           </button>
 
-          {/* Zoom animáció wrapper - 1.5mp scale-in középről */}
+          {/* BONUS MODAL WRAPPER - Fix arányú, skálázódó layout */}
           <div 
             className="relative z-10"
             style={{ 
+              width: 'min(420px, 90vw)',
+              aspectRatio: '9 / 16',
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
@@ -213,7 +215,17 @@ const DailyGiftDialog = ({
               willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
           >
-            <HexShieldFrame showShine={true}>
+            {/* BONUS MODAL CARD - Teljes belső tartalom */}
+            <div 
+              className="absolute inset-0"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <HexShieldFrame showShine={true}>
               {/* Top Hex Badge - "DAILY GIFT" */}
               <div 
                 ref={badgeRef}
@@ -523,7 +535,8 @@ const DailyGiftDialog = ({
                   </HexAcceptButton>
                 </div>
               </div>
-            </HexShieldFrame>
+              </HexShieldFrame>
+            </div>
           </div>
         </div>
       </DialogContent>
