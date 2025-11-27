@@ -42,9 +42,6 @@ verify_jwt = true
 [functions.create-ingame-payment]
 verify_jwt = true
 
-[functions.backfill-friendships]
-verify_jwt = true
-
 [functions.get-friends]
 verify_jwt = true
 

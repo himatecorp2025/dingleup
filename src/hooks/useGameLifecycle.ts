@@ -381,6 +381,9 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     setErrorBannerVisible(false);
     resetRewardAnimation();
     setCurrentQuestionIndex(0);
+    
+    // CRITICAL: Clear old questions IMMEDIATELY to prevent old question flash
+    setQuestions([]);
     setQuestionVisible(false);
     
     // NO animation during restart for instant feel
