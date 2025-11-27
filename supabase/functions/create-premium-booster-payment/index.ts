@@ -66,6 +66,7 @@ serve(async (req) => {
       success_url: `${req.headers.get("origin")}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/dashboard?canceled=true`,
       metadata: {
+        product_type: 'premium_booster', // WEBHOOK ROUTING
         user_id: user.id,
         booster_code: "PREMIUM",
       },
@@ -73,7 +74,11 @@ serve(async (req) => {
 
     console.log(`[create-premium-booster-payment] Checkout session created for user ${user.id}`);
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    // Return session info for localStorage tracking (Mobile WebView fallback)
+    return new Response(JSON.stringify({ 
+      url: session.url,
+      sessionId: session.id 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });

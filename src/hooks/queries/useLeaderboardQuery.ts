@@ -51,13 +51,14 @@ export function useLeaderboardQuery(countryCode: string | undefined) {
     queryKey: LEADERBOARD_QUERY_KEY(countryCode || ''),
     queryFn: () => fetchLeaderboard(countryCode!),
     enabled: !!countryCode,
-    staleTime: 1000 * 60, // 1 minute - leaderboard stays fresh
+    staleTime: 1000 * 30, // 30 seconds - optimized cache duration
     gcTime: 1000 * 60 * 5, // 5 minutes cache
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+    refetchInterval: false, // Disable polling, rely on real-time subscriptions
   });
 
-  // Real-time subscription for leaderboard updates
+  // Real-time subscription for leaderboard updates (optimized)
   useEffect(() => {
     if (!countryCode) return;
 
@@ -66,26 +67,13 @@ export function useLeaderboardQuery(countryCode: string | undefined) {
       .on(
         'postgres_changes',
         {
-          event: '*',
-          schema: 'public',
-          table: 'daily_rankings',
-        },
-        () => {
-          // Invalidate cache on any ranking change
-          queryClient.invalidateQueries({ 
-            queryKey: LEADERBOARD_QUERY_KEY(countryCode) 
-          });
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
           table: 'leaderboard_cache',
+          filter: `country_code=eq.${countryCode}`,
         },
         () => {
-          // Invalidate cache when leaderboard cache refreshes
+          // Invalidate cache only when leaderboard_cache updates for this country
           queryClient.invalidateQueries({ 
             queryKey: LEADERBOARD_QUERY_KEY(countryCode) 
           });

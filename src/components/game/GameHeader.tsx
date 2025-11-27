@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { LogOut } from "lucide-react";
 import { DiamondHexagon } from "@/components/DiamondHexagon";
 import { useI18n } from "@/i18n";
@@ -9,7 +10,7 @@ interface GameHeaderProps {
   onExit: () => void;
 }
 
-export const GameHeader = ({ lives, maxLives, coins, onExit }: GameHeaderProps) => {
+export const GameHeader = memo(({ lives, maxLives, coins, onExit }: GameHeaderProps) => {
   const { t } = useI18n();
   
   return (
@@ -60,4 +61,6 @@ export const GameHeader = ({ lives, maxLives, coins, onExit }: GameHeaderProps) 
       </div>
     </div>
   );
-};
+});
+
+GameHeader.displayName = 'GameHeader';

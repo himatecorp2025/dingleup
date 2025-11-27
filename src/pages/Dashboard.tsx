@@ -17,6 +17,7 @@ import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useDashboardPopupManager } from '@/hooks/useDashboardPopupManager';
 import { useFullscreen } from '@/hooks/useFullscreen';
 import { useNativeFullscreen } from '@/hooks/useNativeFullscreen';
+import { useGameQuestions } from '@/hooks/useGameQuestions';
 
 // PERFORMANCE OPTIMIZATION: Prefetch critical game assets
 // This preloads /game route code + intro video in background while user is on Dashboard
@@ -51,6 +52,7 @@ import { ActiveLootboxDisplay } from '@/components/lootbox/ActiveLootboxDisplay'
 import { LootboxDecisionDialog } from '@/components/lootbox/LootboxDecisionDialog';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
+import { usePaymentPolling } from '@/hooks/usePaymentPolling';
 
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
@@ -73,6 +75,7 @@ const Dashboard = () => {
   const { markActive } = useActivityTracker('route_view');
   const { profile, loading, refreshProfile } = useProfileQuery(userId);
   const { walletData, refetchWallet, serverDriftMs } = useWalletQuery(userId);
+  const { prefetchNextGameQuestions } = useGameQuestions();
   
   // FULLSCREEN MODE: Hide status bar on mobile devices (Web)
   useFullscreen({
@@ -125,6 +128,9 @@ const Dashboard = () => {
     userId,
     profileLoading: loading,
   });
+  
+  // Mobile WebView fallback: Poll for pending payments
+  usePaymentPolling();
   
   // Pull-to-refresh functionality
   const { isPulling, pullProgress } = usePullToRefresh({
@@ -651,7 +657,19 @@ if (!profile) {
             <div className="w-[90%] max-w-screen-lg">
               <PlayNowButton
                 data-tutorial="play-button"
-                onClick={() => navigate('/game')}
+                onClick={async () => {
+                  // PERFORMANCE OPTIMIZATION: Prefetch questions BEFORE navigation
+                  // This eliminates the loading spinner on /game page (instant question display)
+                  const lastPoolOrder = localStorage.getItem('dingleup_global_last_pool');
+                  const poolOrder = lastPoolOrder ? parseInt(lastPoolOrder, 10) : null;
+                  const userLang = profile?.preferred_language || 'en';
+                  
+                  // Start prefetch (non-blocking, runs in background)
+                  prefetchNextGameQuestions(poolOrder, userLang);
+                  
+                  // Navigate immediately (don't wait for prefetch)
+                  navigate('/game');
+                }}
                 className="w-full"
               >
                 <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] flex items-center justify-center leading-none tracking-wider text-[clamp(1.75rem,5vw,2.5rem)] sm:text-[clamp(2rem,5.5vw,3rem)]">

@@ -42,6 +42,40 @@ const securityHeadersPlugin = (mode: string): Plugin => ({
   },
 });
 
+// Cache headers plugin for optimal caching strategy
+const cacheHeadersPlugin = (mode: string): Plugin => ({
+  name: 'cache-headers',
+  configureServer(server) {
+    // Only apply in production preview mode
+    if (mode === 'development') {
+      return;
+    }
+    
+    server.middlewares.use((req, res, next) => {
+      const url = req.url || '';
+      
+      // Hash-versioned assets (JS, CSS with hash in filename) - immutable, 1 year cache
+      if (/\.(js|css)$/.test(url) && /-[a-zA-Z0-9]{8}\.(js|css)/.test(url)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+      // Images, fonts, audio, video - 1 year cache
+      else if (/\.(png|jpg|jpeg|svg|gif|webp|woff|woff2|ttf|otf|mp3|mp4|wav|ogg)$/.test(url)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+      // Non-hashed JS/CSS (registerSW.js, etc) - 1 day cache
+      else if (/\.(js|css)$/.test(url)) {
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+      }
+      // HTML files - no cache, must revalidate
+      else if (/\.html$/.test(url) || url === '/') {
+        res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+      }
+      
+      next();
+    });
+  },
+});
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -53,6 +87,20 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
+          // Vendor chunks for better caching
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-query': ['@tanstack/react-query'],
+          'vendor-ui': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-toast',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-alert-dialog'
+          ],
+          // Admin bundle
           'admin': [
             './src/pages/AdminDashboard.tsx',
             './src/pages/AdminGameProfiles.tsx',
@@ -66,11 +114,13 @@ export default defineConfig(({ mode }) => ({
         },
       },
     },
+    chunkSizeWarningLimit: 1000, // Increase warning limit for larger chunks
   },
   plugins: [
     react(),
     mode === "development" && componentTagger(),
     securityHeadersPlugin(mode),
+    cacheHeadersPlugin(mode),
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
