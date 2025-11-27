@@ -14,25 +14,12 @@ import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import { LeaderboardSkeleton } from '@/components/LeaderboardSkeleton';
 import BottomNav from '@/components/BottomNav';
 
-interface RankReward {
-  rank: number;
-  gold: number;
-  life: number;
-}
-
-interface DailyRewardsData {
-  day: string;
-  type: 'NORMAL' | 'JACKPOT';
-  rewards: RankReward[];
-}
-
 const Leaderboard = () => {
   const navigate = useNavigate();
   const { t } = useI18n();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile } = useProfileQuery(userId);
-  const { leaderboard, loading, refetch } = useLeaderboardQuery(profile?.country_code);
-  const [dailyRewards, setDailyRewards] = useState<DailyRewardsData | null>(null);
+  const { leaderboard, dailyRewards, loading, refetch } = useLeaderboardQuery(profile?.country_code);
   
   // FULLSCREEN MODE: Hide status bar on mobile devices (Web)
   useFullscreen({

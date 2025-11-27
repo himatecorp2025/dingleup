@@ -11,9 +11,26 @@ export interface LeaderboardEntry {
   country_code: string;
 }
 
+interface RankReward {
+  rank: number;
+  gold: number;
+  life: number;
+}
+
+export interface DailyRewardsData {
+  day: string;
+  type: 'NORMAL' | 'JACKPOT';
+  rewards: RankReward[];
+}
+
+interface LeaderboardResponse {
+  leaderboard: LeaderboardEntry[];
+  dailyRewards: DailyRewardsData;
+}
+
 const LEADERBOARD_QUERY_KEY = (countryCode: string) => ['leaderboard', countryCode];
 
-async function fetchLeaderboard(countryCode: string): Promise<LeaderboardEntry[]> {
+async function fetchLeaderboard(countryCode: string): Promise<LeaderboardResponse> {
   const response = await supabase.functions.invoke('get-daily-leaderboard-by-country', {
     body: { countryCode }
   });
@@ -21,7 +38,10 @@ async function fetchLeaderboard(countryCode: string): Promise<LeaderboardEntry[]
   if (response.error) throw response.error;
   if (!response.data?.success) throw new Error('Failed to fetch leaderboard');
 
-  return response.data.leaderboard || [];
+  return {
+    leaderboard: response.data.leaderboard || [],
+    dailyRewards: response.data.dailyRewards,
+  };
 }
 
 export function useLeaderboardQuery(countryCode: string | undefined) {
@@ -79,7 +99,8 @@ export function useLeaderboardQuery(countryCode: string | undefined) {
   }, [countryCode, queryClient]);
 
   return {
-    leaderboard: query.data || [],
+    leaderboard: query.data?.leaderboard || [],
+    dailyRewards: query.data?.dailyRewards || null,
     loading: query.isLoading,
     refetch: query.refetch,
   };
