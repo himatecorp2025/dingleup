@@ -1,0 +1,155 @@
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useActiveLootbox } from '@/hooks/useActiveLootbox';
+import { GoldLootboxIcon } from './GoldLootboxIcon';
+import { LootboxDecisionDialog } from './LootboxDecisionDialog';
+import { useWallet } from '@/hooks/useWallet';
+import { supabase } from '@/integrations/supabase/client';
+
+export const LootboxDropOverlay = () => {
+  const location = useLocation();
+  const { activeLootbox, loading, refetch } = useActiveLootbox(undefined);
+  const { walletData } = useWallet(undefined);
+  
+  const [isVisible, setIsVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
+  const [storedCount, setStoredCount] = useState(0);
+
+  // Hide overlay on admin pages
+  const isAdminPage = location.pathname.startsWith('/admin');
+
+  // Fetch stored lootbox count
+  useEffect(() => {
+    const fetchStoredCount = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        const { data } = await supabase.functions.invoke('lootbox-stored', {
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+
+        if (data?.count !== undefined) {
+          setStoredCount(data.count);
+        }
+      } catch (err) {
+        console.error('[LootboxDropOverlay] Failed to fetch stored count:', err);
+      }
+    };
+
+    if (activeLootbox) {
+      fetchStoredCount();
+    }
+  }, [activeLootbox]);
+
+  // Handle drop animation
+  useEffect(() => {
+    if (activeLootbox && !loading && !isAdminPage) {
+      setIsAnimating(true);
+      setIsVisible(true);
+      
+      // End animation after 1 second
+      const timer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    } else if (!activeLootbox) {
+      setIsVisible(false);
+      setIsAnimating(false);
+    }
+  }, [activeLootbox, loading, isAdminPage]);
+
+  // Handle countdown
+  useEffect(() => {
+    if (!activeLootbox?.expires_at) {
+      setRemainingSeconds(null);
+      return;
+    }
+
+    const calculateRemaining = () => {
+      const now = new Date().getTime();
+      const expires = new Date(activeLootbox.expires_at!).getTime();
+      const diffMs = expires - now;
+      return Math.max(0, Math.floor(diffMs / 1000));
+    };
+
+    setRemainingSeconds(calculateRemaining());
+
+    const interval = setInterval(() => {
+      const remaining = calculateRemaining();
+      setRemainingSeconds(remaining);
+      
+      if (remaining <= 0) {
+        clearInterval(interval);
+        setIsVisible(false);
+        refetch();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [activeLootbox, refetch]);
+
+  const handleSuccess = (decision: 'open_now' | 'store') => {
+    setShowDialog(false);
+    setIsVisible(false);
+    refetch();
+    
+    if (decision === 'store') {
+      setStoredCount(prev => prev + 1);
+    }
+  };
+
+  // Don't render on admin pages or if no active lootbox
+  if (isAdminPage || !isVisible || !activeLootbox) {
+    return null;
+  }
+
+  return (
+    <>
+      {/* Global Fixed Overlay */}
+      <div
+        className={`fixed z-50 cursor-pointer transition-all duration-1000 ${
+          isAnimating 
+            ? 'top-[-100px] opacity-0' 
+            : 'top-4 right-4 opacity-100'
+        }`}
+        onClick={() => setShowDialog(true)}
+        style={{
+          animation: isAnimating ? undefined : 'ease-out'
+        }}
+      >
+        {/* Lootbox Icon */}
+        <div className="relative">
+          <GoldLootboxIcon className="w-20 h-auto md:w-24" />
+          
+          {/* 60s Countdown Badge */}
+          {remainingSeconds !== null && remainingSeconds > 0 && (
+            <div
+              className="absolute top-1 right-1 px-2 py-0.5 rounded-full bg-black/70 text-white text-xs font-semibold"
+              style={{
+                boxShadow: '0 0 8px rgba(0,0,0,0.5)'
+              }}
+            >
+              {remainingSeconds}s
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Decision Dialog */}
+      {showDialog && (
+        <LootboxDecisionDialog
+          open={showDialog}
+          onClose={() => setShowDialog(false)}
+          lootboxId={activeLootbox.id}
+          userGold={walletData?.coinsCurrent || 0}
+          storedCount={storedCount}
+          onSuccess={handleSuccess}
+        />
+      )}
+    </>
+  );
+};
