@@ -168,20 +168,51 @@ serve(async (req) => {
       }
     }
 
-    // 3. Find pending slots that are due
+    // 3. Find pending slots and handle expiration
     const slots = plan.slots as Array<{
       slot_id: number;
       slot_time: string;
       status: string;
     }>;
 
-    const pendingDueSlots = slots.filter(slot => 
+    // Expire slots that were due but user was inactive (15 min grace period)
+    const EXPIRATION_GRACE_MINUTES = 15;
+    const expirationMs = EXPIRATION_GRACE_MINUTES * 60 * 1000;
+    
+    let slotsModified = false;
+    const updatedSlots = slots.map(slot => {
+      if (slot.status === 'pending') {
+        const slotTime = new Date(slot.slot_time);
+        const timeSinceSlot = now.getTime() - slotTime.getTime();
+        
+        // If slot was due more than 15 minutes ago and still pending, expire it
+        if (slotTime <= now && timeSinceSlot > expirationMs) {
+          slotsModified = true;
+          return { ...slot, status: 'expired' };
+        }
+      }
+      return slot;
+    });
+
+    // Update plan if any slots expired
+    if (slotsModified) {
+      await supabaseAdmin
+        .from('lootbox_daily_plan')
+        .update({
+          slots: updatedSlots,
+          updated_at: now.toISOString()
+        })
+        .eq('id', plan.id);
+    }
+
+    // Find pending slots that are due and NOT expired
+    const pendingDueSlots = updatedSlots.filter(slot => 
       slot.status === 'pending' && 
       new Date(slot.slot_time) <= now
     );
 
     if (pendingDueSlots.length === 0) {
-      // No pending slots due yet
+      // No pending slots due yet (all either expired or not due)
       return new Response(
         JSON.stringify({
           success: true,
@@ -199,7 +230,7 @@ serve(async (req) => {
       );
     }
 
-    // 4. Create active_drop from first pending slot
+    // 4. Activate ONLY the first pending slot (strict one-at-a-time)
     const firstSlot = pendingDueSlots[0];
 
     // Insert lootbox_instance (active_drop)
@@ -256,7 +287,7 @@ serve(async (req) => {
     console.log('[Lootbox Heartbeat] Drop created successfully:', newDrop.id);
 
     // 5. Update slot status to 'delivered' and increment delivered_count
-    const updatedSlots = slots.map(slot => 
+    const finalSlots = updatedSlots.map(slot => 
       slot.slot_id === firstSlot.slot_id
         ? { ...slot, status: 'delivered' }
         : slot
@@ -265,7 +296,7 @@ serve(async (req) => {
     const { error: updateError } = await supabaseAdmin
       .from('lootbox_daily_plan')
       .update({
-        slots: updatedSlots,
+        slots: finalSlots,
         delivered_count: plan.delivered_count + 1,
         updated_at: now.toISOString()
       })
