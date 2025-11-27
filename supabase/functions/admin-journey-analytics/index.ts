@@ -41,6 +41,30 @@ Deno.serve(async (req) => {
 
     const service = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Get user's preferred language
+    const { data: userProfile } = await service.from('profiles').select('preferred_language').eq('id', user.id).single();
+    const userLang = userProfile?.preferred_language || 'en';
+
+    // Get translations for funnel steps
+    const { data: translations } = await service.from('translations').select('key, hu, en').in('key', [
+      'journey.funnel.registration',
+      'journey.funnel.dashboard_visit',
+      'journey.funnel.first_game',
+      'journey.funnel.first_purchase',
+      'journey.funnel.product_view',
+      'journey.funnel.add_to_cart',
+      'journey.funnel.purchase',
+      'journey.funnel.game_start',
+      'journey.funnel.question_5',
+      'journey.funnel.question_10',
+      'journey.funnel.game_complete'
+    ]);
+
+    const t = (key: string) => {
+      const translation = translations?.find(t => t.key === key);
+      return translation ? translation[userLang] : key;
+    };
+
     const [{ data: navEvents }, { data: profiles }, { data: conversionEvents }, { data: gameExitEvents }] = await Promise.all([
       service.from('navigation_events').select('*').order('created_at', { ascending: true }),
       service.from('profiles').select('id, created_at'),
@@ -55,10 +79,10 @@ Deno.serve(async (req) => {
     const madePurchase = new Set((conversionEvents || []).filter((e: any) => e.event_type === 'purchase_complete').map((e: any) => e.user_id)).size;
 
     const onboardingFunnel = [
-      { step: 'Regisztráció', users: registeredUsers, dropoffRate: 0 },
-      { step: 'Dashboard látogatás', users: visitedDashboard, dropoffRate: registeredUsers > 0 ? ((registeredUsers - visitedDashboard) / registeredUsers) * 100 : 0 },
-      { step: 'Első játék', users: playedFirstGame, dropoffRate: visitedDashboard > 0 ? ((visitedDashboard - playedFirstGame) / visitedDashboard) * 100 : 0 },
-      { step: 'Első vásárlás', users: madePurchase, dropoffRate: playedFirstGame > 0 ? ((playedFirstGame - madePurchase) / playedFirstGame) * 100 : 0 },
+      { step: t('journey.funnel.registration'), users: registeredUsers, dropoffRate: 0 },
+      { step: t('journey.funnel.dashboard_visit'), users: visitedDashboard, dropoffRate: registeredUsers > 0 ? ((registeredUsers - visitedDashboard) / registeredUsers) * 100 : 0 },
+      { step: t('journey.funnel.first_game'), users: playedFirstGame, dropoffRate: visitedDashboard > 0 ? ((visitedDashboard - playedFirstGame) / visitedDashboard) * 100 : 0 },
+      { step: t('journey.funnel.first_purchase'), users: madePurchase, dropoffRate: playedFirstGame > 0 ? ((playedFirstGame - madePurchase) / playedFirstGame) * 100 : 0 },
     ];
 
     // Purchase Funnel: termék megtekintés (rescue popup) → kosárba helyezés → vásárlás
@@ -67,9 +91,9 @@ Deno.serve(async (req) => {
     const completedPurchase = new Set((conversionEvents || []).filter((e: any) => e.event_type === 'purchase_complete').map((e: any) => e.user_id)).size;
 
     const purchaseFunnel = [
-      { step: 'Termék megtekintés', users: viewedProduct, dropoffRate: 0 },
-      { step: 'Kosárba helyezés', users: addedToCart, dropoffRate: viewedProduct > 0 ? ((viewedProduct - addedToCart) / viewedProduct) * 100 : 0 },
-      { step: 'Vásárlás', users: completedPurchase, dropoffRate: addedToCart > 0 ? ((addedToCart - completedPurchase) / addedToCart) * 100 : 0 },
+      { step: t('journey.funnel.product_view'), users: viewedProduct, dropoffRate: 0 },
+      { step: t('journey.funnel.add_to_cart'), users: addedToCart, dropoffRate: viewedProduct > 0 ? ((viewedProduct - addedToCart) / viewedProduct) * 100 : 0 },
+      { step: t('journey.funnel.purchase'), users: completedPurchase, dropoffRate: addedToCart > 0 ? ((addedToCart - completedPurchase) / addedToCart) * 100 : 0 },
     ];
 
     // Game Funnel: játék kezdés → 5. kérdés elérése → 10. kérdés elérése → befejezés
@@ -79,10 +103,10 @@ Deno.serve(async (req) => {
     const completedGame = new Set((gameExitEvents || []).filter((e: any) => e.event_type === 'game_complete' || e.question_index >= 15).map((e: any) => e.user_id)).size;
 
     const gameFunnel = [
-      { step: 'Játék kezdés', users: startedGame, dropoffRate: 0 },
-      { step: '5. kérdés elérése', users: reached5Questions, dropoffRate: startedGame > 0 ? ((startedGame - reached5Questions) / startedGame) * 100 : 0 },
-      { step: '10. kérdés elérése', users: reached10Questions, dropoffRate: reached5Questions > 0 ? ((reached5Questions - reached10Questions) / reached5Questions) * 100 : 0 },
-      { step: 'Játék befejezés', users: completedGame, dropoffRate: reached10Questions > 0 ? ((reached10Questions - completedGame) / reached10Questions) * 100 : 0 },
+      { step: t('journey.funnel.game_start'), users: startedGame, dropoffRate: 0 },
+      { step: t('journey.funnel.question_5'), users: reached5Questions, dropoffRate: startedGame > 0 ? ((startedGame - reached5Questions) / startedGame) * 100 : 0 },
+      { step: t('journey.funnel.question_10'), users: reached10Questions, dropoffRate: reached5Questions > 0 ? ((reached5Questions - reached10Questions) / reached5Questions) * 100 : 0 },
+      { step: t('journey.funnel.game_complete'), users: completedGame, dropoffRate: reached10Questions > 0 ? ((reached10Questions - completedGame) / reached10Questions) * 100 : 0 },
     ];
 
     const userPaths = new Map<string, string[]>();
