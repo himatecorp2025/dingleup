@@ -46,40 +46,28 @@ const LeaderboardCarouselComponent = () => {
     const track = trackRef.current;
     if (!track) return;
     
-    const children = Array.from(track.children) as HTMLElement[];
-    if (children.length === 0) return;
-    
-    // Calculate width of single list (half of all children)
-    const singleListCount = children.length / 2;
-    
-    // Calculate total width by measuring actual positions
-    let totalWidth = 0;
-    for (let i = 0; i < singleListCount; i++) {
-      const child = children[i];
-      const rect = child.getBoundingClientRect();
-      totalWidth += rect.width;
-      
-      // Add gap between items (from Tailwind gap-2 sm:gap-3)
-      if (i < singleListCount - 1) {
-        const nextChild = children[i + 1];
-        const nextRect = nextChild.getBoundingClientRect();
-        const gap = nextRect.left - rect.right;
-        totalWidth += gap;
-      }
-    }
-    
-    contentWidthRef.current = totalWidth;
+    // Use scrollWidth / 2 for perfect accuracy with DOM layout
+    // scrollWidth is total width of duplicated list, contentWidth is exactly half
+    contentWidthRef.current = track.scrollWidth / 2;
   }, []);
 
-  // Frame rate-independent scroll animation using transform
+  // Frame rate-independent scroll animation using translate3d
   useEffect(() => {
     const container = containerRef.current;
     const track = trackRef.current;
     
     if (!container || !track || topPlayers.length === 0) return;
 
-    // Initialize contentWidth
-    updateContentWidth();
+    // Initialize contentWidth (must wait for DOM to render)
+    const initContentWidth = () => {
+      if (track.scrollWidth === 0) {
+        // DOM not ready yet, retry next frame
+        requestAnimationFrame(initContentWidth);
+        return;
+      }
+      updateContentWidth();
+    };
+    initContentWidth();
     
     // Reset transform position
     translateXRef.current = 0;
@@ -108,18 +96,15 @@ const LeaderboardCarouselComponent = () => {
       // Update translateX position (moving left, so negative)
       translateXRef.current -= deltaPx;
 
-      // Loop back when reaching contentWidth (half of duplicated list)
+      // Simple wrap when reaching contentWidth (half of duplicated list)
       const contentWidth = contentWidthRef.current;
-      if (contentWidth > 0) {
-        // Use modulo for seamless looping without visible jump
-        const absTranslate = Math.abs(translateXRef.current);
-        if (absTranslate >= contentWidth) {
-          translateXRef.current = -(absTranslate % contentWidth);
-        }
+      if (contentWidth > 0 && translateXRef.current <= -contentWidth) {
+        // Add back exactly contentWidth for seamless loop
+        translateXRef.current += contentWidth;
       }
 
-      // Apply transform to track
-      currentTrack.style.transform = `translateX(${translateXRef.current}px)`;
+      // Apply transform using translate3d for GPU acceleration and subpixel precision
+      currentTrack.style.transform = `translate3d(${translateXRef.current}px, 0, 0)`;
 
       // Update timestamp for next frame
       lastTimestampRef.current = timestamp;
