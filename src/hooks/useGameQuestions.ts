@@ -80,6 +80,8 @@ export function useGameQuestions() {
 
       if (funcError) {
         console.error('[useGameQuestions] Prefetch error:', funcError);
+        // CRITICAL: Reset flag on error to allow retry
+        isPrefetchingRef.current = false;
         return;
       }
 
@@ -90,10 +92,13 @@ export function useGameQuestions() {
         setPrefetchedPoolOrder(response.used_pool_order);
         const perfInfo = response.performance ? ` (${response.performance.selection_time_ms}ms)` : '';
         console.log(`[useGameQuestions] ✓ Prefetched ${response.questions.length} questions from pool ${response.used_pool_order || 'fallback'}${perfInfo}`);
+      } else {
+        console.warn('[useGameQuestions] Prefetch returned empty response');
       }
     } catch (err) {
       console.error('[useGameQuestions] Prefetch exception:', err);
     } finally {
+      // CRITICAL: Always reset flag in finally block
       isPrefetchingRef.current = false;
     }
   }, []);

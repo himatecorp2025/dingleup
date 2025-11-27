@@ -150,7 +150,8 @@ export const useGameNavigation = (options: UseGameNavigationOptions) => {
       return;
     }
     
-    setTimeout(() => {
+    // CRITICAL: Store timeout IDs for proper cleanup
+    const firstTimeoutId = setTimeout(() => {
       nextQuestion();
       resetTimer(10);
       setSelectedAnswer(null);
@@ -159,12 +160,18 @@ export const useGameNavigation = (options: UseGameNavigationOptions) => {
       resetQuestionHelpers();
       setQuestionStartTime(Date.now());
       
-      setTimeout(() => {
+      const secondTimeoutId = setTimeout(() => {
         setQuestionVisible(true);
         setIsAnimating(false);
         setCanSwipe(true);
       }, 100);
+
+      // Return cleanup for nested timeout
+      return () => clearTimeout(secondTimeoutId);
     }, 400);
+
+    // Return cleanup for outer timeout
+    return () => clearTimeout(firstTimeoutId);
   }, [
     isAnimating,
     currentQuestionIndex,
@@ -274,8 +281,8 @@ export const useGameNavigation = (options: UseGameNavigationOptions) => {
   ]);
 
   const handleSwipeDown = useCallback(async () => {
-    toast.dismiss();
-    
+    // CRITICAL: Only dismiss game result toast, not all toasts
+    // This prevents accidentally dismissing important error/success messages
     if (errorBannerVisible) {
       setErrorBannerVisible(false);
     }

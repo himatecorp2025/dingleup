@@ -327,15 +327,22 @@ const GamePreview = memo(() => {
   }, [navigate]);
 
   // Auto-start game when profile is ready - ONCE only
+  // CRITICAL: Don't include startGame in dependencies to prevent re-triggering
   useEffect(() => {
     if (profile && !profileLoading && questions.length === 0 && gameState === 'playing' && !hasAutoStarted && !isStartingGame) {
       setHasAutoStarted(true);
       startGame();
     }
-  }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState, startGame]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState]);
 
   // Track game funnel milestones + PREFETCH next game at question 10
   useEffect(() => {
+    // CRITICAL: Reset prefetch trigger on game restart
+    if (currentQuestionIndex === 0 && prefetchTriggeredRef.current) {
+      prefetchTriggeredRef.current = false;
+    }
+
     const trackMilestone = async () => {
       if (!userId || !isGameReady || currentQuestionIndex < 0) return;
 
@@ -452,7 +459,8 @@ const GamePreview = memo(() => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('blur', handleBlur);
     };
-  }, [gameState, navigate, videoEnded]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState, videoEnded]); // t and navigate are stable refs
 
   // Check for in-game payment success
   useEffect(() => {
