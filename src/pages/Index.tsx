@@ -38,7 +38,12 @@ const Index = () => {
   }, []);
 
   // Mobile/tablet: redirect immediately, don't show landing page
-  if (isMobileOrTablet && !loading) {
+  if (isMobileOrTablet) {
+    if (loading) {
+      // Show minimal loading state, no landing page content
+      return null;
+    }
+    
     const introShown = sessionStorage.getItem('introShown');
     
     if (!introShown) {
