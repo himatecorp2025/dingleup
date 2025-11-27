@@ -157,6 +157,19 @@ serve(async (req) => {
     // Insert lootbox_instance (active_drop)
     const expiresAt = new Date(now.getTime() + 60 * 1000); // 60 seconds from now
     
+    console.log('[Lootbox Heartbeat] Creating drop with data:', {
+      user_id: user.id,
+      status: 'active_drop',
+      source: 'daily_activity',
+      open_cost_gold: 150,
+      expires_at: expiresAt.toISOString(),
+      metadata: {
+        slot_id: firstSlot.slot_id,
+        plan_date: today,
+        slot_time: firstSlot.slot_time
+      }
+    });
+    
     const { data: newDrop, error: dropError } = await supabaseAdmin
       .from('lootbox_instances')
       .insert({
@@ -175,12 +188,24 @@ serve(async (req) => {
       .single();
 
     if (dropError || !newDrop) {
-      console.error('[Lootbox Heartbeat] Failed to create drop:', dropError);
-      return new Response(JSON.stringify({ error: 'Failed to create lootbox drop' }), {
+      console.error('[Lootbox Heartbeat] Failed to create drop. Error details:', {
+        error: dropError,
+        message: dropError?.message,
+        details: dropError?.details,
+        hint: dropError?.hint,
+        code: dropError?.code
+      });
+      return new Response(JSON.stringify({ 
+        error: 'Failed to create lootbox drop',
+        details: dropError?.message,
+        hint: dropError?.hint
+      }), {
         status: 500,
         headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       });
     }
+    
+    console.log('[Lootbox Heartbeat] Drop created successfully:', newDrop.id);
 
     // 5. Update slot status to 'delivered' and increment delivered_count
     const updatedSlots = slots.map(slot => 
