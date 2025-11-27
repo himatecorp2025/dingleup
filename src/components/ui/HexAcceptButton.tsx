@@ -173,19 +173,19 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
         />
       </div>
 
-      {/* LABEL - Responsive text that NEVER overflows */}
+      {/* LABEL - Responsive text that wraps properly */}
       <span
-        className="relative z-[1] font-black text-white tracking-[0.05em] px-6"
+        className="relative z-[1] font-black text-white tracking-[0.05em] px-6 text-center leading-tight"
         style={{
-          fontSize: "clamp(1.1rem, 5.5cqw, 2.2rem)",
+          fontSize: "clamp(1rem, 5cqw, 1.8rem)",
           textShadow:
             "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
           animation: "text-pulse 1.125s ease-in-out infinite",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
           maxWidth: "100%",
-          display: "block"
+          display: "block",
+          wordWrap: "break-word",
+          overflowWrap: "break-word",
+          hyphens: "auto"
         }}
       >
         {typeof children === "string" ? children.toUpperCase() : children}
