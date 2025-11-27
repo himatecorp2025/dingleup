@@ -59,12 +59,21 @@ const LeaderboardCarouselComponent = () => {
     // Initialize contentWidth
     updateContentWidth();
     
-    // Reset scroll position to start
-    container.scrollLeft = 0;
+    // Only reset scroll position on initial mount, not on data updates
+    if (container.scrollLeft === 0 && lastTimestampRef.current === null) {
+      container.scrollLeft = 0;
+    }
     lastTimestampRef.current = null;
 
     const animate = (timestamp: number) => {
-      if (!container || !track || topPlayers.length === 0) return;
+      const currentContainer = containerRef.current;
+      const currentTrack = trackRef.current;
+      
+      // Always continue animation as long as refs exist
+      if (!currentContainer || !currentTrack) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
 
       // Initialize timestamp on first frame
       if (lastTimestampRef.current === null) {
@@ -78,18 +87,18 @@ const LeaderboardCarouselComponent = () => {
       const deltaPx = (SCROLL_SPEED_PX_PER_SEC * deltaMs) / 1000;
 
       // Update scroll position
-      container.scrollLeft += deltaPx;
+      currentContainer.scrollLeft += deltaPx;
 
       // Loop back when reaching contentWidth (half of duplicated list)
       const contentWidth = contentWidthRef.current;
-      if (contentWidth > 0 && container.scrollLeft >= contentWidth) {
-        container.scrollLeft -= contentWidth;
+      if (contentWidth > 0 && currentContainer.scrollLeft >= contentWidth) {
+        currentContainer.scrollLeft -= contentWidth;
       }
 
       // Update timestamp for next frame
       lastTimestampRef.current = timestamp;
 
-      // Request next frame
+      // ALWAYS request next frame - never stop
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
