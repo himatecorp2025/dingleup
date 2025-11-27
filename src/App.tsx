@@ -131,13 +131,13 @@ const AppCore = () => {
       <Sonner />
       <OfflineDetector />
       <UpdatePrompt />
-      <LootboxDropOverlay />
       <BrowserRouter
         future={{
           v7_startTransition: true,
           v7_relativeSplatPath: true,
         }}
       >
+        <LootboxDropOverlay />
         <BackButtonHandler />
         <SessionMonitorWrapper />
         <AppWithAnalytics />
