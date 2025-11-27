@@ -48,6 +48,14 @@ serve(async (req) => {
       mode: "payment",
       success_url: `${req.headers.get("origin")}/dashboard?payment=success`,
       cancel_url: `${req.headers.get("origin")}/dashboard?payment=cancelled`,
+      metadata: {
+        product_type: 'speed_booster', // WEBHOOK ROUTING
+        user_id: user.id,
+        speed_token_count: '1',
+        speed_duration_min: '10',
+        gold_reward: '0',
+        lives_reward: '0',
+      },
     });
 
     console.log("Speed boost payment session created:", session.id);

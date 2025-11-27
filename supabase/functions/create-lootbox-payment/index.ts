@@ -75,6 +75,7 @@ serve(async (req) => {
       success_url: `${req.headers.get("origin")}/gifts?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/gifts?payment=canceled`,
       metadata: {
+        product_type: 'lootbox', // WEBHOOK ROUTING
         user_id: user.id,
         boxes: boxes.toString(),
       },
