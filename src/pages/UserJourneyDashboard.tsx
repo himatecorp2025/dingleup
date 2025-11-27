@@ -16,6 +16,46 @@ const UserJourneyDashboard = () => {
   const { analytics, loading, error, refetch } = useUserJourneyAnalytics();
   const { t } = useI18n();
 
+  const getFunnelLabel = (raw: string): string => {
+    switch (raw) {
+      case 'Regisztráció':
+      case 'Registration':
+        return t('journey.funnel.registration');
+      case 'Dashboard látogatás':
+      case 'Dashboard Visit':
+        return t('journey.funnel.dashboard_visit');
+      case 'Első játék':
+      case 'First Game':
+        return t('journey.funnel.first_game');
+      case 'Első vásárlás':
+      case 'First Purchase':
+        return t('journey.funnel.first_purchase');
+      case 'Termék megtekintés':
+      case 'Product View':
+        return t('journey.funnel.product_view');
+      case 'Kosárba helyezés':
+      case 'Add to Cart':
+        return t('journey.funnel.add_to_cart');
+      case 'Vásárlás':
+      case 'Purchase':
+        return t('journey.funnel.purchase');
+      case 'Játék kezdés':
+      case 'Game Start':
+        return t('journey.funnel.game_start');
+      case '5. kérdés elérése':
+      case 'Question 5 Reached':
+        return t('journey.funnel.question_5');
+      case '10. kérdés elérése':
+      case 'Question 10 Reached':
+        return t('journey.funnel.question_10');
+      case 'Játék befejezés':
+      case 'Game Complete':
+        return t('journey.funnel.game_complete');
+      default:
+        return raw;
+    }
+  };
+
   if (loading) {
     return (
       <AdminLayout>
@@ -103,10 +143,10 @@ const UserJourneyDashboard = () => {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={analytics.onboardingFunnel} layout="vertical">
+                  <BarChart data={analytics.onboardingFunnel.map(step => ({ ...step, stepLabel: getFunnelLabel(step.step) }))} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis type="number" stroke="hsl(var(--foreground))" />
-                    <YAxis dataKey="step" type="category" width={150} stroke="hsl(var(--foreground))" />
+                    <YAxis dataKey="stepLabel" type="category" width={150} stroke="hsl(var(--foreground))" />
                     <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--primary-dark))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
                     <Bar dataKey="users" name={t('admin.journey.users')}>
                       {analytics.onboardingFunnel.map((entry, index) => (
@@ -116,19 +156,22 @@ const UserJourneyDashboard = () => {
                   </BarChart>
                 </ResponsiveContainer>
                 <div className="mt-4 space-y-2">
-                  {analytics.onboardingFunnel.map((step, index) => (
-                    <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
-                      <span className="font-medium text-white">{step.step}</span>
-                      <div className="text-right">
-                        <p className="text-sm font-bold text-white">{step.users} {t('admin.journey.user')}</p>
-                        {step.dropoffRate > 0 && (
-                          <p className="text-xs text-red-400">
-                            {step.dropoffRate.toFixed(1)}% {t('admin.journey.dropoff')}
-                          </p>
-                        )}
+                  {analytics.onboardingFunnel.map((step, index) => {
+                    const label = getFunnelLabel(step.step);
+                    return (
+                      <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
+                        <span className="font-medium text-white">{label}</span>
+                        <div className="text-right">
+                          <p className="text-sm font-bold text-white">{step.users} {t('admin.journey.user')}</p>
+                          {step.dropoffRate > 0 && (
+                            <p className="text-xs text-red-400">
+                              {step.dropoffRate.toFixed(1)}% {t('admin.journey.dropoff')}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -148,10 +191,10 @@ const UserJourneyDashboard = () => {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={analytics.purchaseFunnel} layout="vertical">
+                  <BarChart data={analytics.purchaseFunnel.map(step => ({ ...step, stepLabel: getFunnelLabel(step.step) }))} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis type="number" stroke="#fff" />
-                    <YAxis dataKey="step" type="category" width={150} stroke="#fff" />
+                    <YAxis dataKey="stepLabel" type="category" width={150} stroke="#fff" />
                     <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="users" name={t('admin.journey.users')}>
                       {analytics.purchaseFunnel.map((entry, index) => (
@@ -161,19 +204,22 @@ const UserJourneyDashboard = () => {
                   </BarChart>
                 </ResponsiveContainer>
                 <div className="mt-4 space-y-2">
-                  {analytics.purchaseFunnel.map((step, index) => (
-                    <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
-                      <span className="font-medium text-white">{step.step}</span>
-                      <div className="text-right">
-                        <p className="text-sm font-bold text-white">{step.users} {t('admin.journey.user')}</p>
-                        {step.dropoffRate > 0 && (
-                          <p className="text-xs text-red-400">
-                            {step.dropoffRate.toFixed(1)}% {t('admin.journey.dropoff')}
-                          </p>
-                        )}
+                  {analytics.purchaseFunnel.map((step, index) => {
+                    const label = getFunnelLabel(step.step);
+                    return (
+                      <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
+                        <span className="font-medium text-white">{label}</span>
+                        <div className="text-right">
+                          <p className="text-sm font-bold text-white">{step.users} {t('admin.journey.user')}</p>
+                          {step.dropoffRate > 0 && (
+                            <p className="text-xs text-red-400">
+                              {step.dropoffRate.toFixed(1)}% {t('admin.journey.dropoff')}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -193,10 +239,10 @@ const UserJourneyDashboard = () => {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={analytics.gameFunnel} layout="vertical">
+                  <BarChart data={analytics.gameFunnel.map(step => ({ ...step, stepLabel: getFunnelLabel(step.step) }))} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis type="number" stroke="#fff" />
-                    <YAxis dataKey="step" type="category" width={150} stroke="#fff" />
+                    <YAxis dataKey="stepLabel" type="category" width={150} stroke="#fff" />
                     <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
                     <Bar dataKey="users" name={t('admin.journey.users')}>
                       {analytics.gameFunnel.map((entry, index) => (
@@ -206,19 +252,22 @@ const UserJourneyDashboard = () => {
                   </BarChart>
                 </ResponsiveContainer>
                 <div className="mt-4 space-y-2">
-                  {analytics.gameFunnel.map((step, index) => (
-                    <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
-                      <span className="font-medium text-white">{step.step}</span>
-                      <div className="text-right">
-                        <p className="text-sm font-bold text-white">{step.users} {t('admin.journey.user')}</p>
-                        {step.dropoffRate > 0 && (
-                          <p className="text-xs text-red-400">
-                            {step.dropoffRate.toFixed(1)}% {t('admin.journey.dropoff')}
-                          </p>
-                        )}
+                  {analytics.gameFunnel.map((step, index) => {
+                    const label = getFunnelLabel(step.step);
+                    return (
+                      <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
+                        <span className="font-medium text-white">{label}</span>
+                        <div className="text-right">
+                          <p className="text-sm font-bold text-white">{step.users} {t('admin.journey.user')}</p>
+                          {step.dropoffRate > 0 && (
+                            <p className="text-xs text-red-400">
+                              {step.dropoffRate.toFixed(1)}% {t('admin.journey.dropoff')}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
