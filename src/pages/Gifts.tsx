@@ -268,15 +268,8 @@ const Gifts = () => {
                   const lootbox = storedLootboxes[index];
                   const isActive = !!lootbox;
 
-                  return (
-                    <div
-                      key={lootbox?.id || `empty-${index}`}
-                      className={`relative aspect-square rounded-lg border flex items-center justify-center backdrop-blur-sm ${
-                        isActive
-                          ? 'bg-black/60 border-yellow-500/60 opacity-100'
-                          : 'bg-black/40 border-yellow-500/30 opacity-40'
-                      }`}
-                    >
+                  const boxContent = (
+                    <>
                       <img src={boxGold} alt="Gift box" className="w-3/4 h-3/4 object-contain" />
                       
                       {!isActive && (
@@ -291,13 +284,9 @@ const Gifts = () => {
                       )}
 
                       {isActive && (
-                        <button
-                          onClick={() => handleOpenLootbox(lootbox.id)}
-                          disabled={!!openingId}
-                          className="absolute inset-x-0 bottom-0 flex justify-center pb-1"
-                        >
+                        <div className="absolute inset-x-0 bottom-0 flex justify-center pb-1">
                           <span
-                            className="px-2 py-0.5 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:from-gray-600 disabled:to-gray-700 rounded text-black font-bold shadow-lg transition-all"
+                            className="px-2 py-0.5 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded text-black font-bold shadow-lg"
                             style={{ fontSize: 'clamp(7px, 1.8vw, 9px)' }}
                           >
                             {openingId === lootbox.id ? (
@@ -306,8 +295,30 @@ const Gifts = () => {
                               t('lootbox.open')
                             )}
                           </span>
-                        </button>
+                        </div>
                       )}
+                    </>
+                  );
+
+                  if (isActive) {
+                    return (
+                      <button
+                        key={lootbox.id}
+                        onClick={() => handleOpenLootbox(lootbox.id)}
+                        disabled={!!openingId}
+                        className={`relative aspect-square rounded-lg border flex items-center justify-center backdrop-blur-sm bg-black/60 border-yellow-500/60 opacity-100 transition-all hover:bg-black/70 hover:border-yellow-400/80 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
+                      >
+                        {boxContent}
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <div
+                      key={`empty-${index}`}
+                      className={`relative aspect-square rounded-lg border flex items-center justify-center backdrop-blur-sm bg-black/40 border-yellow-500/30 opacity-40`}
+                    >
+                      {boxContent}
                     </div>
                   );
                 })
