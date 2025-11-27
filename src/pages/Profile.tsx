@@ -748,6 +748,46 @@ const Profile = () => {
                 </p>
               </div>
 
+              {/* Language Selector */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-2 flex items-center gap-2">
+                  <Globe className="w-4 h-4" />
+                  {t('profile.language_label')}
+                </p>
+                <Select value={lang} onValueChange={(newLang: LangCode) => setLang(newLang, true)}>
+                  <SelectTrigger className="bg-black/30 border-purple-500/30 text-white hover:border-purple-400/50 focus:border-purple-400">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-purple-500/30 z-50">
+                    <SelectItem value="hu" className="text-foreground hover:bg-accent focus:bg-accent">
+                      🇭🇺 Magyar
+                    </SelectItem>
+                    <SelectItem value="en" className="text-foreground hover:bg-accent focus:bg-accent">
+                      🇬🇧 English
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-white/40 mt-1">
+                  {t('profile.language_notice')}
+                </p>
+              </div>
+              
+              {/* Life Regeneration */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.life_regeneration_label')}</p>
+                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  {t('profile.life_regeneration_value').replace('{rate}', profile.lives_regeneration_rate.toString())}
+                </p>
+              </div>
+              
+              {/* Registration Date */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.registration_date_label')}</p>
+                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  {new Date(profile.created_at).toLocaleDateString('hu-HU')}
+                </p>
+              </div>
+
               {/* Current PIN */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.pin.currentPinLabel')}</p>
@@ -829,56 +869,6 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* About Us Button */}
-              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <Button
-                  onClick={() => navigate('/about')}
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold shadow-lg"
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  {t('nav.about')}
-                </Button>
-              </div>
-
-              {/* Language Selector */}
-              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-2 flex items-center gap-2">
-                  <Globe className="w-4 h-4" />
-                  {t('profile.language_label')}
-                </p>
-                <Select value={lang} onValueChange={(newLang: LangCode) => setLang(newLang, true)}>
-                  <SelectTrigger className="bg-black/30 border-purple-500/30 text-white hover:border-purple-400/50 focus:border-purple-400">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border-purple-500/30 z-50">
-                    <SelectItem value="hu" className="text-foreground hover:bg-accent focus:bg-accent">
-                      🇭🇺 Magyar
-                    </SelectItem>
-                    <SelectItem value="en" className="text-foreground hover:bg-accent focus:bg-accent">
-                      🇬🇧 English
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-white/40 mt-1">
-                  {t('profile.language_notice')}
-                </p>
-              </div>
-              
-              
-              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
-                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.life_regeneration_label')}</p>
-                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {t('profile.life_regeneration_value').replace('{rate}', profile.lives_regeneration_rate.toString())}
-                </p>
-              </div>
-              
-              <div>
-                <p className="text-xs sm:text-sm text-white/50 mb-1">{t('profile.registration_date_label')}</p>
-                <p className="text-sm sm:text-base text-white font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {new Date(profile.created_at).toLocaleDateString('hu-HU')}
-                </p>
-              </div>
-
               {/* Save Button */}
               <div className="pt-2">
                 <Button
@@ -899,7 +889,20 @@ const Profile = () => {
                       <Save className="w-4 h-4" />
                       {t('profile.pin.changeButton')}
                     </span>
-                  )}
+                   )}
+                 </Button>
+              </div>
+
+              {/* About Us Button */}
+              <div className="pt-2">
+                <Button
+                  onClick={() => navigate('/about')}
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold shadow-lg"
+                >
+                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 21H21M3 10H21M5 6L12 3L19 6M4 10V21M20 10V21M8 14V17M12 14V17M16 14V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {t('nav.about')}
                 </Button>
               </div>
             </div>
