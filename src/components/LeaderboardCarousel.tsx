@@ -15,7 +15,7 @@ interface LeaderboardEntry {
 }
 
 // Scroll speed in pixels per second (frame rate-independent)
-const SCROLL_SPEED_PX_PER_SEC = 35;
+const SCROLL_SPEED_PX_PER_SEC = 175;
 
 const LeaderboardCarouselComponent = () => {
   const { t } = useI18n();
