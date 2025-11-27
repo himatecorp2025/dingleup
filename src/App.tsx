@@ -67,6 +67,7 @@ const AdminBoosterPurchases = lazy(() => import("./pages/AdminBoosterPurchases")
 const AdminLoadTest = lazy(() => import("./pages/AdminLoadTest"));
 const AdminQuestionPools = lazy(() => import("./pages/AdminQuestionPools"));
 const AdminProfile = lazy(() => import("./pages/AdminProfile"));
+const AdminSelfHealing = lazy(() => import("./pages/AdminSelfHealing"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading fallback component
@@ -192,6 +193,7 @@ const AppCore = () => {
               <Route path="/admin/question-pools" element={<ErrorBoundary><AdminQuestionPools /></ErrorBoundary>} />
               <Route path="/admin/age-statistics" element={<ErrorBoundary><AdminAgeStatistics /></ErrorBoundary>} />
               <Route path="/admin/profile" element={<ErrorBoundary><AdminProfile /></ErrorBoundary>} />
+              <Route path="/admin/self-healing" element={<ErrorBoundary><AdminSelfHealing /></ErrorBoundary>} />
               
               {/* Legal pages */}
               <Route path="/aszf" element={<ASZF />} />
