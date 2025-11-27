@@ -25,11 +25,11 @@ serve(async (req) => {
     
     // Create Supabase client for auth verification
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
     // Verify user token
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
     if (authError || !user) {
       console.error('[lootbox-active] Auth error:', authError);
       return new Response(
@@ -38,12 +38,8 @@ serve(async (req) => {
       );
     }
 
-    // Create service role client for database operations
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
     // Query active lootbox for this user
-    const { data: activeLootbox, error: queryError } = await supabase
+    const { data: activeLootbox, error: queryError } = await supabaseClient
       .from('lootbox_instances')
       .select('id, status, open_cost_gold, expires_at, source, created_at, activated_at')
       .eq('user_id', user.id)
