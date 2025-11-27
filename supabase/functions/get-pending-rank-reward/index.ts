@@ -35,6 +35,11 @@ serve(async (req) => {
       supabaseUrl,
       supabaseAnonKey,
       {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
         auth: {
           persistSession: false,
           autoRefreshToken: false,
