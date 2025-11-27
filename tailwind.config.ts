@@ -188,7 +188,7 @@ export default {
         "shine": "shine 3s ease-in-out infinite",
         "flash": "flash 4s ease-in-out infinite",
         "pulse-fast": "pulse-fast 0.6s ease-in-out infinite",
-        "leaderboard-marquee": "leaderboard-marquee 60s linear infinite"
+        "leaderboard-marquee": "leaderboard-marquee 30s linear infinite"
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
