@@ -65,7 +65,7 @@ export function AdminSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarContent className="bg-white/5 backdrop-blur-xl border-r border-white/10">
+      <SidebarContent className="bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#0f0a1f] backdrop-blur-xl border-r border-white/10">
         {/* Logo */}
         <div className="p-6 pb-4">
           <div className="relative inline-block">
