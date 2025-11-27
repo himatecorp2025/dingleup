@@ -64,7 +64,6 @@ const AdminGameProfileDetail = lazy(() => import("./pages/AdminGameProfileDetail
 const AdminAdInterests = lazy(() => import("./pages/AdminAdInterests"));
 const AdminBoosterTypes = lazy(() => import("./pages/AdminBoosterTypes"));
 const AdminBoosterPurchases = lazy(() => import("./pages/AdminBoosterPurchases"));
-const AdminLoadTest = lazy(() => import("./pages/AdminLoadTest"));
 const AdminQuestionPools = lazy(() => import("./pages/AdminQuestionPools"));
 const AdminProfile = lazy(() => import("./pages/AdminProfile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -175,8 +174,6 @@ const AppCore = () => {
               <Route path="/admin/dashboard" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
               <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
               <Route path="/admin/translations" element={<ErrorBoundary><AdminTranslations /></ErrorBoundary>} />
-              <Route path="/admin/load-testing" element={<ErrorBoundary><AdminLoadTest /></ErrorBoundary>} />
-              <Route path="/admin/load-test" element={<ErrorBoundary><AdminLoadTest /></ErrorBoundary>} />
               <Route path="/admin/advanced-analytics" element={<ErrorBoundary><AdvancedAnalytics /></ErrorBoundary>} />
               <Route path="/admin/retention" element={<ErrorBoundary><RetentionDashboard /></ErrorBoundary>} />
               <Route path="/admin/monetization" element={<ErrorBoundary><MonetizationDashboard /></ErrorBoundary>} />
