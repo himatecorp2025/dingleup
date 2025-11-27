@@ -87,6 +87,7 @@ serve(async (req) => {
       success_url: `${req.headers.get("origin")}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/dashboard`,
       metadata: {
+        product_type: 'instant_rescue', // WEBHOOK ROUTING
         user_id: user.id,
         booster_type_id: boosterType.id,
         booster_code: 'INSTANT_RESCUE',
