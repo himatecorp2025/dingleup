@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useWalletQuery } from '@/hooks/queries/useWalletQuery';
 import { LootboxRewardDisplay } from '@/components/LootboxRewardDisplay';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface StoredLootbox {
   id: string;
@@ -174,7 +175,7 @@ const Gifts = () => {
     { boxes: 10, price: '$17.99', priceId: 'price_1SY9V1KKw7HPC0ZDCyRUtwoK', rewardKey: 'gifts.rewards_10_boxes' }
   ];
 
-  const handlePurchase = async (pkg: typeof packages[0]) => {
+  const handlePurchaseRaw = async (pkg: typeof packages[0]) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -208,6 +209,9 @@ const Gifts = () => {
       toast.error(t('errors.unknown'));
     }
   };
+
+  // Debounced version to prevent double-click
+  const [handlePurchase, isPurchasing] = useDebounce(handlePurchaseRaw, 500);
 
   return (
     <>
