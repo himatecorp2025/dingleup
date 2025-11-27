@@ -35,41 +35,11 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Standalone intro-first guard (no landing page in app)
-  const isStandalone = (() => {
-    try {
-      return (
-        window.matchMedia('(display-mode: standalone)').matches ||
-        (window.navigator as any).standalone === true ||
-        document.referrer.includes('android-app://')
-      );
-    } catch {
-      return false;
-    }
-  })();
-
-  // Clear intro flag when app starts in standalone mode to ensure intro plays on every app launch
-  useEffect(() => {
-    if (isStandalone) {
-      try {
-        sessionStorage.removeItem('app_intro_shown');
-      } catch {}
-    }
-  }, [isStandalone]);
-
-  const introShown = typeof window !== 'undefined' 
-    ? sessionStorage.getItem('app_intro_shown') === '1' 
-    : false;
-
-  // Mobile/tablet: skip landing page, go directly to intro or auth/dashboard based on session
+  // Mobile/tablet: skip landing page, go directly to auth/dashboard based on session
   if (isMobileOrTablet && location.pathname === '/') {
     if (hasSession === null) {
       // Still checking session - show nothing
       return null;
-    }
-
-    if (!introShown) {
-      return <Navigate to="/intro" replace />;
     }
 
     if (hasSession) {
@@ -77,12 +47,6 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     } else {
       return <Navigate to="/auth/choice" replace />;
     }
-  }
-
-  // Mobile/tablet standalone: redirect to /intro ONLY on first load (from root)
-  if (isMobileOrTablet && isStandalone && !introShown && 
-      (location.pathname === '/' || location.pathname === '/desktop')) {
-    return <Navigate to="/intro" replace />;
   }
 
   // Admin pages always accessible
