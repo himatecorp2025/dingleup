@@ -367,8 +367,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 </div>
 
                 {/* Content Area */}
-                <div className="relative z-10 flex flex-col items-center justify-between px-[8%] pb-[3%]" style={{ height: '100%', paddingTop: '0' }}>
-                  <div className="w-full mb-2 overflow-visible" style={{ height: '100%', maxHeight: '100%' }}>
+                <div className="relative z-10 flex flex-col items-center px-[8%] pb-[3%]" style={{ height: '100%', paddingTop: '0' }}>
+                  <div className="w-full mb-2 overflow-visible" style={{ minHeight: 'calc(100% - 100px)', maxHeight: 'calc(100% - 100px)' }}>
                     {topPlayers.length === 0 ? (
                       <div className="text-center text-white py-8">
                         <p className="text-lg">{t('dailyWinners.noData')}</p>
@@ -643,10 +643,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     )}
                   </div>
 
-                  <div className="mt-auto pt-2 flex justify-center w-full" style={{ transform: 'translateY(-170%)' }}>
+                  <div className="absolute bottom-[3%] left-0 right-0 flex justify-center w-full">
                     <HexAcceptButton 
                       onClick={onClose}
-                      className="w-[80%]"
+                      className="w-[80%] max-w-[320px]"
                       style={{ transform: 'scale(0.88)' }}
                     >
                       {t('common.accept')}
