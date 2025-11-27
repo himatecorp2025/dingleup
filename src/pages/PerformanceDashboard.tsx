@@ -31,7 +31,7 @@ const PerformanceDashboard = () => {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center py-20">
-          <p className="text-lg text-red-400">{error || 'Hiba történt az adatok betöltése során'}</p>
+          <p className="text-lg text-red-400">{error || t('performance.error_loading')}</p>
         </div>
       </AdminLayout>
     );
@@ -230,11 +230,11 @@ const PerformanceDashboard = () => {
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
-                    Hibák Oldalanként
+                    {t('performance.errors_by_page')}
                     <MetricInfo 
-                      title="Oldalankénti Hibák"
-                      description="JavaScript hibák és kivételek oldalanként csoportosítva. Segít azonosítani, mely oldalakon történnek a legtöbb hibák."
-                      interpretation="Magas hibaszám egy oldalon kódhiba vagy rossz felhasználói élmény jelzője. Azonnal javítandó."
+                      title={t('performance.errors_by_page_title')}
+                      description={t('performance.errors_by_page_desc')}
+                      interpretation={t('performance.errors_by_page_interpretation')}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -246,10 +246,10 @@ const PerformanceDashboard = () => {
                           <p className="font-medium text-white">{error.page_route}</p>
                           <p className="text-sm text-white/70">{error.error_type}</p>
                         </div>
-                        <span className="text-sm font-bold text-white">{error.error_count} hiba</span>
+                        <span className="text-sm font-bold text-white">{error.error_count} {t('performance.error_count')}</span>
                       </div>
                     )) : (
-                      <p className="text-white/60 text-center py-8">Nincs rögzített hiba ezen az oldalon</p>
+                      <p className="text-white/60 text-center py-8">{t('performance.no_errors_page')}</p>
                     )}
                   </div>
                 </CardContent>
@@ -258,11 +258,11 @@ const PerformanceDashboard = () => {
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
-                    Top Hibák
+                    {t('performance.top_errors')}
                     <MetricInfo 
-                      title="Leggyakoribb Hibák"
-                      description="A leggyakrabban előforduló hibák típusa és üzenete. Ezek prioritást kapnak a hibajavításban."
-                      interpretation="A leggyakoribb hibák javítása a legnagyobb hatással lesz a felhasználói élményre."
+                      title={t('performance.top_errors_title')}
+                      description={t('performance.top_errors_desc')}
+                      interpretation={t('performance.top_errors_interpretation')}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -277,7 +277,7 @@ const PerformanceDashboard = () => {
                         <span className="text-sm font-bold text-white whitespace-nowrap">{error.count}x</span>
                       </div>
                     )) : (
-                      <p className="text-white/60 text-center py-8">Nincs rögzített hiba</p>
+                      <p className="text-white/60 text-center py-8">{t('performance.no_errors')}</p>
                     )}
                   </div>
                 </CardContent>

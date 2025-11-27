@@ -33,80 +33,78 @@ interface AdminReportActionDialogProps {
   onSuccess: () => void;
 }
 
-// Előre definiált problématípusok listája (megoldva esetén)
-const PROBLEM_TYPES = [
-  '🎮 Játék összeomlás / nem indul',
-  '❓ Kérdés nem jelenik meg helyesen',
-  '✅ Helyes válasz helytelennek jelölve',
-  '❌ Helytelen válasz helyesnek jelölve',
-  '⏱️ Időzítő hiba / nem működik',
-  '💰 Érme/élet nem lett jóváírva',
-  '🚀 Booster nem aktiválódott',
-  '🎁 Ajándék/jutalom nem érkezett meg',
-  '💬 Chat üzenet nem küldhető',
-  '📸 Kép/média feltöltési hiba',
-  '👥 Barát hozzáadási probléma',
-  '🏆 Ranglista nem frissül',
-  '💳 Fizetési hiba',
-  '🔐 Bejelentkezési probléma',
-  '📱 Mobil megjelenítési hiba',
-  '🐛 Egyéb technikai hiba',
-  '⚡ Teljesítmény probléma / lassú',
-  '🔄 Szinkronizálási hiba'
+// Problem types - now using i18n keys
+const getProblemTypes = (t: (key: string) => string) => [
+  t('admin.report.problem_game_crash'),
+  t('admin.report.problem_question_display'),
+  t('admin.report.problem_correct_marked_wrong'),
+  t('admin.report.problem_wrong_marked_correct'),
+  t('admin.report.problem_timer'),
+  t('admin.report.problem_coins_life_not_credited'),
+  t('admin.report.problem_booster_not_activated'),
+  t('admin.report.problem_reward_not_received'),
+  t('admin.report.problem_chat_message_cant_send'),
+  t('admin.report.problem_media_upload'),
+  t('admin.report.problem_friend_add'),
+  t('admin.report.problem_leaderboard_not_updating'),
+  t('admin.report.problem_payment'),
+  t('admin.report.problem_login'),
+  t('admin.report.problem_mobile_display'),
+  t('admin.report.problem_technical_other'),
+  t('admin.report.problem_performance'),
+  t('admin.report.problem_sync')
 ];
 
-// Előre definiált elutasítási okok listája
-const DISMISSAL_REASONS = [
-  // Development (bug) elutasítási okok
-  '✅ Nem reprodukálható - nem sikerült újra előidézni',
-  '📱 Eszköz specifikus - csak bizonyos eszközökön fordul elő',
-  '🌐 Böngésző specifikus - használj másik böngészőt',
-  '🔄 Már javítva - a legújabb verzióban megoldva',
-  '⚙️ Helyes működés - ez így van tervezve',
-  '📋 Duplikált bejelentés - már jelentették',
-  '🔧 Felhasználói hiba - nem megfelelő használat',
-  '📶 Internetkapcsolat probléma - nem az app hibája',
-  '💾 Eszköz tárhely probléma - nincs elég hely',
-  '🔋 Alacsony akkumulátor - energiatakarékos mód aktív',
-  '📵 Elavult verzió - frissítsd az appot',
-  '🔐 Engedélyek hiánya - add meg a szükséges jogokat',
-  
-  // Support (user behavior) elutasítási okok
-  '✅ Nem sérti a szabályokat - normális viselkedés',
-  '📝 Nincs elegendő bizonyíték - több részlet szükséges',
-  '🤝 Félreértés - nem rosszhiszemű szándék',
-  '💬 Kontextus hiányában nem értelmezhető',
-  '👤 Védett beszélgetés - nem nyilvános tartalom',
-  '⚖️ Nem tartozik az admin hatáskörbe',
-  '🔄 Automatikus rendszerüzenet - nem felhasználótól',
-  '😊 Viccből írt üzenet - nem komoly szándék',
-  '🗣️ Nyelvi különbség - nem sértés, csak másképp fogalmazott',
-  '🔒 Mindkét fél jóváhagyta - privát megállapodás'
+// Dismissal reasons - now using i18n keys
+const getDismissalReasons = (t: (key: string) => string) => [
+  t('admin.report.dismiss_not_reproducible'),
+  t('admin.report.dismiss_device_specific'),
+  t('admin.report.dismiss_browser_specific'),
+  t('admin.report.dismiss_already_fixed'),
+  t('admin.report.dismiss_intended_behavior'),
+  t('admin.report.dismiss_duplicate'),
+  t('admin.report.dismiss_user_error'),
+  t('admin.report.dismiss_internet_connection'),
+  t('admin.report.dismiss_storage'),
+  t('admin.report.dismiss_battery'),
+  t('admin.report.dismiss_outdated_version'),
+  t('admin.report.dismiss_permissions'),
+  t('admin.report.dismiss_no_violation'),
+  t('admin.report.dismiss_insufficient_evidence'),
+  t('admin.report.dismiss_misunderstanding'),
+  t('admin.report.dismiss_no_context'),
+  t('admin.report.dismiss_protected_conversation'),
+  t('admin.report.dismiss_out_of_scope'),
+  t('admin.report.dismiss_automated_message'),
+  t('admin.report.dismiss_joke'),
+  t('admin.report.dismiss_language_difference'),
+  t('admin.report.dismiss_mutual_agreement')
 ];
 
-const actionConfig = {
+// Action config - now using i18n keys
+const getActionConfig = (t: (key: string) => string) => ({
   reviewing: {
-    title: 'Jelentés folyamatban',
-    description: 'Jelezd a felhasználónak, hogy a jelentést folyamatban van vizsgálva.',
-    buttonText: 'Folyamatba helyezés',
+    title: t('admin.report.action_reviewing_title'),
+    description: t('admin.report.action_reviewing_desc'),
+    buttonText: t('admin.report.action_reviewing_button'),
     buttonClass: 'bg-primary hover:bg-primary/90',
-    defaultMessage: 'Folyamatban van. Köszönjük a jelzésedet! A csapatunk vizsgálja az ügyet, és hamarosan válaszolunk.'
+    defaultMessage: t('admin.report.action_reviewing_default_msg')
   },
   resolved: {
-    title: 'Jelentés megoldva',
-    description: 'Jelezd a felhasználónak, hogy a jelentés meg lett oldva.',
-    buttonText: 'Megoldva',
+    title: t('admin.report.action_resolved_title'),
+    description: t('admin.report.action_resolved_desc'),
+    buttonText: t('admin.report.action_resolved_button'),
     buttonClass: 'bg-success hover:bg-success/90',
-    defaultMessage: 'Köszönjük a jelentésedet! Az általad jelzett problémát megoldottuk.'
+    defaultMessage: t('admin.report.action_resolved_default_msg')
   },
   dismissed: {
-    title: 'Jelentés elutasítva',
-    description: 'Jelezd a felhasználónak, hogy a jelentés el lett utasítva és miért.',
-    buttonText: 'Elutasítás',
+    title: t('admin.report.action_dismissed_title'),
+    description: t('admin.report.action_dismissed_desc'),
+    buttonText: t('admin.report.action_dismissed_button'),
     buttonClass: 'bg-destructive hover:bg-destructive/90',
-    defaultMessage: 'Köszönjük a jelentésedet. Sajnos ez a jelentés nem igényel további intézkedést.'
+    defaultMessage: t('admin.report.action_dismissed_default_msg')
   }
-};
+});
 
 export const AdminReportActionDialog = ({ 
   open, 
@@ -116,12 +114,13 @@ export const AdminReportActionDialog = ({
   onSuccess 
 }: AdminReportActionDialogProps) => {
   const { t } = useI18n();
+  const actionConfig = getActionConfig(t);
   const [message, setMessage] = useState(actionConfig[actionType].defaultMessage);
   const [submitting, setSubmitting] = useState(false);
   const [reasonType, setReasonType] = useState<string>('');
   const [customReasonType, setCustomReasonType] = useState<string>('');
   const [availableReasonTypes, setAvailableReasonTypes] = useState<string[]>(
-    actionType === 'resolved' ? PROBLEM_TYPES : DISMISSAL_REASONS
+    actionType === 'resolved' ? getProblemTypes(t) : getDismissalReasons(t)
   );
 
   // Reset fields when dialog opens
@@ -130,9 +129,9 @@ export const AdminReportActionDialog = ({
       setMessage(actionConfig[actionType].defaultMessage);
       setReasonType('');
       setCustomReasonType('');
-      setAvailableReasonTypes(actionType === 'resolved' ? PROBLEM_TYPES : DISMISSAL_REASONS);
+      setAvailableReasonTypes(actionType === 'resolved' ? getProblemTypes(t) : getDismissalReasons(t));
     }
-  }, [open, actionType]);
+  }, [open, actionType, t]);
 
   const handleAddCustomReasonType = () => {
     if (customReasonType.trim() && !availableReasonTypes.includes(customReasonType.trim())) {
@@ -256,27 +255,27 @@ export const AdminReportActionDialog = ({
         <div className="space-y-3 mt-2">
           <div>
             <Label className="text-base text-accent mb-2 block font-bold">
-              ⚠️ Indoklás (KÖTELEZŐ) - Miért {actionType === 'reviewing' ? 'van folyamatban' : actionType === 'resolved' ? 'lett megoldva' : 'lett elutasítva'}?
+              {t('admin.report.reason_label')} {actionType === 'reviewing' ? t('admin.report.reason_reviewing_suffix') : actionType === 'resolved' ? t('admin.report.reason_resolved_suffix') : t('admin.report.reason_dismissed_suffix')}?
             </Label>
             <p className="text-xs text-foreground/70 mb-2">
-              Magyarázd el részletesen a döntésed okát. Ez az üzenet el lesz küldve a bejelentőnek.
+              {t('admin.report.reason_explain')}
             </p>
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder={`Pl.: ${
+              placeholder={
                 actionType === 'reviewing' 
-                  ? 'A hibát vizsgáljuk, a fejlesztői csapat 24 órán belül válaszol...' 
+                  ? t('admin.report.placeholder_reviewing') 
                   : actionType === 'resolved'
-                  ? 'A hibát javítottuk a legújabb frissítésben. Köszönjük a jelzést!'
-                  : 'Ez a bejelentés nem igényel intézkedést, mert...'
-              }`}
+                  ? t('admin.report.placeholder_resolved')
+                  : t('admin.report.placeholder_dismissed')
+              }
               className="min-h-[140px] bg-muted/80 border-2 border-accent/50 text-foreground text-sm resize-none focus:border-accent"
               maxLength={2000}
               autoFocus
             />
             <p className="text-xs text-foreground/50 mt-1">
-              {message.length} / 2000 karakter {message.length < 10 && message.length > 0 ? '(túl rövid, minimum 10 karakter)' : ''}
+              {message.length} / 2000 {t('admin.report.char_count')} {message.length < 10 && message.length > 0 ? t('admin.report.too_short') : ''}
             </p>
           </div>
 
@@ -284,16 +283,16 @@ export const AdminReportActionDialog = ({
           {(actionType === 'resolved' || actionType === 'dismissed') && (
             <div>
               <Label className="text-base text-accent mb-2 block font-bold">
-                ⚠️ {actionType === 'resolved' ? 'Megoldott probléma típusa' : 'Elutasítás oka'} (KÖTELEZŐ)
+                {actionType === 'resolved' ? t('admin.report.problem_type_label') : t('admin.report.dismissal_reason_label')}
               </Label>
               <p className="text-xs text-foreground/70 mb-2">
                 {actionType === 'resolved' 
-                  ? 'Válaszd ki, milyen típusú problémát oldottál meg, vagy adj hozzá újat.'
-                  : 'Válaszd ki az elutasítás okát, vagy adj hozzá újat.'}
+                  ? t('admin.report.select_problem_desc')
+                  : t('admin.report.select_dismissal_desc')}
               </p>
               <Select value={reasonType} onValueChange={setReasonType}>
                 <SelectTrigger className="bg-muted/80 border-2 border-accent/50 text-foreground focus:border-accent">
-                  <SelectValue placeholder={actionType === 'resolved' ? 'Válassz problématípust...' : 'Válassz elutasítási okot...'} />
+                  <SelectValue placeholder={actionType === 'resolved' ? t('admin.report.select_problem_placeholder') : t('admin.report.select_dismissal_placeholder')} />
                 </SelectTrigger>
                 <SelectContent className="bg-muted border-accent/50 text-foreground max-h-[300px] z-[10000]">
                   {availableReasonTypes.map((type) => (
@@ -307,13 +306,13 @@ export const AdminReportActionDialog = ({
               {/* Custom Reason Type Input */}
               <div className="mt-3 p-3 bg-muted/50 border border-accent/30 rounded-lg">
                 <Label className="text-sm text-foreground/90 mb-2 block">
-                  ➕ {actionType === 'resolved' ? 'Új problématípus hozzáadása' : 'Új elutasítási ok hozzáadása'}
+                  {actionType === 'resolved' ? t('admin.report.add_custom_problem') : t('admin.report.add_custom_dismissal')}
                 </Label>
                 <div className="flex gap-2">
                   <Input
                     value={customReasonType}
                     onChange={(e) => setCustomReasonType(e.target.value)}
-                    placeholder={actionType === 'resolved' ? 'Írd be az új problématípust...' : 'Írd be az új elutasítási okot...'}
+                    placeholder={actionType === 'resolved' ? t('admin.report.input_custom_problem') : t('admin.report.input_custom_dismissal')}
                     className="flex-1 bg-muted/80 border-primary/50 text-foreground text-sm"
                     maxLength={100}
                     onKeyPress={(e) => {
@@ -329,7 +328,7 @@ export const AdminReportActionDialog = ({
                     disabled={!customReasonType.trim()}
                     className="bg-success hover:bg-success/90 text-foreground whitespace-nowrap text-sm"
                   >
-                    Hozzáad
+                    {t('admin.report.add_button')}
                   </Button>
                 </div>
               </div>
@@ -342,7 +341,7 @@ export const AdminReportActionDialog = ({
               disabled={submitting}
               className={`flex-1 text-foreground font-bold h-9 text-sm ${config.buttonClass}`}
             >
-              {submitting ? 'Küldés...' : config.buttonText}
+              {submitting ? t('admin.report.sending') : config.buttonText}
             </Button>
             <Button
               onClick={() => onOpenChange(false)}
@@ -350,7 +349,7 @@ export const AdminReportActionDialog = ({
               variant="outline"
               className="bg-muted hover:bg-muted/80 border-border text-foreground h-9 text-sm"
             >
-              Mégse
+              {t('admin.report.cancel')}
             </Button>
           </div>
         </div>
