@@ -200,8 +200,8 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
               marginRight: '0'
             }}
           >
-          <DialogTitle className="sr-only">Tegnapi Nyertesek</DialogTitle>
-          <DialogDescription className="sr-only">TOP 10 tegnapi nyertesek listája</DialogDescription>
+          <DialogTitle className="sr-only">{t('dailyWinners.dialog_title')}</DialogTitle>
+          <DialogDescription className="sr-only">{t('dailyWinners.dialog_description')}</DialogDescription>
 
           <div 
             className="relative z-10 w-full max-w-[min(95vw,600px)] flex items-center justify-center overflow-hidden"
