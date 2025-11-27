@@ -379,8 +379,16 @@ useEffect(() => {
 - Dokumentálva a profiles táblában és a credit_wallet() függvényben
 
 ### P2 (Fontos):
-9. **Admin manual credit UI + audit** – KÖVETKEZŐ
+9. ✅ **Admin manual credit UI + audit** – IMPLEMENTÁLVA
 10. ✅ **Frontend debounce** (payment button: 500ms delay) – IMPLEMENTÁLVA
+
+**Admin Manual Credit Implementation:**
+- Létrehozva AdminManualCredit oldal: admin UI form (user ID, gold/lives delta, reason textarea)
+- Edge function: `admin-manual-credit` has_role('admin') check-kel
+- Rate limiting: max 10 credit / óra / admin user
+- Audit trail: admin_audit_log táblába minden kísérlet (success/failed) rögzítve
+- credit_wallet() RPC használata tranzakciós védelemmel
+- IP address és User-Agent logging minden műveletnél
 
 **Debounce Implementation:**
 - Létrehozva `useDebounce` hook (500ms delay)
