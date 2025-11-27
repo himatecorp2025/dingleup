@@ -302,63 +302,71 @@ const DailyGiftDialog = ({
                     {t('daily.day_label')} {weeklyEntryCount + 1}
                   </p>
                   
-                  {/* 3D Fire SVG - Élethű tűz sárga belső cseppel */}
-                  <svg viewBox="0 0 100 120" className="flex-shrink-0" style={{ width: 'clamp(36px, 9vw, 60px)', height: 'auto' }}>
-                    <defs>
-                      {/* Külső láng gradiens - piros/narancs */}
-                      <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#FFD700" />
-                        <stop offset="25%" stopColor="#FF8C00" />
-                        <stop offset="50%" stopColor="#FF6347" />
-                        <stop offset="75%" stopColor="#FF4500" />
-                        <stop offset="100%" stopColor="#DC143C" />
-                      </linearGradient>
-                      {/* Belső sárga csepp gradiens */}
-                      <radialGradient id="fireInnerDrop" cx="50%" cy="50%">
-                        <stop offset="0%" stopColor="#FFFF00" />
-                        <stop offset="40%" stopColor="#FFD700" />
-                        <stop offset="70%" stopColor="#FFA500" />
-                        <stop offset="100%" stopColor="#FF8C00" />
-                      </radialGradient>
-                      {/* Fény highlight */}
-                      <radialGradient id="fireHighlight" cx="35%" cy="25%">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
-                        <stop offset="50%" stopColor="rgba(255,255,255,0.2)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-                      </radialGradient>
-                      <filter id="fireShadow">
-                        <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#FF4500" floodOpacity="0.8"/>
-                      </filter>
-                      <filter id="fireGlow">
-                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                    </defs>
-                    {/* Külső láng alakzat */}
-                    <path d="M50 10 C40 20, 32 35, 30 55 C28 70, 35 85, 42 92 C45 96, 47 98, 50 100 C53 98, 55 96, 58 92 C65 85, 72 70, 70 55 C68 35, 60 20, 50 10 Z" 
-                          fill="url(#fireGrad)" 
-                          stroke="#8B0000" 
-                          strokeWidth="1" 
-                          filter="url(#fireShadow)" 
-                          style={{ animation: 'fireFlicker 0.8s ease-in-out infinite' }} />
-                    {/* Belső sárga láng - a narancssárga láng alján belül */}
-                    <path d="M50 60 C45 67, 41 75, 40 85 C39 92, 42 97, 46 99 C47 99.5, 48.5 100, 50 100 C51.5 100, 53 99.5, 54 99 C58 97, 61 92, 60 85 C59 75, 55 67, 50 60 Z" 
-                          fill="url(#fireInnerDrop)" 
-                          filter="url(#fireGlow)"
-                          opacity="0.95"
-                          style={{ animation: 'fireFlicker 0.8s ease-in-out infinite 0.1s' }} />
-                    {/* Fény highlight a tetején */}
-                    <ellipse cx="48" cy="25" rx="10" ry="12" fill="url(#fireHighlight)" opacity="0.5" />
+                  {/* 3D Fire SVG - 2 részből összerakva */}
+                  <div className="relative flex-shrink-0" style={{ width: 'clamp(36px, 9vw, 60px)', height: 'clamp(43px, 11vw, 72px)' }}>
+                    {/* Külső láng (narancssárga/piros) - 1. rész */}
+                    <svg viewBox="0 0 100 120" className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
+                      <defs>
+                        <linearGradient id="fireOuterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stopColor="#FFD700" />
+                          <stop offset="25%" stopColor="#FF8C00" />
+                          <stop offset="50%" stopColor="#FF6347" />
+                          <stop offset="75%" stopColor="#FF4500" />
+                          <stop offset="100%" stopColor="#DC143C" />
+                        </linearGradient>
+                        <radialGradient id="fireOuterHighlight" cx="35%" cy="25%">
+                          <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
+                          <stop offset="50%" stopColor="rgba(255,255,255,0.15)" />
+                          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                        </radialGradient>
+                        <filter id="fireOuterShadow">
+                          <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#FF4500" floodOpacity="0.8"/>
+                        </filter>
+                      </defs>
+                      <path d="M50 10 C40 20, 32 35, 30 55 C28 70, 35 85, 42 92 C45 96, 47 98, 50 100 C53 98, 55 96, 58 92 C65 85, 72 70, 70 55 C68 35, 60 20, 50 10 Z" 
+                            fill="url(#fireOuterGrad)" 
+                            stroke="#8B0000" 
+                            strokeWidth="1" 
+                            filter="url(#fireOuterShadow)" 
+                            style={{ animation: 'fireFlickerOuter 0.8s ease-in-out infinite' }} />
+                      <ellipse cx="48" cy="25" rx="10" ry="12" fill="url(#fireOuterHighlight)" opacity="0.6" />
+                    </svg>
+                    
+                    {/* Belső láng (sárga) - 2. rész */}
+                    <svg viewBox="0 0 100 120" className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
+                      <defs>
+                        <radialGradient id="fireInnerGrad" cx="50%" cy="50%">
+                          <stop offset="0%" stopColor="#FFFF00" />
+                          <stop offset="40%" stopColor="#FFD700" />
+                          <stop offset="70%" stopColor="#FFA500" />
+                          <stop offset="100%" stopColor="#FF8C00" />
+                        </radialGradient>
+                        <filter id="fireInnerGlow">
+                          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                          <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                          </feMerge>
+                        </filter>
+                      </defs>
+                      <path d="M50 60 C45 67, 41 75, 40 85 C39 92, 42 97, 46 99 C47 99.5, 48.5 100, 50 100 C51.5 100, 53 99.5, 54 99 C58 97, 61 92, 60 85 C59 75, 55 67, 50 60 Z" 
+                            fill="url(#fireInnerGrad)" 
+                            filter="url(#fireInnerGlow)"
+                            opacity="0.95"
+                            style={{ animation: 'fireFlickerInner 0.8s ease-in-out infinite 0.1s' }} />
+                    </svg>
+                    
                     <style>{`
-                      @keyframes fireFlicker {
-                        0%, 100% { transform: scale(1) translateY(0); }
-                        50% { transform: scale(1.05) translateY(-2px); }
+                      @keyframes fireFlickerOuter {
+                        0%, 100% { transform: scale(1) translateY(0); opacity: 1; }
+                        50% { transform: scale(1.03) translateY(-2px); opacity: 0.95; }
+                      }
+                      @keyframes fireFlickerInner {
+                        0%, 100% { transform: scale(1) translateY(0); opacity: 0.95; }
+                        50% { transform: scale(1.05) translateY(-1px); opacity: 1; }
                       }
                     `}</style>
-                  </svg>
+                  </div>
                 </div>
 
                 {/* Weekly Rewards Preview - 7 boxes with 3D SVG stars and coins */}
