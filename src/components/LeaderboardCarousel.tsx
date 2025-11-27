@@ -15,7 +15,7 @@ interface LeaderboardEntry {
 }
 
 // Scroll speed in pixels per second (frame rate-independent)
-const SCROLL_SPEED_PX_PER_SEC = 100;
+const MARQUEE_SPEED_PX_PER_SEC = 80;
 
 const LeaderboardCarouselComponent = () => {
   const { t } = useI18n();
@@ -27,8 +27,8 @@ const LeaderboardCarouselComponent = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number | null>(null);
-  const offsetRef = useRef<number>(0);
-  const [contentWidth, setContentWidth] = useState<number>(0);
+  const cycleWidthRef = useRef<number>(0);
+  const positionRef = useRef<number>(0);
 
   // Get user session
   useEffect(() => {
@@ -41,69 +41,69 @@ const LeaderboardCarouselComponent = () => {
 
   const topPlayers = leaderboard.slice(0, 100);
 
-  // Measure contentWidth (half of duplicated list)
+  // Frame rate-independent marquee animation with precise wrapping
   useEffect(() => {
     const track = trackRef.current;
+
     if (!track || topPlayers.length === 0) return;
 
-    // Wait for DOM to render, then measure
-    const measureWidth = () => {
-      const fullWidth = track.scrollWidth;
-      const halfWidth = fullWidth / 2;
-      setContentWidth(halfWidth);
-    };
+    // Measure single cycle width from DOM
+    const fullWidth = track.scrollWidth;
+    const singleWidth = fullWidth / 2;
 
-    // Small delay to ensure layout is complete
-    setTimeout(measureWidth, 50);
-  }, [topPlayers]);
+    if (!singleWidth || !isFinite(singleWidth)) return;
+    cycleWidthRef.current = singleWidth;
 
-  // Smooth continuous animation
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track || topPlayers.length === 0 || contentWidth === 0) return;
-
-    // Reset position
-    offsetRef.current = 0;
+    // Reset animation state
+    positionRef.current = 0;
     lastTimestampRef.current = null;
 
     const animate = (timestamp: number) => {
-      if (!track) return;
+      const currentTrack = trackRef.current;
+      const currentWidth = cycleWidthRef.current;
 
-      // Initialize timestamp on first frame
-      if (lastTimestampRef.current === null) {
+      if (!currentTrack || !currentWidth) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      if (lastTimestampRef.current == null) {
         lastTimestampRef.current = timestamp;
         animationFrameRef.current = requestAnimationFrame(animate);
         return;
       }
 
-      // Calculate delta time in seconds
-      const delta = (timestamp - lastTimestampRef.current) / 1000;
+      const deltaSeconds = (timestamp - lastTimestampRef.current) / 1000;
       lastTimestampRef.current = timestamp;
 
-      // Move left (negative direction)
-      offsetRef.current -= SCROLL_SPEED_PX_PER_SEC * delta;
+      let nextPos = positionRef.current + MARQUEE_SPEED_PX_PER_SEC * deltaSeconds;
 
-      // Simple wrap when reaching contentWidth
-      if (Math.abs(offsetRef.current) >= contentWidth) {
-        offsetRef.current += contentWidth;
+      if (nextPos >= currentWidth) {
+        nextPos -= currentWidth;
+        if (nextPos < 0 || nextPos > currentWidth) {
+          nextPos = 0;
+        }
       }
 
-      // Apply transform with subpixel precision
-      track.style.transform = `translateX(${offsetRef.current}px)`;
+      positionRef.current = nextPos;
 
-      // Continue animation
+      const snapped = Math.round(nextPos);
+      currentTrack.style.transform = `translate3d(-${snapped}px, 0, 0)`;
+
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    // Start animation
     animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (animationFrameRef.current) {
+      if (animationFrameRef.current != null) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      animationFrameRef.current = null;
+      lastTimestampRef.current = null;
+      positionRef.current = 0;
     };
-  }, [topPlayers.length, contentWidth]);
+  }, [topPlayers.length]);
 
   // Memoized color functions to prevent recalculation
   const getHexagonColor = useCallback((index: number) => {
