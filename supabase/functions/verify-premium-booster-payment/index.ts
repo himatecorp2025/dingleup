@@ -45,12 +45,29 @@ serve(async (req) => {
       throw new Error("Session ID required");
     }
 
+    // SECURITY: Validate session ID format
+    if (!/^cs_/.test(sessionId)) {
+      return new Response(
+        JSON.stringify({ success: false, error: "INVALID_SESSION_FORMAT" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
+    }
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
 
     // Retrieve and verify Stripe session
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    // SECURITY: Check session expiry (24 hours)
+    const sessionAge = Date.now() - (session.created * 1000);
+    if (sessionAge > 24 * 60 * 60 * 1000) {
+      return new Response(
+        JSON.stringify({ success: false, error: "SESSION_EXPIRED" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
+    }
 
     if (session.payment_status !== "paid") {
       return new Response(

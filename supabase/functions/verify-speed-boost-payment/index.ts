@@ -64,6 +64,15 @@ serve(async (req) => {
       });
     }
 
+    // SECURITY: Validate session ID format
+    if (!/^cs_/.test(sessionId)) {
+      console.error('[verify-speed-boost-payment] Invalid session ID format');
+      return new Response(JSON.stringify({ error: "Invalid session ID format" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
     console.log('[verify-speed-boost-payment] Session ID:', sessionId, 'User ID:', user.id);
 
     // Initialize Stripe
@@ -74,6 +83,19 @@ serve(async (req) => {
     // Retrieve session from Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     console.log('[verify-speed-boost-payment] Stripe session status:', session.payment_status);
+
+    // SECURITY: Check session expiry (24 hours)
+    const sessionAge = Date.now() - (session.created * 1000);
+    if (sessionAge > 24 * 60 * 60 * 1000) {
+      console.warn('[verify-speed-boost-payment] Session expired');
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Session expired' 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
 
     if (session.payment_status !== 'paid') {
       console.warn('[verify-speed-boost-payment] Payment not completed');
