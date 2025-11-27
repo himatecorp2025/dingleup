@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useEffect, useState, useRef } from 'react';
 import { useI18n } from '@/i18n';
+import { Gift } from 'lucide-react';
 
 const BottomNav = () => {
   const [isDesktop, setIsDesktop] = useState(false);
@@ -98,6 +99,11 @@ const BottomNav = () => {
       ),
       label: t('nav.share'), 
       path: '/invitation' 
+    },
+    { 
+      icon: () => <Gift className="w-5 h-5 text-yellow-500" />,
+      label: t('nav.gifts'), 
+      path: '/gifts' 
     },
     { 
       icon: () => (
