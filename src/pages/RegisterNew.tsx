@@ -66,7 +66,7 @@ const createRegisterSchema = (t: (key: string) => string) => z.object({
 const RegisterNew = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t, setLang } = useI18n();
+  const { t, setLang, isLoading: i18nLoading } = useI18n();
   
   const registerSchema = createRegisterSchema(t);
   type RegisterForm = z.infer<typeof registerSchema>;
@@ -80,6 +80,7 @@ const RegisterNew = () => {
   const [isStandalone, setIsStandalone] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [showPinConfirm, setShowPinConfirm] = useState(false);
+  const [langDetected, setLangDetected] = useState(false);
 
   useEffect(() => {
     const checkStandalone = () => {
@@ -103,8 +104,10 @@ const RegisterNew = () => {
         
         // Set language without updating database (user not logged in yet)
         await setLang(detectedLang, true);
+        setLangDetected(true);
       } catch (error) {
         console.error('[AUTH LANG] Error detecting language:', error);
+        setLangDetected(true);
       }
     };
     
@@ -188,6 +191,18 @@ const RegisterNew = () => {
       setIsLoading(false);
     }
   };
+
+  // Show loading until language is detected and translations loaded
+  if (!langDetected || i18nLoading) {
+    return (
+      <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <img src={loadingLogo} alt="DingleUP!" className="w-20 h-20 animate-pulse" />
+          <p className="text-white/70 text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
