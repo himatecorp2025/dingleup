@@ -189,7 +189,6 @@ export default defineConfig(({ mode }) => ({
         // PERFORMANCE OPTIMIZATION: Pre-cache critical assets for instant load
         additionalManifestEntries: [
           { url: '/dingleup-logo.png', revision: null },
-          { url: '/src/assets/introvideo.mp4', revision: null }, // Intro video pre-cached
           { url: '/src/assets/loading-video.mp4', revision: null }, // Loading video pre-cached
           { url: '/src/assets/DingleUP.mp3', revision: null },
           { url: '/src/assets/backmusic.mp3', revision: null },
@@ -197,10 +196,10 @@ export default defineConfig(({ mode }) => ({
           { url: '/src/assets/hero-bg.jpg', revision: null }
         ],
         runtimeCaching: [
-          // CRITICAL OPTIMIZATION: Intro & Loading Videos - CacheFirst for instant playback
-          // After 1st load, videos play instantly from cache (50-70% faster)
+          // CRITICAL OPTIMIZATION: Loading Video - CacheFirst for instant playback
+          // After 1st load, video plays instantly from cache (50-70% faster)
           {
-            urlPattern: ({ url }) => url.pathname.includes('introvideo.mp4') || url.pathname.includes('loading-video.mp4'),
+            urlPattern: ({ url }) => url.pathname.includes('loading-video.mp4'),
             handler: 'CacheFirst',
             options: {
               cacheName: 'critical-videos',
