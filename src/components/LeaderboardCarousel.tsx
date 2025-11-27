@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, memo } from 'react';
+import { useEffect, useState, useRef, useCallback, memo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Crown } from 'lucide-react';
 import { DailyRankingsCountdown } from './DailyRankingsCountdown';
@@ -14,11 +14,20 @@ interface LeaderboardEntry {
   avatar_url: string | null;
 }
 
+// Scroll speed in pixels per second (frame rate-independent)
+const SCROLL_SPEED_PX_PER_SEC = 35;
+
 const LeaderboardCarouselComponent = () => {
   const { t } = useI18n();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile } = useProfileQuery(userId);
   const { leaderboard, loading } = useLeaderboardQuery(profile?.country_code);
+  
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const lastTimestampRef = useRef<number | null>(null);
+  const contentWidthRef = useRef<number>(0);
 
   // Get user session
   useEffect(() => {
@@ -30,6 +39,87 @@ const LeaderboardCarouselComponent = () => {
   }, []);
 
   const topPlayers = leaderboard.slice(0, 100);
+
+  // Calculate and update contentWidth (half of duplicated list)
+  const updateContentWidth = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    
+    // scrollWidth is the total width of duplicated list, contentWidth is half
+    contentWidthRef.current = track.scrollWidth / 2;
+  }, []);
+
+  // Frame rate-independent scroll animation
+  useEffect(() => {
+    const container = containerRef.current;
+    const track = trackRef.current;
+    
+    if (!container || !track || topPlayers.length === 0) return;
+
+    // Initialize contentWidth
+    updateContentWidth();
+    
+    // Reset scroll position to start
+    container.scrollLeft = 0;
+    lastTimestampRef.current = null;
+
+    const animate = (timestamp: number) => {
+      if (!container || !track || topPlayers.length === 0) return;
+
+      // Initialize timestamp on first frame
+      if (lastTimestampRef.current === null) {
+        lastTimestampRef.current = timestamp;
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      // Calculate delta time in seconds
+      const deltaMs = timestamp - lastTimestampRef.current;
+      const deltaPx = (SCROLL_SPEED_PX_PER_SEC * deltaMs) / 1000;
+
+      // Update scroll position
+      container.scrollLeft += deltaPx;
+
+      // Loop back when reaching contentWidth (half of duplicated list)
+      const contentWidth = contentWidthRef.current;
+      if (contentWidth > 0 && container.scrollLeft >= contentWidth) {
+        container.scrollLeft -= contentWidth;
+      }
+
+      // Update timestamp for next frame
+      lastTimestampRef.current = timestamp;
+
+      // Request next frame
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    // Start animation loop
+    animationFrameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [topPlayers.length, updateContentWidth]);
+
+  // Handle window resize and recalculate contentWidth
+  useEffect(() => {
+    if (topPlayers.length === 0) return;
+
+    const handleResize = () => {
+      updateContentWidth();
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // Recalculate on data change
+    updateContentWidth();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [topPlayers, updateContentWidth]);
 
   // Memoized color functions to prevent recalculation
   const getHexagonColor = useCallback((index: number) => {
@@ -53,13 +143,17 @@ const LeaderboardCarouselComponent = () => {
         <DailyRankingsCountdown compact={false} userTimezone={profile?.user_timezone || 'Europe/Budapest'} />
       </div>
       
-      <div className="overflow-hidden whitespace-nowrap h-16 sm:h-20 md:h-24 relative">
+      <div 
+        ref={containerRef}
+        className="overflow-x-hidden whitespace-nowrap h-16 sm:h-20 md:h-24 relative"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
         {loading || topPlayers.length === 0 ? (
           <LeaderboardSkeleton />
         ) : (
-          <div className="inline-flex gap-2 sm:gap-3 px-2 animate-leaderboard-marquee will-change-transform">
-            {/* 4x duplikálás a zökkenőmentes végtelen scroll érdekében */}
-            {[...topPlayers, ...topPlayers, ...topPlayers, ...topPlayers].map((player, index) => {
+          <div ref={trackRef} className="inline-flex gap-2 sm:gap-3 px-2 will-change-transform">
+            {/* Dupla rendering: eredeti lista + másolat zökkenőmentes loophoz */}
+            {[...topPlayers, ...topPlayers].map((player, index) => {
               const rank = (index % topPlayers.length) + 1;
               const showCrown = (index % topPlayers.length) < 3;
               const rankIndex = index % topPlayers.length;
