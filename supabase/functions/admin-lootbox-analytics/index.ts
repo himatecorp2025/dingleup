@@ -9,6 +9,8 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization');
+    console.log('[Admin Lootbox Analytics] Auth header present:', !!authHeader);
+    
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Missing auth header' }), {
         status: 401,
@@ -24,22 +26,36 @@ serve(async (req) => {
 
     // Verify JWT and get user
     const jwt = authHeader.replace('Bearer ', '');
+    console.log('[Admin Lootbox Analytics] Verifying JWT...');
+    
     const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(jwt);
+    console.log('[Admin Lootbox Analytics] User verification result:', { 
+      hasUser: !!user, 
+      userId: user?.id,
+      error: userError?.message 
+    });
     
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      console.error('[Admin Lootbox Analytics] Auth failed:', userError);
+      return new Response(JSON.stringify({ error: 'Unauthorized', details: userError?.message }), {
         status: 401,
         headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       });
     }
 
     // Check admin role
-    const { data: roleCheck } = await supabaseAdmin
+    console.log('[Admin Lootbox Analytics] Checking admin role for user:', user.id);
+    const { data: roleCheck, error: roleError } = await supabaseAdmin
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
       .eq('role', 'admin')
       .single();
+
+    console.log('[Admin Lootbox Analytics] Role check result:', { 
+      hasRole: !!roleCheck,
+      error: roleError?.message 
+    });
 
     if (!roleCheck) {
       return new Response(JSON.stringify({ error: 'Forbidden - Admin access required' }), {
@@ -47,6 +63,8 @@ serve(async (req) => {
         headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       });
     }
+    
+    console.log('[Admin Lootbox Analytics] Admin verified, fetching analytics...');
 
     // Fetch comprehensive lootbox analytics
     const [
