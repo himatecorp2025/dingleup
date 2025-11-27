@@ -208,36 +208,28 @@ serve(async (req) => {
     if (goldReward > 0 || livesReward > 0) {
       const idempotencyKey = `speed-boost-payment:${sessionId}:wallet`;
       
+      // TRANSACTIONAL: Use credit_wallet() RPC function for atomic operation
       await withRetry(async () => {
-        const { error: walletError } = await supabaseAdmin
-          .from('wallet_ledger')
-          .insert({
-            user_id: user.id,
-            delta_coins: goldReward,
-            delta_lives: livesReward,
-            source: 'speed_boost_purchase',
-            idempotency_key: idempotencyKey,
-            metadata: {
-              session_id: sessionId,
-              speed_token_count: speedTokenCount,
-              speed_duration_min: speedDurationMin
-            }
-          });
+        const { data: creditResult, error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
+          p_user_id: user.id,
+          p_delta_coins: goldReward,
+          p_delta_lives: livesReward,
+          p_source: 'speed_boost_purchase',
+          p_idempotency_key: idempotencyKey,
+          p_metadata: {
+            session_id: sessionId,
+            speed_token_count: speedTokenCount,
+            speed_duration_min: speedDurationMin
+          }
+        });
 
-        if (walletError && !walletError.message?.includes('duplicate')) {
-          throw walletError;
+        if (creditError) {
+          throw creditError;
         }
-      });
 
-      // Update profile balances
-      await withRetry(async () => {
-        await supabaseAdmin
-          .from('profiles')
-          .update({
-            coins: supabaseAdmin.rpc('increment', { amount: goldReward }),
-            lives: supabaseAdmin.rpc('increment', { amount: livesReward })
-          })
-          .eq('id', user.id);
+        if (!creditResult?.success) {
+          throw new Error(creditResult?.error || 'Failed to credit wallet');
+        }
       });
     }
 
@@ -269,8 +261,6 @@ serve(async (req) => {
         throw tokenError;
       }
     });
-
-    console.log('[verify-speed-boost-payment] Successfully credited', speedTokenCount, 'speed tokens to user:', user.id);
 
     return new Response(JSON.stringify({ 
       success: true,

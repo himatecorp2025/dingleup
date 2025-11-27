@@ -112,42 +112,32 @@ serve(async (req) => {
     const rewardGold = boosterType.reward_gold || 0;
     const rewardLives = boosterType.reward_lives || 0;
 
-    // Get current balance
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("coins, lives")
-      .eq("id", user.id)
-      .single();
-
-    const currentGold = profile?.coins || 0;
-    const currentLives = profile?.lives || 0;
-
-    // Grant rewards: gold + lives
-    const newGold = currentGold + rewardGold;
-    const newLives = currentLives + rewardLives;
-
-    await supabaseAdmin
-      .from("profiles")
-      .update({
-        coins: newGold,
-        lives: newLives,
-        updated_at: new Date().toISOString()
-      })
-      .eq("id", user.id);
-
-    // Log to wallet_ledger
-    await supabaseAdmin.from("wallet_ledger").insert({
-      user_id: user.id,
-      delta_coins: rewardGold,
-      delta_lives: rewardLives,
-      source: "booster_purchase",
-      idempotency_key: `premium_booster:${sessionId}`,
-      metadata: {
+    // TRANSACTIONAL: Use credit_wallet() RPC function for atomic operation
+    const idempotencyKey = `premium_booster:${sessionId}`;
+    
+    const { data: creditResult, error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
+      p_user_id: user.id,
+      p_delta_coins: rewardGold,
+      p_delta_lives: rewardLives,
+      p_source: 'booster_purchase',
+      p_idempotency_key: idempotencyKey,
+      p_metadata: {
         booster_code: "PREMIUM",
         stripe_session_id: sessionId,
         timestamp: new Date().toISOString()
       }
     });
+
+    if (creditError) {
+      throw new Error(`Failed to credit wallet: ${creditError.message}`);
+    }
+
+    if (!creditResult?.success) {
+      throw new Error(creditResult?.error || 'Wallet credit failed');
+    }
+
+    const newGold = creditResult.new_coins;
+    const newLives = creditResult.new_lives;
 
     // Log purchase
     await supabaseAdmin.from("booster_purchases").insert({

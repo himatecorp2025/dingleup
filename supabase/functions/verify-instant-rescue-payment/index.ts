@@ -171,49 +171,30 @@ serve(async (req) => {
       throw purchaseError;
     }
 
-    // Credit gold and lives via wallet_ledger (idempotent)
+    // TRANSACTIONAL: Use credit_wallet() RPC function for atomic operation
     const idempotencyKey = `instant-rescue-payment:${sessionId}:wallet`;
     
     await withRetry(async () => {
-      const { error: walletError } = await supabaseAdmin
-        .from('wallet_ledger')
-        .insert({
-          user_id: user.id,
-          delta_coins: goldReward,
-          delta_lives: livesReward,
-          source: 'instant_rescue_purchase',
-          idempotency_key: idempotencyKey,
-          metadata: {
-            session_id: sessionId,
-            booster_type_id: boosterTypeId
-          }
-        });
+      const { data: creditResult, error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
+        p_user_id: user.id,
+        p_delta_coins: goldReward,
+        p_delta_lives: livesReward,
+        p_source: 'instant_rescue_purchase',
+        p_idempotency_key: idempotencyKey,
+        p_metadata: {
+          session_id: sessionId,
+          booster_type_id: boosterTypeId
+        }
+      });
 
-      if (walletError && !walletError.message?.includes('duplicate')) {
-        throw walletError;
+      if (creditError) {
+        throw creditError;
+      }
+
+      if (!creditResult?.success) {
+        throw new Error(creditResult?.error || 'Failed to credit wallet');
       }
     });
-
-    // Update profile balances
-    await withRetry(async () => {
-      const { data: profile } = await supabaseAdmin
-        .from('profiles')
-        .select('coins, lives')
-        .eq('id', user.id)
-        .single();
-
-      if (profile) {
-        await supabaseAdmin
-          .from('profiles')
-          .update({
-            coins: (profile.coins || 0) + goldReward,
-            lives: (profile.lives || 0) + livesReward
-          })
-          .eq('id', user.id);
-      }
-    });
-
-    console.log('[verify-instant-rescue-payment] Successfully credited rewards to user:', user.id);
 
     return new Response(JSON.stringify({ 
       success: true,
