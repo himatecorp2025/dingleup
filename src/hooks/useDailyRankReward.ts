@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useI18n } from '@/i18n';
 
 export interface DailyRankReward {
   rank: number;
@@ -17,6 +18,7 @@ export interface DailyRankReward {
  * Shows popup when user has pending rank reward from yesterday
  */
 export const useDailyRankReward = (userId: string | undefined) => {
+  const { t } = useI18n();
   const [showRewardPopup, setShowRewardPopup] = useState(false);
   const [pendingReward, setPendingReward] = useState<DailyRankReward | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,21 +46,7 @@ export const useDailyRankReward = (userId: string | undefined) => {
         return;
       }
 
-      // Check if profile exists before calling edge function
-      const { data: profileCheck } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', userId)
-        .single();
-
-      if (!profileCheck) {
-        console.log('[RANK-REWARD] Profile not found, skipping');
-        setPendingReward(null);
-        setShowRewardPopup(false);
-        setIsLoading(false);
-        return;
-      }
-
+      // Edge function already checks profile existence, no need for redundant check here
       const { data, error } = await supabase.functions.invoke('get-pending-rank-reward', {
         body: {}
       });
@@ -102,8 +90,8 @@ export const useDailyRankReward = (userId: string | undefined) => {
       if (error || !data?.success) {
         console.error('[RANK-REWARD] Error claiming reward:', error);
         toast({
-          title: 'Hiba',
-          description: 'Nem sikerült felvenni a jutalmat. Próbáld újra később.',
+          title: t('errors.error_title'),
+          description: t('dailyReward.claim_error'),
           variant: 'destructive'
         });
         return;
@@ -117,14 +105,14 @@ export const useDailyRankReward = (userId: string | undefined) => {
 
       // Show success toast
       toast({
-        title: '🎉 Jutalom felvéve!',
-        description: `+${data.goldCredited} arany, +${data.livesCredited} élet`,
+        title: t('dailyReward.claimed_title'),
+        description: `+${data.goldCredited} ${t('dailyReward.gold')}, +${data.livesCredited} ${t('dailyReward.lives')}`,
       });
     } catch (error) {
       console.error('[RANK-REWARD] Exception claiming reward:', error);
       toast({
-        title: 'Hiba',
-        description: 'Hiba történt a jutalom felvétele során.',
+        title: t('errors.error_title'),
+        description: t('dailyReward.claim_error'),
         variant: 'destructive'
       });
     } finally {

@@ -83,10 +83,9 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       const { data, error } = await supabase.rpc('claim_daily_gift');
       
       if (error) {
-        const errorMsg = error.message || t('daily.claim_error');
         toast({
           title: t('errors.error_title'),
-          description: errorMsg,
+          description: t('daily.claim_error'),
           variant: 'destructive'
         });
         return false;
@@ -136,10 +135,9 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         return false;
       }
     } catch (error: any) {
-      const errorMsg = error?.message || t('daily.claim_error');
       toast({
         title: t('errors.error_title'),
-        description: errorMsg,
+        description: t('daily.claim_error'),
         variant: 'destructive'
       });
       return false;

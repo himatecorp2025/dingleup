@@ -5,7 +5,6 @@ import { toast } from '@/hooks/use-toast';
 import { useI18n } from '@/i18n';
 
 export const useSessionMonitor = () => {
-  const [isValidating, setIsValidating] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useI18n();
@@ -22,9 +21,6 @@ export const useSessionMonitor = () => {
 
     // Check session validity every 5 minutes for protected pages
     const validateSession = async () => {
-      if (isValidating) return;
-      
-      setIsValidating(true);
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
         
@@ -42,17 +38,15 @@ export const useSessionMonitor = () => {
         }
       } catch (err) {
         console.error('[SessionMonitor] Error validating session:', err);
-      } finally {
-        setIsValidating(false);
       }
     };
 
     // Initial validation
     validateSession();
 
-    // Periodic validation every 2 minutes
-    const interval = setInterval(validateSession, 2 * 60 * 1000);
+    // Periodic validation every 5 minutes (less aggressive)
+    const interval = setInterval(validateSession, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [navigate, location.pathname, isValidating]);
+  }, [navigate, location.pathname, t]);
 };
