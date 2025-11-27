@@ -380,7 +380,14 @@ useEffect(() => {
 
 ### P2 (Fontos):
 9. **Admin manual credit UI + audit** – KÖVETKEZŐ
-10. **Frontend debounce** (payment button: 500ms delay) – KÖVETKEZŐ
+10. ✅ **Frontend debounce** (payment button: 500ms delay) – IMPLEMENTÁLVA
+
+**Debounce Implementation:**
+- Létrehozva `useDebounce` hook (500ms delay)
+- Implementálva minden payment handler-ben:
+  - Gifts.tsx: lootbox purchase (handlePurchase)
+  - InGameRescuePopup.tsx: gold saver + instant rescue purchase
+- Dupla kattintás esetén a második kattintás ignorálva → prevent 2 Stripe session creation
 
 ---
 

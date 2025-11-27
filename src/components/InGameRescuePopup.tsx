@@ -13,6 +13,7 @@ import { GoldRewardCoin3D } from '@/components/icons/GoldRewardCoin3D';
 import { LoadingSpinner3D } from '@/components/icons/LoadingSpinner3D';
 import { SlotMachine3D } from '@/components/icons/SlotMachine3D';
 import { trackConversionEvent } from '@/lib/analytics';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface InGameRescuePopupProps {
   isOpen: boolean;
@@ -66,7 +67,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     }
   }, [isOpen]);
 
-  const handleGoldSaverPurchase = async () => {
+  const handleGoldSaverPurchaseRaw = async () => {
     if (currentGold < 500) {
       toast.error(t('rescue.insufficient_gold'));
       return;
@@ -124,7 +125,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     }
   };
 
-  const handleInstantRescuePurchase = async () => {
+  const handleInstantRescuePurchaseRaw = async () => {
     setLoadingInstantRescue(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -176,6 +177,10 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
       setLoadingInstantRescue(false);
     }
   };
+
+  // Debounced versions to prevent double-click
+  const [handleGoldSaverPurchase, isGoldSaverDebouncing] = useDebounce(handleGoldSaverPurchaseRaw, 500);
+  const [handleInstantRescuePurchase, isInstantRescueDebouncing] = useDebounce(handleInstantRescuePurchaseRaw, 500);
 
   const hasEnoughGold = currentGold >= 500;
 
