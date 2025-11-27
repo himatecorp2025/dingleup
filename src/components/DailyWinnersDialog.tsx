@@ -670,16 +670,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   style={{ width: '100%' }}
                                 >
                                   <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
-                                    {/* Profile Picture with 3D Royal Blue Border */}
+                                    {/* Profile Picture with 3D Royal Blue Border - Same structure as TOP 3 */}
                                     <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
-                                      <div 
-                                        className="absolute inset-0 rounded-full" 
-                                        style={{
-                                          background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
-                                          boxShadow: '0 6px 12px rgba(65, 105, 225, 0.5), inset 0 2px 4px rgba(135, 206, 250, 0.8), inset 0 -2px 4px rgba(0, 0, 139, 0.3)'
-                                        }} 
-                                      />
-                                      <div className="absolute inset-[4px] rounded-full overflow-hidden">
+                                      <div className="absolute inset-0 rounded-full" style={{
+                                        background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(220, 80%, 70%) 25%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 75%, hsl(225, 73%, 70%) 100%)',
+                                        boxShadow: '0 8px 16px rgba(65, 105, 225, 0.6), inset 0 2px 4px rgba(135, 206, 250, 0.8), inset 0 -2px 4px rgba(0, 0, 139, 0.5)'
+                                      }} />
+                                      <div className="absolute inset-[6px] rounded-full overflow-hidden">
                                         {player.avatar_url ? (
                                           <img 
                                             src={player.avatar_url} 
@@ -700,40 +697,28 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                       </div>
                                     </div>
 
-                                    {/* Rank Badge - Bottom Center - Royal Blue */}
-                                    <div className="absolute" style={{ left: '35%', bottom: '5%', width: '30%' }}>
+                                    {/* Rank Badge - Bottom Center - Same 3-layer structure as TOP 3 */}
+                                    <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
                                       <div className="aspect-square rounded-full relative">
-                                        <div 
-                                          className="absolute inset-0 rounded-full" 
-                                          style={{
-                                            background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
-                                            boxShadow: '0 4px 8px rgba(65, 105, 225, 0.5), 0 2px 4px rgba(0, 0, 139, 0.2)'
-                                          }} 
-                                        />
-                                        <div 
-                                          className="absolute inset-[2px] rounded-full" 
-                                          style={{
-                                            background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
-                                            boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.7), inset 0 -2px 6px rgba(0, 0, 139, 0.4)'
-                                          }} 
-                                        />
-                                        <div 
-                                          className="absolute inset-[4px] rounded-full flex items-center justify-center" 
-                                          style={{
-                                            background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 57%) 40%, hsl(225, 73%, 47%) 100%)',
-                                            boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.8), inset 0 -1px 3px rgba(0, 0, 139, 0.2)'
-                                          }}
-                                        >
-                                          <span 
-                                            className="font-black relative" 
-                                            style={{ 
-                                              fontSize: 'clamp(0.6rem, 3vw, 0.75rem)',
-                                              background: 'linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%)',
-                                              WebkitBackgroundClip: 'text',
-                                              WebkitTextFillColor: 'transparent',
-                                              filter: 'drop-shadow(0 1px 1px rgba(0, 0, 139, 0.5))'
-                                            }}
-                                          >
+                                        <div className="absolute inset-0 rounded-full" style={{
+                                          background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 85%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: '0 6px 12px rgba(65, 105, 225, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3)'
+                                        }} />
+                                        <div className="absolute inset-[3px] rounded-full" style={{
+                                          background: 'linear-gradient(135deg, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 50%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.9), inset 0 -2px 6px rgba(0, 0, 139, 0.5)'
+                                        }} />
+                                        <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                          background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 85%) 0%, hsl(225, 73%, 70%) 40%, hsl(225, 73%, 57%) 100%)',
+                                          boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.9), inset 0 -1px 3px rgba(0, 0, 139, 0.3)'
+                                        }}>
+                                          <span className="font-black relative" style={{ 
+                                            fontSize: '4vw',
+                                            background: 'linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            filter: 'drop-shadow(0 1px 2px rgba(135, 206, 250, 0.4))'
+                                          }}>
                                             {player.rank}
                                           </span>
                                         </div>
@@ -770,16 +755,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                   style={{ width: 'calc(25% - 6px)' }}
                                 >
                                   <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
-                                    {/* Profile Picture with 3D Royal Blue Border */}
+                                    {/* Profile Picture with 3D Royal Blue Border - Same structure as TOP 3 */}
                                     <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
-                                      <div 
-                                        className="absolute inset-0 rounded-full" 
-                                        style={{
-                                          background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
-                                          boxShadow: '0 6px 12px rgba(65, 105, 225, 0.5), inset 0 2px 4px rgba(135, 206, 250, 0.8), inset 0 -2px 4px rgba(0, 0, 139, 0.3)'
-                                        }} 
-                                      />
-                                      <div className="absolute inset-[4px] rounded-full overflow-hidden">
+                                      <div className="absolute inset-0 rounded-full" style={{
+                                        background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(220, 80%, 70%) 25%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 75%, hsl(225, 73%, 70%) 100%)',
+                                        boxShadow: '0 8px 16px rgba(65, 105, 225, 0.6), inset 0 2px 4px rgba(135, 206, 250, 0.8), inset 0 -2px 4px rgba(0, 0, 139, 0.5)'
+                                      }} />
+                                      <div className="absolute inset-[6px] rounded-full overflow-hidden">
                                         {player.avatar_url ? (
                                           <img 
                                             src={player.avatar_url} 
@@ -800,40 +782,28 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                       </div>
                                     </div>
 
-                                    {/* Rank Badge - Bottom Center - Royal Blue */}
-                                    <div className="absolute" style={{ left: '35%', bottom: '5%', width: '30%' }}>
+                                    {/* Rank Badge - Bottom Center - Same 3-layer structure as TOP 3 */}
+                                    <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
                                       <div className="aspect-square rounded-full relative">
-                                        <div 
-                                          className="absolute inset-0 rounded-full" 
-                                          style={{
-                                            background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
-                                            boxShadow: '0 4px 8px rgba(65, 105, 225, 0.5), 0 2px 4px rgba(0, 0, 139, 0.2)'
-                                          }} 
-                                        />
-                                        <div 
-                                          className="absolute inset-[2px] rounded-full" 
-                                          style={{
-                                            background: 'linear-gradient(135deg, hsl(225, 73%, 70%) 0%, hsl(225, 73%, 57%) 50%, hsl(225, 73%, 47%) 100%)',
-                                            boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.7), inset 0 -2px 6px rgba(0, 0, 139, 0.4)'
-                                          }} 
-                                        />
-                                        <div 
-                                          className="absolute inset-[4px] rounded-full flex items-center justify-center" 
-                                          style={{
-                                            background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 57%) 40%, hsl(225, 73%, 47%) 100%)',
-                                            boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.8), inset 0 -1px 3px rgba(0, 0, 139, 0.2)'
-                                          }}
-                                        >
-                                          <span 
-                                            className="font-black relative" 
-                                            style={{ 
-                                              fontSize: 'clamp(0.6rem, 3vw, 0.75rem)',
-                                              background: 'linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%)',
-                                              WebkitBackgroundClip: 'text',
-                                              WebkitTextFillColor: 'transparent',
-                                              filter: 'drop-shadow(0 1px 1px rgba(0, 0, 139, 0.5))'
-                                            }}
-                                          >
+                                        <div className="absolute inset-0 rounded-full" style={{
+                                          background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 85%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: '0 6px 12px rgba(65, 105, 225, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3)'
+                                        }} />
+                                        <div className="absolute inset-[3px] rounded-full" style={{
+                                          background: 'linear-gradient(135deg, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 50%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.9), inset 0 -2px 6px rgba(0, 0, 139, 0.5)'
+                                        }} />
+                                        <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                          background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 85%) 0%, hsl(225, 73%, 70%) 40%, hsl(225, 73%, 57%) 100%)',
+                                          boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.9), inset 0 -1px 3px rgba(0, 0, 139, 0.3)'
+                                        }}>
+                                          <span className="font-black relative" style={{ 
+                                            fontSize: '4vw',
+                                            background: 'linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            filter: 'drop-shadow(0 1px 2px rgba(135, 206, 250, 0.4))'
+                                          }}>
                                             {player.rank}
                                           </span>
                                         </div>
@@ -864,7 +834,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     )}
                   </div>
 
-                  <div className="absolute bottom-[3%] left-0 right-0 flex justify-center w-full px-4">
+                  <div className="absolute bottom-[8%] left-0 right-0 flex justify-center w-full px-4">
                     <HexAcceptButton 
                       onClick={onClose}
                       className="w-full max-w-[280px]"
