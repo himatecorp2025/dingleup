@@ -89,7 +89,7 @@ export default function AdminBoosterPurchases() {
         user_id: p.userId,
         booster_code: p.boosterCode,
         booster_name: p.boosterName,
-        username: p.userDisplayName || 'Ismeretlen felhasználó',
+        username: p.userDisplayName || t('admin.unknown_user'),
         purchase_source: p.purchaseSource,
         gold_spent: p.goldSpent || 0,
         usd_cents_spent: p.usdCentsSpent || 0,
@@ -144,9 +144,9 @@ export default function AdminBoosterPurchases() {
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-foreground">Booster Vásárlások</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('admin.booster_purchases.title')}</h1>
           <span className="text-sm text-muted-foreground">
-            {filteredPurchases.length} / {purchases.length} vásárlás
+            {filteredPurchases.length} / {purchases.length} {t('admin.booster_purchases.purchases_count')}
           </span>
         </div>
 
@@ -154,44 +154,44 @@ export default function AdminBoosterPurchases() {
         <div className="grid gap-6 md:grid-cols-3">
           <Card className="p-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Free Booster</p>
+              <p className="text-sm text-muted-foreground">{t('admin.booster_purchases.free_booster')}</p>
               <p className="text-3xl font-bold text-yellow-400">{summary.total_free}</p>
-              <p className="text-xs text-muted-foreground">aranyért vásárolva</p>
+              <p className="text-xs text-muted-foreground">{t('admin.booster_purchases.purchased_with_gold')}</p>
             </div>
           </Card>
           <Card className="p-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Premium Booster</p>
+              <p className="text-sm text-muted-foreground">{t('admin.booster_purchases.premium_booster')}</p>
               <p className="text-3xl font-bold text-green-400">{summary.total_premium}</p>
-              <p className="text-xs text-muted-foreground">IAP vásárlás</p>
+              <p className="text-xs text-muted-foreground">{t('admin.booster_purchases.iap_purchase')}</p>
             </div>
           </Card>
           <Card className="p-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Gold Saver Booster</p>
+              <p className="text-sm text-muted-foreground">{t('admin.booster_purchases.gold_saver_booster')}</p>
               <p className="text-3xl font-bold text-orange-400">{summary.total_gold_saver}</p>
-              <p className="text-xs text-muted-foreground">játék közben</p>
+              <p className="text-xs text-muted-foreground">{t('admin.booster_purchases.during_game')}</p>
             </div>
           </Card>
           <Card className="p-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Instant Rescue</p>
+              <p className="text-sm text-muted-foreground">{t('admin.booster_purchases.instant_rescue')}</p>
               <p className="text-3xl font-bold text-purple-400">{summary.total_instant_rescue}</p>
-              <p className="text-xs text-muted-foreground">mentés IAP-pal</p>
+              <p className="text-xs text-muted-foreground">{t('admin.booster_purchases.rescue_with_iap')}</p>
             </div>
           </Card>
           <Card className="p-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Arany kiadás</p>
+              <p className="text-sm text-muted-foreground">{t('admin.booster_purchases.gold_spent')}</p>
               <p className="text-3xl font-bold text-yellow-400">{summary.total_gold_spent.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">összesen</p>
+              <p className="text-xs text-muted-foreground">{t('admin.booster_purchases.total')}</p>
             </div>
           </Card>
           <Card className="p-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">USD bevétel</p>
+              <p className="text-sm text-muted-foreground">{t('admin.booster_purchases.usd_revenue')}</p>
               <p className="text-3xl font-bold text-green-400">${summary.total_usd_revenue.toFixed(2)}</p>
-              <p className="text-xs text-muted-foreground">IAP-ből</p>
+              <p className="text-xs text-muted-foreground">{t('admin.booster_purchases.from_iap')}</p>
             </div>
           </Card>
         </div>
@@ -200,30 +200,30 @@ export default function AdminBoosterPurchases() {
         <Card className="p-6">
           <div className="grid gap-4 md:grid-cols-3">
             <Input
-              placeholder="Keresés felhasználónév alapján..."
+              placeholder={t('admin.booster_purchases.search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <Select value={sourceFilter} onValueChange={setSourceFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Forrás szűrése" />
+                <SelectValue placeholder={t('admin.booster_purchases.filter_source')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Minden forrás</SelectItem>
-                <SelectItem value="GOLD">Arany</SelectItem>
-                <SelectItem value="IAP">IAP</SelectItem>
+                <SelectItem value="all">{t('admin.booster_purchases.all_sources')}</SelectItem>
+                <SelectItem value="GOLD">{t('admin.booster_purchases.gold')}</SelectItem>
+                <SelectItem value="IAP">{t('admin.booster_purchases.iap')}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={boosterFilter} onValueChange={setBoosterFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Booster szűrése" />
+                <SelectValue placeholder={t('admin.booster_purchases.filter_booster')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Minden booster</SelectItem>
-                <SelectItem value="FREE">Free Booster</SelectItem>
-                <SelectItem value="PREMIUM">Premium Booster</SelectItem>
-                <SelectItem value="GOLD_SAVER">Gold Saver</SelectItem>
-                <SelectItem value="INSTANT_RESCUE">Instant Rescue</SelectItem>
+                <SelectItem value="all">{t('admin.booster_purchases.all_boosters')}</SelectItem>
+                <SelectItem value="FREE">{t('admin.booster_purchases.free_booster')}</SelectItem>
+                <SelectItem value="PREMIUM">{t('admin.booster_purchases.premium_booster')}</SelectItem>
+                <SelectItem value="GOLD_SAVER">{t('admin.booster_purchases.gold_saver')}</SelectItem>
+                <SelectItem value="INSTANT_RESCUE">{t('admin.booster_purchases.instant_rescue')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -234,13 +234,13 @@ export default function AdminBoosterPurchases() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Felhasználó</TableHead>
-                <TableHead>Booster</TableHead>
-                <TableHead>Forrás</TableHead>
-                <TableHead>Context</TableHead>
-                <TableHead className="text-right">Arany</TableHead>
-                <TableHead className="text-right">USD</TableHead>
-                <TableHead>Dátum</TableHead>
+                <TableHead>{t('admin.booster_purchases.table.user')}</TableHead>
+                <TableHead>{t('admin.booster_purchases.table.booster')}</TableHead>
+                <TableHead>{t('admin.booster_purchases.table.source')}</TableHead>
+                <TableHead>{t('admin.booster_purchases.table.context')}</TableHead>
+                <TableHead className="text-right">{t('admin.booster_purchases.table.gold')}</TableHead>
+                <TableHead className="text-right">{t('admin.booster_purchases.table.usd')}</TableHead>
+                <TableHead>{t('admin.booster_purchases.table.date')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
