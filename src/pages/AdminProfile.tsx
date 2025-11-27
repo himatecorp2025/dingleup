@@ -104,7 +104,7 @@ const AdminProfile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || 'Felhasználónév frissítés sikertelen');
+        throw new Error(response.error.message || t('admin.profile.username_update_error'));
       }
 
       setUsername(newUsername);
@@ -120,7 +120,7 @@ const AdminProfile = () => {
 
   const validatePin = (pin: string): string | null => {
     if (!/^\d{6}$/.test(pin)) {
-      return 'A PIN-nek pontosan 6 számjegyből kell állnia';
+      return t('admin.profile.pin_validation_error');
     }
     return null;
   };
@@ -157,7 +157,7 @@ const AdminProfile = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || 'Hibás jelenlegi PIN');
+        throw new Error(response.error.message || t('admin.profile.pin_update_error'));
       }
 
       const responseData = response.data;
@@ -234,7 +234,7 @@ const AdminProfile = () => {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Betöltés...</p>
+            <p className="text-muted-foreground">{t('admin.profile.loading')}</p>
           </div>
         </div>
       </AdminLayout>
@@ -245,9 +245,9 @@ const AdminProfile = () => {
     <AdminLayout>
       <div className="space-y-6 pb-16">
         <div>
-          <h1 className="text-3xl font-bold">Profil Szerkesztése</h1>
+          <h1 className="text-3xl font-bold">{t('admin.profile.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Admin fiók beállításainak kezelése
+            {t('admin.profile.description')}
           </p>
         </div>
 
@@ -256,15 +256,15 @@ const AdminProfile = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5" />
-              Felhasználónév Módosítása
+              {t('admin.profile.username_section_title')}
             </CardTitle>
             <CardDescription>
-              7 naponta módosítható
+              {t('admin.profile.username_section_description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Jelenlegi felhasználónév</Label>
+              <Label>{t('admin.profile.current_username')}</Label>
               <div className="flex gap-2">
                 <Input
                   value={isEditingUsername ? newUsername : username}
@@ -274,12 +274,12 @@ const AdminProfile = () => {
                 />
                 {!isEditingUsername ? (
                   <Button onClick={handleUsernameEdit} variant="outline">
-                    Szerkesztés
+                    {t('admin.profile.edit_button')}
                   </Button>
                 ) : (
                   <>
                     <Button onClick={handleUsernameSave}>
-                      Mentés
+                      {t('admin.profile.save_button')}
                     </Button>
                     <Button 
                       onClick={() => {
@@ -288,7 +288,7 @@ const AdminProfile = () => {
                       }}
                       variant="ghost"
                     >
-                      Mégse
+                      {t('admin.profile.cancel_button')}
                     </Button>
                   </>
                 )}
@@ -302,21 +302,21 @@ const AdminProfile = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lock className="w-5 h-5" />
-              PIN Kód Módosítása
+              {t('admin.profile.pin_section_title')}
             </CardTitle>
             <CardDescription>
-              A bejelentkezési PIN kód megváltoztatása
+              {t('admin.profile.pin_section_description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Jelenlegi PIN kód</Label>
+              <Label>{t('admin.profile.current_pin')}</Label>
               <div className="relative">
                 <Input
                   type={showCurrentPin ? "text" : "password"}
                   value={currentPin}
                   onChange={(e) => setCurrentPin(e.target.value)}
-                  placeholder="••••••"
+                  placeholder={t('admin.profile.pin_placeholder')}
                   maxLength={6}
                   className="pr-10"
                 />
@@ -331,13 +331,13 @@ const AdminProfile = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Új PIN kód</Label>
+              <Label>{t('admin.profile.new_pin')}</Label>
               <div className="relative">
                 <Input
                   type={showNewPin ? "text" : "password"}
                   value={newPin}
                   onChange={(e) => setNewPin(e.target.value)}
-                  placeholder="••••••"
+                  placeholder={t('admin.profile.pin_placeholder')}
                   maxLength={6}
                   className="pr-10"
                 />
@@ -352,13 +352,13 @@ const AdminProfile = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Új PIN kód megerősítése</Label>
+              <Label>{t('admin.profile.confirm_pin')}</Label>
               <div className="relative">
                 <Input
                   type={showConfirmPin ? "text" : "password"}
                   value={confirmPin}
                   onChange={(e) => setConfirmPin(e.target.value)}
-                  placeholder="••••••"
+                  placeholder={t('admin.profile.pin_placeholder')}
                   maxLength={6}
                   className="pr-10"
                 />
@@ -373,7 +373,7 @@ const AdminProfile = () => {
             </div>
 
             <Button onClick={handlePinSave} className="w-full">
-              PIN Kód Mentése
+              {t('admin.profile.save_pin_button')}
             </Button>
           </CardContent>
         </Card>
@@ -383,19 +383,19 @@ const AdminProfile = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="w-5 h-5" />
-              Admin Jogosultság Adása
+              {t('admin.profile.grant_admin_section_title')}
             </CardTitle>
             <CardDescription>
-              Felhasználónak admin jogosultság megadása
+              {t('admin.profile.grant_admin_section_description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Felhasználónév</Label>
+              <Label>{t('admin.profile.username_label')}</Label>
               <Input
                 value={targetUsername}
                 onChange={(e) => setTargetUsername(e.target.value)}
-                placeholder="Felhasználónév"
+                placeholder={t('admin.profile.username_placeholder')}
               />
             </div>
 
@@ -407,10 +407,10 @@ const AdminProfile = () => {
               {isGranting ? (
                 <span className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Feldolgozás...
+                  {t('admin.profile.processing')}
                 </span>
               ) : (
-                'Admin Jogosultság Megadása'
+                t('admin.profile.grant_admin_button')
               )}
             </Button>
           </CardContent>
