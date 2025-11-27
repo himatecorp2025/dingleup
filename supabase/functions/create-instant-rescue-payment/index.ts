@@ -32,6 +32,15 @@ serve(async (req) => {
 
     console.log('[create-instant-rescue-payment] User:', user.id, user.email);
 
+    // Get game_session_id from request body
+    const { gameSessionId } = await req.json();
+    if (!gameSessionId) {
+      console.error('[create-instant-rescue-payment] Missing gameSessionId');
+      throw new Error('Game session ID required');
+    }
+
+    console.log('[create-instant-rescue-payment] Game session:', gameSessionId);
+
     // Get INSTANT_RESCUE booster details
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -52,6 +61,24 @@ serve(async (req) => {
 
     const priceUsdCents = boosterType.price_usd_cents || 299; // $2.99 default
     console.log('[create-instant-rescue-payment] Price:', priceUsdCents, 'cents');
+
+    // **DUPLICATE RESCUE CHECK** - prevent multiple rescue attempts for same session
+    const { data: existingSession, error: sessionError } = await supabaseAdmin
+      .from('game_sessions')
+      .select('pending_rescue, pending_rescue_session_id')
+      .eq('id', gameSessionId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (sessionError) {
+      console.error('[create-instant-rescue-payment] Game session not found:', sessionError);
+      throw new Error('Game session not found');
+    }
+
+    if (existingSession.pending_rescue && existingSession.pending_rescue_session_id) {
+      console.log('[create-instant-rescue-payment] Rescue already pending for session:', existingSession.pending_rescue_session_id);
+      throw new Error('Rescue payment already pending for this game session');
+    }
 
     // Initialize Stripe
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
@@ -89,6 +116,7 @@ serve(async (req) => {
       metadata: {
         product_type: 'instant_rescue', // WEBHOOK ROUTING
         user_id: user.id,
+        game_session_id: gameSessionId,
         booster_type_id: boosterType.id,
         booster_code: 'INSTANT_RESCUE',
         gold_reward: boosterType.reward_gold.toString(),
@@ -97,6 +125,15 @@ serve(async (req) => {
     });
 
     console.log('[create-instant-rescue-payment] Session created:', session.id);
+
+    // Mark game session as pending rescue
+    await supabaseAdmin
+      .from('game_sessions')
+      .update({
+        pending_rescue: true,
+        pending_rescue_session_id: session.id
+      })
+      .eq('id', gameSessionId);
 
     return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

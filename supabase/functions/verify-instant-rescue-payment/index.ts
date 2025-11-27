@@ -142,12 +142,14 @@ serve(async (req) => {
 
     // Extract metadata
     const boosterTypeId = session.metadata?.booster_type_id;
+    const gameSessionId = session.metadata?.game_session_id;
     const goldReward = parseInt(session.metadata?.gold_reward || '0');
     const livesReward = parseInt(session.metadata?.lives_reward || '0');
     const priceUsdCents = session.amount_total || 0;
 
     console.log('[verify-instant-rescue-payment] Rewards:', {
       boosterTypeId,
+      gameSessionId,
       goldReward,
       livesReward,
       priceUsdCents
@@ -196,7 +198,22 @@ serve(async (req) => {
       }
     });
 
-    return new Response(JSON.stringify({ 
+    // Clear rescue pending flag and mark rescue completed
+    if (gameSessionId) {
+      await supabaseAdmin
+        .from('game_sessions')
+        .update({
+          pending_rescue: false,
+          pending_rescue_session_id: null,
+          rescue_completed_at: new Date().toISOString()
+        })
+        .eq('id', gameSessionId)
+        .eq('user_id', user.id);
+
+      console.log('[verify-instant-rescue-payment] Rescue completed for game session:', gameSessionId);
+    }
+
+    return new Response(JSON.stringify({
       success: true,
       gold_granted: goldReward,
       lives_granted: livesReward,

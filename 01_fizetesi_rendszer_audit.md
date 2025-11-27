@@ -367,7 +367,7 @@ useEffect(() => {
 ### P1 (Sürgős):
 5. ✅ **Mobile WebView fallback** (deep link + polling-based verification) – IMPLEMENTÁLVA
 6. ✅ **Speed token collision check** (aktív token ellenőrzés activation előtt) – IMPLEMENTÁLVA (activate-speed-token + verify functionök)
-7. **Rescue popup state management** (game_sessions.pending_rescue flag)
+7. ✅ **Rescue popup state management** (game_sessions.pending_rescue flag + session_id tracking) – IMPLEMENTÁLVA
 8. **Lives overflow policy** (dokumentálás vagy cap enforcement)
 
 ### P2 (Fontos):
