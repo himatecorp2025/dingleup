@@ -109,28 +109,34 @@ export const LootboxDropOverlay = () => {
 
   return (
     <>
-      {/* Global Fixed Overlay */}
+      {/* Global Fixed Overlay - Centered */}
       <div
         className={`fixed z-50 cursor-pointer transition-all duration-1000 ${
           isAnimating 
-            ? 'top-[-100px] opacity-0' 
-            : 'top-4 right-4 opacity-100'
+            ? 'scale-0 opacity-0' 
+            : 'scale-100 opacity-100'
         }`}
         onClick={() => setShowDialog(true)}
         style={{
-          animation: isAnimating ? undefined : 'ease-out'
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          height: '70vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
       >
         {/* Lootbox Icon */}
         <div className="relative">
-          <GoldLootboxIcon className="w-20 h-auto md:w-24" />
+          <GoldLootboxIcon className="w-32 h-auto md:w-40" />
           
           {/* 60s Countdown Badge */}
           {remainingSeconds !== null && remainingSeconds > 0 && (
             <div
-              className="absolute top-1 right-1 px-2 py-0.5 rounded-full bg-black/70 text-white text-xs font-semibold"
+              className="absolute top-2 right-2 px-3 py-1 rounded-full bg-black/80 text-white text-sm font-semibold"
               style={{
-                boxShadow: '0 0 8px rgba(0,0,0,0.5)'
+                boxShadow: '0 0 12px rgba(0,0,0,0.6)'
               }}
             >
               {remainingSeconds}s
