@@ -46,7 +46,7 @@ import { PremiumBoosterConfirmDialog } from '@/components/PremiumBoosterConfirmD
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
-import { FallingCoins } from '@/components/FallingCoins';
+
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { IdleWarning } from '@/components/IdleWarning';
@@ -442,8 +442,6 @@ if (!profile) {
       onClose={popupManager.closeDailyWinners} 
     />
     
-    {/* Falling coins background */}
-    <FallingCoins />
       
       {/* Casino lights removed per user requirement */}
       
