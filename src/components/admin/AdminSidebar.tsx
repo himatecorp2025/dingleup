@@ -67,30 +67,30 @@ export function AdminSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent className="bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#0f0a1f] backdrop-blur-xl border-r border-white/10">
         {/* Logo */}
-        <div className="p-6 pb-4">
-          <div className="relative inline-block">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-lg opacity-30"></div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 1024 1024"
-              className="w-12 h-12 relative z-10"
-            >
-              <image
-                href="/logo.png"
-                x="0"
-                y="0"
-                width="1024"
-                height="1024"
-                preserveAspectRatio="xMidYMid meet"
-              />
-            </svg>
-          </div>
-          {!isCollapsed && (
+        {!isCollapsed && (
+          <div className="p-6 pb-4">
+            <div className="relative inline-block">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-lg opacity-30"></div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="48"
+                height="48"
+                viewBox="0 0 1024 1024"
+                className="w-12 h-12 relative z-10"
+              >
+                <image
+                  href="/logo.png"
+                  x="0"
+                  y="0"
+                  width="1024"
+                  height="1024"
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              </svg>
+            </div>
             <h2 className="text-white font-bold text-xs mt-2">{t('admin.layout.admin_panel')}</h2>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* DASHBOARD & USERS */}
         <SidebarGroup>
