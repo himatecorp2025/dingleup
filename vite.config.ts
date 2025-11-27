@@ -42,6 +42,40 @@ const securityHeadersPlugin = (mode: string): Plugin => ({
   },
 });
 
+// Cache headers plugin for optimal caching strategy
+const cacheHeadersPlugin = (mode: string): Plugin => ({
+  name: 'cache-headers',
+  configureServer(server) {
+    // Only apply in production preview mode
+    if (mode === 'development') {
+      return;
+    }
+    
+    server.middlewares.use((req, res, next) => {
+      const url = req.url || '';
+      
+      // Hash-versioned assets (JS, CSS with hash in filename) - immutable, 1 year cache
+      if (/\.(js|css)$/.test(url) && /-[a-zA-Z0-9]{8}\.(js|css)/.test(url)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+      // Images, fonts, audio, video - 1 year cache
+      else if (/\.(png|jpg|jpeg|svg|gif|webp|woff|woff2|ttf|otf|mp3|mp4|wav|ogg)$/.test(url)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+      // Non-hashed JS/CSS (registerSW.js, etc) - 1 day cache
+      else if (/\.(js|css)$/.test(url)) {
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+      }
+      // HTML files - no cache, must revalidate
+      else if (/\.html$/.test(url) || url === '/') {
+        res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+      }
+      
+      next();
+    });
+  },
+});
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -86,6 +120,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     securityHeadersPlugin(mode),
+    cacheHeadersPlugin(mode),
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
