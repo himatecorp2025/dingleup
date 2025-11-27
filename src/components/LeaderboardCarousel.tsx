@@ -40,23 +40,32 @@ const LeaderboardCarouselComponent = () => {
     if (!container || topPlayers.length === 0) return;
     
     let animationFrameId: number;
-    const scrollSpeed = 1.5;
+    const scrollSpeed = 1.2;
+    let frameCount = 0;
     
     const scroll = () => {
-      if (!autoScrollPausedRef.current && container) {
+      if (container && topPlayers.length > 0) {
         container.scrollLeft += scrollSpeed;
         
-        // Körkörös scroll: ha elértük a duplikált tartalom felét, folyamatosan "átcsúszunk" a második feléről az elsőre
         const halfWidth = container.scrollWidth / 2;
-        if (container.scrollLeft >= halfWidth) {
+        if (halfWidth > 0 && container.scrollLeft >= halfWidth) {
           container.scrollLeft -= halfWidth;
         }
+
+        // Debug: néha logoljuk, hogy biztosan fut a loop (fejlesztéshez)
+        if (frameCount % 600 === 0) {
+          console.log('[LeaderboardCarousel] auto-scroll', {
+            left: container.scrollLeft,
+            halfWidth,
+            clientWidth: container.clientWidth,
+          });
+        }
+        frameCount += 1;
       }
-      // KRITIKUS: mindig újraindítjuk a következő frame-et, így soha nem áll le
+
       animationFrameId = requestAnimationFrame(scroll);
     };
 
-    // Indítás
     animationFrameId = requestAnimationFrame(scroll);
 
     return () => {
@@ -64,7 +73,7 @@ const LeaderboardCarouselComponent = () => {
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [topPlayers]);
+  }, [topPlayers.length]);
 
   // Érintéses/manuális csúsztatás
   useEffect(() => {
