@@ -38,26 +38,27 @@ const LeaderboardCarouselComponent = () => {
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || topPlayers.length === 0) return;
-    
+
     let animationFrameId: number;
     const scrollSpeed = 1.2;
-    let frameCount = 0;
-    
+
     const scroll = () => {
-      if (container && topPlayers.length > 0) {
-        container.scrollLeft += scrollSpeed;
+      if (!container || topPlayers.length === 0) return;
 
-        const singleWidth = container.scrollWidth / 2;
-        const loopPoint = singleWidth + container.clientWidth;
+      container.scrollLeft += scrollSpeed;
 
-        if (singleWidth > 0 && container.scrollLeft >= loopPoint) {
-          container.scrollLeft -= singleWidth;
-        }
+      const contentWidth = container.scrollWidth / 2;
+      if (contentWidth > 0 && container.scrollLeft >= contentWidth) {
+        // Ha elértük a duplikált lista felét, visszaugrunk pontosan egy lista-szélességet,
+        // így az utolsó helyezett után az 1. folytatódik zökkenőmentesen.
+        container.scrollLeft -= contentWidth;
       }
 
       animationFrameId = requestAnimationFrame(scroll);
     };
 
+    // Indítás mindig a lista elejéről
+    container.scrollLeft = 0;
     animationFrameId = requestAnimationFrame(scroll);
 
     return () => {
