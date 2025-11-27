@@ -85,7 +85,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/booster-types', labelKey: 'admin.menu.booster_packages', icon: Zap },
     { path: '/admin/booster-purchases', labelKey: 'admin.menu.booster_purchases', icon: ShoppingBag },
     { path: '/admin/translations', labelKey: 'admin.menu.translations', icon: Languages },
-    { path: '/admin/load-test', labelKey: 'admin.menu.load_test', icon: BarChart3 },
     { path: '/admin/advanced-analytics', labelKey: 'admin.menu.advanced_analytics', icon: Activity },
     { path: '/admin/age-statistics', labelKey: 'admin.menu.age_statistics', icon: Calendar },
     { path: '/admin/profile', labelKey: 'admin.menu.profile_settings', icon: Settings },
