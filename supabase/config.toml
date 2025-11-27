@@ -138,3 +138,21 @@ verify_jwt = true
 [functions.simple-load-test]
 verify_jwt = false
 
+[functions.lootbox-active]
+verify_jwt = true
+
+[functions.lootbox-decide]
+verify_jwt = true
+
+[functions.lootbox-open-stored]
+verify_jwt = true
+
+[functions.lootbox-stored]
+verify_jwt = true
+
+[functions.lootbox-heartbeat]
+verify_jwt = true
+
+[functions.register-activity-and-drop]
+verify_jwt = true
+

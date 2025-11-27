@@ -1486,6 +1486,45 @@ export type Database = {
         }
         Relationships: []
       }
+      lootbox_daily_plan: {
+        Row: {
+          active_window_end: string | null
+          active_window_start: string | null
+          created_at: string
+          delivered_count: number
+          id: string
+          plan_date: string
+          slots: Json
+          target_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active_window_end?: string | null
+          active_window_start?: string | null
+          created_at?: string
+          delivered_count?: number
+          id?: string
+          plan_date: string
+          slots?: Json
+          target_count: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active_window_end?: string | null
+          active_window_start?: string | null
+          created_at?: string
+          delivered_count?: number
+          id?: string
+          plan_date?: string
+          slots?: Json
+          target_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lootbox_instances: {
         Row: {
           activated_at: string | null
@@ -3714,6 +3753,14 @@ export type Database = {
       }
       distribute_weekly_rewards: { Args: never; Returns: undefined }
       generate_invitation_code: { Args: never; Returns: string }
+      generate_lootbox_daily_plan: {
+        Args: {
+          p_first_login_time?: string
+          p_plan_date: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       get_correct_answer_from_jsonb: {
         Args: { answers_jsonb: Json }
         Returns: string
@@ -3768,6 +3815,10 @@ export type Database = {
           topic_id: number
           topic_name: string
         }[]
+      }
+      get_user_activity_window: {
+        Args: { p_lookback_days?: number; p_user_id: string }
+        Returns: Json
       }
       get_user_country_rank: { Args: { p_user_id: string }; Returns: number }
       get_user_threads_optimized: {
