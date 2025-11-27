@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePlatformDetection } from '@/hooks/usePlatformDetection';
+import { useI18n } from '@/i18n';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -33,6 +34,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isHandheld } = usePlatformDetection();
+  const { t } = useI18n();
   const [sidebarOpen, setSidebarOpen] = useState(!isHandheld);
 
   useEffect(() => {
@@ -137,11 +139,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   />
                 </svg>
               </div>
-              <h2 className="text-white font-bold text-xs xl:text-sm mt-2">Admin Panel</h2>
+              <h2 className="text-white font-bold text-xs xl:text-sm mt-2">{t('admin.layout.admin_panel')}</h2>
             </div>
 
             <div className="mb-6 xl:mb-8">
-              <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">Főmenü</h3>
+              <h3 className="text-white/50 text-xs font-bold mb-3 xl:mb-4 uppercase tracking-wider">{t('admin.layout.main_menu')}</h3>
               
               {/* Menu Items */}
               <nav className="space-y-2">
@@ -173,14 +175,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 className="md:hidden w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
               >
                 <Gamepad2 className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-                <span className="font-medium">Vissza a játékba</span>
+                <span className="font-medium">{t('admin.layout.back_to_game')}</span>
               </button>
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg text-white/60 hover:bg-white/5 transition-all text-sm"
               >
                 <LogOut className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-                <span className="font-medium">Kijelentkezés</span>
+                <span className="font-medium">{t('admin.layout.logout')}</span>
               </button>
             </div>
           </div>
@@ -206,7 +208,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               className="md:hidden text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-2"
             >
               <Gamepad2 className="h-5 w-5" />
-              <span className="font-medium">Vissza a játékba</span>
+              <span className="font-medium">{t('admin.layout.back_to_game')}</span>
             </Button>
           </div>
 

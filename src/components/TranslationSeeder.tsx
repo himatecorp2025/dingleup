@@ -18,12 +18,6 @@ interface InitialStats {
   totalKeys: number;
   languages: {
     en: LanguageStats;
-    de: LanguageStats;
-    fr: LanguageStats;
-    es: LanguageStats;
-    it: LanguageStats;
-    pt: LanguageStats;
-    nl: LanguageStats;
   };
 }
 
@@ -48,7 +42,7 @@ export const TranslationSeeder = () => {
       try {
         setIsCheckingContent(true);
 
-        const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'] as const;
+        const TARGET_LANGUAGES = ['en'] as const;
         
         // Get total keys count
         const { count: totalKeys, error: countError } = await supabase
@@ -214,13 +208,7 @@ export const TranslationSeeder = () => {
   };
 
   const LANGUAGE_NAMES: Record<string, string> = {
-    en: 'Angol',
-    de: 'Német',
-    fr: 'Francia',
-    es: 'Spanyol',
-    it: 'Olasz',
-    pt: 'Portugál',
-    nl: 'Holland'
+    en: t('language.english')
   };
 
   return (
@@ -229,12 +217,11 @@ export const TranslationSeeder = () => {
         <div className="p-2 bg-blue-500/20 rounded-lg">
           <Languages className="w-5 h-5 text-blue-400" />
         </div>
-        <h3 className="text-lg font-semibold text-white">UI Fordítások</h3>
+        <h3 className="text-lg font-semibold text-white">{t('admin.ui_translations.title')}</h3>
       </div>
 
       <p className="text-sm text-white/60 mb-4">
-        AI-alapú automatikus fordítás generálása az összes UI szövegre mind a 7 támogatott nyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
-        A folyamat eltarthat néhány percig.
+        {t('admin.ui_translations.description')}
       </p>
 
       {/* Initial Statistics Display */}
@@ -242,7 +229,7 @@ export const TranslationSeeder = () => {
         <div className="mb-4 space-y-3">
           <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-white">Összes kulcs:</span>
+              <span className="text-sm font-medium text-white">{t('admin.ui_translations.total_keys')}:</span>
               <span className="text-lg font-bold text-blue-400">{initialStats.totalKeys}</span>
             </div>
           </div>
@@ -275,7 +262,7 @@ export const TranslationSeeder = () => {
         <div className="mb-4">
           <Progress value={progress} className="h-2" />
           <div className="flex items-center justify-between mt-2">
-            <p className="text-xs text-white/50">Folyamat:</p>
+            <p className="text-xs text-white/50">{t('admin.ui_translations.progress')}:</p>
             <p className="text-sm font-semibold text-blue-400">{progress}%</p>
           </div>
         </div>
@@ -286,21 +273,21 @@ export const TranslationSeeder = () => {
           <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <Languages className="w-4 h-4 text-blue-400" />
-              <span className="text-xs text-white/60">Összesen</span>
+              <span className="text-xs text-white/60">{t('admin.ui_translations.total')}</span>
             </div>
             <p className="text-xl font-bold text-blue-400">{stats.total}</p>
           </div>
           <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <CheckCircle className="w-4 h-4 text-green-400" />
-              <span className="text-xs text-white/60">Sikeres</span>
+              <span className="text-xs text-white/60">{t('admin.ui_translations.successful')}</span>
             </div>
             <p className="text-xl font-bold text-green-400">{stats.success}</p>
           </div>
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <XCircle className="w-4 h-4 text-red-400" />
-              <span className="text-xs text-white/60">Hibák</span>
+              <span className="text-xs text-white/60">{t('admin.ui_translations.errors')}</span>
             </div>
             <p className="text-xl font-bold text-red-400">{stats.errors}</p>
           </div>

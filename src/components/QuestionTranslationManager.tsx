@@ -19,12 +19,6 @@ interface InitialStats {
   totalAnswers: number;
   languages: {
     en: LanguageStats;
-    de: LanguageStats;
-    fr: LanguageStats;
-    es: LanguageStats;
-    it: LanguageStats;
-    pt: LanguageStats;
-    nl: LanguageStats;
   };
 }
 
@@ -51,7 +45,7 @@ export const QuestionTranslationManager = () => {
       try {
         setIsCheckingContent(true);
 
-        const TARGET_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt', 'nl'] as const;
+        const TARGET_LANGUAGES = ['en'] as const;
         
         // Get total questions count
         const { count: totalQuestions, error: questionsError } = await supabase
@@ -227,13 +221,7 @@ export const QuestionTranslationManager = () => {
   };
 
   const LANGUAGE_NAMES: Record<string, string> = {
-    en: 'Angol',
-    de: 'Német',
-    fr: 'Francia',
-    es: 'Spanyol',
-    it: 'Olasz',
-    pt: 'Portugál',
-    nl: 'Holland'
+    en: t('language.english')
   };
 
   return (
@@ -242,12 +230,11 @@ export const QuestionTranslationManager = () => {
         <div className="p-2 bg-purple-500/20 rounded-lg">
           <Languages className="w-5 h-5 text-purple-400" />
         </div>
-        <h3 className="text-lg font-semibold text-white">Kérdés Fordítások</h3>
+        <h3 className="text-lg font-semibold text-white">{t('admin.question_translations.title')}</h3>
       </div>
 
       <p className="text-sm text-white/60 mb-4">
-        AI-alapú automatikus fordítás generálása mind a 7 támogatott nyelvre (angol, német, francia, spanyol, olasz, portugál, holland).
-        A folyamat eltarthat néhány percig.
+        {t('admin.question_translations.description')}
       </p>
 
       {/* Initial Statistics Display */}
@@ -256,13 +243,13 @@ export const QuestionTranslationManager = () => {
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-white">Összes kérdés:</span>
+                <span className="text-sm font-medium text-white">{t('admin.question_translations.total_questions')}:</span>
                 <span className="text-lg font-bold text-purple-400">{initialStats.totalQuestions}</span>
               </div>
             </div>
             <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-white">Összes válasz:</span>
+                <span className="text-sm font-medium text-white">{t('admin.question_translations.total_answers')}:</span>
                 <span className="text-lg font-bold text-purple-400">{initialStats.totalAnswers}</span>
               </div>
             </div>
@@ -293,7 +280,7 @@ export const QuestionTranslationManager = () => {
             <div className="mt-2 flex items-center gap-2">
               <Languages className="w-4 h-4 text-purple-400" />
               <p className="text-xs text-white/60">
-                Aktuális nyelv: <span className="font-semibold text-purple-400">{currentLanguage}</span>
+                {t('admin.question_translations.current_language')}: <span className="font-semibold text-purple-400">{currentLanguage}</span>
               </p>
             </div>
           )}
@@ -309,7 +296,7 @@ export const QuestionTranslationManager = () => {
         <div className="mb-4">
           <Progress value={progress} className="h-2" />
           <div className="flex items-center justify-between mt-2">
-            <p className="text-xs text-white/50">Folyamat:</p>
+            <p className="text-xs text-white/50">{t('admin.question_translations.progress')}:</p>
             <p className="text-sm font-semibold text-purple-400">{progress}%</p>
           </div>
         </div>
@@ -320,7 +307,7 @@ export const QuestionTranslationManager = () => {
           <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <Languages className="w-4 h-4 text-purple-400" />
-              <span className="text-xs text-white/60">Összesen</span>
+              <span className="text-xs text-white/60">{t('admin.question_translations.total')}</span>
             </div>
             <p className="text-xl font-bold text-purple-400">{stats.total}</p>
           </div>
@@ -334,7 +321,7 @@ export const QuestionTranslationManager = () => {
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <XCircle className="w-4 h-4 text-red-400" />
-              <span className="text-xs text-white/60">Hibák</span>
+              <span className="text-xs text-white/60">{t('admin.question_translations.errors')}</span>
             </div>
             <p className="text-xl font-bold text-red-400">{stats.errors}</p>
           </div>
@@ -349,17 +336,17 @@ export const QuestionTranslationManager = () => {
         {isCheckingContent ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Tartalom ellenőrzése...
+            {t('admin.question_translations.checking_content')}
           </>
         ) : isTranslating ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Fordítás folyamatban...
+            {t('admin.question_translations.translating')}
           </>
         ) : (
           <>
             <Languages className="w-4 h-4 mr-2" />
-            Hiányzó fordítások generálása
+            {t('admin.question_translations.generate_missing')}
           </>
         )}
       </Button>
