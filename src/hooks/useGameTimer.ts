@@ -29,11 +29,13 @@ export const useGameTimer = ({ initialTime, onTimeout, enabled }: UseGameTimerOp
   // Timer logic
   useEffect(() => {
     if (!enabled) {
-      // Clear timer if disabled
+      // Clear timer if disabled AND reset timeout flag
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
       }
+      // CRITICAL: Reset timeout flag when timer is disabled
+      hasTimedOutRef.current = false;
       return;
     }
 
