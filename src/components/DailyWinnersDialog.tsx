@@ -697,12 +697,31 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                       </div>
                                     </div>
 
-                                    {/* Rank Badge - Simple royal blue style */}
+                                    {/* Rank Badge - 3D Royal Blue style matching TOP 3 structure */}
                                     <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
-                                      <div className="aspect-square rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-blue-300 flex items-center justify-center shadow-lg">
-                                        <span className="font-bold text-white" style={{ fontSize: '3.5vw' }}>
-                                          {player.rank}
-                                        </span>
+                                      <div className="aspect-square rounded-full relative">
+                                        <div className="absolute inset-0 rounded-full" style={{
+                                          background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 85%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: '0 6px 12px rgba(65, 105, 225, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3)'
+                                        }} />
+                                        <div className="absolute inset-[3px] rounded-full" style={{
+                                          background: 'linear-gradient(135deg, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 50%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.9), inset 0 -2px 6px rgba(0, 0, 139, 0.5)'
+                                        }} />
+                                        <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                          background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 85%) 0%, hsl(225, 73%, 70%) 40%, hsl(225, 73%, 57%) 100%)',
+                                          boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.9), inset 0 -1px 3px rgba(0, 0, 139, 0.3)'
+                                        }}>
+                                          <span className="font-black relative" style={{ 
+                                            fontSize: '4vw',
+                                            background: 'linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            filter: 'drop-shadow(0 1px 2px rgba(135, 206, 250, 0.4))'
+                                          }}>
+                                            {player.rank}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
@@ -763,12 +782,31 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                       </div>
                                     </div>
 
-                                    {/* Rank Badge - Simple royal blue style */}
+                                    {/* Rank Badge - 3D Royal Blue style matching TOP 3 structure */}
                                     <div className="absolute" style={{ left: '38%', bottom: '10%', width: '24%' }}>
-                                      <div className="aspect-square rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-blue-300 flex items-center justify-center shadow-lg">
-                                        <span className="font-bold text-white" style={{ fontSize: '3.5vw' }}>
-                                          {player.rank}
-                                        </span>
+                                      <div className="aspect-square rounded-full relative">
+                                        <div className="absolute inset-0 rounded-full" style={{
+                                          background: 'radial-gradient(circle at 30% 30%, hsl(220, 80%, 85%) 0%, hsl(225, 73%, 70%) 30%, hsl(225, 73%, 57%) 60%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: '0 6px 12px rgba(65, 105, 225, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3)'
+                                        }} />
+                                        <div className="absolute inset-[3px] rounded-full" style={{
+                                          background: 'linear-gradient(135deg, hsl(220, 80%, 80%) 0%, hsl(225, 73%, 70%) 50%, hsl(225, 73%, 47%) 100%)',
+                                          boxShadow: 'inset 0 2px 6px rgba(135, 206, 250, 0.9), inset 0 -2px 6px rgba(0, 0, 139, 0.5)'
+                                        }} />
+                                        <div className="absolute inset-[6px] rounded-full flex items-center justify-center" style={{
+                                          background: 'radial-gradient(circle at 35% 35%, hsl(220, 80%, 85%) 0%, hsl(225, 73%, 70%) 40%, hsl(225, 73%, 57%) 100%)',
+                                          boxShadow: 'inset 0 1px 3px rgba(135, 206, 250, 0.9), inset 0 -1px 3px rgba(0, 0, 139, 0.3)'
+                                        }}>
+                                          <span className="font-black relative" style={{ 
+                                            fontSize: '4vw',
+                                            background: 'linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            filter: 'drop-shadow(0 1px 2px rgba(135, 206, 250, 0.4))'
+                                          }}>
+                                            {player.rank}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
