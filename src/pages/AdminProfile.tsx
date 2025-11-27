@@ -58,7 +58,7 @@ const AdminProfile = () => {
         setLastUsernameChange(profile.last_username_change);
       }
     } catch (error: any) {
-      toast.error('Profil betöltése sikertelen');
+      toast.error(t('admin.error_loading_profile'));
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,7 @@ const AdminProfile = () => {
 
   const handleUsernameSave = async () => {
     if (!newUsername.trim()) {
-      toast.error('A felhasználónév nem lehet üres');
+      toast.error(t('admin.error_username_empty'));
       return;
     }
 
@@ -109,7 +109,7 @@ const AdminProfile = () => {
 
       setUsername(newUsername);
       setIsEditingUsername(false);
-      toast.success('Felhasználónév frissítve');
+      toast.success(t('admin.success_username_updated'));
       
       // Refresh to get new last_username_change
       await fetchProfile();
@@ -127,12 +127,12 @@ const AdminProfile = () => {
 
   const handlePinSave = async () => {
     if (!currentPin || !newPin || !confirmPin) {
-      toast.error('Minden mező kitöltése kötelező');
+      toast.error(t('admin.error_all_fields_required'));
       return;
     }
 
     if (newPin !== confirmPin) {
-      toast.error('Az új PIN-ek nem egyeznek');
+      toast.error(t('admin.error_pins_not_match'));
       return;
     }
 
@@ -168,7 +168,7 @@ const AdminProfile = () => {
       setCurrentPin('');
       setNewPin('');
       setConfirmPin('');
-      toast.success('PIN sikeresen módosítva');
+      toast.success(t('admin.success_pin_updated'));
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -176,7 +176,7 @@ const AdminProfile = () => {
 
   const handleGrantAdmin = async () => {
     if (!targetUsername.trim()) {
-      toast.error('Add meg a felhasználónevet');
+      toast.error(t('admin.error_enter_username'));
       return;
     }
 
@@ -190,7 +190,7 @@ const AdminProfile = () => {
         .maybeSingle();
 
       if (userError || !targetUser) {
-        toast.error('Felhasználó nem található');
+        toast.error(t('admin.error_user_not_found'));
         return;
       }
 

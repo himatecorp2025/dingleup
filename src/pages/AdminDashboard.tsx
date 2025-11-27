@@ -491,11 +491,11 @@ const AdminDashboard = () => {
                 <Button
                   onClick={async () => {
                     try {
-                      toast.info('Manuális barátság-szinkronizálás indítása...');
+                      toast.info(t('admin.friendships_sync_starting'));
                       
                       const { data: { session } } = await supabase.auth.getSession();
                       if (!session) {
-                        toast.error('Admin session expired');
+                        toast.error(t('admin.session_expired'));
                         return;
                       }
                       

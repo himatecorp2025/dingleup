@@ -61,7 +61,7 @@ const AdminLogin = () => {
       }
 
       if (!signInSuccess) {
-        toast.error('Bejelentkezés sikertelen');
+        toast.error(t('admin.error_login_failed'));
         return;
       }
 

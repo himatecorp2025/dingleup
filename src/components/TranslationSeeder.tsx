@@ -169,7 +169,7 @@ export const TranslationSeeder = () => {
         if (error) {
           console.error('[TranslationSeeder] Translation error:', error);
           toast.error(t('admin.translation_error_generic'));
-          setStatus('Hiba történt');
+          setStatus(t('admin.error_occurred'));
           setIsTranslating(false);
           return;
         }
@@ -201,13 +201,13 @@ export const TranslationSeeder = () => {
       toast.success(t('admin.translation_success').replace('{count}', totalSuccess.toString()));
 
       if (totalErrors > 0) {
-        toast.warning(`${totalErrors} hiba történt a fordítás során.`);
+        toast.warning(t('admin.translation_errors_occurred').replace('{count}', totalErrors.toString()));
       }
 
     } catch (error) {
       console.error('[TranslationSeeder] Exception:', error);
       toast.error(t('admin.unexpected_error'));
-      setStatus('Váratlan hiba');
+      setStatus(t('admin.unexpected_error'));
     } finally {
       setIsTranslating(false);
     }

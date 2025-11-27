@@ -107,10 +107,10 @@ export default function AdminLoadTest() {
       }
 
       setResults(data as LoadTestResults);
-      toast.success('Load test completed successfully');
+      toast.success(t('admin.load_test_success'));
     } catch (error: any) {
       console.error('Load test error:', error);
-      toast.error(error.message || 'Failed to execute load test');
+      toast.error(error.message || t('admin.load_test_error'));
       setResults({
         success: false,
         error: error.message || 'Unknown error',

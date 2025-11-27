@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp } from 'lucide-react';
+import { useI18n } from '@/i18n';
 
 interface ChartDataPoint {
   date: string;
@@ -10,6 +11,7 @@ interface ChartDataPoint {
 }
 
 export const UserGrowthChart = () => {
+  const { t } = useI18n();
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -119,7 +121,7 @@ export const UserGrowthChart = () => {
           <h3 className="text-lg lg:text-xl font-bold text-foreground">Felhasználók & Költés Trend</h3>
         </div>
         <div className="h-64 lg:h-80 flex items-center justify-center">
-          <p className="text-muted-foreground">Adatok betöltése...</p>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     );
