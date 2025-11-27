@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import type { Plugin } from 'vite';
 
 // Security headers plugin - ONLY for production builds
@@ -119,6 +120,20 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     securityHeadersPlugin(mode),
     cacheHeadersPlugin(mode),
+    ViteImageOptimizer({
+      png: {
+        quality: 80,
+      },
+      jpeg: {
+        quality: 80,
+      },
+      jpg: {
+        quality: 80,
+      },
+      webp: {
+        quality: 80,
+      },
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'inline',
