@@ -2,6 +2,34 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts';
 
+function getUserIdFromAuthHeader(req: Request): string | null {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+
+  const token = authHeader.replace('Bearer ', '');
+  try {
+    const payloadPart = token.split('.')[1];
+    if (!payloadPart) return null;
+
+    const normalized = payloadPart
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    const padded = normalized.padEnd(
+      normalized.length + (4 - (normalized.length % 4)) % 4,
+      '='
+    );
+
+    const json = atob(padded);
+    const payload = JSON.parse(json);
+    return typeof payload.sub === 'string' ? payload.sub : null;
+  } catch (error) {
+    console.error('[lootbox-active] Failed to decode JWT:', error);
+    return null;
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -28,10 +56,10 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Verify user token
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
-    if (authError || !user) {
-      console.error('[lootbox-active] Auth error:', authError);
+    // Decode user id from JWT (avoid auth.getUser session dependency)
+    const userId = getUserIdFromAuthHeader(req);
+    if (!userId) {
+      console.error('[lootbox-active] Invalid or missing JWT');
       return new Response(
         JSON.stringify({ error: 'Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -42,7 +70,7 @@ serve(async (req) => {
     const { data: activeLootbox, error: queryError } = await supabaseClient
       .from('lootbox_instances')
       .select('id, status, open_cost_gold, expires_at, source, created_at, activated_at')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('status', 'active_drop')
       .order('created_at', { ascending: false })
       .limit(1)
