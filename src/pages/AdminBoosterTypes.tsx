@@ -56,7 +56,7 @@ export default function AdminBoosterTypes() {
       <AdminLayout>
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-foreground">Booster Csomagok</h1>
+            <h1 className="text-3xl font-bold text-foreground">{t('admin.boosters.title')}</h1>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             <Skeleton className="h-64" />
@@ -71,9 +71,9 @@ export default function AdminBoosterTypes() {
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-foreground">Booster Csomagok</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('admin.boosters.title')}</h1>
           <span className="text-sm text-muted-foreground">
-            {boosterTypes.length} típus
+            {boosterTypes.length} {t('admin.boosters.types')}
           </span>
         </div>
 
@@ -88,7 +88,7 @@ export default function AdminBoosterTypes() {
                       ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
                       : 'bg-red-500/20 text-red-400 border border-red-500/30'
                   }`}>
-                    {booster.is_active ? 'Aktív' : 'Inaktív'}
+                    {booster.is_active ? t('admin.boosters.active') : t('admin.boosters.inactive')}
                   </span>
                 </div>
 
@@ -97,7 +97,7 @@ export default function AdminBoosterTypes() {
                 )}
 
                 <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Ár</h3>
+                  <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t('admin.boosters.price')}</h3>
                   <div className="flex gap-3">
                     {booster.price_gold && (
                       <div className="flex items-center gap-2 bg-yellow-500/10 px-3 py-2 rounded-lg border border-yellow-500/20">
@@ -115,7 +115,7 @@ export default function AdminBoosterTypes() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Jutalmak</h3>
+                  <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">{t('admin.boosters.rewards')}</h3>
                   <div className="grid grid-cols-2 gap-3">
                     {booster.reward_gold > 0 && (
                       <div className="flex items-center gap-2 bg-yellow-500/10 px-3 py-2 rounded-lg border border-yellow-500/20">
@@ -133,7 +133,7 @@ export default function AdminBoosterTypes() {
                       <div className="col-span-2 flex items-center gap-2 bg-blue-500/10 px-3 py-2 rounded-lg border border-blue-500/20">
                         <Zap className="w-4 h-4 text-blue-400" />
                         <span className="text-sm text-blue-400">
-                          {booster.reward_speed_count}× {booster.reward_speed_duration_min} perc
+                          {booster.reward_speed_count}× {booster.reward_speed_duration_min} {t('admin.boosters.minutes')}
                         </span>
                       </div>
                     )}
@@ -142,8 +142,8 @@ export default function AdminBoosterTypes() {
 
                 <div className="pt-2 border-t border-border">
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Kód: {booster.code}</span>
-                    <span>Létrehozva: {new Date(booster.created_at).toLocaleDateString('hu-HU')}</span>
+                    <span>{t('admin.boosters.code')}: {booster.code}</span>
+                    <span>{t('admin.boosters.created')}: {new Date(booster.created_at).toLocaleDateString('hu-HU')}</span>
                   </div>
                 </div>
               </div>

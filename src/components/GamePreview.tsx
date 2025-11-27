@@ -30,6 +30,8 @@ import { useGameAnimation } from "@/hooks/useGameAnimation";
 import { useLikePrompt } from "@/hooks/useLikePrompt";
 import { QuestionLikePromptPopup } from "./QuestionLikePromptPopup";
 import { useQuestionLike } from "@/hooks/useQuestionLike";
+import { GameErrorBanner } from "./game/GameErrorBanner";
+import { GameQuestionContainer } from "./game/GameQuestionContainer";
 
 type GameState = 'playing' | 'finished' | 'out-of-lives';
 
@@ -592,89 +594,47 @@ const GamePreview = memo(() => {
           ref={containerRef}
           className="fixed inset-0 z-10 overflow-hidden pb-16"
         >
-          {/* Error banner with deep 3D effect */}
-          {errorBannerVisible && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 max-w-xs" style={{ perspective: '1000px' }}>
-              {/* BASE SHADOW */}
-              <div className="absolute inset-0 bg-black/70 rounded-xl" style={{ transform: 'translate(6px, 6px)', filter: 'blur(8px)' }} aria-hidden />
-              
-              {/* OUTER FRAME */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-red-400 via-red-500 to-red-600 opacity-95 border-4 border-red-300/60 shadow-2xl" style={{ transform: 'translateZ(0px)' }} aria-hidden />
-              
-              {/* MIDDLE FRAME */}
-              <div className="absolute inset-[6px] rounded-xl bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -3px 0 rgba(0,0,0,0.6)', transform: 'translateZ(15px)' }} aria-hidden />
-              
-              {/* INNER LAYER */}
-              <div className="absolute inset-[8px] rounded-xl bg-gradient-to-br from-red-400/90 to-red-500/90" style={{ boxShadow: 'inset 0 16px 32px rgba(255,255,255,0.2), inset 0 -16px 32px rgba(0,0,0,0.5)', transform: 'translateZ(30px)' }} aria-hidden />
-              
-              {/* SPECULAR HIGHLIGHT */}
-              <div className="absolute inset-[8px] rounded-xl pointer-events-none" style={{ background: 'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)', transform: 'translateZ(45px)' }} aria-hidden />
-              
-              <div className="relative text-white px-6 py-3 font-bold text-xs text-center animate-fade-in" style={{ transform: 'translateZ(60px)', textShadow: '0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6), 1px 1px 0 rgba(0,0,0,1), -1px -1px 0 rgba(0,0,0,1), 1px -1px 0 rgba(0,0,0,1), -1px 1px 0 rgba(0,0,0,1)' }}>
-                <div className="mb-1">{errorBannerMessage}</div>
-                <div className="text-[10px] opacity-90">
-                  {t('game.swipe_up_continue_cost').replace('{cost}', String(continueType === 'timeout' ? TIMEOUT_CONTINUE_COST : CONTINUE_AFTER_WRONG_COST))}
-                </div>
-                <div className="text-[10px] opacity-90">
-                  {t('game.swipe_down_exit')}
-                </div>
-              </div>
-            </div>
-          )}
+          <GameErrorBanner
+            visible={errorBannerVisible}
+            message={errorBannerMessage}
+            continueType={continueType}
+          />
 
-          {/* Question module with OPTIMIZED TikTok-style smooth animation */}
-          <div 
-            className={`absolute inset-0 w-full h-full`}
-            style={{ 
-              transform: isAnimating 
-                ? 'translate3d(0, -100%, 0)' // GPU-accelerated
-                : `translate3d(0, ${translateY}px, 0)`, // GPU-accelerated
-              transition: isAnimating 
-                ? 'transform 350ms cubic-bezier(0.4, 0.0, 0.2, 1)' // Smooth ease-out
-                : 'transform 0ms',
-              willChange: isAnimating || translateY !== 0 ? 'transform' : 'auto',
-              backfaceVisibility: 'hidden', // Prevent flickering
-              WebkitBackfaceVisibility: 'hidden',
-            }}
+          <GameQuestionContainer
+            isAnimating={isAnimating}
+            translateY={translateY}
+            questionVisible={questionVisible}
           >
-            <div 
-              className="w-full h-full"
-              style={{ 
-                opacity: questionVisible ? 1 : 0,
-                transition: 'opacity 200ms ease-in-out',
-              }}
-            >
-              <QuestionCard
-                question={currentQuestion}
-                questionNumber={currentQuestionIndex + 1}
-                timeLeft={timeLeft}
-                selectedAnswer={selectedAnswer}
-                firstAttempt={firstAttempt}
-                secondAttempt={secondAttempt}
-                removedAnswer={removedAnswer}
-                audienceVotes={audienceVotes}
-                help5050UsageCount={help5050UsageCount}
-                help2xAnswerUsageCount={help2xAnswerUsageCount}
-                helpAudienceUsageCount={helpAudienceUsageCount}
-                isHelp5050ActiveThisQuestion={isHelp5050ActiveThisQuestion}
-                isDoubleAnswerActiveThisQuestion={isDoubleAnswerActiveThisQuestion}
-                isAudienceActiveThisQuestion={isAudienceActiveThisQuestion}
-                usedQuestionSwap={usedQuestionSwap}
-                lives={profile.lives}
-                maxLives={profile.max_lives}
-                coins={profile.coins}
-                coinRewardAmount={coinRewardAmount}
-                coinRewardTrigger={coinRewardTrigger}
-                onAnswerSelect={handleAnswer}
-                onUseHelp5050={useHelp5050}
-                onUseHelp2xAnswer={useHelp2xAnswer}
-                onUseHelpAudience={useHelpAudience}
-                onUseQuestionSwap={useQuestionSwap}
-                onExit={() => setShowExitDialog(true)}
-                disabled={selectedAnswer !== null || isAnimating}
-              />
-            </div>
-          </div>
+            <QuestionCard
+              question={currentQuestion}
+              questionNumber={currentQuestionIndex + 1}
+              timeLeft={timeLeft}
+              selectedAnswer={selectedAnswer}
+              firstAttempt={firstAttempt}
+              secondAttempt={secondAttempt}
+              removedAnswer={removedAnswer}
+              audienceVotes={audienceVotes}
+              help5050UsageCount={help5050UsageCount}
+              help2xAnswerUsageCount={help2xAnswerUsageCount}
+              helpAudienceUsageCount={helpAudienceUsageCount}
+              isHelp5050ActiveThisQuestion={isHelp5050ActiveThisQuestion}
+              isDoubleAnswerActiveThisQuestion={isDoubleAnswerActiveThisQuestion}
+              isAudienceActiveThisQuestion={isAudienceActiveThisQuestion}
+              usedQuestionSwap={usedQuestionSwap}
+              lives={profile.lives}
+              maxLives={profile.max_lives}
+              coins={profile.coins}
+              coinRewardAmount={coinRewardAmount}
+              coinRewardTrigger={coinRewardTrigger}
+              onAnswerSelect={handleAnswer}
+              onUseHelp5050={useHelp5050}
+              onUseHelp2xAnswer={useHelp2xAnswer}
+              onUseHelpAudience={useHelpAudience}
+              onUseQuestionSwap={useQuestionSwap}
+              onExit={() => setShowExitDialog(true)}
+              disabled={selectedAnswer !== null || isAnimating}
+            />
+          </GameQuestionContainer>
         </div>
 
         {/* Dialogs */}

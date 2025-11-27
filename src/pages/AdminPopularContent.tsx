@@ -12,6 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useI18n } from '@/i18n';
 
 interface TopicPopularityRow {
   topicId: number;
@@ -25,6 +26,7 @@ type SortField = 'topicName' | 'totalLikes' | 'totalDislikes' | 'netScore';
 type SortDirection = 'asc' | 'desc';
 
 const AdminPopularContent = () => {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [data, setData] = useState<TopicPopularityRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +115,7 @@ const AdminPopularContent = () => {
       setData(responseData as TopicPopularityRow[]);
     } catch (err) {
       console.error('[AdminPopularContent] Error:', err);
-      setError('Nem sikerült betölteni a népszerű tartalmakat. Kérlek, próbáld meg később újra.');
+      setError(t('admin.popular.load_error'));
     } finally {
       setLoading(false);
     }
@@ -150,7 +152,7 @@ const AdminPopularContent = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Népszerű tartalmak
+            {t('admin.popular.title')}
           </h1>
         </div>
 
@@ -167,7 +169,7 @@ const AdminPopularContent = () => {
               className="mt-4"
               variant="outline"
             >
-              Újrapróbálás
+              {t('admin.popular.retry')}
             </Button>
           </div>
         ) : (
@@ -180,7 +182,7 @@ const AdminPopularContent = () => {
                     className="text-foreground font-bold cursor-pointer hover:text-primary"
                     onClick={() => handleSort('topicName')}
                   >
-                    Témakör {sortField === 'topicName' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('admin.popular.topic')} {sortField === 'topicName' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </TableHead>
                   <TableHead 
                     className="text-foreground font-bold cursor-pointer hover:text-primary text-center"
@@ -188,7 +190,7 @@ const AdminPopularContent = () => {
                   >
                     <div className="flex items-center justify-center gap-2">
                       <Heart className="w-4 h-4 text-red-500" />
-                      Összes lájk {sortField === 'totalLikes' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      {t('admin.popular.total_likes')} {sortField === 'totalLikes' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </div>
                   </TableHead>
                   <TableHead 
@@ -197,7 +199,7 @@ const AdminPopularContent = () => {
                   >
                     <div className="flex items-center justify-center gap-2">
                       <ThumbsDown className="w-4 h-4 text-orange-500" />
-                      Összes dislike {sortField === 'totalDislikes' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      {t('admin.popular.total_dislikes')} {sortField === 'totalDislikes' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </div>
                   </TableHead>
                   <TableHead 
@@ -206,7 +208,7 @@ const AdminPopularContent = () => {
                   >
                     <div className="flex items-center justify-center gap-2">
                       <TrendingUp className="w-4 h-4 text-accent" />
-                      Netto népszerűség {sortField === 'netScore' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      {t('admin.popular.net_score')} {sortField === 'netScore' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </div>
                   </TableHead>
                 </TableRow>

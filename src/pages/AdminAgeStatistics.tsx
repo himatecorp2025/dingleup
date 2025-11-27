@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useI18n } from '@/i18n';
 
 interface AgeBucket {
   label: string;
@@ -20,6 +21,7 @@ interface AgeStatistics {
 const COLORS = ['#FFD700', '#FFA500', '#FF6347', '#9370DB', '#4169E1'];
 
 export default function AdminAgeStatistics() {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [statistics, setStatistics] = useState<AgeStatistics | null>(null);
   const [dateFilter, setDateFilter] = useState<string>('all');
@@ -56,15 +58,15 @@ export default function AdminAgeStatistics() {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Korcsoport Statisztika</h1>
-          <p className="text-muted-foreground">Felhasználók megoszlása életkor szerint</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">{t('admin.age.title')}</h1>
+          <p className="text-muted-foreground">{t('admin.age.description')}</p>
         </div>
 
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">Regisztráció időszak</CardTitle>
+              <CardTitle className="text-sm">{t('admin.age.registration_period')}</CardTitle>
             </CardHeader>
             <CardContent>
               <Select value={dateFilter} onValueChange={setDateFilter}>
@@ -72,10 +74,10 @@ export default function AdminAgeStatistics() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Összes</SelectItem>
-                  <SelectItem value="30">Elmúlt 30 nap</SelectItem>
-                  <SelectItem value="90">Elmúlt 90 nap</SelectItem>
-                  <SelectItem value="365">Elmúlt 1 év</SelectItem>
+                  <SelectItem value="all">{t('admin.age.all')}</SelectItem>
+                  <SelectItem value="30">{t('admin.age.last_30_days')}</SelectItem>
+                  <SelectItem value="90">{t('admin.age.last_90_days')}</SelectItem>
+                  <SelectItem value="365">{t('admin.age.last_1_year')}</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>
@@ -83,7 +85,7 @@ export default function AdminAgeStatistics() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">Ország</CardTitle>
+              <CardTitle className="text-sm">{t('admin.age.country')}</CardTitle>
             </CardHeader>
             <CardContent>
               <Select value={countryFilter} onValueChange={setCountryFilter}>
@@ -91,7 +93,7 @@ export default function AdminAgeStatistics() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Összes ország</SelectItem>
+                  <SelectItem value="all">{t('admin.age.all_countries')}</SelectItem>
                   <SelectItem value="HU">Magyarország</SelectItem>
                   <SelectItem value="US">USA</SelectItem>
                   <SelectItem value="GB">Egyesült Királyság</SelectItem>
@@ -112,14 +114,14 @@ export default function AdminAgeStatistics() {
             {/* Summary Card */}
             <Card>
               <CardHeader>
-                <CardTitle>Összesítés</CardTitle>
+                <CardTitle>{t('admin.age.summary')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-foreground">
-                  {statistics.total_users.toLocaleString('hu-HU')} felhasználó
+                  {statistics.total_users.toLocaleString('hu-HU')} {t('admin.age.users')}
                 </div>
                 <p className="text-sm text-muted-foreground mt-2">
-                  16 éves vagy idősebb felhasználók száma
+                  {t('admin.age.users_16_plus')}
                 </p>
               </CardContent>
             </Card>
@@ -127,7 +129,7 @@ export default function AdminAgeStatistics() {
             {/* Bar Chart */}
             <Card>
               <CardHeader>
-                <CardTitle>Korcsoportok eloszlása</CardTitle>
+                <CardTitle>{t('admin.age.distribution')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -140,7 +142,7 @@ export default function AdminAgeStatistics() {
                       labelStyle={{ color: '#000' }}
                     />
                     <Legend />
-                    <Bar dataKey="count" fill="#FFD700" name="Felhasználók száma" />
+                    <Bar dataKey="count" fill="#FFD700" name={t('admin.age.users_count')} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -149,7 +151,7 @@ export default function AdminAgeStatistics() {
             {/* Pie Chart */}
             <Card>
               <CardHeader>
-                <CardTitle>Korcsoportok aránya</CardTitle>
+                <CardTitle>{t('admin.age.ratio')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -176,16 +178,16 @@ export default function AdminAgeStatistics() {
             {/* Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Részletes táblázat</CardTitle>
+                <CardTitle>{t('admin.age.detailed_table')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left py-3 px-4">Korcsoport</th>
-                        <th className="text-right py-3 px-4">Felhasználók száma</th>
-                        <th className="text-right py-3 px-4">Arány (%)</th>
+                        <th className="text-left py-3 px-4">{t('admin.age.age_group')}</th>
+                        <th className="text-right py-3 px-4">{t('admin.age.users_count')}</th>
+                        <th className="text-right py-3 px-4">{t('admin.age.percentage')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -197,7 +199,7 @@ export default function AdminAgeStatistics() {
                         </tr>
                       ))}
                       <tr className="font-bold bg-muted/30">
-                        <td className="py-3 px-4">Összesen</td>
+                        <td className="py-3 px-4">{t('admin.age.total')}</td>
                         <td className="text-right py-3 px-4">{statistics.total_users.toLocaleString('hu-HU')}</td>
                         <td className="text-right py-3 px-4">100%</td>
                       </tr>
@@ -210,7 +212,7 @@ export default function AdminAgeStatistics() {
         ) : (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
-              Nincs megjeleníthető adat
+              {t('admin.age.no_data')}
             </CardContent>
           </Card>
         )}

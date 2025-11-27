@@ -63,13 +63,15 @@ export default function AdminQuestionPools() {
 
       if (error) throw error;
 
-      toast.success(`✓ ${data.pools_created} medence létrehozva!`, {
-        description: `${data.topics_count} témakör, ${data.questions_per_topic_per_pool} kérdés/témakör/medence`,
+      toast.success(t('admin.pools.created').replace('{count}', String(data.pools_created)), {
+        description: t('admin.pools.created_desc')
+          .replace('{topics}', String(data.topics_count))
+          .replace('{questions}', String(data.questions_per_topic_per_pool)),
       });
       await loadPoolStats();
     } catch (error) {
       console.error('Error regenerating pools:', error);
-      toast.error(`Hiba: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(t('admin.pools.error').replace('{message}', error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setRegenerating(false);
     }
