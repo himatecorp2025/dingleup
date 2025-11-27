@@ -190,10 +190,10 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   useEffect(() => {
     initializeLanguage();
 
-    // Listen for auth state changes - when user logs in/out or switches accounts,
-    // reinitialize language based on the new user's preferred_language
+    // Listen for auth state changes - only reinitialize on actual login/logout,
+    // NOT on USER_UPDATED to prevent language switching during data refreshes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+      if (event === 'SIGNED_IN') {
         // Re-initialize language for the newly logged-in user
         initializeLanguage();
       } else if (event === 'SIGNED_OUT') {
@@ -201,6 +201,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         setLangState('en');
         localStorage.setItem(STORAGE_KEY, 'en');
       }
+      // Explicitly NOT handling USER_UPDATED to keep language stable during data refreshes
     });
 
     return () => {
@@ -239,16 +240,15 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         setIsLoading(false);
       }
 
-      // Update database in background (don't block UI)
+      // Update database (await to ensure consistency)
       if (!skipDbUpdate) {
-        supabase.auth.getUser().then(({ data: { user } }) => {
-          if (user) {
-            supabase
-              .from('profiles')
-              .update({ preferred_language: newLang })
-              .eq('id', user.id);
-          }
-        });
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase
+            .from('profiles')
+            .update({ preferred_language: newLang })
+            .eq('id', user.id);
+        }
       }
     } catch (error) {
       console.error('[I18n] Failed to change language:', error);
