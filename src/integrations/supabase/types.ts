@@ -3662,6 +3662,35 @@ export type Database = {
         Args: { p_invitee_id: string; p_inviter_id: string }
         Returns: Json
       }
+      create_lootbox_drop: {
+        Args: {
+          p_expires_at: string
+          p_metadata?: Json
+          p_open_cost_gold: number
+          p_source: string
+          p_user_id: string
+        }
+        Returns: {
+          activated_at: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          metadata: Json | null
+          open_cost_gold: number
+          opened_at: string | null
+          rewards_gold: number | null
+          rewards_life: number | null
+          source: string
+          status: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lootbox_instances"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       credit_lives: {
         Args: {
           p_delta_lives: number

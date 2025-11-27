@@ -147,21 +147,17 @@ serve(async (req) => {
       const dailySequence = todayDropCount + 1;
 
       const { data: newDrop, error: insertError } = await supabaseAdmin
-        .from('lootbox_instances')
-        .insert({
-          user_id: user.id,
-          status: 'active_drop',
-          source: 'daily_first_login',
-          open_cost_gold: 150,
-          expires_at: expiresAt.toISOString(),
-          metadata: { 
+        .rpc('create_lootbox_drop', {
+          p_user_id: user.id,
+          p_source: 'daily_first_login',
+          p_open_cost_gold: 150,
+          p_expires_at: expiresAt.toISOString(),
+          p_metadata: {
             activity_type,
             daily_sequence: dailySequence,
-            ...metadata 
+            ...metadata
           }
-        })
-        .select()
-        .single();
+        });
 
       if (insertError) {
         console.error('[register-activity-and-drop] Insert error:', insertError);
@@ -199,22 +195,18 @@ serve(async (req) => {
     const dailySequence = todayDropCount + 1;
 
     const { data: newDrop, error: insertError } = await supabaseAdmin
-      .from('lootbox_instances')
-      .insert({
-        user_id: user.id,
-        status: 'active_drop',
-        source: 'activity_random',
-        open_cost_gold: 150,
-        expires_at: expiresAt.toISOString(),
-        metadata: { 
+      .rpc('create_lootbox_drop', {
+        p_user_id: user.id,
+        p_source: 'activity_random',
+        p_open_cost_gold: 150,
+        p_expires_at: expiresAt.toISOString(),
+        p_metadata: {
           activity_type,
           daily_sequence: dailySequence,
           random_value: randomValue,
-          ...metadata 
+          ...metadata
         }
-      })
-      .select()
-      .single();
+      });
 
     if (insertError) {
       console.error('[register-activity-and-drop] Insert error:', insertError);
