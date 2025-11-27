@@ -9,8 +9,10 @@ import { Brain, Search, Info } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useI18n } from '@/i18n';
 
 export default function AdminGameProfiles() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const { profiles, loading, error } = useAdminGameProfilesQuery();
   const [search, setSearch] = useState('');
@@ -44,7 +46,7 @@ export default function AdminGameProfiles() {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-            <p className="text-lg text-white/70">Betöltés...</p>
+            <p className="text-lg text-white/70">{t('admin.loading')}</p>
           </div>
         </div>
       </AdminLayout>
@@ -69,23 +71,23 @@ export default function AdminGameProfiles() {
         <div className="mb-8">
           <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-3 mb-2">
             <Brain className="h-8 w-8 text-purple-400" />
-            Játékprofil Statisztika
+            {t('admin.game_profiles.title')}
           </h1>
           <p className="text-white/60">
-            Játékosok profilozási adatai és személyre szabási státuszok
+            {t('admin.game_profiles.subtitle')}
           </p>
         </div>
 
         <Alert className="mb-6 backdrop-blur-xl bg-blue-500/10 border-blue-500/30">
           <Info className="h-4 w-4 text-blue-400" />
           <AlertDescription className="text-white/80">
-            Ez a nézet a játékosok játékprofil-statisztikáit mutatja. Az adatok nem tartalmaznak érzékeny személyes adatot, és kizárólag a játékmechanika személyre szabásához és a rendszer fejlesztéséhez használjuk őket. Nem reklámcélú profilozás.
+            {t('admin.game_profiles.disclaimer')}
           </AlertDescription>
         </Alert>
 
         <Card className="mb-6 backdrop-blur-xl bg-white/5 border border-white/10">
           <CardHeader>
-            <CardTitle className="text-white">Szűrés és Rendezés</CardTitle>
+            <CardTitle className="text-white">{t('admin.game_profiles.filter_sort')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col md:flex-row gap-4">
@@ -93,7 +95,7 @@ export default function AdminGameProfiles() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Keresés user ID vagy felhasználónév alapján..."
+                    placeholder={t('admin.game_profiles.search_placeholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-10"
@@ -105,19 +107,19 @@ export default function AdminGameProfiles() {
                   variant={sortBy === 'answered' ? 'default' : 'outline'}
                   onClick={() => setSortBy('answered')}
                 >
-                  Válaszok száma
+                  {t('admin.game_profiles.sort_answers')}
                 </Button>
                 <Button
                   variant={sortBy === 'correctness' ? 'default' : 'outline'}
                   onClick={() => setSortBy('correctness')}
                 >
-                  Helyesség
+                  {t('admin.game_profiles.sort_correctness')}
                 </Button>
                 <Button
                   variant={sortBy === 'active' ? 'default' : 'outline'}
                   onClick={() => setSortBy('active')}
                 >
-                  Aktív AI
+                  {t('admin.game_profiles.sort_active')}
                 </Button>
               </div>
             </div>
@@ -127,21 +129,21 @@ export default function AdminGameProfiles() {
         {/* Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Játékosok ({filteredAndSorted.length})</CardTitle>
-            <CardDescription>Összes profil adatok és státuszok</CardDescription>
+            <CardTitle>{t('admin.game_profiles.players')} ({filteredAndSorted.length})</CardTitle>
+            <CardDescription>{t('admin.game_profiles.table_desc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4">Felhasználó</th>
-                    <th className="text-right py-3 px-4">Összes válasz</th>
-                    <th className="text-right py-3 px-4">Helyes %</th>
-                    <th className="text-right py-3 px-4">Like/Dislike</th>
-                    <th className="text-center py-3 px-4">AI Státusz</th>
-                    <th className="text-left py-3 px-4">TOP3 Témák</th>
-                    <th className="text-center py-3 px-4">Műveletek</th>
+                    <th className="text-left py-3 px-4">{t('admin.game_profiles.col_user')}</th>
+                    <th className="text-right py-3 px-4">{t('admin.game_profiles.col_total_answers')}</th>
+                    <th className="text-right py-3 px-4">{t('admin.game_profiles.col_correct_percent')}</th>
+                    <th className="text-right py-3 px-4">{t('admin.game_profiles.col_like_dislike')}</th>
+                    <th className="text-center py-3 px-4">{t('admin.game_profiles.col_ai_status')}</th>
+                    <th className="text-left py-3 px-4">{t('admin.game_profiles.col_top3')}</th>
+                    <th className="text-center py-3 px-4">{t('admin.game_profiles.col_actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -163,14 +165,14 @@ export default function AdminGameProfiles() {
                       <td className="text-center py-3 px-4">
                         {profile.personalizationActive ? (
                           <Badge variant="default" className="bg-green-500">
-                            Személyre szabás aktív (70/20/10)
+                            {t('admin.game_profiles.personalization_active')}
                           </Badge>
                         ) : profile.totalAnswered < 1000 ? (
                           <Badge variant="secondary">
-                            Tanulási fázis ({profile.totalAnswered}/1000)
+                            {t('admin.game_profiles.learning_phase_short')} ({profile.totalAnswered}/1000)
                           </Badge>
                         ) : (
-                          <Badge variant="outline">AI kikapcsolva</Badge>
+                          <Badge variant="outline">{t('admin.game_profiles.ai_disabled')}</Badge>
                         )}
                       </td>
                       <td className="py-3 px-4">
@@ -188,7 +190,7 @@ export default function AdminGameProfiles() {
                           size="sm"
                           onClick={() => navigate(`/admin/game-profiles/${profile.userId}`)}
                         >
-                          Részletek
+                          {t('admin.game_profiles.view_details')}
                         </Button>
                       </td>
                     </tr>

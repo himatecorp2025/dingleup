@@ -435,32 +435,32 @@ const AdminDashboard = () => {
 
         {activeTab === 'revenue' && (
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">Teljes árbevétel</h2>
+            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">{t('admin.dashboard.revenue_title')}</h2>
             <div className="overflow-x-auto -mx-4 lg:mx-0">
               <table className="w-full min-w-[600px]">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Ország</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Felhasználók száma</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Átlagos költés</th>
-                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">Zászló</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.revenue_country')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.revenue_user_count')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.revenue_avg_spend')}</th>
+                    <th className="text-left text-white/70 font-medium py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">{t('admin.dashboard.revenue_flag')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">Magyarország</td>
+                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{t('admin.dashboard.country_hungary')}</td>
                     <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">9.783</td>
                     <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">8$</td>
                     <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">🇭🇺</td>
                   </tr>
                   <tr className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">Anglia</td>
+                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{t('admin.dashboard.country_england')}</td>
                     <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">2.981</td>
                     <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">7.49$</td>
                     <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">🇬🇧</td>
                   </tr>
                   <tr className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">Ausztria</td>
+                    <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">{t('admin.dashboard.country_austria')}</td>
                     <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">2.432</td>
                     <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">7.24$</td>
                     <td className="py-3 lg:py-4 px-2 lg:px-4 text-white text-xs lg:text-sm">🇦🇹</td>
@@ -473,7 +473,7 @@ const AdminDashboard = () => {
 
         {activeTab === 'payouts' && (
           <div className="bg-[#1a1a3e]/50 border border-purple-500/30 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">Nyeremény kifizetések</h2>
+            <h2 className="text-xl lg:text-2xl font-bold text-white mb-4 lg:mb-6">{t('admin.dashboard.payouts_title')}</h2>
 ...
           </div>
         )}
@@ -695,10 +695,8 @@ const AdminDashboard = () => {
                       </>
                     )}
 
-                    {/* Screenshots Section */}
-                    {report.screenshot_urls && report.screenshot_urls.length > 0 && (
                       <div className="mt-3">
-                        <strong className="text-white text-sm block mb-2">Csatolt képek ({report.screenshot_urls.length}):</strong>
+                        <strong className="text-white text-sm block mb-2">{t('admin.dashboard.attached_images')} ({report.screenshot_urls.length}):</strong>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                           {report.screenshot_urls.map((url: string, idx: number) => (
                             <a 
@@ -710,7 +708,7 @@ const AdminDashboard = () => {
                             >
                               <img 
                                 src={url} 
-                                alt={`Képernyőkép ${idx + 1}`}
+                                alt={`${t('admin.dashboard.screenshot')} ${idx + 1}`}
                                 className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-300"
                                 onError={(e) => {
                                   console.error('Image load error:', url);
@@ -719,18 +717,17 @@ const AdminDashboard = () => {
                               />
                               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                                 <span className="opacity-0 group-hover:opacity-100 text-white text-xs bg-black/70 px-2 py-1 rounded">
-                                  Megnyitás
+                                  {t('admin.dashboard.open_image')}
                                 </span>
                               </div>
                             </a>
                           ))}
                         </div>
                       </div>
-                    )}
 
                     {report.admin_notes && (
                       <p className="text-sm text-purple-300 mt-2">
-                        <strong>Admin megjegyzés:</strong> {report.admin_notes}
+                        <strong>{t('admin.dashboard.admin_note')}</strong> {report.admin_notes}
                       </p>
                     )}
                   </div>
@@ -745,7 +742,7 @@ const AdminDashboard = () => {
                         }}
                         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
                       >
-                        📋 Folyamatban
+                        📋 {t('admin.dashboard.action_reviewing')}
                       </button>
                       <button
                         onClick={() => {
@@ -755,7 +752,7 @@ const AdminDashboard = () => {
                         }}
                         className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors"
                       >
-                        ✅ Megoldva
+                        ✅ {t('admin.dashboard.action_resolved')}
                       </button>
                       <button
                         onClick={() => {
@@ -765,7 +762,7 @@ const AdminDashboard = () => {
                         }}
                         className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors"
                       >
-                        ❌ Elutasítás
+                        ❌ {t('admin.dashboard.action_dismissed')}
                       </button>
                     </div>
                   )}
@@ -776,7 +773,7 @@ const AdminDashboard = () => {
                 reportsSubTab === 'development' ? r.report_type === 'bug' : r.report_type === 'user_behavior'
               ).length === 0 && (
                 <div className="text-center py-8 text-white/50">
-                  Nincs {reportsSubTab === 'development' ? 'fejlesztői' : 'felhasználói'} jelentés
+                  {reportsSubTab === 'development' ? t('admin.dashboard.no_dev_reports') : t('admin.dashboard.no_support_reports')}
                 </div>
               )}
             </div>
