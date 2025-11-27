@@ -44,12 +44,6 @@ const Index = () => {
       return null;
     }
     
-    const introShown = sessionStorage.getItem('introShown');
-    
-    if (!introShown) {
-      return <Navigate to="/intro" replace />;
-    }
-    
     if (userId) {
       return <Navigate to="/dashboard" replace />;
     }

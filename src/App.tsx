@@ -32,7 +32,6 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AuthChoice = lazy(() => import("./pages/AuthChoice"));
 const RegisterNew = lazy(() => import("./pages/RegisterNew"));
 const LoginNew = lazy(() => import("./pages/LoginNew"));
-const IntroVideo = lazy(() => import("./pages/IntroVideo"));
 const Game = lazy(() => import("./pages/Game"));
 const GameRules = lazy(() => import("./pages/GameRules"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -117,16 +116,6 @@ const AppCore = () => {
     },
   });
 
-  // Reset intro flag on logout to ensure clean cold-start flow
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') {
-        try { sessionStorage.removeItem('app_intro_shown'); } catch {}
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, []);
-
   return (
     <>
       <Toaster />
@@ -157,8 +146,6 @@ const AppCore = () => {
               <Route path="/auth/choice" element={<AuthChoice />} />
               <Route path="/auth/register" element={<RegisterNew />} />
               <Route path="/auth/login" element={<LoginNew />} />
-              
-              <Route path="/intro" element={<IntroVideo />} />
               
               {/* Protected routes wrapped in ErrorBoundary */}
               <Route path="/dashboard" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
