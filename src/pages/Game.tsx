@@ -6,10 +6,17 @@ import { useAudioStore } from "@/stores/audioStore";
 import { ScreenshotProtection } from "@/components/ScreenshotProtection";
 import { GameErrorBoundary } from "@/components/GameErrorBoundary";
 import AudioManager from "@/lib/audioManager";
+import { useFullscreen } from "@/hooks/useFullscreen";
 
 const Game = () => {
   const navigate = useNavigate();
   const { musicEnabled, volume, loaded } = useAudioStore();
+
+  // FULLSCREEN MODE: Hide status bar on mobile devices
+  useFullscreen({
+    enabled: true,
+    autoReenter: true,
+  });
 
   // CRITICAL: Game is MOBILE-ONLY - redirect desktop users
   useEffect(() => {
@@ -48,7 +55,7 @@ const Game = () => {
   return (
     <GameErrorBoundary>
       <ScreenshotProtection enabled={true}>
-        <div className="min-h-dvh min-h-svh overflow-hidden relative" style={{
+        <div className="h-dvh overflow-hidden relative" style={{
           paddingTop: 'max(calc(env(safe-area-inset-top) + 2%), env(safe-area-inset-top) + 8px)'
         }}>
           {/* Fixed background layer - extends beyond safe-area, does NOT scroll */}

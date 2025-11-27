@@ -6,6 +6,7 @@ import { useWallet } from '@/hooks/useWallet';
 import { useBoosterState } from '@/hooks/useBoosterState';
 import { useI18n, LangCode } from '@/i18n';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useFullscreen } from '@/hooks/useFullscreen';
 
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,6 +28,12 @@ const Profile = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [weeklyCorrectAnswers, setWeeklyCorrectAnswers] = useState<number>(0);
+  
+  // FULLSCREEN MODE: Hide status bar on mobile devices
+  useFullscreen({
+    enabled: true,
+    autoReenter: true,
+  });
   
   // Username editing
   const [isEditingUsername, setIsEditingUsername] = useState(false);
