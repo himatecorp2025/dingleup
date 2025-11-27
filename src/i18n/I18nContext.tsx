@@ -140,9 +140,16 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
           localStorage.setItem(STORAGE_KEY, targetLang);
         }
       } else {
-        // No user logged in - always default to English for landing page
-        targetLang = 'en';
-        localStorage.setItem(STORAGE_KEY, 'en');
+        // No user logged in - detect timezone for login/register pages
+        try {
+          const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const countryCode = await import('@/lib/utils').then(m => m.getCountryFromTimezone(detectedTimezone));
+          targetLang = countryCode === 'HU' ? 'hu' : 'en';
+        } catch (error) {
+          console.error('[I18n] Timezone detection failed:', error);
+          targetLang = 'en';
+        }
+        localStorage.setItem(STORAGE_KEY, targetLang);
       }
 
       setLangState(targetLang);
