@@ -136,7 +136,7 @@ Deno.serve(async (req) => {
         JSON.stringify({ 
           success: true, 
           coinsEarned,
-          message: 'Játék sikeresen befejezve!',
+          message: 'Game completed successfully!',
           cached: true
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -232,7 +232,7 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         coinsEarned,
-        message: 'Játék sikeresen befejezve!' 
+        message: 'Game completed successfully!' 
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
