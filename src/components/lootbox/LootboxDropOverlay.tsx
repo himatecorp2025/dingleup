@@ -5,6 +5,7 @@ import { GoldLootboxIcon } from './GoldLootboxIcon';
 import { LootboxDecisionDialog } from './LootboxDecisionDialog';
 import { useWallet } from '@/hooks/useWallet';
 import { supabase } from '@/integrations/supabase/client';
+import type { User } from '@supabase/supabase-js';
 
 export const LootboxDropOverlay = () => {
   const location = useLocation();
@@ -16,9 +17,26 @@ export const LootboxDropOverlay = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [storedCount, setStoredCount] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
 
-  // Hide overlay on admin pages
+  // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/auth-choice';
+
+  // Check user authentication
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Fetch stored lootbox count
   useEffect(() => {
@@ -39,14 +57,14 @@ export const LootboxDropOverlay = () => {
       }
     };
 
-    if (activeLootbox) {
+    if (activeLootbox && user) {
       fetchStoredCount();
     }
-  }, [activeLootbox]);
+  }, [activeLootbox, user]);
 
   // Handle drop animation
   useEffect(() => {
-    if (activeLootbox && !loading && !isAdminPage) {
+    if (activeLootbox && !loading && !isAdminPage && !isAuthPage && user) {
       setIsAnimating(true);
       setIsVisible(true);
       
@@ -56,11 +74,11 @@ export const LootboxDropOverlay = () => {
       }, 1000);
 
       return () => clearTimeout(timer);
-    } else if (!activeLootbox) {
+    } else if (!activeLootbox || !user) {
       setIsVisible(false);
       setIsAnimating(false);
     }
-  }, [activeLootbox, loading, isAdminPage]);
+  }, [activeLootbox, loading, isAdminPage, isAuthPage, user]);
 
   // Handle countdown
   useEffect(() => {
@@ -102,8 +120,8 @@ export const LootboxDropOverlay = () => {
     }
   };
 
-  // Don't render on admin pages or if no active lootbox
-  if (isAdminPage || !isVisible || !activeLootbox) {
+  // Don't render on admin/auth pages, if no user, or if no active lootbox
+  if (isAdminPage || isAuthPage || !user || !isVisible || !activeLootbox) {
     return null;
   }
 
