@@ -164,7 +164,7 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'A kérés feldolgozása sikertelen' }), {
+    return new Response(JSON.stringify({ error: 'Request processing failed' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
