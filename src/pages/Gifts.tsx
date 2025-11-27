@@ -168,10 +168,10 @@ const Gifts = () => {
   };
 
   const packages = [
-    { boxes: 1, price: '$1.99', priceId: 'price_1SY9TpKKw7HPC0ZDjtahxbNo' },
-    { boxes: 3, price: '$4.99', priceId: 'price_1SY9U8KKw7HPC0ZDj6AXLJdN' },
-    { boxes: 5, price: '$9.99', priceId: 'price_1SY9UbKKw7HPC0ZDGHEJq6Tg' },
-    { boxes: 10, price: '$17.99', priceId: 'price_1SY9V1KKw7HPC0ZDCyRUtwoK' }
+    { boxes: 1, price: '$1.99', priceId: 'price_1SY9TpKKw7HPC0ZDjtahxbNo', rewardKey: 'gifts.rewards_1_box' },
+    { boxes: 3, price: '$4.99', priceId: 'price_1SY9U8KKw7HPC0ZDj6AXLJdN', rewardKey: 'gifts.rewards_3_boxes' },
+    { boxes: 5, price: '$9.99', priceId: 'price_1SY9UbKKw7HPC0ZDGHEJq6Tg', rewardKey: 'gifts.rewards_5_boxes' },
+    { boxes: 10, price: '$17.99', priceId: 'price_1SY9V1KKw7HPC0ZDCyRUtwoK', rewardKey: 'gifts.rewards_10_boxes' }
   ];
 
   const handlePurchase = async (pkg: typeof packages[0]) => {
@@ -461,7 +461,7 @@ const Gifts = () => {
                         marginBottom: 'clamp(2px, 0.5vh, 4px)'
                       }}
                     >
-                      {t('gifts.random_rewards')}
+                      {t(pkg.rewardKey)}
                     </p>
                     <p 
                       className="font-bold text-white"
