@@ -14,6 +14,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { GameErrorBoundary } from "@/components/GameErrorBoundary";
 import { OfflineDetector } from "@/components/OfflineDetector";
 import { UpdatePrompt } from "@/components/UpdatePrompt";
+import { LootboxDropOverlay } from "@/components/lootbox/LootboxDropOverlay";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useAppLifecycle } from "@/hooks/useAppLifecycle";
 import { useSessionMonitor } from "@/hooks/useSessionMonitor";
@@ -130,6 +131,7 @@ const AppCore = () => {
       <Sonner />
       <OfflineDetector />
       <UpdatePrompt />
+      <LootboxDropOverlay />
       <BrowserRouter
         future={{
           v7_startTransition: true,

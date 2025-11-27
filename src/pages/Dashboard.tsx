@@ -60,6 +60,7 @@ import BottomNav from '@/components/BottomNav';
 import gameBackground from '@/assets/game-background.png';
 import { toast } from 'sonner';
 import { useBroadcastChannel } from '@/hooks/useBroadcastChannel';
+import { useLoginLootboxTracker } from '@/hooks/useLoginLootboxTracker';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -99,6 +100,9 @@ const Dashboard = () => {
   const boosterState = useBoosterState(userId);
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
+  
+  // Track login activity for lootbox drops
+  useLoginLootboxTracker(!!userId);
   
   // Lootbox state
   const { activeLootbox, refetch: refetchActiveLootbox } = useActiveLootbox(userId);

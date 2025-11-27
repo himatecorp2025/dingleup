@@ -18,18 +18,12 @@ interface UseActiveLootboxReturn {
   refetch: () => Promise<void>;
 }
 
-export const useActiveLootbox = (userId: string | undefined): UseActiveLootboxReturn => {
+export const useActiveLootbox = (userId?: string | undefined): UseActiveLootboxReturn => {
   const [activeLootbox, setActiveLootbox] = useState<ActiveLootbox | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchActiveLootbox = async () => {
-    if (!userId) {
-      setActiveLootbox(null);
-      setLoading(false);
-      return;
-    }
-
     try {
       setLoading(true);
       setError(null);
@@ -65,7 +59,11 @@ export const useActiveLootbox = (userId: string | undefined): UseActiveLootboxRe
 
   useEffect(() => {
     fetchActiveLootbox();
-  }, [userId]);
+    
+    // Poll every 30 seconds to check for new drops
+    const interval = setInterval(fetchActiveLootbox, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   return {
     activeLootbox,
