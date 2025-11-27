@@ -82,7 +82,7 @@ const About = () => {
           <button
             onClick={() => navigate('/admin/dashboard')}
             className="absolute top-4 left-4 p-2 bg-accent/80 hover:bg-accent rounded-lg transition-colors border border-accent/50 shadow-lg z-10"
-            title="Admin Felület"
+            title={t('about.admin_button')}
           >
             <Shield className="w-5 h-5 text-accent-foreground" />
           </button>
