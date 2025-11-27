@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n';
+import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { LifeIcon3D } from '@/components/icons/LifeIcon3D';
 import { CoinIcon3D } from '@/components/icons/CoinIcon3D';
@@ -20,6 +21,7 @@ interface InGameRescuePopupProps {
   currentLives: number;
   currentGold: number;
   onStateRefresh: () => Promise<void>;
+  onGameEnd?: () => void;
 }
 
 export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
@@ -29,8 +31,10 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
   currentLives,
   currentGold,
   onStateRefresh,
+  onGameEnd,
 }) => {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [loadingGoldSaver, setLoadingGoldSaver] = useState(false);
   const [loadingInstantRescue, setLoadingInstantRescue] = useState(false);
   const [hasTrackedView, setHasTrackedView] = useState(false);
@@ -98,11 +102,23 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         await onStateRefresh();
         onClose();
       } else {
-        toast.error(data?.error || t('rescue.free_error'));
+        // Sikertelen vásárlás - egységes hibaüzenet
+        toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
+        onClose();
+        if (onGameEnd) onGameEnd();
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
       }
     } catch (error) {
       console.error('Gold Saver purchase error:', error);
-      toast.error(t('rescue.purchase_error'));
+      // Sikertelen vásárlás - egységes hibaüzenet
+      toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
+      onClose();
+      if (onGameEnd) onGameEnd();
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     } finally {
       setLoadingGoldSaver(false);
     }
@@ -139,15 +155,23 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         await onStateRefresh();
         onClose();
       } else {
-        if (data?.error === 'PAYMENT_FAILED') {
-          toast.error(t('rescue.premium_payment_failed'));
-        } else {
-          toast.error(data?.error || t('rescue.free_error'));
-        }
+        // Sikertelen vásárlás - egységes hibaüzenet
+        toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
+        onClose();
+        if (onGameEnd) onGameEnd();
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
       }
     } catch (error) {
       console.error('Instant Rescue purchase error:', error);
-      toast.error(t('rescue.purchase_error'));
+      // Sikertelen vásárlás - egységes hibaüzenet
+      toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
+      onClose();
+      if (onGameEnd) onGameEnd();
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     } finally {
       setLoadingInstantRescue(false);
     }
