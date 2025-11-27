@@ -18,8 +18,8 @@ const Gifts = () => {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.1),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[url('/game-background.png')] bg-cover bg-center opacity-10 pointer-events-none" />
 
-      <div className="relative z-10 flex-1 flex flex-col overflow-hidden pb-28">
-        <div className="container mx-auto px-4 py-3 max-w-2xl flex-1 flex flex-col overflow-y-auto">
+      <div className="relative z-10 flex-1 flex flex-col overflow-hidden pb-32">
+        <div className="container mx-auto px-4 py-3 max-w-2xl flex-1 flex flex-col justify-between">
           {/* Header */}
           <h1 className="text-2xl md:text-3xl font-black text-center mb-3 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 drop-shadow-[0_2px_8px_rgba(234,179,8,0.6)]">
             {t('gifts.title')}
