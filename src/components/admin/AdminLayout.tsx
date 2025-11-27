@@ -74,21 +74,21 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   };
 
   const menuItems = [
-    { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-    { path: '/admin/dashboard?tab=users', label: 'Összes felhasználó', icon: Users },
-    { path: '/admin/game-profiles', label: 'Játékos Profilozás', icon: Brain },
-    { path: '/admin/ad-interests', label: 'Reklámprofilok (Előkészítés)', icon: Target },
-    { path: '/admin/dashboard?tab=invitations', label: 'Meghívások', icon: Users, badge: 'invitations' },
-    { path: '/admin/dashboard?tab=reports', label: 'Jelentések', icon: AlertTriangle, badge: 'reports' },
-    { path: '/admin/popular-content', label: 'Népszerű tartalmak', icon: TrendingUp },
-    { path: '/admin/question-pools', label: 'Question Pools (Kérdésbázis)', icon: Database },
-    { path: '/admin/booster-types', label: 'Booster Csomagok', icon: Zap },
-    { path: '/admin/booster-purchases', label: 'Booster Vásárlások', icon: ShoppingBag },
-    { path: '/admin/translations', label: 'Fordítások (UI & Kérdések)', icon: Languages },
-    { path: '/admin/load-test', label: 'Terheléses Teszt (Load Test)', icon: BarChart3 },
-    { path: '/admin/advanced-analytics', label: 'Fejlett Analitika', icon: Activity },
-    { path: '/admin/age-statistics', label: 'Korcsoport Statisztika', icon: Calendar },
-    { path: '/admin/profile', label: 'Profil Szerkesztése', icon: Settings },
+    { path: '/admin/dashboard', labelKey: 'common.dashboard', icon: LayoutDashboard, exact: true },
+    { path: '/admin/dashboard?tab=users', labelKey: 'admin.menu.all_users', icon: Users },
+    { path: '/admin/game-profiles', labelKey: 'admin.menu.game_profiling', icon: Brain },
+    { path: '/admin/ad-interests', labelKey: 'admin.menu.ad_profiles', icon: Target },
+    { path: '/admin/dashboard?tab=invitations', labelKey: 'admin.menu.invitations', icon: Users, badge: 'invitations' },
+    { path: '/admin/dashboard?tab=reports', labelKey: 'admin.menu.reports', icon: AlertTriangle, badge: 'reports' },
+    { path: '/admin/popular-content', labelKey: 'admin.menu.popular_content', icon: TrendingUp },
+    { path: '/admin/question-pools', labelKey: 'admin.menu.question_pools', icon: Database },
+    { path: '/admin/booster-types', labelKey: 'admin.menu.booster_packages', icon: Zap },
+    { path: '/admin/booster-purchases', labelKey: 'admin.menu.booster_purchases', icon: ShoppingBag },
+    { path: '/admin/translations', labelKey: 'admin.menu.translations', icon: Languages },
+    { path: '/admin/load-test', labelKey: 'admin.menu.load_test', icon: BarChart3 },
+    { path: '/admin/advanced-analytics', labelKey: 'admin.menu.advanced_analytics', icon: Activity },
+    { path: '/admin/age-statistics', labelKey: 'admin.menu.age_statistics', icon: Calendar },
+    { path: '/admin/profile', labelKey: 'admin.menu.profile_settings', icon: Settings },
   ];
 
   const handleLogout = async () => {
@@ -160,7 +160,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                       }`}
                     >
                       <Icon className="w-4 h-4 xl:w-5 xl:h-5 text-purple-400" />
-                      <span className="font-medium">{item.label}</span>
+                      <span className="font-medium">{t(item.labelKey)}</span>
                     </button>
                   );
                 })}
