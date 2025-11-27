@@ -329,7 +329,7 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error('Premium speed activation error:', error);
-      const errorMsg = error instanceof Error ? error.message : "Aktiválási hiba";
+      const errorMsg = error instanceof Error ? error.message : t('errors.activation_failed');
       toast.error(errorMsg, { id: 'activate-premium-speed' });
     }
   };
@@ -361,7 +361,7 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error('Premium booster payment error:', error);
-      const errorMsg = error instanceof Error ? error.message : "Fizetési hiba";
+      const errorMsg = error instanceof Error ? error.message : t('errors.payment_failed');
       toast.error(errorMsg, { id: 'purchase-premium-booster' });
     }
   };
