@@ -359,10 +359,10 @@ useEffect(() => {
 ## 7. Összefoglaló – Kritikus Javítások Listája
 
 ### P0 (AZONNAL):
-1. ✅ **Stripe webhook implementálása** (`stripe-webhook-handler`)
-2. ✅ **Session ID validáció** (verify functionekben: check customer email/ID)
-3. ✅ **Timeout és retry kezelés** (frontend: 30s timeout + retry button)
-4. ✅ **Tranzakciós védelem** (minden verify function használja `credit_wallet()` function-t)
+1. ✅ **Stripe webhook implementálása** (`stripe-webhook-handler`) – IMPLEMENTÁLVA
+2. ✅ **Session ID validáció** (verify functionekben: check customer email/ID + format + expiry) – IMPLEMENTÁLVA (mind a 4 verify functionben)
+3. ⏳ **Timeout és retry kezelés** (frontend: 30s timeout + retry button)
+4. ⏳ **Tranzakciós védelem** (minden verify function használja `credit_wallet()` function-t)
 
 ### P1 (Sürgős):
 5. ✅ **Mobile WebView fallback** (deep link + polling-based verification)
