@@ -4,6 +4,9 @@ import App from "./App.tsx";
 import "./index.css";
 import { I18nProvider } from "./i18n";
 
+// Initialize self-healing error monitoring system
+import "./lib/selfHealing";
+
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
 
