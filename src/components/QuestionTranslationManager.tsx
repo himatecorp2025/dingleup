@@ -111,7 +111,7 @@ export const QuestionTranslationManager = () => {
     try {
       setIsTranslating(true);
       setProgress(0);
-      setStatus('Csonka fordítások keresése...');
+      setStatus(t('admin.searching_truncated_translations'));
       setCurrentLanguage('');
       setCurrentBatch(0);
       setTotalBatches(0);
@@ -137,7 +137,7 @@ export const QuestionTranslationManager = () => {
         
         if (data.phase === 'language-start') {
           setCurrentLanguage(data.languageName);
-          setStatus(`Fordítás ${data.languageName} nyelvre...`);
+          setStatus(t('admin.translating_to_language').replace('{language}', data.languageName));
           setCurrentBatch(0);
           setTotalBatches(Math.ceil(data.totalQuestions / 10));
         } else if (data.phase === 'batch-complete' || data.phase === 'batch-skipped') {
@@ -145,7 +145,7 @@ export const QuestionTranslationManager = () => {
           setTotalBatches(data.totalBatches);
           const percentComplete = Math.round((data.questionsProcessed / data.totalQuestions) * 100);
           setProgress(percentComplete);
-          setStatus(`${data.languageName}: ${data.currentBatch}/${data.totalBatches} batch (${data.successCount} sikeres, ${data.errorCount} hiba)`);
+          setStatus(`${data.languageName}: ${data.currentBatch}/${data.totalBatches} batch (${data.successCount} ${t('admin.successful')}, ${data.errorCount} ${t('admin.error')})`);
         }
       });
 
@@ -153,7 +153,7 @@ export const QuestionTranslationManager = () => {
       channelRef.current = progressChannel;
 
       // Single invocation - scans ALL question_translations, finds truncated, deletes, and re-translates
-      setStatus('Csonka fordítások törlése és újrafordítása...');
+      setStatus(t('admin.deleting_retranslating_truncated'));
       setProgress(5);
 
       const { data, error } = await supabase.functions.invoke('generate-question-translations', {
@@ -192,7 +192,7 @@ export const QuestionTranslationManager = () => {
         const totalTruncated = data.stats.totalTruncated || 0;
 
         setProgress(100);
-        setStatus('Fordítás befejezve!');
+        setStatus(t('admin.translation_complete'));
         setStats({
           total: totalTruncated,
           success: totalSuccess,
@@ -299,7 +299,7 @@ export const QuestionTranslationManager = () => {
           )}
           {totalBatches > 0 && (
             <p className="mt-1 text-xs text-white/60">
-              Batch: <span className="font-semibold text-purple-400">{currentBatch}/{totalBatches}</span>
+              {t('admin.batch')}: <span className="font-semibold text-purple-400">{currentBatch}/{totalBatches}</span>
             </p>
           )}
         </div>
@@ -327,7 +327,7 @@ export const QuestionTranslationManager = () => {
           <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <CheckCircle className="w-4 h-4 text-green-400" />
-              <span className="text-xs text-white/60">Sikeres</span>
+              <span className="text-xs text-white/60">{t('admin.successful')}</span>
             </div>
             <p className="text-xl font-bold text-green-400">{stats.success}</p>
           </div>
