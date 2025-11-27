@@ -53,6 +53,20 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
+          // Vendor chunks for better caching
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-query': ['@tanstack/react-query'],
+          'vendor-ui': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-toast',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-alert-dialog'
+          ],
+          // Admin bundle
           'admin': [
             './src/pages/AdminDashboard.tsx',
             './src/pages/AdminGameProfiles.tsx',
@@ -66,6 +80,7 @@ export default defineConfig(({ mode }) => ({
         },
       },
     },
+    chunkSizeWarningLimit: 1000, // Increase warning limit for larger chunks
   },
   plugins: [
     react(),

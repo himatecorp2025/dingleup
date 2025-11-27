@@ -86,17 +86,21 @@ purchases, invitations, user_presence)
 
 ## 🔄 KÖVETKEZŐ LÉPÉSEK (P1 - Magas prioritás)
 
-### 5. **Bundle Size Optimization – Code Splitting**
-**Státusz:** Még nincs implementálva
-**Becsült idő:** 4-5 óra
+### 5. **Bundle Size Optimization – Code Splitting** ✅
+**Státusz:** Implementálva
+**Implementálási idő:** ~30 perc
 
-**Feladatok:**
-- [ ] Route-level lazy loading (Admin pages, Game page, Leaderboard)
-- [ ] Vite `manualChunks` konfiguráció (vendor-react, vendor-supabase, admin chunk)
-- [ ] Admin bundle külön chunk-ba szervezése
+**Változások:**
+- ✅ React.lazy() és Suspense hozzáadva az App.tsx-ben
+- ✅ Admin pages lazy loading (külön admin chunk)
+- ✅ Less critical pages lazy loading (About, Gifts, PaymentSuccess, stb.)
+- ✅ Vite `manualChunks` konfiguráció (vendor-react, vendor-supabase, vendor-query, vendor-ui, admin)
+- ✅ Loading fallback spinner hozzáadva
 
-**Várható eredmény:**
-- Initial bundle: 3.2 MB → 1.2 MB (~65% csökkenés)
+**Előny:**
+- Initial bundle: 3.2 MB → ~1.2 MB várható (~65% csökkenés)
+- Admin bundle csak admin navigációnál töltődik be
+- Kritikus route-ok (Dashboard, Game, Leaderboard) instant load
 
 ---
 
