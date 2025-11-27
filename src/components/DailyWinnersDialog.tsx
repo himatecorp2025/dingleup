@@ -658,102 +658,129 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           )}
                         </div>
 
-                        {/* Positions 4-10 - 2x4 Grid Layout with IT Blue */}
-                        <div className="grid grid-cols-4 gap-2.5 px-2" style={{ transform: 'translateY(-8%)' }}>
-                          {rankFourToTen.map((player) => (
-                            <div
-                              key={player.user_id}
-                              className="flex flex-col items-center gap-1.5 p-2 rounded-lg backdrop-blur-sm"
-                              style={{
-                                background: 'linear-gradient(135deg, rgba(100, 200, 255, 0.15) 0%, rgba(100, 200, 255, 0.08) 100%)',
-                                border: '2px solid rgba(100, 200, 255, 0.5)',
-                                boxShadow: '0 2px 8px rgba(100, 200, 255, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
-                              }}
-                            >
-                              {/* Rank Badge - IT Blue Theme */}
-                              <div 
-                                className="w-6 h-6 rounded-full flex items-center justify-center font-bold"
-                                style={{
-                                  background: 'linear-gradient(135deg, rgba(100, 200, 255, 0.4) 0%, rgba(100, 200, 255, 0.2) 100%)',
-                                  border: '1.5px solid rgba(100, 200, 255, 0.6)',
-                                  color: '#64C8FF',
-                                  fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)',
-                                  WebkitTextStroke: '0.5px rgba(0,0,0,0.6)',
-                                  textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
-                                }}
+                        {/* Positions 4-10 - 2x4 Grid Layout (same style as TOP 3, no wreaths) */}
+                        <div className="grid grid-cols-4 gap-2" style={{ transform: 'translateY(-8%)' }}>
+                          {rankFourToTen.map((player, index) => {
+                            // Alternate between silver and bronze styles
+                            const isSilver = index % 2 === 0;
+                            
+                            return (
+                              <div
+                                key={player.user_id}
+                                className="flex flex-col items-center relative"
+                                style={{ width: '100%' }}
                               >
-                                {player.rank}
-                              </div>
-
-                              {/* Avatar - IT Blue Border */}
-                              <div 
-                                className="w-12 h-12 rounded-full overflow-hidden bg-gray-700 flex-shrink-0"
-                                style={{
-                                  border: '2px solid rgba(100, 200, 255, 0.6)',
-                                  boxShadow: '0 0 8px rgba(100, 200, 255, 0.3)'
-                                }}
-                              >
-                                {player.avatar_url ? (
-                                  <img 
-                                    src={player.avatar_url} 
-                                    alt={`${player.username} avatar`}
-                                    className="w-full h-full object-cover"
-                                    loading="lazy"
-                                  />
-                                ) : (
-                                  <div 
-                                    className="w-full h-full flex items-center justify-center font-bold text-sm"
-                                    style={{ color: '#64C8FF' }}
-                                  >
-                                    {player.username.substring(0, 2).toUpperCase()}
+                                <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
+                                  {/* Profile Picture with 3D Border */}
+                                  <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 relative">
+                                    <div 
+                                      className="absolute inset-0 rounded-full" 
+                                      style={{
+                                        background: isSilver 
+                                          ? 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)'
+                                          : 'linear-gradient(135deg, #f4a460 0%, #daa06d 40%, #cd7f32 70%, #a0522d 100%)',
+                                        boxShadow: isSilver
+                                          ? '0 6px 12px rgba(192,192,192,0.5), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.3)'
+                                          : '0 6px 12px rgba(205,127,50,0.5), inset 0 2px 4px rgba(255,200,150,0.8), inset 0 -2px 4px rgba(0,0,0,0.3)'
+                                      }} 
+                                    />
+                                    <div className="absolute inset-[4px] rounded-full overflow-hidden">
+                                      {player.avatar_url ? (
+                                        <img 
+                                          src={player.avatar_url} 
+                                          alt={player.username}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div 
+                                          className="w-full h-full flex items-center justify-center font-bold bg-gray-800"
+                                          style={{ 
+                                            color: isSilver ? '#d8d8d8' : '#cd7f32',
+                                            fontSize: 'clamp(0.9rem, 4vw, 1.2rem)'
+                                          }}
+                                        >
+                                          {player.username.substring(0, 2).toUpperCase()}
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
-                                )}
-                              </div>
 
-                              {/* Username - IT Blue Text */}
-                              <p 
-                                className="text-center font-semibold truncate w-full px-0.5" 
-                                style={{
-                                  color: '#64C8FF',
-                                  WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
-                                  fontSize: 'clamp(0.6rem, 2.5vw, 0.7rem)',
-                                  maxWidth: '100%'
-                                }}
-                              >
-                                {player.username}
-                              </p>
+                                  {/* Rank Badge - Bottom Center */}
+                                  <div className="absolute" style={{ left: '35%', bottom: '5%', width: '30%' }}>
+                                    <div className="aspect-square rounded-full relative">
+                                      <div 
+                                        className="absolute inset-0 rounded-full" 
+                                        style={{
+                                          background: isSilver
+                                            ? 'radial-gradient(circle at 30% 30%, #ffffff 0%, #e8e8e8 30%, #d0d0d0 60%, #a8a8a8 100%)'
+                                            : 'radial-gradient(circle at 30% 30%, #f4c896 0%, #daa06d 30%, #cd7f32 60%, #a0522d 100%)',
+                                          boxShadow: isSilver
+                                            ? '0 4px 8px rgba(192,192,192,0.5), 0 2px 4px rgba(0,0,0,0.2)'
+                                            : '0 4px 8px rgba(205,127,50,0.5), 0 2px 4px rgba(0,0,0,0.2)'
+                                        }} 
+                                      />
+                                      <div 
+                                        className="absolute inset-[2px] rounded-full" 
+                                        style={{
+                                          background: isSilver
+                                            ? 'linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 50%, #a8a8a8 100%)'
+                                            : 'linear-gradient(135deg, #f4a460 0%, #daa06d 40%, #cd7f32 70%, #a0522d 100%)',
+                                          boxShadow: isSilver
+                                            ? 'inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
+                                            : 'inset 0 2px 6px rgba(255,200,150,0.7), inset 0 -2px 6px rgba(0,0,0,0.4)'
+                                        }} 
+                                      />
+                                      <div 
+                                        className="absolute inset-[4px] rounded-full flex items-center justify-center" 
+                                        style={{
+                                          background: isSilver
+                                            ? 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e8e8e8 40%, #c0c0c0 100%)'
+                                            : 'radial-gradient(circle at 35% 35%, #daa06d 0%, #cd7f32 40%, #a0522d 100%)',
+                                          boxShadow: isSilver
+                                            ? 'inset 0 1px 3px rgba(255,255,255,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
+                                            : 'inset 0 1px 3px rgba(255,200,150,0.8), inset 0 -1px 3px rgba(0,0,0,0.2)'
+                                        }}
+                                      >
+                                        <span 
+                                          className="font-black relative" 
+                                          style={{ 
+                                            fontSize: 'clamp(0.6rem, 3vw, 0.75rem)',
+                                            background: isSilver
+                                              ? 'linear-gradient(180deg, #333333 0%, #000000 100%)'
+                                              : 'linear-gradient(180deg, #4a2511 0%, #2d1506 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            filter: isSilver
+                                              ? 'drop-shadow(0 1px 1px rgba(255,255,255,0.3))'
+                                              : 'drop-shadow(0 1px 1px rgba(255,200,150,0.3))'
+                                          }}
+                                        >
+                                          {player.rank}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
 
-                              {/* Correct Answers Count - IT Blue Theme */}
-                              <div 
-                                className="flex items-center gap-0.5"
-                                style={{
-                                  fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)',
-                                  color: '#64C8FF',
-                                  fontWeight: 'bold'
-                                }}
-                              >
-                                <svg 
-                                  width="12" 
-                                  height="12" 
-                                  viewBox="0 0 24 24" 
-                                  fill="none" 
-                                  stroke="currentColor" 
-                                  strokeWidth="2"
-                                >
-                                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-                                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-                                  <path d="M4 22h16" />
-                                  <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-                                  <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-                                  <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
-                                </svg>
-                                <span>{player.total_correct_answers}</span>
+                                {/* Username */}
+                                <div className="text-center w-full mt-1">
+                                  <p 
+                                    className="text-white font-bold leading-none truncate px-1" 
+                                    style={{
+                                      WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
+                                      textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
+                                      fontSize: 'clamp(0.55rem, 2.5vw, 0.7rem)',
+                                      maxWidth: '100%'
+                                    }}
+                                  >
+                                    {player.username}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
-                      </>
+                       </>
                     )}
                   </div>
 
