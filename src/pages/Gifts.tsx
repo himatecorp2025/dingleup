@@ -101,8 +101,12 @@ const Gifts = () => {
       };
       verifyPayment();
     } else if (paymentStatus === 'canceled') {
-      toast.error(t('gifts.payment_canceled'));
+      // Sikertelen vásárlás - egységes hibaüzenet és visszairányítás
+      toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
       window.history.replaceState({}, '', '/gifts');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     }
   }, [userId, t]);
 

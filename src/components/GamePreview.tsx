@@ -677,6 +677,11 @@ const GamePreview = memo(() => {
             setErrorBannerVisible(false);
             await handleNextQuestion();
           }}
+          onGameEnd={() => {
+            // Lezárja a játékot sikertelen vásárlás esetén
+            setShowRescuePopup(false);
+            resetGameState();
+          }}
         />
       </GameSwipeHandler>
     );

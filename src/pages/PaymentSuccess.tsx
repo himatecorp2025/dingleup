@@ -47,12 +47,21 @@ const PaymentSuccess = () => {
             navigate('/dashboard');
           }, 2000);
         } else {
-          throw new Error(data?.error || t('payment.error.verification_failed'));
+          // Sikertelen vásárlás - egységes hibaüzenet
+          toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
+          // Visszairányítás Dashboard-ra 1.5 másodperc után
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1500);
         }
       } catch (err) {
         console.error('Payment verification error:', err);
-        toast.error(t('payment.error.verification_error'));
-        navigate('/dashboard');
+        // Egységes hibaüzenet sikertelen vásárlás esetén
+        toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
+        // Visszairányítás Dashboard-ra 1.5 másodperc után
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
       } finally {
         setVerifying(false);
       }
