@@ -1,0 +1,192 @@
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { generateLootboxRewards } from "../_shared/lootboxRewards.ts";
+
+serve(async (req) => {
+  const origin = req.headers.get('origin');
+
+  if (req.method === 'OPTIONS') {
+    return handleCorsPreflight(origin);
+  }
+
+  const corsHeaders = getCorsHeaders(origin);
+
+  try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Not logged in' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+        auth: {
+          persistSession: false,
+        }
+      }
+    );
+
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { lootboxId, decision } = await req.json();
+
+    // Validate input
+    if (!lootboxId || typeof lootboxId !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid lootboxId' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!decision || !['open_now', 'store'].includes(decision)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid decision. Must be "open_now" or "store"' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Use service role client for database operations
+    const supabaseService = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Verify lootbox exists and belongs to user with status = 'active_drop'
+    const { data: lootbox, error: lootboxError } = await supabaseService
+      .from('lootbox_instances')
+      .select('*')
+      .eq('id', lootboxId)
+      .eq('user_id', user.id)
+      .eq('status', 'active_drop')
+      .single();
+
+    if (lootboxError || !lootbox) {
+      console.log('Lootbox not found or invalid:', { lootboxId, userId: user.id, error: lootboxError });
+      return new Response(
+        JSON.stringify({ error: 'Lootbox not found or already processed' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (decision === 'store') {
+      // Store for later - update status to 'stored'
+      const { data: updated, error: updateError } = await supabaseService
+        .from('lootbox_instances')
+        .update({
+          status: 'stored',
+          expires_at: null,
+        })
+        .eq('id', lootboxId)
+        .select()
+        .single();
+
+      if (updateError) {
+        console.error('Failed to store lootbox:', updateError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to store lootbox' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      console.log('Lootbox stored successfully:', { lootboxId, userId: user.id });
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          lootbox: updated,
+          message: 'Lootbox stored for later opening',
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // decision === 'open_now'
+    // Generate rewards
+    const rewards = generateLootboxRewards();
+    const idempotencyKey = `lootbox_open::${lootboxId}`;
+
+    console.log('Opening lootbox now:', { 
+      lootboxId, 
+      userId: user.id, 
+      tier: rewards.tier,
+      gold: rewards.gold,
+      life: rewards.life,
+    });
+
+    // Call PostgreSQL transaction function
+    const { data: result, error: txError } = await supabaseService.rpc(
+      'open_lootbox_transaction',
+      {
+        p_lootbox_id: lootboxId,
+        p_user_id: user.id,
+        p_tier: rewards.tier,
+        p_gold_reward: rewards.gold,
+        p_life_reward: rewards.life,
+        p_idempotency_key: idempotencyKey,
+      }
+    );
+
+    if (txError) {
+      console.error('Transaction error:', txError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to open lootbox', details: txError.message }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!result || !result.success) {
+      const errorCode = result?.error || 'UNKNOWN_ERROR';
+      console.log('Lootbox opening failed:', { errorCode, result });
+      
+      return new Response(
+        JSON.stringify({
+          error: errorCode,
+          required: result?.required,
+          current: result?.current,
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Lootbox opened successfully:', { 
+      lootboxId, 
+      userId: user.id,
+      tier: rewards.tier,
+      newBalance: result.new_balance,
+    });
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        lootbox: result.lootbox,
+        rewards: result.rewards,
+        new_balance: result.new_balance,
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+
+  } catch (e) {
+    console.error('Unexpected error:', e);
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+});

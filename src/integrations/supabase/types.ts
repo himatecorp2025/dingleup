@@ -1486,6 +1486,51 @@ export type Database = {
         }
         Relationships: []
       }
+      lootbox_instances: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          metadata: Json | null
+          open_cost_gold: number
+          opened_at: string | null
+          rewards_gold: number | null
+          rewards_life: number | null
+          source: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          open_cost_gold?: number
+          opened_at?: string | null
+          rewards_gold?: number | null
+          rewards_life?: number | null
+          source: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          open_cost_gold?: number
+          opened_at?: string | null
+          rewards_gold?: number | null
+          rewards_life?: number | null
+          source?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       message_media: {
         Row: {
           created_at: string | null
@@ -3730,6 +3775,17 @@ export type Database = {
       normalize_user_ids: {
         Args: { uid1: string; uid2: string }
         Returns: string[]
+      }
+      open_lootbox_transaction: {
+        Args: {
+          p_gold_reward: number
+          p_idempotency_key: string
+          p_life_reward: number
+          p_lootbox_id: string
+          p_tier: string
+          p_user_id: string
+        }
+        Returns: Json
       }
       process_invitation_reward: { Args: never; Returns: Json }
       purchase_life: { Args: never; Returns: Json }
