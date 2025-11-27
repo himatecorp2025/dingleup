@@ -27,8 +27,8 @@ const LeaderboardCarouselComponent = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number | null>(null);
-  const contentWidthRef = useRef<number>(0);
-  const translateXRef = useRef<number>(0);
+  const offsetRef = useRef<number>(0);
+  const [contentWidth, setContentWidth] = useState<number>(0);
 
   // Get user session
   useEffect(() => {
@@ -41,48 +41,33 @@ const LeaderboardCarouselComponent = () => {
 
   const topPlayers = leaderboard.slice(0, 100);
 
-  // Calculate and update contentWidth (half of duplicated list)
-  const updateContentWidth = useCallback(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    
-    // Use scrollWidth / 2 for exact DOM-calculated width
-    // This is the most accurate way to get the width of one full list cycle
-    contentWidthRef.current = track.scrollWidth / 2;
-  }, []);
-
-  // Frame rate-independent scroll animation using translate3d
+  // Measure contentWidth (half of duplicated list)
   useEffect(() => {
-    const container = containerRef.current;
     const track = trackRef.current;
-    
-    if (!container || !track || topPlayers.length === 0) return;
+    if (!track || topPlayers.length === 0) return;
 
-    // Reset transform position
-    translateXRef.current = 0;
-    lastTimestampRef.current = null;
-    
-    // Wait for layout to be fully ready before measuring
-    const initContentWidth = () => {
-      setTimeout(() => {
-        if (!track || track.children.length === 0) return;
-        updateContentWidth();
-        
-        // Only start animation after contentWidth is measured
-        if (contentWidthRef.current > 0) {
-          animationFrameRef.current = requestAnimationFrame(animate);
-        }
-      }, 50); // Small delay to ensure full layout
+    // Wait for DOM to render, then measure
+    const measureWidth = () => {
+      const fullWidth = track.scrollWidth;
+      const halfWidth = fullWidth / 2;
+      setContentWidth(halfWidth);
     };
 
+    // Small delay to ensure layout is complete
+    setTimeout(measureWidth, 50);
+  }, [topPlayers]);
+
+  // Smooth continuous animation
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || topPlayers.length === 0 || contentWidth === 0) return;
+
+    // Reset position
+    offsetRef.current = 0;
+    lastTimestampRef.current = null;
+
     const animate = (timestamp: number) => {
-      const currentTrack = trackRef.current;
-      
-      // Always continue animation as long as track exists
-      if (!currentTrack) {
-        animationFrameRef.current = requestAnimationFrame(animate);
-        return;
-      }
+      if (!track) return;
 
       // Initialize timestamp on first frame
       if (lastTimestampRef.current === null) {
@@ -92,60 +77,33 @@ const LeaderboardCarouselComponent = () => {
       }
 
       // Calculate delta time in seconds
-      const deltaMs = timestamp - lastTimestampRef.current;
-      const deltaPx = (SCROLL_SPEED_PX_PER_SEC * deltaMs) / 1000;
-
-      // Update translateX position (moving left, so negative) and snap to whole pixels
-      const nextX = translateXRef.current - deltaPx;
-      translateXRef.current = -Math.round(Math.abs(nextX));
-
-      // Seamless wrap using modulo - no visible jump
-      const contentWidth = contentWidthRef.current;
-      if (contentWidth > 0) {
-        const absX = Math.abs(translateXRef.current);
-        if (absX >= contentWidth) {
-          // Use modulo to wrap seamlessly
-          translateXRef.current = -(absX % contentWidth);
-        }
-      }
-
-      // Apply transform using translate3d for GPU acceleration and subpixel precision
-      currentTrack.style.transform = `translate3d(${translateXRef.current}px, 0, 0)`;
-
-      // Update timestamp for next frame
+      const delta = (timestamp - lastTimestampRef.current) / 1000;
       lastTimestampRef.current = timestamp;
 
-      // ALWAYS request next frame - never stop
+      // Move left (negative direction)
+      offsetRef.current -= SCROLL_SPEED_PX_PER_SEC * delta;
+
+      // Simple wrap when reaching contentWidth
+      if (Math.abs(offsetRef.current) >= contentWidth) {
+        offsetRef.current += contentWidth;
+      }
+
+      // Apply transform with subpixel precision
+      track.style.transform = `translateX(${offsetRef.current}px)`;
+
+      // Continue animation
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    // Initialize contentWidth and start animation
-    initContentWidth();
+    // Start animation
+    animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [topPlayers.length, updateContentWidth]);
-
-  // Handle window resize and recalculate contentWidth
-  useEffect(() => {
-    if (topPlayers.length === 0) return;
-
-    const handleResize = () => {
-      updateContentWidth();
-    };
-
-    window.addEventListener('resize', handleResize);
-    
-    // Recalculate on data change
-    updateContentWidth();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [topPlayers, updateContentWidth]);
+  }, [topPlayers.length, contentWidth]);
 
   // Memoized color functions to prevent recalculation
   const getHexagonColor = useCallback((index: number) => {
@@ -171,12 +129,16 @@ const LeaderboardCarouselComponent = () => {
       
       <div 
         ref={containerRef}
-        className="overflow-hidden whitespace-nowrap h-16 sm:h-20 md:h-24 relative"
+        className="relative overflow-hidden whitespace-nowrap h-16 sm:h-20 md:h-24 w-full flex items-center"
       >
         {loading || topPlayers.length === 0 ? (
           <LeaderboardSkeleton />
         ) : (
-          <div ref={trackRef} className="inline-flex gap-2 sm:gap-3 px-2 will-change-transform">
+          <div 
+            ref={trackRef} 
+            className="inline-flex gap-2 sm:gap-3 px-2 will-change-transform"
+            style={{ transform: 'translateX(0px)' }}
+          >
             {/* Dupla rendering: eredeti lista + másolat zökkenőmentes loophoz */}
             {[...topPlayers, ...topPlayers].map((player, index) => {
               const rank = (index % topPlayers.length) + 1;
