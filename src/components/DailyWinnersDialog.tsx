@@ -326,7 +326,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           letterSpacing: '0.05em',
                           fontFamily: '"Poppins", system-ui, -apple-system, sans-serif',
                           WebkitTextStroke: '1.5px rgba(0,0,0,0.8)',
-                          textShadow: '2px 2px 6px rgba(0,0,0,0.9)',
                           wordWrap: 'break-word',
                           overflowWrap: 'break-word',
                           hyphens: 'auto',
@@ -346,7 +345,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       <span style={{
                         color: '#ffd700',
                         WebkitTextStroke: '0.8px rgba(0,0,0,0.8)',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.9)',
                         letterSpacing: '0.03em',
                         textTransform: 'uppercase',
                         whiteSpace: 'nowrap'
@@ -359,8 +357,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           fontWeight: 700,
                           fontFamily: '"Poppins", system-ui, sans-serif',
                           color: '#ffd700',
-                          WebkitTextStroke: '1px rgba(0,0,0,0.8)',
-                          textShadow: '2px 2px 4px rgba(0,0,0,0.9)'
+                          WebkitTextStroke: '1px rgba(0,0,0,0.8)'
                         }}>{totalRewards.totalGold.toLocaleString()}</span>
                         <svg width="22" height="22" viewBox="0 0 100 100" className="inline-block">
                           <defs>
@@ -394,8 +391,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           fontWeight: 700,
                           fontFamily: '"Poppins", system-ui, sans-serif',
                           color: '#ff1744',
-                          WebkitTextStroke: '1px rgba(0,0,0,0.8)',
-                          textShadow: '2px 2px 4px rgba(0,0,0,0.9)'
+                          WebkitTextStroke: '1px rgba(0,0,0,0.8)'
                         }}>{totalRewards.totalLives.toLocaleString()}</span>
                         <svg width="22" height="22" viewBox="0 0 100 100" fill="none" className="inline-block">
                           <defs>
