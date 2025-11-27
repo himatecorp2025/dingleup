@@ -95,7 +95,7 @@ export function AdminSidebar() {
         {/* DASHBOARD & USERS */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-white/50 text-xs font-bold uppercase tracking-wider">
-            {!isCollapsed && 'Dashboard & Users'}
+            {!isCollapsed && t('admin.sidebar.dashboard_users')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -106,7 +106,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/dashboard') && !location.search ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <LayoutDashboard className="text-purple-400" />
-                  <span>Dashboard</span>
+                  <span>{t('common.dashboard')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -116,7 +116,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/dashboard?tab=users') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Users className="text-purple-400" />
-                  <span>Users</span>
+                  <span>{t('admin.sidebar.users')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -126,7 +126,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/dashboard?tab=invitations') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Mail className="text-purple-400" />
-                  <span>Invitations</span>
+                  <span>{t('admin.sidebar.invitations')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -136,7 +136,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/dashboard?tab=reports') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <AlertTriangle className="text-purple-400" />
-                  <span>Reports</span>
+                  <span>{t('admin.sidebar.reports')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -146,7 +146,7 @@ export function AdminSidebar() {
         {/* PLAYER & TARGETING */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-white/50 text-xs font-bold uppercase tracking-wider">
-            {!isCollapsed && 'Player & Targeting'}
+            {!isCollapsed && t('admin.sidebar.player_targeting')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -157,7 +157,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/game-profiles') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Gamepad2 className="text-purple-400" />
-                  <span>Game Profiles</span>
+                  <span>{t('admin.sidebar.game_profiles')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -167,7 +167,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/ad-interests') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Target className="text-purple-400" />
-                  <span>Ad Interests</span>
+                  <span>{t('admin.sidebar.ad_interests')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -177,7 +177,7 @@ export function AdminSidebar() {
         {/* CONTENT CENTER */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-white/50 text-xs font-bold uppercase tracking-wider">
-            {!isCollapsed && 'Content Center'}
+            {!isCollapsed && t('admin.sidebar.content_center')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -188,7 +188,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/question-pools') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Database className="text-purple-400" />
-                  <span>Question Pools</span>
+                  <span>{t('admin.sidebar.question_pools')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -198,7 +198,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/popular-content') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <TrendingUp className="text-purple-400" />
-                  <span>Popular Content</span>
+                  <span>{t('admin.sidebar.popular_content')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -208,7 +208,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/translations') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Languages className="text-purple-400" />
-                  <span>Translations</span>
+                  <span>{t('admin.sidebar.translations')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -218,7 +218,7 @@ export function AdminSidebar() {
         {/* ECONOMY CENTER */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-white/50 text-xs font-bold uppercase tracking-wider">
-            {!isCollapsed && 'Economy Center'}
+            {!isCollapsed && t('admin.sidebar.economy_center')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -229,7 +229,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/lootbox-analytics') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Heart className="text-purple-400" />
-                  <span>Lootbox Analytics</span>
+                  <span>{t('admin.sidebar.lootbox_analytics')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -239,7 +239,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/booster-types') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Zap className="text-purple-400" />
-                  <span>Booster Types</span>
+                  <span>{t('admin.sidebar.booster_types')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -249,7 +249,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/booster-purchases') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <ShoppingBag className="text-purple-400" />
-                  <span>Booster Purchases</span>
+                  <span>{t('admin.sidebar.booster_purchases')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -259,7 +259,7 @@ export function AdminSidebar() {
         {/* ADVANCED ANALYTICS HUB with submenu */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-white/50 text-xs font-bold uppercase tracking-wider">
-            {!isCollapsed && 'Advanced Analytics Hub'}
+            {!isCollapsed && t('admin.sidebar.analytics_hub')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -270,7 +270,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/advanced-analytics') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <BarChart3 className="text-purple-400" />
-                  <span>Overview</span>
+                  <span>{t('admin.sidebar.overview')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
@@ -285,7 +285,7 @@ export function AdminSidebar() {
                           isActive={isActive('/admin/retention')}
                           className={isActive('/admin/retention') ? 'bg-white/10 text-white' : 'text-white/60'}
                         >
-                          <span>Retention</span>
+                          <span>{t('admin.sidebar.retention')}</span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
@@ -294,7 +294,7 @@ export function AdminSidebar() {
                           isActive={isActive('/admin/monetization')}
                           className={isActive('/admin/monetization') ? 'bg-white/10 text-white' : 'text-white/60'}
                         >
-                          <span>Monetization</span>
+                          <span>{t('admin.sidebar.monetization')}</span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
@@ -303,7 +303,7 @@ export function AdminSidebar() {
                           isActive={isActive('/admin/performance')}
                           className={isActive('/admin/performance') ? 'bg-white/10 text-white' : 'text-white/60'}
                         >
-                          <span>Performance</span>
+                          <span>{t('admin.sidebar.performance')}</span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
@@ -312,7 +312,7 @@ export function AdminSidebar() {
                           isActive={isActive('/admin/engagement')}
                           className={isActive('/admin/engagement') ? 'bg-white/10 text-white' : 'text-white/60'}
                         >
-                          <span>Engagement</span>
+                          <span>{t('admin.sidebar.engagement')}</span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
@@ -321,7 +321,7 @@ export function AdminSidebar() {
                           isActive={isActive('/admin/user-journey')}
                           className={isActive('/admin/user-journey') ? 'bg-white/10 text-white' : 'text-white/60'}
                         >
-                          <span>User Journey</span>
+                          <span>{t('admin.sidebar.user_journey')}</span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
@@ -335,7 +335,7 @@ export function AdminSidebar() {
         {/* OTHER */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-white/50 text-xs font-bold uppercase tracking-wider">
-            {!isCollapsed && 'Other'}
+            {!isCollapsed && t('admin.sidebar.other')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -346,7 +346,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/age-statistics') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Calendar className="text-purple-400" />
-                  <span>Age Statistics</span>
+                  <span>{t('admin.sidebar.age_statistics')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -356,7 +356,7 @@ export function AdminSidebar() {
                   className={isActive('/admin/profile') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
                 >
                   <Settings className="text-purple-400" />
-                  <span>Admin Profile</span>
+                  <span>{t('admin.sidebar.admin_profile')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
