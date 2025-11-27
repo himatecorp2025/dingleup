@@ -70,7 +70,7 @@ const AdminDashboard = () => {
       
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Admin session expired');
+        toast.error(t('admin.session_expired'));
         setIsRefreshing(false);
         return;
       }
@@ -129,7 +129,7 @@ const AdminDashboard = () => {
       setIsRefreshing(false);
     } catch (error) {
       console.error('[Admin] Fatal fetch error:', error);
-      toast.error('Kritikus hiba az adatok betöltésekor');
+      toast.error(t('admin.error_loading_data'));
       setIsRefreshing(false);
     }
   }, []);

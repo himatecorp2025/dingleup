@@ -31,7 +31,7 @@ const AdminLogin = () => {
           const match = rawMessage.match(/\{.*\}/);
           if (match) {
             const parsed = JSON.parse(match[0]);
-            toast.error(parsed.error || 'Hibás felhasználónév vagy PIN');
+            toast.error(parsed.error || t('admin.error_invalid_credentials'));
           } else {
             toast.error(rawMessage);
           }
@@ -42,7 +42,7 @@ const AdminLogin = () => {
       }
 
       if (!loginData?.success) {
-        toast.error(loginData?.error || 'Hibás felhasználónév vagy PIN');
+        toast.error(loginData?.error || t('admin.error_invalid_credentials'));
         return;
       }
 

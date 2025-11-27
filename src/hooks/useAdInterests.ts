@@ -36,7 +36,7 @@ export const useAdInterests = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error('Nem vagy bejelentkezve');
+        toast.error(t('errors.not_logged_in'));
         return;
       }
       
