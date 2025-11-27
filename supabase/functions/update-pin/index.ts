@@ -28,7 +28,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'Nem vagy bejelentkezve' }),
+        JSON.stringify({ error: 'Not authenticated' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -50,7 +50,7 @@ serve(async (req) => {
     if (authError || !user) {
       console.error('Auth error:', authError);
       return new Response(
-        JSON.stringify({ error: 'Érvénytelen munkamenet' }),
+        JSON.stringify({ error: 'Invalid session' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -58,7 +58,7 @@ serve(async (req) => {
     // Validation
     if (!currentPin || !newPin) {
       return new Response(
-        JSON.stringify({ error: 'Minden mezőt ki kell tölteni' }),
+        JSON.stringify({ error: 'All fields are required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -66,7 +66,7 @@ serve(async (req) => {
     // Validate new PIN format (exactly 6 digits)
     if (!/^\d{6}$/.test(newPin)) {
       return new Response(
-        JSON.stringify({ error: 'A PIN kód pontosan 6 számjegyből kell álljon' }),
+        JSON.stringify({ error: 'PIN must be exactly 6 digits' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -81,7 +81,7 @@ serve(async (req) => {
     if (profileError || !profile) {
       console.error('Profile error:', profileError);
       return new Response(
-        JSON.stringify({ error: 'Profil nem található' }),
+        JSON.stringify({ error: 'Profile not found' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -92,7 +92,7 @@ serve(async (req) => {
     
     if (!isValidPin) {
       return new Response(
-        JSON.stringify({ error: 'Hibás jelenlegi PIN kód' }),
+        JSON.stringify({ error: 'Incorrect current PIN' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -109,7 +109,7 @@ serve(async (req) => {
     if (updateError) {
       console.error('PIN update error:', updateError);
       return new Response(
-        JSON.stringify({ error: 'Hiba történt a PIN módosítása során' }),
+        JSON.stringify({ error: 'PIN update failed' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -135,7 +135,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Update PIN error:', error);
     return new Response(
-      JSON.stringify({ error: 'Váratlan hiba történt' }),
+      JSON.stringify({ error: 'Unexpected error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

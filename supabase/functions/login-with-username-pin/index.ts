@@ -29,7 +29,7 @@ serve(async (req) => {
 
     if (!username || !pin) {
       return new Response(
-        JSON.stringify({ error: 'Hiányzó felhasználónév vagy PIN' }),
+        JSON.stringify({ error: 'Missing username or PIN' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -39,7 +39,7 @@ serve(async (req) => {
     // Validate PIN format
     if (!/^\d{6}$/.test(pin)) {
       return new Response(
-        JSON.stringify({ error: 'Érvénytelen PIN formátum' }),
+        JSON.stringify({ error: 'Invalid PIN format' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -70,7 +70,7 @@ serve(async (req) => {
           const minutesRemaining = Math.ceil((lockedUntil.getTime() - Date.now()) / 60000);
           return new Response(
             JSON.stringify({ 
-              error: `Túl sok sikertelen próbálkozás. Próbáld újra ${minutesRemaining} perc múlva.` 
+              error: `Too many failed attempts. Try again in ${minutesRemaining} minutes.` 
             }),
             { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
@@ -88,7 +88,7 @@ serve(async (req) => {
     if (profileError || !profile) {
       await recordFailedAttempt(supabaseAdmin, normalizedUsername);
       return new Response(
-        JSON.stringify({ error: 'Helytelen felhasználónév vagy PIN' }),
+        JSON.stringify({ error: 'Incorrect username or PIN' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -98,7 +98,7 @@ serve(async (req) => {
     if (pinHash !== profile.pin_hash) {
       await recordFailedAttempt(supabaseAdmin, normalizedUsername);
       return new Response(
-        JSON.stringify({ error: 'Helytelen felhasználónév vagy PIN' }),
+        JSON.stringify({ error: 'Incorrect username or PIN' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -146,7 +146,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Login error:', error);
     return new Response(
-      JSON.stringify({ error: 'Váratlan hiba történt' }),
+      JSON.stringify({ error: 'Unexpected error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

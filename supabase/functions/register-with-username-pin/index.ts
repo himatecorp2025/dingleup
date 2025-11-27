@@ -27,7 +27,7 @@ serve(async (req) => {
     // Validation
     if (!username || !pin) {
       return new Response(
-        JSON.stringify({ error: 'Hiányzó felhasználónév vagy PIN' }),
+        JSON.stringify({ error: 'Missing username or PIN' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -35,14 +35,14 @@ serve(async (req) => {
     // Validate username
     if (username.length < 3 || username.length > 30) {
       return new Response(
-        JSON.stringify({ error: 'A felhasználónév 3-30 karakter hosszú legyen' }),
+        JSON.stringify({ error: 'Username must be 3-30 characters' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
     
     if (/\s/.test(username)) {
       return new Response(
-        JSON.stringify({ error: 'A felhasználónév nem tartalmazhat szóközt' }),
+        JSON.stringify({ error: 'Username cannot contain spaces' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -50,7 +50,7 @@ serve(async (req) => {
     // Validate PIN (exactly 6 digits)
     if (!/^\d{6}$/.test(pin)) {
       return new Response(
-        JSON.stringify({ error: 'A PIN pontosan 6 számjegyből kell álljon' }),
+        JSON.stringify({ error: 'PIN must be exactly 6 digits' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -75,7 +75,7 @@ serve(async (req) => {
 
     if (existingUser) {
       return new Response(
-        JSON.stringify({ error: 'A felhasználónév már foglalt' }),
+        JSON.stringify({ error: 'Username is already taken' }),
         { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -95,7 +95,7 @@ serve(async (req) => {
     if (authError || !authData.user) {
       console.error('Auth creation error:', authError);
       return new Response(
-        JSON.stringify({ error: 'Hiba történt a fiók létrehozása során' }),
+        JSON.stringify({ error: 'Account creation failed' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -116,7 +116,7 @@ serve(async (req) => {
       console.error('Profile update error:', profileError);
       await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
       return new Response(
-        JSON.stringify({ error: 'Hiba történt a profil létrehozása során' }),
+        JSON.stringify({ error: 'Profile creation failed' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -135,7 +135,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Registration error:', error);
     return new Response(
-      JSON.stringify({ error: 'Váratlan hiba történt' }),
+      JSON.stringify({ error: 'Unexpected error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
