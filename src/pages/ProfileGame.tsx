@@ -77,9 +77,9 @@ export default function ProfileGame() {
           <div>
             <h1 className="text-3xl font-bold text-white flex items-center gap-2">
               <Brain className="h-8 w-8 text-purple-400" />
-              Játékprofilom
+              {t('profile_game.title')}
             </h1>
-            <p className="text-white/70 mt-1">Személyre szabott kérdéssor és statisztikák</p>
+            <p className="text-white/70 mt-1">{t('profile_game.subtitle')}</p>
           </div>
         </div>
 
@@ -87,7 +87,7 @@ export default function ProfileGame() {
         <Alert className="mb-6 bg-blue-500/10 border-blue-500/30">
           <Info className="h-4 w-4 text-blue-400" />
           <AlertDescription className="text-white/90">
-            A játékprofil kizárólag a játékélmény személyre szabására szolgál. Nem tartalmaz érzékeny adatot, nem reklámprofil, és bármikor kikapcsolhatod. A személyre szabás csak akkor aktiválódik, ha több mint 1000 kérdést megválaszoltál.
+            {t('profile_game.legal_info')}
           </AlertDescription>
         </Alert>
 
@@ -96,7 +96,7 @@ export default function ProfileGame() {
           <Alert className="mb-6 bg-yellow-500/10 border-yellow-500/30">
             <TrendingUp className="h-4 w-4 text-yellow-400" />
             <AlertDescription className="text-white/90">
-              <strong>Tanulási fázis:</strong> A rendszer még tanulja a játékstílusodat. {questionsRemaining} kérdés szükséges még a személyre szabott kérdéssor aktiválásához.
+              <strong>{t('profile_game.learning_phase')}:</strong> {t('profile_game.learning_phase_desc').replace('{count}', questionsRemaining.toString())}
               <Progress value={(profile.totalAnswered / 1000) * 100} className="mt-2" />
             </AlertDescription>
           </Alert>
@@ -104,7 +104,7 @@ export default function ProfileGame() {
           <Alert className="mb-6 bg-green-500/10 border-green-500/30">
             <Target className="h-4 w-4 text-green-400" />
             <AlertDescription className="text-white/90">
-              <strong>Személyre szabás aktív:</strong> A kérdések 70%-a a kedvenc témáidból érkezik.
+              <strong>{t('profile_game.personalization_active')}:</strong> {t('profile_game.personalization_active_desc')}
             </AlertDescription>
           </Alert>
         )}
@@ -114,13 +114,13 @@ export default function ProfileGame() {
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Brain className="h-5 w-5 text-purple-400" />
-              AI Személyre Szabás
+              {t('profile_game.ai_personalization')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <Label htmlFor="ai-toggle" className="text-white/90 cursor-pointer">
-                Személyre szabott kérdéssor engedélyezése
+                {t('profile_game.enable_personalized')}
               </Label>
               <Switch
                 id="ai-toggle"
@@ -136,7 +136,7 @@ export default function ProfileGame() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
           <Card className="bg-white/5 border-white/10 backdrop-blur">
             <CardHeader className="pb-2">
-              <CardDescription className="text-white/70">Összes válasz</CardDescription>
+              <CardDescription className="text-white/70">{t('profile_game.stats.total_answers')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-white">{profile.totalAnswered}</p>
@@ -145,7 +145,7 @@ export default function ProfileGame() {
 
           <Card className="bg-white/5 border-white/10 backdrop-blur">
             <CardHeader className="pb-2">
-              <CardDescription className="text-white/70">Helyes válaszok</CardDescription>
+              <CardDescription className="text-white/70">{t('profile_game.stats.correct_answers')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-green-400">{profile.totalCorrect}</p>
@@ -154,7 +154,7 @@ export default function ProfileGame() {
 
           <Card className="bg-white/5 border-white/10 backdrop-blur">
             <CardHeader className="pb-2">
-              <CardDescription className="text-white/70">Helyességi arány</CardDescription>
+              <CardDescription className="text-white/70">{t('profile_game.stats.correct_ratio')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-blue-400">
@@ -182,10 +182,10 @@ export default function ProfileGame() {
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-yellow-400" />
-              TOP 3 Témakörök
+              {t('profile_game.top3_topics')}
             </CardTitle>
             <CardDescription className="text-white/70">
-              A kedvenc témáid, amelyekből a legtöbb kérdés érkezik
+              {t('profile_game.top3_desc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -197,12 +197,12 @@ export default function ProfileGame() {
                     <div>
                       <p className="text-white font-semibold">{topic.topicName}</p>
                       <p className="text-white/70 text-sm">
-                        {topic.answeredCount} válasz • {(topic.correctRatio * 100).toFixed(1)}% helyes
+                        {t('profile_game.answers_count').replace('{count}', topic.answeredCount.toString())} • {t('profile_game.correct_percentage').replace('{percent}', (topic.correctRatio * 100).toFixed(1))}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-white font-semibold">Pontszám: {topic.score.toFixed(2)}</p>
+                    <p className="text-white font-semibold">{t('profile_game.table.score')}: {topic.score.toFixed(2)}</p>
                     <p className="text-white/70 text-sm">
                       <Heart className="inline h-3 w-3" /> {topic.likeCount} • <ThumbsDown className="inline h-3 w-3" /> {topic.dislikeCount}
                     </p>
@@ -217,30 +217,30 @@ export default function ProfileGame() {
         {profile.personalizationReady && (
           <Card className="mb-6 bg-white/5 border-white/10 backdrop-blur">
             <CardHeader>
-              <CardTitle className="text-white">Kérdéselosztás (70/20/10)</CardTitle>
+              <CardTitle className="text-white">{t('profile_game.question_distribution')}</CardTitle>
               <CardDescription className="text-white/70">
-                Személyre szabott kérdéssor megoszlása
+                {t('profile_game.distribution_desc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-white/90">Kedvenc témák (TOP3)</span>
+                    <span className="text-white/90">{t('profile_game.favorite_topics')}</span>
                     <span className="text-white font-semibold">70%</span>
                   </div>
                   <Progress value={70} className="h-3" />
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-white/90">Új kérdések</span>
+                    <span className="text-white/90">{t('profile_game.new_questions')}</span>
                     <span className="text-white font-semibold">20%</span>
                   </div>
                   <Progress value={20} className="h-3" />
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-white/90">Dislike témák</span>
+                    <span className="text-white/90">{t('profile_game.dislike_topics')}</span>
                     <span className="text-white font-semibold">10%</span>
                   </div>
                   <Progress value={10} className="h-3" />
@@ -253,9 +253,9 @@ export default function ProfileGame() {
         {/* Összes téma táblázat */}
         <Card className="bg-white/5 border-white/10 backdrop-blur">
           <CardHeader>
-            <CardTitle className="text-white">Összes Témakör</CardTitle>
+            <CardTitle className="text-white">{t('profile_game.all_topics')}</CardTitle>
             <CardDescription className="text-white/70">
-              Teljes statisztika témánként
+              {t('profile_game.all_topics_desc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -263,12 +263,12 @@ export default function ProfileGame() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left py-2 px-4 text-white/90">Témakör</th>
-                    <th className="text-right py-2 px-4 text-white/90">Válaszok</th>
-                    <th className="text-right py-2 px-4 text-white/90">Helyes %</th>
-                    <th className="text-right py-2 px-4 text-white/90">Like/Dislike</th>
-                    <th className="text-right py-2 px-4 text-white/90">Pontszám</th>
-                    <th className="text-center py-2 px-4 text-white/90">TOP3</th>
+                    <th className="text-left py-2 px-4 text-white/90">{t('profile_game.table.topic')}</th>
+                    <th className="text-right py-2 px-4 text-white/90">{t('profile_game.table.answers')}</th>
+                    <th className="text-right py-2 px-4 text-white/90">{t('profile_game.table.correct_percent')}</th>
+                    <th className="text-right py-2 px-4 text-white/90">{t('profile_game.table.like_dislike')}</th>
+                    <th className="text-right py-2 px-4 text-white/90">{t('profile_game.table.score')}</th>
+                    <th className="text-center py-2 px-4 text-white/90">{t('profile_game.table.top3')}</th>
                   </tr>
                 </thead>
                 <tbody>
