@@ -34,7 +34,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isHandheld } = usePlatformDetection();
-  const { t } = useI18n();
+  const { t, lang, setLang } = useI18n();
   const [sidebarOpen, setSidebarOpen] = useState(!isHandheld);
 
   useEffect(() => {
@@ -191,25 +191,53 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         {/* Main Content */}
         <main className="flex-1 min-h-dvh min-h-svh overflow-auto">
           {/* Toggle Sidebar Button */}
-          <div className="p-4 flex items-center gap-3">
-            <Button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              variant="ghost"
-              size="icon"
-              className="text-white/70 hover:text-white hover:bg-white/10"
-            >
-              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
-            
-            {/* Vissza a játékba gomb - csak mobilon/tableten, mindig látható */}
-            <Button
-              onClick={() => navigate('/dashboard')}
-              variant="ghost"
-              className="md:hidden text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-2"
-            >
-              <Gamepad2 className="h-5 w-5" />
-              <span className="font-medium">{t('admin.layout.back_to_game')}</span>
-            </Button>
+          <div className="p-4 flex items-center gap-3 justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                variant="ghost"
+                size="icon"
+                className="text-white/70 hover:text-white hover:bg-white/10"
+              >
+                {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
+              
+              {/* Vissza a játékba gomb - csak mobilon/tableten, mindig látható */}
+              <Button
+                onClick={() => navigate('/dashboard')}
+                variant="ghost"
+                className="md:hidden text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-2"
+              >
+                <Gamepad2 className="h-5 w-5" />
+                <span className="font-medium">{t('admin.layout.back_to_game')}</span>
+              </Button>
+            </div>
+
+            {/* Language Switcher with Flags */}
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setLang('hu')}
+                variant="ghost"
+                size="icon"
+                className={`text-2xl hover:bg-white/10 transition-all ${
+                  lang === 'hu' ? 'ring-2 ring-white/30 bg-white/10' : 'opacity-60'
+                }`}
+                title="Magyar"
+              >
+                🇭🇺
+              </Button>
+              <Button
+                onClick={() => setLang('en')}
+                variant="ghost"
+                size="icon"
+                className={`text-2xl hover:bg-white/10 transition-all ${
+                  lang === 'en' ? 'ring-2 ring-white/30 bg-white/10' : 'opacity-60'
+                }`}
+                title="English"
+              >
+                🇺🇸
+              </Button>
+            </div>
           </div>
 
           {/* Page Content */}
