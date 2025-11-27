@@ -63,10 +63,13 @@ serve(async (req) => {
       .maybeSingle();
 
     if (profileError) {
-      console.error('[GET-PENDING-REWARD] Profile error:', profileError);
+      console.error('[GET-PENDING-REWARD] Profile error, treating as no pending reward:', profileError);
       return new Response(
-        JSON.stringify({ error: 'Failed to fetch user profile' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          hasPendingReward: false,
+          reward: null
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
