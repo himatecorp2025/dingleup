@@ -53,7 +53,7 @@ const UserJourneyDashboard = () => {
               <ArrowLeft className="w-6 h-6" />
             </Button>
             <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              User Journey Dashboard
+              {t('admin.journey.title')}
             </h1>
           </div>
           <Button onClick={() => refetch()} disabled={loading} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white">
@@ -73,19 +73,19 @@ const UserJourneyDashboard = () => {
         <Tabs defaultValue="onboarding" className="space-y-6">
           <TabsList className="bg-primary-dark/50 p-1 flex-wrap h-auto gap-1">
             <TabsTrigger value="onboarding" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
-              Onboarding Tölcsér
+              {t('admin.journey.tab_onboarding')}
             </TabsTrigger>
             <TabsTrigger value="purchase" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
-              Vásárlási Tölcsér
+              {t('admin.journey.tab_purchase')}
             </TabsTrigger>
             <TabsTrigger value="game" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
-              Játék Tölcsér
+              {t('admin.journey.tab_game')}
             </TabsTrigger>
             <TabsTrigger value="paths" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
-              Gyakori Útvonalak
+              {t('admin.journey.tab_paths')}
             </TabsTrigger>
             <TabsTrigger value="exits" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground">
-              Kilépési Pontok
+              {t('admin.journey.tab_exits')}
             </TabsTrigger>
           </TabsList>
 
@@ -93,11 +93,11 @@ const UserJourneyDashboard = () => {
             <Card className="bg-primary-dark/50 border border-primary/30">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <CardTitle className="text-foreground">Onboarding Funnel</CardTitle>
+                  <CardTitle className="text-foreground">{t('admin.journey.onboarding_funnel')}</CardTitle>
                   <MetricInfo
-                    title="Onboarding Tölcsér"
-                    description="Az onboarding folyamat során végigkövetjük, hogy a felhasználók hány lépésben jutnak el a regisztrációtól a játék megkezdéséig. Minden lépésnél látható, hány felhasználó halad tovább, és hol morzsolódnak le a legtöbben."
-                    interpretation="Minél alacsonyabb a lemorzsolódási arány, annál sikeresebb az onboarding folyamat. Ha egy lépésnél magas a lemorzsolódás, érdemes megvizsgálni, hogy mi okozza a problémát."
+                    title={t('admin.journey.onboarding_funnel')}
+                    description={t('admin.journey.onboarding_funnel_desc')}
+                    interpretation={t('admin.journey.onboarding_funnel_interpretation')}
                   />
                 </div>
               </CardHeader>
@@ -108,7 +108,7 @@ const UserJourneyDashboard = () => {
                     <XAxis type="number" stroke="hsl(var(--foreground))" />
                     <YAxis dataKey="step" type="category" width={150} stroke="hsl(var(--foreground))" />
                     <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--primary-dark))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
-                    <Bar dataKey="users" name="Felhasználók">
+                    <Bar dataKey="users" name={t('admin.journey.users')}>
                       {analytics.onboardingFunnel.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
@@ -120,10 +120,10 @@ const UserJourneyDashboard = () => {
                     <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
                       <span className="font-medium text-white">{step.step}</span>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-white">{step.users} felhasználó</p>
+                        <p className="text-sm font-bold text-white">{step.users} {t('admin.journey.user')}</p>
                         {step.dropoffRate > 0 && (
                           <p className="text-xs text-red-400">
-                            {step.dropoffRate.toFixed(1)}% lemorzsolódás
+                            {step.dropoffRate.toFixed(1)}% {t('admin.journey.dropoff')}
                           </p>
                         )}
                       </div>
@@ -138,11 +138,11 @@ const UserJourneyDashboard = () => {
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <CardTitle className="text-white">Vásárlási Funnel</CardTitle>
+                  <CardTitle className="text-white">{t('admin.journey.purchase_funnel')}</CardTitle>
                   <MetricInfo
-                    title="Vásárlási Tölcsér"
-                    description="A vásárlási folyamat három fő lépése: (1) Booster megtekintés - a felhasználó megnézi a Bolt oldalt, (2) Vásárlás indítás - rákattint egy boosterre, (3) Sikeres vásárlás - befejezi a vásárlást és az arany/élet jóváírásra kerül."
-                    interpretation="A magas konverziós arány azt jelenti, hogy sokan vásárolnak. Ha sok felhasználó nézi meg a Bolt oldalt, de kevesen vásárolnak, akkor érdemes az árakat vagy az ajánlatokat felülvizsgálni."
+                    title={t('admin.journey.purchase_funnel')}
+                    description={t('admin.journey.purchase_funnel_desc')}
+                    interpretation={t('admin.journey.purchase_funnel_interpretation')}
                   />
                 </div>
               </CardHeader>
@@ -153,7 +153,7 @@ const UserJourneyDashboard = () => {
                     <XAxis type="number" stroke="#fff" />
                     <YAxis dataKey="step" type="category" width={150} stroke="#fff" />
                     <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
-                    <Bar dataKey="users" name="Felhasználók">
+                    <Bar dataKey="users" name={t('admin.journey.users')}>
                       {analytics.purchaseFunnel.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
@@ -165,10 +165,10 @@ const UserJourneyDashboard = () => {
                     <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
                       <span className="font-medium text-white">{step.step}</span>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-white">{step.users} felhasználó</p>
+                        <p className="text-sm font-bold text-white">{step.users} {t('admin.journey.user')}</p>
                         {step.dropoffRate > 0 && (
                           <p className="text-xs text-red-400">
-                            {step.dropoffRate.toFixed(1)}% lemorzsolódás
+                            {step.dropoffRate.toFixed(1)}% {t('admin.journey.dropoff')}
                           </p>
                         )}
                       </div>
@@ -183,11 +183,11 @@ const UserJourneyDashboard = () => {
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <CardTitle className="text-white">Játék Funnel</CardTitle>
+                  <CardTitle className="text-white">{t('admin.journey.game_funnel')}</CardTitle>
                   <MetricInfo
-                    title="Játék Tölcsér"
-                    description="A játék tölcsér mutatja, hogy a felhasználók hányan jutnak el az 5. kérdésig, a 10. kérdésig, és hányan fejezik be sikeresen mind a 15 kérdést. Ez segít azonosítani, hogy melyik szakaszban adják fel legtöbben a játékot."
-                    interpretation="Ha az 5. kérdésnél magas a lemorzsolódás, lehet, hogy túl nehéz a játék eleje. Ha a 10. kérdésnél sokan feladják, lehet, hogy a játék túl hosszú vagy unalmas. A cél, hogy minél többen fejezzék be mind a 15 kérdést."
+                    title={t('admin.journey.game_funnel')}
+                    description={t('admin.journey.game_funnel_desc')}
+                    interpretation={t('admin.journey.game_funnel_interpretation')}
                   />
                 </div>
               </CardHeader>
@@ -198,7 +198,7 @@ const UserJourneyDashboard = () => {
                     <XAxis type="number" stroke="#fff" />
                     <YAxis dataKey="step" type="category" width={150} stroke="#fff" />
                     <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
-                    <Bar dataKey="users" name="Felhasználók">
+                    <Bar dataKey="users" name={t('admin.journey.users')}>
                       {analytics.gameFunnel.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
@@ -210,10 +210,10 @@ const UserJourneyDashboard = () => {
                     <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
                       <span className="font-medium text-white">{step.step}</span>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-white">{step.users} felhasználó</p>
+                        <p className="text-sm font-bold text-white">{step.users} {t('admin.journey.user')}</p>
                         {step.dropoffRate > 0 && (
                           <p className="text-xs text-red-400">
-                            {step.dropoffRate.toFixed(1)}% lemorzsolódás
+                            {step.dropoffRate.toFixed(1)}% {t('admin.journey.dropoff')}
                           </p>
                         )}
                       </div>
@@ -228,11 +228,11 @@ const UserJourneyDashboard = () => {
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <CardTitle className="text-white">Leggyakoribb Útvonalak</CardTitle>
+                  <CardTitle className="text-white">{t('admin.journey.common_paths')}</CardTitle>
                   <MetricInfo
-                    title="Gyakori Útvonalak"
-                    description="Ez a lista mutatja, hogy a felhasználók milyen sorrendben keresik fel az oldalakon keresztül az alkalmazást. Például: Dashboard → Játék → Ranglista. Minden útvonal mellett látható, hogy hányan követték azt az útvonalat."
-                    interpretation="A leggyakoribb útvonalak megmutatják, hogy a felhasználók hogyan használják az alkalmazást a gyakorlatban. Ha váratlan útvonalakat látsz, érdemes megvizsgálni, hogy miért választják azokat."
+                    title={t('admin.journey.common_paths')}
+                    description={t('admin.journey.common_paths_desc')}
+                    interpretation={t('admin.journey.common_paths_interpretation')}
                   />
                 </div>
               </CardHeader>
@@ -241,7 +241,7 @@ const UserJourneyDashboard = () => {
                   {analytics.commonPaths.map((path, index) => (
                     <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 border border-purple-500/20 rounded bg-[#0a0a2e]/50">
                       <span className="font-mono text-sm text-white break-all">{path.path}</span>
-                      <span className="font-bold text-white whitespace-nowrap">{path.count} alkalom</span>
+                      <span className="font-bold text-white whitespace-nowrap">{path.count} {t('admin.journey.occurrences')}</span>
                     </div>
                   ))}
                 </div>
@@ -253,11 +253,11 @@ const UserJourneyDashboard = () => {
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <CardTitle className="text-white">Kilépési Pontok</CardTitle>
+                  <CardTitle className="text-white">{t('admin.journey.exit_points')}</CardTitle>
                   <MetricInfo
-                    title="Kilépési Pontok"
-                    description="Ezek azok az oldalak, ahol a felhasználók leggyakrabban kilépnek az alkalmazásból vagy bezárják azt. Minden oldal mellett látható, hány kilépés történt onnan."
-                    interpretation="Magas kilépési arány egy adott oldalon azt jelezheti, hogy ott valami probléma van, vagy a felhasználók elvégezték, amit akartak (pl. megnézték a ranglistát és kiléptek). A Játék oldalról történő kilépések normálisak, ha befejezték a játékot."
+                    title={t('admin.journey.exit_points')}
+                    description={t('admin.journey.exit_points_desc')}
+                    interpretation={t('admin.journey.exit_points_interpretation')}
                   />
                 </div>
               </CardHeader>
@@ -268,7 +268,7 @@ const UserJourneyDashboard = () => {
                     <XAxis dataKey="page" stroke="#fff" />
                     <YAxis stroke="#fff" />
                     <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
-                    <Bar dataKey="exits" fill="hsl(var(--destructive))" name="Kilépések" />
+                    <Bar dataKey="exits" fill="hsl(var(--destructive))" name={t('admin.journey.exits')} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
