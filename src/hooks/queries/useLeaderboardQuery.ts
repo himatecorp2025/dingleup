@@ -28,7 +28,7 @@ interface LeaderboardResponse {
   dailyRewards: DailyRewardsData;
 }
 
-const LEADERBOARD_QUERY_KEY = (countryCode: string) => ['leaderboard', countryCode];
+const LEADERBOARD_QUERY_KEY = (countryCode: string) => ['leaderboard', 'v2', countryCode];
 
 async function fetchLeaderboard(countryCode: string): Promise<LeaderboardResponse> {
   const response = await supabase.functions.invoke('get-daily-leaderboard-by-country', {
