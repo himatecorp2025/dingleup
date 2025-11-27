@@ -233,19 +233,12 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       await refetchWallet();
       await broadcast('wallet:update', { source: 'game_start', livesDelta: -1 });
       
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !session) {
+      const { data: { session: authSession }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !authSession) {
         console.error('[useGameLifecycle] Session error:', sessionError);
         toast.error(t('game.session_expired'));
         navigate('/auth/login');
         throw new Error('Session error');
-      }
-      
-      const { data: { session: authSession } } = await supabase.auth.getSession();
-      if (!authSession) {
-        toast.error(t('game.not_logged_in'));
-        navigate('/auth/login');
-        throw new Error('Not authenticated');
       }
       
       await Promise.all([

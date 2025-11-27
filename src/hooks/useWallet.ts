@@ -31,7 +31,7 @@ export const useWallet = (userId: string | undefined) => {
         reset();
       }
     };
-  }, [userId, setUserId, reset]);
+  }, [userId, setUserId, reset]); // t is NOT needed here - no direct usage in effect
 
   return {
     walletData,
