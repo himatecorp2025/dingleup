@@ -72,7 +72,8 @@ serve(async (req) => {
       decisionsData,
       rewardsData,
       dailyData,
-      topUsersData
+      topUsersData,
+      dailyPlansData
     ] = await Promise.all([
       // Total drops by source
       supabaseAdmin
@@ -105,6 +106,13 @@ serve(async (req) => {
       supabaseAdmin
         .from('lootbox_instances')
         .select('user_id, status, rewards_gold, rewards_life')
+        .then(({ data }) => data || []),
+      
+      // Daily plans with activity windows
+      supabaseAdmin
+        .from('lootbox_daily_plan')
+        .select('*')
+        .gte('plan_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
         .then(({ data }) => data || [])
     ]);
 
@@ -173,6 +181,46 @@ serve(async (req) => {
       .slice(0, 10)
       .map(([userId, stats]) => ({ userId, ...stats }));
 
+    // Process activity window and hourly distribution from daily plans
+    const hourlyDistribution = Array(24).fill(0);
+    const activityWindows: Array<{ start: number; end: number }> = [];
+    let totalTargetCount = 0;
+    let totalDeliveredCount = 0;
+    const slotStatusCounts = { pending: 0, delivered: 0 };
+
+    dailyPlansData.forEach(plan => {
+      totalTargetCount += plan.target_count;
+      totalDeliveredCount += plan.delivered_count;
+
+      // Extract activity window
+      if (plan.active_window_start && plan.active_window_end) {
+        const startHour = new Date(plan.active_window_start).getUTCHours();
+        const endHour = new Date(plan.active_window_end).getUTCHours();
+        activityWindows.push({ start: startHour, end: endHour });
+      }
+
+      // Process slots for hourly distribution and status
+      if (plan.slots && Array.isArray(plan.slots)) {
+        plan.slots.forEach((slot: any) => {
+          const slotTime = new Date(slot.slot_time);
+          const hour = slotTime.getUTCHours();
+          hourlyDistribution[hour]++;
+
+          // Count slot statuses
+          if (slot.status === 'pending') slotStatusCounts.pending++;
+          else if (slot.status === 'delivered') slotStatusCounts.delivered++;
+        });
+      }
+    });
+
+    // Calculate average activity window
+    const avgActivityWindow = activityWindows.length > 0
+      ? {
+          avgStart: Math.round(activityWindows.reduce((sum, w) => sum + w.start, 0) / activityWindows.length),
+          avgEnd: Math.round(activityWindows.reduce((sum, w) => sum + w.end, 0) / activityWindows.length)
+        }
+      : null;
+
     return new Response(
       JSON.stringify({
         overview: {
@@ -195,7 +243,16 @@ serve(async (req) => {
         decisionRate: {
           openNowPercentage: totalDrops > 0 ? Math.round((openedNow / totalDrops) * 100) : 0,
           storePercentage: totalDrops > 0 ? Math.round((stored / totalDrops) * 100) : 0
-        }
+        },
+        hourlyDistribution: hourlyDistribution.map((count, hour) => ({ hour, count })),
+        activityWindow: avgActivityWindow,
+        planStatistics: {
+          totalPlans: dailyPlansData.length,
+          avgTargetCount: dailyPlansData.length > 0 ? Math.round(totalTargetCount / dailyPlansData.length) : 0,
+          avgDeliveredCount: dailyPlansData.length > 0 ? Math.round(totalDeliveredCount / dailyPlansData.length) : 0,
+          deliveryRate: totalTargetCount > 0 ? Math.round((totalDeliveredCount / totalTargetCount) * 100) : 0
+        },
+        slotStatus: slotStatusCounts
       }),
       {
         status: 200,
