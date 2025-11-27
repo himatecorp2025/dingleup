@@ -302,34 +302,10 @@ const DailyGiftDialog = ({
                     {t('daily.day_label')} {weeklyEntryCount + 1}
                   </p>
                   
-                  {/* 3D Fire SVG - Élethű tűz 1 SVG-ben */}
-                  <svg viewBox="0 0 100 120" className="flex-shrink-0" style={{ width: 'clamp(36px, 9vw, 60px)', height: 'auto' }}>
+                  {/* 3D Fire SVG - Élethű láng feltöltött SVG alapján */}
+                  <svg viewBox="0 0 92.27 122.88" className="flex-shrink-0" style={{ width: 'clamp(36px, 9vw, 60px)', height: 'auto' }}>
                     <defs>
-                      {/* Külső láng gradiens - piros/narancs */}
-                      <linearGradient id="fireOuterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#FFD700" />
-                        <stop offset="25%" stopColor="#FF8C00" />
-                        <stop offset="50%" stopColor="#FF6347" />
-                        <stop offset="75%" stopColor="#FF4500" />
-                        <stop offset="100%" stopColor="#DC143C" />
-                      </linearGradient>
-                      {/* Belső sárga láng gradiens */}
-                      <radialGradient id="fireInnerGrad" cx="50%" cy="50%">
-                        <stop offset="0%" stopColor="#FFFF00" />
-                        <stop offset="40%" stopColor="#FFD700" />
-                        <stop offset="70%" stopColor="#FFA500" />
-                        <stop offset="100%" stopColor="#FF8C00" />
-                      </radialGradient>
-                      {/* Fény highlight */}
-                      <radialGradient id="fireHighlight" cx="35%" cy="25%">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
-                        <stop offset="50%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-                      </radialGradient>
-                      <filter id="fireOuterShadow">
-                        <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#FF4500" floodOpacity="0.8"/>
-                      </filter>
-                      <filter id="fireInnerGlow">
+                      <filter id="fireGlowEffect">
                         <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
                         <feMerge>
                           <feMergeNode in="coloredBlur"/>
@@ -337,33 +313,55 @@ const DailyGiftDialog = ({
                         </feMerge>
                       </filter>
                     </defs>
-                    
-                    {/* Külső láng alakzat */}
-                    <path d="M50 10 C40 20, 32 35, 30 55 C28 70, 35 85, 42 92 C45 96, 47 98, 50 100 C53 98, 55 96, 58 92 C65 85, 72 70, 70 55 C68 35, 60 20, 50 10 Z" 
-                          fill="url(#fireOuterGrad)" 
-                          stroke="#8B0000" 
-                          strokeWidth="1" 
-                          filter="url(#fireOuterShadow)" 
-                          style={{ animation: 'fireFlickerOuter 0.8s ease-in-out infinite' }} />
-                    
-                    {/* Belső sárga láng - a narancssárga láng alján belül */}
-                    <path d="M50 60 C45 67, 41 75, 40 85 C39 92, 42 97, 46 99 C47 99.5, 48.5 100, 50 100 C51.5 100, 53 99.5, 54 99 C58 97, 61 92, 60 85 C59 75, 55 67, 50 60 Z" 
-                          fill="url(#fireInnerGrad)" 
-                          filter="url(#fireInnerGlow)"
-                          opacity="0.95"
-                          style={{ animation: 'fireFlickerInner 0.8s ease-in-out infinite 0.1s' }} />
-                    
-                    {/* Fény highlight a tetején */}
-                    <ellipse cx="48" cy="25" rx="10" ry="12" fill="url(#fireHighlight)" opacity="0.6" />
+                    <g style={{ animation: 'fireRealisticFlicker 1.2s ease-in-out infinite' }}>
+                      {/* Külső láng - narancssárga/piros */}
+                      <path 
+                        fill="#EC6F59"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        filter="url(#fireGlowEffect)"
+                        d="M18.61,54.89C15.7,28.8,30.94,10.45,59.52,0 C42.02,22.71,74.44,47.31,76.23,70.89 c4.19-7.15,6.57-16.69,7.04-29.45c21.43,33.62,3.66,88.57-43.5,80.67c-4.33-0.72-8.5-2.09-12.3-4.13C10.27,108.8,0,88.79,0,69.68 C0,57.5,5.21,46.63,11.95,37.99C12.85,46.45,14.77,52.76,18.61,54.89L18.61,54.89z"
+                        style={{ animation: 'fireFlickerOuter 0.9s ease-in-out infinite' }} 
+                      />
+                      {/* Belső láng - sárga */}
+                      <path 
+                        fill="#FAD15C"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        filter="url(#fireGlowEffect)"
+                        d="M33.87,92.58c-4.86-12.55-4.19-32.82,9.42-39.93c0.1,23.3,23.05,26.27,18.8,51.14 c3.92-4.44,5.9-11.54,6.25-17.15c6.22,14.24,1.34,25.63-7.53,31.43c-26.97,17.64-50.19-18.12-34.75-37.72 C26.53,84.73,31.89,91.49,33.87,92.58L33.87,92.58z"
+                        style={{ animation: 'fireFlickerInner 1s ease-in-out infinite 0.15s' }}
+                      />
+                    </g>
                     
                     <style>{`
+                      @keyframes fireRealisticFlicker {
+                        0%, 100% { 
+                          transform: translateY(0) scale(1);
+                          opacity: 1;
+                        }
+                        25% { 
+                          transform: translateY(-2px) scale(1.02, 0.98);
+                          opacity: 0.95;
+                        }
+                        50% { 
+                          transform: translateY(-1px) scale(0.98, 1.02);
+                          opacity: 0.98;
+                        }
+                        75% { 
+                          transform: translateY(-3px) scale(1.01, 0.99);
+                          opacity: 0.96;
+                        }
+                      }
                       @keyframes fireFlickerOuter {
-                        0%, 100% { transform: scale(1) translateY(0); opacity: 1; }
-                        50% { transform: scale(1.03) translateY(-2px); opacity: 0.95; }
+                        0%, 100% { transform: scale(1, 1); opacity: 1; }
+                        33% { transform: scale(1.02, 0.98); opacity: 0.96; }
+                        66% { transform: scale(0.98, 1.02); opacity: 0.98; }
                       }
                       @keyframes fireFlickerInner {
-                        0%, 100% { transform: scale(1) translateY(0); opacity: 0.95; }
-                        50% { transform: scale(1.05) translateY(-1px); opacity: 1; }
+                        0%, 100% { transform: scale(1, 1); opacity: 0.95; }
+                        40% { transform: scale(1.04, 0.96); opacity: 1; }
+                        80% { transform: scale(0.96, 1.04); opacity: 0.92; }
                       }
                     `}</style>
                   </svg>
