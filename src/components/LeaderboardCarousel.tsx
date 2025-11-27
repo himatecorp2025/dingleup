@@ -46,19 +46,19 @@ const LeaderboardCarouselComponent = () => {
       if (!autoScrollPausedRef.current && container) {
         container.scrollLeft += scrollSpeed;
         
-        // Körköröz scroll: ha elértük a duplikált tartalom felét, visszaugrik az elejére (zökkenőmentes)
+        // Körkörös scroll: ha elértük a duplikált tartalom felét, folyamatosan "átcsúszunk" a második feléről az elsőre
         const halfWidth = container.scrollWidth / 2;
         if (container.scrollLeft >= halfWidth) {
-          container.scrollLeft = 0;
+          container.scrollLeft -= halfWidth;
         }
       }
       // KRITIKUS: mindig újraindítjuk a következő frame-et, így soha nem áll le
       animationFrameId = requestAnimationFrame(scroll);
     };
-    
+
     // Indítás
     animationFrameId = requestAnimationFrame(scroll);
-    
+
     return () => {
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
