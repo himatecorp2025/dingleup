@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Hiányzó Authorization header' }), {
+      return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'Érvénytelen token' }), {
+      return new Response(JSON.stringify({ error: 'Invalid token' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
     });
 
     if (!isAdmin) {
-      return new Response(JSON.stringify({ error: 'Nincs admin jogosultság' }), {
+      return new Response(JSON.stringify({ error: 'Admin access required' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
 
     // Revenue by product
     const revenueByProductMap = purchases?.reduce((acc, p) => {
-      const productName = (p.booster_types as any)?.name || 'Ismeretlen';
+      const productName = (p.booster_types as any)?.name || 'Unknown';
       if (!acc[productName]) {
         acc[productName] = { product: productName, revenue: 0, count: 0 };
       }

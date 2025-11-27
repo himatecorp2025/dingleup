@@ -102,8 +102,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Összesített érmék számítása (már jóváírva lettek minden helyes válasz után)
-    // Ez csak statisztikai célokra kerül a game_results táblába
+    // Calculate total coins (already credited after each correct answer)
+    // This is only for statistics in game_results table
     let totalCoinsEarned = 1; // Start jutalom
     for (let i = 0; i < body.correctAnswers; i++) {
       if (i >= 0 && i <= 3) totalCoinsEarned += 1;      // 1-4. kérdés
@@ -166,8 +166,8 @@ Deno.serve(async (req) => {
 
     console.log(`[complete-game] Game result ${gameResult.id} saved for user ${user.id}`);
 
-    // MEGJEGYZÉS: A jutalmak már jóvá lettek írva minden helyes válasz után
-    // a credit-gameplay-reward edge function által, ezért itt NEM írunk jóvá újra
+    // NOTE: Rewards were already credited after each correct answer
+    // by the credit-gameplay-reward edge function, so we do NOT credit again here
 
     // Get user profile for leaderboard display
     const { data: userProfile, error: profileError } = await supabaseAdmin

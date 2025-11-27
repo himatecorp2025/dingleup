@@ -38,7 +38,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: "Hiányzó autentikáció" }),
+        JSON.stringify({ error: "Missing authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -47,7 +47,7 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
     if (userError || !userData.user) {
       return new Response(
-        JSON.stringify({ error: "Érvénytelen autentikáció" }),
+        JSON.stringify({ error: "Invalid authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -61,7 +61,7 @@ serve(async (req) => {
     const isAdmin = roles?.some(r => r.role === "admin");
     if (!isAdmin) {
       return new Response(
-        JSON.stringify({ error: "Nincs admin jogosultságod" }),
+        JSON.stringify({ error: "Admin access required" }),
         { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -75,7 +75,7 @@ serve(async (req) => {
     if (fetchError) {
       console.error("[admin-booster-types] Fetch error:", fetchError);
       return new Response(
-        JSON.stringify({ error: "Adatok lekérése sikertelen" }),
+        JSON.stringify({ error: "Failed to fetch data" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -103,7 +103,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("[admin-booster-types] Error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Szerver hiba";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     return new Response(
       JSON.stringify({ error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

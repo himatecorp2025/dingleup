@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
     
     if (!allowedTypes.includes(contentType)) {
       return new Response(
-        JSON.stringify({ error: 'Nem támogatott fájltípus' }),
+        JSON.stringify({ error: 'Unsupported file type' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

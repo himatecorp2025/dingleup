@@ -35,7 +35,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: "Hiányzó autentikáció" }),
+        JSON.stringify({ error: "Missing authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -44,7 +44,7 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
     if (userError || !userData.user) {
       return new Response(
-        JSON.stringify({ error: "Érvénytelen autentikáció" }),
+        JSON.stringify({ error: "Invalid authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -58,7 +58,7 @@ serve(async (req) => {
     const isAdmin = roles?.some(r => r.role === "admin");
     if (!isAdmin) {
       return new Response(
-        JSON.stringify({ error: "Nincs admin jogosultságod" }),
+        JSON.stringify({ error: "Admin access required" }),
         { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -87,7 +87,7 @@ serve(async (req) => {
     if (fetchError) {
       console.error("[admin-booster-purchases] Fetch error:", fetchError);
       return new Response(
-        JSON.stringify({ error: "Adatok lekérése sikertelen", details: fetchError.message }),
+        JSON.stringify({ error: "Failed to fetch data", details: fetchError.message }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -125,9 +125,9 @@ serve(async (req) => {
       return {
         id: p.id,
         userId: p.user_id,
-        userDisplayName: profile?.username || 'Ismeretlen',
+        userDisplayName: profile?.username || 'Unknown',
         boosterCode: boosterType?.code || 'UNKNOWN',
-        boosterName: boosterType?.name || 'Ismeretlen Booster',
+        boosterName: boosterType?.name || 'Unknown Booster',
         purchaseSource: p.purchase_source as 'GOLD' | 'IAP',
         goldSpent: p.gold_spent,
         usdCentsSpent: p.usd_cents_spent,
@@ -161,7 +161,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("[admin-booster-purchases] Error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Szerver hiba";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     return new Response(
       JSON.stringify({ error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

@@ -34,13 +34,13 @@ serve(async (req) => {
     const { currentPassword, newPassword } = await req.json();
 
     if (!currentPassword || !newPassword) {
-      throw new Error('Hiányzó jelszó adatok');
+      throw new Error('Missing password data');
     }
 
     // Validate new password requirements
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
     if (!passwordRegex.test(newPassword)) {
-      throw new Error('A jelszónak tartalmaznia kell kis- és nagybetűt, számot, speciális karaktert (@$!%*?&.) és legalább 8 karakterből kell állnia');
+      throw new Error('Password must contain lowercase, uppercase, number, special character (@$!%*?&.) and be at least 8 characters long');
     }
 
     // Verify current password by attempting to sign in
@@ -50,7 +50,7 @@ serve(async (req) => {
     });
 
     if (signInError) {
-      throw new Error('Jelenlegi jelszó helytelen');
+      throw new Error('Current password is incorrect');
     }
 
     // Hash the new password for comparison with history
@@ -76,7 +76,7 @@ serve(async (req) => {
       for (const record of passwordHistory) {
         const matches = await bcrypt.compare(newPassword, record.password_hash);
         if (matches) {
-          throw new Error('Ez a jelszó már használva volt az elmúlt 90 napban. Kérjük, válassz másik jelszót.');
+          throw new Error('This password was used in the last 90 days. Please choose a different password.');
         }
       }
     }
@@ -88,7 +88,7 @@ serve(async (req) => {
     );
 
     if (updateError) {
-      throw new Error('Jelszó frissítése sikertelen');
+      throw new Error('Failed to update password');
     }
 
     // Store new password hash in history
@@ -112,13 +112,13 @@ serve(async (req) => {
       .lt('created_at', ninetyDaysAgo.toISOString());
 
     return new Response(
-      JSON.stringify({ success: true, message: 'Jelszó sikeresen módosítva' }),
+      JSON.stringify({ success: true, message: 'Password successfully updated' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
     console.error('Password update error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Ismeretlen hiba történt';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return new Response(
       JSON.stringify({ error: errorMessage }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

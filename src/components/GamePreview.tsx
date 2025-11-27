@@ -467,7 +467,7 @@ const GamePreview = memo(() => {
     const params = new URLSearchParams(window.location.search);
     const paymentStatus = params.get('payment');
     const sessionId = params.get('session_id');
-    let timeoutId: NodeJS.Timeout | null = null;
+    const timeoutIdRef = { current: null as NodeJS.Timeout | null };
 
     const verifyInGamePayment = async () => {
       if (paymentStatus === 'success' && sessionId && userId) {
@@ -488,7 +488,7 @@ const GamePreview = memo(() => {
             
             // Continue game automatically
             if (gameState === 'playing') {
-              timeoutId = setTimeout(() => {
+              timeoutIdRef.current = setTimeout(() => {
                 handleNextQuestion();
               }, 1500);
             }
@@ -510,9 +510,12 @@ const GamePreview = memo(() => {
       verifyInGamePayment();
     }
 
-    // Cleanup timeout on unmount
+    // CRITICAL: Cleanup timeout on unmount to prevent memory leaks
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = null;
+      }
     };
   }, [userId, gameState, refreshProfile, handleNextQuestion]);
 

@@ -18,7 +18,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'Nincs bejelentkezve' }),
+        JSON.stringify({ error: 'Not logged in' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
       );
     }
@@ -53,7 +53,7 @@ serve(async (req) => {
     const rateLimitResult = await checkRateLimit(supabaseClient, 'toggle-question-like', RATE_LIMITS.SOCIAL);
     if (!rateLimitResult.allowed) {
       return new Response(
-        JSON.stringify({ error: 'Túl sok kérés. Próbáld újra később.' }),
+        JSON.stringify({ error: 'Too many requests. Try again later.' }),
         { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
