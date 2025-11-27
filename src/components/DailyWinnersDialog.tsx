@@ -325,6 +325,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           fontSize: 'clamp(1.125rem, 4.5vw, 1.875rem)', 
                           letterSpacing: '0.05em',
                           fontFamily: '"Poppins", system-ui, -apple-system, sans-serif',
+                          fontWeight: 'bold',
                           WebkitTextStroke: '1.5px rgba(0,0,0,0.8)',
                           wordWrap: 'break-word',
                           overflowWrap: 'break-word',
@@ -347,14 +348,15 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         WebkitTextStroke: '0.8px rgba(0,0,0,0.8)',
                         letterSpacing: '0.03em',
                         textTransform: 'uppercase',
-                        whiteSpace: 'nowrap'
+                        whiteSpace: 'nowrap',
+                        fontWeight: 'bold'
                       }}>{t('dailyWinners.jackpot')}</span>
                       
                       {/* Gold coin: value above, icon below */}
                       <div className="flex flex-col items-center gap-0.5">
                         <span style={{
                           fontSize: 'clamp(0.9rem, 3.5vw, 1.2rem)',
-                          fontWeight: 700,
+                          fontWeight: 'bold',
                           fontFamily: '"Poppins", system-ui, sans-serif',
                           color: '#ffd700',
                           WebkitTextStroke: '1px rgba(0,0,0,0.8)'
@@ -388,7 +390,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       <div className="flex flex-col items-center gap-0.5">
                         <span style={{
                           fontSize: 'clamp(0.9rem, 3.5vw, 1.2rem)',
-                          fontWeight: 700,
+                          fontWeight: 'bold',
                           fontFamily: '"Poppins", system-ui, sans-serif',
                           color: '#ff1744',
                           WebkitTextStroke: '1px rgba(0,0,0,0.8)'
