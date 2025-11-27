@@ -7,10 +7,12 @@ import { usePerformanceAnalytics } from "@/hooks/usePerformanceAnalytics";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { MetricInfo } from "@/components/admin/MetricInfo";
+import { useI18n } from '@/i18n';
 
 const PerformanceDashboard = () => {
   const navigate = useNavigate();
   const { analytics, loading, error, refetch } = usePerformanceAnalytics();
+  const { t } = useI18n();
 
   if (loading) {
     return (
@@ -82,11 +84,11 @@ const PerformanceDashboard = () => {
               <Card className="backdrop-blur-xl bg-white/5 border border-white/10">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-white text-lg flex items-center">
-                    Átlagos Betöltési Idő
+                    {t('admin.performance.avg_load_time')}
                     <MetricInfo 
-                      title="Betöltési Idő (Load Time)"
-                      description="Az oldal teljes betöltési ideje milliszekundumban, a DNS keresésétől kezdve a teljes megjelenésig."
-                      interpretation="Jó: <2000ms | Közepes: 2000-4000ms | Lassú: >4000ms"
+                      title={t('admin.performance.load_time_title')}
+                      description={t('admin.performance.load_time_desc')}
+                      interpretation={t('admin.performance.load_time_interpretation')}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -98,11 +100,11 @@ const PerformanceDashboard = () => {
               <Card className="backdrop-blur-xl bg-white/5 border border-white/10">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-white text-lg flex items-center">
-                    Átlagos TTFB
+                    {t('admin.performance.avg_ttfb')}
                     <MetricInfo 
-                      title="Time To First Byte"
-                      description="Az első bájt megérkezésének ideje a szerverről. Azt mutatja, mennyire gyorsan válaszol a backend."
-                      interpretation="Jó: <200ms | Közepes: 200-500ms | Lassú: >500ms"
+                      title={t('admin.performance.ttfb_title')}
+                      description={t('admin.performance.ttfb_desc')}
+                      interpretation={t('admin.performance.ttfb_interpretation')}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -114,11 +116,11 @@ const PerformanceDashboard = () => {
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-white text-base sm:text-lg flex items-center">
-                    Átlagos LCP
+                    {t('admin.performance.avg_lcp')}
                     <MetricInfo 
-                      title="Largest Contentful Paint"
-                      description="A legnagyobb tartalmi elem megjelenési ideje. Google Core Web Vitals egyik fő metrikája."
-                      interpretation="Jó: <2.5s | Közepes: 2.5-4s | Lassú: >4s"
+                      title={t('admin.performance.lcp_title')}
+                      description={t('admin.performance.lcp_desc')}
+                      interpretation={t('admin.performance.lcp_interpretation')}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -130,11 +132,11 @@ const PerformanceDashboard = () => {
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-white text-base sm:text-lg flex items-center">
-                    Átlagos CLS
+                    {t('admin.performance.avg_cls')}
                     <MetricInfo 
-                      title="Cumulative Layout Shift"
-                      description="A vizuális stabilitás mérőszáma. Azt mutatja, mennyire 'ugrál' az oldal betöltés közben."
-                      interpretation="Jó: <0.1 | Közepes: 0.1-0.25 | Lassú: >0.25"
+                      title={t('admin.performance.cls_title')}
+                      description={t('admin.performance.cls_desc')}
+                      interpretation={t('admin.performance.cls_interpretation')}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -149,11 +151,11 @@ const PerformanceDashboard = () => {
             <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
               <CardHeader>
                 <CardTitle className="text-white flex items-center">
-                  Teljesítmény Oldalanként
+                  {t('admin.performance.by_page_title')}
                   <MetricInfo 
-                    title="Oldalankénti Teljesítmény"
-                    description="Minden egyes oldal átlagos betöltési ideje. Ez segít azonosítani, mely oldalak lassúak és optimalizálásra szorulnak."
-                    interpretation="Összehasonlítsd az oldalakat egymással - a leglassabb oldalak prioritást kaphatnak az optimalizálásban."
+                    title={t('admin.performance.by_page_metric_title')}
+                    description={t('admin.performance.by_page_desc')}
+                    interpretation={t('admin.performance.by_page_interpretation')}
                   />
                 </CardTitle>
               </CardHeader>
@@ -164,7 +166,7 @@ const PerformanceDashboard = () => {
                     <XAxis dataKey="page_route" stroke="#fff" />
                     <YAxis stroke="#fff" />
                     <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
-                    <Bar dataKey="avg_load_time_ms" fill="hsl(var(--primary))" name="Átlagos betöltési idő (ms)" />
+                    <Bar dataKey="avg_load_time_ms" fill="hsl(var(--primary))" name={t('admin.performance.avg_load_time_ms')} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -176,11 +178,11 @@ const PerformanceDashboard = () => {
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
-                    Teljesítmény Eszközönként
+                    {t('admin.performance.by_device_title')}
                     <MetricInfo 
-                      title="Eszközönkénti Teljesítmény"
-                      description="Betöltési idők mobilon, tableten és deszktopon. A mobil felhasználók gyakran lassabb hálózatot használnak, ezért fontosak ezek a mérések."
-                      interpretation="Mobil optimalizálás kulcsfontosságú - a felhasználók 70-80%-a mobilról látogat."
+                      title={t('admin.performance.by_device_metric_title')}
+                      description={t('admin.performance.by_device_desc')}
+                      interpretation={t('admin.performance.by_device_interpretation')}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -191,7 +193,7 @@ const PerformanceDashboard = () => {
                       <XAxis dataKey="device_type" stroke="#fff" />
                       <YAxis stroke="#fff" />
                       <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
-                      <Bar dataKey="avg_load_time" fill="hsl(var(--primary))" name="Átlagos betöltési idő (ms)" />
+                      <Bar dataKey="avg_load_time" fill="hsl(var(--primary))" name={t('admin.performance.avg_load_time_ms')} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -200,11 +202,11 @@ const PerformanceDashboard = () => {
               <Card className="bg-[#1a1a3e]/50 border border-purple-500/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
-                    Teljesítmény Böngészőnként
+                    {t('admin.performance.by_browser_title')}
                     <MetricInfo 
-                      title="Böngészőnkénti Teljesítmény"
-                      description="Betöltési idők különböző böngészőkben (Chrome, Safari, Firefox, stb.). Segít azonosítani böngésző-specifikus problémákat."
-                      interpretation="Ha egy böngészőben jelentősen lassabb az oldal, akkor böngésző-kompatibilitási probléma lehet."
+                      title={t('admin.performance.by_browser_metric_title')}
+                      description={t('admin.performance.by_browser_desc')}
+                      interpretation={t('admin.performance.by_browser_interpretation')}
                     />
                   </CardTitle>
                 </CardHeader>
@@ -215,7 +217,7 @@ const PerformanceDashboard = () => {
                       <XAxis dataKey="browser" stroke="#fff" />
                       <YAxis stroke="#fff" />
                       <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
-                      <Bar dataKey="avg_load_time" fill="hsl(var(--secondary))" name="Átlagos betöltési idő (ms)" />
+                      <Bar dataKey="avg_load_time" fill="hsl(var(--secondary))" name={t('admin.performance.avg_load_time_ms')} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
