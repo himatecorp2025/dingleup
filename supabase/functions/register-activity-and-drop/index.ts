@@ -20,8 +20,10 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey, {
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    
+    // Client with user context for auth and reads
+    const supabaseUser = createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false
@@ -33,7 +35,15 @@ serve(async (req) => {
       }
     });
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Pure service role client for inserts (bypasses RLS)
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+
+    const { data: { user }, error: authError } = await supabaseUser.auth.getUser();
     if (authError || !user) {
       return new Response(
         JSON.stringify({ error: 'Invalid or expired token' }),
@@ -57,7 +67,7 @@ serve(async (req) => {
     const todayEnd = new Date(now);
     todayEnd.setHours(23, 59, 59, 999);
 
-    const { data: todayDrops, error: countError } = await supabase
+    const { data: todayDrops, error: countError } = await supabaseAdmin
       .from('lootbox_instances')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id)
@@ -86,7 +96,7 @@ serve(async (req) => {
     }
 
     // Step 2: Check cooldown (20 minutes since last drop)
-    const { data: lastDrop } = await supabase
+    const { data: lastDrop } = await supabaseAdmin
       .from('lootbox_instances')
       .select('created_at')
       .eq('user_id', user.id)
@@ -113,7 +123,7 @@ serve(async (req) => {
     // Step 3: Handle guaranteed first daily drop
     if (activity_type === 'daily_first_login') {
       // Check if user already got daily_first_login drop today
-      const { data: existingFirstDrop } = await supabase
+      const { data: existingFirstDrop } = await supabaseAdmin
         .from('lootbox_instances')
         .select('id')
         .eq('user_id', user.id)
@@ -136,7 +146,7 @@ serve(async (req) => {
       const expiresAt = new Date(now.getTime() + 60 * 1000); // 60 seconds
       const dailySequence = todayDropCount + 1;
 
-      const { data: newDrop, error: insertError } = await supabase
+      const { data: newDrop, error: insertError } = await supabaseAdmin
         .from('lootbox_instances')
         .insert({
           user_id: user.id,
@@ -188,7 +198,7 @@ serve(async (req) => {
     const expiresAt = new Date(now.getTime() + 60 * 1000); // 60 seconds
     const dailySequence = todayDropCount + 1;
 
-    const { data: newDrop, error: insertError } = await supabase
+    const { data: newDrop, error: insertError } = await supabaseAdmin
       .from('lootbox_instances')
       .insert({
         user_id: user.id,
