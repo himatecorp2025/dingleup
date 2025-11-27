@@ -162,7 +162,7 @@ export const DailyRankRewardDialog = ({
                     +{reward.gold}
                   </span>
                   <span className="text-white text-sm font-semibold uppercase">
-                    {lang === 'hu' ? 'Arany' : 'Gold'}
+                    {t('rank_reward.gold_label')}
                   </span>
                 </div>
 
@@ -176,16 +176,14 @@ export const DailyRankRewardDialog = ({
                     +{reward.lives}
                   </span>
                   <span className="text-white text-sm font-semibold uppercase">
-                    {lang === 'hu' ? 'Élet' : 'Lives'}
+                    {t('rank_reward.lives_label')}
                   </span>
                 </div>
               </div>
 
               {/* Addictive marketing copy */}
               <p className="text-white/90 text-base font-semibold mb-8 max-w-[400px] leading-relaxed">
-                {lang === 'hu' 
-                  ? '🔥 Király vagy! Ma te uralod a táblát! Fogadd el a jutalmat és játssz tovább!' 
-                  : '🔥 You\'re amazing! You rule the board today! Claim your reward and keep playing!'}
+                {t('rank_reward.marketing_text')}
               </p>
 
               {/* Claim button */}
