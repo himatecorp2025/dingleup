@@ -19,6 +19,28 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
 
     try {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('username, daily_gift_streak, daily_gift_last_claimed')
+        .eq('id', userId)
+        .single();
+
+      if (profileError) throw profileError;
+
+      // TESTING MODE: Always show for DingleUP admin user (design testing)
+      if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
+        const currentStreak = profile?.daily_gift_streak ?? 0;
+        const cyclePosition = currentStreak % 7;
+        const rewardCoins = DAILY_GIFT_REWARDS[cyclePosition];
+        
+        setWeeklyEntryCount(currentStreak);
+        setNextReward(rewardCoins);
+        setCanClaim(true);
+        setShowPopup(true);
+        trackEvent('popup_impression', 'daily');
+        return;
+      }
+
       // Check session storage for today's dismissal/claim
       const today = new Date().toISOString().split('T')[0];
       const dismissed = sessionStorage.getItem(`${DAILY_GIFT_SESSION_KEY}${today}`);
@@ -29,14 +51,6 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         setShowPopup(false);
         return;
       }
-
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('daily_gift_streak, daily_gift_last_claimed')
-        .eq('id', userId)
-        .single();
-
-      if (profileError) throw profileError;
 
       // Check if already claimed today
       const lastClaimed = profile?.daily_gift_last_claimed;
@@ -79,6 +93,31 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     setClaiming(true);
     
     try {
+      // TESTING MODE: Check if this is DingleUP admin user
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username, daily_gift_streak')
+        .eq('id', userId)
+        .single();
+
+      // TESTING MODE: Don't actually claim for DingleUP admin (allow re-testing)
+      if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
+        const currentStreak = profile?.daily_gift_streak ?? 0;
+        const cyclePosition = currentStreak % 7;
+        const rewardCoins = DAILY_GIFT_REWARDS[cyclePosition];
+        
+        trackEvent('daily_gift_claimed', 'daily', rewardCoins.toString());
+        setCanClaim(false);
+        setShowPopup(false);
+        
+        toast({
+          title: t('daily.claimed_title'),
+          description: `+${rewardCoins} ${t('daily.gold')} (TESZT MÓD)`,
+        });
+        
+        return true;
+      }
+
       // Call RPC function (same pattern as Welcome Bonus)
       const { data, error } = await supabase.rpc('claim_daily_gift');
       
@@ -148,22 +187,48 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     }
   };
 
-  const handleLater = () => {
+  const handleLater = async () => {
     if (!userId) return;
     
-    // Mark as dismissed for today (CONSISTENT KEY)
-    const today = new Date().toISOString().split('T')[0];
-    sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'dismissed');
-    
-    // Close popup
-    setShowPopup(false);
-    
-    // Track analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'popup_dismissed', {
-        event_category: 'daily_gift',
-        event_label: 'user_dismissed',
-      });
+    try {
+      // TESTING MODE: Check if this is DingleUP admin user
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', userId)
+        .single();
+
+      // TESTING MODE: Don't mark as dismissed for DingleUP admin (allow re-testing)
+      if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
+        setShowPopup(false);
+        
+        // Track analytics
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'popup_dismissed', {
+            event_category: 'daily_gift',
+            event_label: 'user_dismissed',
+          });
+        }
+        return;
+      }
+
+      // Mark as dismissed for today (CONSISTENT KEY)
+      const today = new Date().toISOString().split('T')[0];
+      sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'dismissed');
+      
+      // Close popup
+      setShowPopup(false);
+      
+      // Track analytics
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'popup_dismissed', {
+          event_category: 'daily_gift',
+          event_label: 'user_dismissed',
+        });
+      }
+    } catch (error) {
+      // Even on error, close popup
+      setShowPopup(false);
     }
   };
 
