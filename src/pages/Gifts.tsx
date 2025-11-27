@@ -1,9 +1,12 @@
 import { useI18n } from '@/i18n';
 import BottomNav from '@/components/BottomNav';
 import boxGold from '@/assets/box-gold.svg';
+import { useNavigate } from 'react-router-dom';
+import { LogOut, Play } from 'lucide-react';
 
 const Gifts = () => {
   const { t } = useI18n();
+  const navigate = useNavigate();
 
   const packages = [
     { boxes: 1, price: '$1.99' },
@@ -23,10 +26,65 @@ const Gifts = () => {
         style={{ height: 'calc(100dvh - var(--bottom-nav-h) - env(safe-area-inset-bottom, 0px))' }}
       >
         <div className="container mx-auto px-4 py-2 max-w-2xl flex-1 flex flex-col justify-between scale-[0.9] origin-top">
-          {/* Header */}
-          <h1 className="text-2xl md:text-3xl font-black text-center mb-3 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 drop-shadow-[0_2px_8px_rgba(234,179,8,0.6)]">
-            {t('gifts.title')}
-          </h1>
+          {/* Header with Back and Play buttons */}
+          <div className="flex items-center justify-between mb-2">
+            {/* Back Button - Left */}
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="relative p-3 rounded-full hover:scale-110 transition-all flex-shrink-0"
+              title={t('profile.back_to_dashboard')}
+            >
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
+              
+              {/* OUTER FRAME */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-700 via-red-600 to-red-900 border-2 border-red-400/50 shadow-lg" aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-red-600 via-red-500 to-red-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+              
+              {/* Icon */}
+              <LogOut className="w-6 h-6 text-white relative z-10 -scale-x-100" />
+            </button>
+
+            {/* Title - Center */}
+            <h1 className="flex-1 text-xl md:text-2xl font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 drop-shadow-[0_2px_8px_rgba(234,179,8,0.6)]">
+              {t('gifts.title')}
+            </h1>
+
+            {/* Play Button - Right */}
+            <button
+              onClick={() => navigate('/game')}
+              className="relative p-3 rounded-full hover:scale-110 transition-all flex-shrink-0"
+              title="Play Game"
+            >
+              {/* BASE SHADOW */}
+              <div className="absolute inset-0 bg-black/40 rounded-full" style={{ transform: 'translate(3px, 3px)', filter: 'blur(4px)' }} aria-hidden />
+              
+              {/* OUTER FRAME - Green */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-700 via-green-600 to-green-900 border-2 border-green-400/50 shadow-lg" aria-hidden />
+              
+              {/* MIDDLE FRAME */}
+              <div className="absolute inset-[3px] rounded-full bg-gradient-to-b from-green-600 via-green-500 to-green-800" style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)' }} aria-hidden />
+              
+              {/* INNER LAYER */}
+              <div className="absolute inset-[5px] rounded-full bg-gradient-to-b from-green-500 via-green-600 to-green-700" style={{ boxShadow: 'inset 0 8px 16px rgba(255,255,255,0.2), inset 0 -8px 16px rgba(0,0,0,0.3)' }} aria-hidden />
+              
+              {/* SPECULAR HIGHLIGHT */}
+              <div className="absolute inset-[5px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%, transparent 60%)' }} aria-hidden />
+              
+              {/* Icon */}
+              <Play className="w-6 h-6 text-white relative z-10 fill-white" />
+            </button>
+          </div>
+
+          {/* Header removed from here as it's now part of the button row above */}
 
           {/* My Reward Boxes Section */}
           <div className="mb-4">
