@@ -30,23 +30,38 @@ export const useDailyRankReward = (userId: string | undefined) => {
       return;
     }
 
-    const fetchPendingReward = async () => {
-      setIsLoading(true);
-      try {
-        // CRITICAL FIX: Wait for Supabase session to fully initialize before calling edge function
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-          console.log('[RANK-REWARD] No active session, skipping');
-          setPendingReward(null);
-          setShowRewardPopup(false);
-          setIsLoading(false);
-          return;
-        }
+  const fetchPendingReward = async () => {
+    setIsLoading(true);
+    try {
+      // CRITICAL FIX: Wait for Supabase session to fully initialize before calling edge function
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        console.log('[RANK-REWARD] No active session, skipping');
+        setPendingReward(null);
+        setShowRewardPopup(false);
+        setIsLoading(false);
+        return;
+      }
 
-        const { data, error } = await supabase.functions.invoke('get-pending-rank-reward', {
-          body: {}
-        });
+      // Check if profile exists before calling edge function
+      const { data: profileCheck } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .single();
+
+      if (!profileCheck) {
+        console.log('[RANK-REWARD] Profile not found, skipping');
+        setPendingReward(null);
+        setShowRewardPopup(false);
+        setIsLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('get-pending-rank-reward', {
+        body: {}
+      });
 
         if (error) {
           console.error('[RANK-REWARD] Error fetching pending reward:', error);
