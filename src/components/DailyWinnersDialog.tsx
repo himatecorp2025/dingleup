@@ -221,6 +221,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent 
+        overlayClassName="bg-black/75"
         className="overflow-visible p-0 border-0 bg-transparent w-screen h-screen max-w-none rounded-none [&>button[data-dialog-close]]:hidden z-[99999]"
         style={{ 
           margin: 0,
@@ -231,15 +232,14 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         }}
       >
           <div 
-            className="fixed inset-0 flex flex-col items-center justify-center overflow-visible backdrop-blur-md"
+            className="fixed inset-0 flex flex-col items-center justify-center overflow-visible"
             style={{ 
               minHeight: '100dvh', 
               minWidth: '100vw',
               paddingLeft: '0',
               paddingRight: '0',
               marginLeft: '0',
-              marginRight: '0',
-              backgroundColor: 'rgba(0, 0, 0, 0.75)'
+              marginRight: '0'
             }}
           >
           <DialogTitle className="sr-only">{t('dailyWinners.dialog_title')}</DialogTitle>
