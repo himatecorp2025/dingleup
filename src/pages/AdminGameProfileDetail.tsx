@@ -56,13 +56,13 @@ export default function AdminGameProfileDetail() {
           <Alert className="mb-6 bg-green-500/10 border-green-500/30">
             <TrendingUp className="h-4 w-4 text-green-600" />
             <AlertDescription>
-              <strong>Személyre szabás aktív:</strong> 70/20/10 kérdéselosztás használatban
+              <strong>{t('admin.game_profile_detail.personalization_active')}</strong> {t('admin.game_profile_detail.personalization_active_desc')}
             </AlertDescription>
           </Alert>
         ) : profile.personalizationReady ? (
           <Alert className="mb-6 bg-yellow-500/10 border-yellow-500/30">
             <AlertDescription>
-              <strong>AI kikapcsolva:</strong> User kikapcsolta a személyre szabást
+              <strong>{t('admin.game_profile_detail.ai_disabled')}</strong> {t('admin.game_profile_detail.ai_disabled_desc')}
             </AlertDescription>
           </Alert>
         ) : (
