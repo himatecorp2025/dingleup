@@ -15,7 +15,7 @@ interface LeaderboardEntry {
 }
 
 // Scroll speed in pixels per second (frame rate-independent)
-const SCROLL_SPEED_PX_PER_SEC = 150;
+const SCROLL_SPEED_PX_PER_SEC = 100;
 
 const LeaderboardCarouselComponent = () => {
   const { t } = useI18n();
@@ -46,22 +46,25 @@ const LeaderboardCarouselComponent = () => {
     const track = trackRef.current;
     if (!track) return;
     
-    // Get actual width of track content
-    const firstChild = track.firstElementChild;
-    if (!firstChild) return;
+    const children = Array.from(track.children) as HTMLElement[];
+    if (children.length === 0) return;
     
-    // Calculate width of single list (count children / 2)
-    const childCount = track.children.length;
-    const singleListCount = childCount / 2;
+    // Calculate width of single list (half of all children)
+    const singleListCount = children.length / 2;
     
-    // Estimate width: sum first half of children
+    // Calculate total width by measuring actual positions
     let totalWidth = 0;
     for (let i = 0; i < singleListCount; i++) {
-      const child = track.children[i] as HTMLElement;
-      totalWidth += child.offsetWidth;
-      // Add gap (0.5rem = 8px on sm:, 0.75rem = 12px on md:)
+      const child = children[i];
+      const rect = child.getBoundingClientRect();
+      totalWidth += rect.width;
+      
+      // Add gap between items (from Tailwind gap-2 sm:gap-3)
       if (i < singleListCount - 1) {
-        totalWidth += 8; // approximate gap
+        const nextChild = children[i + 1];
+        const nextRect = nextChild.getBoundingClientRect();
+        const gap = nextRect.left - rect.right;
+        totalWidth += gap;
       }
     }
     
@@ -107,9 +110,12 @@ const LeaderboardCarouselComponent = () => {
 
       // Loop back when reaching contentWidth (half of duplicated list)
       const contentWidth = contentWidthRef.current;
-      if (contentWidth > 0 && Math.abs(translateXRef.current) >= contentWidth) {
-        // Reset to beginning by adding back contentWidth
-        translateXRef.current += contentWidth;
+      if (contentWidth > 0) {
+        // Use modulo for seamless looping without visible jump
+        const absTranslate = Math.abs(translateXRef.current);
+        if (absTranslate >= contentWidth) {
+          translateXRef.current = -(absTranslate % contentWidth);
+        }
       }
 
       // Apply transform to track
