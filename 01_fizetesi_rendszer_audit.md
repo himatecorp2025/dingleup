@@ -366,9 +366,9 @@ useEffect(() => {
 
 ### P1 (Sürgős):
 5. ✅ **Mobile WebView fallback** (deep link + polling-based verification)
-6. ✅ **Speed token collision check** (aktív token ellenőrzés vásárlás előtt)
-7. ✅ **Rescue popup state management** (game_sessions.pending_rescue flag)
-8. ✅ **Lives overflow policy** (dokumentálás vagy cap enforcement)
+6. **Speed token collision check** (aktív token ellenőrzés vásárlás előtt)
+7. **Rescue popup state management** (game_sessions.pending_rescue flag)
+8. **Lives overflow policy** (dokumentálás vagy cap enforcement)
 
 ### P2 (Fontos):
 9. ✅ **Admin manual credit UI + audit**

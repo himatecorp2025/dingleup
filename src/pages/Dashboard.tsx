@@ -52,6 +52,7 @@ import { ActiveLootboxDisplay } from '@/components/lootbox/ActiveLootboxDisplay'
 import { LootboxDecisionDialog } from '@/components/lootbox/LootboxDecisionDialog';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
+import { usePaymentPolling } from '@/hooks/usePaymentPolling';
 
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
@@ -127,6 +128,9 @@ const Dashboard = () => {
     userId,
     profileLoading: loading,
   });
+  
+  // Mobile WebView fallback: Poll for pending payments
+  usePaymentPolling();
   
   // Pull-to-refresh functionality
   const { isPulling, pullProgress } = usePullToRefresh({

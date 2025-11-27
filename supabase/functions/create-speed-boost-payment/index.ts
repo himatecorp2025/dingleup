@@ -60,7 +60,11 @@ serve(async (req) => {
 
     console.log("Speed boost payment session created:", session.id);
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    // Return session info for localStorage tracking (Mobile WebView fallback)
+    return new Response(JSON.stringify({ 
+      url: session.url,
+      sessionId: session.id 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
