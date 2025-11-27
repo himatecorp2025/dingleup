@@ -116,9 +116,9 @@ export const PlayNowButton: React.FC<PlayNowButtonProps> = ({
         </g>
       </svg>
 
-      {/* Content (Text + Icon) - Absolutely centered */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center m-0 p-0 bg-transparent">
-        <div className="flex items-center justify-center m-0 p-0 gap-3 text-foreground font-black leading-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)] [background:transparent] translate-y-[6px]">
+      {/* Content (Text + Icon) - Absolutely centered with semi-transparent background */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center m-0 p-0">
+        <div className="flex items-center justify-center m-0 p-0 gap-3 text-foreground font-black leading-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)] bg-black/30 px-6 py-2 rounded-lg backdrop-blur-sm translate-y-[6px]">
           {children}
         </div>
       </div>
