@@ -116,7 +116,11 @@ const RetentionDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="name" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Bar dataKey="rate" fill="hsl(var(--primary))" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -135,7 +139,11 @@ const RetentionDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="cohort" stroke="#fff" />
                     <YAxis stroke="#fff" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1a1a3e', border: '1px solid #6b7280', color: '#fff' }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
                     <Legend />
                     <Line type="monotone" dataKey="day1" stroke="hsl(var(--primary))" name="1. Nap" />
                     <Line type="monotone" dataKey="day7" stroke="hsl(var(--secondary))" name="7. Nap" />

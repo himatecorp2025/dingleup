@@ -151,6 +151,7 @@ const MonetizationDashboard = () => {
                   <Tooltip
                     contentStyle={{ backgroundColor: 'rgba(0,0,0,0.9)', border: '1px solid rgba(255,255,255,0.2)' }}
                     labelStyle={{ color: '#fff' }}
+                    itemStyle={{ color: '#fff' }}
                   />
                   <Legend />
                   <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} name={t('admin.monetization.revenue_chart')} />
@@ -175,6 +176,7 @@ const MonetizationDashboard = () => {
                   <Tooltip
                     contentStyle={{ backgroundColor: 'rgba(0,0,0,0.9)', border: '1px solid rgba(255,255,255,0.2)' }}
                     labelStyle={{ color: '#fff' }}
+                    itemStyle={{ color: '#fff' }}
                   />
                   <Legend />
                   <Bar dataKey="revenue" fill="#10b981" name={t('admin.monetization.revenue_chart')} />
