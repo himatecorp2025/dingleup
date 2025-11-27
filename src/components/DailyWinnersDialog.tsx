@@ -203,19 +203,29 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           <DialogTitle className="sr-only">{t('dailyWinners.dialog_title')}</DialogTitle>
           <DialogDescription className="sr-only">{t('dailyWinners.dialog_description')}</DialogDescription>
 
+          {/* BONUS MODAL WRAPPER - Fix arányú, skálázódó layout */}
           <div 
-            className="relative z-10 w-full max-w-[min(95vw,600px)] flex items-center justify-center overflow-hidden"
+            className="relative z-10"
             style={{ 
+              width: 'min(420px, 90vw)',
+              aspectRatio: '9 / 16',
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1500ms ease-in-out 10ms, opacity 1500ms ease-in-out 10ms',
               transformOrigin: 'center center',
-              willChange: contentVisible ? 'transform, opacity' : 'auto',
-              marginLeft: 'auto',
-              marginRight: 'auto'
+              willChange: contentVisible ? 'transform, opacity' : 'auto'
             }}
           >
-            <div className="relative w-full flex justify-center">
+            {/* BONUS MODAL CARD - Teljes belső tartalom */}
+            <div 
+              className="absolute inset-0"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
               <HexShieldFrame showShine={true}>
                 <div style={{ transform: 'translateY(-7.5%)' }}>
                 {/* Top Hex Badge - "TEGNAPI GÉNIUSZOK" */}

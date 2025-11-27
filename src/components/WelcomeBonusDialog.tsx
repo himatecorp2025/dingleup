@@ -153,10 +153,12 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
             </>
           )}
 
-          {/* ZOOM WRAPPER - Pulzáló arany fénysugár háttér */}
+          {/* BONUS MODAL WRAPPER - Fix arányú, skálázódó layout */}
           <div 
             className="relative z-10"
             style={{ 
+              width: 'min(420px, 90vw)',
+              aspectRatio: '9 / 16',
               transform: contentVisible ? 'scale(1)' : 'scale(0)',
               opacity: contentVisible ? 1 : 0,
               transition: 'transform 1.125s cubic-bezier(0.34, 1.56, 0.64, 1) 0ms, opacity 1.125s ease-in-out 0ms',
@@ -164,31 +166,41 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
               willChange: contentVisible ? 'transform, opacity' : 'auto',
             }}
           >
-            {/* Pulzáló arany fénysugár háttér */}
+            {/* BONUS MODAL CARD - Teljes belső tartalom */}
             <div 
-              className="absolute -inset-12"
+              className="absolute inset-0"
               style={{
-                background: 'radial-gradient(ellipse 100% 100% at 50% 50%, rgba(250,204,21,0.4) 0%, rgba(234,179,8,0.2) 40%, transparent 70%)',
-                filter: 'blur(40px)',
-                animation: 'welcomeShieldGlow 2s ease-in-out infinite',
-                zIndex: -1,
-                pointerEvents: 'none'
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
-            ></div>
-            <style>{`
-              @keyframes welcomeShieldGlow {
-                0%, 100% { 
-                  filter: blur(40px) brightness(1);
-                  opacity: 0.6;
+            >
+              {/* Pulzáló arany fénysugár háttér */}
+              <div 
+                className="absolute -inset-12"
+                style={{
+                  background: 'radial-gradient(ellipse 100% 100% at 50% 50%, rgba(250,204,21,0.4) 0%, rgba(234,179,8,0.2) 40%, transparent 70%)',
+                  filter: 'blur(40px)',
+                  animation: 'welcomeShieldGlow 2s ease-in-out infinite',
+                  zIndex: -1,
+                  pointerEvents: 'none'
+                }}
+              ></div>
+              <style>{`
+                @keyframes welcomeShieldGlow {
+                  0%, 100% { 
+                    filter: blur(40px) brightness(1);
+                    opacity: 0.6;
+                  }
+                  50% { 
+                    filter: blur(50px) brightness(1.3);
+                    opacity: 1;
+                  }
                 }
-                50% { 
-                  filter: blur(50px) brightness(1.3);
-                  opacity: 1;
-                }
-              }
-            `}</style>
+              `}</style>
 
-            <HexShieldFrame showShine={true}>
+              <HexShieldFrame showShine={true}>
               {/* Premium WELCOME badge - ARANY 3D */}
               <div 
                 className="relative -mt-12 mb-4 mx-auto z-20" 
@@ -694,6 +706,7 @@ export const WelcomeBonusDialog = ({ open, onClaim, onLater, claiming }: Welcome
                 </div>
               </div>
             </HexShieldFrame>
+            </div>
           </div>
 
           {/* Close X button */}
