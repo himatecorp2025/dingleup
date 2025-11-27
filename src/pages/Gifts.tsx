@@ -106,7 +106,7 @@ const Gifts = () => {
           {/* Header removed from here as it's now part of the button row above */}
 
           {/* My Reward Boxes Section */}
-          <div style={{ marginBottom: 'clamp(12px, 3vh, 24px)' }}>
+          <div style={{ marginBottom: 'clamp(10px, 2.5vh, 18px)' }}>
             <h2 
               className="font-bold text-yellow-400 drop-shadow-[0_2px_4px_rgba(234,179,8,0.4)]"
               style={{ 
@@ -118,7 +118,7 @@ const Gifts = () => {
             </h2>
             <div 
               className="grid grid-cols-5"
-              style={{ gap: 'clamp(6px, 1.5vw, 12px)' }}
+              style={{ gap: 'clamp(5px, 1.2vw, 10px)' }}
             >
               {Array.from({ length: 10 }).map((_, index) => (
                 <div
@@ -151,14 +151,14 @@ const Gifts = () => {
               {t('gifts.get_new')}
             </h2>
             <div 
-              className="grid grid-cols-2 flex-1"
-              style={{ gap: 'clamp(6px, 1.5vw, 12px)', paddingBottom: 'clamp(4px, 1vh, 8px)' }}
+              className="grid grid-cols-2"
+              style={{ gap: 'clamp(5px, 1.2vw, 10px)', paddingBottom: 'clamp(2px, 0.8vh, 6px)' }}
             >
               {packages.map((pkg, index) => (
                 <div
                   key={index}
                   className="relative rounded-xl backdrop-blur-sm transform-gpu hover:scale-105 transition-transform cursor-pointer"
-                  style={{ padding: 'clamp(8px, 2vw, 16px)' }}
+                  style={{ padding: 'clamp(7px, 1.8vw, 14px)' }}
                 >
                   {/* 3D Frame Effects */}
                   <div className="absolute rounded-xl bg-black/35 blur-md" style={{ top: '3px', left: '3px', right: '-3px', bottom: '-3px' }} aria-hidden />
@@ -173,15 +173,15 @@ const Gifts = () => {
                       alt="Gift box" 
                       className="object-contain"
                       style={{ 
-                        width: 'clamp(48px, 12vw, 80px)', 
-                        height: 'clamp(48px, 12vw, 80px)',
+                        width: 'clamp(44px, 11vw, 72px)', 
+                        height: 'clamp(44px, 11vw, 72px)',
                         marginBottom: 'clamp(4px, 1vh, 8px)'
                       }}
                     />
                     <p 
                       className="font-black text-yellow-400"
                       style={{ 
-                        fontSize: 'clamp(1rem, 4vw, 1.5rem)',
+                        fontSize: 'clamp(0.95rem, 3.8vw, 1.4rem)',
                         marginBottom: 'clamp(2px, 0.5vh, 4px)'
                       }}
                     >
@@ -190,7 +190,7 @@ const Gifts = () => {
                     <p 
                       className="text-yellow-300/80"
                       style={{ 
-                        fontSize: 'clamp(0.625rem, 2.5vw, 0.875rem)',
+                        fontSize: 'clamp(0.6rem, 2.3vw, 0.8rem)',
                         marginBottom: 'clamp(2px, 0.5vh, 4px)'
                       }}
                     >
@@ -199,8 +199,8 @@ const Gifts = () => {
                     <p 
                       className="font-bold text-white"
                       style={{ 
-                        fontSize: 'clamp(0.875rem, 3.5vw, 1.25rem)',
-                        marginBottom: 'clamp(4px, 1vh, 8px)'
+                        fontSize: 'clamp(0.82rem, 3.2vw, 1.15rem)',
+                        marginBottom: 'clamp(3px, 0.9vh, 7px)'
                       }}
                     >
                       {pkg.price}
@@ -208,8 +208,8 @@ const Gifts = () => {
                     <button 
                       className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 rounded-lg font-bold text-black shadow-lg transition-all"
                       style={{ 
-                        padding: 'clamp(4px, 1vh, 8px) clamp(8px, 2vw, 16px)',
-                        fontSize: 'clamp(0.75rem, 3vw, 1rem)'
+                        padding: 'clamp(3px, 0.9vh, 7px) clamp(7px, 1.8vw, 14px)',
+                        fontSize: 'clamp(0.72rem, 2.8vw, 0.95rem)'
                       }}
                     >
                       {t('gifts.buy')}
