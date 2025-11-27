@@ -713,7 +713,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                           boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.9), inset 0 -1px 3px rgba(30,58,138,0.3)'
                                         }}>
                                           <span className="font-black relative" style={{ 
-                                            fontSize: '4vw',
+                                            fontSize: '3.5vw',
                                             background: 'linear-gradient(180deg, #1e3a8a 0%, #0f1e47 100%)',
                                             WebkitBackgroundClip: 'text',
                                             WebkitTextFillColor: 'transparent',
@@ -798,7 +798,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                           boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.9), inset 0 -1px 3px rgba(30,58,138,0.3)'
                                         }}>
                                           <span className="font-black relative" style={{ 
-                                            fontSize: '4vw',
+                                            fontSize: '3.5vw',
                                             background: 'linear-gradient(180deg, #1e3a8a 0%, #0f1e47 100%)',
                                             WebkitBackgroundClip: 'text',
                                             WebkitTextFillColor: 'transparent',
