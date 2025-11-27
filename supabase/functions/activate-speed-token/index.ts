@@ -100,7 +100,7 @@ serve(async (req) => {
     if (activateError) {
       console.error("[activate-speed-token] Activation error:", activateError);
       return new Response(
-        JSON.stringify({ success: false, error: "Token aktiválási hiba" }),
+        JSON.stringify({ success: false, error: "Token activation failed" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -144,7 +144,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("[activate-speed-token] Error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Szerver hiba";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     return new Response(
       JSON.stringify({ success: false, error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

@@ -38,7 +38,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ success: false, error: "Hiányzó autentikáció" }),
+        JSON.stringify({ success: false, error: "Missing authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -47,7 +47,7 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
     if (userError || !userData.user) {
       return new Response(
-        JSON.stringify({ success: false, error: "Érvénytelen autentikáció" }),
+        JSON.stringify({ success: false, error: "Invalid authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -96,7 +96,7 @@ serve(async (req) => {
 
     if (boosterError || !boosterType) {
       return new Response(
-        JSON.stringify({ success: false, error: "Premium booster definíció nem található" }),
+        JSON.stringify({ success: false, error: "Premium booster definition not found" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -124,7 +124,7 @@ serve(async (req) => {
     if (speedError) {
       console.error("[activate-premium-speed] Speed tokens creation error:", speedError);
       return new Response(
-        JSON.stringify({ success: false, error: "Speed token létrehozási hiba" }),
+        JSON.stringify({ success: false, error: "Speed token creation failed" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -143,7 +143,7 @@ serve(async (req) => {
     if (clearError) {
       console.error("[activate-premium-speed] Error clearing pending flag:", clearError);
       return new Response(
-        JSON.stringify({ success: false, error: "Állapot frissítési hiba" }),
+        JSON.stringify({ success: false, error: "State update failed" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -176,7 +176,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("[activate-premium-speed] Error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Szerver hiba";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     return new Response(
       JSON.stringify({ success: false, error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
