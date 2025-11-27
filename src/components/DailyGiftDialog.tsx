@@ -303,7 +303,7 @@ const DailyGiftDialog = ({
                   </p>
                   
                   {/* 3D Fire SVG */}
-                  <svg viewBox="0 0 100 120" className="flex-shrink-0" style={{ width: 'clamp(24px, 6vw, 40px)', height: 'auto' }}>
+                  <svg viewBox="0 0 100 120" className="flex-shrink-0" style={{ width: 'clamp(36px, 9vw, 60px)', height: 'auto' }}>
                     <defs>
                       <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                         <stop offset="0%" stopColor="#FFD700" />
