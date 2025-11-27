@@ -38,11 +38,12 @@ const LeaderboardCarouselComponent = () => {
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || topPlayers.length === 0) return;
+    
     let animationFrameId: number;
     const scrollSpeed = 1.5;
     
     const scroll = () => {
-      if (!autoScrollPausedRef.current) {
+      if (!autoScrollPausedRef.current && container) {
         container.scrollLeft += scrollSpeed;
         
         // Körköröz scroll: ha elértük a duplikált tartalom felét, visszaugrik az elejére (zökkenőmentes)
@@ -51,10 +52,18 @@ const LeaderboardCarouselComponent = () => {
           container.scrollLeft = 0;
         }
       }
+      // KRITIKUS: mindig újraindítjuk a következő frame-et, így soha nem áll le
       animationFrameId = requestAnimationFrame(scroll);
     };
+    
+    // Indítás
     animationFrameId = requestAnimationFrame(scroll);
-    return () => cancelAnimationFrame(animationFrameId);
+    
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
   }, [topPlayers]);
 
   // Érintéses/manuális csúsztatás
@@ -71,10 +80,10 @@ const LeaderboardCarouselComponent = () => {
       if (autoScrollTimeoutRef.current) {
         clearTimeout(autoScrollTimeoutRef.current);
       }
-      // Resume auto-scroll after 500ms (instant UX, minimal pause)
+      // Resume auto-scroll after 2000ms
       autoScrollTimeoutRef.current = setTimeout(() => {
         autoScrollPausedRef.current = false;
-      }, 500);
+      }, 2000);
     };
 
     const handleMouseDown = (e: MouseEvent) => {
