@@ -164,26 +164,55 @@ serve(async (req) => {
 
     console.log(`[verify-premium-booster-payment] Creating ${rewardSpeedCount} speed tokens of ${rewardSpeedDuration} minutes each`);
 
-    const speedTokens = [];
-    for (let i = 0; i < rewardSpeedCount; i++) {
-      speedTokens.push({
-        user_id: user.id,
-        duration_minutes: rewardSpeedDuration,
-        source: 'PREMIUM_BOOSTER'
-        // used_at and expires_at are NULL - tokens are pending activation
-      });
-    }
+    // **SPEED TOKEN COLLISION CHECK** - prevent duplicate token creation
+    const { data: existingTokens } = await supabaseAdmin
+      .from('speed_tokens')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('source', 'PREMIUM_BOOSTER')
+      .filter('metadata->session_id', 'eq', sessionId)
+      .limit(1);
 
-    if (speedTokens.length > 0) {
-      const { error: speedError } = await supabaseAdmin
-        .from("speed_tokens")
-        .insert(speedTokens);
+    let actualSpeedCount = 0;
 
-      if (speedError) {
-        console.error("[verify-premium-booster-payment] Speed tokens creation error:", speedError);
-      } else {
-        console.log(`[verify-premium-booster-payment] Successfully created ${rewardSpeedCount} speed tokens (pending activation)`);
+    if (!existingTokens || existingTokens.length === 0) {
+      // Create tokens only if none exist for this session
+      const speedTokens = [];
+      for (let i = 0; i < rewardSpeedCount; i++) {
+        speedTokens.push({
+          user_id: user.id,
+          duration_minutes: rewardSpeedDuration,
+          source: 'PREMIUM_BOOSTER',
+          metadata: {
+            session_id: sessionId,
+            purchased_at: new Date().toISOString()
+          }
+          // used_at and expires_at are NULL - tokens are pending activation
+        });
       }
+
+      if (speedTokens.length > 0) {
+        const { error: speedError } = await supabaseAdmin
+          .from("speed_tokens")
+          .insert(speedTokens);
+
+        if (speedError) {
+          console.error("[verify-premium-booster-payment] Speed tokens creation error:", speedError);
+        } else {
+          actualSpeedCount = rewardSpeedCount;
+          console.log(`[verify-premium-booster-payment] Successfully created ${rewardSpeedCount} speed tokens (pending activation)`);
+        }
+      }
+    } else {
+      console.log('[verify-premium-booster-payment] Speed tokens already exist for session:', sessionId);
+      // Count existing tokens for this session
+      const { count } = await supabaseAdmin
+        .from('speed_tokens')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('source', 'PREMIUM_BOOSTER')
+        .filter('metadata->session_id', 'eq', sessionId);
+      actualSpeedCount = count || 0;
     }
 
     console.log(`[verify-premium-booster-payment] Success! User ${user.id} received +${rewardGold} gold, +${rewardLives} lives, ${rewardSpeedCount} speed tokens created, pending premium flag set`);
@@ -194,7 +223,7 @@ serve(async (req) => {
         grantedRewards: {
           gold: rewardGold,
           lives: rewardLives,
-          speedCount: rewardSpeedCount
+          speedCount: actualSpeedCount
         },
         balance: {
           gold: newGold,
