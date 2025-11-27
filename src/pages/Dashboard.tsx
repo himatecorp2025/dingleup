@@ -46,6 +46,9 @@ import { DailyWinnersDialog } from '@/components/DailyWinnersDialog';
 import { DailyRankRewardDialog } from '@/components/DailyRankRewardDialog';
 import { PremiumBoosterConfirmDialog } from '@/components/PremiumBoosterConfirmDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
+import { useActiveLootbox } from '@/hooks/useActiveLootbox';
+import { ActiveLootboxDisplay } from '@/components/lootbox/ActiveLootboxDisplay';
+import { LootboxDecisionDialog } from '@/components/lootbox/LootboxDecisionDialog';
 import { DailyRankingsCountdown } from '@/components/DailyRankingsCountdown';
 import { NextLifeTimer } from '@/components/NextLifeTimer';
 
@@ -96,6 +99,11 @@ const Dashboard = () => {
   const boosterState = useBoosterState(userId);
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
+  
+  // Lootbox state
+  const { activeLootbox, refetch: refetchActiveLootbox } = useActiveLootbox(userId);
+  const [showLootboxDecision, setShowLootboxDecision] = useState(false);
+  const [storedLootboxCount, setStoredLootboxCount] = useState(0);
   
   // PERFORMANCE OPTIMIZATION: Centralized popup manager (eliminates 150+ lines of duplicate state)
   const popupManager = useDashboardPopupManager({
@@ -195,6 +203,32 @@ const Dashboard = () => {
 
 
   // Realtime country-specific rank updates via edge function (instant, 0 seconds delay)
+  // Fetch stored lootbox count
+  useEffect(() => {
+    if (!userId) return;
+    
+    const fetchStoredCount = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        const { data } = await supabase.functions.invoke('lootbox-stored', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`
+          }
+        });
+
+        if (data?.count !== undefined) {
+          setStoredLootboxCount(data.count);
+        }
+      } catch (err) {
+        console.error('[Dashboard] Error fetching stored lootbox count:', err);
+      }
+    };
+
+    fetchStoredCount();
+  }, [userId]);
+
   useEffect(() => {
     if (!userId) return;
 
@@ -544,9 +578,19 @@ if (!profile) {
 
         {/* Fixed bottom section - CORRECT ORDER from bottom to top: BottomNav -> Top 100 -> Boosters -> Play Now -> Logo */}
         <div className="fixed bottom-0 left-0 right-0 z-[9000] flex flex-col-reverse items-center pb-[calc(var(--bottom-nav-h)+1rem)]">
-          {/* Top 100 Leaderboard Carousel - legalsó (közvetlenül BottomNav felett) */}
+          {/* Top 100 Leaderboard Carousel + Active Lootbox - legalsó (közvetlenül BottomNav felett) */}
           <div className="w-full" style={{ marginBottom: '2vh' }}>
-            <LeaderboardCarousel />
+            <div className="flex items-center justify-center gap-4 px-3">
+              <div className="flex-1 max-w-screen-lg">
+                <LeaderboardCarousel />
+              </div>
+              {activeLootbox && (
+                <ActiveLootboxDisplay
+                  expiresAt={activeLootbox.expires_at}
+                  onClick={() => setShowLootboxDecision(true)}
+                />
+              )}
+            </div>
           </div>
 
           {/* Booster Button - Top 100 felett */}
@@ -679,6 +723,24 @@ if (!profile) {
         <BottomNav />
       </div>
       <TutorialManager route="dashboard" />
+      
+      {/* Lootbox Decision Dialog */}
+      {activeLootbox && walletData && (
+        <LootboxDecisionDialog
+          open={showLootboxDecision}
+          onClose={() => setShowLootboxDecision(false)}
+          lootboxId={activeLootbox.id}
+          userGold={walletData.coinsCurrent}
+          storedCount={storedLootboxCount}
+          onSuccess={async (decision) => {
+            await refetchWallet();
+            await refetchActiveLootbox();
+            if (decision === 'store') {
+              setStoredLootboxCount(prev => prev + 1);
+            }
+          }}
+        />
+      )}
       
       <PremiumBoosterConfirmDialog
         open={showPremiumConfirm}
