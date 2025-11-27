@@ -829,6 +829,17 @@ const Profile = () => {
                 </div>
               </div>
 
+              {/* About Us Button */}
+              <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
+                <Button
+                  onClick={() => navigate('/about')}
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold shadow-lg"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  {t('nav.about')}
+                </Button>
+              </div>
+
               {/* Language Selector */}
               <div className="border-b border-purple-500/20 pb-2 sm:pb-3">
                 <p className="text-xs sm:text-sm text-white/50 mb-2 flex items-center gap-2">
