@@ -19,6 +19,7 @@ export const LootboxDropOverlay = () => {
   const [storedCount, setStoredCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
   const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
+  const [countdownActive, setCountdownActive] = useState(false);
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -73,22 +74,25 @@ export const LootboxDropOverlay = () => {
 
       setIsAnimating(true);
       setIsVisible(true);
+      setCountdownActive(false);
       
-      // End animation after 1 second
+      // End animation after 1.5 seconds (medium speed), then start countdown
       const timer = setTimeout(() => {
         setIsAnimating(false);
-      }, 1000);
+        setCountdownActive(true);
+      }, 1500);
 
       return () => clearTimeout(timer);
     } else if (!activeLootbox || !user) {
       setIsVisible(false);
       setIsAnimating(false);
+      setCountdownActive(false);
     }
   }, [activeLootbox, loading, isAdminPage, isAuthPage, user, dismissedLootboxes]);
 
-  // Handle countdown
+  // Handle countdown - only start when animation is complete
   useEffect(() => {
-    if (!activeLootbox?.expires_at) {
+    if (!activeLootbox?.expires_at || !countdownActive) {
       setRemainingSeconds(null);
       return;
     }
@@ -114,7 +118,7 @@ export const LootboxDropOverlay = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [activeLootbox, refetch]);
+  }, [activeLootbox, refetch, countdownActive]);
 
   const handleSuccess = (decision: 'open_now' | 'store') => {
     setShowDialog(false);
@@ -139,18 +143,14 @@ export const LootboxDropOverlay = () => {
 
   return (
     <>
-      {/* Global Fixed Overlay - Right Side */}
+      {/* Global Fixed Overlay - Right Side, Drop from top */}
       <div
-        className={`fixed z-50 cursor-pointer transition-all duration-1000 ${
-          isAnimating 
-            ? 'translate-x-full opacity-0' 
-            : 'translate-x-0 opacity-100'
-        }`}
+        className="fixed z-50 cursor-pointer right-4"
         onClick={() => setShowDialog(true)}
         style={{
           top: '50%',
-          right: '16px',
-          transform: 'translateY(-50%)',
+          transform: `translateY(${isAnimating ? '-150%' : '-50%'})`,
+          transition: 'transform 1.5s ease-out',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
@@ -160,8 +160,8 @@ export const LootboxDropOverlay = () => {
         <div className="relative">
           <GoldLootboxIcon className="w-16 h-auto md:w-20" />
           
-          {/* 60s Countdown Badge */}
-          {remainingSeconds !== null && remainingSeconds > 0 && (
+          {/* 60s Countdown Badge - only show when countdown is active */}
+          {countdownActive && remainingSeconds !== null && remainingSeconds > 0 && (
             <div
               className="absolute top-2 right-2 px-3 py-1 rounded-full bg-black/80 text-white text-sm font-semibold"
               style={{
