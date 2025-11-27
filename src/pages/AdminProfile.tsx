@@ -83,7 +83,7 @@ const AdminProfile = () => {
       
       if (daysSinceLastChange < 7) {
         const daysRemaining = Math.ceil(7 - daysSinceLastChange);
-        toast.error(`7 naponta módosítható. Még ${daysRemaining} nap van hátra.`);
+        toast.error(t('admin.username_cooldown').replace('{days}', String(daysRemaining)));
         setIsEditingUsername(false);
         return;
       }
@@ -203,7 +203,7 @@ const AdminProfile = () => {
         .maybeSingle();
 
       if (existingRole) {
-        toast.error(`${targetUser.username} már rendelkezik admin jogosultsággal`);
+        toast.error(t('admin.already_admin').replace('{username}', targetUser.username));
         return;
       }
 
@@ -219,10 +219,10 @@ const AdminProfile = () => {
         throw insertError;
       }
 
-      toast.success(`Admin jogosultság sikeresen megadva: ${targetUser.username}`);
+      toast.success(t('admin.grant_success').replace('{username}', targetUser.username));
       setTargetUsername('');
     } catch (error: any) {
-      toast.error(error.message || 'Hiba történt az admin jogosultság megadásakor');
+      toast.error(error.message || t('admin.grant_error'));
     } finally {
       setIsGranting(false);
     }
