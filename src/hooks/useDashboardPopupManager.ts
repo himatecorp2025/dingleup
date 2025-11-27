@@ -128,7 +128,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     }
   }, [canMountModals, userId, profileLoading, popupState.ageGateCompleted, popupState.showAgeGate, popupState.showRankReward, popupState.showWelcomeBonus, dailyGift.canClaim, popupState.showDailyGift]);
 
-  // Priority 5: Daily Winners (ONLY if NO rank reward - mutually exclusive, with 500ms delay)
+  // Priority 5: Daily Winners (ONLY if NO rank reward - mutually exclusive, with 1200ms delay)
   useEffect(() => {
     if (!canMountModals || !userId || profileLoading) return;
     if (!popupState.ageGateCompleted || popupState.showAgeGate || popupState.showRankReward || popupState.showWelcomeBonus || popupState.showDailyGift) return;
@@ -143,7 +143,7 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
           ...prev,
           showDailyWinners: true,
         }));
-      }, 500);
+      }, 1200); // 1200ms delay to ensure clear separation from Daily Gift
       
       return () => clearTimeout(timer);
     }
