@@ -320,30 +320,36 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       background: 'radial-gradient(ellipse 100% 60% at 30% 0%, rgba(255,255,255,0.5), transparent 60%)'
                     }} />
                     
-                     <h1 className="relative z-10 font-black text-white text-center uppercase"
+                     <h1 className="relative z-10 font-black text-white text-center uppercase px-2"
                         style={{ 
-                          fontSize: 'clamp(1.375rem, 5.72vw, 2.31rem)', 
-                          letterSpacing: '0.08em',
+                          fontSize: 'clamp(1.125rem, 4.5vw, 1.875rem)', 
+                          letterSpacing: '0.05em',
                           fontFamily: '"Poppins", system-ui, -apple-system, sans-serif',
                           WebkitTextStroke: '1.5px rgba(0,0,0,0.8)',
-                          textShadow: '2px 2px 6px rgba(0,0,0,0.9)'
+                          textShadow: '2px 2px 6px rgba(0,0,0,0.9)',
+                          wordWrap: 'break-word',
+                          overflowWrap: 'break-word',
+                          hyphens: 'auto',
+                          lineHeight: '1.2'
                         }}>
                       {t('dailyWinners.geniuses')}
                     </h1>
                     
                     {/* Jackpot info row */}
-                    <div className="relative z-10 mt-2 flex items-center justify-center gap-1 text-white"
+                    <div className="relative z-10 mt-2 flex items-center justify-center gap-1 text-white px-2"
                          style={{
-                           fontSize: 'clamp(0.85rem, 3.5vw, 1.1rem)',
+                           fontSize: 'clamp(0.75rem, 3vw, 1rem)',
                            fontFamily: '"Poppins", system-ui, sans-serif',
-                           fontWeight: 700
+                           fontWeight: 700,
+                           flexWrap: 'wrap'
                          }}>
                       <span style={{
                         color: '#ffd700',
-                        WebkitTextStroke: '1px rgba(0,0,0,0.8)',
+                        WebkitTextStroke: '0.8px rgba(0,0,0,0.8)',
                         textShadow: '2px 2px 4px rgba(0,0,0,0.9)',
-                        letterSpacing: '0.05em',
-                        textTransform: 'uppercase'
+                        letterSpacing: '0.03em',
+                        textTransform: 'uppercase',
+                        whiteSpace: 'nowrap'
                       }}>{t('dailyWinners.jackpot')}</span>
                       
                       {/* Gold coin: value above, icon below */}
@@ -490,9 +496,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               </div>
                               <div className="text-center w-full" style={{ marginTop: '-4px' }}>
-                                <p className="text-white font-bold text-[0.65rem] leading-none truncate px-1" style={{
+                                <p className="text-white font-bold leading-none truncate px-1" style={{
                                   WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)'
+                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
+                                  fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
+                                  maxWidth: '100%'
                                 }}>
                                   {topPlayers[1].username}
                                 </p>
@@ -562,9 +570,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               </div>
                               <div className="text-center w-full" style={{ marginTop: '-4px' }}>
-                                <p className="text-white font-bold text-[0.7rem] leading-none truncate px-1" style={{
+                                <p className="text-white font-bold leading-none truncate px-1" style={{
                                   WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)'
+                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
+                                  fontSize: 'clamp(0.65rem, 3vw, 0.8rem)',
+                                  maxWidth: '100%'
                                 }}>
                                   {topPlayers[0].username}
                                 </p>
@@ -635,9 +645,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               </div>
                               <div className="text-center w-full" style={{ marginTop: '-4px' }}>
-                                <p className="text-white font-bold text-[0.65rem] leading-none truncate px-1" style={{
+                                <p className="text-white font-bold leading-none truncate px-1" style={{
                                   WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)'
+                                  textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
+                                  fontSize: 'clamp(0.6rem, 2.8vw, 0.75rem)',
+                                  maxWidth: '100%'
                                 }}>
                                   {topPlayers[2].username}
                                 </p>
@@ -679,10 +691,12 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 </div>
                               )}
                             </div>
-                            <div className="flex-grow min-w-0">
-                              <p className="text-white font-semibold text-xs truncate" style={{
+                            <div className="flex-grow min-w-0 max-w-[65%]">
+                              <p className="text-white font-semibold truncate" style={{
                                 WebkitTextStroke: '0.5px rgba(0,0,0,0.8)',
-                                textShadow: '1px 1px 3px rgba(0,0,0,0.9)'
+                                textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
+                                fontSize: 'clamp(0.65rem, 2.8vw, 0.8rem)',
+                                maxWidth: '100%'
                               }}>
                                 {player.username}
                               </p>
@@ -694,11 +708,11 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     )}
                   </div>
 
-                  <div className="absolute bottom-[3%] left-0 right-0 flex justify-center w-full">
+                  <div className="absolute bottom-[3%] left-0 right-0 flex justify-center w-full px-4">
                     <HexAcceptButton 
                       onClick={onClose}
-                      className="w-[80%] max-w-[320px]"
-                      style={{ transform: 'scale(0.88)' }}
+                      className="w-full max-w-[280px]"
+                      style={{ transform: 'scale(0.9)' }}
                     >
                       {t('common.accept')}
                     </HexAcceptButton>
