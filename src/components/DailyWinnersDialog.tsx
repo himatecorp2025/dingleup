@@ -336,22 +336,22 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       {t('dailyWinners.geniuses')}
                     </h1>
                     
-                    {/* Jackpot info row */}
-                    <div className="relative z-10 mt-2 flex items-center justify-center gap-1 text-white px-2"
-                         style={{
-                           fontSize: 'clamp(0.95rem, 3.8vw, 1.25rem)',
-                           fontFamily: '"Poppins", system-ui, sans-serif',
-                           fontWeight: 700,
-                           flexWrap: 'wrap'
-                         }}>
-                      <span style={{
-                        color: '#ffd700',
-                        WebkitTextStroke: '0.8px rgba(0,0,0,0.8)',
-                        letterSpacing: '0.03em',
-                        textTransform: 'uppercase',
-                        whiteSpace: 'nowrap',
-                        fontWeight: 'bold'
-                      }}>{t('dailyWinners.jackpot')}</span>
+                     {/* Jackpot info row */}
+                     <div className="relative z-10 mt-2 flex items-center justify-center gap-1 text-white px-2"
+                          style={{
+                            fontSize: 'clamp(0.75rem, 3.2vw, 1.1rem)',
+                            fontFamily: '"Poppins", system-ui, sans-serif',
+                            fontWeight: 700,
+                            flexWrap: 'nowrap'
+                          }}>
+                       <span style={{
+                         color: '#ffd700',
+                         WebkitTextStroke: '0.8px rgba(0,0,0,0.8)',
+                         letterSpacing: '0.03em',
+                         textTransform: 'uppercase',
+                         whiteSpace: 'nowrap',
+                         fontWeight: 'bold'
+                       }}>{t('dailyWinners.jackpot')}</span>
                       
                       {/* Gold coin: value above, icon below */}
                       <div className="flex flex-col items-center gap-0.5">
