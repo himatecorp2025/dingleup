@@ -175,9 +175,9 @@ const HexAcceptButton: React.FC<HexAcceptButtonProps> = ({
 
       {/* LABEL - Responsive text that NEVER overflows */}
       <span
-        className="relative z-[1] font-black text-white tracking-[0.08em] px-4"
+        className="relative z-[1] font-black text-white tracking-[0.05em] px-6"
         style={{
-          fontSize: "clamp(1.4rem, 7cqw, 2.9rem)",
+          fontSize: "clamp(1.1rem, 5.5cqw, 2.2rem)",
           textShadow:
             "0 2px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.8)",
           animation: "text-pulse 1.125s ease-in-out infinite",
