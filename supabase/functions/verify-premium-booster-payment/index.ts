@@ -45,29 +45,12 @@ serve(async (req) => {
       throw new Error("Session ID required");
     }
 
-    // SECURITY: Validate session ID format
-    if (!/^cs_/.test(sessionId)) {
-      return new Response(
-        JSON.stringify({ success: false, error: "INVALID_SESSION_FORMAT" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-      );
-    }
-
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
 
     // Retrieve and verify Stripe session
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-    // SECURITY: Check session expiry (24 hours)
-    const sessionAge = Date.now() - (session.created * 1000);
-    if (sessionAge > 24 * 60 * 60 * 1000) {
-      return new Response(
-        JSON.stringify({ success: false, error: "SESSION_EXPIRED" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-      );
-    }
 
     if (session.payment_status !== "paid") {
       return new Response(
@@ -112,32 +95,42 @@ serve(async (req) => {
     const rewardGold = boosterType.reward_gold || 0;
     const rewardLives = boosterType.reward_lives || 0;
 
-    // TRANSACTIONAL: Use credit_wallet() RPC function for atomic operation
-    const idempotencyKey = `premium_booster:${sessionId}`;
-    
-    const { data: creditResult, error: creditError } = await supabaseAdmin.rpc('credit_wallet', {
-      p_user_id: user.id,
-      p_delta_coins: rewardGold,
-      p_delta_lives: rewardLives,
-      p_source: 'booster_purchase',
-      p_idempotency_key: idempotencyKey,
-      p_metadata: {
+    // Get current balance
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("coins, lives")
+      .eq("id", user.id)
+      .single();
+
+    const currentGold = profile?.coins || 0;
+    const currentLives = profile?.lives || 0;
+
+    // Grant rewards: gold + lives
+    const newGold = currentGold + rewardGold;
+    const newLives = currentLives + rewardLives;
+
+    await supabaseAdmin
+      .from("profiles")
+      .update({
+        coins: newGold,
+        lives: newLives,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", user.id);
+
+    // Log to wallet_ledger
+    await supabaseAdmin.from("wallet_ledger").insert({
+      user_id: user.id,
+      delta_coins: rewardGold,
+      delta_lives: rewardLives,
+      source: "booster_purchase",
+      idempotency_key: `premium_booster:${sessionId}`,
+      metadata: {
         booster_code: "PREMIUM",
         stripe_session_id: sessionId,
         timestamp: new Date().toISOString()
       }
     });
-
-    if (creditError) {
-      throw new Error(`Failed to credit wallet: ${creditError.message}`);
-    }
-
-    if (!creditResult?.success) {
-      throw new Error(creditResult?.error || 'Wallet credit failed');
-    }
-
-    const newGold = creditResult.new_coins;
-    const newLives = creditResult.new_lives;
 
     // Log purchase
     await supabaseAdmin.from("booster_purchases").insert({
@@ -164,55 +157,26 @@ serve(async (req) => {
 
     console.log(`[verify-premium-booster-payment] Creating ${rewardSpeedCount} speed tokens of ${rewardSpeedDuration} minutes each`);
 
-    // **SPEED TOKEN COLLISION CHECK** - prevent duplicate token creation
-    const { data: existingTokens } = await supabaseAdmin
-      .from('speed_tokens')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('source', 'PREMIUM_BOOSTER')
-      .filter('metadata->session_id', 'eq', sessionId)
-      .limit(1);
+    const speedTokens = [];
+    for (let i = 0; i < rewardSpeedCount; i++) {
+      speedTokens.push({
+        user_id: user.id,
+        duration_minutes: rewardSpeedDuration,
+        source: 'PREMIUM_BOOSTER'
+        // used_at and expires_at are NULL - tokens are pending activation
+      });
+    }
 
-    let actualSpeedCount = 0;
+    if (speedTokens.length > 0) {
+      const { error: speedError } = await supabaseAdmin
+        .from("speed_tokens")
+        .insert(speedTokens);
 
-    if (!existingTokens || existingTokens.length === 0) {
-      // Create tokens only if none exist for this session
-      const speedTokens = [];
-      for (let i = 0; i < rewardSpeedCount; i++) {
-        speedTokens.push({
-          user_id: user.id,
-          duration_minutes: rewardSpeedDuration,
-          source: 'PREMIUM_BOOSTER',
-          metadata: {
-            session_id: sessionId,
-            purchased_at: new Date().toISOString()
-          }
-          // used_at and expires_at are NULL - tokens are pending activation
-        });
+      if (speedError) {
+        console.error("[verify-premium-booster-payment] Speed tokens creation error:", speedError);
+      } else {
+        console.log(`[verify-premium-booster-payment] Successfully created ${rewardSpeedCount} speed tokens (pending activation)`);
       }
-
-      if (speedTokens.length > 0) {
-        const { error: speedError } = await supabaseAdmin
-          .from("speed_tokens")
-          .insert(speedTokens);
-
-        if (speedError) {
-          console.error("[verify-premium-booster-payment] Speed tokens creation error:", speedError);
-        } else {
-          actualSpeedCount = rewardSpeedCount;
-          console.log(`[verify-premium-booster-payment] Successfully created ${rewardSpeedCount} speed tokens (pending activation)`);
-        }
-      }
-    } else {
-      console.log('[verify-premium-booster-payment] Speed tokens already exist for session:', sessionId);
-      // Count existing tokens for this session
-      const { count } = await supabaseAdmin
-        .from('speed_tokens')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('source', 'PREMIUM_BOOSTER')
-        .filter('metadata->session_id', 'eq', sessionId);
-      actualSpeedCount = count || 0;
     }
 
     console.log(`[verify-premium-booster-payment] Success! User ${user.id} received +${rewardGold} gold, +${rewardLives} lives, ${rewardSpeedCount} speed tokens created, pending premium flag set`);
@@ -223,7 +187,7 @@ serve(async (req) => {
         grantedRewards: {
           gold: rewardGold,
           lives: rewardLives,
-          speedCount: actualSpeedCount
+          speedCount: rewardSpeedCount
         },
         balance: {
           gold: newGold,

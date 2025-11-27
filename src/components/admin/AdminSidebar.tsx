@@ -16,7 +16,6 @@ import {
   Calendar,
   Settings,
   ChevronRight,
-  Coins,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -251,16 +250,6 @@ export function AdminSidebar() {
                 >
                   <ShoppingBag className="text-purple-400" />
                   <span>{t('admin.sidebar.booster_purchases')}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => navigate('/admin/manual-credit')}
-                  isActive={isActive('/admin/manual-credit')}
-                  className={isActive('/admin/manual-credit') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
-                >
-                  <Coins className="text-purple-400" />
-                  <span>Manual Credit</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

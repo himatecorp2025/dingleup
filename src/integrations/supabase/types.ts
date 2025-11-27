@@ -1229,10 +1229,7 @@ export type Database = {
           current_question: number
           expires_at: string
           id: string
-          pending_rescue: boolean | null
-          pending_rescue_session_id: string | null
           questions: Json
-          rescue_completed_at: string | null
           session_id: string
           started_at: string
           user_id: string
@@ -1245,10 +1242,7 @@ export type Database = {
           current_question?: number
           expires_at: string
           id?: string
-          pending_rescue?: boolean | null
-          pending_rescue_session_id?: string | null
           questions: Json
-          rescue_completed_at?: string | null
           session_id: string
           started_at?: string
           user_id: string
@@ -1261,10 +1255,7 @@ export type Database = {
           current_question?: number
           expires_at?: string
           id?: string
-          pending_rescue?: boolean | null
-          pending_rescue_session_id?: string | null
           questions?: Json
-          rescue_completed_at?: string | null
           session_id?: string
           started_at?: string
           user_id?: string

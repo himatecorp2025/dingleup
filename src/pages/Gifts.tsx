@@ -8,7 +8,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useWalletQuery } from '@/hooks/queries/useWalletQuery';
 import { LootboxRewardDisplay } from '@/components/LootboxRewardDisplay';
-import { useDebounce } from '@/hooks/useDebounce';
 
 interface StoredLootbox {
   id: string;
@@ -102,12 +101,8 @@ const Gifts = () => {
       };
       verifyPayment();
     } else if (paymentStatus === 'canceled') {
-      // Sikertelen vásárlás - egységes hibaüzenet és visszairányítás
-      toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
+      toast.error(t('gifts.payment_canceled'));
       window.history.replaceState({}, '', '/gifts');
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
     }
   }, [userId, t]);
 
@@ -169,13 +164,13 @@ const Gifts = () => {
   };
 
   const packages = [
-    { boxes: 1, price: '$1.99', priceId: 'price_1SY9TpKKw7HPC0ZDjtahxbNo', rewardKey: 'gifts.rewards_1_box' },
-    { boxes: 3, price: '$4.99', priceId: 'price_1SY9U8KKw7HPC0ZDj6AXLJdN', rewardKey: 'gifts.rewards_3_boxes' },
-    { boxes: 5, price: '$9.99', priceId: 'price_1SY9UbKKw7HPC0ZDGHEJq6Tg', rewardKey: 'gifts.rewards_5_boxes' },
-    { boxes: 10, price: '$17.99', priceId: 'price_1SY9V1KKw7HPC0ZDCyRUtwoK', rewardKey: 'gifts.rewards_10_boxes' }
+    { boxes: 1, price: '$1.99', priceId: 'price_1SY9TpKKw7HPC0ZDjtahxbNo' },
+    { boxes: 3, price: '$4.99', priceId: 'price_1SY9U8KKw7HPC0ZDj6AXLJdN' },
+    { boxes: 5, price: '$9.99', priceId: 'price_1SY9UbKKw7HPC0ZDGHEJq6Tg' },
+    { boxes: 10, price: '$17.99', priceId: 'price_1SY9V1KKw7HPC0ZDCyRUtwoK' }
   ];
 
-  const handlePurchaseRaw = async (pkg: typeof packages[0]) => {
+  const handlePurchase = async (pkg: typeof packages[0]) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -209,9 +204,6 @@ const Gifts = () => {
       toast.error(t('errors.unknown'));
     }
   };
-
-  // Debounced version to prevent double-click
-  const [handlePurchase, isPurchasing] = useDebounce(handlePurchaseRaw, 500);
 
   return (
     <>
@@ -465,7 +457,7 @@ const Gifts = () => {
                         marginBottom: 'clamp(2px, 0.5vh, 4px)'
                       }}
                     >
-                      {t(pkg.rewardKey)}
+                      {t('gifts.random_rewards')}
                     </p>
                     <p 
                       className="font-bold text-white"

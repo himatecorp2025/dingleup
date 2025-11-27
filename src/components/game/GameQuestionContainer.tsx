@@ -1,4 +1,4 @@
-import { memo, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 interface GameQuestionContainerProps {
   isAnimating: boolean;
@@ -7,7 +7,7 @@ interface GameQuestionContainerProps {
   children: ReactNode;
 }
 
-export const GameQuestionContainer = memo(({
+export const GameQuestionContainer = ({
   isAnimating,
   translateY,
   questionVisible,
@@ -39,6 +39,4 @@ export const GameQuestionContainer = memo(({
       </div>
     </div>
   );
-});
-
-GameQuestionContainer.displayName = 'GameQuestionContainer';
+};

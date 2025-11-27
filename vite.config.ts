@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa';
-import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import type { Plugin } from 'vite';
 
 // Security headers plugin - ONLY for production builds
@@ -43,40 +42,6 @@ const securityHeadersPlugin = (mode: string): Plugin => ({
   },
 });
 
-// Cache headers plugin for optimal caching strategy
-const cacheHeadersPlugin = (mode: string): Plugin => ({
-  name: 'cache-headers',
-  configureServer(server) {
-    // Only apply in production preview mode
-    if (mode === 'development') {
-      return;
-    }
-    
-    server.middlewares.use((req, res, next) => {
-      const url = req.url || '';
-      
-      // Hash-versioned assets (JS, CSS with hash in filename) - immutable, 1 year cache
-      if (/\.(js|css)$/.test(url) && /-[a-zA-Z0-9]{8}\.(js|css)/.test(url)) {
-        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-      }
-      // Images, fonts, audio, video - 1 year cache
-      else if (/\.(png|jpg|jpeg|svg|gif|webp|woff|woff2|ttf|otf|mp3|mp4|wav|ogg)$/.test(url)) {
-        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-      }
-      // Non-hashed JS/CSS (registerSW.js, etc) - 1 day cache
-      else if (/\.(js|css)$/.test(url)) {
-        res.setHeader('Cache-Control', 'public, max-age=86400');
-      }
-      // HTML files - no cache, must revalidate
-      else if (/\.html$/.test(url) || url === '/') {
-        res.setHeader('Cache-Control', 'no-cache, must-revalidate');
-      }
-      
-      next();
-    });
-  },
-});
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -87,56 +52,28 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          // Vendor chunks for better caching
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
-            return 'vendor-react';
-          }
-          if (id.includes('node_modules/@supabase/supabase-js')) {
-            return 'vendor-supabase';
-          }
-          if (id.includes('node_modules/@tanstack/react-query')) {
-            return 'vendor-query';
-          }
-          if (id.includes('node_modules/@radix-ui')) {
-            return 'vendor-ui';
-          }
-          // Admin pages - ONLY load when navigating to admin routes
-          if (id.includes('/src/pages/Admin') || 
-              id.includes('/src/pages/PerformanceDashboard') || 
-              id.includes('/src/pages/RetentionDashboard') ||
-              id.includes('/src/pages/EngagementDashboard') ||
-              id.includes('/src/pages/MonetizationDashboard') ||
-              id.includes('/src/pages/UserJourneyDashboard')) {
-            return 'admin';
-          }
+        manualChunks: {
+          'admin': [
+            './src/pages/AdminDashboard.tsx',
+            './src/pages/AdminGameProfiles.tsx',
+            './src/pages/AdminPopularContent.tsx',
+            './src/pages/PerformanceDashboard.tsx',
+            './src/pages/RetentionDashboard.tsx',
+            './src/pages/EngagementDashboard.tsx',
+            './src/pages/MonetizationDashboard.tsx',
+            './src/pages/UserJourneyDashboard.tsx',
+          ],
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
   },
   plugins: [
     react(),
     mode === "development" && componentTagger(),
     securityHeadersPlugin(mode),
-    cacheHeadersPlugin(mode),
-    ViteImageOptimizer({
-      png: {
-        quality: 80,
-      },
-      jpeg: {
-        quality: 80,
-      },
-      jpg: {
-        quality: 80,
-      },
-      webp: {
-        quality: 80,
-      },
-    }),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'inline',
+      injectRegister: 'auto',
       includeAssets: ['favicon.ico', 'robots.txt', 'dingleup-logo.png'],
       manifest: {
         name: 'DingleUP!',

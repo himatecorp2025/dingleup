@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n';
-import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { LifeIcon3D } from '@/components/icons/LifeIcon3D';
 import { CoinIcon3D } from '@/components/icons/CoinIcon3D';
@@ -13,7 +12,6 @@ import { GoldRewardCoin3D } from '@/components/icons/GoldRewardCoin3D';
 import { LoadingSpinner3D } from '@/components/icons/LoadingSpinner3D';
 import { SlotMachine3D } from '@/components/icons/SlotMachine3D';
 import { trackConversionEvent } from '@/lib/analytics';
-import { useDebounce } from '@/hooks/useDebounce';
 
 interface InGameRescuePopupProps {
   isOpen: boolean;
@@ -22,7 +20,6 @@ interface InGameRescuePopupProps {
   currentLives: number;
   currentGold: number;
   onStateRefresh: () => Promise<void>;
-  onGameEnd?: () => void;
 }
 
 export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
@@ -32,10 +29,8 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
   currentLives,
   currentGold,
   onStateRefresh,
-  onGameEnd,
 }) => {
   const { t } = useI18n();
-  const navigate = useNavigate();
   const [loadingGoldSaver, setLoadingGoldSaver] = useState(false);
   const [loadingInstantRescue, setLoadingInstantRescue] = useState(false);
   const [hasTrackedView, setHasTrackedView] = useState(false);
@@ -67,7 +62,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     }
   }, [isOpen]);
 
-  const handleGoldSaverPurchaseRaw = async () => {
+  const handleGoldSaverPurchase = async () => {
     if (currentGold < 500) {
       toast.error(t('rescue.insufficient_gold'));
       return;
@@ -103,29 +98,17 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         await onStateRefresh();
         onClose();
       } else {
-        // Sikertelen vásárlás - egységes hibaüzenet
-        toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
-        onClose();
-        if (onGameEnd) onGameEnd();
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500);
+        toast.error(data?.error || t('rescue.free_error'));
       }
     } catch (error) {
       console.error('Gold Saver purchase error:', error);
-      // Sikertelen vásárlás - egységes hibaüzenet
-      toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
-      onClose();
-      if (onGameEnd) onGameEnd();
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
+      toast.error(t('rescue.purchase_error'));
     } finally {
       setLoadingGoldSaver(false);
     }
   };
 
-  const handleInstantRescuePurchaseRaw = async () => {
+  const handleInstantRescuePurchase = async () => {
     setLoadingInstantRescue(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -156,31 +139,19 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         await onStateRefresh();
         onClose();
       } else {
-        // Sikertelen vásárlás - egységes hibaüzenet
-        toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
-        onClose();
-        if (onGameEnd) onGameEnd();
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500);
+        if (data?.error === 'PAYMENT_FAILED') {
+          toast.error(t('rescue.premium_payment_failed'));
+        } else {
+          toast.error(data?.error || t('rescue.free_error'));
+        }
       }
     } catch (error) {
       console.error('Instant Rescue purchase error:', error);
-      // Sikertelen vásárlás - egységes hibaüzenet
-      toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
-      onClose();
-      if (onGameEnd) onGameEnd();
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
+      toast.error(t('rescue.purchase_error'));
     } finally {
       setLoadingInstantRescue(false);
     }
   };
-
-  // Debounced versions to prevent double-click
-  const [handleGoldSaverPurchase, isGoldSaverDebouncing] = useDebounce(handleGoldSaverPurchaseRaw, 500);
-  const [handleInstantRescuePurchase, isInstantRescueDebouncing] = useDebounce(handleInstantRescuePurchaseRaw, 500);
 
   const hasEnoughGold = currentGold >= 500;
 

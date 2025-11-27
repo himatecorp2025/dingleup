@@ -61,41 +61,6 @@ serve(async (req) => {
 
     console.log(`[activate-speed-token] User ${userId} activating speed token`);
 
-    // **COLLISION CHECK** - prevent multiple active tokens at the same time
-    const { data: activeTokens, error: activeError } = await supabaseAdmin
-      .from("speed_tokens")
-      .select("id, expires_at, duration_minutes")
-      .eq("user_id", userId)
-      .not("used_at", "is", null)
-      .gt("expires_at", new Date().toISOString())
-      .limit(1);
-
-    if (activeError) {
-      console.error("[activate-speed-token] Error checking active tokens:", activeError);
-      return new Response(
-        JSON.stringify({ success: false, error: "Database error" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    if (activeTokens && activeTokens.length > 0) {
-      const activeToken = activeTokens[0];
-      const expiresAt = new Date(activeToken.expires_at);
-      const remainingMinutes = Math.ceil((expiresAt.getTime() - Date.now()) / (60 * 1000));
-      
-      console.log(`[activate-speed-token] User ${userId} already has active token, ${remainingMinutes} minutes remaining`);
-      
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "ACTIVE_TOKEN_EXISTS",
-          message: `You already have an active speed token. Please wait ${remainingMinutes} minutes for it to expire.`,
-          remainingMinutes
-        }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     // Check for unused speed tokens
     const { data: unusedTokens, error: tokenError } = await supabaseAdmin
       .from("speed_tokens")

@@ -29,10 +29,7 @@ export const LanguageSelector: React.FC = () => {
 
   return (
     <Select value={lang} onValueChange={handleLanguageChange} disabled={isLoading}>
-      <SelectTrigger 
-        className="w-[140px] bg-background/10 backdrop-blur-sm border-border/20 hover:bg-background/20 transition-colors"
-        aria-label="Select language"
-      >
+      <SelectTrigger className="w-[140px] bg-background/10 backdrop-blur-sm border-border/20 hover:bg-background/20 transition-colors">
         <Globe className="w-4 h-4 mr-2" />
         <SelectValue>
           <span className="flex items-center gap-2">

@@ -340,30 +340,25 @@ async function handlePremiumBoosterPurchase(
         });
     }
 
-    // **CRITICAL FIX - PRODUCTION BLOCKER**
-    // Premium boosters MUST use real Stripe payment via create-premium-booster-payment
-    // Simulated payment is REMOVED - this is a production security issue
+    // ========== PAYMENT SIMULATION ==========
+    // TODO: Replace with real Stripe payment integration
+    // For now, simulate payment (90% success rate for testing)
+    const paymentSuccess = Math.random() > 0.1; // 90% success rate
     
-    console.log('[PREMIUM] CRITICAL: Premium booster must use Stripe payment');
-    console.log('[PREMIUM] Blocking simulated payment - redirect to create-premium-booster-payment');
-    
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: "STRIPE_PAYMENT_REQUIRED",
-        message: "Premium booster purchases must use Stripe. Call create-premium-booster-payment endpoint.",
-        requiresStripeCheckout: true,
-        boosterTypeId: boosterType.id,
-        instantPremiumBoosterEnabled: instantEnabled || confirmInstantPurchase,
-        hasPendingPremiumBooster: false
-      }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-
-    // ========== REMOVED SIMULATED PAYMENT CODE ==========
-    // All code below this point is unreachable and will be removed in future cleanup
-    // Real payment must go through create-premium-booster-payment + verify-premium-booster-payment
-    // ====================================================
+    if (!paymentSuccess) {
+      console.log('[PREMIUM] Simulated payment failure');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "PAYMENT_FAILED",
+          instantPremiumBoosterEnabled: instantEnabled || confirmInstantPurchase,
+          hasPendingPremiumBooster: false
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    console.log('[PREMIUM] Simulated payment success');
+    // ========== END PAYMENT SIMULATION ==========
 
     // Get current balance
     const { data: profile } = await supabaseAdmin
@@ -630,21 +625,135 @@ async function handleInstantRescuePurchase(supabaseAdmin: any, userId: string, b
   const rewardLives = boosterType.reward_lives || 0;
   const priceUsdCents = boosterType.price_usd_cents || 0;
 
-  console.log(`[INSTANT_RESCUE] CRITICAL: Instant Rescue must use Stripe payment`);
-  console.log(`[INSTANT_RESCUE] Rewards would be: gold=${rewardGold}, lives=${rewardLives}, price=$${(priceUsdCents / 100).toFixed(2)}`);
+  console.log(`[INSTANT_RESCUE] Rewards: gold=${rewardGold}, lives=${rewardLives}, price=$${(priceUsdCents / 100).toFixed(2)}`);
 
-  // **CRITICAL FIX - PRODUCTION BLOCKER**
-  // Instant Rescue purchases MUST use real Stripe payment via create-instant-rescue-payment
-  // Simulated payment is REMOVED - this is a production security issue
-  
-  return new Response(
-    JSON.stringify({
-      success: false,
-      error: "STRIPE_PAYMENT_REQUIRED",
-      message: "Instant Rescue purchases must use Stripe. Call create-instant-rescue-payment endpoint.",
-      requiresStripeCheckout: true,
-      boosterTypeId: boosterType.id
-    }),
-    { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-  );
+  try {
+    // ========== PAYMENT SIMULATION ==========
+    // TODO: Replace with real Stripe payment integration
+    // For now, simulate payment (90% success rate for testing)
+    const paymentSuccess = Math.random() > 0.1; // 90% success rate
+    
+    if (!paymentSuccess) {
+      console.log('[INSTANT_RESCUE] Simulated payment failure');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "PAYMENT_FAILED"
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    console.log('[INSTANT_RESCUE] Simulated payment success');
+    // ========== END PAYMENT SIMULATION ==========
+
+    // Get current balance
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("coins, lives")
+      .eq("id", userId)
+      .single();
+
+    const currentGold = profile?.coins || 0;
+    const currentLives = profile?.lives || 0;
+
+    // Grant immediate rewards: gold + lives (NO speed)
+    const newGold = currentGold + rewardGold;
+    const newLives = currentLives + rewardLives;
+
+    const { error: updateError } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        coins: newGold,
+        lives: newLives,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", userId);
+
+    if (updateError) {
+      console.error("[INSTANT_RESCUE] Profile update error:", updateError);
+      return new Response(
+        JSON.stringify({ success: false, error: "Profile update failed" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Log wallet transaction
+    const idempotencyKey = `instant_rescue:${userId}:${Date.now()}`;
+    await supabaseAdmin
+      .from("wallet_ledger")
+      .insert({
+        user_id: userId,
+        delta_coins: rewardGold,
+        delta_lives: rewardLives,
+        source: "booster_purchase",
+        idempotency_key: idempotencyKey,
+        metadata: {
+          booster_type_id: boosterType.id,
+          booster_code: 'INSTANT_RESCUE',
+          price_usd_cents: priceUsdCents,
+          reward_gold: rewardGold,
+          reward_lives: rewardLives,
+          purchase_context: 'INGAME'
+        }
+      });
+
+    // Log purchase
+    await supabaseAdmin
+      .from("booster_purchases")
+      .insert({
+        user_id: userId,
+        booster_type_id: boosterType.id,
+        purchase_source: "IAP",
+        gold_spent: 0,
+        usd_cents_spent: priceUsdCents,
+        iap_transaction_id: `stripe_instant_rescue_${Date.now()}`, // TODO: Replace with real Stripe transaction ID
+        purchase_context: "INGAME"
+      });
+
+    // Track purchase completion
+    await supabaseAdmin
+      .from("conversion_events")
+      .insert({
+        user_id: userId,
+        event_type: "purchase_complete",
+        product_type: "booster",
+        product_id: boosterType.code,
+        session_id: `session_${userId}_${Date.now()}`,
+        metadata: {
+          booster_code: boosterType.code,
+          price_usd_cents: priceUsdCents,
+          reward_gold: rewardGold,
+          reward_lives: rewardLives,
+          purchase_context: 'INGAME'
+        }
+      });
+
+    console.log(`[INSTANT_RESCUE] Purchase successful`);
+
+    const response: BoosterPurchaseResponse = {
+      success: true,
+      balanceAfter: {
+        gold: newGold,
+        lives: newLives,
+        speedTokensAvailable: 0
+      },
+      grantedRewards: {
+        gold: rewardGold,
+        lives: rewardLives,
+        speedCount: 0,
+        speedDurationMinutes: 0
+      }
+    };
+
+    return new Response(
+      JSON.stringify(response),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    console.error("[INSTANT_RESCUE] Transaction error:", error);
+    return new Response(
+      JSON.stringify({ success: false, error: "Transaction failed" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
 }

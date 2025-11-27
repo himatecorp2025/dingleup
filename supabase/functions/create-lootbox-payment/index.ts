@@ -75,7 +75,6 @@ serve(async (req) => {
       success_url: `${req.headers.get("origin")}/gifts?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/gifts?payment=canceled`,
       metadata: {
-        product_type: 'lootbox', // WEBHOOK ROUTING
         user_id: user.id,
         boxes: boxes.toString(),
       },
@@ -83,11 +82,7 @@ serve(async (req) => {
 
     console.log('[create-lootbox-payment] Session created:', session.id, 'for user:', user.id);
 
-    // Return session info for localStorage tracking (Mobile WebView fallback)
-    return new Response(JSON.stringify({ 
-      url: session.url,
-      sessionId: session.id 
-    }), {
+    return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
