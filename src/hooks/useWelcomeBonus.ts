@@ -26,15 +26,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
 
       if (error) throw error;
 
-      // TESTING MODE: Always show for DingleUP admin user (design testing)
-      if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
-        setCanClaim(true);
-        trackEvent('popup_impression', 'welcome');
-        setLoading(false);
-        return;
-      }
-
-      // Normal logic for other users
+      // Normal logic: if already claimed, don't show
       if (profile?.welcome_bonus_claimed) {
         setCanClaim(false);
         setLoading(false);
@@ -60,22 +52,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     setClaiming(true);
 
     try {
-      // TESTING MODE: Check if this is DingleUP admin user
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', userId)
-        .single();
-
-      // TESTING MODE: Don't actually claim for DingleUP admin (allow re-testing)
-      if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
-        trackEvent('popup_cta_click', 'welcome', 'claim');
-        setCanClaim(false);
-        toast.success(`${t('welcome.claimed_success_emoji')} +2500 ${t('welcome.gold')}, +50 ${t('welcome.life')} (TESZT MÓD)`);
-        return true;
-      }
-
-      // Normal claim logic for other users
+      // Normal claim logic
       const { data, error } = await supabase.rpc('claim_welcome_bonus');
       
       if (error) {
@@ -112,21 +89,7 @@ export const useWelcomeBonus = (userId: string | undefined) => {
     if (!userId) return;
     
     try {
-      // TESTING MODE: Check if this is DingleUP admin user
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', userId)
-        .single();
-
-      // TESTING MODE: Don't mark as claimed for DingleUP admin (allow re-testing)
-      if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
-        setCanClaim(false);
-        trackEvent('popup_cta_click', 'welcome', 'dismissed');
-        return;
-      }
-
-      // Normal logic: mark as claimed for other users
+      // Mark as claimed so it won't appear again
       await supabase
         .from('profiles')
         .update({ welcome_bonus_claimed: true })
