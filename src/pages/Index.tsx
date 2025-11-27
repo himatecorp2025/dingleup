@@ -7,6 +7,7 @@ import DevelopmentStatus from "@/components/DevelopmentStatus";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import loadingLogo from '@/assets/dingleup-loading-logo.png';
 
 const Index = () => {
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(() => {
@@ -40,8 +41,16 @@ const Index = () => {
   // Mobile/tablet: redirect immediately, don't show landing page
   if (isMobileOrTablet) {
     if (loading) {
-      // Show minimal loading state, no landing page content
-      return null;
+      // Show splash screen while checking auth
+      return (
+        <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
+          <img 
+            src={loadingLogo} 
+            alt="DingleUP!" 
+            className="w-32 h-32 object-contain animate-pulse"
+          />
+        </div>
+      );
     }
     
     if (userId) {
