@@ -98,7 +98,7 @@ const AdminPopularContent = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setError(t('admin.popular.session_error'));
+        setError('Session expired');
         setLoading(false);
         return;
       }
@@ -115,7 +115,7 @@ const AdminPopularContent = () => {
       setData(responseData as TopicPopularityRow[]);
     } catch (err) {
       console.error('[AdminPopularContent] Error:', err);
-      setError(t('admin.popular.load_error'));
+      setError(t('popular.error_loading'));
     } finally {
       setLoading(false);
     }
@@ -152,7 +152,7 @@ const AdminPopularContent = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-            {t('admin.popular.title')}
+            {t('popular.page_title')}
           </h1>
         </div>
 
@@ -169,7 +169,7 @@ const AdminPopularContent = () => {
               className="mt-4"
               variant="outline"
             >
-              {t('admin.popular.retry')}
+              {t('common.retry')}
             </Button>
           </div>
         ) : (
@@ -182,7 +182,7 @@ const AdminPopularContent = () => {
                     className="text-foreground font-bold cursor-pointer hover:text-primary"
                     onClick={() => handleSort('topicName')}
                   >
-                    {t('admin.popular.topic')} {sortField === 'topicName' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('popular.table_topic_name')} {sortField === 'topicName' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </TableHead>
                   <TableHead 
                     className="text-foreground font-bold cursor-pointer hover:text-primary text-center"
@@ -190,7 +190,7 @@ const AdminPopularContent = () => {
                   >
                     <div className="flex items-center justify-center gap-2">
                       <Heart className="w-4 h-4 text-red-500" />
-                      {t('admin.popular.total_likes')} {sortField === 'totalLikes' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      {t('popular.table_total_likes')} {sortField === 'totalLikes' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </div>
                   </TableHead>
                   <TableHead 
@@ -199,7 +199,7 @@ const AdminPopularContent = () => {
                   >
                     <div className="flex items-center justify-center gap-2">
                       <ThumbsDown className="w-4 h-4 text-orange-500" />
-                      {t('admin.popular.total_dislikes')} {sortField === 'totalDislikes' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      Diszlájkok {sortField === 'totalDislikes' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </div>
                   </TableHead>
                   <TableHead 
@@ -208,7 +208,7 @@ const AdminPopularContent = () => {
                   >
                     <div className="flex items-center justify-center gap-2">
                       <TrendingUp className="w-4 h-4 text-accent" />
-                      {t('admin.popular.net_score')} {sortField === 'netScore' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      Nettó érték {sortField === 'netScore' && (sortDirection === 'asc' ? '↑' : '↓')}
                     </div>
                   </TableHead>
                 </TableRow>
