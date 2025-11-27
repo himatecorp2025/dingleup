@@ -22,12 +22,14 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
-  // Check session
+  // Optimized session check - only check once on mount, then rely on auth state changes
   useEffect(() => {
+    // Single session check on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       setHasSession(!!session);
     });
 
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setHasSession(!!session);
     });
@@ -35,18 +37,10 @@ export const AppRouteGuard = ({ children }: AppRouteGuardProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Mobile/tablet: skip landing page, go directly to auth/dashboard based on session
+  // Mobile/tablet: skip landing page, go directly to auth/choice
+  // No session check needed - just redirect immediately
   if (isMobileOrTablet && location.pathname === '/') {
-    if (hasSession === null) {
-      // Still checking session - show nothing
-      return null;
-    }
-
-    if (hasSession) {
-      return <Navigate to="/dashboard" replace />;
-    } else {
-      return <Navigate to="/auth/choice" replace />;
-    }
+    return <Navigate to="/auth/choice" replace />;
   }
 
   // Admin pages always accessible

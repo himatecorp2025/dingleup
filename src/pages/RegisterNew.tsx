@@ -169,16 +169,7 @@ const RegisterNew = () => {
     }
   };
 
-  // Show loading until translations are loaded
-  if (i18nLoading) {
-    return (
-      <div className="min-h-dvh min-h-svh relative overflow-hidden bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <img src={loadingLogo} alt="DingleUP!" className="w-20 h-20 animate-pulse" />
-        </div>
-      </div>
-    );
-  }
+  // Removed i18n loading screen - translations load instantly with static import
 
   return (
     <div 
