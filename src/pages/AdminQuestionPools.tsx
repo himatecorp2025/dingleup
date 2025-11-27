@@ -100,7 +100,7 @@ export default function AdminQuestionPools() {
             size="lg"
           >
             <RefreshCw className={`mr-2 h-4 w-4 ${regenerating ? 'animate-spin' : ''}`} />
-            Poolok Újragenerálása
+            {t('admin.pools.regenerate')}
           </Button>
         </div>
 
@@ -140,15 +140,15 @@ export default function AdminQuestionPools() {
 
             {loading ? (
               <div className="text-center py-8 text-muted-foreground">
-                Betöltés...
+                {t('admin.pools.loading')}
               </div>
             ) : pools.length === 0 ? (
               <div className="text-center py-8">
                 <Badge variant="destructive" className="mb-4">
-                  Még nincs egyetlen pool sem generálva
+                  {t('admin.pools.no_pools')}
                 </Badge>
                 <p className="text-muted-foreground">
-                  Kattints a "Poolok Újragenerálása" gombra a létrehozáshoz
+                  {t('admin.pools.no_pools_desc')}
                 </p>
               </div>
             ) : (

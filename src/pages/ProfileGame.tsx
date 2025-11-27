@@ -10,8 +10,10 @@ import { Brain, TrendingUp, Heart, ThumbsDown, Target, Info, ArrowLeft } from 'l
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useI18n } from '@/i18n';
 
 export default function ProfileGame() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { loading, error, profile, updateSettings } = useUserGameProfileQuery(userId);
@@ -50,7 +52,7 @@ export default function ProfileGame() {
       <div className="min-h-screen bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] p-6">
         <div className="container mx-auto max-w-6xl">
           <Alert variant="destructive">
-            <AlertDescription>{error || 'Hiba történt az adatok betöltésekor'}</AlertDescription>
+            <AlertDescription>{error || t('profile_game.error_loading')}</AlertDescription>
           </Alert>
         </div>
       </div>
