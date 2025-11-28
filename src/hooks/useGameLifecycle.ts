@@ -43,7 +43,7 @@ interface UseGameLifecycleOptions {
 }
 
 export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { trackActivity } = useLootboxActivityTracker();
   const {
     userId,
@@ -245,14 +245,15 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       
         await Promise.all([
         creditStartReward(),
-        (async () => {
-          try {
-            // CRITICAL: Always send lang parameter to backend for correct question language
-            const userLang = profile.preferred_language || 'en';
-            const { data, error } = await supabase.functions.invoke('start-game-session', {
-              headers: { Authorization: `Bearer ${authSession.access_token}` },
-              body: { lang: userLang }
-            });
+         (async () => {
+           try {
+             // CRITICAL: Always send CURRENT UI language to backend for correct question language
+             // Do NOT rely on profile.preferred_language here because it can be stale after user switches language
+             const userLang = lang || 'en';
+             const { data, error } = await supabase.functions.invoke('start-game-session', {
+               headers: { Authorization: `Bearer ${authSession.access_token}` },
+               body: { lang: userLang }
+             });
 
             if (error) throw error;
             
@@ -304,13 +305,14 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
         timestamp: new Date().toISOString()
       }).catch(err => console.error('[useGameLifecycle] Error tracking quiz_started:', err));
     })();
-  }, [
-    profile, isStarting, userId, spendLife, navigate, refetchWallet, broadcast,
-    creditStartReward, setQuestions, resetGameStateHook, resetTimer,
-    setHelp5050UsageCount, setHelp2xAnswerUsageCount, setHelpAudienceUsageCount,
-    resetQuestionHelpers, setFirstAttempt, setSecondAttempt, setQuestionStartTime,
-    setCanSwipe, setIsAnimating, refreshProfile, prefetchedQuestions, onPrefetchComplete
-  ]);
+   }, [
+     profile, isStarting, userId, spendLife, navigate, refetchWallet, broadcast,
+     creditStartReward, setQuestions, resetGameStateHook, resetTimer,
+     setHelp5050UsageCount, setHelp2xAnswerUsageCount, setHelpAudienceUsageCount,
+     resetQuestionHelpers, setFirstAttempt, setSecondAttempt, setQuestionStartTime,
+     setCanSwipe, setIsAnimating, refreshProfile, prefetchedQuestions, onPrefetchComplete,
+     lang
+   ]);
 
   const handleVideoEnd = useCallback(async () => {
     if (gameInitPromiseRef.current) {
