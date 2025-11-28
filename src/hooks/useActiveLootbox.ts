@@ -61,8 +61,8 @@ export const useActiveLootbox = (userId?: string | undefined): UseActiveLootboxR
   useEffect(() => {
     fetchActiveLootbox();
     
-    // Poll every 30 seconds to check for new drops
-    const interval = setInterval(fetchActiveLootbox, 30000);
+    // Poll every 2 minutes to check for new drops (reduced from 30s to prevent excessive polling)
+    const interval = setInterval(fetchActiveLootbox, 120000);
     return () => clearInterval(interval);
   }, []);
 
