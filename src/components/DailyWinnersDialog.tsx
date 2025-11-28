@@ -434,7 +434,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         <div className="flex justify-center items-end gap-2 mb-4 px-1" style={{ transform: 'translateY(-30%)' }}>
                           {topPlayers[1] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '31.5%',
+                              width: '36.225%',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -508,7 +508,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {topPlayers[0] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '37.8%',
+                              width: '43.47%',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -581,7 +581,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
 
                           {topPlayers[2] && (
                             <div className="flex flex-col items-center relative" style={{ 
-                              width: '31.5%',
+                              width: '36.225%',
                               animation: 'pulse-scale 2s ease-in-out infinite'
                             }}>
                               <div className="relative w-full" style={{ aspectRatio: '744.09/1052.36' }}>
@@ -747,7 +747,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 <div
                                   key={player.user_id}
                                   className="flex flex-col items-center relative"
-                                  style={{ width: 'calc(25% - 6px)' }}
+                                  style={{ width: 'calc(28.75% - 6px)' }}
                                 >
                                   <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
                                     {/* Profile Picture with 3D Royal Blue Border - Same structure as TOP 3 */}
