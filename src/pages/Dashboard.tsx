@@ -652,19 +652,10 @@ const Dashboard = () => {
           {/* Play Now Button - Boosters felett */}
           <div className="flex justify-center w-full px-3" style={{ marginBottom: '2vh' }}>
             <div className="w-[90%] max-w-screen-lg">
-              <PlayNowButton
+              <PlayNowButton 
                 data-tutorial="play-button"
-                onClick={async () => {
-                  // PERFORMANCE OPTIMIZATION: Prefetch questions BEFORE navigation
-                  // This eliminates the loading spinner on /game page (instant question display)
-                  const lastPoolOrder = localStorage.getItem('dingleup_global_last_pool');
-                  const poolOrder = lastPoolOrder ? parseInt(lastPoolOrder, 10) : null;
-                  const userLang = profile?.preferred_language || 'en';
-                  
-                  // Start prefetch (non-blocking, runs in background)
-                  prefetchNextGameQuestions(poolOrder, userLang);
-                  
-                  // Navigate immediately (don't wait for prefetch)
+                onClick={() => {
+                  // INSTANT NAVIGATION - no prefetch delay
                   navigate('/game');
                 }}
                 className="w-full"
