@@ -120,29 +120,62 @@ serve(async (req) => {
       }
     }
 
-    // Step 3: Handle guaranteed first daily drop
+    // Step 3: Handle guaranteed drops for first 3 logins of the day
     if (activity_type === 'daily_first_login') {
-      // Check if user already got daily_first_login drop today
-      const { data: existingFirstDrop } = await supabaseAdmin
+      // Count how many session_start events happened today (including current one)
+      const { data: sessionEvents, error: sessionError } = await supabaseAdmin
+        .from('app_session_events')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('event_type', 'session_start')
+        .gte('created_at', todayStart.toISOString())
+        .lte('created_at', todayEnd.toISOString());
+
+      if (sessionError) {
+        console.error('[register-activity-and-drop] Session count error:', sessionError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to check session count' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const todaySessionCount = sessionEvents?.length || 0;
+
+      // Only grant guaranteed drop for first 3 logins of the day
+      if (todaySessionCount > 3) {
+        return new Response(
+          JSON.stringify({ 
+            drop_granted: false, 
+            reason: 'EXCEEDED_3_DAILY_LOGINS',
+            today_session_count: todaySessionCount
+          }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Check if this login number already got its guaranteed drop
+      const { data: existingLoginDrop } = await supabaseAdmin
         .from('lootbox_instances')
         .select('id')
         .eq('user_id', user.id)
         .eq('source', 'daily_first_login')
         .gte('created_at', todayStart.toISOString())
         .lte('created_at', todayEnd.toISOString())
+        .eq('metadata->>login_number', todaySessionCount.toString())
         .maybeSingle();
 
-      if (existingFirstDrop) {
+      if (existingLoginDrop) {
         return new Response(
           JSON.stringify({ 
             drop_granted: false, 
-            reason: 'DAILY_FIRST_LOGIN_ALREADY_GRANTED'
+            reason: 'LOGIN_DROP_ALREADY_GRANTED',
+            login_number: todaySessionCount
           }),
           { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      // Grant guaranteed first drop
+      // Grant guaranteed drop for this login (1st, 2nd, or 3rd)
       const expiresAt = new Date(now.getTime() + 60 * 1000); // 60 seconds
       const dailySequence = todayDropCount + 1;
 
@@ -155,6 +188,7 @@ serve(async (req) => {
           p_metadata: {
             activity_type,
             daily_sequence: dailySequence,
+            login_number: todaySessionCount,
             ...metadata
           }
         });
@@ -171,7 +205,8 @@ serve(async (req) => {
         JSON.stringify({ 
           drop_granted: true, 
           lootbox: newDrop,
-          reason: 'DAILY_FIRST_LOGIN'
+          reason: 'GUARANTEED_LOGIN_DROP',
+          login_number: todaySessionCount
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
