@@ -85,13 +85,14 @@ serve(async (req) => {
       );
     }
 
-    // Calculate yesterday's date (use UTC for now, but rewards are timezone-specific)
-    const yesterday = new Date();
-    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
-    yesterday.setUTCHours(0, 0, 0, 0);
-    const yesterdayDate = yesterday.toISOString().split('T')[0];
+    // Calculate yesterday's date using user's timezone (not UTC!)
+    const userTimezone = userProfile.user_timezone || 'Europe/Budapest';
+    const nowInUserTz = new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }));
+    const yesterdayInUserTz = new Date(nowInUserTz);
+    yesterdayInUserTz.setDate(yesterdayInUserTz.getDate() - 1);
+    const yesterdayDate = yesterdayInUserTz.toISOString().split('T')[0];
 
-    console.log(`[GET-PENDING-REWARD] Checking user ${user.id} in country ${userProfile.country_code} (timezone: ${userProfile.user_timezone})`);
+    console.log(`[GET-PENDING-REWARD] Checking user ${user.id} in country ${userProfile.country_code} (timezone: ${userProfile.user_timezone}), yesterday: ${yesterdayDate}`);
 
     // Check for pending reward from yesterday FOR THIS USER (country + timezone specific)
     const { data: pendingReward, error: rewardError } = await supabaseClient

@@ -9,9 +9,23 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
   const [showPopup, setShowPopup] = useState(false);
   const [canShowToday, setCanShowToday] = useState(false);
 
-  const getCurrentDay = () => {
-    const now = new Date();
-    return now.toISOString().split('T')[0]; // YYYY-MM-DD format
+  // Get current day in user's timezone (not UTC!)
+  const getCurrentDayInUserTimezone = async (userId: string): Promise<string> => {
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_timezone')
+        .eq('id', userId)
+        .single();
+      
+      const userTimezone = profile?.user_timezone || 'Europe/Budapest';
+      return new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }))
+        .toISOString()
+        .split('T')[0];
+    } catch (error) {
+      // Fallback to UTC if timezone fetch fails
+      return new Date().toISOString().split('T')[0];
+    }
   };
 
   // Check if popup can be shown today
@@ -28,7 +42,7 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
           return;
         }
 
-        const currentDay = getCurrentDay();
+        const currentDay = await getCurrentDayInUserTimezone(userId);
 
         // Check if user has seen popup today
         const { data, error } = await supabase
@@ -65,7 +79,7 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
     if (!userId) return;
 
     try {
-      const currentDay = getCurrentDay();
+      const currentDay = await getCurrentDayInUserTimezone(userId);
 
       // Upsert the popup view record
       const { error } = await supabase

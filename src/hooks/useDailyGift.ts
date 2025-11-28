@@ -21,7 +21,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     try {
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('username, daily_gift_streak, daily_gift_last_claimed')
+        .select('username, daily_gift_streak, daily_gift_last_claimed, user_timezone')
         .eq('id', userId)
         .single();
 
@@ -34,8 +34,13 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         return;
       }
 
+      // Get today's date in user's timezone (not UTC!)
+      const userTimezone = profile?.user_timezone || 'Europe/Budapest';
+      const today = new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }))
+        .toISOString()
+        .split('T')[0];
+      
       // Check session storage for today's dismissal/claim
-      const today = new Date().toISOString().split('T')[0];
       const dismissed = sessionStorage.getItem(`${DAILY_GIFT_SESSION_KEY}${today}`);
       
       // If already dismissed or claimed today, don't show
@@ -45,10 +50,12 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         return;
       }
 
-      // Check if already claimed today
+      // Check if already claimed today (compare in user's timezone)
       const lastClaimed = profile?.daily_gift_last_claimed;
       if (lastClaimed) {
-        const lastClaimedDate = new Date(lastClaimed).toISOString().split('T')[0];
+        const lastClaimedDate = new Date(new Date(lastClaimed).toLocaleString('en-US', { timeZone: userTimezone }))
+          .toISOString()
+          .split('T')[0];
         if (lastClaimedDate === today) {
           // Already claimed today
           setCanClaim(false);
@@ -109,8 +116,19 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         setCanClaim(false);
         setShowPopup(false);
         
+        // Get user timezone for accurate date
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('user_timezone')
+          .eq('id', userId)
+          .single();
+        
+        const userTimezone = profile?.user_timezone || 'Europe/Budapest';
+        const today = new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }))
+          .toISOString()
+          .split('T')[0];
+        
         // Mark as dismissed in session storage
-        const today = new Date().toISOString().split('T')[0];
         sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'true');
         
         // Show success toast with actual amounts
@@ -163,8 +181,19 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
     
     try {
+      // Get user timezone for accurate date
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_timezone')
+        .eq('id', userId)
+        .single();
+      
+      const userTimezone = profile?.user_timezone || 'Europe/Budapest';
+      const today = new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }))
+        .toISOString()
+        .split('T')[0];
+      
       // Mark as dismissed for today
-      const today = new Date().toISOString().split('T')[0];
       sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'dismissed');
       
       // Close popup
