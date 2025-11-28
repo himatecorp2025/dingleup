@@ -18,7 +18,6 @@ serve(async (req) => {
   try {
     const url = new URL(req.url);
     const lang = url.searchParams.get('lang') as LangCode | null;
-    const criticalOnly = url.searchParams.get('critical') === 'true';
 
     if (!lang || !VALID_LANGUAGES.includes(lang)) {
       return new Response(
@@ -31,24 +30,12 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    console.log('[get-translations] Fetching translations for language:', lang, 'critical:', criticalOnly);
+    console.log('[get-translations] Fetching translations for language:', lang);
 
-    // OPTIMIZATION: If criticalOnly, fetch only essential keys for fast initial render
-    const CRITICAL_PREFIXES = [
-      'auth.', 'common.', 'dashboard.', 'game.', 'daily_gift.',
-      'welcome_bonus.', 'dailyWinners.', 'profile.', 'leaderboard.'
-    ];
-
-    let query = supabase
+    const query = supabase
       .from('translations')
       .select(`key, hu, en, ${lang}`)
       .order('key');
-
-    if (criticalOnly) {
-      // Filter to critical keys only (much smaller dataset)
-      const orFilters = CRITICAL_PREFIXES.map(prefix => `key.ilike.${prefix}%`).join(',');
-      query = query.or(orFilters).limit(500);
-    }
 
     const { data: translations, error } = await query;
 
