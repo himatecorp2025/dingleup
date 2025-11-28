@@ -387,10 +387,9 @@ const GamePreview = memo(() => {
                 const { data: { session } } = await supabase.auth.getSession();
                 if (!session) return;
                 
-                const userLang = profile?.preferred_language || 'en';
-                
                 const { data, error } = await supabase.functions.invoke('start-game-session', {
-                  headers: { Authorization: `Bearer ${session.access_token}` }
+                  headers: { Authorization: `Bearer ${session.access_token}` },
+                  body: { lang }
                 });
                 
                 if (error || !data?.questions) {
@@ -401,13 +400,13 @@ const GamePreview = memo(() => {
                 let questionsToUse = data.questions;
                 
                 // Apply translations if needed
-                if (userLang !== 'hu' && questionsToUse.length > 0) {
+                if (lang !== 'hu' && questionsToUse.length > 0) {
                   const questionIds = questionsToUse.map((q: any) => q.id);
                   
                   const { data: translations } = await supabase
                     .from('question_translations')
                     .select('question_id, question_text, answer_a, answer_b, answer_c')
-                    .eq('lang', userLang)
+                    .eq('lang', lang)
                     .in('question_id', questionIds);
                   
                   if (translations && translations.length > 0) {
@@ -459,7 +458,8 @@ const GamePreview = memo(() => {
         if (!authSession) return;
 
         const { data, error } = await supabase.functions.invoke('start-game-session', {
-          headers: { Authorization: `Bearer ${authSession.access_token}` }
+          headers: { Authorization: `Bearer ${authSession.access_token}` },
+          body: { lang }
         });
 
         if (error) throw error;
