@@ -108,6 +108,13 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
 
   const initializeLanguage = async () => {
+    // CRITICAL: Set a safety timeout to ensure isLoading becomes false
+    // even if initialization fails or hangs (Safari compatibility)
+    const safetyTimeout = setTimeout(() => {
+      console.warn('[I18n] Safety timeout reached - forcing loading complete');
+      setIsLoading(false);
+    }, 3000); // 3 seconds max wait
+
     try {
       // Clear old cache versions immediately
       const storedVersion = localStorage.getItem(CACHE_VERSION_KEY);
@@ -155,6 +162,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         // Cache hit - instant render
         setTranslations(cachedTranslations);
         setIsLoading(false);
+        clearTimeout(safetyTimeout); // Clear safety timeout on success
         
         // Background refresh (don't block UI)
         fetchTranslations(targetLang).then(freshTranslations => {
@@ -167,6 +175,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         const trans = await fetchTranslations(targetLang);
         setTranslations(trans);
         setIsLoading(false);
+        clearTimeout(safetyTimeout); // Clear safety timeout on success
       }
     } catch (error) {
       console.error('[I18n] Language initialization failed:', error);
@@ -180,6 +189,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         setTranslations(trans);
       }
       setIsLoading(false);
+      clearTimeout(safetyTimeout); // Clear safety timeout after error handling
     }
   };
 
