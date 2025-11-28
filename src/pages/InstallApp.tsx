@@ -167,7 +167,7 @@ const InstallApp = () => {
         <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6 text-left">
           <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
             <Download className="w-5 h-5 text-purple-400" />
-            {lang === 'hu' ? 'Telepítés közvetlenül PWA-ként' : 'Install directly as PWA'}
+            {lang === 'hu' ? 'Telepítés közvetlenül' : 'Install Directly'}
           </h3>
 
           {/* ========== CSAK iOS ESZKÖZÖKÖN ========== */}
@@ -257,15 +257,14 @@ const InstallApp = () => {
           {/* ========== CSAK DESKTOP / EGYÉB ESZKÖZÖKÖN ========== */}
           {!isIOS && !isAndroid && (
             <div className="bg-purple-500/10 border-2 border-purple-400 rounded-lg p-4">
-              <p className="text-white font-bold text-base mb-4">
-                💻 {lang === 'hu' ? 'DESKTOP / EGYÉB ESZKÖZÖKÖN:' : 'ON DESKTOP / OTHER DEVICES:'}
-              </p>
               <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
+                <li>
+                  {lang === 'hu' 
+                    ? 'Nyisd meg ezt az oldalt Chrome vagy Safari böngészőben (iOS eszközön csak Safari támogatott)' 
+                    : 'Open this page in Chrome or Safari browser (on iOS devices only Safari is supported)'}
+                </li>
                 <li>{lang === 'hu' 
-                  ? 'Nyisd meg ezt az oldalt Chrome, Edge vagy Safari böngészőben' 
-                  : 'Open this page in Chrome, Edge, or Safari browser'}</li>
-                <li>{lang === 'hu' 
-                  ? 'Keresd meg a böngésző menüben a "Telepítés" vagy "Install" gombot' 
+                  ? 'Keresd meg a böngésző menüjében a "Telepítés" vagy "Install" gombot' 
                   : 'Find the "Install" button in your browser menu'}</li>
                 <li>{lang === 'hu' 
                   ? 'Kattints rá és erősítsd meg a telepítést' 
