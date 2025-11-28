@@ -96,30 +96,6 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
         return;
       }
 
-      // TESTING MODE: Always show mock data for DingleUP admin user
-      if (profileData?.username === 'DingleUP' || profileData?.username === 'DingelUP!') {
-        console.log('[DAILY-WINNERS] Admin user detected - showing mock data');
-        const mockPlayers: TopPlayer[] = [
-          { user_id: '1', rank: 1, username: 'ProGamer2024', avatar_url: null, total_correct_answers: 145 },
-          { user_id: '2', rank: 2, username: 'QuizMaster', avatar_url: null, total_correct_answers: 142 },
-          { user_id: '3', rank: 3, username: 'BrainChamp', avatar_url: null, total_correct_answers: 138 },
-          { user_id: '4', rank: 4, username: 'SmartPlayer', avatar_url: null, total_correct_answers: 135 },
-          { user_id: '5', rank: 5, username: 'ThinkFast99', avatar_url: null, total_correct_answers: 132 },
-          { user_id: '6', rank: 6, username: 'QuickWit', avatar_url: null, total_correct_answers: 128 },
-          { user_id: '7', rank: 7, username: 'MindWarrior', avatar_url: null, total_correct_answers: 125 },
-          { user_id: '8', rank: 8, username: 'LogicKing', avatar_url: null, total_correct_answers: 122 },
-          { user_id: '9', rank: 9, username: 'PuzzlePro', avatar_url: null, total_correct_answers: 118 },
-          { user_id: '10', rank: 10, username: 'GeniusOne', avatar_url: null, total_correct_answers: 115 },
-        ];
-        
-        if (isMountedRef.current) {
-          setTopPlayers(mockPlayers);
-          setTotalRewards({ totalGold: 1_725, totalLives: 62 });
-          console.log('[DAILY-WINNERS] Mock data loaded (admin mode)');
-        }
-        return;
-      }
-
       const userCountry = profileData.country_code;
 
       const yesterday = new Date();
