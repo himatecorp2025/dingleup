@@ -17,7 +17,7 @@ const createRegisterSchema = (t: (key: string) => string) => z.object({
     .trim()
     .min(3, t('auth.register.validationUsernameMinLength'))
     .max(30, t('auth.register.validationUsernameMaxLength'))
-    .regex(/^[^\s]+$/, t('auth.register.validationUsernameNoSpaces')),
+    .regex(/^[a-zA-Z0-9_áéíóöőúüűÁÉÍÓÖŐÚÜŰ]+$/, t('auth.register.validationUsernameNoSpaces')),
   pin: z.string()
     .regex(/^\d{6}$/, t('auth.register.validationPinFormat')),
   pinConfirm: z.string()

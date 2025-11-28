@@ -47,6 +47,14 @@ serve(async (req) => {
       );
     }
 
+    // Validate allowed characters (alphanumeric, underscore, and Hungarian accented characters)
+    if (!/^[a-zA-Z0-9_áéíóöőúüűÁÉÍÓÖŐÚÜŰ]+$/.test(username)) {
+      return new Response(
+        JSON.stringify({ error: 'Username contains invalid characters' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Validate PIN (exactly 6 digits)
     if (!/^\d{6}$/.test(pin)) {
       return new Response(
