@@ -59,6 +59,30 @@ export type Database = {
         }
         Relationships: []
       }
+      app_download_links: {
+        Row: {
+          app_store_url: string | null
+          google_play_url: string | null
+          id: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          app_store_url?: string | null
+          google_play_url?: string | null
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          app_store_url?: string | null
+          google_play_url?: string | null
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       app_session_events: {
         Row: {
           browser: string | null
