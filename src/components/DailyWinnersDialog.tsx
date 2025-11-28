@@ -207,6 +207,17 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
           <DialogTitle className="sr-only">{t('dailyWinners.dialog_title')}</DialogTitle>
           <DialogDescription className="sr-only">{t('dailyWinners.dialog_description')}</DialogDescription>
 
+          {/* Close X button - Only visible when no data (topPlayers.length === 0) */}
+          {topPlayers.length === 0 && (
+            <button
+              onClick={onClose}
+              className={`absolute top-[8vh] right-[4vw] text-white/70 hover:text-white font-bold z-30 w-[12vw] h-[12vw] max-w-[60px] max-h-[60px] flex items-center justify-center bg-black/30 hover:bg-black/50 rounded-full transition-all transform duration-500 ease-out ${contentVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+              style={{ fontSize: 'clamp(2rem, 9vw, 3.5rem)', transitionDelay: '0ms' }}
+            >
+              ×
+            </button>
+          )}
+
           {/* BONUS MODAL WRAPPER - Fix arányú, skálázódó layout */}
           <div 
             className="relative z-10"
