@@ -15,11 +15,11 @@ export const LootboxRewardDisplay = ({ gold, life, onClose }: LootboxRewardDispl
     // Trigger animation immediately
     setIsVisible(true);
 
-    // Auto-close after 3.5 seconds
+    // Auto-close after 1.5 seconds
     const timer = setTimeout(() => {
       setIsVisible(false);
       setTimeout(onClose, 300); // Wait for fade out animation
-    }, 3500);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, [onClose]);

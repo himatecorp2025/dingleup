@@ -82,9 +82,16 @@ serve(async (req) => {
     const rewards = generateLootboxRewards();
     const idempotencyKey = `lootbox_open::${lootboxId}`;
 
+    // Determine if this is a purchased lootbox (free to open) or drop (150 gold cost)
+    const isPurchased = lootbox.source === 'purchase';
+    const openCost = isPurchased ? 0 : 150;
+
     console.log('Opening stored lootbox:', { 
       lootboxId, 
       userId: user.id, 
+      source: lootbox.source,
+      isPurchased,
+      openCost,
       tier: rewards.tier,
       gold: rewards.gold,
       life: rewards.life,
@@ -100,6 +107,7 @@ serve(async (req) => {
         p_gold_reward: rewards.gold,
         p_life_reward: rewards.life,
         p_idempotency_key: idempotencyKey,
+        p_open_cost: openCost,
       }
     );
 

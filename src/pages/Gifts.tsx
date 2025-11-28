@@ -116,8 +116,13 @@ const Gifts = () => {
   const handleOpenLootbox = async (lootboxId: string) => {
     if (openingId || !walletData) return;
 
-    // Check if user has enough gold
-    if (walletData.coinsCurrent < 150) {
+    // Find the lootbox to check its source
+    const lootbox = storedLootboxes.find(box => box.id === lootboxId);
+    if (!lootbox) return;
+
+    // Check if user has enough gold ONLY for non-purchased (drop) lootboxes
+    const isPurchased = lootbox.source === 'purchase';
+    if (!isPurchased && walletData.coinsCurrent < 150) {
       toast.error(t('lootbox.not_enough_gold'));
       return;
     }
