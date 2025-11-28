@@ -3119,6 +3119,7 @@ export type Database = {
           created_at: string
           day_date: string
           prompt_count: number
+          shown_sessions: Json | null
           updated_at: string
           user_id: string
         }
@@ -3126,6 +3127,7 @@ export type Database = {
           created_at?: string
           day_date?: string
           prompt_count?: number
+          shown_sessions?: Json | null
           updated_at?: string
           user_id: string
         }
@@ -3133,6 +3135,7 @@ export type Database = {
           created_at?: string
           day_date?: string
           prompt_count?: number
+          shown_sessions?: Json | null
           updated_at?: string
           user_id?: string
         }

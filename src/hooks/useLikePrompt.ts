@@ -4,9 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 interface UseLikePromptOptions {
   currentQuestionIndex: number;
   questionId: string | null;
+  gameSessionId: string | null;
 }
 
-export const useLikePrompt = ({ currentQuestionIndex, questionId }: UseLikePromptOptions) => {
+export const useLikePrompt = ({ currentQuestionIndex, questionId, gameSessionId }: UseLikePromptOptions) => {
   const [isLikePromptOpen, setIsLikePromptOpen] = useState(false);
 
   const checkAndShowLikePrompt = useCallback(async () => {
@@ -21,9 +22,18 @@ export const useLikePrompt = ({ currentQuestionIndex, questionId }: UseLikePromp
       return;
     }
 
+    // Don't check if no gameSessionId (can't track per-session)
+    if (!gameSessionId) {
+      console.warn('[useLikePrompt] Cannot check eligibility - gameSessionId is null');
+      return;
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke('check-like-prompt-eligibility', {
-        body: { questionIndex: currentQuestionIndex }
+        body: { 
+          questionIndex: currentQuestionIndex,
+          gameSessionId 
+        }
       });
 
       if (error) {
@@ -32,26 +42,29 @@ export const useLikePrompt = ({ currentQuestionIndex, questionId }: UseLikePromp
       }
 
       if (data?.eligible) {
+        console.log(`[useLikePrompt] Eligible to show - session ${gameSessionId}, question ${currentQuestionIndex}`);
         setIsLikePromptOpen(true);
       }
     } catch (error) {
       console.error('[useLikePrompt] Error in checkAndShowLikePrompt:', error);
     }
-  }, [currentQuestionIndex, questionId]);
+  }, [currentQuestionIndex, questionId, gameSessionId]);
 
   const recordPromptView = useCallback(async () => {
     try {
       const { error } = await supabase.functions.invoke('record-like-prompt-view', {
-        body: {}
+        body: { gameSessionId }
       });
 
       if (error) {
         console.error('[useLikePrompt] Error recording prompt view:', error);
+      } else {
+        console.log(`[useLikePrompt] Recorded view for session ${gameSessionId}`);
       }
     } catch (error) {
       console.error('[useLikePrompt] Error in recordPromptView:', error);
     }
-  }, []);
+  }, [gameSessionId]);
 
   const handleCloseLikePrompt = useCallback(() => {
     setIsLikePromptOpen(false);

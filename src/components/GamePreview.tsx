@@ -103,6 +103,9 @@ const GamePreview = memo(() => {
 
   // Like prompt system
   const currentQuestionId = questions[currentQuestionIndex]?.id || null;
+  // Generate stable gameSessionId at component mount
+  const [gameSessionId] = useState(() => `game_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  
   const {
     isLikePromptOpen,
     checkAndShowLikePrompt,
@@ -110,7 +113,8 @@ const GamePreview = memo(() => {
     handleLikeFromPrompt,
   } = useLikePrompt({ 
     currentQuestionIndex, 
-    questionId: currentQuestionId 
+    questionId: currentQuestionId,
+    gameSessionId 
   });
 
   // Question like functionality

@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { questionIndex } = await req.json();
+    const { questionIndex, gameSessionId } = await req.json();
 
     // Check if question index is eligible (1-15 = any question in the game)
     if (questionIndex < 1 || questionIndex > 15) {
@@ -39,6 +39,27 @@ Deno.serve(async (req) => {
         JSON.stringify({ eligible: false, reason: 'question_index_not_eligible' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // CRITICAL: Check if popup already shown in THIS game session (gameSessionId)
+    // This ensures popup appears ONCE PER GAME maximum
+    if (gameSessionId) {
+      const { data: sessionTracking, error: sessionError } = await supabase
+        .from('user_like_prompt_tracking')
+        .select('shown_sessions')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!sessionError && sessionTracking?.shown_sessions) {
+        const shownSessions = sessionTracking.shown_sessions as string[];
+        if (shownSessions.includes(gameSessionId)) {
+          console.log(`[check-like-prompt] Already shown in session ${gameSessionId}`);
+          return new Response(
+            JSON.stringify({ eligible: false, reason: 'already_shown_in_session' }),
+            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
     }
 
     // Check daily limit (max 10 prompts per day)
@@ -66,9 +87,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    // 40% random chance
+    // 30% random chance (reduced from 40% to make it more rare)
     const randomChance = Math.random();
-    if (randomChance > 0.4) {
+    if (randomChance > 0.3) {
       return new Response(
         JSON.stringify({ eligible: false, reason: 'random_chance_failed' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
