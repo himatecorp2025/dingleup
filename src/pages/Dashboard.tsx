@@ -423,9 +423,16 @@ const Dashboard = () => {
 
       if (error) throw error;
 
-      if (data?.url) {
-        // Redirect to Stripe Checkout in new tab
-        window.open(data.url, '_blank');
+      if (data?.url && data?.sessionId) {
+        // Store session ID for mobile WebView fallback polling
+        localStorage.setItem('pending_premium_session', JSON.stringify({
+          sessionId: data.sessionId,
+          timestamp: Date.now()
+        }));
+
+        // PWA/Mobile: use window.location.href instead of window.open
+        // This works better in WebView/PWA environments
+        window.location.href = data.url;
         toast.success(t('payment.page_opened'), { id: 'purchase-premium-booster' });
       } else {
         throw new Error(t('payment.url_missing'));
