@@ -2,9 +2,8 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { LangCode, TranslationMap, I18nContextValue } from './types';
 import { VALID_LANGUAGES, DEFAULT_LANG, SOURCE_LANG, STORAGE_KEY } from './constants';
-import { resolveLangFromCountry, ALLOWED_LANGS } from '@/lib/i18n/langMapping';
+import { ALLOWED_LANGS } from '@/lib/i18n/langMapping';
 import { resolveInitialLang } from '@/lib/i18n/resolveInitialLang';
-import { getCountryFromTimezone } from '@/lib/utils';
 
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
@@ -111,45 +110,31 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
       }
 
-      // 1. Get user profile with preferred_language
+      // CRITICAL: Default language is ALWAYS English unless explicitly set by user
+      let targetLang: LangCode = DEFAULT_LANG; // DEFAULT_LANG = 'en'
+
+      // Get user profile with preferred_language
       const { data: { user } } = await supabase.auth.getUser();
-      let targetLang: LangCode = DEFAULT_LANG; // DEFAULT_LANG is already 'en'
 
       if (user) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('preferred_language, preferred_country')
+          .select('preferred_language')
           .eq('id', user.id)
           .single();
 
-        if (profile) {
-          // Use resolveInitialLang with user's preferred_language
+        if (profile?.preferred_language) {
+          // Use user's explicitly set preferred_language
           targetLang = resolveInitialLang({ 
             loggedInUserPreferredLanguage: profile.preferred_language 
           });
-          
-          // If no preferred_language set, derive from country
-          if (!profile.preferred_language && profile.preferred_country) {
-            targetLang = resolveLangFromCountry(profile.preferred_country);
-            // Update database with derived language
-            await supabase
-              .from('profiles')
-              .update({ preferred_language: targetLang })
-              .eq('id', user.id);
-          }
-          
-          localStorage.setItem(STORAGE_KEY, targetLang);
         }
+        // If no preferred_language set, stay with default English
+        
+        localStorage.setItem(STORAGE_KEY, targetLang);
       } else {
-        // No user logged in - detect timezone for login/register pages
-        try {
-          const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          const countryCode = getCountryFromTimezone(detectedTimezone);
-          targetLang = countryCode === 'HU' ? 'hu' : 'en';
-        } catch (error) {
-          console.error('[I18n] Timezone detection failed:', error);
-          targetLang = 'en';
-        }
+        // No user logged in - ALWAYS default to English
+        targetLang = 'en';
         localStorage.setItem(STORAGE_KEY, targetLang);
       }
 
