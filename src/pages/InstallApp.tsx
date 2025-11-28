@@ -11,7 +11,16 @@ const InstallApp = () => {
   const [googlePlayUrl, setGooglePlayUrl] = useState('');
   const [appStoreUrl, setAppStoreUrl] = useState('');
 
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+
   useEffect(() => {
+    console.log('[InstallApp] mounted', {
+      ua: navigator.userAgent,
+      isIOS,
+      isAndroid,
+      location: window.location.pathname,
+    });
     fetchDownloadLinks();
   }, []);
 
@@ -36,8 +45,6 @@ const InstallApp = () => {
     }
   };
 
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isAndroid = /Android/.test(navigator.userAgent);
   const isIOSChrome = isIOS && /CriOS/.test(navigator.userAgent);
   const isIOSSafari = isIOS && /Safari/.test(navigator.userAgent) && !/CriOS/.test(navigator.userAgent);
 
