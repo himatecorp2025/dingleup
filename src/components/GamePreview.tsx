@@ -75,8 +75,8 @@ const GamePreview = memo(() => {
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
   const [gameInstanceId] = useState(() => crypto.randomUUID());
   
-  // Loading video state - simple: video playing while questions load in background
-  const [showLoadingVideo, setShowLoadingVideo] = useState(true);
+  // Loading video state: track only whether the intro video finished
+  const [videoEnded, setVideoEnded] = useState(false);
 
   const {
     help5050UsageCount,
@@ -352,10 +352,10 @@ const GamePreview = memo(() => {
     });
   }, [profile, isStartingGame, startGame]);
 
-  // Video ends → hide video screen, game starts if questions ready
+  // Video ends → mark as finished; we keep showing it until questions are ready
   const handleVideoEnd = useCallback(() => {
-    console.log('[GamePreview] Video ended - switching to game');
-    setShowLoadingVideo(false);
+    console.log('[GamePreview] Video ended');
+    setVideoEnded(true);
   }, []);
 
   // Track game funnel milestones + PREFETCH next game at question 10
@@ -544,6 +544,12 @@ const GamePreview = memo(() => {
   const handleRejectContinue = () => {
     finishGame();
   };
+
+  // Decide if we should still show the intro video:
+  // - while questions are loading (not ready) OR
+  // - while the video itself hasn't ended yet
+  const isInitialLoading = (!isGameReady || questions.length === 0) && gameState === 'playing';
+  const showLoadingVideo = !videoEnded || isInitialLoading;
 
   if (profileLoading || !userId || !profile) {
     return (
