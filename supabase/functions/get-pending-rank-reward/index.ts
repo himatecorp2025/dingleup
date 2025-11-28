@@ -87,10 +87,15 @@ serve(async (req) => {
 
     // Calculate yesterday's date using user's timezone (not UTC!)
     const userTimezone = userProfile.user_timezone || 'Europe/Budapest';
-    const nowInUserTz = new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }));
-    const yesterdayInUserTz = new Date(nowInUserTz);
-    yesterdayInUserTz.setDate(yesterdayInUserTz.getDate() - 1);
-    const yesterdayDate = yesterdayInUserTz.toISOString().split('T')[0];
+    
+    // Get current time in user's timezone
+    const nowInUserTz = new Date().toLocaleString('en-US', { timeZone: userTimezone });
+    const userNow = new Date(nowInUserTz);
+    
+    // Calculate yesterday
+    const yesterday = new Date(userNow);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayDate = yesterday.toISOString().split('T')[0];
 
     console.log(`[GET-PENDING-REWARD] Checking user ${user.id} in country ${userProfile.country_code} (timezone: ${userProfile.user_timezone}), yesterday: ${yesterdayDate}`);
 
