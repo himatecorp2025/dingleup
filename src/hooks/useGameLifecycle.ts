@@ -344,9 +344,10 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     }
     
     // Start new game with PREFETCH MODE (uses prefetched questions if available)
+    // CRITICAL: Await startGame completion BEFORE resetting timer/visibility
     await startGame(true, true);
     
-    // INSTANT transition - no setTimeout delay!
+    // INSTANT transition - AFTER game is fully ready
     resetTimer(10);
     setQuestionVisible(true);
     setCanSwipe(true);
