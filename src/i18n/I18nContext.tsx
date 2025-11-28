@@ -70,16 +70,23 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
     }
   };
 
-  const fetchTranslations = async (targetLang: LangCode): Promise<TranslationMap> => {
+  // CRITICAL TRANSLATIONS: Only load essential keys for first render
+  const CRITICAL_KEYS = [
+    'auth.', 'common.', 'dashboard.', 'game.', 'daily_gift.', 
+    'welcome_bonus.', 'dailyWinners.', 'profile.', 'leaderboard.'
+  ];
+
+  const fetchTranslations = async (targetLang: LangCode, criticalOnly: boolean = false): Promise<TranslationMap> => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-translations?lang=${targetLang}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          }
+      const url = criticalOnly 
+        ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-translations?lang=${targetLang}&critical=true`
+        : `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-translations?lang=${targetLang}`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         }
-      );
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -89,7 +96,9 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
       const fetchedTranslations = data?.translations || {};
       
       // Cache the fetched translations
-      setCachedTranslations(targetLang, fetchedTranslations);
+      if (!criticalOnly) {
+        setCachedTranslations(targetLang, fetchedTranslations);
+      }
       
       return fetchedTranslations;
     } catch (error) {
@@ -155,23 +164,31 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
       setLangState(targetLang);
 
-      // Try to load from cache first (instant)
+      // OPTIMIZATION: Check cache first
       const cachedTranslations = getCachedTranslations(targetLang);
-      if (cachedTranslations && Object.keys(cachedTranslations).length > 0) {
+      if (cachedTranslations && Object.keys(cachedTranslations).length > 100) {
+        // Cache hit - instant render
         setTranslations(cachedTranslations);
         setIsLoading(false);
         
-        // Fetch fresh translations in background (don't await)
+        // Background refresh (don't block UI)
         fetchTranslations(targetLang).then(freshTranslations => {
           if (Object.keys(freshTranslations).length > 0) {
             setTranslations(freshTranslations);
           }
         });
       } else {
-        // No cache - must fetch before rendering
-        const trans = await fetchTranslations(targetLang);
-        setTranslations(trans);
-        setIsLoading(false);
+        // PROGRESSIVE LOADING: Load critical translations first (50-100ms)
+        const criticalTrans = await fetchTranslations(targetLang, true);
+        setTranslations(criticalTrans);
+        setIsLoading(false); // Unblock UI immediately
+        
+        // Load full translations in background (non-blocking)
+        fetchTranslations(targetLang).then(fullTrans => {
+          if (Object.keys(fullTrans).length > 0) {
+            setTranslations(fullTrans);
+          }
+        });
       }
     } catch (error) {
       console.error('[I18n] Language initialization failed:', error);

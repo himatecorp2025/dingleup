@@ -18,6 +18,7 @@ serve(async (req) => {
   try {
     const url = new URL(req.url);
     const lang = url.searchParams.get('lang') as LangCode | null;
+    const criticalOnly = url.searchParams.get('critical') === 'true';
 
     if (!lang || !VALID_LANGUAGES.includes(lang)) {
       return new Response(
@@ -30,61 +31,51 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    console.log('[get-translations] Fetching translations for language:', lang);
+    console.log('[get-translations] Fetching translations for language:', lang, 'critical:', criticalOnly);
 
-    // Get total count first
-    const { count, error: countError } = await supabase
+    // OPTIMIZATION: If criticalOnly, fetch only essential keys for fast initial render
+    const CRITICAL_PREFIXES = [
+      'auth.', 'common.', 'dashboard.', 'game.', 'daily_gift.',
+      'welcome_bonus.', 'dailyWinners.', 'profile.', 'leaderboard.'
+    ];
+
+    let query = supabase
       .from('translations')
-      .select('*', { count: 'exact', head: true });
+      .select(`key, hu, en, ${lang}`)
+      .order('key');
 
-    if (countError) {
-      console.error('[get-translations] Count error:', countError);
-      throw countError;
+    if (criticalOnly) {
+      // Filter to critical keys only (much smaller dataset)
+      const orFilters = CRITICAL_PREFIXES.map(prefix => `key.ilike.${prefix}%`).join(',');
+      query = query.or(orFilters).limit(500);
     }
 
-    const totalCount = count || 0;
-    console.log('[get-translations] Total translations in database:', totalCount);
+    const { data: translations, error } = await query;
 
-    // Fetch all translations in batches (Supabase default limit is 1000)
-    const batchSize = 1000;
-    const allTranslations: any[] = [];
-    
-    for (let offset = 0; offset < totalCount; offset += batchSize) {
-      const { data: batch, error: batchError } = await supabase
-        .from('translations')
-        .select(`key, hu, en, ${lang}`)
-        .order('key')
-        .range(offset, offset + batchSize - 1);
-
-      if (batchError) {
-        console.error('[get-translations] Batch error at offset', offset, ':', batchError);
-        throw batchError;
-      }
-
-      if (batch && batch.length > 0) {
-        allTranslations.push(...batch);
-      }
+    if (error) {
+      console.error('[get-translations] Error:', error);
+      throw error;
     }
 
-    if (allTranslations.length === 0) {
-      console.log('[get-translations] No translations found in database');
+    if (!translations || translations.length === 0) {
+      console.log('[get-translations] No translations found');
       return new Response(
         JSON.stringify({ translations: {} }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
     }
 
-    console.log('[get-translations] Fetched', allTranslations.length, 'translations total');
+    console.log('[get-translations] Fetched', translations.length, 'translations');
 
     // Build translation map with fallback chain: target → en → hu
     const translationMap: Record<string, string> = {};
     
-    for (const row of allTranslations) {
+    for (const row of translations) {
       const key = row.key;
-      const rowData = row as any; // Type assertion for dynamic column access
+      const rowData = row as any;
       const targetLangText = rowData[lang] as string | null;
       const englishText = row.en as string | null;
-      const hungarianText = row.hu; // Hungarian is always the source
+      const hungarianText = row.hu;
       
       // Fallback chain: target language → English → Hungarian → key
       if (targetLangText && targetLangText.trim() !== '') {

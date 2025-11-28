@@ -57,6 +57,7 @@ import { usePaymentPolling } from '@/hooks/usePaymentPolling';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { IdleWarning } from '@/components/IdleWarning';
+import { DashboardSkeleton } from '@/components/DashboardSkeleton';
 
 import BottomNav from '@/components/BottomNav';
 import gameBackground from '@/assets/game-background.png';
@@ -73,9 +74,25 @@ const Dashboard = () => {
   const { isHandheld, isStandalone } = usePlatformDetection();
   const { canMountModals } = useScrollBehavior();
   const { markActive } = useActivityTracker('route_view');
-  const { profile, loading, refreshProfile } = useProfileQuery(userId);
+  
+  // PHASE 1: Critical data (profile, wallet) - loads immediately
+  const { profile, loading: profileLoading, refreshProfile } = useProfileQuery(userId);
   const { walletData, refetchWallet, serverDriftMs } = useWalletQuery(userId);
+  
+  // PHASE 2: Secondary data (loaded after profile/wallet ready)
+  const [enableSecondaryLoading, setEnableSecondaryLoading] = useState(false);
   const { prefetchNextGameQuestions } = useGameQuestions();
+  
+  // Enable secondary hooks only after critical data is loaded
+  useEffect(() => {
+    if (!profileLoading && walletData) {
+      // Delay secondary loading by 100ms to allow UI to render first
+      const timer = setTimeout(() => {
+        setEnableSecondaryLoading(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [profileLoading, walletData]);
   
   // FULLSCREEN MODE: Hide status bar on mobile devices (Web)
   useFullscreen({
@@ -86,50 +103,38 @@ const Dashboard = () => {
   // NATIVE FULLSCREEN: Hide status bar on iOS/Android Capacitor apps
   useNativeFullscreen();
   
-  // DEBUG: Log wallet data
-  useEffect(() => {
-    if (walletData) {
-      console.log('[Dashboard] Wallet Data:', {
-        lives: walletData.livesCurrent,
-        maxLives: walletData.livesMax,
-        nextLifeAt: walletData.nextLifeAt,
-        serverDriftMs,
-        activeSpeedToken: walletData.activeSpeedToken
-      });
-    }
-  }, [walletData, serverDriftMs]);
-  
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
   const boosterState = useBoosterState(userId);
   const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
+  // PHASE 2 HOOKS: Only enabled after critical data loads
   // LOOTBOX HEARTBEAT SYSTEM: Automatic periodic checks for pending slots
-  // Sends heartbeat every 30s while Dashboard is active
-  // Backend processes pending lootbox slots when user is actively playing
   useLootboxActivityTracker({
-    enabled: !!userId, // Only when authenticated
+    enabled: !!userId && enableSecondaryLoading,
     heartbeatIntervalSeconds: 30
   });
   
   // Track login activity for lootbox drops (first login of the day)
-  useLoginLootboxTracker(!!userId);
+  useLoginLootboxTracker(!!userId && enableSecondaryLoading);
   
   // Lootbox state
-  const { activeLootbox, refetch: refetchActiveLootbox } = useActiveLootbox(userId);
+  const { activeLootbox, refetch: refetchActiveLootbox } = useActiveLootbox(
+    enableSecondaryLoading ? userId : undefined
+  );
   const [showLootboxDecision, setShowLootboxDecision] = useState(false);
   const [storedLootboxCount, setStoredLootboxCount] = useState(0);
   
-  // PERFORMANCE OPTIMIZATION: Centralized popup manager (eliminates 150+ lines of duplicate state)
+  // PERFORMANCE OPTIMIZATION: Centralized popup manager
   const popupManager = useDashboardPopupManager({
     canMountModals,
     needsAgeVerification: !profile?.age_verified || !profile?.birth_date,
     userId,
-    profileLoading: loading,
+    profileLoading: profileLoading,
   });
   
-  // Mobile WebView fallback: Poll for pending payments
+  // Mobile WebView fallback: Poll for pending payments (delayed)
   usePaymentPolling();
   
   // Pull-to-refresh functionality
@@ -429,22 +434,6 @@ const Dashboard = () => {
       toast.error(errorMsg, { id: 'purchase-premium-booster' });
     }
   };
-
-  if (loading) {
-  return (
-    <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-      <p className="text-lg text-foreground">{t('common.loading')}</p>
-    </div>
-  );
-}
-
-if (!profile) {
-  return (
-    <div className="min-h-dvh min-h-svh flex items-center justify-center bg-gradient-to-br from-[#0a0a2e] via-[#16213e] to-[#0f0f3d]">
-      <p className="text-lg text-foreground">{t('common.loading')}</p>
-    </div>
-  );
-}
 
   return (
     <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
