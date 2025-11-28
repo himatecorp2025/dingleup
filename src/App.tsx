@@ -71,10 +71,14 @@ const AdminLootboxAnalytics = lazy(() => import("./pages/AdminLootboxAnalytics")
 const AdminProfile = lazy(() => import("./pages/AdminProfile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-// Loading fallback component
+// Loading fallback component with logo
 const PageLoader = () => (
-  <div className="min-h-dvh min-h-svh bg-black flex items-center justify-center">
-    {/* Silent loading - no visible text or spinner for seamless transition */}
+  <div className="min-h-dvh min-h-svh bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] flex items-center justify-center">
+    <img 
+      src={loadingLogo} 
+      alt="DingleUP!" 
+      className="w-32 h-32 object-contain animate-pulse"
+    />
   </div>
 );
 
