@@ -31,8 +31,7 @@ export const useSessionMonitor = () => {
         if (error || !session) {
           console.log('[SessionMonitor] Session invalid, redirecting to login');
           toast({
-            title: t('session.expired_title'),
-            description: t('session.expired_description'),
+            description: t('profile.logout'),
             variant: "destructive",
             duration: 4000,
           });

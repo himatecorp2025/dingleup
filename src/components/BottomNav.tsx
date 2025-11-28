@@ -60,7 +60,6 @@ const BottomNav = () => {
     if (error) {
       toast.error(t('common.error'));
     } else {
-      toast.success(t('profile.logout'));
       navigate('/auth/choice');
     }
   };
