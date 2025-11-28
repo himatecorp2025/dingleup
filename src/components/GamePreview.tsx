@@ -36,7 +36,7 @@ import { GameQuestionContainer } from "./game/GameQuestionContainer";
 type GameState = 'playing' | 'finished' | 'out-of-lives';
 
 const GamePreview = memo(() => {
-  const { t } = useI18n();
+  const { t, isLoading: i18nLoading, lang } = useI18n();
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | undefined>();
   const { profile, loading: profileLoading, spendLife, refreshProfile } = useGameProfile(userId);
@@ -534,7 +534,7 @@ const GamePreview = memo(() => {
     finishGame();
   };
 
-  if (profileLoading || !userId || !profile) {
+  if (profileLoading || i18nLoading || !userId || !profile) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
         <div className="relative z-10 text-white">{t('game.loading')}</div>
