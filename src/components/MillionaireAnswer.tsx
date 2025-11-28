@@ -13,20 +13,6 @@ interface MillionaireAnswerProps {
   showCorrectPulse?: boolean;
 }
 
-// Generate unique IDs for SVG elements to prevent conflicts
-const getUniqueIds = (letter: string, suffix: string) => {
-  const base = `ans_${letter}`;
-  return {
-    hexPath: `HEX_${base}`,
-    bgGrad: `bg_${base}`,
-    chromeGrad: `chromeGrad_${base}`,
-    band20: `band20_${base}_${suffix}`,
-    band5: `band5_${base}_${suffix}`,
-    filter: `pro3d_${base}`,
-    mask: `maskOuterOnly_${base}`
-  };
-};
-
 export const MillionaireAnswer = ({ 
   children, 
   letter, 
@@ -53,161 +39,6 @@ export const MillionaireAnswer = ({
     setIsMultiLine(lines >= 2);
   }, [children]);
 
-  if (isRemoved) {
-    const ids = getUniqueIds(letter, 'removed');
-    
-    // Render with SVG but with reduced opacity and disabled state
-    return (
-      <div className="w-full flex justify-center mb-1 opacity-30">
-        <button
-          disabled={true}
-          className="w-[90%] relative cursor-not-allowed"
-          style={{ minHeight: '72px' }}
-        >
-          {/* SVG Background - same as active answers but grayed */}
-          <svg 
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="22.53058 -47.5814116 672.82399 250"
-            fill="none"
-            shapeRendering="geometricPrecision"
-            colorInterpolationFilters="sRGB"
-            className="absolute inset-0 w-full h-auto pointer-events-none"
-            preserveAspectRatio="none"
-            aria-hidden
-          >
-            <defs>
-              <path id={ids.hexPath} d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
-
-              <linearGradient id={ids.bgGrad} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#191534"/>
-                <stop offset="100%" stopColor="#0e0b1c"/>
-              </linearGradient>
-
-              <linearGradient id={ids.chromeGrad} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#f8fbff"/>
-                <stop offset="10%" stopColor="#c6ccd3"/>
-                <stop offset="22%" stopColor="#ffffff"/>
-                <stop offset="40%" stopColor="#9ea6b0"/>
-                <stop offset="58%" stopColor="#e7ebf0"/>
-                <stop offset="78%" stopColor="#bfc6cf"/>
-                <stop offset="100%" stopColor="#ffffff"/>
-              </linearGradient>
-
-              <linearGradient id={ids.band20} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#888"/>
-                <stop offset="35%" stopColor="#555"/>
-                <stop offset="100%" stopColor="#333"/>
-              </linearGradient>
-
-              <linearGradient id={ids.band5} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#999"/>
-                <stop offset="50%" stopColor="#666"/>
-                <stop offset="100%" stopColor="#444"/>
-              </linearGradient>
-
-              <filter id={ids.filter} x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
-                <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
-              </filter>
-
-              <mask id={ids.mask} maskUnits="userSpaceOnUse">
-                <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
-                <use href={`#${ids.hexPath}`} stroke="white" strokeWidth="2" fill="none"/>
-                <use href={`#${ids.hexPath}`} stroke="black" strokeWidth="25" fill="none"/>
-              </mask>
-            </defs>
-
-            <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
-
-            <g transform="scale(1,1.44)">
-              <use href={`#${ids.hexPath}`} fill="black" fillOpacity="0.5"/>
-
-              <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.band20})`} strokeWidth="20"
-                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter={`url(#${ids.filter})`}
-                   vectorEffect="non-scaling-stroke"/>
-
-              <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.band5})`} strokeWidth="5"
-                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter={`url(#${ids.filter})`}
-                   vectorEffect="non-scaling-stroke"/>
-
-              <g mask={`url(#${ids.mask})`}>
-                <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.chromeGrad})`} strokeWidth="2"
-                     strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
-              </g>
-            </g>
-          </svg>
-          
-          {/* Content wrapper */}
-          <div className="absolute inset-0 flex items-center justify-center px-3 sm:px-4 md:px-5">
-            <div className="flex items-center justify-center w-full gap-2 sm:gap-3 translate-y-[19px]">
-              <div 
-                className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
-                style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
-              >
-                {/* Letter hexagon grayed out */}
-                <div
-                  className="absolute"
-                  style={{
-                    top: '2px',
-                    left: '2px',
-                    right: '-2px',
-                    bottom: '-2px',
-                    background: 'rgba(0,0,0,0.35)',
-                    filter: 'blur(3px)',
-                    clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)'
-                  }}
-                  aria-hidden
-                />
-
-                <div
-                  className="absolute inset-0 bg-gradient-to-br from-gray-600 via-gray-500 to-gray-700 border-2 border-gray-500"
-                  style={{ 
-                    clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)',
-                    boxShadow: '0 0 10px rgba(128,128,128,0.3)'
-                  }}
-                  aria-hidden
-                />
-
-                <div
-                  className="absolute bg-gradient-to-b from-gray-500 via-gray-600 to-gray-700"
-                  style={{ 
-                    top: '2px',
-                    left: '2px',
-                    right: '2px',
-                    bottom: '2px',
-                    clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)',
-                    boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.1)' 
-                  }}
-                  aria-hidden
-                />
-
-                <span className="relative z-10 text-gray-400 font-bold text-[15px] sm:text-lg leading-none drop-shadow-lg font-poppins line-through">{letter}:</span>
-              </div>
-              <p 
-                ref={textRef}
-                className={`font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-muted-foreground line-through ${
-                  typeof children === 'string' && children.length > 35 
-                    ? 'text-base sm:text-lg md:text-xl' 
-                    : typeof children === 'string' && children.length > 25
-                    ? 'text-lg sm:text-xl md:text-2xl'
-                    : 'text-xl sm:text-2xl md:text-3xl'
-                }`}
-                style={{ 
-                  textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)',
-                  transform: isMultiLine ? 'scale(0.85)' : 'scale(1)',
-                  transformOrigin: 'center'
-                }}
-              >
-                {children}
-              </p>
-              <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />
-            </div>
-          </div>
-        </button>
-      </div>
-    );
-  }
-
   // Determine gradient suffix based on state
   let gradientSuffix = 'default';
   if (showCorrectPulse || isCorrect) {
@@ -218,14 +49,15 @@ export const MillionaireAnswer = ({
     gradientSuffix = 'orange';
   }
 
-  const ids = getUniqueIds(letter, gradientSuffix);
+  const band20Id = `band20_ans_${gradientSuffix}`;
+  const band5Id = `band5_ans_${gradientSuffix}`;
 
   return (
-    <div className="w-full flex justify-center mb-1">
+    <div className={`w-full flex justify-center mb-1 ${isRemoved ? 'opacity-40' : ''}`}>
       <button
         onClick={onClick}
-        disabled={disabled}
-        className={`w-[90%] relative ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'} transition-transform duration-300`}
+        disabled={disabled || isRemoved}
+        className={`w-[90%] relative ${disabled || isRemoved ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'} transition-transform duration-300`}
         style={{ minHeight: '72px' }}
       >
         {/* SVG Background with fast pulse animation on correct answer */}
@@ -240,14 +72,14 @@ export const MillionaireAnswer = ({
           aria-hidden
         >
           <defs>
-            <path id={ids.hexPath} d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+            <path id="HEX_ANS" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
 
-            <linearGradient id={ids.bgGrad} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <linearGradient id="bg_ans" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#191534"/>
               <stop offset="100%" stopColor="#0e0b1c"/>
             </linearGradient>
 
-            <linearGradient id={ids.chromeGrad} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <linearGradient id="chromeGrad_ans" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#f8fbff"/>
               <stop offset="10%" stopColor="#c6ccd3"/>
               <stop offset="22%" stopColor="#ffffff"/>
@@ -309,33 +141,33 @@ export const MillionaireAnswer = ({
               <stop offset="100%" stopColor="#D6851E"/>
             </linearGradient>
 
-            <filter id={ids.filter} x="-50%" y="-50%" width="200%" height="200%">
+            <filter id="pro3d_ans" x="-50%" y="-50%" width="200%" height="200%">
               <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
               <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
             </filter>
 
-            <mask id={ids.mask} maskUnits="userSpaceOnUse">
+            <mask id="maskOuterOnly_ans" maskUnits="userSpaceOnUse">
               <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
-              <use href={`#${ids.hexPath}`} stroke="white" strokeWidth="2" fill="none"/>
-              <use href={`#${ids.hexPath}`} stroke="black" strokeWidth="25" fill="none"/>
+              <use href="#HEX_ANS" stroke="white" strokeWidth="2" fill="none"/>
+              <use href="#HEX_ANS" stroke="black" strokeWidth="25" fill="none"/>
             </mask>
           </defs>
 
           <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
 
           <g transform="scale(1,1.44)">
-            <use href={`#${ids.hexPath}`} fill="black" fillOpacity="0.5"/>
+            <use href="#HEX_ANS" fill="black" fillOpacity="0.5"/>
 
-            <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.band20})`} strokeWidth="20"
-                 strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter={`url(#${ids.filter})`}
+            <use href="#HEX_ANS" fill="none" stroke={`url(#${band20Id})`} strokeWidth="20"
+                 strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_ans)"
                  vectorEffect="non-scaling-stroke"/>
 
-            <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.band5})`} strokeWidth="5"
-                 strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter={`url(#${ids.filter})`}
+            <use href="#HEX_ANS" fill="none" stroke={`url(#${band5Id})`} strokeWidth="5"
+                 strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_ans)"
                  vectorEffect="non-scaling-stroke"/>
 
-            <g mask={`url(#${ids.mask})`}>
-              <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.chromeGrad})`} strokeWidth="2"
+            <g mask="url(#maskOuterOnly_ans)">
+              <use href="#HEX_ANS" fill="none" stroke="url(#chromeGrad_ans)" strokeWidth="2"
                    strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
             </g>
           </g>
