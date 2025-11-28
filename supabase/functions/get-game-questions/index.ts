@@ -39,9 +39,10 @@ interface Pool {
 }
 
 // ============================================================================
-// IN-MEMORY POOL CACHE - ALL 15 POOLS LOADED AT STARTUP
+// IN-MEMORY POOL CACHE + TRANSLATIONS - ALL DATA LOADED AT STARTUP
 // ============================================================================
 const POOLS_MEMORY_CACHE = new Map<number, Question[]>();
+const TRANSLATIONS_CACHE = new Map<string, Map<string, QuestionTranslation>>(); // questionId -> lang -> translation
 let CACHE_INITIALIZED = false;
 let CACHE_INIT_PROMISE: Promise<void> | null = null;
 
@@ -55,41 +56,42 @@ function fisherYatesShuffle<T>(array: T[]): T[] {
   return shuffled;
 }
 
-// Initialize all 15 pools into memory at startup
+// Initialize all 15 pools + translations into memory at startup
 async function initializePoolsCache(supabase: any): Promise<void> {
   if (CACHE_INITIALIZED) return;
   if (CACHE_INIT_PROMISE) return CACHE_INIT_PROMISE;
 
   CACHE_INIT_PROMISE = (async () => {
-    console.log('[POOL CACHE] Initializing all 15 pools into memory...');
+    console.log('[POOL CACHE] Initializing all 15 pools + translations into memory...');
     const startTime = Date.now();
 
     try {
-      const { data: pools, error } = await supabase
+      // Load all pools
+      const { data: pools, error: poolsError } = await supabase
         .from('question_pools')
         .select('*')
         .gte('question_count', MIN_QUESTIONS_PER_POOL)
         .order('pool_order');
 
-      if (error) {
-        console.error('[POOL CACHE] Failed to load pools:', error);
-        throw error;
+      if (poolsError) {
+        console.error('[POOL CACHE] Failed to load pools:', poolsError);
+        throw poolsError;
       }
 
       if (!pools || pools.length < TOTAL_POOLS) {
         console.warn(`[POOL CACHE] Only ${pools?.length || 0} pools found, expected ${TOTAL_POOLS}`);
       }
 
+      // Collect all unique question IDs across all pools
+      const allQuestionIds = new Set<string>();
+
       // Load all pools into memory
       for (const poolData of pools || []) {
-        // ✅ CRITICAL FIX: Explicit JSONB[] -> Question[] parsing
         const questionsRaw = poolData.questions;
         let questions: Question[] = [];
 
         if (questionsRaw && Array.isArray(questionsRaw)) {
-          // Parse each question object explicitly (JSONB[] conversion)
           questions = questionsRaw.map((q: any) => {
-            // If string, parse JSON
             if (typeof q === 'string') {
               try {
                 return JSON.parse(q);
@@ -98,24 +100,49 @@ async function initializePoolsCache(supabase: any): Promise<void> {
                 return null;
               }
             }
-            // If already object, return as-is
             return q;
-          }).filter((q: any) => q !== null); // Remove null entries
+          }).filter((q: any) => q !== null);
         }
 
-        // ✅ VALIDATION: Ensure pool has sufficient questions
         if (questions.length < MIN_QUESTIONS_PER_POOL) {
-          console.error(`[POOL CACHE] ❌ Pool ${poolData.pool_order} has only ${questions.length} questions (expected ${MIN_QUESTIONS_PER_POOL})`);
+          console.error(`[POOL CACHE] ❌ Pool ${poolData.pool_order} has only ${questions.length} questions`);
         } else {
           console.log(`[POOL CACHE] ✅ Pool ${poolData.pool_order} loaded: ${questions.length} questions`);
         }
 
         POOLS_MEMORY_CACHE.set(poolData.pool_order, questions);
+        
+        // Collect question IDs for translation loading
+        questions.forEach(q => allQuestionIds.add(q.id));
+      }
+
+      // Load ALL translations for ALL questions in one query (only 'en' since 'hu' is original)
+      const questionIdsArray = Array.from(allQuestionIds);
+      console.log(`[POOL CACHE] Loading translations for ${questionIdsArray.length} questions...`);
+      
+      const { data: allTranslations, error: translationsError } = await supabase
+        .from('question_translations')
+        .select('question_id, lang, question_text, answer_a, answer_b, answer_c')
+        .in('question_id', questionIdsArray)
+        .eq('lang', 'en'); // Only load English translations (Hungarian is original)
+
+      if (translationsError) {
+        console.error('[POOL CACHE] Failed to load translations:', translationsError);
+      } else if (allTranslations) {
+        console.log(`[POOL CACHE] Loaded ${allTranslations.length} translations`);
+        
+        // Build nested map: questionId -> lang -> translation
+        for (const trans of allTranslations) {
+          if (!TRANSLATIONS_CACHE.has(trans.question_id)) {
+            TRANSLATIONS_CACHE.set(trans.question_id, new Map());
+          }
+          TRANSLATIONS_CACHE.get(trans.question_id)!.set(trans.lang, trans);
+        }
       }
 
       CACHE_INITIALIZED = true;
       const elapsed = Date.now() - startTime;
-      console.log(`[POOL CACHE] ✅ All pools loaded in ${elapsed}ms. Total pools: ${POOLS_MEMORY_CACHE.size}`);
+      console.log(`[POOL CACHE] ✅ All pools + translations loaded in ${elapsed}ms. Pools: ${POOLS_MEMORY_CACHE.size}, Translations: ${TRANSLATIONS_CACHE.size}`);
     } catch (err) {
       console.error('[POOL CACHE] Initialization failed:', err);
       CACHE_INIT_PROMISE = null;
@@ -236,34 +263,15 @@ async function translateQuestions(
     return questions;
   }
 
-  const questionIds = questions.map(q => q.id);
-  
-  // Fetch translations for all questions in one query
-  const { data: translations } = await supabase
-    .from('question_translations')
-    .select('question_id, question_text, answer_a, answer_b, answer_c')
-    .in('question_id', questionIds)
-    .eq('lang', lang);
+  console.log(`[translateQuestions] Applying translations from memory cache for lang: ${lang}`);
 
-  if (!translations || translations.length === 0) {
-    // Fallback to Hungarian if translations not found
-    console.warn(`[translateQuestions] No translations found for lang: ${lang}, using Hungarian`);
-    return questions;
-  }
-
-  console.log(`[translateQuestions] Applying ${translations.length} translations for lang: ${lang}`);
-
-  // Create a map of translations by question_id
-  const translationMap = new Map<string, QuestionTranslation>(
-    (translations as QuestionTranslation[]).map((t: QuestionTranslation) => [t.question_id, t])
-  );
-
-  // CRITICAL: Apply translations to original question and answers fields
+  // CRITICAL: Apply translations from in-memory cache (instant, <1ms)
   return questions.map(q => {
-    const translation = translationMap.get(q.id);
+    const questionTranslations = TRANSLATIONS_CACHE.get(q.id);
+    const translation = questionTranslations?.get(lang);
     
     if (translation) {
-      // Apply translations to the original fields
+      // Apply translations from memory
       return {
         ...q,
         question: translation.question_text,
@@ -275,7 +283,8 @@ async function translateQuestions(
       };
     }
     
-    // No translation found - keep original Hungarian
+    // No translation found in cache - keep original Hungarian
+    console.warn(`[translateQuestions] Missing translation for question ${q.id} in lang: ${lang}`);
     return q;
   });
 }
