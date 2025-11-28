@@ -437,6 +437,11 @@ const Dashboard = () => {
     }
   };
 
+  // Don't render until critical data is loaded
+  if (profileLoading || !profile || !walletData) {
+    return null;
+  }
+
   return (
     <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
       background: 'transparent'
