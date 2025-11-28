@@ -3,10 +3,9 @@ import loadingVideo from '@/assets/loading-video.mp4';
 
 interface GameLoadingScreenProps {
   onVideoEnd: () => void;
-  onVideoStart?: () => void;
 }
 
-export const GameLoadingScreen = ({ onVideoEnd, onVideoStart }: GameLoadingScreenProps) => {
+export const GameLoadingScreen = ({ onVideoEnd }: GameLoadingScreenProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasStarted = useRef(false);
   const hasEnded = useRef(false);
@@ -20,11 +19,6 @@ export const GameLoadingScreen = ({ onVideoEnd, onVideoStart }: GameLoadingScree
 
     const handleCanPlay = () => {
       setVideoLoaded(true);
-      // Trigger question prefetch when video starts playing
-      if (onVideoStart) {
-        console.log('[GameLoadingScreen] Video starting - triggering question prefetch');
-        onVideoStart();
-      }
       // Start playing immediately without any delay
       video.play().catch((err) => {
         console.warn('[GameLoadingScreen] Autoplay failed:', err);

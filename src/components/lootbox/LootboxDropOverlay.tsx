@@ -18,19 +18,12 @@ export const LootboxDropOverlay = () => {
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [storedCount, setStoredCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
-  const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(() => {
-    try {
-      const stored = localStorage.getItem('dismissedLootboxes');
-      return stored ? new Set(JSON.parse(stored)) : new Set();
-    } catch {
-      return new Set();
-    }
-  });
+  const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
   const [countdownActive, setCountdownActive] = useState(false);
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
-  const isAuthPage = location.pathname === '/auth/login' || location.pathname === '/auth/register' || location.pathname === '/auth/choice' || location.pathname === '/';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/auth-choice';
 
   // Check user authentication
   useEffect(() => {
@@ -131,17 +124,9 @@ export const LootboxDropOverlay = () => {
     setShowDialog(false);
     setIsVisible(false);
     
-    // Mark this lootbox as dismissed and persist to localStorage
+    // Mark this lootbox as dismissed
     if (activeLootbox) {
-      setDismissedLootboxes(prev => {
-        const updated = new Set(prev).add(activeLootbox.id);
-        try {
-          localStorage.setItem('dismissedLootboxes', JSON.stringify(Array.from(updated)));
-        } catch (err) {
-          console.error('[LootboxDropOverlay] Failed to save dismissed lootboxes:', err);
-        }
-        return updated;
-      });
+      setDismissedLootboxes(prev => new Set(prev).add(activeLootbox.id));
     }
     
     refetch();

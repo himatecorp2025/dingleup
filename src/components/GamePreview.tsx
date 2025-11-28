@@ -74,9 +74,6 @@ const GamePreview = memo(() => {
   const [gameCompleted, setGameCompleted] = useState(false);
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
   const [gameInstanceId] = useState(() => crypto.randomUUID());
-  
-  // Track when intro video ends
-  const [videoEnded, setVideoEnded] = useState(false);
 
   const {
     help5050UsageCount,
@@ -172,12 +169,14 @@ const GamePreview = memo(() => {
   });
 
   const {
-    // REMOVED: showLoadingVideo, videoEnded, handleVideoEnd - instant game start
+    showLoadingVideo,
+    videoEnded,
     isGameReady,
     hasAutoStarted,
     setHasAutoStarted,
     isStarting: isStartingGame,
     startGame,
+    handleVideoEnd,
     restartGameImmediately,
     finishGame,
     resetGameState,
@@ -334,29 +333,15 @@ const GamePreview = memo(() => {
     });
   }, [navigate]);
 
-  // Auto-start intro video + data loading when profile is ready
+  // Auto-start game when profile is ready - ONCE only
+  // CRITICAL: Don't include startGame in dependencies to prevent re-triggering
   useEffect(() => {
     if (profile && !profileLoading && questions.length === 0 && gameState === 'playing' && !hasAutoStarted && !isStartingGame) {
       setHasAutoStarted(true);
-      console.log('[GamePreview] Profile ready - intro video will auto-start and trigger data loading');
+      startGame();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState]);
-
-  // Video starts → trigger question loading in parallel
-  const handleVideoStart = useCallback(() => {
-    if (!profile || isStartingGame) return;
-    
-    console.log('[GamePreview] Video playing - loading questions in background');
-    startGame().catch(error => {
-      console.error('[GamePreview] Error loading questions:', error);
-    });
-  }, [profile, isStartingGame, startGame]);
-
-  // Video ends → mark as finished
-  const handleVideoEnd = useCallback(() => {
-    console.log('[GamePreview] Video ended');
-    setVideoEnded(true);
-  }, []);
 
   // Track game funnel milestones + PREFETCH next game at question 10
   useEffect(() => {
@@ -457,10 +442,10 @@ const GamePreview = memo(() => {
     trackMilestone();
   }, [currentQuestionIndex, userId, isGameReady, correctAnswers, profile?.preferred_language]);
 
-  // Background detection - exit game if app goes to background (instant check, no video delay)
+  // Background detection - exit game if app goes to background (only after video ended)
   useEffect(() => {
-    // Activate background detection immediately when game is ready
-    if (gameState !== 'playing' || !isGameReady) return;
+    // Do not activate background detection while the intro/loading video is playing
+    if (gameState !== 'playing' || !videoEnded) return;
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -482,7 +467,7 @@ const GamePreview = memo(() => {
       window.removeEventListener('blur', handleBlur);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState, isGameReady]); // t and navigate are stable refs
+  }, [gameState, videoEnded]); // t and navigate are stable refs
 
   // Check for in-game payment success
   useEffect(() => {
@@ -545,36 +530,10 @@ const GamePreview = memo(() => {
     finishGame();
   };
 
-  // RENDER LOGIC: Decide what to show based on loading states
-  
   if (profileLoading || !userId || !profile) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
         <div className="relative z-10 text-white">{t('game.loading')}</div>
-      </div>
-    );
-  }
-
-  // Show intro video until video ends AND game is ready
-  const shouldShowIntroVideo = !videoEnded;
-  const shouldShowLoadingOverlay = videoEnded && (!isGameReady || questions.length === 0);
-  
-  if (shouldShowIntroVideo) {
-    return (
-      <GameLoadingScreen 
-        onVideoStart={handleVideoStart}
-        onVideoEnd={handleVideoEnd}
-      />
-    );
-  }
-  
-  if (shouldShowLoadingOverlay) {
-    return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-[#1a0a4e] via-[#2d1b69] to-[#1a0a4e]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mx-auto mb-4" />
-          <div className="text-white text-xl font-semibold">{t('game.loading')}</div>
-        </div>
       </div>
     );
   }
@@ -594,7 +553,16 @@ const GamePreview = memo(() => {
     );
   }
 
-  // REMOVED: Loading video screen - instant game start, no video delay
+  // Show loading video IMMEDIATELY when game start begins (even before backend completes)
+  // Keep video visible until BOTH video ends AND questions are ready
+  // For seamless restart: never show any loading screen
+  if (showLoadingVideo && (isStartingGame || !videoEnded)) {
+    return (
+      <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
+        <GameLoadingScreen onVideoEnd={handleVideoEnd} />
+      </div>
+    );
+  }
 
   if (gameState === 'playing') {
     const currentQuestion = questions[currentQuestionIndex];

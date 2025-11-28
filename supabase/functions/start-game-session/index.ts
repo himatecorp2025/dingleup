@@ -60,24 +60,25 @@ serve(async (req) => {
     console.log(`[start-game-session] User ${user.id} starting game`);
 
     // =====================================================
-    // OPTIMIZATION: Parallel fetches for user profile and pool session
+    // CRITICAL: USE GLOBAL POOL SYSTEM + MULTILINGUAL QUESTIONS
     // =====================================================
     
-    const [userProfileResult, poolSessionResult] = await Promise.all([
-      supabaseClient
-        .from('profiles')
-        .select('preferred_language')
-        .eq('id', user.id)
-        .single(),
-      supabaseClient
-        .from('game_session_pools')
-        .select('last_pool_order')
-        .eq('user_id', user.id)
-        .single()
-    ]);
+    // Get user's last pool order AND language preference
+    const { data: userProfile } = await supabaseClient
+      .from('profiles')
+      .select('preferred_language')
+      .eq('id', user.id)
+      .single();
 
-    const userLang = userProfileResult.data?.preferred_language || 'en';
-    const lastPoolOrder = poolSessionResult.data?.last_pool_order || null;
+    const userLang = userProfile?.preferred_language || 'en';
+    
+    const { data: poolSession } = await supabaseClient
+      .from('game_session_pools')
+      .select('last_pool_order')
+      .eq('user_id', user.id)
+      .single();
+
+    const lastPoolOrder = poolSession?.last_pool_order || null;
     
     console.log(`[start-game-session] User ${user.id} last pool: ${lastPoolOrder}, lang: ${userLang}`);
 
@@ -112,9 +113,9 @@ serve(async (req) => {
 
     console.log(`[start-game-session] Got ${poolQuestions.length} questions from pool ${used_pool_order || 'fallback'}`);
 
-    // OPTIMIZATION: Update user's pool session in background (non-blocking)
+    // Update user's pool session (if not fallback)
     if (used_pool_order !== null) {
-      supabaseClient
+      await supabaseClient
         .from('game_session_pools')
         .upsert({
           user_id: user.id,
@@ -122,14 +123,9 @@ serve(async (req) => {
           updated_at: new Date().toISOString(),
         }, {
           onConflict: 'user_id',
-        })
-        .then(({ error }) => {
-          if (error) {
-            console.error('[start-game-session] Background pool update error:', error);
-          } else {
-            console.log(`[start-game-session] Updated user pool session in background: pool ${used_pool_order}`);
-          }
         });
+      
+      console.log(`[start-game-session] Updated user pool session: pool ${used_pool_order}`);
     }
 
     // Questions are already properly formatted from pool
@@ -153,20 +149,20 @@ serve(async (req) => {
       expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
     };
 
-    // OPTIMIZATION: Store session in database in background (non-blocking)
-    // This saves ~20-50ms by not waiting for database write
-    const sessionInsertPromise = supabaseClient
+    // Store session in database
+    const { error: insertError } = await supabaseClient
       .from('game_sessions')
-      .insert(sessionData)
-      .then(({ error }) => {
-        if (error) {
-          console.error('[start-game-session] Background insert error:', error);
-        } else {
-          console.log(`[start-game-session] Session ${sessionId} created in background`);
-        }
-      });
+      .insert(sessionData);
 
-    console.log(`[start-game-session] Returning ${clientQuestions.length} questions immediately (session insert in background)`);
+    if (insertError) {
+      console.error('[start-game-session] Insert error:', insertError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to create game session' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`[start-game-session] Session ${sessionId} created with pool ${used_pool_order || 'fallback'} for user ${user.id}`);
 
     return new Response(
       JSON.stringify({ 
