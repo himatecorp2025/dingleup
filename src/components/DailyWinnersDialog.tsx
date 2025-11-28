@@ -390,12 +390,84 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                     {topPlayers.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center -translate-y-[10%]">
                         <div className="text-center text-white flex flex-col items-center gap-4">
-                          {/* Sad emoji SVG */}
-                          <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="50" cy="50" r="45" fill="#FFA726" stroke="#FF6F00" strokeWidth="2"/>
-                            <circle cx="35" cy="40" r="5" fill="#333"/>
-                            <circle cx="65" cy="40" r="5" fill="#333"/>
-                            <path d="M 30 70 Q 50 60 70 70" stroke="#333" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                          {/* High-quality 3D Sad Emoji SVG */}
+                          <svg width="100" height="100" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                              {/* Main face gradient - orange 3D sphere */}
+                              <radialGradient id="faceGradient" cx="35%" cy="35%">
+                                <stop offset="0%" stopColor="#FFD54F" />
+                                <stop offset="40%" stopColor="#FFB300" />
+                                <stop offset="70%" stopColor="#FF8F00" />
+                                <stop offset="100%" stopColor="#E65100" />
+                              </radialGradient>
+                              
+                              {/* Shadow gradient */}
+                              <radialGradient id="shadowGradient" cx="50%" cy="50%">
+                                <stop offset="0%" stopColor="#000000" stopOpacity="0.3" />
+                                <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+                              </radialGradient>
+                              
+                              {/* Eye gradient */}
+                              <radialGradient id="eyeGradient" cx="30%" cy="30%">
+                                <stop offset="0%" stopColor="#4A4A4A" />
+                                <stop offset="100%" stopColor="#1A1A1A" />
+                              </radialGradient>
+                              
+                              {/* Mouth shadow */}
+                              <linearGradient id="mouthShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#8B4513" stopOpacity="0.4" />
+                                <stop offset="100%" stopColor="#8B4513" stopOpacity="0" />
+                              </linearGradient>
+                              
+                              {/* Highlight shine */}
+                              <radialGradient id="highlight" cx="30%" cy="30%">
+                                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.8" />
+                                <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.3" />
+                                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                              </radialGradient>
+                            </defs>
+                            
+                            {/* Drop shadow */}
+                            <ellipse cx="60" cy="105" rx="35" ry="8" fill="url(#shadowGradient)" />
+                            
+                            {/* Main face circle with 3D gradient */}
+                            <circle cx="60" cy="60" r="48" fill="url(#faceGradient)" />
+                            
+                            {/* Outer rim for depth */}
+                            <circle cx="60" cy="60" r="48" fill="none" stroke="#E65100" strokeWidth="1.5" opacity="0.6" />
+                            
+                            {/* Highlight shine on top-left */}
+                            <ellipse cx="45" cy="40" rx="18" ry="14" fill="url(#highlight)" opacity="0.5" />
+                            
+                            {/* Left eye with 3D effect */}
+                            <ellipse cx="42" cy="50" rx="7" ry="8" fill="url(#eyeGradient)" />
+                            <ellipse cx="44" cy="48" rx="2" ry="2.5" fill="#FFFFFF" opacity="0.6" />
+                            
+                            {/* Right eye with 3D effect */}
+                            <ellipse cx="78" cy="50" rx="7" ry="8" fill="url(#eyeGradient)" />
+                            <ellipse cx="80" cy="48" rx="2" ry="2.5" fill="#FFFFFF" opacity="0.6" />
+                            
+                            {/* Sad mouth - downward curve with depth */}
+                            <path 
+                              d="M 35 78 Q 60 68 85 78" 
+                              stroke="#6D4C41" 
+                              strokeWidth="4.5" 
+                              strokeLinecap="round" 
+                              fill="none"
+                              opacity="0.9"
+                            />
+                            
+                            {/* Mouth inner shadow for depth */}
+                            <path 
+                              d="M 38 77 Q 60 69 82 77" 
+                              stroke="url(#mouthShadow)" 
+                              strokeWidth="3" 
+                              strokeLinecap="round" 
+                              fill="none"
+                            />
+                            
+                            {/* Bottom shadow for spherical depth */}
+                            <ellipse cx="60" cy="90" rx="40" ry="12" fill="#E65100" opacity="0.2" />
                           </svg>
                           
                           <div className="space-y-2 mb-6">
