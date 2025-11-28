@@ -59,6 +59,17 @@ serve(async (req) => {
 
     console.log(`[start-game-session] User ${user.id} starting game`);
 
+    // Get lang parameter from request body (if provided, otherwise use profile preference)
+    let requestBody: { lang?: string } = {};
+    try {
+      const bodyText = await req.text();
+      if (bodyText) {
+        requestBody = JSON.parse(bodyText);
+      }
+    } catch (e) {
+      console.warn('[start-game-session] Could not parse request body, using profile preference');
+    }
+
     // =====================================================
     // CRITICAL: USE GLOBAL POOL SYSTEM + MULTILINGUAL QUESTIONS
     // =====================================================
@@ -70,7 +81,8 @@ serve(async (req) => {
       .eq('id', user.id)
       .single();
 
-    const userLang = userProfile?.preferred_language || 'en';
+    // PRIORITY: Use lang from request body if provided, otherwise use profile preference
+    const userLang = requestBody.lang || userProfile?.preferred_language || 'en';
     
     const { data: poolSession } = await supabaseClient
       .from('game_session_pools')

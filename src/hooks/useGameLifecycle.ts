@@ -247,8 +247,11 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
         creditStartReward(),
         (async () => {
           try {
+            // CRITICAL: Always send lang parameter to backend for correct question language
+            const userLang = profile.preferred_language || 'en';
             const { data, error } = await supabase.functions.invoke('start-game-session', {
-              headers: { Authorization: `Bearer ${authSession.access_token}` }
+              headers: { Authorization: `Bearer ${authSession.access_token}` },
+              body: { lang: userLang }
             });
 
             if (error) throw error;
@@ -257,9 +260,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
               throw new Error('No questions received from backend');
             }
 
-            // CRITICAL: Questions are already translated by backend based on user's preferred_language
-            // No need for additional translation logic here
-            const userLang = profile.preferred_language || 'en';
+            // CRITICAL: Questions are already translated by backend based on lang parameter
             console.log(`[useGameLifecycle] Questions received in language: ${userLang}`);
 
             const shuffledWithVariety = shuffleAnswers(data.questions);
