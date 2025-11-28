@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { LangCode, TranslationMap, I18nContextValue } from './types';
 import { VALID_LANGUAGES, DEFAULT_LANG, SOURCE_LANG, STORAGE_KEY } from './constants';
@@ -23,6 +24,7 @@ interface CachedTranslations {
 }
 
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
+  const queryClient = useQueryClient();
   const [lang, setLangState] = useState<LangCode>(DEFAULT_LANG);
   const [translations, setTranslations] = useState<TranslationMap>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -203,6 +205,8 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
     }
 
     try {
+      console.log(`[I18n] Language change initiated: ${lang} -> ${newLang}`);
+      
       // Update state and localStorage immediately
       setLangState(newLang);
       localStorage.setItem(STORAGE_KEY, newLang);
@@ -227,6 +231,22 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         setIsLoading(false);
       }
 
+      // CRITICAL: Invalidate all language-dependent queries
+      // This forces React Query to refetch all cached data with the new language
+      console.log('[I18n] Invalidating language-dependent query cache...');
+      await queryClient.invalidateQueries({ 
+        predicate: (query) => {
+          // Invalidate queries that might contain language-dependent data
+          const key = query.queryKey[0] as string;
+          return key === 'user-game-profile' || 
+                 key === 'profile' || 
+                 key === 'wallet' ||
+                 key === 'questions' ||
+                 key === 'leaderboard';
+        }
+      });
+      console.log('[I18n] Query cache invalidated');
+
       // Update database (await to ensure consistency)
       if (!skipDbUpdate) {
         const { data: { user } } = await supabase.auth.getUser();
@@ -235,8 +255,11 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
             .from('profiles')
             .update({ preferred_language: newLang })
             .eq('id', user.id);
+          console.log(`[I18n] Database updated with preferred_language: ${newLang}`);
         }
       }
+      
+      console.log(`[I18n] ✓ Language change complete: ${newLang}`);
     } catch (error) {
       console.error('[I18n] Failed to change language:', error);
       setIsLoading(false);

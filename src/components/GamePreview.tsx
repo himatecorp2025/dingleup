@@ -445,12 +445,19 @@ const GamePreview = memo(() => {
     trackMilestone();
   }, [currentQuestionIndex, userId, isGameReady, correctAnswers, profile?.preferred_language]);
 
-  // Language change detection - reload questions when user changes language during game
+  // Language change detection - reload questions when user changes language
+  // This works both during game AND when not playing (e.g., on Dashboard)
   useEffect(() => {
     const reloadQuestionsForLanguage = async () => {
-      if (!userId || !isGameReady || questions.length === 0 || !lang) return;
+      // CRITICAL: Only reload if user is authenticated and language is set
+      if (!userId || !lang) return;
       
-      // Check if current questions match the current language by fetching them
+      // If game is not ready yet (initial load), let startGame handle it
+      if (!isGameReady) return;
+      
+      // If no questions loaded, nothing to reload
+      if (questions.length === 0) return;
+      
       console.log(`[GamePreview] Language changed to ${lang}, reloading questions...`);
       
       try {
