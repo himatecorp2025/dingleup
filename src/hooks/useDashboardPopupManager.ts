@@ -123,6 +123,9 @@ export const useDashboardPopupManager = (params: PopupManagerParams) => {
     // If Welcome Bonus can be claimed but not completed yet, wait
     if (welcomeBonus.canClaim && !popupState.welcomeBonusCompleted) return;
     
+    // CRITICAL: Do NOT show if already completed today (prevents re-appearing after claim)
+    if (popupState.dailyGiftCompleted) return;
+    
     // Only show if can claim and not already showing
     if (dailyGift.canClaim && !popupState.showDailyGift) {
       const timer = setTimeout(() => {
