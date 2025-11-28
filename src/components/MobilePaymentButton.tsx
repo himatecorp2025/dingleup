@@ -23,7 +23,7 @@ import { Loader2 } from 'lucide-react';
  * />
  */
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+const stripePromise = loadStripe('pk_test_51SKlmJKKw7HPC0ZDrqmnAspTdgyOR4leFEO0DnOhSnBxcoLr4erjomPcjYJ3Fa3K6zoX64IyN8deqyzELpfpIYlx001m5g7ctj');
 
 interface MobilePaymentButtonProps {
   productType: 'lootbox' | 'speed_booster' | 'premium_booster' | 'instant_rescue';
