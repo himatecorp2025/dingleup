@@ -27,6 +27,13 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
       if (profileError) throw profileError;
 
+      // Admin users don't see Daily Gift popup
+      if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
+        setCanClaim(false);
+        setShowPopup(false);
+        return;
+      }
+
       // Check session storage for today's dismissal/claim
       const today = new Date().toISOString().split('T')[0];
       const dismissed = sessionStorage.getItem(`${DAILY_GIFT_SESSION_KEY}${today}`);
