@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useWalletQuery } from '@/hooks/queries/useWalletQuery';
 import { LootboxRewardDisplay } from '@/components/LootboxRewardDisplay';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useMobilePayment } from '@/hooks/useMobilePayment';
 
 interface StoredLootbox {
   id: string;
@@ -27,6 +28,7 @@ const Gifts = () => {
   const [openingId, setOpeningId] = useState<string | null>(null);
   const [rewardDisplay, setRewardDisplay] = useState<{ gold: number; life: number } | null>(null);
   const { walletData, refetchWallet } = useWalletQuery(userId);
+  const { startPayment, isProcessing } = useMobilePayment();
 
   // Get user session
   useEffect(() => {
@@ -169,12 +171,18 @@ const Gifts = () => {
   };
 
   const packages = [
-    { boxes: 1, price: '$1.99', priceId: 'price_1SY9TpKKw7HPC0ZDjtahxbNo', rewardKey: 'gifts.rewards_1_box' },
-    { boxes: 3, price: '$4.99', priceId: 'price_1SY9U8KKw7HPC0ZDj6AXLJdN', rewardKey: 'gifts.rewards_3_boxes' },
-    { boxes: 5, price: '$9.99', priceId: 'price_1SY9UbKKw7HPC0ZDGHEJq6Tg', rewardKey: 'gifts.rewards_5_boxes' },
-    { boxes: 10, price: '$17.99', priceId: 'price_1SY9V1KKw7HPC0ZDCyRUtwoK', rewardKey: 'gifts.rewards_10_boxes' }
+    { boxes: 1, price: 199, displayName: '1 Ajándékdoboz', rewardKey: 'gifts.rewards_1_box' },
+    { boxes: 3, price: 499, displayName: '3 Ajándékdoboz', rewardKey: 'gifts.rewards_3_boxes' },
+    { boxes: 5, price: 999, displayName: '5 Ajándékdoboz', rewardKey: 'gifts.rewards_5_boxes' },
+    { boxes: 10, price: 1799, displayName: '10 Ajándékdoboz', rewardKey: 'gifts.rewards_10_boxes' }
   ];
 
+  /**
+   * NATÍV MOBILFIZETÉS (Apple Pay / Google Pay)
+   * 
+   * Közvetlen gombnyomásra megjelenik a natív fizetési sheet.
+   * Fallback: ha natív fizetés nem elérhető, Stripe kártyás form.
+   */
   const handlePurchaseRaw = async (pkg: typeof packages[0]) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -183,34 +191,33 @@ const Gifts = () => {
         return;
       }
 
-      // Call Stripe payment edge function
-      const { data, error } = await supabase.functions.invoke('create-lootbox-payment', {
-        body: { 
-          priceId: pkg.priceId,
-          boxes: pkg.boxes 
+      // Natív mobilfizetés indítása
+      await startPayment({
+        productType: 'lootbox',
+        amount: pkg.price, // cents (199 = $1.99)
+        currency: 'usd',
+        displayName: pkg.displayName,
+        metadata: { boxes: pkg.boxes.toString() },
+        onSuccess: async () => {
+          // Sikeres fizetés után lootbox lista frissítése
+          const { data: updatedBoxes } = await supabase
+            .from('lootbox_instances')
+            .select('*')
+            .eq('user_id', userId!)
+            .eq('status', 'stored')
+            .order('created_at', { ascending: false });
+
+          if (updatedBoxes) {
+            setStoredLootboxes(updatedBoxes);
+          }
+          
+          await refetchWallet();
         },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
+        onError: (error) => {
+          console.error('[Gifts] Payment error:', error);
+          toast.error(`${t('errors.unknown')}: ${error}`);
         }
       });
-
-      if (error) {
-        console.error('[Gifts] Payment error:', error);
-        toast.error(t('errors.unknown'));
-        return;
-      }
-
-      if (data?.url && data?.sessionId) {
-        // Store session ID for mobile WebView fallback polling
-        localStorage.setItem('pending_lootbox_session', JSON.stringify({
-          sessionId: data.sessionId,
-          timestamp: Date.now()
-        }));
-
-        // PWA/Mobile: use window.location.href instead of window.open
-        // This works better in WebView/PWA environments
-        window.location.href = data.url;
-      }
     } catch (err) {
       console.error('[Gifts] Unexpected payment error:', err);
       toast.error(t('errors.unknown'));
