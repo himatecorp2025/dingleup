@@ -747,7 +747,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 <div
                                   key={player.user_id}
                                   className="flex flex-col items-center relative"
-                                  style={{ width: 'calc(28.75% - 6px)' }}
+                                  style={{ width: 'calc(25% - 6px)' }}
                                 >
                                   <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
                                     {/* Profile Picture with 3D Royal Blue Border - Same structure as TOP 3 */}
