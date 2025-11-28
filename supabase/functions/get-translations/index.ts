@@ -81,10 +81,12 @@ serve(async (req) => {
       const englishText = row.en as string | null;
       const hungarianText = row.hu;
       
-      // Fallback chain: target language → English → Hungarian → key
-      if (targetLangText && targetLangText.trim() !== '') {
+      // CRITICAL: Check if translation exists (even if empty string)
+      // Empty string is a valid translation (intentionally blank), not missing
+      // Only use fallback when value is NULL/undefined
+      if (targetLangText !== null && targetLangText !== undefined) {
         translationMap[key] = targetLangText;
-      } else if (englishText && englishText.trim() !== '') {
+      } else if (englishText !== null && englishText !== undefined) {
         translationMap[key] = englishText;
       } else {
         translationMap[key] = hungarianText || key;
