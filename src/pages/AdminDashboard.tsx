@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, DollarSign, TrendingUp, Search, AlertTriangle, Activity, Target, Zap, Map as MapIcon } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, Search, AlertTriangle, Activity, Target, Zap, Map as MapIcon, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,10 +9,11 @@ import { UserGrowthChart } from '@/components/UserGrowthChart';
 import { AdminReportActionDialog } from '@/components/AdminReportActionDialog';
 import { QuestionTranslationManager } from '@/components/QuestionTranslationManager';
 import { TranslationSeeder } from '@/components/TranslationSeeder';
+import { DownloadLinksManager } from '@/components/admin/DownloadLinksManager';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useI18n } from '@/i18n';
 
-type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'invitations' | 'reports' | 'popular-content';
+type MenuTab = 'dashboard' | 'users' | 'revenue' | 'payouts' | 'invitations' | 'reports' | 'popular-content' | 'download-links';
 type ReportsSubTab = 'development' | 'support';
 
 const AdminDashboard = () => {
@@ -280,6 +281,17 @@ const AdminDashboard = () => {
             </div>
             <p className="text-xl lg:text-3xl font-bold text-white">${totalRevenue}</p>
             <p className="text-white/50 text-xs mt-1">{t('admin.dashboard.revenue_source')}</p>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('download-links')}
+            className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 text-left hover:bg-white/10 hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300"
+          >
+            <div className="flex items-center justify-between mb-3 lg:mb-4">
+              <h3 className="text-white/70 text-xs lg:text-sm">{t('admin.dashboard.download_links')}</h3>
+              <Download className="w-6 h-6 lg:w-8 lg:h-8 text-green-400 bg-green-500/20 p-1.5 lg:p-2 rounded-lg" />
+            </div>
+            <p className="text-sm text-white/70">{t('admin.dashboard.download_links_desc')}</p>
           </button>
 
         </div>
@@ -778,6 +790,10 @@ const AdminDashboard = () => {
               )}
             </div>
           </div>
+        )}
+
+        {activeTab === 'download-links' && (
+          <DownloadLinksManager />
         )}
 
       </div>
