@@ -2010,6 +2010,7 @@ export type Database = {
           country_code: string
           created_at: string | null
           daily_gift_last_claimed: string | null
+          daily_gift_last_seen: string | null
           daily_gift_streak: number | null
           device_id: string | null
           email: string | null
@@ -2055,6 +2056,7 @@ export type Database = {
           country_code?: string
           created_at?: string | null
           daily_gift_last_claimed?: string | null
+          daily_gift_last_seen?: string | null
           daily_gift_streak?: number | null
           device_id?: string | null
           email?: string | null
@@ -2100,6 +2102,7 @@ export type Database = {
           country_code?: string
           created_at?: string | null
           daily_gift_last_claimed?: string | null
+          daily_gift_last_seen?: string | null
           daily_gift_streak?: number | null
           device_id?: string | null
           email?: string | null

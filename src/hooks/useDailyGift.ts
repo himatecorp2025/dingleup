@@ -3,10 +3,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useI18n } from '@/i18n';
 
-const DAILY_GIFT_REWARDS = [50, 75, 110, 160, 220, 300, 500];
-
-const DAILY_GIFT_SESSION_KEY = 'daily_gift_dismissed_';
-
 export const useDailyGift = (userId: string | undefined, isPremium: boolean = false) => {
   const { t } = useI18n();
   const [canClaim, setCanClaim] = useState(false);
@@ -19,58 +15,26 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
 
     try {
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('username, daily_gift_streak, daily_gift_last_claimed')
-        .eq('id', userId)
-        .single();
+      // Call backend edge function to get status (timezone-aware)
+      const { data, error } = await supabase.functions.invoke('get-daily-gift-status');
 
-      if (profileError) throw profileError;
-
-      // Admin users don't see Daily Gift popup
-      if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
-        setCanClaim(false);
-        setShowPopup(false);
+      if (error) {
+        console.error('Daily gift status error:', error);
         return;
       }
 
-      // CRITICAL FIX: Use local timezone date, not UTC date
-      // toLocaleDateString('en-CA') returns YYYY-MM-DD in user's local timezone
-      const today = new Date().toLocaleDateString('en-CA');
-      const dismissed = sessionStorage.getItem(`${DAILY_GIFT_SESSION_KEY}${today}`);
-      
-      // If already dismissed or claimed today, don't show
-      if (dismissed) {
+      if (data.canShow) {
+        setWeeklyEntryCount(data.streak ?? 0);
+        setNextReward(data.nextReward ?? 0);
+        setCanClaim(true);
+        setShowPopup(true);
+        trackEvent('popup_impression', 'daily');
+      } else {
         setCanClaim(false);
         setShowPopup(false);
-        return;
       }
-
-      // Check if already claimed today (compare dates in local timezone)
-      const lastClaimed = profile?.daily_gift_last_claimed;
-      if (lastClaimed) {
-        const lastClaimedDate = new Date(lastClaimed).toLocaleDateString('en-CA');
-        if (lastClaimedDate === today) {
-          // Already claimed today
-          setCanClaim(false);
-          setShowPopup(false);
-          return;
-        }
-      }
-
-      const currentStreak = profile?.daily_gift_streak ?? 0;
-      
-      // Calculate reward based on cycle position (0-6) - matches edge function logic
-      const cyclePosition = currentStreak % 7;
-      const rewardCoins = DAILY_GIFT_REWARDS[cyclePosition];
-      
-      setWeeklyEntryCount(currentStreak);
-      setNextReward(rewardCoins);
-      setCanClaim(true);
-      setShowPopup(true);
-      trackEvent('popup_impression', 'daily');
     } catch (error) {
-      // Silent fail
+      console.error('Daily gift check error:', error);
     }
   };
 
@@ -87,7 +51,6 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     setClaiming(true);
     
     try {
-      // Call RPC function
       const { data, error } = await supabase.rpc('claim_daily_gift');
       
       if (error) {
@@ -104,29 +67,21 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       const result = data as { success: boolean; grantedCoins: number; walletBalance: number; streak: number; error?: string };
       
       if (result.success) {
-        // Track claim BEFORE showing success message
         trackEvent('daily_gift_claimed', 'daily', result.grantedCoins.toString());
         
         setCanClaim(false);
         setShowPopup(false);
         
-        // Mark as dismissed in session storage (use local timezone date)
-        const today = new Date().toLocaleDateString('en-CA');
-        sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'true');
-        
-        // Show success toast with actual amounts
         toast({
           title: t('daily.claimed_title'),
           description: `+${result.grantedCoins} ${t('daily.gold')}`,
           duration: 3000,
         });
         
-        // Refetch wallet to update UI immediately
         if (refetchWallet) await refetchWallet();
         
         return true;
       } else {
-        // Translate error codes from backend to i18n keys
         let errorKey = 'daily.claim_error';
         if (result.error === 'NOT_LOGGED_IN') {
           errorKey = 'daily.error.not_logged_in';
@@ -164,14 +119,15 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
     
     try {
-      // Mark as dismissed for today (use local timezone date)
-      const today = new Date().toLocaleDateString('en-CA');
-      sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'dismissed');
+      // Call backend to mark as dismissed (timezone-aware)
+      const { error } = await supabase.functions.invoke('dismiss-daily-gift');
       
-      // Close popup
+      if (error) {
+        console.error('Dismiss error:', error);
+      }
+      
       setShowPopup(false);
       
-      // Track analytics
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'popup_dismissed', {
           event_category: 'daily_gift',
@@ -179,7 +135,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         });
       }
     } catch (error) {
-      // Even on error, close popup
+      console.error('Dismiss catch error:', error);
       setShowPopup(false);
     }
   };
