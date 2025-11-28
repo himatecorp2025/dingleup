@@ -88,12 +88,23 @@ serve(async (req) => {
     // Calculate yesterday's date using user's timezone (not UTC!)
     const userTimezone = userProfile.user_timezone || 'Europe/Budapest';
     
-    // Get current time in user's timezone
-    const nowInUserTz = new Date().toLocaleString('en-US', { timeZone: userTimezone });
-    const userNow = new Date(nowInUserTz);
+    // Get current date in user's timezone
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: userTimezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    const parts = formatter.formatToParts(now);
+    const year = parts.find((p: any) => p.type === 'year')?.value;
+    const month = parts.find((p: any) => p.type === 'month')?.value;
+    const day = parts.find((p: any) => p.type === 'day')?.value;
+    const todayStr = `${year}-${month}-${day}`;
     
     // Calculate yesterday
-    const yesterday = new Date(userNow);
+    const todayDate = new Date(`${todayStr}T00:00:00`);
+    const yesterday = new Date(todayDate);
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayDate = yesterday.toISOString().split('T')[0];
 

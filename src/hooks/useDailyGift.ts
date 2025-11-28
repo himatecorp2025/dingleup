@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useI18n } from '@/i18n';
-import { formatInTimeZone } from 'date-fns-tz';
 
 const DAILY_GIFT_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 
@@ -46,7 +45,19 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       // Get today's date in user's timezone (not UTC!)
       const userTimezone = profile?.user_timezone || 'Europe/Budapest';
       const now = new Date();
-      const today = formatInTimeZone(now, userTimezone, 'yyyy-MM-dd');
+      
+      // Get date components in user's timezone
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: userTimezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+      const parts = formatter.formatToParts(now);
+      const year = parts.find(p => p.type === 'year')?.value;
+      const month = parts.find(p => p.type === 'month')?.value;
+      const day = parts.find(p => p.type === 'day')?.value;
+      const today = `${year}-${month}-${day}`;
       
       console.log('[DAILY-GIFT] Timezone calculations:', {
         userTimezone,
@@ -72,16 +83,27 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       // Check if already claimed today (compare in user's timezone)
       const lastClaimed = profile?.daily_gift_last_claimed;
       if (lastClaimed) {
-        const lastClaimedDate = formatInTimeZone(new Date(lastClaimed), userTimezone, 'yyyy-MM-dd');
+        const lastClaimedDate = new Date(lastClaimed);
+        const formatter = new Intl.DateTimeFormat('en-CA', {
+          timeZone: userTimezone,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        });
+        const parts = formatter.formatToParts(lastClaimedDate);
+        const year = parts.find(p => p.type === 'year')?.value;
+        const month = parts.find(p => p.type === 'month')?.value;
+        const day = parts.find(p => p.type === 'day')?.value;
+        const lastClaimedDateStr = `${year}-${month}-${day}`;
         
         console.log('[DAILY-GIFT] Last claimed check:', {
           lastClaimedUTC: lastClaimed,
-          lastClaimedDate,
+          lastClaimedDate: lastClaimedDateStr,
           today,
-          matches: lastClaimedDate === today,
+          matches: lastClaimedDateStr === today,
         });
         
-        if (lastClaimedDate === today) {
+        if (lastClaimedDateStr === today) {
           console.log('[DAILY-GIFT] Already claimed today in database');
           setCanClaim(false);
           setShowPopup(false);
@@ -158,7 +180,18 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
           .single();
         
         const userTimezone = profile?.user_timezone || 'Europe/Budapest';
-        const today = formatInTimeZone(new Date(), userTimezone, 'yyyy-MM-dd');
+        const now = new Date();
+        const formatter = new Intl.DateTimeFormat('en-CA', {
+          timeZone: userTimezone,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        });
+        const parts = formatter.formatToParts(now);
+        const year = parts.find(p => p.type === 'year')?.value;
+        const month = parts.find(p => p.type === 'month')?.value;
+        const day = parts.find(p => p.type === 'day')?.value;
+        const today = `${year}-${month}-${day}`;
         
         // Mark as dismissed in session storage
         sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'true');
@@ -221,7 +254,18 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         .single();
       
       const userTimezone = profile?.user_timezone || 'Europe/Budapest';
-      const today = formatInTimeZone(new Date(), userTimezone, 'yyyy-MM-dd');
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: userTimezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+      const parts = formatter.formatToParts(now);
+      const year = parts.find(p => p.type === 'year')?.value;
+      const month = parts.find(p => p.type === 'month')?.value;
+      const day = parts.find(p => p.type === 'day')?.value;
+      const today = `${year}-${month}-${day}`;
       
       // Mark as dismissed for today
       sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'dismissed');
