@@ -94,7 +94,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         toast({
           title: t('errors.error_title'),
           description: errorMsg,
-          variant: 'destructive'
+          variant: 'destructive',
+          duration: 4000,
         });
         return false;
       }
@@ -116,6 +117,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         toast({
           title: t('daily.claimed_title'),
           description: `+${result.grantedCoins} ${t('daily.gold')}`,
+          duration: 3000,
         });
         
         // Refetch wallet to update UI immediately
@@ -138,7 +140,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         toast({
           title: t('errors.error_title'),
           description: t(errorKey),
-          variant: 'destructive'
+          variant: 'destructive',
+          duration: 4000,
         });
         return false;
       }
@@ -147,7 +150,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       toast({
         title: t('errors.error_title'),
         description: errorMsg,
-        variant: 'destructive'
+        variant: 'destructive',
+        duration: 4000,
       });
       return false;
     } finally {

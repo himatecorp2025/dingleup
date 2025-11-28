@@ -65,6 +65,7 @@ const LoginNew = () => {
           title: t('auth.login.error_title'),
           description: loginData?.error || t('auth.login.errorLoginFailed'),
           variant: "destructive",
+          duration: 4000,
         });
         return;
       }
@@ -74,6 +75,7 @@ const LoginNew = () => {
           title: t('auth.login.error_title'),
           description: t('auth.login.errorLoginUnsuccessful'),
           variant: "destructive",
+          duration: 4000,
         });
         return;
       }
@@ -97,20 +99,17 @@ const LoginNew = () => {
           title: t('auth.login.error_title'),
           description: t('auth.login.errorInvalidCredentials'),
           variant: "destructive",
+          duration: 4000,
         });
         return;
       }
 
-      const loginToast = toast({
+      toast({
         title: t('auth.login.success_title'),
         description: t('auth.login.success_description'),
         className: "bg-gradient-to-r from-green-500/90 to-emerald-500/90 border-green-400/50 text-white shadow-2xl shadow-green-500/50",
+        duration: 3000,
       });
-      
-      // Auto-dismiss after 3 seconds
-      setTimeout(() => {
-        loginToast.dismiss();
-      }, 3000);
       
       navigate("/dashboard");
     } catch (error) {
@@ -128,6 +127,7 @@ const LoginNew = () => {
           title: t('auth.login.error_title'),
           description: t('auth.login.errorUnexpected'),
           variant: "destructive",
+          duration: 4000,
         });
       }
     } finally {

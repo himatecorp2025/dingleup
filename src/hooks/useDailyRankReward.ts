@@ -106,7 +106,8 @@ export const useDailyRankReward = (userId: string | undefined) => {
         toast({
           title: t('rank_reward.claim_error_title'),
           description: t('rank_reward.claim_error_desc'),
-          variant: 'destructive'
+          variant: 'destructive',
+          duration: 4000,
         });
         return;
       }
@@ -123,13 +124,15 @@ export const useDailyRankReward = (userId: string | undefined) => {
         description: t('rank_reward.claim_success_desc')
           .replace('{gold}', data.goldCredited.toString())
           .replace('{lives}', data.livesCredited.toString()),
+        duration: 3000,
       });
     } catch (error) {
       console.error('[RANK-REWARD] Exception claiming reward:', error);
       toast({
         title: t('rank_reward.claim_error_title'),
         description: t('rank_reward.claim_exception_desc'),
-        variant: 'destructive'
+        variant: 'destructive',
+        duration: 4000,
       });
     } finally {
       setIsClaiming(false);
