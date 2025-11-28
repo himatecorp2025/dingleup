@@ -23,7 +23,7 @@ export const LootboxDecisionDialog = ({
   storedCount,
   onSuccess
 }: LootboxDecisionDialogProps) => {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [loading, setLoading] = useState(false);
 
   const OPEN_COST = 150;
@@ -178,7 +178,14 @@ export const LootboxDecisionDialog = ({
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                 ) : (
-                  <span className="text-base">{t('lootbox.open_now')}</span>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-base leading-tight">
+                      {lang === 'hu' ? 'Kinyitom most!' : 'Open Now'}
+                    </span>
+                    <span className="text-xs font-normal leading-tight opacity-80">
+                      {lang === 'hu' ? '150 arany' : '150 gold'}
+                    </span>
+                  </div>
                 )}
               </button>
             </div>
