@@ -9,43 +9,9 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
   const [showPopup, setShowPopup] = useState(false);
   const [canShowToday, setCanShowToday] = useState(false);
 
-  // Get current day in user's timezone (not UTC!)
-  const getCurrentDayInUserTimezone = async (userId: string): Promise<string> => {
-    try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('user_timezone')
-        .eq('id', userId)
-        .single();
-      
-      const userTimezone = profile?.user_timezone || 'Europe/Budapest';
-      const now = new Date();
-      const formatter = new Intl.DateTimeFormat('en-CA', {
-        timeZone: userTimezone,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      });
-      const parts = formatter.formatToParts(now);
-      const year = parts.find(p => p.type === 'year')?.value;
-      const month = parts.find(p => p.type === 'month')?.value;
-      const day = parts.find(p => p.type === 'day')?.value;
-      return `${year}-${month}-${day}`;
-    } catch (error) {
-      // Fallback to UTC if timezone fetch fails
-      const now = new Date();
-      const formatter = new Intl.DateTimeFormat('en-CA', {
-        timeZone: 'UTC',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      });
-      const parts = formatter.formatToParts(now);
-      const year = parts.find(p => p.type === 'year')?.value;
-      const month = parts.find(p => p.type === 'month')?.value;
-      const day = parts.find(p => p.type === 'day')?.value;
-      return `${year}-${month}-${day}`;
-    }
+  const getCurrentDay = () => {
+    const now = new Date();
+    return now.toISOString().split('T')[0]; // YYYY-MM-DD format
   };
 
   // Check if popup can be shown today
@@ -58,13 +24,11 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
     const checkIfCanShowToday = async () => {
       try {
         if (forceAlwaysShow) {
-          console.log('[DAILY-WINNERS] Force always show enabled');
           setCanShowToday(true);
           return;
         }
 
-        const currentDay = await getCurrentDayInUserTimezone(userId);
-        console.log('[DAILY-WINNERS] Current day in user timezone:', currentDay);
+        const currentDay = getCurrentDay();
 
         // Check if user has seen popup today
         const { data, error } = await supabase
@@ -78,12 +42,6 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
           setCanShowToday(false);
           return;
         }
-
-        console.log('[DAILY-WINNERS] Database check:', {
-          lastShownDay: data?.last_shown_day,
-          currentDay,
-          canShow: !data || data.last_shown_day !== currentDay,
-        });
 
         // Can show if not seen today
         setCanShowToday(!data || data.last_shown_day !== currentDay);
@@ -107,7 +65,7 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
     if (!userId) return;
 
     try {
-      const currentDay = await getCurrentDayInUserTimezone(userId);
+      const currentDay = getCurrentDay();
 
       // Upsert the popup view record
       const { error } = await supabase

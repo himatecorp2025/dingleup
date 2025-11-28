@@ -85,30 +85,13 @@ serve(async (req) => {
       );
     }
 
-    // Calculate yesterday's date using user's timezone (not UTC!)
-    const userTimezone = userProfile.user_timezone || 'Europe/Budapest';
-    
-    // Get current date in user's timezone
-    const now = new Date();
-    const formatter = new Intl.DateTimeFormat('en-CA', {
-      timeZone: userTimezone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-    const parts = formatter.formatToParts(now);
-    const year = parts.find((p: any) => p.type === 'year')?.value;
-    const month = parts.find((p: any) => p.type === 'month')?.value;
-    const day = parts.find((p: any) => p.type === 'day')?.value;
-    const todayStr = `${year}-${month}-${day}`;
-    
-    // Calculate yesterday
-    const todayDate = new Date(`${todayStr}T00:00:00`);
-    const yesterday = new Date(todayDate);
-    yesterday.setDate(yesterday.getDate() - 1);
+    // Calculate yesterday's date (use UTC for now, but rewards are timezone-specific)
+    const yesterday = new Date();
+    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+    yesterday.setUTCHours(0, 0, 0, 0);
     const yesterdayDate = yesterday.toISOString().split('T')[0];
 
-    console.log(`[GET-PENDING-REWARD] Checking user ${user.id} in country ${userProfile.country_code} (timezone: ${userProfile.user_timezone}), yesterday: ${yesterdayDate}`);
+    console.log(`[GET-PENDING-REWARD] Checking user ${user.id} in country ${userProfile.country_code} (timezone: ${userProfile.user_timezone})`);
 
     // Check for pending reward from yesterday FOR THIS USER (country + timezone specific)
     const { data: pendingReward, error: rewardError } = await supabaseClient
