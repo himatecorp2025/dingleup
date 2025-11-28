@@ -171,10 +171,10 @@ const Gifts = () => {
   };
 
   const packages = [
-    { boxes: 1, price: 199, displayName: '1 Ajándékdoboz', rewardKey: 'gifts.rewards_1_box' },
-    { boxes: 3, price: 499, displayName: '3 Ajándékdoboz', rewardKey: 'gifts.rewards_3_boxes' },
-    { boxes: 5, price: 999, displayName: '5 Ajándékdoboz', rewardKey: 'gifts.rewards_5_boxes' },
-    { boxes: 10, price: 1799, displayName: '10 Ajándékdoboz', rewardKey: 'gifts.rewards_10_boxes' }
+    { boxes: 1, price: 199, displayPrice: '$1.99', displayName: '1 Ajándékdoboz', rewardKey: 'gifts.rewards_1_box' },
+    { boxes: 3, price: 499, displayPrice: '$4.99', displayName: '3 Ajándékdoboz', rewardKey: 'gifts.rewards_3_boxes' },
+    { boxes: 5, price: 999, displayPrice: '$9.99', displayName: '5 Ajándékdoboz', rewardKey: 'gifts.rewards_5_boxes' },
+    { boxes: 10, price: 1799, displayPrice: '$17.99', displayName: '10 Ajándékdoboz', rewardKey: 'gifts.rewards_10_boxes' }
   ];
 
   /**
@@ -488,7 +488,7 @@ const Gifts = () => {
                         marginBottom: 'clamp(3px, 0.9vh, 7px)'
                       }}
                     >
-                      {pkg.price}
+                      {pkg.displayPrice}
                     </p>
                     <button 
                       onClick={() => handlePurchase(pkg)}
