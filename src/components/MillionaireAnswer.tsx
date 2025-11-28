@@ -40,35 +40,154 @@ export const MillionaireAnswer = ({
   }, [children]);
 
   if (isRemoved) {
+    // Render with SVG but with reduced opacity and disabled state
     return (
-      <div className="w-full flex justify-center mb-2 opacity-30">
-      <div 
-        className="w-[90%] bg-muted/50 border-2 border-muted/50 px-3 sm:px-4 md:px-5 py-[18px] sm:py-[28px] md:py-[37px] text-muted-foreground"
-          style={{
-            clipPath: 'polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%)'
-          }}
+      <div className="w-full flex justify-center mb-1 opacity-30">
+        <button
+          disabled={true}
+          className="w-[90%] relative cursor-not-allowed"
+          style={{ minHeight: '72px' }}
         >
-          <div className="flex items-center justify-center w-full">
-            <div 
-              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-muted/80 border-2 border-muted flex items-center justify-center flex-shrink-0 text-lg sm:text-xl font-bold font-poppins"
-              style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)' }}
-            >
-              {letter}:
+          {/* SVG Background - same as active answers but grayed */}
+          <svg 
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="22.53058 -47.5814116 672.82399 250"
+            fill="none"
+            shapeRendering="geometricPrecision"
+            colorInterpolationFilters="sRGB"
+            className="absolute inset-0 w-full h-auto pointer-events-none"
+            preserveAspectRatio="none"
+            aria-hidden
+          >
+            <defs>
+              <path id="HEX_ANS_REMOVED" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+
+              <linearGradient id="bg_ans_removed" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#191534"/>
+                <stop offset="100%" stopColor="#0e0b1c"/>
+              </linearGradient>
+
+              <linearGradient id="chromeGrad_ans_removed" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#f8fbff"/>
+                <stop offset="10%" stopColor="#c6ccd3"/>
+                <stop offset="22%" stopColor="#ffffff"/>
+                <stop offset="40%" stopColor="#9ea6b0"/>
+                <stop offset="58%" stopColor="#e7ebf0"/>
+                <stop offset="78%" stopColor="#bfc6cf"/>
+                <stop offset="100%" stopColor="#ffffff"/>
+              </linearGradient>
+
+              <linearGradient id="band20_ans_removed" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#888"/>
+                <stop offset="35%" stopColor="#555"/>
+                <stop offset="100%" stopColor="#333"/>
+              </linearGradient>
+
+              <linearGradient id="band5_ans_removed" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#999"/>
+                <stop offset="50%" stopColor="#666"/>
+                <stop offset="100%" stopColor="#444"/>
+              </linearGradient>
+
+              <filter id="pro3d_ans_removed" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
+                <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
+              </filter>
+
+              <mask id="maskOuterOnly_ans_removed" maskUnits="userSpaceOnUse">
+                <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
+                <use href="#HEX_ANS_REMOVED" stroke="white" strokeWidth="2" fill="none"/>
+                <use href="#HEX_ANS_REMOVED" stroke="black" strokeWidth="25" fill="none"/>
+              </mask>
+            </defs>
+
+            <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
+
+            <g transform="scale(1,1.44)">
+              <use href="#HEX_ANS_REMOVED" fill="black" fillOpacity="0.5"/>
+
+              <use href="#HEX_ANS_REMOVED" fill="none" stroke="url(#band20_ans_removed)" strokeWidth="20"
+                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_ans_removed)"
+                   vectorEffect="non-scaling-stroke"/>
+
+              <use href="#HEX_ANS_REMOVED" fill="none" stroke="url(#band5_ans_removed)" strokeWidth="5"
+                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_ans_removed)"
+                   vectorEffect="non-scaling-stroke"/>
+
+              <g mask="url(#maskOuterOnly_ans_removed)">
+                <use href="#HEX_ANS_REMOVED" fill="none" stroke="url(#chromeGrad_ans_removed)" strokeWidth="2"
+                     strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
+              </g>
+            </g>
+          </svg>
+          
+          {/* Content wrapper */}
+          <div className="absolute inset-0 flex items-center justify-center px-3 sm:px-4 md:px-5">
+            <div className="flex items-center justify-center w-full gap-2 sm:gap-3 translate-y-[19px]">
+              <div 
+                className="relative w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 flex-shrink-0 flex items-center justify-center"
+                style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)' }}
+              >
+                {/* Letter hexagon grayed out */}
+                <div
+                  className="absolute"
+                  style={{
+                    top: '2px',
+                    left: '2px',
+                    right: '-2px',
+                    bottom: '-2px',
+                    background: 'rgba(0,0,0,0.35)',
+                    filter: 'blur(3px)',
+                    clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)'
+                  }}
+                  aria-hidden
+                />
+
+                <div
+                  className="absolute inset-0 bg-gradient-to-br from-gray-600 via-gray-500 to-gray-700 border-2 border-gray-500"
+                  style={{ 
+                    clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)',
+                    boxShadow: '0 0 10px rgba(128,128,128,0.3)'
+                  }}
+                  aria-hidden
+                />
+
+                <div
+                  className="absolute bg-gradient-to-b from-gray-500 via-gray-600 to-gray-700"
+                  style={{ 
+                    top: '2px',
+                    left: '2px',
+                    right: '2px',
+                    bottom: '2px',
+                    clipPath: 'polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)',
+                    boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.1)' 
+                  }}
+                  aria-hidden
+                />
+
+                <span className="relative z-10 text-gray-400 font-bold text-[15px] sm:text-lg leading-none drop-shadow-lg font-poppins line-through">{letter}:</span>
+              </div>
+              <p 
+                ref={textRef}
+                className={`font-bold leading-snug text-center flex-1 drop-shadow-lg font-poppins text-muted-foreground line-through ${
+                  typeof children === 'string' && children.length > 35 
+                    ? 'text-base sm:text-lg md:text-xl' 
+                    : typeof children === 'string' && children.length > 25
+                    ? 'text-lg sm:text-xl md:text-2xl'
+                    : 'text-xl sm:text-2xl md:text-3xl'
+                }`}
+                style={{ 
+                  textShadow: '1px 1px 2px hsl(var(--background) / 0.8), -1px -1px 2px hsl(var(--background) / 0.8)',
+                  transform: isMultiLine ? 'scale(0.85)' : 'scale(1)',
+                  transformOrigin: 'center'
+                }}
+              >
+                {children}
+              </p>
+              <div className="w-12 sm:w-14 md:w-16 flex-shrink-0" aria-hidden />
             </div>
-            <span 
-              className={`line-through font-bold font-poppins flex-1 text-center px-2 sm:px-3 md:px-4 ${
-                typeof children === 'string' && children.length > 35 
-                  ? 'text-base sm:text-lg md:text-xl' 
-                  : typeof children === 'string' && children.length > 25
-                  ? 'text-lg sm:text-xl md:text-2xl'
-                  : 'text-xl sm:text-2xl md:text-3xl'
-              }`}
-            >
-              {children}
-            </span>
-            <div className="w-8 sm:w-9 md:w-10 flex-shrink-0" aria-hidden />
           </div>
-        </div>
+        </button>
       </div>
     );
   }
