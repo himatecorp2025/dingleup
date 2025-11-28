@@ -389,7 +389,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
                     <span className="text-[10px] sm:text-xs">{t('rescue.processing')}</span>
                   </div>
                 ) : (
-                  <span className="text-base sm:text-xl tracking-wider">{t('rescue.only_price_prefix')} 1,49$</span>
+                  <span className="text-base sm:text-xl tracking-wider">{t('rescue.only_price_prefix')} $1.49</span>
                 )}
               </Button>
 
