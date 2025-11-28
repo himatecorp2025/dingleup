@@ -75,8 +75,9 @@ const GamePreview = memo(() => {
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
   const [gameInstanceId] = useState(() => crypto.randomUUID());
   
-  // Loading video state: track only whether the intro video finished
-  const [videoEnded, setVideoEnded] = useState(false);
+  // NEW LOADING FLOW: Two independent states
+  const [videoFinished, setVideoFinished] = useState(false);  // true when intro video ends
+  const [dataLoaded, setDataLoaded] = useState(false);        // true when backend data ready
 
   const {
     help5050UsageCount,
@@ -334,29 +335,46 @@ const GamePreview = memo(() => {
     });
   }, [navigate]);
 
-  // Auto-start game loading when profile is ready
+  // Auto-start intro video + data loading when profile is ready
   useEffect(() => {
     if (profile && !profileLoading && questions.length === 0 && gameState === 'playing' && !hasAutoStarted && !isStartingGame) {
       setHasAutoStarted(true);
-      // Video will trigger startGame via onVideoStart callback
+      console.log('[GamePreview] Profile ready - intro video will auto-start and trigger data loading');
     }
   }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState]);
 
-  // Video starts → trigger question loading in parallel (don't await)
+  // Video starts → trigger question loading in background (parallel with video playback)
   const handleVideoStart = useCallback(() => {
     if (!profile || isStartingGame) return;
     
-    console.log('[GamePreview] Video playing - loading questions in background');
-    startGame().catch(error => {
-      console.error('[GamePreview] Error loading questions:', error);
-    });
-  }, [profile, isStartingGame, startGame]);
+    console.log('[GamePreview] ✓ Video playing - loading game data in background');
+    
+    // Start data loading in parallel (don't await)
+    startGame()
+      .then(() => {
+        console.log('[GamePreview] ✓ Game data loaded successfully');
+        setDataLoaded(true);
+      })
+      .catch(error => {
+        console.error('[GamePreview] ✗ Error loading game data:', error);
+        toast.error(t('game.error_loading_questions'));
+        navigate('/dashboard');
+      });
+  }, [profile, isStartingGame, startGame, t, navigate]);
 
-  // Video ends → mark as finished; we keep showing it until questions are ready
+  // Video ends → mark video as finished
   const handleVideoEnd = useCallback(() => {
-    console.log('[GamePreview] Video ended');
-    setVideoEnded(true);
+    console.log('[GamePreview] ✓ Video finished');
+    setVideoFinished(true);
   }, []);
+
+  // Both video finished AND data loaded → transition to game
+  useEffect(() => {
+    if (videoFinished && dataLoaded) {
+      console.log('[GamePreview] ✓ Both video and data ready - game starting now');
+      // Game will automatically show when conditions are met
+    }
+  }, [videoFinished, dataLoaded]);
 
   // Track game funnel milestones + PREFETCH next game at question 10
   useEffect(() => {
@@ -545,12 +563,8 @@ const GamePreview = memo(() => {
     finishGame();
   };
 
-  // Decide if we should still show the intro video:
-  // - while questions are loading (not ready) OR
-  // - while the video itself hasn't ended yet
-  const isInitialLoading = (!isGameReady || questions.length === 0) && gameState === 'playing';
-  const showLoadingVideo = !videoEnded || isInitialLoading;
-
+  // RENDER LOGIC: Decide what to show based on loading states
+  
   if (profileLoading || !userId || !profile) {
     return (
       <div className="min-h-dvh min-h-svh flex items-center justify-center relative">
@@ -559,13 +573,29 @@ const GamePreview = memo(() => {
     );
   }
 
-  // Show loading video during initial game start
-  if (showLoadingVideo) {
+  // LOADING FLOW: Show intro video OR loading overlay until BOTH video and data are ready
+  const shouldShowIntroVideo = !videoFinished;
+  const shouldShowLoadingOverlay = videoFinished && !dataLoaded;
+  
+  if (shouldShowIntroVideo) {
+    // Show intro video (data is loading in parallel)
     return (
       <GameLoadingScreen 
         onVideoStart={handleVideoStart}
         onVideoEnd={handleVideoEnd}
       />
+    );
+  }
+  
+  if (shouldShowLoadingOverlay) {
+    // Video finished but data not ready yet - show loading overlay
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-[#1a0a4e] via-[#2d1b69] to-[#1a0a4e]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mx-auto mb-4" />
+          <div className="text-white text-xl font-semibold">{t('game.loading')}</div>
+        </div>
+      </div>
     );
   }
 
