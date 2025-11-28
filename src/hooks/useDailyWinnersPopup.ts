@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { formatInTimeZone } from 'date-fns-tz';
 
 /**
  * Hook to manage daily winners popup visibility
@@ -20,10 +19,32 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
         .single();
       
       const userTimezone = profile?.user_timezone || 'Europe/Budapest';
-      return formatInTimeZone(new Date(), userTimezone, 'yyyy-MM-dd');
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: userTimezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+      const parts = formatter.formatToParts(now);
+      const year = parts.find(p => p.type === 'year')?.value;
+      const month = parts.find(p => p.type === 'month')?.value;
+      const day = parts.find(p => p.type === 'day')?.value;
+      return `${year}-${month}-${day}`;
     } catch (error) {
       // Fallback to UTC if timezone fetch fails
-      return formatInTimeZone(new Date(), 'UTC', 'yyyy-MM-dd');
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'UTC',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+      const parts = formatter.formatToParts(now);
+      const year = parts.find(p => p.type === 'year')?.value;
+      const month = parts.find(p => p.type === 'month')?.value;
+      const day = parts.find(p => p.type === 'day')?.value;
+      return `${year}-${month}-${day}`;
     }
   };
 
