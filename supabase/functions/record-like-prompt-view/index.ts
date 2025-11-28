@@ -31,12 +31,13 @@ Deno.serve(async (req) => {
       );
     }
 
+    const { gameSessionId } = await req.json();
     const today = new Date().toISOString().split('T')[0];
 
-    // Upsert tracking record (increment count)
+    // Fetch current tracking record
     const { data: tracking, error: trackingError } = await supabase
       .from('user_like_prompt_tracking')
-      .select('prompt_count')
+      .select('prompt_count, shown_sessions')
       .eq('user_id', user.id)
       .eq('day_date', today)
       .single();
@@ -50,6 +51,12 @@ Deno.serve(async (req) => {
     }
 
     const newCount = (tracking?.prompt_count ?? 0) + 1;
+    const shownSessions = (tracking?.shown_sessions as string[]) || [];
+    
+    // Add gameSessionId to shown_sessions array if provided
+    if (gameSessionId && !shownSessions.includes(gameSessionId)) {
+      shownSessions.push(gameSessionId);
+    }
 
     const { error: upsertError } = await supabase
       .from('user_like_prompt_tracking')
@@ -57,6 +64,7 @@ Deno.serve(async (req) => {
         user_id: user.id,
         day_date: today,
         prompt_count: newCount,
+        shown_sessions: shownSessions,
       }, {
         onConflict: 'user_id,day_date'
       });
