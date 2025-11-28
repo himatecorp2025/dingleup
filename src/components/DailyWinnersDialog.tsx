@@ -145,24 +145,10 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       }
 
       if (!players || players.length === 0) {
-        console.log('[DAILY-WINNERS] No snapshot data found for yesterday - showing mock data');
-        // If no data, show mock data for testing
-        const mockPlayers: TopPlayer[] = [
-          { user_id: '1', rank: 1, username: 'ProGamer2024', avatar_url: null, total_correct_answers: 145 },
-          { user_id: '2', rank: 2, username: 'QuizMaster', avatar_url: null, total_correct_answers: 142 },
-          { user_id: '3', rank: 3, username: 'BrainChamp', avatar_url: null, total_correct_answers: 138 },
-          { user_id: '4', rank: 4, username: 'SmartPlayer', avatar_url: null, total_correct_answers: 135 },
-          { user_id: '5', rank: 5, username: 'ThinkFast99', avatar_url: null, total_correct_answers: 132 },
-          { user_id: '6', rank: 6, username: 'QuickWit', avatar_url: null, total_correct_answers: 128 },
-          { user_id: '7', rank: 7, username: 'MindWarrior', avatar_url: null, total_correct_answers: 125 },
-          { user_id: '8', rank: 8, username: 'LogicKing', avatar_url: null, total_correct_answers: 122 },
-          { user_id: '9', rank: 9, username: 'PuzzlePro', avatar_url: null, total_correct_answers: 118 },
-          { user_id: '10', rank: 10, username: 'GeniusOne', avatar_url: null, total_correct_answers: 115 },
-        ];
-        
+        console.log('[DAILY-WINNERS] No snapshot data found for yesterday');
         if (isMountedRef.current) {
-          setTopPlayers(mockPlayers);
-          setTotalRewards({ totalGold: 1_725, totalLives: 62 });
+          setTopPlayers([]);
+          setTotalRewards({ totalGold: 0, totalLives: 0 });
         }
         return;
       }
@@ -426,8 +412,13 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 <div className="relative z-10 flex flex-col items-center px-[8%] pb-[3%]" style={{ height: '100%', paddingTop: '0' }}>
                   <div className="w-full mb-2 overflow-visible" style={{ minHeight: 'calc(100% - 100px)', maxHeight: 'calc(100% - 100px)' }}>
                     {topPlayers.length === 0 ? (
-                      <div className="text-center text-white py-8">
-                        <p className="text-lg">{t('dailyWinners.noData')}</p>
+                      <div className="text-center text-white py-8 px-4">
+                        <p className="text-lg font-semibold leading-relaxed" style={{
+                          fontSize: 'clamp(1rem, 4vw, 1.25rem)',
+                          WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
+                        }}>
+                          {t('dailyWinners.noWinnersMessage')}
+                        </p>
                       </div>
                     ) : (
                       <>
@@ -834,7 +825,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                       className="w-full max-w-[280px]"
                       style={{ transform: 'scale(0.9)' }}
                     >
-                      {t('common.accept')}
+                      {topPlayers.length === 0 ? t('dailyWinners.playNowButton') : t('common.accept')}
                     </HexAcceptButton>
                   </div>
                 </div>
