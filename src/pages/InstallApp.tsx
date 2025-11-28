@@ -11,16 +11,7 @@ const InstallApp = () => {
   const [googlePlayUrl, setGooglePlayUrl] = useState('');
   const [appStoreUrl, setAppStoreUrl] = useState('');
 
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isAndroid = /Android/.test(navigator.userAgent);
-
   useEffect(() => {
-    console.log('[InstallApp] mounted', {
-      ua: navigator.userAgent,
-      isIOS,
-      isAndroid,
-      location: window.location.pathname,
-    });
     fetchDownloadLinks();
   }, []);
 
@@ -45,6 +36,8 @@ const InstallApp = () => {
     }
   };
 
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
   const isIOSChrome = isIOS && /CriOS/.test(navigator.userAgent);
   const isIOSSafari = isIOS && /Safari/.test(navigator.userAgent) && !/CriOS/.test(navigator.userAgent);
 
@@ -130,76 +123,75 @@ const InstallApp = () => {
           </div>
         </div>
 
-        {/* iOS Warning Message */}
-        {isIOS && (
-          <div className="bg-red-500/20 border-2 border-red-500 rounded-xl p-6 mb-6">
-            <p className="text-white font-bold text-lg text-center mb-2">
-              ⚠️ {lang === 'hu' ? 'iOS eszközön közvetlen telepítés nem elérhető' : 'Direct installation not available on iOS devices'}
-            </p>
-            <p className="text-white/80 text-center">
-              {lang === 'hu' 
-                ? 'Kérjük, töltsd le az alkalmazást az App Store-ból a fenti gombbal.' 
-                : 'Please download the app from the App Store using the button above.'}
-            </p>
-          </div>
-        )}
+        {/* OR Divider */}
+        <div className="flex items-center gap-4 my-6">
+          <div className="flex-1 h-px bg-white/20"></div>
+          <span className="text-white/50 font-semibold text-sm uppercase">{t('install.or')}</span>
+          <div className="flex-1 h-px bg-white/20"></div>
+        </div>
 
-        {/* OR Divider - Only show on non-iOS */}
-        {!isIOS && (
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-white/20"></div>
-            <span className="text-white/50 font-semibold text-sm uppercase">{t('install.or')}</span>
-            <div className="flex-1 h-px bg-white/20"></div>
-          </div>
-        )}
+        {/* PWA Installation Instructions */}
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6 text-left">
+          <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+            <Download className="w-5 h-5 text-purple-400" />
+            {lang === 'hu' ? 'Telepítés közvetlenül' : 'Install Directly'}
+          </h3>
 
-        {/* PWA Installation Instructions - Only show on non-iOS */}
-        {!isIOS && (
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6 text-left">
-            <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-              <Download className="w-5 h-5 text-purple-400" />
-              {lang === 'hu' ? 'Telepítés közvetlenül' : 'Install Directly'}
-            </h3>
-
-            {/* ========== ANDROID BOX ========== */}
-            <div className="bg-green-500/10 border-2 border-green-400 rounded-lg p-4 mb-4">
-              <p className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                📱 {lang === 'hu' ? 'ANDROID ESZKÖZÖKÖN:' : 'ON ANDROID DEVICES:'}
-                <span className="text-xs font-normal text-green-400 bg-green-500/30 px-2 py-1 rounded">
-                  {lang === 'hu' ? 'CHROME AJÁNLOTT' : 'CHROME RECOMMENDED'}
-                </span>
-              </p>
-              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
-                <li>{lang === 'hu' 
-                  ? 'Nyisd meg ezt az oldalt Chrome böngészőben' 
-                  : 'Open this page in Chrome browser'}</li>
-                <li>{lang === 'hu' 
-                  ? 'Koppints a három pontra (⋮) a jobb felső sarokban' 
-                  : 'Tap the three dots (⋮) in the top right corner'}</li>
-                <li>{lang === 'hu' 
-                  ? 'Válaszd az "Alkalmazás telepítése" vagy "Hozzáadás a kezdőképernyőhöz" opciót' 
-                  : 'Select "Install app" or "Add to Home screen"'}</li>
-                <li>{lang === 'hu' 
-                  ? 'Erősítsd meg a telepítést a "Telepítés" gombbal' 
-                  : 'Confirm installation with "Install" button'}</li>
-              </ol>
-            </div>
-          </div>
-        )}
-
-        {/* iOS Warning Message */}
-        {isIOS && (
-          <div className="bg-red-500/20 border-2 border-red-500 rounded-xl p-6 mb-6">
-            <p className="text-white font-bold text-lg text-center mb-2">
-              ⚠️ {lang === 'hu' ? 'iOS eszközön közvetlen telepítés nem elérhető' : 'Direct installation not available on iOS devices'}
+          {/* ========== ANDROID BOX ========== */}
+          <div className="bg-green-500/10 border-2 border-green-400 rounded-lg p-4 mb-4">
+            <p className="text-white font-bold text-base mb-4 flex items-center gap-2">
+              📱 {lang === 'hu' ? 'ANDROID ESZKÖZÖKÖN:' : 'ON ANDROID DEVICES:'}
+              <span className="text-xs font-normal text-green-400 bg-green-500/30 px-2 py-1 rounded">
+                {lang === 'hu' ? 'CHROME AJÁNLOTT' : 'CHROME RECOMMENDED'}
+              </span>
             </p>
-            <p className="text-white/80 text-center">
-              {lang === 'hu' 
-                ? 'Kérjük, töltsd le az alkalmazást az App Store-ból.' 
-                : 'Please download the app from the App Store.'}
-            </p>
+            <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
+              <li>{lang === 'hu' 
+                ? 'Nyisd meg ezt az oldalt Chrome böngészőben' 
+                : 'Open this page in Chrome browser'}</li>
+              <li>{lang === 'hu' 
+                ? 'Koppints a három pontra (⋮) a jobb felső sarokban' 
+                : 'Tap the three dots (⋮) in the top right corner'}</li>
+              <li>{lang === 'hu' 
+                ? 'Válaszd az "Alkalmazás telepítése" vagy "Hozzáadás a kezdőképernyőhöz" opciót' 
+                : 'Select "Install app" or "Add to Home screen"'}</li>
+              <li>{lang === 'hu' 
+                ? 'Erősítsd meg a telepítést a "Telepítés" gombbal' 
+                : 'Confirm installation with "Install" button'}</li>
+            </ol>
           </div>
-        )}
+
+          {/* ========== iOS BOX ========== */}
+          <div className="bg-blue-500/10 border-2 border-blue-400 rounded-lg p-4">
+            <p className="text-white font-bold text-base mb-4 flex items-center gap-2">
+              📱 {lang === 'hu' ? 'iOS ESZKÖZÖKÖN (iPhone/iPad):' : 'ON iOS DEVICES (iPhone/iPad):'}
+              <span className="text-xs font-normal text-red-400 bg-red-500/30 px-2 py-1 rounded">
+                {lang === 'hu' ? 'CSAK SAFARI' : 'SAFARI ONLY'}
+              </span>
+            </p>
+            <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
+              <li className="text-red-400 font-bold">
+                {lang === 'hu' 
+                  ? 'Nyisd meg ezt az oldalt Safari böngészőben' 
+                  : 'Open this page in Safari browser'}
+              </li>
+              <li>{lang === 'hu' 
+                ? 'Koppints a "Megosztás" ikonra (alsó menüsorban a négyzetből felfelé mutató nyíl)' 
+                : 'Tap the "Share" icon (square with upward arrow in bottom menu)'}</li>
+              <li>{lang === 'hu' 
+                ? 'Görgess le és válaszd a "Hozzáadás a kezdőképernyőhöz" opciót' 
+                : 'Scroll down and select "Add to Home Screen"'}</li>
+              <li className="text-yellow-400 font-bold">
+                {lang === 'hu' 
+                  ? '⚠️ FONTOS: Kapcsold BE a "Megnyitás webappként" (Web App) kapcsolót!' 
+                  : '⚠️ IMPORTANT: Turn ON the "Open as Web App" toggle!'}
+              </li>
+              <li>{lang === 'hu' 
+                ? 'Koppints a "Hozzáadás" gombra a jobb felső sarokban' 
+                : 'Tap "Add" button in the top right corner'}</li>
+            </ol>
+          </div>
+        </div>
 
         <Button
           onClick={() => navigate('/')}
