@@ -388,7 +388,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 <div className="relative z-10 flex flex-col items-center px-[8%] pb-[3%]" style={{ height: '100%', paddingTop: '0' }}>
                   <div className="w-full mb-2 overflow-visible" style={{ minHeight: 'calc(100% - 100px)', maxHeight: 'calc(100% - 100px)' }}>
                     {topPlayers.length === 0 ? (
-                      <div className="h-full flex flex-col items-center justify-center -translate-y-[15%]">
+                      <div className="h-full flex flex-col items-center justify-center -translate-y-[10%]">
                         <div className="text-center text-white flex flex-col items-center gap-4">
                           {/* Sad emoji SVG */}
                           <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
