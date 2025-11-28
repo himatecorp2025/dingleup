@@ -18,9 +18,8 @@ import { LootboxDropOverlay } from "@/components/lootbox/LootboxDropOverlay";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useAppLifecycle } from "@/hooks/useAppLifecycle";
 import { useSessionMonitor } from "@/hooks/useSessionMonitor";
-import { AppRouteGuard } from "@/components/AppRouteGuard";
 import { AudioPolicyManager } from "@/components/AudioPolicyManager";
-import { MobileBrowserGuard } from "@/components/MobileBrowserGuard";
+import { AppEnvironmentGuard } from "@/components/AppEnvironmentGuard";
 import { useI18n } from "@/i18n";
 import { useTimezoneDetection } from "@/hooks/useTimezoneDetection";
 import loadingLogo from '@/assets/dingleup-loading-logo.png';
@@ -138,9 +137,8 @@ const AppCore = () => {
         <AudioPolicyManager />
         <Suspense fallback={<PageLoader />}>
           <div className="animate-fade-in">
-            <MobileBrowserGuard>
-              <AppRouteGuard>
-                <Routes>
+            <AppEnvironmentGuard>
+              <Routes>
               {/* Public routes - no ErrorBoundary needed */}
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
@@ -194,10 +192,9 @@ const AppCore = () => {
               <Route path="/adatkezeles" element={<Adatkezeles />} />
               
               {/* 404 fallback */}
-              <Route path="*" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />
+                  <Route path="*" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />
                 </Routes>
-              </AppRouteGuard>
-            </MobileBrowserGuard>
+            </AppEnvironmentGuard>
           </div>
         </Suspense>
       </BrowserRouter>
