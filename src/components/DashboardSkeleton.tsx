@@ -36,9 +36,16 @@ export const DashboardSkeleton = () => {
           </div>
         </div>
 
-        {/* Play Now button skeleton */}
+        {/* Logo */}
         <div className="flex justify-center mb-6">
-          <Skeleton className="w-48 h-48 rounded-full bg-white/10" />
+          <div className="relative w-[clamp(100px,28vw,280px)] h-[clamp(100px,28vw,280px)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/30 via-red-500/20 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+            <img 
+              src="/logo.png"
+              alt="DingleUP! Logo"
+              className="relative w-full h-full object-contain drop-shadow-2xl"
+            />
+          </div>
         </div>
 
         {/* Leaderboard carousel skeleton */}
