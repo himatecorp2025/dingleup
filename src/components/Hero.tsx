@@ -3,15 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { Play, Sparkles, Trophy, Zap } from "lucide-react";
 import { useI18n } from "@/i18n";
 import { LanguageSelector } from "./LanguageSelector";
+import { usePlatformDetection } from "@/hooks/usePlatformDetection";
 
 const Hero = () => {
   const navigate = useNavigate();
   const { t } = useI18n();
+  const { isHandheld } = usePlatformDetection();
 
   const scrollToFeatures = () => {
     const featuresSection = document.getElementById('features');
     if (featuresSection) {
       featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleStartGame = () => {
+    // Mobile/tablet: redirect to install page
+    if (isHandheld) {
+      navigate('/install');
+    } else {
+      // Desktop: go to game rules
+      navigate('/game-rules');
     }
   };
 
@@ -114,7 +126,7 @@ const Hero = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 animate-fade-in px-4" style={{ animationDelay: '0.6s' }}>
             <Button
-              onClick={() => navigate('/game-rules')}
+              onClick={handleStartGame}
               size="lg"
               className="w-full sm:w-auto bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800 text-white font-black text-base xs:text-lg sm:text-xl md:text-2xl px-6 xs:px-8 sm:px-12 py-5 xs:py-6 sm:py-7 rounded-full shadow-[0_0_30px_rgba(34,197,94,0.5)] hover:shadow-[0_0_50px_rgba(34,197,94,0.8)] border-2 border-green-400 transform hover:scale-105 transition-all duration-300 truncate"
             >
