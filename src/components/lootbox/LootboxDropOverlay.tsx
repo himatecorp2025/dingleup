@@ -23,7 +23,7 @@ export const LootboxDropOverlay = () => {
 
   // Hide overlay on admin pages and auth pages
   const isAdminPage = location.pathname.startsWith('/admin');
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/auth-choice';
+  const isAuthPage = location.pathname === '/auth/login' || location.pathname === '/auth/register' || location.pathname === '/auth/choice' || location.pathname === '/';
 
   // Check user authentication
   useEffect(() => {
