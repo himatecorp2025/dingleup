@@ -24,7 +24,14 @@ interface CachedTranslations {
 }
 
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
-  const queryClient = useQueryClient();
+  // Use optional queryClient - may not be available if I18nProvider wraps QueryClientProvider
+  let queryClient;
+  try {
+    queryClient = useQueryClient();
+  } catch {
+    // QueryClient not available yet - this is OK during initial app setup
+    queryClient = null;
+  }
   const [lang, setLangState] = useState<LangCode>(DEFAULT_LANG);
   const [translations, setTranslations] = useState<TranslationMap>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -233,19 +240,21 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
       // CRITICAL: Invalidate all language-dependent queries
       // This forces React Query to refetch all cached data with the new language
-      console.log('[I18n] Invalidating language-dependent query cache...');
-      await queryClient.invalidateQueries({ 
-        predicate: (query) => {
-          // Invalidate queries that might contain language-dependent data
-          const key = query.queryKey[0] as string;
-          return key === 'user-game-profile' || 
-                 key === 'profile' || 
-                 key === 'wallet' ||
-                 key === 'questions' ||
-                 key === 'leaderboard';
-        }
-      });
-      console.log('[I18n] Query cache invalidated');
+      if (queryClient) {
+        console.log('[I18n] Invalidating language-dependent query cache...');
+        await queryClient.invalidateQueries({ 
+          predicate: (query) => {
+            // Invalidate queries that might contain language-dependent data
+            const key = query.queryKey[0] as string;
+            return key === 'user-game-profile' || 
+                   key === 'profile' || 
+                   key === 'wallet' ||
+                   key === 'questions' ||
+                   key === 'leaderboard';
+          }
+        });
+        console.log('[I18n] Query cache invalidated');
+      }
 
       // Update database (await to ensure consistency)
       if (!skipDbUpdate) {
