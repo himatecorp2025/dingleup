@@ -77,38 +77,16 @@ const InstallApp = () => {
         <h1 className="text-3xl font-black text-white mb-2">
           {t('install.title')}
         </h1>
-        <p className="text-white/70 text-sm mb-8">
-          {t('install.subtitle')}
+        <p className="text-white/70 text-base mb-8">
+          {t('install.app_only_message')}
         </p>
 
-        {/* PWA Installation Instructions */}
-        {(isIOS || isAndroid) && (
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6 text-left">
-            <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-              <Download className="w-5 h-5 text-purple-400" />
-              {t('install.pwa_title')}
-            </h3>
-            {isIOS && (
-              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
-                <li>{t('install.ios.step1')}</li>
-                <li>{t('install.ios.step2')}</li>
-                <li>{t('install.ios.step3')}</li>
-              </ol>
-            )}
-            {isAndroid && (
-              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
-                <li>{t('install.android.step1')}</li>
-                <li>{t('install.android.step2')}</li>
-                <li>{t('install.android.step3')}</li>
-              </ol>
-            )}
-          </div>
-        )}
-
         {/* Store Download Buttons */}
-        <div className="space-y-4 mb-6">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-            <p className="text-white/70 text-sm mb-4">{t('install.or_download')}</p>
+        {(googlePlayUrl || appStoreUrl) && (
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6">
+            <h3 className="text-white font-bold text-lg mb-4">
+              {t('install.download_from_store')}
+            </h3>
             
             <div className="flex flex-col gap-3">
               {googlePlayUrl && (
@@ -140,7 +118,38 @@ const InstallApp = () => {
               )}
             </div>
           </div>
+        )}
+
+        {/* OR Divider */}
+        <div className="flex items-center gap-4 my-6">
+          <div className="flex-1 h-px bg-white/20"></div>
+          <span className="text-white/50 font-semibold text-sm uppercase">{t('install.or')}</span>
+          <div className="flex-1 h-px bg-white/20"></div>
         </div>
+
+        {/* PWA Installation Instructions */}
+        {(isIOS || isAndroid) && (
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6 text-left">
+            <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+              <Download className="w-5 h-5 text-purple-400" />
+              {t('install.pwa_title')}
+            </h3>
+            {isIOS && (
+              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
+                <li>{t('install.ios.step1')}</li>
+                <li>{t('install.ios.step2')}</li>
+                <li>{t('install.ios.step3')}</li>
+              </ol>
+            )}
+            {isAndroid && (
+              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
+                <li>{t('install.android.step1')}</li>
+                <li>{t('install.android.step2')}</li>
+                <li>{t('install.android.step3')}</li>
+              </ol>
+            )}
+          </div>
+        )}
 
         <Button
           onClick={() => navigate('/')}
