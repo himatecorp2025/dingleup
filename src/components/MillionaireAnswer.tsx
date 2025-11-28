@@ -13,6 +13,20 @@ interface MillionaireAnswerProps {
   showCorrectPulse?: boolean;
 }
 
+// Generate unique IDs for SVG elements to prevent conflicts
+const getUniqueIds = (letter: string, suffix: string) => {
+  const base = `ans_${letter}`;
+  return {
+    hexPath: `HEX_${base}`,
+    bgGrad: `bg_${base}`,
+    chromeGrad: `chromeGrad_${base}`,
+    band20: `band20_${base}_${suffix}`,
+    band5: `band5_${base}_${suffix}`,
+    filter: `pro3d_${base}`,
+    mask: `maskOuterOnly_${base}`
+  };
+};
+
 export const MillionaireAnswer = ({ 
   children, 
   letter, 
@@ -40,6 +54,8 @@ export const MillionaireAnswer = ({
   }, [children]);
 
   if (isRemoved) {
+    const ids = getUniqueIds(letter, 'removed');
+    
     // Render with SVG but with reduced opacity and disabled state
     return (
       <div className="w-full flex justify-center mb-1 opacity-30">
@@ -60,14 +76,14 @@ export const MillionaireAnswer = ({
             aria-hidden
           >
             <defs>
-              <path id="HEX_ANS_REMOVED" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+              <path id={ids.hexPath} d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
 
-              <linearGradient id="bg_ans_removed" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+              <linearGradient id={ids.bgGrad} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
                 <stop offset="0%" stopColor="#191534"/>
                 <stop offset="100%" stopColor="#0e0b1c"/>
               </linearGradient>
 
-              <linearGradient id="chromeGrad_ans_removed" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+              <linearGradient id={ids.chromeGrad} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
                 <stop offset="0%" stopColor="#f8fbff"/>
                 <stop offset="10%" stopColor="#c6ccd3"/>
                 <stop offset="22%" stopColor="#ffffff"/>
@@ -77,45 +93,45 @@ export const MillionaireAnswer = ({
                 <stop offset="100%" stopColor="#ffffff"/>
               </linearGradient>
 
-              <linearGradient id="band20_ans_removed" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+              <linearGradient id={ids.band20} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
                 <stop offset="0%" stopColor="#888"/>
                 <stop offset="35%" stopColor="#555"/>
                 <stop offset="100%" stopColor="#333"/>
               </linearGradient>
 
-              <linearGradient id="band5_ans_removed" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+              <linearGradient id={ids.band5} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
                 <stop offset="0%" stopColor="#999"/>
                 <stop offset="50%" stopColor="#666"/>
                 <stop offset="100%" stopColor="#444"/>
               </linearGradient>
 
-              <filter id="pro3d_ans_removed" x="-50%" y="-50%" width="200%" height="200%">
+              <filter id={ids.filter} x="-50%" y="-50%" width="200%" height="200%">
                 <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
                 <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
               </filter>
 
-              <mask id="maskOuterOnly_ans_removed" maskUnits="userSpaceOnUse">
+              <mask id={ids.mask} maskUnits="userSpaceOnUse">
                 <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
-                <use href="#HEX_ANS_REMOVED" stroke="white" strokeWidth="2" fill="none"/>
-                <use href="#HEX_ANS_REMOVED" stroke="black" strokeWidth="25" fill="none"/>
+                <use href={`#${ids.hexPath}`} stroke="white" strokeWidth="2" fill="none"/>
+                <use href={`#${ids.hexPath}`} stroke="black" strokeWidth="25" fill="none"/>
               </mask>
             </defs>
 
             <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
 
             <g transform="scale(1,1.44)">
-              <use href="#HEX_ANS_REMOVED" fill="black" fillOpacity="0.5"/>
+              <use href={`#${ids.hexPath}`} fill="black" fillOpacity="0.5"/>
 
-              <use href="#HEX_ANS_REMOVED" fill="none" stroke="url(#band20_ans_removed)" strokeWidth="20"
-                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_ans_removed)"
+              <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.band20})`} strokeWidth="20"
+                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter={`url(#${ids.filter})`}
                    vectorEffect="non-scaling-stroke"/>
 
-              <use href="#HEX_ANS_REMOVED" fill="none" stroke="url(#band5_ans_removed)" strokeWidth="5"
-                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_ans_removed)"
+              <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.band5})`} strokeWidth="5"
+                   strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter={`url(#${ids.filter})`}
                    vectorEffect="non-scaling-stroke"/>
 
-              <g mask="url(#maskOuterOnly_ans_removed)">
-                <use href="#HEX_ANS_REMOVED" fill="none" stroke="url(#chromeGrad_ans_removed)" strokeWidth="2"
+              <g mask={`url(#${ids.mask})`}>
+                <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.chromeGrad})`} strokeWidth="2"
                      strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
               </g>
             </g>
@@ -202,8 +218,7 @@ export const MillionaireAnswer = ({
     gradientSuffix = 'orange';
   }
 
-  const band20Id = `band20_ans_${gradientSuffix}`;
-  const band5Id = `band5_ans_${gradientSuffix}`;
+  const ids = getUniqueIds(letter, gradientSuffix);
 
   return (
     <div className="w-full flex justify-center mb-1">
@@ -225,14 +240,14 @@ export const MillionaireAnswer = ({
           aria-hidden
         >
           <defs>
-            <path id="HEX_ANS" d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
+            <path id={ids.hexPath} d="M 592.82399,0 h -467.76283 c -23.80302,0 -36.4576,36.10205 -62.53058,36.10196 26.07298,-9e-5 38.72756,36.10196 62.53058,36.10196 h 467.76283 c 23.80302,0 36.4576,-36.10205 62.53058,-36.10196 -26.07298,9e-5 -38.72756,-36.10196 -62.53058,-36.10196 z"/>
 
-            <linearGradient id="bg_ans" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <linearGradient id={ids.bgGrad} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#191534"/>
               <stop offset="100%" stopColor="#0e0b1c"/>
             </linearGradient>
 
-            <linearGradient id="chromeGrad_ans" x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
+            <linearGradient id={ids.chromeGrad} x1="0" y1="-47.58" x2="0" y2="119.78" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#f8fbff"/>
               <stop offset="10%" stopColor="#c6ccd3"/>
               <stop offset="22%" stopColor="#ffffff"/>
@@ -294,33 +309,33 @@ export const MillionaireAnswer = ({
               <stop offset="100%" stopColor="#D6851E"/>
             </linearGradient>
 
-            <filter id="pro3d_ans" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id={ids.filter} x="-50%" y="-50%" width="200%" height="200%">
               <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="rgba(0,0,0,0.35)"/>
               <feDropShadow dx="0" dy="-0.6" stdDeviation="0.7" floodColor="rgba(255,255,255,0.35)"/>
             </filter>
 
-            <mask id="maskOuterOnly_ans" maskUnits="userSpaceOnUse">
+            <mask id={ids.mask} maskUnits="userSpaceOnUse">
               <rect x="-9999" y="-9999" width="20000" height="20000" fill="black"/>
-              <use href="#HEX_ANS" stroke="white" strokeWidth="2" fill="none"/>
-              <use href="#HEX_ANS" stroke="black" strokeWidth="25" fill="none"/>
+              <use href={`#${ids.hexPath}`} stroke="white" strokeWidth="2" fill="none"/>
+              <use href={`#${ids.hexPath}`} stroke="black" strokeWidth="25" fill="none"/>
             </mask>
           </defs>
 
           <rect x="-10000" y="-10000" width="30000" height="30000" fill="none" />
 
           <g transform="scale(1,1.44)">
-            <use href="#HEX_ANS" fill="black" fillOpacity="0.5"/>
+            <use href={`#${ids.hexPath}`} fill="black" fillOpacity="0.5"/>
 
-            <use href="#HEX_ANS" fill="none" stroke={`url(#${band20Id})`} strokeWidth="20"
-                 strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_ans)"
+            <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.band20})`} strokeWidth="20"
+                 strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter={`url(#${ids.filter})`}
                  vectorEffect="non-scaling-stroke"/>
 
-            <use href="#HEX_ANS" fill="none" stroke={`url(#${band5Id})`} strokeWidth="5"
-                 strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter="url(#pro3d_ans)"
+            <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.band5})`} strokeWidth="5"
+                 strokeLinejoin="miter" strokeMiterlimit="200" strokeLinecap="butt" filter={`url(#${ids.filter})`}
                  vectorEffect="non-scaling-stroke"/>
 
-            <g mask="url(#maskOuterOnly_ans)">
-              <use href="#HEX_ANS" fill="none" stroke="url(#chromeGrad_ans)" strokeWidth="2"
+            <g mask={`url(#${ids.mask})`}>
+              <use href={`#${ids.hexPath}`} fill="none" stroke={`url(#${ids.chromeGrad})`} strokeWidth="2"
                    strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
             </g>
           </g>
