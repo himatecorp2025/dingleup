@@ -75,10 +75,8 @@ const GamePreview = memo(() => {
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
   const [gameInstanceId] = useState(() => crypto.randomUUID());
   
-  // Loading video state - show during initial game start
+  // Loading video state - simple: video playing while questions load in background
   const [showLoadingVideo, setShowLoadingVideo] = useState(true);
-  const [videoEnded, setVideoEnded] = useState(false);
-  const [questionsReady, setQuestionsReady] = useState(false);
 
   const {
     help5050UsageCount,
@@ -336,52 +334,34 @@ const GamePreview = memo(() => {
     });
   }, [navigate]);
 
-  // Auto-start game when profile is ready - trigger question prefetch
-  // CRITICAL: Don't include startGame in dependencies to prevent re-triggering
+  // Auto-start game when profile is ready - trigger question loading when video starts
   useEffect(() => {
     if (profile && !profileLoading && questions.length === 0 && gameState === 'playing' && !hasAutoStarted && !isStartingGame) {
-      console.log('[GamePreview] Profile ready - waiting for video to trigger question loading');
       setHasAutoStarted(true);
-      // Don't start game yet - wait for video to trigger via onVideoStart callback
+      console.log('[GamePreview] Profile ready - waiting for video to start');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState]);
 
-  // Callback for video start - trigger question loading in parallel with video
+  // Callback for video start - trigger question loading in parallel with video playback
   const handleVideoStart = useCallback(async () => {
     if (!profile || isStartingGame) return;
     
-    console.log('[GamePreview] Video started - beginning question prefetch in parallel');
+    console.log('[GamePreview] Video started - loading questions in background');
     
-    try {
-      await startGame();
-      setQuestionsReady(true);
-      console.log('[GamePreview] Questions loaded while video is playing');
-    } catch (error) {
+    // Don't await - let it run parallel with video
+    startGame().catch(error => {
       console.error('[GamePreview] Error loading questions:', error);
-      setQuestionsReady(true); // Allow video to end even if questions failed
-    }
+    });
   }, [profile, isStartingGame, startGame]);
 
-  // Callback for video end - hide loading screen only if questions are ready
+  // Callback for video end - hide loading screen and start game
   const handleVideoEnd = useCallback(() => {
-    console.log('[GamePreview] Video ended, questions ready:', questionsReady);
-    setVideoEnded(true);
+    console.log('[GamePreview] Video ended - checking if questions are ready');
     
-    // Hide loading screen immediately if questions are ready
-    // If not ready yet, wait for questions to complete
-    if (questionsReady) {
-      setShowLoadingVideo(false);
-    }
-  }, [questionsReady]);
-
-  // Hide loading screen when both video ended AND questions ready
-  useEffect(() => {
-    if (videoEnded && questionsReady) {
-      console.log('[GamePreview] Both video and questions ready - starting game');
-      setShowLoadingVideo(false);
-    }
-  }, [videoEnded, questionsReady]);
+    // Simply hide the loading video - if questions aren't ready yet, 
+    // the game will show a loading state until they arrive
+    setShowLoadingVideo(false);
+  }, []);
 
   // Track game funnel milestones + PREFETCH next game at question 10
   useEffect(() => {
