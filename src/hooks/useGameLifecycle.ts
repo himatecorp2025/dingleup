@@ -294,6 +294,14 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
         timestamp: new Date().toISOString()
       }).catch(err => console.error('[useGameLifecycle] Error tracking quiz_started:', err));
     })();
+    
+    // CRITICAL: Await the promise to ensure questions are loaded before returning
+    try {
+      await gameInitPromiseRef.current;
+    } catch (error) {
+      console.error('[useGameLifecycle] Game init error:', error);
+      throw error;
+    }
   }, [
     profile, isStarting, userId, spendLife, navigate, refetchWallet, broadcast,
     creditStartReward, setQuestions, resetGameStateHook, resetTimer,
