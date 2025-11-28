@@ -334,32 +334,27 @@ const GamePreview = memo(() => {
     });
   }, [navigate]);
 
-  // Auto-start game when profile is ready - trigger question loading when video starts
+  // Auto-start game loading when profile is ready
   useEffect(() => {
     if (profile && !profileLoading && questions.length === 0 && gameState === 'playing' && !hasAutoStarted && !isStartingGame) {
       setHasAutoStarted(true);
-      console.log('[GamePreview] Profile ready - waiting for video to start');
+      // Video will trigger startGame via onVideoStart callback
     }
   }, [profile, profileLoading, hasAutoStarted, isStartingGame, questions.length, gameState]);
 
-  // Callback for video start - trigger question loading in parallel with video playback
-  const handleVideoStart = useCallback(async () => {
+  // Video starts → trigger question loading in parallel (don't await)
+  const handleVideoStart = useCallback(() => {
     if (!profile || isStartingGame) return;
     
-    console.log('[GamePreview] Video started - loading questions in background');
-    
-    // Don't await - let it run parallel with video
+    console.log('[GamePreview] Video playing - loading questions in background');
     startGame().catch(error => {
       console.error('[GamePreview] Error loading questions:', error);
     });
   }, [profile, isStartingGame, startGame]);
 
-  // Callback for video end - hide loading screen and start game
+  // Video ends → hide video screen, game starts if questions ready
   const handleVideoEnd = useCallback(() => {
-    console.log('[GamePreview] Video ended - checking if questions are ready');
-    
-    // Simply hide the loading video - if questions aren't ready yet, 
-    // the game will show a loading state until they arrive
+    console.log('[GamePreview] Video ended - switching to game');
     setShowLoadingVideo(false);
   }, []);
 
