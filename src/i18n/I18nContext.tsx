@@ -272,8 +272,8 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
       console.warn(`[I18n] Missing translation for key: ${key} (lang: ${lang})`);
     }
 
-    // Return key itself as last resort (debug mode)
-    return key;
+    // TEMPORARY: Do NOT show raw keys to users, return empty string instead
+    return '';
   };
 
   const value: I18nContextValue = {
