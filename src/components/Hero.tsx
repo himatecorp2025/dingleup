@@ -6,9 +6,10 @@ import { LanguageSelector } from "./LanguageSelector";
 import { usePlatformDetection } from "@/hooks/usePlatformDetection";
 
 const Hero = () => {
-  const navigate = useNavigate();
-  const { t } = useI18n();
-  const { isHandheld } = usePlatformDetection();
+  console.log('[Landing] Hero rendered');
+   const navigate = useNavigate();
+   const { t } = useI18n();
+   const { isHandheld } = usePlatformDetection();
 
   const scrollToFeatures = () => {
     const featuresSection = document.getElementById('features');
