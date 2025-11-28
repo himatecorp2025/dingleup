@@ -86,11 +86,8 @@ const Dashboard = () => {
   // Enable secondary hooks only after critical data is loaded
   useEffect(() => {
     if (!profileLoading && walletData) {
-      // Delay secondary loading by 100ms to allow UI to render first
-      const timer = setTimeout(() => {
-        setEnableSecondaryLoading(true);
-      }, 100);
-      return () => clearTimeout(timer);
+      // Immediate secondary loading - no artificial delay
+      setEnableSecondaryLoading(true);
     }
   }, [profileLoading, walletData]);
   
@@ -195,11 +192,16 @@ const Dashboard = () => {
     });
   }, [navigate]);
 
-  // PERFORMANCE OPTIMIZATION: Prefetch game assets on Dashboard mount
+  // PERFORMANCE OPTIMIZATION: Prefetch game assets AFTER critical UI renders
   // Loads /game route chunks + intro video in background for instant navigation
+  // Delayed to avoid blocking initial Dashboard render
   useEffect(() => {
-    prefetchGameAssets();
-  }, []);
+    if (!profileLoading && walletData) {
+      // Delay prefetch to ensure Dashboard is fully interactive first
+      const timer = setTimeout(prefetchGameAssets, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [profileLoading, walletData]);
 
   // Check for canceled payment - separate useEffect for searchParams
   useEffect(() => {
@@ -226,10 +228,9 @@ const Dashboard = () => {
 
 
 
-  // Realtime country-specific rank updates via edge function (instant, 0 seconds delay)
-  // Fetch stored lootbox count
+  // PERFORMANCE: Fetch stored lootbox count ONLY after critical data loads
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !enableSecondaryLoading) return;
     
     const fetchStoredCount = async () => {
       try {
@@ -251,10 +252,11 @@ const Dashboard = () => {
     };
 
     fetchStoredCount();
-  }, [userId]);
+  }, [userId, enableSecondaryLoading]);
 
+  // PERFORMANCE: Fetch user daily rank ONLY after critical data loads + defer realtime subscription
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !enableSecondaryLoading) return;
 
     const fetchUserDailyRank = async () => {
       try {
@@ -291,10 +293,11 @@ const Dashboard = () => {
       }
     };
     
-    // Fetch immediately on mount
+    // Fetch immediately when secondary loading is enabled
     fetchUserDailyRank();
     
-    // Subscribe to realtime changes in daily_rankings (instant refetch, 0 seconds delay)
+    // PERFORMANCE: Subscribe to realtime changes ONLY after initial fetch completes
+    // This prevents blocking the initial render with subscription setup
     const leaderboardChannel = supabase
       .channel('daily-leaderboard-rank-updates')
       .on(
@@ -313,7 +316,7 @@ const Dashboard = () => {
     return () => {
       supabase.removeChannel(leaderboardChannel);
     };
-  }, [userId]);
+  }, [userId, enableSecondaryLoading]);
 
   const handleClaimDailyGift = async (): Promise<boolean> => {
     const success = await popupManager.dailyGift.claimDailyGift(refetchWallet);
