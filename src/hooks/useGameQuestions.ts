@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useI18n } from '@/i18n';
 
 interface Question {
   id: string;
@@ -26,6 +27,7 @@ interface GameQuestionsResponse {
 const POOL_STORAGE_KEY = 'dingleup_global_last_pool';
 
 export function useGameQuestions() {
+  const { lang: currentLang } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [prefetchedQuestions, setPrefetchedQuestions] = useState<Question[] | null>(null);
@@ -67,14 +69,17 @@ export function useGameQuestions() {
     }
 
     isPrefetchingRef.current = true;
+    
+    // CRITICAL: Use provided lang or fallback to current UI language
+    const effectiveLang = lang || currentLang;
 
     try {
-      console.log(`[useGameQuestions] Prefetching next game questions (background, lang: ${lang})...`);
+      console.log(`[useGameQuestions] Prefetching next game questions (background, lang: ${effectiveLang})...`);
 
       const { data, error: funcError } = await supabase.functions.invoke('get-game-questions', {
         body: {
           last_pool_order: currentPoolOrder,
-          lang,
+          lang: effectiveLang,
         },
       });
 
@@ -107,6 +112,9 @@ export function useGameQuestions() {
   const getNextGameQuestions = useCallback(async (lang?: string): Promise<Question[]> => {
     setLoading(true);
     setError(null);
+    
+    // CRITICAL: Use provided lang or fallback to current UI language
+    const effectiveLang = lang || currentLang;
 
     try {
       // Check if we have prefetched questions
@@ -126,7 +134,7 @@ export function useGameQuestions() {
         }
 
         // Start prefetching next questions in background
-        prefetchNextGameQuestions(poolOrder, lang);
+        prefetchNextGameQuestions(poolOrder, effectiveLang);
 
         setLoading(false);
         return questions;
@@ -135,12 +143,12 @@ export function useGameQuestions() {
       // No prefetched questions - fetch synchronously
       const lastPoolOrder = getLastPoolOrder();
 
-      console.log(`[useGameQuestions] Fetching questions (last pool: ${lastPoolOrder}, lang: ${lang})`);
+      console.log(`[useGameQuestions] Fetching questions (last pool: ${lastPoolOrder}, lang: ${effectiveLang})`);
 
       const { data, error: funcError } = await supabase.functions.invoke('get-game-questions', {
         body: {
           last_pool_order: lastPoolOrder,
-          lang,
+          lang: effectiveLang,
         },
       });
 
@@ -168,7 +176,7 @@ export function useGameQuestions() {
       console.log(`[useGameQuestions] ✓ Questions loaded${perfInfo}`);
 
       // Start prefetching next questions in background
-      prefetchNextGameQuestions(response.used_pool_order, lang);
+      prefetchNextGameQuestions(response.used_pool_order, effectiveLang);
 
       setLoading(false);
       return response.questions;
@@ -180,7 +188,7 @@ export function useGameQuestions() {
       setLoading(false);
       throw err;
     }
-  }, [getLastPoolOrder, saveLastPoolOrder, prefetchedQuestions, prefetchedPoolOrder, prefetchNextGameQuestions]);
+  }, [getLastPoolOrder, saveLastPoolOrder, prefetchedQuestions, prefetchedPoolOrder, prefetchNextGameQuestions, currentLang]);
 
   // Clear pool history (reset rotation)
   const clearPoolHistory = useCallback(() => {
