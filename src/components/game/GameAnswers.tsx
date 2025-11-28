@@ -46,6 +46,7 @@ export const GameAnswers = memo(({
             isSelected={isSelected}
             isWrong={isWrongAnswer || isFirstAttemptWrong || isSecondAttemptWrong}
             isRemoved={isRemoved}
+            isDoubleChoiceActive={isDoubleAnswerActive}
             onClick={() => !disabled && !isRemoved && onAnswerSelect(answer.key)}
             disabled={disabled || isRemoved}
           >
