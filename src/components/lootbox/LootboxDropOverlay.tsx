@@ -18,7 +18,14 @@ export const LootboxDropOverlay = () => {
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [storedCount, setStoredCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
-  const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(new Set());
+  const [dismissedLootboxes, setDismissedLootboxes] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('dismissedLootboxes');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
   const [countdownActive, setCountdownActive] = useState(false);
 
   // Hide overlay on admin pages and auth pages
@@ -124,9 +131,17 @@ export const LootboxDropOverlay = () => {
     setShowDialog(false);
     setIsVisible(false);
     
-    // Mark this lootbox as dismissed
+    // Mark this lootbox as dismissed and persist to localStorage
     if (activeLootbox) {
-      setDismissedLootboxes(prev => new Set(prev).add(activeLootbox.id));
+      setDismissedLootboxes(prev => {
+        const updated = new Set(prev).add(activeLootbox.id);
+        try {
+          localStorage.setItem('dismissedLootboxes', JSON.stringify(Array.from(updated)));
+        } catch (err) {
+          console.error('[LootboxDropOverlay] Failed to save dismissed lootboxes:', err);
+        }
+        return updated;
+      });
     }
     
     refetch();
