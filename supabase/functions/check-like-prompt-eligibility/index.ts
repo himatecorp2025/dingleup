@@ -87,9 +87,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    // 30% random chance (reduced from 40% to make it more rare)
+    // 10% random chance (reduced from 30% to make it very rare)
     const randomChance = Math.random();
-    if (randomChance > 0.3) {
+    if (randomChance > 0.1) {
       return new Response(
         JSON.stringify({ eligible: false, reason: 'random_chance_failed' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
