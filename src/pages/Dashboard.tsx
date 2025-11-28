@@ -18,6 +18,7 @@ import { useDashboardPopupManager } from '@/hooks/useDashboardPopupManager';
 import { useFullscreen } from '@/hooks/useFullscreen';
 import { useNativeFullscreen } from '@/hooks/useNativeFullscreen';
 import { useGameQuestions } from '@/hooks/useGameQuestions';
+import { useMobilePayment } from '@/hooks/useMobilePayment';
 
 // PERFORMANCE OPTIMIZATION: Prefetch critical game assets
 // This preloads /game route code + intro video in background while user is on Dashboard
@@ -73,6 +74,7 @@ const Dashboard = () => {
   const { isHandheld, isStandalone } = usePlatformDetection();
   const { canMountModals } = useScrollBehavior();
   const { markActive } = useActivityTracker('route_view');
+  const { startPayment, isProcessing } = useMobilePayment();
   
   // PHASE 1: Critical data (profile, wallet) - loads immediately
   const { profile, loading: profileLoading, refreshProfile } = useProfileQuery(userId);
@@ -405,42 +407,41 @@ const Dashboard = () => {
     }
   };
 
+  /**
+   * PREMIUM BOOSTER VÁSÁRLÁS - NATÍV MOBILFIZETÉSSEL
+   * 
+   * Apple Pay / Google Pay natív fizetési sheet használata.
+   * Fallback: Stripe kártyás fizetés, ha natív nem elérhető.
+   */
   const purchasePremiumBooster = async (confirmInstant: boolean = false) => {
     try {
-      toast.loading(t('payment.loading'), { id: 'purchase-premium-booster' });
-      
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error(t('errors.not_logged_in'), { id: 'purchase-premium-booster' });
+        toast.error(t('errors.not_logged_in'));
         return;
       }
       
-      // Create Stripe Checkout session
-      const { data, error } = await supabase.functions.invoke('create-premium-booster-payment', {
-        body: {},
-        headers: { Authorization: `Bearer ${session.access_token}` }
+      // Natív mobilfizetés indítása
+      await startPayment({
+        productType: 'premium_booster',
+        amount: 249, // $2.49
+        currency: 'usd',
+        displayName: 'Premium Speed Booster',
+        metadata: { booster_code: 'PREMIUM' },
+        onSuccess: async () => {
+          toast.success(t('premium.purchase_success'));
+          await refetchWallet();
+          await refreshProfile();
+        },
+        onError: (error) => {
+          console.error('Premium booster payment error:', error);
+          toast.error(`${t('errors.payment_failed')}: ${error}`);
+        }
       });
-
-      if (error) throw error;
-
-      if (data?.url && data?.sessionId) {
-        // Store session ID for mobile WebView fallback polling
-        localStorage.setItem('pending_premium_session', JSON.stringify({
-          sessionId: data.sessionId,
-          timestamp: Date.now()
-        }));
-
-        // PWA/Mobile: use window.location.href instead of window.open
-        // This works better in WebView/PWA environments
-        window.location.href = data.url;
-        toast.success(t('payment.page_opened'), { id: 'purchase-premium-booster' });
-      } else {
-        throw new Error(t('payment.url_missing'));
-      }
     } catch (error) {
       console.error('Premium booster payment error:', error);
       const errorMsg = error instanceof Error ? error.message : t('errors.payment_failed');
-      toast.error(errorMsg, { id: 'purchase-premium-booster' });
+      toast.error(errorMsg);
     }
   };
 
