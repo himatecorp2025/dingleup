@@ -32,19 +32,36 @@ serve(async (req) => {
 
     console.log('[get-translations] Fetching translations for language:', lang);
 
-    const query = supabase
-      .from('translations')
-      .select(`key, hu, en, ${lang}`)
-      .order('key');
+    const PAGE_SIZE = 1000;
+    const allTranslations: any[] = [];
+    let from = 0;
 
-    const { data: translations, error } = await query;
+    while (true) {
+      const { data, error } = await supabase
+        .from('translations')
+        .select(`key, hu, en, ${lang}`)
+        .order('key')
+        .range(from, from + PAGE_SIZE - 1);
 
-    if (error) {
-      console.error('[get-translations] Error:', error);
-      throw error;
+      if (error) {
+        console.error('[get-translations] Error loading page starting at', from, error);
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+        break;
+      }
+
+      allTranslations.push(...data);
+
+      if (data.length < PAGE_SIZE) {
+        break;
+      }
+
+      from += PAGE_SIZE;
     }
 
-    if (!translations || translations.length === 0) {
+    if (!allTranslations || allTranslations.length === 0) {
       console.log('[get-translations] No translations found');
       return new Response(
         JSON.stringify({ translations: {} }),
@@ -52,12 +69,12 @@ serve(async (req) => {
       );
     }
 
-    console.log('[get-translations] Fetched', translations.length, 'translations');
+    console.log('[get-translations] Fetched', allTranslations.length, 'translations');
 
     // Build translation map with fallback chain: target → en → hu
     const translationMap: Record<string, string> = {};
     
-    for (const row of translations) {
+    for (const row of allTranslations) {
       const key = row.key;
       const rowData = row as any;
       const targetLangText = rowData[lang] as string | null;
