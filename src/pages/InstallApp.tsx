@@ -92,39 +92,6 @@ const InstallApp = () => {
           {t('install.app_only_message')}
         </p>
 
-        {/* iOS Chrome Warning */}
-        {isIOSChrome && (
-          <div className="mb-6 p-4 bg-yellow-500/20 border-2 border-yellow-500 rounded-lg animate-pulse">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" />
-              <div className="text-left">
-                <h3 className="font-bold text-yellow-500 mb-2 text-lg">
-                  {lang === 'hu' ? '⚠️ Safari böngésző szükséges!' : '⚠️ Safari Browser Required!'}
-                </h3>
-                <p className="text-sm text-white/90 mb-3">
-                  {lang === 'hu' 
-                    ? 'iPhone-on a PWA telepítés CSAK Safari böngészőből működik! Chrome böngészőből nem telepíthető.' 
-                    : 'PWA installation on iPhone works ONLY from Safari browser! Cannot be installed from Chrome.'}
-                </p>
-                <div className="flex flex-col gap-2 text-xs text-white/80 bg-black/30 p-3 rounded">
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold">1.</span>
-                    <span>{lang === 'hu' ? 'Koppints a Share gombra (alul középen)' : 'Tap the Share button (center bottom)'}</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold">2.</span>
-                    <span>{lang === 'hu' ? 'Görgess le és válaszd: "Megnyitás Safariban"' : 'Scroll and select: "Open in Safari"'}</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold">3.</span>
-                    <span>{lang === 'hu' ? 'Ott telepítsd a PWA-t az alábbi utasítások szerint' : 'Install the PWA there following the instructions below'}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Store Download Buttons */}
         <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6">
           <h3 className="text-white font-bold text-lg mb-4">
@@ -170,108 +137,60 @@ const InstallApp = () => {
             {lang === 'hu' ? 'Telepítés közvetlenül' : 'Install Directly'}
           </h3>
 
-          {/* ========== CSAK iOS ESZKÖZÖKÖN ========== */}
-          {isIOS && (
-            <>
-              {/* iOS Safari Requirement Box */}
-              <div className={`p-4 rounded-lg border-2 mb-4 ${isIOSSafari ? 'bg-green-500/20 border-green-500' : 'bg-red-500/20 border-red-500'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                  {isIOSSafari ? (
-                    <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  ) : (
-                    <XCircle className="w-5 h-5 text-red-500" />
-                  )}
-                  <span className={`font-bold ${isIOSSafari ? 'text-green-500' : 'text-red-500'}`}>
-                    {isIOSSafari 
-                      ? (lang === 'hu' ? '✓ Safari böngésző - Folytatható!' : '✓ Safari Browser - You can proceed!')
-                      : (lang === 'hu' ? '✗ Safari böngésző szükséges!' : '✗ Safari Browser Required!')}
-                  </span>
-                </div>
-                {!isIOSSafari && (
-                  <p className="text-sm text-white/80">
-                    {lang === 'hu' 
-                      ? 'Nyisd meg ezt az oldalt Safari böngészőben a telepítéshez.' 
-                      : 'Open this page in Safari browser to install.'}
-                  </p>
-                )}
-              </div>
+          {/* ========== ANDROID BOX ========== */}
+          <div className="bg-green-500/10 border-2 border-green-400 rounded-lg p-4 mb-4">
+            <p className="text-white font-bold text-base mb-4 flex items-center gap-2">
+              📱 {lang === 'hu' ? 'ANDROID ESZKÖZÖKÖN:' : 'ON ANDROID DEVICES:'}
+              <span className="text-xs font-normal text-green-400 bg-green-500/30 px-2 py-1 rounded">
+                {lang === 'hu' ? 'CHROME AJÁNLOTT' : 'CHROME RECOMMENDED'}
+              </span>
+            </p>
+            <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
+              <li>{lang === 'hu' 
+                ? 'Nyisd meg ezt az oldalt Chrome böngészőben' 
+                : 'Open this page in Chrome browser'}</li>
+              <li>{lang === 'hu' 
+                ? 'Koppints a három pontra (⋮) a jobb felső sarokban' 
+                : 'Tap the three dots (⋮) in the top right corner'}</li>
+              <li>{lang === 'hu' 
+                ? 'Válaszd az "Alkalmazás telepítése" vagy "Hozzáadás a kezdőképernyőhöz" opciót' 
+                : 'Select "Install app" or "Add to Home screen"'}</li>
+              <li>{lang === 'hu' 
+                ? 'Erősítsd meg a telepítést a "Telepítés" gombbal' 
+                : 'Confirm installation with "Install" button'}</li>
+            </ol>
+          </div>
 
-              <div className="bg-blue-500/10 border-2 border-blue-400 rounded-lg p-4">
-                <p className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                  📱 {lang === 'hu' ? 'iOS ESZKÖZÖKÖN (iPhone/iPad):' : 'ON iOS DEVICES (iPhone/iPad):'}
-                  <span className="text-xs font-normal text-red-400 bg-red-500/30 px-2 py-1 rounded">
-                    {lang === 'hu' ? 'CSAK SAFARI' : 'SAFARI ONLY'}
-                  </span>
-                </p>
-                <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
-                  <li className={isIOSSafari ? 'text-white/80' : 'text-red-400 font-bold'}>
-                    {lang === 'hu' 
-                      ? 'Nyisd meg ezt az oldalt Safari böngészőben' 
-                      : 'Open this page in Safari browser'}
-                  </li>
-                  <li>{lang === 'hu' 
-                    ? 'Koppints a "Megosztás" ikonra (alsó menüsorban a négyzetből felfelé mutató nyíl)' 
-                    : 'Tap the "Share" icon (square with upward arrow in bottom menu)'}</li>
-                  <li>{lang === 'hu' 
-                    ? 'Görgess le és válaszd a "Hozzáadás a kezdőképernyőhöz" opciót' 
-                    : 'Scroll down and select "Add to Home Screen"'}</li>
-                  <li className="text-yellow-400 font-bold">
-                    {lang === 'hu' 
-                      ? '⚠️ FONTOS: Kapcsold BE a "Megnyitás webappként" (Web App) kapcsolót!' 
-                      : '⚠️ IMPORTANT: Turn ON the "Open as Web App" toggle!'}
-                  </li>
-                  <li>{lang === 'hu' 
-                    ? 'Koppints a "Hozzáadás" gombra a jobb felső sarokban' 
-                    : 'Tap "Add" button in the top right corner'}</li>
-                </ol>
-              </div>
-            </>
-          )}
-          
-          {/* ========== CSAK ANDROID ESZKÖZÖKÖN ========== */}
-          {isAndroid && (
-            <div className="bg-green-500/10 border-2 border-green-400 rounded-lg p-4">
-              <p className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                📱 {lang === 'hu' ? 'ANDROID ESZKÖZÖKÖN:' : 'ON ANDROID DEVICES:'}
-                <span className="text-xs font-normal text-green-400 bg-green-500/30 px-2 py-1 rounded">
-                  {lang === 'hu' ? 'CHROME AJÁNLOTT' : 'CHROME RECOMMENDED'}
-                </span>
-              </p>
-              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
-                <li>{lang === 'hu' 
-                  ? 'Nyisd meg ezt az oldalt Chrome böngészőben' 
-                  : 'Open this page in Chrome browser'}</li>
-                <li>{lang === 'hu' 
-                  ? 'Koppints a három pontra (⋮) a jobb felső sarokban' 
-                  : 'Tap the three dots (⋮) in the top right corner'}</li>
-                <li>{lang === 'hu' 
-                  ? 'Válaszd az "Alkalmazás telepítése" vagy "Hozzáadás a kezdőképernyőhöz" opciót' 
-                  : 'Select "Install app" or "Add to Home screen"'}</li>
-                <li>{lang === 'hu' 
-                  ? 'Erősítsd meg a telepítést a "Telepítés" gombbal' 
-                  : 'Confirm installation with "Install" button'}</li>
-              </ol>
-            </div>
-          )}
-          
-          {/* ========== CSAK DESKTOP / EGYÉB ESZKÖZÖKÖN ========== */}
-          {!isIOS && !isAndroid && (
-            <div className="bg-purple-500/10 border-2 border-purple-400 rounded-lg p-4">
-              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
-                <li>
-                  {lang === 'hu' 
-                    ? 'Nyisd meg ezt az oldalt Chrome vagy Safari böngészőben (iOS eszközön csak Safari támogatott)' 
-                    : 'Open this page in Chrome or Safari browser (on iOS devices only Safari is supported)'}
-                </li>
-                <li>{lang === 'hu' 
-                  ? 'Keresd meg a böngésző menüjében a "Telepítés" vagy "Install" gombot' 
-                  : 'Find the "Install" button in your browser menu'}</li>
-                <li>{lang === 'hu' 
-                  ? 'Kattints rá és erősítsd meg a telepítést' 
-                  : 'Click it and confirm the installation'}</li>
-              </ol>
-            </div>
-          )}
+          {/* ========== iOS BOX ========== */}
+          <div className="bg-blue-500/10 border-2 border-blue-400 rounded-lg p-4">
+            <p className="text-white font-bold text-base mb-4 flex items-center gap-2">
+              📱 {lang === 'hu' ? 'iOS ESZKÖZÖKÖN (iPhone/iPad):' : 'ON iOS DEVICES (iPhone/iPad):'}
+              <span className="text-xs font-normal text-red-400 bg-red-500/30 px-2 py-1 rounded">
+                {lang === 'hu' ? 'CSAK SAFARI' : 'SAFARI ONLY'}
+              </span>
+            </p>
+            <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
+              <li className="text-red-400 font-bold">
+                {lang === 'hu' 
+                  ? 'Nyisd meg ezt az oldalt Safari böngészőben' 
+                  : 'Open this page in Safari browser'}
+              </li>
+              <li>{lang === 'hu' 
+                ? 'Koppints a "Megosztás" ikonra (alsó menüsorban a négyzetből felfelé mutató nyíl)' 
+                : 'Tap the "Share" icon (square with upward arrow in bottom menu)'}</li>
+              <li>{lang === 'hu' 
+                ? 'Görgess le és válaszd a "Hozzáadás a kezdőképernyőhöz" opciót' 
+                : 'Scroll down and select "Add to Home Screen"'}</li>
+              <li className="text-yellow-400 font-bold">
+                {lang === 'hu' 
+                  ? '⚠️ FONTOS: Kapcsold BE a "Megnyitás webappként" (Web App) kapcsolót!' 
+                  : '⚠️ IMPORTANT: Turn ON the "Open as Web App" toggle!'}
+              </li>
+              <li>{lang === 'hu' 
+                ? 'Koppints a "Hozzáadás" gombra a jobb felső sarokban' 
+                : 'Tap "Add" button in the top right corner'}</li>
+            </ol>
+          </div>
         </div>
 
         <Button
