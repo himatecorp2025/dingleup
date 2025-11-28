@@ -388,13 +388,29 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                 <div className="relative z-10 flex flex-col items-center px-[8%] pb-[3%]" style={{ height: '100%', paddingTop: '0' }}>
                   <div className="w-full mb-2 overflow-visible" style={{ minHeight: 'calc(100% - 100px)', maxHeight: 'calc(100% - 100px)' }}>
                     {topPlayers.length === 0 ? (
-                      <div className="text-center text-white py-8 px-4">
-                        <p className="text-lg font-semibold leading-relaxed" style={{
-                          fontSize: 'clamp(1rem, 4vw, 1.25rem)',
-                          WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
-                        }}>
-                          {t('dailyWinners.noWinnersMessage')}
-                        </p>
+                      <div className="text-center text-white py-8 px-4 flex flex-col items-center gap-4">
+                        {/* Sad emoji SVG */}
+                        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="50" cy="50" r="45" fill="#FFA726" stroke="#FF6F00" strokeWidth="2"/>
+                          <circle cx="35" cy="40" r="5" fill="#333"/>
+                          <circle cx="65" cy="40" r="5" fill="#333"/>
+                          <path d="M 30 70 Q 50 60 70 70" stroke="#333" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                        </svg>
+                        
+                        <div className="space-y-2">
+                          <p className="font-bold leading-relaxed" style={{
+                            fontSize: 'clamp(1.25rem, 5vw, 1.5625rem)',
+                            WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
+                          }}>
+                            {t('dailyWinners.noWinnersFirstLine')}
+                          </p>
+                          <p className="font-bold leading-relaxed" style={{
+                            fontSize: 'clamp(1.25rem, 5vw, 1.5625rem)',
+                            WebkitTextStroke: '0.5px rgba(0,0,0,0.8)'
+                          }}>
+                            {t('dailyWinners.noWinnersSecondLine')}
+                          </p>
+                        </div>
                       </div>
                     ) : (
                       <>
