@@ -14,6 +14,7 @@ import { LoadingSpinner3D } from '@/components/icons/LoadingSpinner3D';
 import { SlotMachine3D } from '@/components/icons/SlotMachine3D';
 import { trackConversionEvent } from '@/lib/analytics';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useMobilePayment } from '@/hooks/useMobilePayment';
 
 interface InGameRescuePopupProps {
   isOpen: boolean;
@@ -39,6 +40,7 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
   const [loadingGoldSaver, setLoadingGoldSaver] = useState(false);
   const [loadingInstantRescue, setLoadingInstantRescue] = useState(false);
   const [hasTrackedView, setHasTrackedView] = useState(false);
+  const { startPayment } = useMobilePayment();
 
   // Track product_view when popup opens
   useEffect(() => {
@@ -125,6 +127,12 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
     }
   };
 
+  /**
+   * INSTANT RESCUE VÁSÁRLÁS - NATÍV MOBILFIZETÉSSEL
+   * 
+   * Játék közben elérhető fizetős mentés (Apple Pay / Google Pay).
+   * Fallback: Stripe kártyás fizetés.
+   */
   const handleInstantRescuePurchaseRaw = async () => {
     setLoadingInstantRescue(true);
     try {
@@ -144,29 +152,32 @@ export const InGameRescuePopup: React.FC<InGameRescuePopupProps> = ({
         { price: 0, currency: 'real_money' }
       );
       
-      const { data, error } = await supabase.functions.invoke('purchase-booster', {
-        body: { boosterCode: 'INSTANT_RESCUE' },
-        headers: { Authorization: `Bearer ${session.access_token}` }
+      // Natív mobilfizetés indítása
+      await startPayment({
+        productType: 'instant_rescue',
+        amount: 149, // $1.49
+        currency: 'usd',
+        displayName: t('rescue.instant_rescue_title'),
+        metadata: { 
+          game_session_id: 'GAME_SESSION_ID_HERE' // TODO: Ha van gameSessionId prop, ide kell
+        },
+        onSuccess: async () => {
+          toast.success(t('rescue.premium_success'));
+          await onStateRefresh();
+          onClose();
+        },
+        onError: (error) => {
+          console.error('Instant Rescue payment error:', error);
+          toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
+          onClose();
+          if (onGameEnd) onGameEnd();
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1500);
+        }
       });
-
-      if (error) throw error;
-
-      if (data?.success) {
-        toast.success(t('rescue.premium_success'));
-        await onStateRefresh();
-        onClose();
-      } else {
-        // Sikertelen vásárlás - egységes hibaüzenet
-        toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
-        onClose();
-        if (onGameEnd) onGameEnd();
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500);
-      }
     } catch (error) {
       console.error('Instant Rescue purchase error:', error);
-      // Sikertelen vásárlás - egységes hibaüzenet
       toast.error(t('payment.error.purchase_failed'), { duration: 4000 });
       onClose();
       if (onGameEnd) onGameEnd();
