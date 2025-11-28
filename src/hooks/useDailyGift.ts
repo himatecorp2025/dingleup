@@ -34,8 +34,9 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         return;
       }
 
-      // Check session storage for today's dismissal/claim
-      const today = new Date().toISOString().split('T')[0];
+      // CRITICAL FIX: Use local timezone date, not UTC date
+      // toLocaleDateString('en-CA') returns YYYY-MM-DD in user's local timezone
+      const today = new Date().toLocaleDateString('en-CA');
       const dismissed = sessionStorage.getItem(`${DAILY_GIFT_SESSION_KEY}${today}`);
       
       // If already dismissed or claimed today, don't show
@@ -45,10 +46,10 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         return;
       }
 
-      // Check if already claimed today
+      // Check if already claimed today (compare dates in local timezone)
       const lastClaimed = profile?.daily_gift_last_claimed;
       if (lastClaimed) {
-        const lastClaimedDate = new Date(lastClaimed).toISOString().split('T')[0];
+        const lastClaimedDate = new Date(lastClaimed).toLocaleDateString('en-CA');
         if (lastClaimedDate === today) {
           // Already claimed today
           setCanClaim(false);
@@ -109,8 +110,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         setCanClaim(false);
         setShowPopup(false);
         
-        // Mark as dismissed in session storage
-        const today = new Date().toISOString().split('T')[0];
+        // Mark as dismissed in session storage (use local timezone date)
+        const today = new Date().toLocaleDateString('en-CA');
         sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'true');
         
         // Show success toast with actual amounts
@@ -163,8 +164,8 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
     if (!userId) return;
     
     try {
-      // Mark as dismissed for today
-      const today = new Date().toISOString().split('T')[0];
+      // Mark as dismissed for today (use local timezone date)
+      const today = new Date().toLocaleDateString('en-CA');
       sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'dismissed');
       
       // Close popup
