@@ -175,8 +175,8 @@ serve(async (req) => {
       status: string;
     }>;
 
-    // Expire slots that were due but user was inactive (15 min grace period)
-    const EXPIRATION_GRACE_MINUTES = 15;
+    // Expire slots that were due but user was inactive (5 min grace period)
+    const EXPIRATION_GRACE_MINUTES = 5;
     const expirationMs = EXPIRATION_GRACE_MINUTES * 60 * 1000;
     
     let slotsModified = false;
