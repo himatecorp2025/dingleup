@@ -129,28 +129,75 @@ const InstallApp = () => {
         </div>
 
         {/* PWA Installation Instructions */}
-        {(isIOS || isAndroid) && (
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6 text-left">
-            <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-              <Download className="w-5 h-5 text-purple-400" />
-              {t('install.pwa_title')}
-            </h3>
-            {isIOS && (
-              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
-                <li>{t('install.ios.step1')}</li>
-                <li>{t('install.ios.step2')}</li>
-                <li>{t('install.ios.step3')}</li>
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6 text-left">
+          <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+            <Download className="w-5 h-5 text-purple-400" />
+            {lang === 'hu' ? 'Telepítés közvetlenül PWA-ként' : 'Install directly as PWA'}
+          </h3>
+          
+          {isIOS && (
+            <>
+              <p className="text-white/90 font-semibold mb-3">
+                {lang === 'hu' ? 'iOS (iPhone/iPad):' : 'iOS (iPhone/iPad):'}
+              </p>
+              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside mb-6">
+                <li>{lang === 'hu' 
+                  ? 'Nyisd meg ezt az oldalt Safari böngészőben' 
+                  : 'Open this page in Safari browser'}</li>
+                <li>{lang === 'hu' 
+                  ? 'Koppints a "Megosztás" ikonra (alsó menüsorban a négyzetből felfelé mutató nyíl)' 
+                  : 'Tap the "Share" icon (square with upward arrow in bottom menu)'}</li>
+                <li>{lang === 'hu' 
+                  ? 'Görgess le és válaszd a "Hozzáadás a kezdőképernyőhöz" opciót' 
+                  : 'Scroll down and select "Add to Home Screen"'}</li>
+                <li>{lang === 'hu' 
+                  ? 'Koppints a "Hozzáadás" gombra a jobb felső sarokban' 
+                  : 'Tap "Add" button in the top right corner'}</li>
               </ol>
-            )}
-            {isAndroid && (
-              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
-                <li>{t('install.android.step1')}</li>
-                <li>{t('install.android.step2')}</li>
-                <li>{t('install.android.step3')}</li>
+            </>
+          )}
+          
+          {isAndroid && (
+            <>
+              <p className="text-white/90 font-semibold mb-3">
+                {lang === 'hu' ? 'Android:' : 'Android:'}
+              </p>
+              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside mb-6">
+                <li>{lang === 'hu' 
+                  ? 'Nyisd meg ezt az oldalt Chrome böngészőben' 
+                  : 'Open this page in Chrome browser'}</li>
+                <li>{lang === 'hu' 
+                  ? 'Koppints a három pontra (⋮) a jobb felső sarokban' 
+                  : 'Tap the three dots (⋮) in the top right corner'}</li>
+                <li>{lang === 'hu' 
+                  ? 'Válaszd az "Alkalmazás telepítése" vagy "Hozzáadás a kezdőképernyőhöz" opciót' 
+                  : 'Select "Install app" or "Add to Home screen"'}</li>
+                <li>{lang === 'hu' 
+                  ? 'Erősítsd meg a telepítést a "Telepítés" gombbal' 
+                  : 'Confirm installation with "Install" button'}</li>
               </ol>
-            )}
-          </div>
-        )}
+            </>
+          )}
+          
+          {!isIOS && !isAndroid && (
+            <>
+              <p className="text-white/90 font-semibold mb-3">
+                {lang === 'hu' ? 'Desktop / Egyéb eszközök:' : 'Desktop / Other devices:'}
+              </p>
+              <ol className="text-white/80 space-y-3 text-sm list-decimal list-inside">
+                <li>{lang === 'hu' 
+                  ? 'Nyisd meg ezt az oldalt Chrome, Edge vagy Safari böngészőben' 
+                  : 'Open this page in Chrome, Edge, or Safari browser'}</li>
+                <li>{lang === 'hu' 
+                  ? 'Keresd meg a böngésző menüben a "Telepítés" vagy "Install" gombot' 
+                  : 'Find the "Install" button in your browser menu'}</li>
+                <li>{lang === 'hu' 
+                  ? 'Kattints rá és erősítsd meg a telepítést' 
+                  : 'Click it and confirm the installation'}</li>
+              </ol>
+            </>
+          )}
+        </div>
 
         <Button
           onClick={() => navigate('/')}
