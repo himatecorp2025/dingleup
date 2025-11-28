@@ -169,14 +169,12 @@ const GamePreview = memo(() => {
   });
 
   const {
-    showLoadingVideo,
-    videoEnded,
+    // REMOVED: showLoadingVideo, videoEnded, handleVideoEnd - instant game start
     isGameReady,
     hasAutoStarted,
     setHasAutoStarted,
     isStarting: isStartingGame,
     startGame,
-    handleVideoEnd,
     restartGameImmediately,
     finishGame,
     resetGameState,
@@ -442,10 +440,10 @@ const GamePreview = memo(() => {
     trackMilestone();
   }, [currentQuestionIndex, userId, isGameReady, correctAnswers, profile?.preferred_language]);
 
-  // Background detection - exit game if app goes to background (only after video ended)
+  // Background detection - exit game if app goes to background (instant check, no video delay)
   useEffect(() => {
-    // Do not activate background detection while the intro/loading video is playing
-    if (gameState !== 'playing' || !videoEnded) return;
+    // Activate background detection immediately when game is ready
+    if (gameState !== 'playing' || !isGameReady) return;
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -467,7 +465,7 @@ const GamePreview = memo(() => {
       window.removeEventListener('blur', handleBlur);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState, videoEnded]); // t and navigate are stable refs
+  }, [gameState, isGameReady]); // t and navigate are stable refs
 
   // Check for in-game payment success
   useEffect(() => {
@@ -553,16 +551,7 @@ const GamePreview = memo(() => {
     );
   }
 
-  // Show loading video IMMEDIATELY when game start begins (even before backend completes)
-  // Keep video visible until BOTH video ends AND questions are ready
-  // For seamless restart: never show any loading screen
-  if (showLoadingVideo && (isStartingGame || !videoEnded)) {
-    return (
-      <div className="fixed inset-0 w-full h-full bg-black z-[9999]">
-        <GameLoadingScreen onVideoEnd={handleVideoEnd} />
-      </div>
-    );
-  }
+  // REMOVED: Loading video screen - instant game start, no video delay
 
   if (gameState === 'playing') {
     const currentQuestion = questions[currentQuestionIndex];

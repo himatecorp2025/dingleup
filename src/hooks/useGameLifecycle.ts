@@ -81,8 +81,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
   } = options;
 
   const navigate = useNavigate();
-  const [showLoadingVideo, setShowLoadingVideo] = useState(false);
-  const [videoEnded, setVideoEnded] = useState(false);
+  // REMOVED: showLoadingVideo, videoEnded states - instant game start
   const [isGameReady, setIsGameReady] = useState(false);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
@@ -133,8 +132,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       console.log('[useGameLifecycle] ⚡ INSTANT RESTART - Using prefetched questions (<5ms)');
       
       setIsStarting(true);
-      setShowLoadingVideo(false);
-      setVideoEnded(true);
+      // INSTANT: Game ready immediately, no video
       setIsGameReady(true);
       
       try {
@@ -189,7 +187,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       }
     }
     
-    // NORMAL MODE: Full backend loading
+    // NORMAL MODE: Full backend loading - INSTANT, no video
     if (userId) {
       await trackFeatureUsage(userId, 'game_action', 'game', 'start', {
         skipLoadingVideo,
@@ -204,15 +202,8 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     }
     
     setIsStarting(true);
-    if (!skipLoadingVideo) {
-      setShowLoadingVideo(true);
-      setVideoEnded(false);
-      setIsGameReady(false);
-    } else {
-      setShowLoadingVideo(false);
-      setVideoEnded(true);
-      setIsGameReady(true);
-    }
+    // INSTANT: Game ready immediately, no video delay
+    setIsGameReady(true);
     
     const backendStartTime = performance.now();
     console.log('[useGameLifecycle] Backend loading started');
@@ -311,26 +302,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     setCanSwipe, setIsAnimating, refreshProfile, prefetchedQuestions, onPrefetchComplete
   ]);
 
-  const handleVideoEnd = useCallback(async () => {
-    if (gameInitPromiseRef.current) {
-      try {
-        // Add 5-second timeout to prevent infinite wait
-        await Promise.race([
-          gameInitPromiseRef.current,
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Game initialization timeout')), 5000)
-          )
-        ]);
-      } catch (error) {
-        console.error('[useGameLifecycle] Init timeout or error:', error);
-        return;
-      }
-    }
-    
-    setIsGameReady(true);
-    setVideoEnded(true);
-    setIsStarting(false);
-  }, []);
+  // REMOVED: handleVideoEnd - no video delay, instant game start
 
   const restartGameImmediately = useCallback(async () => {
     if (!profile || isStarting) return;
@@ -374,13 +346,11 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     // Start new game with PREFETCH MODE (uses prefetched questions if available)
     await startGame(true, true);
     
-    // Instant transition to new game (no 300ms delay!)
-    setTimeout(() => {
-      resetTimer(10);
-      setQuestionVisible(true);
-      setCanSwipe(true);
-      console.log('[useGameLifecycle] ✓ Instant restart complete');
-    }, 50);
+    // INSTANT transition - no setTimeout delay!
+    resetTimer(10);
+    setQuestionVisible(true);
+    setCanSwipe(true);
+    console.log('[useGameLifecycle] ✓ Instant restart complete');
   }, [
     profile, isStarting, gameCompleted, resetGameStateHook, setCoinsEarned,
     setHelp5050UsageCount, setHelp2xAnswerUsageCount, setHelpAudienceUsageCount,
@@ -478,14 +448,12 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
   }, [gameCompleted, navigate, t]);
 
   return {
-    showLoadingVideo,
-    videoEnded,
+    // REMOVED: showLoadingVideo, videoEnded - instant game start
     isGameReady,
     hasAutoStarted,
     setHasAutoStarted,
     isStarting,
     startGame,
-    handleVideoEnd,
     restartGameImmediately,
     finishGame,
     resetGameState,
