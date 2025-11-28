@@ -37,7 +37,7 @@ interface LootboxActivityTrackerOptions {
 export const useLootboxActivityTracker = (
   options: LootboxActivityTrackerOptions = {}
 ) => {
-  const { enabled = true, heartbeatIntervalSeconds = 30 } = options;
+  const { enabled = true, heartbeatIntervalSeconds = 300 } = options;
   const heartbeatInterval = useRef<NodeJS.Timeout | null>(null);
   const lastHeartbeat = useRef<Date | null>(null);
 
