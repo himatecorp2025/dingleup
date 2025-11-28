@@ -46,7 +46,6 @@ import DailyGiftDialog from '@/components/DailyGiftDialog';
 import { WelcomeBonusDialog } from '@/components/WelcomeBonusDialog';
 import { DailyWinnersDialog } from '@/components/DailyWinnersDialog';
 import { DailyRankRewardDialog } from '@/components/DailyRankRewardDialog';
-import { PremiumBoosterConfirmDialog } from '@/components/PremiumBoosterConfirmDialog';
 import { LeaderboardCarousel } from '@/components/LeaderboardCarousel';
 import { useActiveLootbox } from '@/hooks/useActiveLootbox';
 import { ActiveLootboxDisplay } from '@/components/lootbox/ActiveLootboxDisplay';
@@ -104,7 +103,6 @@ const Dashboard = () => {
   // Auto logout on inactivity with warning
   const { showWarning, remainingSeconds, handleStayActive } = useAutoLogout();
   const boosterState = useBoosterState(userId);
-  const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
   const [currentRank, setCurrentRank] = useState<number | null>(null);
   
   // PHASE 2 HOOKS: Only enabled after critical data loads
@@ -362,14 +360,7 @@ const Dashboard = () => {
       return;
     }
 
-    // Otherwise, purchase premium booster
-    if (!boosterState.instantPremiumEnabled) {
-      // Show confirmation dialog for first-time purchase
-      setShowPremiumConfirm(true);
-      return;
-    }
-
-    // Instant purchase enabled - direct purchase
+    // Direct purchase without confirmation dialog
     await purchasePremiumBooster(true);
   };
 
@@ -776,12 +767,6 @@ const Dashboard = () => {
           }}
         />
       )}
-      
-      <PremiumBoosterConfirmDialog
-        open={showPremiumConfirm}
-        onOpenChange={setShowPremiumConfirm}
-        onConfirm={() => purchasePremiumBooster(true)}
-      />
     </div>
   );
 };
