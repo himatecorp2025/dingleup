@@ -132,8 +132,6 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       console.log('[useGameLifecycle] ⚡ INSTANT RESTART - Using prefetched questions (<5ms)');
       
       setIsStarting(true);
-      // INSTANT: Game ready immediately, no video
-      setIsGameReady(true);
       
       try {
         // Backend operations in parallel (non-blocking)
@@ -173,6 +171,8 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
         setCanSwipe(true);
         setIsAnimating(false);
         
+        // CRITICAL: Set game ready AFTER questions are loaded
+        setIsGameReady(true);
         setIsStarting(false);
         
         // Wait for backend ops to complete
@@ -202,8 +202,6 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
     }
     
     setIsStarting(true);
-    // INSTANT: Game ready immediately, no video delay
-    setIsGameReady(true);
     
     const backendStartTime = performance.now();
     console.log('[useGameLifecycle] Backend loading started');
@@ -234,7 +232,7 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
         throw new Error('Session error');
       }
       
-        await Promise.all([
+      await Promise.all([
         creditStartReward(),
         (async () => {
           try {
@@ -281,6 +279,8 @@ export const useGameLifecycle = (options: UseGameLifecycleOptions) => {
       setCanSwipe(true);
       setIsAnimating(false);
       
+      // CRITICAL: Set game ready AFTER questions are loaded
+      setIsGameReady(true);
       setIsStarting(false);
       gameInitPromiseRef.current = null;
       
