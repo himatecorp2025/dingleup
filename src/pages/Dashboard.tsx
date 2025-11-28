@@ -18,7 +18,6 @@ import { useDashboardPopupManager } from '@/hooks/useDashboardPopupManager';
 import { useFullscreen } from '@/hooks/useFullscreen';
 import { useNativeFullscreen } from '@/hooks/useNativeFullscreen';
 import { useGameQuestions } from '@/hooks/useGameQuestions';
-import { useMobilePayment } from '@/hooks/useMobilePayment';
 
 // PERFORMANCE OPTIMIZATION: Prefetch critical game assets
 // This preloads /game route code + intro video in background while user is on Dashboard
@@ -73,7 +72,6 @@ const Dashboard = () => {
   const { isHandheld, isStandalone } = usePlatformDetection();
   const { canMountModals } = useScrollBehavior();
   const { markActive } = useActivityTracker('route_view');
-  const { startPayment, isProcessing } = useMobilePayment();
   
   // PHASE 1: Critical data (profile, wallet) - loads immediately
   const { profile, loading: profileLoading, refreshProfile } = useProfileQuery(userId);
@@ -399,10 +397,8 @@ const Dashboard = () => {
   };
 
   /**
-   * PREMIUM BOOSTER VÁSÁRLÁS - NATÍV MOBILFIZETÉSSEL
-   * 
-   * Apple Pay / Google Pay natív fizetési sheet használata.
-   * Fallback: Stripe kártyás fizetés, ha natív nem elérhető.
+   * PREMIUM BOOSTER VÁSÁRLÁS - STRIPE CHECKOUT
+   * PWA-ban window.location.href redirect használata megbízhatóság miatt
    */
   const purchasePremiumBooster = async (confirmInstant: boolean = false) => {
     try {
@@ -412,27 +408,23 @@ const Dashboard = () => {
         return;
       }
       
-      // Natív mobilfizetés indítása
-      await startPayment({
-        productType: 'premium_booster',
-        amount: 249, // $2.49
-        currency: 'usd',
-        displayName: 'Premium Speed Booster',
-        metadata: { booster_code: 'PREMIUM' },
-        onSuccess: async () => {
-          toast.success(t('premium.purchase_success'));
-          await refetchWallet();
-          await refreshProfile();
-        },
-        onError: (error) => {
-          console.error('Premium booster payment error:', error);
-          toast.error(`${t('errors.payment_failed')}: ${error}`);
-        }
+      toast.loading(t('booster.processing'), { id: 'premium-payment' });
+
+      // Stripe Checkout session létrehozása
+      const { data, error } = await supabase.functions.invoke('create-premium-booster-payment', {
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
+
+      if (error || !data?.url) {
+        throw new Error(error?.message || t('errors.payment_failed'));
+      }
+
+      // PWA-ban window.location.href a megbízható
+      window.location.href = data.url;
     } catch (error) {
       console.error('Premium booster payment error:', error);
       const errorMsg = error instanceof Error ? error.message : t('errors.payment_failed');
-      toast.error(errorMsg);
+      toast.error(errorMsg, { id: 'premium-payment' });
     }
   };
 
