@@ -10,8 +10,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import loadingLogo from '@/assets/dingleup-loading-logo.png';
 
 const Index = () => {
-  console.log('[Landing] Index rendered');
-   // Show landing page for all devices (desktop, mobile, tablet)
+  // Show landing page for all devices (desktop, mobile, tablet)
   return (
     <main className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-[#1a0033] via-[#2d1b69] to-[#0f0033] overflow-x-hidden overflow-y-auto">
       {/* Full-screen deep purple/blue background extending behind status bar */}

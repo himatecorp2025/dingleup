@@ -224,11 +224,13 @@ const SplashScreen = () => (
   </div>
 );
 
-// Content wrapper that no longer blocks on i18n loading
-// If translations are still loading, keys may villan be röviden,
-// de a teljes app azonnal renderelődik (stabilitás fontosabb).
+// Content wrapper that checks i18n loading state
 const AppContent = () => {
-  useI18n(); // ensure provider is initialized, but ne blokkoljunk rajta
+  const { isLoading } = useI18n();
+
+  if (isLoading) {
+    return <SplashScreen />;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
