@@ -60,7 +60,7 @@ export function useGameQuestions() {
   }, []);
 
   // Prefetch next game questions (background operation)
-  const prefetchNextGameQuestions = useCallback(async (currentPoolOrder: number | null, lang: string = 'en') => {
+  const prefetchNextGameQuestions = useCallback(async (currentPoolOrder: number | null, lang?: string) => {
     if (isPrefetchingRef.current) {
       console.log('[useGameQuestions] Prefetch already in progress, skipping');
       return;
@@ -104,7 +104,7 @@ export function useGameQuestions() {
   }, []);
 
   // Get next game questions using global pool rotation
-  const getNextGameQuestions = useCallback(async (lang: string = 'en'): Promise<Question[]> => {
+  const getNextGameQuestions = useCallback(async (lang?: string): Promise<Question[]> => {
     setLoading(true);
     setError(null);
 
