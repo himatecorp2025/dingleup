@@ -183,9 +183,11 @@ export const DailyRankingsCountdown = ({ compact = false, className = '', userTi
           <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
             {timeRemaining}
           </span>
-          <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
-            {t('countdown.in_time')}
-          </span>
+          {t('countdown.in_time') && (
+            <span className="text-[10px] sm:text-xs font-black text-foreground drop-shadow-lg leading-none whitespace-nowrap">
+              {t('countdown.in_time')}
+            </span>
+          )}
         </div>
       </div>
     </div>
