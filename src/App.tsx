@@ -48,6 +48,7 @@ const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminAgeStatistics = lazy(() => import("./pages/AdminAgeStatistics"));
 const AdminTranslations = lazy(() => import("./pages/AdminTranslations"));
+const AdminLegalDocuments = lazy(() => import("./pages/AdminLegalDocuments"));
 const ASZF = lazy(() => import("./pages/ASZF"));
 const Adatkezeles = lazy(() => import("./pages/Adatkezeles"));
 
@@ -183,6 +184,7 @@ const AppCore = () => {
               <Route path="/admin/manual-credit" element={<ErrorBoundary><AdminManualCredit /></ErrorBoundary>} />
               <Route path="/admin/lootbox-analytics" element={<ErrorBoundary><AdminLootboxAnalytics /></ErrorBoundary>} />
               <Route path="/admin/age-statistics" element={<ErrorBoundary><AdminAgeStatistics /></ErrorBoundary>} />
+              <Route path="/admin/legal-documents" element={<ErrorBoundary><AdminLegalDocuments /></ErrorBoundary>} />
               <Route path="/admin/profile" element={<ErrorBoundary><AdminProfile /></ErrorBoundary>} />
               
               {/* Legal pages */}

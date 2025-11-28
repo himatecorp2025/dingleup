@@ -17,6 +17,7 @@ import {
   Settings,
   ChevronRight,
   Coins,
+  FileText,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -39,7 +40,7 @@ export function AdminSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useSidebar();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   
   const isCollapsed = state === 'collapsed';
 
@@ -358,6 +359,16 @@ export function AdminSidebar() {
                 >
                   <Calendar className="text-purple-400" />
                   <span>{t('admin.sidebar.age_statistics')}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => navigate('/admin/legal-documents')}
+                  isActive={isActive('/admin/legal-documents')}
+                  className={isActive('/admin/legal-documents') ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-white' : 'text-white/60'}
+                >
+                  <FileText className="text-purple-400" />
+                  <span>{lang === 'hu' ? 'Jogi Dokumentumok' : 'Legal Documents'}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
