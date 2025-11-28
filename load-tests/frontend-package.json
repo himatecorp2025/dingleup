@@ -1,0 +1,19 @@
+{
+  "name": "dingleup-frontend-load-tests",
+  "version": "1.0.0",
+  "description": "Frontend performance and load testing for DingleUP!",
+  "private": true,
+  "scripts": {
+    "test:frontend": "node run-frontend-tests.js",
+    "test:lighthouse": "node scenarios/lighthouse-audit.js",
+    "test:user-journey": "node scenarios/user-journey.js",
+    "test:concurrent-users": "node scenarios/concurrent-users.js"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "lighthouse": "^11.4.0",
+    "chrome-launcher": "^1.1.0",
+    "dotenv": "^16.4.5",
+    "chalk": "^4.1.2"
+  }
+}
