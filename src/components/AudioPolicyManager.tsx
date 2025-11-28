@@ -117,9 +117,16 @@ export const AudioPolicyManager = () => {
         console.log('[AudioPolicy] 🔴 App went to BACKGROUND - pausing all music');
         audioManager.pauseAll();
       } else {
-        // App returned to foreground - resume if enabled
-        console.log('[AudioPolicy] 🟢 App returned to FOREGROUND - resuming music if enabled');
-        if (musicEnabled && volume > 0) {
+        // App returned to foreground - check if music is allowed on current route
+        const musicAllowed = isMusicAllowed(location.pathname);
+        console.log('[AudioPolicy] 🟢 App returned to FOREGROUND', { 
+          pathname: location.pathname, 
+          musicAllowed, 
+          musicEnabled, 
+          volume 
+        });
+        
+        if (musicAllowed && musicEnabled && volume > 0) {
           audioManager.resumeIfEnabled();
         }
       }
@@ -127,11 +134,16 @@ export const AudioPolicyManager = () => {
 
     const handlePageShow = (e: PageTransitionEvent) => {
       if (e.persisted) {
-        // Page restored from back/forward cache
-        console.log('[AudioPolicy] 📄 Page restored from cache - resuming music');
+        // Page restored from back/forward cache - check if music is allowed
+        const musicAllowed = isMusicAllowed(location.pathname);
+        console.log('[AudioPolicy] 📄 Page restored from cache', { 
+          pathname: location.pathname, 
+          musicAllowed 
+        });
+        
         const audioManager = AudioManager.getInstance();
         const { musicEnabled, volume } = useAudioStore.getState();
-        if (musicEnabled && volume > 0) {
+        if (musicAllowed && musicEnabled && volume > 0) {
           audioManager.resumeIfEnabled();
         }
       }
