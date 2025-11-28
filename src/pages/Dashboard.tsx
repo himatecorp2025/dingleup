@@ -435,6 +435,11 @@ const Dashboard = () => {
     }
   };
 
+  // Show skeleton while critical data loads
+  if (profileLoading || !profile || !walletData) {
+    return <DashboardSkeleton />;
+  }
+
   return (
     <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
       background: 'transparent'
