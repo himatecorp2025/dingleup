@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import HexShieldFrame from './frames/HexShieldFrame';
 import HexAcceptButton from './ui/HexAcceptButton';
@@ -29,6 +30,7 @@ const generateUniqueId = (prefix: string) => `${prefix}-${Math.random().toString
 
 export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) => {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [contentVisible, setContentVisible] = useState(false);
   const [topPlayers, setTopPlayers] = useState<TopPlayer[]>([]);
   const [totalRewards, setTotalRewards] = useState<TotalRewards>({ totalGold: 150000, totalLives: 20000 });
@@ -174,6 +176,12 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       setContentVisible(false);
     }
   }, [open, fetchYesterdayTopPlayers]);
+
+  // Handle Play Now button click - navigate to game
+  const handlePlayNow = useCallback(() => {
+    onClose();
+    navigate('/game');
+  }, [onClose, navigate]);
 
   // Memoize players 4-10 to avoid re-renders
   const rankFourToTen = useMemo(() => topPlayers.slice(3, 10), [topPlayers]);
@@ -497,7 +505,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                           </div>
 
                           <HexAcceptButton 
-                            onClick={onClose}
+                            onClick={handlePlayNow}
                             className="w-full max-w-[280px]"
                             style={{ transform: 'scale(0.9)' }}
                           >
