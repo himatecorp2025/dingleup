@@ -27,8 +27,16 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
       if (profileError) throw profileError;
 
+      console.log('[DAILY-GIFT] Profile data:', {
+        username: profile?.username,
+        streak: profile?.daily_gift_streak,
+        lastClaimed: profile?.daily_gift_last_claimed,
+        timezone: profile?.user_timezone
+      });
+
       // Admin users don't see Daily Gift popup
       if (profile?.username === 'DingleUP' || profile?.username === 'DingelUP!') {
+        console.log('[DAILY-GIFT] Admin user detected, hiding popup');
         setCanClaim(false);
         setShowPopup(false);
         return;
@@ -36,15 +44,28 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
 
       // Get today's date in user's timezone (not UTC!)
       const userTimezone = profile?.user_timezone || 'Europe/Budapest';
-      const today = new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }))
-        .toISOString()
-        .split('T')[0];
+      const now = new Date();
+      const nowUTC = now.toISOString();
+      const nowInUserTz = new Date(now.toLocaleString('en-US', { timeZone: userTimezone }));
+      const today = nowInUserTz.toISOString().split('T')[0];
+      
+      console.log('[DAILY-GIFT] Timezone calculations:', {
+        userTimezone,
+        nowUTC,
+        nowInUserTz: nowInUserTz.toISOString(),
+        today,
+      });
       
       // Check session storage for today's dismissal/claim
       const dismissed = sessionStorage.getItem(`${DAILY_GIFT_SESSION_KEY}${today}`);
+      console.log('[DAILY-GIFT] Session storage check:', {
+        key: `${DAILY_GIFT_SESSION_KEY}${today}`,
+        dismissed,
+      });
       
       // If already dismissed or claimed today, don't show
       if (dismissed) {
+        console.log('[DAILY-GIFT] Already dismissed/claimed today in session');
         setCanClaim(false);
         setShowPopup(false);
         return;
@@ -53,15 +74,27 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       // Check if already claimed today (compare in user's timezone)
       const lastClaimed = profile?.daily_gift_last_claimed;
       if (lastClaimed) {
-        const lastClaimedDate = new Date(new Date(lastClaimed).toLocaleString('en-US', { timeZone: userTimezone }))
-          .toISOString()
-          .split('T')[0];
+        const lastClaimedUTC = new Date(lastClaimed);
+        const lastClaimedInUserTz = new Date(lastClaimedUTC.toLocaleString('en-US', { timeZone: userTimezone }));
+        const lastClaimedDate = lastClaimedInUserTz.toISOString().split('T')[0];
+        
+        console.log('[DAILY-GIFT] Last claimed check:', {
+          lastClaimedUTC: lastClaimedUTC.toISOString(),
+          lastClaimedInUserTz: lastClaimedInUserTz.toISOString(),
+          lastClaimedDate,
+          today,
+          matches: lastClaimedDate === today,
+        });
+        
         if (lastClaimedDate === today) {
           // Already claimed today
+          console.log('[DAILY-GIFT] Already claimed today in database');
           setCanClaim(false);
           setShowPopup(false);
           return;
         }
+      } else {
+        console.log('[DAILY-GIFT] No previous claim found');
       }
 
       const currentStreak = profile?.daily_gift_streak ?? 0;
@@ -70,12 +103,19 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       const cyclePosition = currentStreak % 7;
       const rewardCoins = DAILY_GIFT_REWARDS[cyclePosition];
       
+      console.log('[DAILY-GIFT] Can claim! Reward:', {
+        currentStreak,
+        cyclePosition,
+        rewardCoins,
+      });
+      
       setWeeklyEntryCount(currentStreak);
       setNextReward(rewardCoins);
       setCanClaim(true);
       setShowPopup(true);
       trackEvent('popup_impression', 'daily');
     } catch (error) {
+      console.error('[DAILY-GIFT] Error in checkDailyGift:', error);
       // Silent fail
     }
   };

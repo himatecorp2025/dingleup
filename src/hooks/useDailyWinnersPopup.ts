@@ -38,11 +38,13 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
     const checkIfCanShowToday = async () => {
       try {
         if (forceAlwaysShow) {
+          console.log('[DAILY-WINNERS] Force always show enabled');
           setCanShowToday(true);
           return;
         }
 
         const currentDay = await getCurrentDayInUserTimezone(userId);
+        console.log('[DAILY-WINNERS] Current day in user timezone:', currentDay);
 
         // Check if user has seen popup today
         const { data, error } = await supabase
@@ -56,6 +58,12 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
           setCanShowToday(false);
           return;
         }
+
+        console.log('[DAILY-WINNERS] Database check:', {
+          lastShownDay: data?.last_shown_day,
+          currentDay,
+          canShow: !data || data.last_shown_day !== currentDay,
+        });
 
         // Can show if not seen today
         setCanShowToday(!data || data.last_shown_day !== currentDay);
