@@ -20,6 +20,7 @@ import { useAppLifecycle } from "@/hooks/useAppLifecycle";
 import { useSessionMonitor } from "@/hooks/useSessionMonitor";
 import { AppRouteGuard } from "@/components/AppRouteGuard";
 import { AudioPolicyManager } from "@/components/AudioPolicyManager";
+import { MobileBrowserGuard } from "@/components/MobileBrowserGuard";
 import { useI18n } from "@/i18n";
 import { useTimezoneDetection } from "@/hooks/useTimezoneDetection";
 import loadingLogo from '@/assets/dingleup-loading-logo.png';
@@ -137,8 +138,9 @@ const AppCore = () => {
         <AudioPolicyManager />
         <Suspense fallback={<PageLoader />}>
           <div className="animate-fade-in">
-            <AppRouteGuard>
-            <Routes>
+            <MobileBrowserGuard>
+              <AppRouteGuard>
+                <Routes>
               {/* Public routes - no ErrorBoundary needed */}
               <Route path="/" element={<Index />} />
               <Route path="/desktop" element={<Index />} />
@@ -193,8 +195,9 @@ const AppCore = () => {
               
               {/* 404 fallback */}
               <Route path="*" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />
-            </Routes>
-          </AppRouteGuard>
+                </Routes>
+              </AppRouteGuard>
+            </MobileBrowserGuard>
           </div>
         </Suspense>
       </BrowserRouter>
