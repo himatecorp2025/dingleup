@@ -446,6 +446,57 @@ const GamePreview = memo(() => {
     trackMilestone();
   }, [currentQuestionIndex, userId, isGameReady, correctAnswers, profile?.preferred_language]);
 
+  // Language change detection - reload questions when user changes language during game
+  useEffect(() => {
+    const reloadQuestionsForLanguage = async () => {
+      if (!userId || !isGameReady || questions.length === 0 || !lang) return;
+      
+      // Check if current questions match the current language by fetching them
+      console.log(`[GamePreview] Language changed to ${lang}, reloading questions...`);
+      
+      try {
+        const { data: { session: authSession } } = await supabase.auth.getSession();
+        if (!authSession) return;
+
+        const { data, error } = await supabase.functions.invoke('start-game-session', {
+          headers: { Authorization: `Bearer ${authSession.access_token}` }
+        });
+
+        if (error) throw error;
+        
+        if (!data?.questions || data.questions.length === 0) {
+          console.error('[GamePreview] No questions received for language change');
+          return;
+        }
+
+        // Preserve game state while updating questions with new language
+        const currentIndex = currentQuestionIndex;
+        const shuffledQuestions = data.questions.map((q: any) => {
+          const existingAnswers = q.answers;
+          const shuffledAnswers = [...existingAnswers].sort(() => Math.random() - 0.5);
+          return {
+            ...q,
+            answers: [
+              { key: 'A', text: shuffledAnswers[0].text, correct: shuffledAnswers[0].correct },
+              { key: 'B', text: shuffledAnswers[1].text, correct: shuffledAnswers[1].correct },
+              { key: 'C', text: shuffledAnswers[2].text, correct: shuffledAnswers[2].correct }
+            ]
+          };
+        });
+
+        setQuestions(shuffledQuestions);
+        // Ensure current index is maintained
+        setCurrentQuestionIndex(currentIndex);
+        console.log(`[GamePreview] ✓ Questions reloaded in ${lang}`);
+      } catch (error) {
+        console.error('[GamePreview] Error reloading questions for language:', error);
+      }
+    };
+
+    reloadQuestionsForLanguage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]); // Only trigger when language changes
+
   // Background detection - exit game if app goes to background (only after video ended)
   useEffect(() => {
     // Do not activate background detection while the intro/loading video is playing
