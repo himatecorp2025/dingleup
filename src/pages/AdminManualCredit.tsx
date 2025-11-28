@@ -32,6 +32,7 @@ const AdminManualCredit = () => {
         title: 'Error',
         description: 'User ID is required',
         variant: 'destructive',
+        duration: 4000,
       });
       return;
     }
@@ -41,6 +42,7 @@ const AdminManualCredit = () => {
         title: 'Error',
         description: 'At least one of Gold or Lives must be non-zero',
         variant: 'destructive',
+        duration: 4000,
       });
       return;
     }
@@ -50,6 +52,7 @@ const AdminManualCredit = () => {
         title: 'Error',
         description: 'Reason is required',
         variant: 'destructive',
+        duration: 4000,
       });
       return;
     }
@@ -75,6 +78,7 @@ const AdminManualCredit = () => {
       toast({
         title: 'Success',
         description: `Manual credit applied successfully`,
+        duration: 3000,
       });
 
       // Reset form
@@ -89,6 +93,7 @@ const AdminManualCredit = () => {
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to apply manual credit',
         variant: 'destructive',
+        duration: 4000,
       });
     } finally {
       setIsSubmitting(false);

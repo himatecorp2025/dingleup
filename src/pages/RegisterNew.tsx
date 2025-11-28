@@ -112,6 +112,7 @@ const RegisterNew = () => {
           title: t('auth.register.error_title'),
           description: regData?.error || t('auth.register.errorRegisterFailed'),
           variant: "destructive",
+          duration: 4000,
         });
         return;
       }
@@ -121,6 +122,7 @@ const RegisterNew = () => {
           title: t('auth.register.error_title'),
           description: t('auth.register.errorRegisterUnsuccessful'),
           variant: "destructive",
+          duration: 4000,
         });
         return;
       }
@@ -137,6 +139,7 @@ const RegisterNew = () => {
         toast({
           title: t('auth.register.success_title'),
           description: t('auth.register.successPleaseLogin'),
+          duration: 3000,
         });
         navigate('/auth/login');
         return;
@@ -145,6 +148,7 @@ const RegisterNew = () => {
       toast({
         title: t('auth.register.success_title'),
         description: t('auth.register.successMessage'),
+        duration: 3000,
       });
       navigate('/dashboard');
     } catch (error) {
@@ -162,6 +166,7 @@ const RegisterNew = () => {
           title: t('auth.register.error_title'),
           description: t('auth.register.errorUnexpected'),
           variant: "destructive",
+          duration: 4000,
         });
       }
     } finally {
