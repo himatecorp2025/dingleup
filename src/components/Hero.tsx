@@ -18,13 +18,8 @@ const Hero = () => {
   };
 
   const handleStartGame = () => {
-    // Mobile/tablet: redirect to install page
-    if (isHandheld) {
-      navigate('/install');
-    } else {
-      // Desktop: go to game rules
-      navigate('/game-rules');
-    }
+    // Always redirect to install page (mobile-optimized view)
+    navigate('/install');
   };
 
   return (
