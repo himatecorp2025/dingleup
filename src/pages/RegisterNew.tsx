@@ -289,6 +289,28 @@ const RegisterNew = () => {
               {errors.pinConfirm && <p className="text-sm text-red-400">{errors.pinConfirm}</p>}
             </div>
 
+            <p className="text-center text-white/60 text-xs sm:text-sm mb-3 px-2">
+              {t('auth.register.termsPrefix')}{' '}
+              <a 
+                href="/aszf" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-yellow-400 hover:text-yellow-300 underline transition-colors"
+              >
+                {t('auth.register.termsLink')}
+              </a>
+              {' '}{t('auth.register.termsAnd')}{' '}
+              <a 
+                href="/adatkezeles" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-yellow-400 hover:text-yellow-300 underline transition-colors"
+              >
+                {t('auth.register.privacyLink')}
+              </a>
+              .
+            </p>
+
             <Button 
               type="submit" 
               className="w-full h-12 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 text-black font-bold shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 transition-all duration-300 text-base"
