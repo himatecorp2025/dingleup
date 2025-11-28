@@ -57,7 +57,6 @@ import { usePaymentPolling } from '@/hooks/usePaymentPolling';
 import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { TutorialManager } from '@/components/tutorial/TutorialManager';
 import { IdleWarning } from '@/components/IdleWarning';
-import { DashboardSkeleton } from '@/components/DashboardSkeleton';
 
 import BottomNav from '@/components/BottomNav';
 import gameBackground from '@/assets/game-background.png';
@@ -437,11 +436,6 @@ const Dashboard = () => {
       toast.error(errorMsg, { id: 'purchase-premium-booster' });
     }
   };
-
-  // Show skeleton while critical data loads
-  if (profileLoading || !profile || !walletData) {
-    return <DashboardSkeleton />;
-  }
 
   return (
     <div className="min-h-svh min-h-dvh w-screen overflow-x-hidden relative" style={{
