@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useI18n } from '@/i18n';
+import { formatInTimeZone } from 'date-fns-tz';
 
 const DAILY_GIFT_REWARDS = [50, 75, 110, 160, 220, 300, 500];
 
@@ -45,15 +46,12 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       // Get today's date in user's timezone (not UTC!)
       const userTimezone = profile?.user_timezone || 'Europe/Budapest';
       const now = new Date();
-      const nowUTC = now.toISOString();
-      const nowInUserTz = new Date(now.toLocaleString('en-US', { timeZone: userTimezone }));
-      const today = nowInUserTz.toISOString().split('T')[0];
+      const today = formatInTimeZone(now, userTimezone, 'yyyy-MM-dd');
       
       console.log('[DAILY-GIFT] Timezone calculations:', {
         userTimezone,
-        nowUTC,
-        nowInUserTz: nowInUserTz.toISOString(),
-        today,
+        nowUTC: now.toISOString(),
+        todayInUserTz: today,
       });
       
       // Check session storage for today's dismissal/claim
@@ -74,20 +72,16 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
       // Check if already claimed today (compare in user's timezone)
       const lastClaimed = profile?.daily_gift_last_claimed;
       if (lastClaimed) {
-        const lastClaimedUTC = new Date(lastClaimed);
-        const lastClaimedInUserTz = new Date(lastClaimedUTC.toLocaleString('en-US', { timeZone: userTimezone }));
-        const lastClaimedDate = lastClaimedInUserTz.toISOString().split('T')[0];
+        const lastClaimedDate = formatInTimeZone(new Date(lastClaimed), userTimezone, 'yyyy-MM-dd');
         
         console.log('[DAILY-GIFT] Last claimed check:', {
-          lastClaimedUTC: lastClaimedUTC.toISOString(),
-          lastClaimedInUserTz: lastClaimedInUserTz.toISOString(),
+          lastClaimedUTC: lastClaimed,
           lastClaimedDate,
           today,
           matches: lastClaimedDate === today,
         });
         
         if (lastClaimedDate === today) {
-          // Already claimed today
           console.log('[DAILY-GIFT] Already claimed today in database');
           setCanClaim(false);
           setShowPopup(false);
@@ -164,9 +158,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
           .single();
         
         const userTimezone = profile?.user_timezone || 'Europe/Budapest';
-        const today = new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }))
-          .toISOString()
-          .split('T')[0];
+        const today = formatInTimeZone(new Date(), userTimezone, 'yyyy-MM-dd');
         
         // Mark as dismissed in session storage
         sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'true');
@@ -229,9 +221,7 @@ export const useDailyGift = (userId: string | undefined, isPremium: boolean = fa
         .single();
       
       const userTimezone = profile?.user_timezone || 'Europe/Budapest';
-      const today = new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }))
-        .toISOString()
-        .split('T')[0];
+      const today = formatInTimeZone(new Date(), userTimezone, 'yyyy-MM-dd');
       
       // Mark as dismissed for today
       sessionStorage.setItem(`${DAILY_GIFT_SESSION_KEY}${today}`, 'dismissed');

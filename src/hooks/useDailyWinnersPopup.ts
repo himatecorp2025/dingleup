@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { formatInTimeZone } from 'date-fns-tz';
 
 /**
  * Hook to manage daily winners popup visibility
@@ -19,12 +20,10 @@ export const useDailyWinnersPopup = (userId: string | undefined, forceAlwaysShow
         .single();
       
       const userTimezone = profile?.user_timezone || 'Europe/Budapest';
-      return new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }))
-        .toISOString()
-        .split('T')[0];
+      return formatInTimeZone(new Date(), userTimezone, 'yyyy-MM-dd');
     } catch (error) {
       // Fallback to UTC if timezone fetch fails
-      return new Date().toISOString().split('T')[0];
+      return formatInTimeZone(new Date(), 'UTC', 'yyyy-MM-dd');
     }
   };
 
