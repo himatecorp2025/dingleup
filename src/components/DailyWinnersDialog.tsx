@@ -657,7 +657,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                         {/* Positions 4-10 - 2 rows: first row 4 items, second row 3 items centered */}
                         <div style={{ transform: 'translateY(-8%)' }}>
                           {/* First row: positions 4-7 */}
-                          <div className="grid grid-cols-4 gap-2 mb-2">
+                          <div className="grid grid-cols-4 gap-2 mb-2" style={{ transform: 'scale(1.15)' }}>
                             {rankFourToTen.slice(0, 4).map((player) => {
                               return (
                                 <div
@@ -747,7 +747,7 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
                                 <div
                                   key={player.user_id}
                                   className="flex flex-col items-center relative"
-                                  style={{ width: 'calc(25% - 6px)' }}
+                                  style={{ width: 'calc(28.75% - 6px)' }}
                                 >
                                   <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
                                     {/* Profile Picture with 3D Royal Blue Border - Same structure as TOP 3 */}
