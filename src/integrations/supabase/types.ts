@@ -3868,17 +3868,30 @@ export type Database = {
         Args: { uid1: string; uid2: string }
         Returns: string[]
       }
-      open_lootbox_transaction: {
-        Args: {
-          p_gold_reward: number
-          p_idempotency_key: string
-          p_life_reward: number
-          p_lootbox_id: string
-          p_tier: string
-          p_user_id: string
-        }
-        Returns: Json
-      }
+      open_lootbox_transaction:
+        | {
+            Args: {
+              p_gold_reward: number
+              p_idempotency_key: string
+              p_life_reward: number
+              p_lootbox_id: string
+              p_tier: string
+              p_user_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_gold_reward: number
+              p_idempotency_key: string
+              p_life_reward: number
+              p_lootbox_id: string
+              p_open_cost?: number
+              p_tier: string
+              p_user_id: string
+            }
+            Returns: Json
+          }
       process_invitation_reward: { Args: never; Returns: Json }
       purchase_life: { Args: never; Returns: Json }
       reactivate_help: {
