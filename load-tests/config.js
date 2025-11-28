@@ -5,10 +5,10 @@ module.exports = {
   supabaseAnonKey: process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkcHhtd3N4aGNrYXp3eHVmdHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2MDQ3ODUsImV4cCI6MjA3NjE4MDc4NX0.DeAS4ACvq-YVt2ytoOS3NVSg7xFSHVhvyjUEOti_NnA',
   
   // Test parameters
-  virtualUsers: parseInt(process.env.VIRTUAL_USERS) || 5000,
-  testDuration: parseInt(process.env.TEST_DURATION) || 60, // seconds
-  connections: parseInt(process.env.CONNECTIONS) || 100,
-  pipelining: parseInt(process.env.PIPELINING) || 10,
+  virtualUsers: parseInt(process.env.VIRTUAL_USERS) || 25000,
+  testDuration: parseInt(process.env.TEST_DURATION) || 90, // seconds
+  connections: parseInt(process.env.CONNECTIONS) || 500,
+  pipelining: parseInt(process.env.PIPELINING) || 20,
   
   // Edge function URLs
   endpoints: {
