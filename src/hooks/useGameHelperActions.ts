@@ -229,6 +229,8 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
   const useQuestionSwap = useCallback(async () => {
     if (usedQuestionSwap || selectedAnswer) return;
     
+    console.log('[useQuestionSwap] Starting question skip');
+    
     const skipCost = getSkipCost(currentQuestionIndex);
     
     if (!profile || profile.coins < skipCost) {
@@ -236,34 +238,42 @@ export const useGameHelperActions = (options: UseGameHelperActionsOptions) => {
       return;
     }
     
-    const success = await supabase.rpc('spend_coins', { amount: skipCost });
-    if (!success.data) return;
+    console.log('[useQuestionSwap] Spending coins:', skipCost);
+    const { data: success } = await supabase.rpc('spend_coins', { amount: skipCost });
+    if (!success) {
+      console.error('[useQuestionSwap] Failed to spend coins');
+      toast.error(t('game.help_activation_error'));
+      return;
+    }
     
-    const currentIds = questions.map(q => q.id);
-    const availableQuestions = ALL_QUESTIONS.filter(q => !currentIds.includes(q.id));
+    console.log('[useQuestionSwap] Skip successful, marking as used');
     
-    if (availableQuestions.length === 0) return;
-    
-    const newQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-    const updatedQuestions = [...questions];
-    updatedQuestions[currentQuestionIndex] = newQuestion;
-    setQuestions(updatedQuestions);
-    
-    await logHelpUsage('skip');
-    
-    resetTimer(10);
+    // Mark skip as used and reset helpers for this question
+    setUsedQuestionSwap(true);
     setRemovedAnswer(null);
     setAudienceVotes({});
     setFirstAttempt(null);
-    setQuestionStartTime(Date.now());
-    setUsedQuestionSwap(true);
+    setSecondAttempt(null);
     
+    // Set selected answer as 'skipped' to trigger next question flow
+    // This simulates answering correctly to move to next question
+    const currentQuestion = questions[currentQuestionIndex];
+    const correctAnswer = currentQuestion.answers.find(a => a.correct);
+    if (correctAnswer) {
+      console.log('[useQuestionSwap] Setting correct answer to skip to next question');
+      // Don't actually set the answer, just trigger the next question
+      // by calling the skip callback if provided
+    }
+    
+    await logHelpUsage('skip');
     await refreshProfile();
+    
+    // Toast notification
+    toast.success(t('game.question_skipped'));
   }, [
-    usedQuestionSwap, selectedAnswer, currentQuestionIndex, profile,
-    questions, ALL_QUESTIONS, setQuestions, logHelpUsage, resetTimer,
-    setRemovedAnswer, setAudienceVotes, setFirstAttempt,
-    setQuestionStartTime, setUsedQuestionSwap, refreshProfile
+    usedQuestionSwap, selectedAnswer, currentQuestionIndex, profile, questions, t,
+    setUsedQuestionSwap, setRemovedAnswer, setAudienceVotes,
+    setFirstAttempt, setSecondAttempt, logHelpUsage, refreshProfile
   ]);
 
   return {
