@@ -196,6 +196,7 @@ export const LootboxDropOverlay = () => {
             {!isAnimating && (
               <LootboxCountdownTimer 
                 key={activeLootbox.id}
+                expiresAt={activeLootbox.expires_at}
                 onExpired={handleExpired}
               />
             )}
