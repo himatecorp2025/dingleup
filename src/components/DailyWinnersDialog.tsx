@@ -130,7 +130,63 @@ export const DailyWinnersDialog = ({ open, onClose }: DailyWinnersDialogProps) =
       }
 
       if (!players || players.length === 0) {
-        console.log('[DAILY-WINNERS] No snapshot data found for yesterday');
+        console.log('[DAILY-WINNERS] No snapshot data - triggering on-demand processing for yesterday:', yesterdayDate);
+        
+        // Trigger process-daily-winners to process yesterday's winners
+        try {
+          const { error: processError } = await supabase.functions.invoke('process-daily-winners', {
+            body: {}
+          });
+          
+          if (processError) {
+            console.error('[DAILY-WINNERS] On-demand processing failed:', processError);
+          } else {
+            console.log('[DAILY-WINNERS] On-demand processing initiated, waiting 3 seconds then refetching...');
+            
+            // Wait for processing to complete
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            if (!isMountedRef.current) return;
+            
+            // Refetch snapshot data after processing
+            const { data: refetchedPlayers, error: refetchError } = await supabase
+              .from('daily_leaderboard_snapshot')
+              .select('user_id, rank, username, avatar_url, total_correct_answers')
+              .eq('country_code', userCountry)
+              .eq('snapshot_date', yesterdayDate)
+              .order('rank', { ascending: true })
+              .limit(25);
+            
+            if (!isMountedRef.current) return;
+            
+            if (!refetchError && refetchedPlayers && refetchedPlayers.length > 0) {
+              setTopPlayers(refetchedPlayers as TopPlayer[]);
+              console.log('[DAILY-WINNERS] Successfully loaded after on-demand processing:', refetchedPlayers.length, 'players');
+              
+              // Fetch rewards for the refetched players
+              const { data: rewards, error: rewardsError } = await supabase
+                .from('daily_winner_awarded')
+                .select('gold_awarded, lives_awarded')
+                .eq('day_date', yesterdayDate)
+                .lte('rank', 25);
+              
+              if (!rewardsError && rewards && isMountedRef.current) {
+                const totalGold = rewards.reduce((sum, r) => sum + r.gold_awarded, 0);
+                const totalLives = rewards.reduce((sum, r) => sum + r.lives_awarded, 0);
+                setTotalRewards({ totalGold, totalLives });
+                console.log('[DAILY-WINNERS] Rewards after on-demand processing:', { totalGold, totalLives });
+              }
+              
+              return; // Successfully loaded data, exit here
+            } else {
+              console.log('[DAILY-WINNERS] Still no data after on-demand processing');
+            }
+          }
+        } catch (processError) {
+          console.error('[DAILY-WINNERS] Exception during on-demand processing:', processError);
+        }
+        
+        // If we reach here, processing failed or returned no data
         if (isMountedRef.current) {
           setTopPlayers([]);
           setTotalRewards({ totalGold: 0, totalLives: 0 });

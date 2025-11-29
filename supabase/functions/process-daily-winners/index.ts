@@ -57,12 +57,13 @@ serve(async (req) => {
   
   const corsHeaders = getCorsHeaders(origin);
 
-  // Verify cron secret OR admin authentication OR test mode in development
+  // Verify cron secret OR admin authentication OR authenticated user OR test mode in development
   const cronSecret = req.headers.get('x-supabase-cron-secret');
   const expectedSecret = Deno.env.get('CRON_SECRET');
   
   const hasValidCronSecret = cronSecret && cronSecret === expectedSecret;
   let isAdmin = false;
+  let hasValidAuth = false;
   
   // Parse URL for test mode
   const url = new URL(req.url);
@@ -70,7 +71,7 @@ serve(async (req) => {
   const isDevelopment = (Deno.env.get('SUPABASE_URL') || '').includes('wdpxmwsxhckazwxufttk');
 
   if (!hasValidCronSecret) {
-    // Check if request has valid JWT and user is admin
+    // Check if request has valid JWT (any authenticated user can trigger on-demand processing)
     const authHeader = req.headers.get('authorization');
     if (authHeader) {
       const supabaseClient = createClient(
@@ -84,7 +85,9 @@ serve(async (req) => {
       
       const { data: { user } } = await supabaseClient.auth.getUser();
       if (user) {
-        // Check if user has admin role
+        hasValidAuth = true;
+        
+        // Check if user has admin role (optional - admins can force processing)
         const { data: roleData } = await supabaseClient
           .from('user_roles')
           .select('role')
@@ -97,8 +100,8 @@ serve(async (req) => {
     }
   }
 
-  // Allow test mode only in development
-  const isAuthorized = hasValidCronSecret || isAdmin || (testMode && isDevelopment);
+  // Allow if: valid cron secret, authenticated user, admin, or test mode in dev
+  const isAuthorized = hasValidCronSecret || hasValidAuth || isAdmin || (testMode && isDevelopment);
 
   if (!isAuthorized) {
     return new Response(
@@ -115,6 +118,13 @@ serve(async (req) => {
 
   try {
     console.log('[DAILY-WINNERS] Starting timezone-based daily winners processing...');
+    
+    // Check if this is an on-demand request (not cron)
+    const isOnDemandRequest = !hasValidCronSecret;
+    
+    if (isOnDemandRequest) {
+      console.log('[DAILY-WINNERS] On-demand processing requested - processing all timezones immediately');
+    }
 
     // Get all distinct user timezones
     const { data: timezones, error: timezonesError } = await supabaseClient
@@ -133,8 +143,9 @@ serve(async (req) => {
 
     // Process each timezone separately
     for (const timezone of uniqueTimezones) {
-      // Check if it's time to process this timezone (23:55-23:59 local time)
-      if (!shouldProcessTimezone(timezone)) {
+      // For on-demand requests, skip time check - process immediately
+      // For cron requests, only process if time is 23:55-23:59 local time
+      if (!isOnDemandRequest && !shouldProcessTimezone(timezone)) {
         const localTime = getLocalTime(timezone);
         console.log(`[DAILY-WINNERS] Not time yet for ${timezone} (local time: ${localTime.toLocaleTimeString()})`);
         skippedTimezones.push(timezone);
